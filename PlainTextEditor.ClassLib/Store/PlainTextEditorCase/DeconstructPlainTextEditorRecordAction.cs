@@ -1,0 +1,3 @@
+namespace PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
+
+public record DeconstructPlainTextEditorRecordAction(PlainTextEditorKey PlainTextEditorKey);

@@ -1,0 +1,32 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div id="@IsActiveRowId"
+     class="pte_plain-text-editor-row-display @IsActiveCss"
+     @onclick="DispatchPlainTextEditorOnClickAction">
+    <PlainTextEditorLineNumberDisplay MostDigitsInARowNumber="MostDigitsInARowNumber" />
+    
+    <CascadingValue Name="NotifyCharacterWasClicked" Value="new Action(() => _characterWasClicked = true)">
+        <div class="pte_plain-text-editor-row-display-body"
+            style="@WidthStyleCss">
+
+            @{
+                // Ensure reference to PlainTextEditorRow does
+                // not change while looping over tokens
+                // by making a local reference to it.
+                var currentPlainTextEditorRow = PlainTextEditorRow;
+
+                for (int i = 0; i < currentPlainTextEditorRow.Array.Length; i++)
+                {
+                    var tokenIndex = i;
+
+                    var tokenKey = currentPlainTextEditorRow.Array[tokenIndex];
+                    var tokenValue = currentPlainTextEditorRow.Map[tokenKey];
+                    <CascadingValue Name="TokenIndex" Value="tokenIndex">
+                        <TextTokenDisplay @key="tokenKey"
+                                          TextToken="tokenValue" />
+                    </CascadingValue>
+                }
+            }
+        </div>
+    </CascadingValue>
+</div>

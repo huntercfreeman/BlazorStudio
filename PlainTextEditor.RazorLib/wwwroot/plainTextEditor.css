@@ -1,0 +1,103 @@
+.pte_visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+.pte_unselectable {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+.pte_plain-text-editor-spawn {
+    margin-top: 10px;
+}
+
+.pte_plain-text-editor-wrapping {
+    padding: 10px;
+}
+
+.pte_plain-text-editor-display {
+    min-height: 100px;
+    min-width: 100px;
+    height: 400px;
+    margin: 10px;
+    overflow: auto;
+    border: 1.5px solid black;
+    font-family: monospace;
+    position: relative;
+}
+
+.pte_plain-text-editor-display.pte_focused {
+    border: 1.5px solid #0000ff;
+    box-shadow: 0px 0px 6px rgb(0, 0, 0);
+}
+
+.pte_active-row-position-marker.pte_visually-hidden.pte_unselectable {
+    height: 34px;
+}
+
+.pte_plain-text-editor-text-token-display:hover {
+    border: 1.5px solid #0000ff;
+}
+
+.pte_character-renderer {
+    position: relative;
+    display: inline-flex;
+    height: 100%;
+}
+
+@keyframes pte_blink {
+    0% {
+        background-color: #2b2b2b;
+    }
+
+    50% {
+        background-color: transparent;
+    }
+}
+
+.pte_cursor-display {
+    position: absolute;
+    display: inline-block;
+    width: 1.5px;
+    right: -1px;
+    top: -1px;
+    height: calc(100% + 2px);
+    background-color: #2b2b2b;
+    animation-name: pte_blink;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite
+}
+
+.pte_plain-text-editor-row-display {
+    display: flex;
+}
+
+.pte_plain-text-editor-row-display-body {
+    display: inline-flex;
+    border: 1.5px solid transparent;
+}
+
+.pte_focused .pte_plain-text-editor-row-display.pte_active .pte_plain-text-editor-row-display-body {
+    border: 1.5px solid #008cf3;
+}
+
+.pte_plain-text-editor-row-display.pte_active .pte_plain-text-editor-row-display-body {
+    border: 1.5px solid #606060;
+}
+
+.pte_plain-text-editor-line-number-display {
+    display: inline-flex;
+    margin-right: 1ch;
+}
+
+.pte_focused .pte_plain-text-editor-row-display.pte_active .pte_plain-text-editor-line-number-display {
+    color: rgb(255, 0, 174);
+}
