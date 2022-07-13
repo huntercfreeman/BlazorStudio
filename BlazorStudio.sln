@@ -21,11 +21,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Editors", "Editors", "{F76A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Editors", "Editors", "{91CA6455-B3DE-47A7-AB3B-28D01F164FC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorStudio.Maui", "BlazorStudio.Maui\BlazorStudio.Maui.csproj", "{6D074A93-280B-43C1-AB40-0C1A5E8CCC45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStudio.Maui", "BlazorStudio.Maui\BlazorStudio.Maui.csproj", "{6D074A93-280B-43C1-AB40-0C1A5E8CCC45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorStudio.RazorLib", "BlazorStudio.RazorLib\BlazorStudio.RazorLib.csproj", "{1C9FBAEC-12DE-488A-9A8F-2DC5377FC9E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStudio.RazorLib", "BlazorStudio.RazorLib\BlazorStudio.RazorLib.csproj", "{1C9FBAEC-12DE-488A-9A8F-2DC5377FC9E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorStudio.ClassLib", "BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj", "{4CA31C1C-0A96-4E65-A2A8-4BB549C25F70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStudio.ClassLib", "BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj", "{4CA31C1C-0A96-4E65-A2A8-4BB549C25F70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

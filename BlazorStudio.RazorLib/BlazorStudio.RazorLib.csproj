@@ -24,4 +24,12 @@
     <Folder Include="Shared\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <UpToDateCheckInput Remove="MaterialDesign\SelectDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="MaterialDesign\SelectDisplay.razor" />
+  </ItemGroup>
+
 </Project>
