@@ -8,6 +8,7 @@ public static class BlazorStudioClassLibExtensions
     public static IServiceCollection AddBlazorStudioClassLibServices(this IServiceCollection services)
     {
         return services
-            .AddFluxor();
+            .AddFluxor(options => options
+                .ScanAssemblies(typeof(BlazorStudioClassLibExtensions).Assembly));
     }
 }

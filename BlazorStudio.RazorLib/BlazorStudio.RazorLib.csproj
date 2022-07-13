@@ -12,11 +12,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Fluxor.Blazor.Web" Version="5.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.6" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Shared\" />
   </ItemGroup>
 
 </Project>

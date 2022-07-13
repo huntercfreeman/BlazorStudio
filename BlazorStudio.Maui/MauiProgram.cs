@@ -1,4 +1,4 @@
-﻿using BlazorStudio.Maui.Data;
+﻿using BlazorStudio.RazorLib;
 using Microsoft.AspNetCore.Components.WebView.Maui;
 
 namespace BlazorStudio.Maui
@@ -20,7 +20,7 @@ namespace BlazorStudio.Maui
 		builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
 
-            builder.Services.AddSingleton<WeatherForecastService>();
+            builder.Services.AddBlazorStudioRazorLibServices();
 
             return builder.Build();
         }
