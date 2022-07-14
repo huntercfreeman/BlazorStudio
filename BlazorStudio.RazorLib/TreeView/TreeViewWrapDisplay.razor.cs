@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.Store.TreeViewCase;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Store.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -20,25 +21,30 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     [Parameter, EditorRequired]
     public bool ShouldDispose { get; set; }
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnInitialized()
     {
-        if (firstRender)
+        TreeViewWrapStateSelection.Select(x =>
         {
-            TreeViewWrapStateSelection.Select(x =>
-            {
-                x.Map.TryGetValue(TreeViewWrapKey, out var value);
+            x.Map.TryGetValue(TreeViewWrapKey, out var value);
 
-                return value;
-            });
+            return value;
+        });
 
-            if (TreeViewWrapStateSelection.Value is null)
+        if (TreeViewWrapStateSelection.Value is null)
+        {
+            var iterableRootItems = RootItems.ToImmutableArray();
+
+            // TreeViewWrap is uninitialized
+            Dispatcher.Dispatch(new RegisterTreeViewWrapRecordAction(new TreeViewWrap<T>(TreeViewWrapKey)
             {
-                // TreeViewWrap is uninitialized
-                Dispatcher.Dispatch(new RegisterTreeViewWrapRecordAction(TreeViewWrapKey));
-            }
+                RootTreeViewRecords = iterableRootItems.
+                    Select(x => (ITreeViewRecord)
+                        new TreeViewRecord<T>(TreeViewKey.NewTreeViewKey()))
+                    .ToImmutableList()
+            }));
         }
 
-        return base.OnAfterRenderAsync(firstRender);
+        base.OnInitialized();
     }
 
     protected override void Dispose(bool disposing)
