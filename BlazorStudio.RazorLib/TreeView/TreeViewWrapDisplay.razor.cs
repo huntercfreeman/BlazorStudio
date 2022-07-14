@@ -20,6 +20,8 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     public IEnumerable<T> RootItems { get; set; } = null!;
     [Parameter, EditorRequired]
     public bool ShouldDispose { get; set; }
+    [Parameter, EditorRequired]
+    public Func<T, Task<IEnumerable<T>>> GetChildrenFunc { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -32,15 +34,15 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
 
         if (TreeViewWrapStateSelection.Value is null)
         {
-            var iterableRootItems = RootItems.ToImmutableArray();
+            var iterableRootItems = RootItems.ToArray();
 
             // TreeViewWrap is uninitialized
             Dispatcher.Dispatch(new RegisterTreeViewWrapRecordAction(new TreeViewWrap<T>(TreeViewWrapKey)
             {
-                RootTreeViewRecords = iterableRootItems.
-                    Select(x => (ITreeViewRecord)
-                        new TreeViewRecord<T>(TreeViewKey.NewTreeViewKey()))
-                    .ToImmutableList()
+                RootTreeViews = iterableRootItems.
+                    Select(x => (ITreeView)
+                        new TreeView<T>(TreeViewKey.NewTreeViewKey(), x))
+                    .ToArray()
             }));
         }
 

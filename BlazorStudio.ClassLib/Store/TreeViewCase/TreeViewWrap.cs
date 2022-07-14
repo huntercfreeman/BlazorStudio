@@ -2,7 +2,7 @@
 
 namespace BlazorStudio.ClassLib.Store.TreeViewCase;
 
-public record TreeViewWrap<T> : ITreeViewWrap
+public class TreeViewWrap<T> : ITreeViewWrap
     where T : class
 {
     public TreeViewWrap(TreeViewWrapKey key)
@@ -13,6 +13,6 @@ public record TreeViewWrap<T> : ITreeViewWrap
     public TreeViewWrapKey Key { get; }
     public Type ItemType => typeof(T);
 
-    public ImmutableList<ITreeViewRecord> RootTreeViewRecords { get; init; } 
-        = ImmutableList<ITreeViewRecord>.Empty;
+    public ITreeView[] RootTreeViews { get; init; } 
+        = Array.Empty<ITreeView>();
 }

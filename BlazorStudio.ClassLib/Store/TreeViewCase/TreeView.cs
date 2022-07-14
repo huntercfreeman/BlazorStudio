@@ -2,18 +2,19 @@
 
 namespace BlazorStudio.ClassLib.Store.TreeViewCase;
 
-public record TreeViewRecord<T> : ITreeViewRecord
+public class TreeView<T> : ITreeView
     where T : class
 {
-    public TreeViewRecord(TreeViewKey key)
+    public TreeView(TreeViewKey key, T item)
     {
         Key = key;
+        Item = item;
     }
 
     public TreeViewKey Key { get; }
     public T Item { get; init; } = null!;
     public Type ItemType => typeof(T);
-    public bool IsExpanded { get; init; }
-    public ImmutableList<ITreeViewRecord> Children { get; init; } 
-        = ImmutableList<ITreeViewRecord>.Empty;
+    public bool IsExpanded { get; set; }
+    public ITreeView[] Children { get; set; } 
+        = Array.Empty<ITreeView>();
 }

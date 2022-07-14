@@ -2,10 +2,10 @@
 
 namespace BlazorStudio.ClassLib.Store.TreeViewCase;
 
-public interface ITreeViewRecord
+public interface ITreeView
 {
     public TreeViewKey Key { get; }
     public Type ItemType { get; }
     public bool IsExpanded { get; }
-    public ImmutableList<ITreeViewRecord> Children { get; }
+    public ITreeView[] Children { get; }
 }

@@ -7,7 +7,7 @@ public record RegisterTreeViewWrapRecordAction(ITreeViewWrap TreeViewWrap);
 public class TreeViewWrapStatesReducer
 {
     [ReducerMethod]
-    public static TreeViewWrapStates ReduceRegisterTreeViewWrapRecordAction(TreeViewWrapStates previousTreeViewWrapStates,
+    public static TreeViewWrapStates ReduceRegisterTreeViewWrapAction(TreeViewWrapStates previousTreeViewWrapStates,
         RegisterTreeViewWrapRecordAction registerTreeViewWrapRecordAction)
     {
         var nextMap = previousTreeViewWrapStates.Map
@@ -18,7 +18,7 @@ public class TreeViewWrapStatesReducer
     }
 
     [ReducerMethod]
-    public static TreeViewWrapStates ReduceDisposeTreeViewWrapRecordAction(TreeViewWrapStates previousTreeViewWrapStates,
+    public static TreeViewWrapStates ReduceDisposeTreeViewWrapAction(TreeViewWrapStates previousTreeViewWrapStates,
         DisposeTreeViewWrapRecordAction disposeTreeViewWrapRecordAction)
     {
         var nextMap = previousTreeViewWrapStates.Map

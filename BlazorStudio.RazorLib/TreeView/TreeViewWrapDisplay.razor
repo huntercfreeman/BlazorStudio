@@ -1,4 +1,5 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@using BlazorStudio.ClassLib.Store.TreeViewCase
 @typeparam T
 
 <div class="bstudio_tree-view-wrap-display">
@@ -11,9 +12,11 @@
     }
     else
     {
-        foreach (var item in RootItems)
-        {
-            <TreeViewDisplay Item="item" />
-        }
+        <CascadingValue Value="GetChildrenFunc">
+            @foreach (var treeView in TreeViewWrapStateSelection.Value.RootTreeViews)
+            {
+                <TreeViewDisplay TreeView="(TreeView<T>) treeView" />
+            }
+        </CascadingValue>
     }
 </div>

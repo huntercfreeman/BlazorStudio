@@ -1,5 +1,17 @@
 ﻿@typeparam T
+@using BlazorStudio.ClassLib.Store.TreeViewCase
 
 <div class="bstudio_tree-view-display">
     TreeViewEntry
+    
+    <div class="bstudio_tree-view-display-body">
+
+        @if (TreeView.IsExpanded)
+        {
+            foreach (var item in TreeView.Children)
+            {
+                <TreeViewDisplay TreeView="(TreeView<T>) item" />
+            }
+        }
+    </div>
 </div>

@@ -6,5 +6,5 @@ public interface ITreeViewWrap
 {
     public TreeViewWrapKey Key { get; }
     public Type ItemType { get; }
-    public ImmutableList<ITreeViewRecord> RootTreeViewRecords { get; }
+    public ITreeView[] RootTreeViews { get; }
 }
