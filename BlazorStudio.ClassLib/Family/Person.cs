@@ -1,16 +1,16 @@
 ﻿namespace BlazorStudio.ClassLib.Family;
 
-public record Person(PersonKey PersonKey,
-    string FirstName,
-    string LastName)
+public class Person
 {
-    public string DisplayName => $"{FirstName} {LastName}";
-}
-
-public record PersonKey(Guid Guid)
-{
-    public static PersonKey NewPersonKey()
+    public Person(string firstName, string lastName)
     {
-        return new PersonKey(Guid.NewGuid());
+        FirstName = firstName;
+        LastName = lastName;
     }
+
+    public PersonKey PersonKey { get; } = PersonKey.NewPersonKey();
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public List<Person> Children { get; set; } = new List<Person>();
+    public string DisplayName => $"{FirstName} {LastName}";
 }

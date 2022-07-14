@@ -4,19 +4,19 @@
 
 <div class="bstudio_tree-view-wrap-display">
 
-    <h3>TreeViewWrapDisplay</h3>
-
     @if (TreeViewWrapStateSelection.Value is null)
     {
-        <div>TVWSS is Null</div>
+        <div>TreeViewWrap is Loading...</div>
     }
     else
     {
         <CascadingValue Value="GetChildrenFunc">
-            @foreach (var treeView in TreeViewWrapStateSelection.Value.RootTreeViews)
-            {
-                <TreeViewDisplay TreeView="(TreeView<T>) treeView" />
-            }
+            <CascadingValue Value="ChildContent">
+                @foreach (var treeView in TreeViewWrapStateSelection.Value.RootTreeViews)
+                {
+                    <TreeViewDisplay TreeView="(TreeView<T>) treeView" />
+                }
+            </CascadingValue>
         </CascadingValue>
     }
 </div>

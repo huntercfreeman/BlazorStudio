@@ -25,11 +25,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="MaterialDesign\SelectDisplay.razor" />
+    <UpToDateCheckInput Remove="General\SelectDisplay.razor" />
   </ItemGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="MaterialDesign\SelectDisplay.razor" />
+    <_ContentIncludedByDefault Remove="General\SelectDisplay.razor" />
     <_ContentIncludedByDefault Remove="TreeView\TreeViewWrapDisplay.razor" />
   </ItemGroup>
 

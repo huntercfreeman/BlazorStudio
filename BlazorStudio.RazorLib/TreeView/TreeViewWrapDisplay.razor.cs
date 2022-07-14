@@ -22,6 +22,8 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     public bool ShouldDispose { get; set; }
     [Parameter, EditorRequired]
     public Func<T, Task<IEnumerable<T>>> GetChildrenFunc { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public RenderFragment<T> ChildContent { get; set; } = null!;
 
     protected override void OnInitialized()
     {

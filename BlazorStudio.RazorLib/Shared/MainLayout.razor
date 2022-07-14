@@ -10,5 +10,8 @@
 
 <TreeViewWrapDisplay ShouldDispose="false"
                      TreeViewWrapKey="_familyTreeViewKey"
-                     RootItems="_rootPeople" />
-
+                     RootItems="_rootPeople"
+                     GetChildrenFunc="LoadPersonChildren"
+                     Context="person">
+    @person.DisplayName
+</TreeViewWrapDisplay>
