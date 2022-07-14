@@ -30,6 +30,11 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="MaterialDesign\SelectDisplay.razor" />
+    <_ContentIncludedByDefault Remove="TreeView\TreeViewWrapDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="TreeView\TreeViewWrapDisplay.razor" />
   </ItemGroup>
 
 </Project>
