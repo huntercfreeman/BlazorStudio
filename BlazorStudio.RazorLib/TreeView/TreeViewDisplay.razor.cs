@@ -9,6 +9,11 @@ namespace BlazorStudio.RazorLib.TreeView;
 public partial class TreeViewDisplay<T>
     where T : class
 {
+    [Inject]
+    private IStateSelection<TreeViewWrapStates, ITreeViewWrap?> TreeViewWrapStateSelection { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+
     [CascadingParameter]
     public Func<T, Task<IEnumerable<T>>> GetChildrenFunc { get; set; } = null!;
     [CascadingParameter]
@@ -18,6 +23,8 @@ public partial class TreeViewDisplay<T>
     /// </summary>
     [CascadingParameter(Name="Depth")]
     public int Depth { get; set; }
+    [CascadingParameter]
+    public TreeViewWrapKey TreeViewWrapKey { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeView<T> TreeView { get; set; } = null!;
@@ -32,7 +39,23 @@ public partial class TreeViewDisplay<T>
     /// </summary>
     private bool _shouldLoadChildren = true;
 
-    private string GetScaledByDepthPixelsOffset(int depth) => $"{depth * DEPTH_PADDING_LEFT_SCALING_IN_PIXELS}px;";
+    protected override void OnInitialized()
+    {
+        TreeViewWrapStateSelection.Select(x =>
+        {
+            x.Map.TryGetValue(TreeViewWrapKey, out var value);
+
+            return value;
+        });
+
+        base.OnInitialized();
+    }
+
+    private string GetIsActiveStyling => TreeViewWrapStateSelection.Value?.ActiveTreeViews.Select(x => x.Key).Contains(TreeView.Key) ?? false
+        ? "bstudio_active"
+        : string.Empty;
+
+    private string GetScaledByDepthPixelsOffset(int depth) => $"{depth * DEPTH_PADDING_LEFT_SCALING_IN_PIXELS}px";
 
     private async Task GetChildrenAsync()
     {
@@ -53,5 +76,10 @@ public partial class TreeViewDisplay<T>
         }
 
         TreeView.IsExpanded = !TreeView.IsExpanded;
+    }
+    
+    private void SetIsActiveOnClick()
+    {
+        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, TreeView));
     }
 }

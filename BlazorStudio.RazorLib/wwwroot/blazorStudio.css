@@ -1,4 +1,4 @@
-﻿.bstudio_tree-view-display-title:hover {
+﻿.bstudio_tree-view-display-title.bstudio_active {
     background-color: aqua;
 }
 

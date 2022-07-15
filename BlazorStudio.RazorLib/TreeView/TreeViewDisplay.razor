@@ -4,9 +4,11 @@
 <div class="bstudio_tree-view-display">
     
     <span class="bstudio_tree-view-display-title"
-          style="padding-left: @GetScaledByDepthPixelsOffset(Depth)">
+          style="padding-left: @(GetScaledByDepthPixelsOffset(Depth)); @GetIsActiveStyling"
+          @onclick="SetIsActiveOnClick">
         
-        <span @onclick="ToggleIsExpandedOnClick">
+        <span @onclick="ToggleIsExpandedOnClick"
+              @onclick:stopPropagation="true">
             @if (TreeView.IsExpanded)
             {
                 <IconChevronDown />

@@ -39,12 +39,12 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
             var iterableRootItems = RootItems.ToArray();
 
             // TreeViewWrap is uninitialized
-            Dispatcher.Dispatch(new RegisterTreeViewWrapRecordAction(new TreeViewWrap<T>(TreeViewWrapKey)
+            Dispatcher.Dispatch(new RegisterTreeViewWrapAction(new TreeViewWrap<T>(TreeViewWrapKey)
             {
                 RootTreeViews = iterableRootItems.
                     Select(x => (ITreeView)
                         new TreeView<T>(TreeViewKey.NewTreeViewKey(), x))
-                    .ToArray()
+                    .ToList()
             }));
         }
 
@@ -55,7 +55,7 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     {
         if (ShouldDispose)
         {
-            Dispatcher.Dispatch(new DisposeTreeViewWrapRecordAction(TreeViewWrapKey));
+            Dispatcher.Dispatch(new DisposeTreeViewWrapAction(TreeViewWrapKey));
         }
 
         base.Dispose(disposing);

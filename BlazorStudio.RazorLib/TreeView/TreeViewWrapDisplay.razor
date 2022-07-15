@@ -10,13 +10,20 @@
     }
     else
     {
+        @foreach (var treeView in TreeViewWrapStateSelection.Value.ActiveTreeViews)
+        {
+            <div>Aaaaa</div>
+        }
+
         <CascadingValue Value="GetChildrenFunc">
             <CascadingValue Value="ChildContent">
                 <CascadingValue Name="Depth" Value="0">
-                    @foreach (var treeView in TreeViewWrapStateSelection.Value.RootTreeViews)
-                    {
-                        <TreeViewDisplay TreeView="(TreeView<T>) treeView" />
-                    }
+                    <CascadingValue Value="TreeViewWrapKey">
+                        @foreach (var treeView in TreeViewWrapStateSelection.Value.RootTreeViews)
+                        {
+                            <TreeViewDisplay TreeView="(TreeView<T>) treeView" />
+                        }
+                    </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
         </CascadingValue>
