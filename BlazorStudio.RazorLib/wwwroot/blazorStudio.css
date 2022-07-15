@@ -1,1 +1,14 @@
-﻿
+﻿.bstudio_tree-view-display-title:hover {
+    background-color: aqua;
+}
+
+.bstudio_tree-view-display-body {
+    position: relative;
+}
+
+.bstudio_tree-view-display-body-border {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-left: 1px solid black;
+}

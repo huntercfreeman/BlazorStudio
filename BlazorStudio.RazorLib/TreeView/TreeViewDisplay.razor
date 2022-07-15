@@ -3,26 +3,35 @@
 
 <div class="bstudio_tree-view-display">
     
-    <span @onclick="ToggleIsExpandedOnClick">
-        @if (TreeView.IsExpanded)
-        {
-            <IconChevronDown />
-        }
-        else
-        {
-            <IconChevronRight />
-        }
+    <span class="bstudio_tree-view-display-title"
+          style="padding-left: @GetScaledByDepthPixelsOffset(Depth)">
+        
+        <span @onclick="ToggleIsExpandedOnClick">
+            @if (TreeView.IsExpanded)
+            {
+                <IconChevronDown />
+            }
+            else
+            {
+                <IconChevronRight />
+            }
+        </span>
+
+        @ChildContent(TreeView.Item)
     </span>
 
-    @ChildContent(TreeView.Item)
-
     <div class="bstudio_tree-view-display-body">
+        <div class="bstudio_tree-view-display-body-border"
+             style="left: @GetScaledByDepthPixelsOffset(Depth + 1)">
+        </div>
         @if (TreeView.IsExpanded)
         {
-            foreach (var item in TreeView.Children)
-            {
-                <TreeViewDisplay TreeView="(TreeView<T>) item"/>
-            }
+            <CascadingValue Name="Depth" Value="Depth + 1">
+                @foreach (var item in TreeView.Children)
+                {
+                    <TreeViewDisplay TreeView="(TreeView<T>) item"/>
+                }
+            </CascadingValue>
         }
     </div>
 </div>
