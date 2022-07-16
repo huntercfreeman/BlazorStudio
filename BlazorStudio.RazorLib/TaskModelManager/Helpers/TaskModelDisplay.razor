@@ -1,0 +1,34 @@
+﻿<div class="bstudio_task-model-display">
+    <div class="bstudio_task-model-display-title">
+        Title: @TaskModel.Key.Title&nbsp;
+        (Status: @TaskModel.Task.Status)&nbsp;
+        
+        @if (ShowCancelButton)
+        {
+            if (TaskModel.CancellationTokenSource.IsCancellationRequested)
+            {
+                <span @onclick="CancelTaskOnClick"
+                      class="bstudio_task-model-display-cancel-button bstudio_success">
+                    Is Cancelled
+                </span>
+            }
+            else
+            {
+                <span @onclick="CancelTaskOnClick"
+                      class="bstudio_task-model-display-cancel-button bstudio_active">
+                    Cancel?
+                </span>
+            }
+        }
+    </div>
+    <div class="bstudio_task-model-display-body">
+        <div>
+            Lifetime Until Seems Unresponsive: @TaskModel.LifetimeUntilSeemsUnresponsive.TotalSeconds seconds
+        </div>
+        
+        @if (TaskModel.RichErrorModel is not null)
+        {
+            <RichErrorDisplay RichErrorModel="TaskModel.RichErrorModel" />
+        }
+    </div>
+</div>

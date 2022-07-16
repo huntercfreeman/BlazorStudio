@@ -53,4 +53,11 @@
     <UpToDateCheckInput Remove="Transformable\TransformableDisplay.razor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Errors\HelperComponents\RichErrorDisplay.razor" />
+    <None Include="Errors\RichErrorListDisplay.razor" />
+    <None Include="TaskModelManager\Helpers\TaskModelManagerDialogEntryPointTaskModelListPreviewDisplay.razor" />
+    <None Include="TaskModelManager\TaskModelManagerDialogEntryPointDisplay.razor" />
+  </ItemGroup>
+
 </Project>

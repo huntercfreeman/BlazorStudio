@@ -1,5 +1,7 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Errors;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
+using BlazorStudio.ClassLib.TaskModelManager;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -53,6 +55,7 @@ public partial class TreeViewDisplay<T>
     private ElementReference _titleSpan;
     private bool _isGettingChildren;
     private bool _previousFocusState;
+    private RichErrorModel? _toggleIsExpandedOnClickRichErrorModel;
 
     protected override void OnInitialized()
     {
@@ -106,12 +109,18 @@ public partial class TreeViewDisplay<T>
     {
         if (_shouldLoadChildren)
         {
-            _ = Task.Run(async () =>
-            {
-                _isGettingChildren = true;
-                await GetChildrenAsync();
-                _isGettingChildren = false;
-            });
+            _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+                {
+                    throw new ApplicationException($"Apples");
+                    _isGettingChildren = true;
+                    await GetChildrenAsync();
+                    _isGettingChildren = false;
+                },
+                $"{nameof(ToggleIsExpandedOnClick)}",
+                false,
+                TimeSpan.FromSeconds(10),
+                exception => _toggleIsExpandedOnClickRichErrorModel = new RichErrorModel($"{nameof(ToggleIsExpandedOnClick)}: ${exception.Message}",
+                    $"TODO: Add a hint"));
         }
 
         TreeView.IsExpanded = !TreeView.IsExpanded;

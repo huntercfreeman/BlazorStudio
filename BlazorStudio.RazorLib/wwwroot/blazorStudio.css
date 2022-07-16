@@ -146,3 +146,68 @@
     min-width: 100vw;
     min-height: 100vw;
 }
+
+/* from BlazorStudioObsolete */
+
+.bstudio_blazor-ui-error-display-error {
+    color: red;
+}
+
+.bstudio_blazor-ui-error-display-hint {
+    color: blue;
+}
+
+.bstudio_danger {
+    background-color: rgb(255, 188, 188);
+}
+
+.bstudio_warning {
+    background-color: #fffbd6;
+}
+
+.bstudio_primary {
+    background-color: #b6e5ff;
+}
+
+.bstudio_success {
+    background-color: #cdffcd;
+}
+
+.bstudio_task-model-manager-dialog-entry-point-display {
+    background-color: silver;
+    margin-left: 2px;
+}
+
+.bstudio_task-model-manager-dialog-display {
+    height: 100%;
+}
+
+.bstudio_task-model-manager-dialog-entry-point-task-model-list-preview-display {
+    margin-right: 2px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.bstudio_task-model-manager-task-model-list-display {
+    margin-bottom: 15px;
+    height: calc(25% - 20px);
+}
+
+.bstudio_task-model-manager-task-model-list-display-title {
+    height: 1.5em;
+}
+
+.bstudio_task-model-manager-task-model-list-display-body {
+    height: calc(100% - 1.5em);
+    overflow-y: auto;
+    margin-left: 30px;
+}
+
+.bstudio_task-model-display-cancel-button {
+    padding: 5px;
+}
+
+.bstudio_task-model-display-cancel-button.bstudio_active {
+    cursor: pointer;
+    background-color: #ff8a8a;
+}
