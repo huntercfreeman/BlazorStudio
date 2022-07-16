@@ -15,7 +15,7 @@ public class Dimensions
     public List<DimensionUnit> TopCalc { get; set; } = new();
     public List<DimensionUnit> BottomCalc { get; set; } = new();
     
-    public string DimensionsString => GetDimensionsString();
+    public string DimensionsCssString => GetDimensionsString();
 
     private string GetDimensionsString()
     {
