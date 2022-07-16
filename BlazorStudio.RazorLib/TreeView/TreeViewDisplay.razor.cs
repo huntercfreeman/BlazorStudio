@@ -35,7 +35,7 @@ public partial class TreeViewDisplay<T>
     [Parameter, EditorRequired]
     public int IndexAmongSiblings { get; set; }
     [Parameter, EditorRequired]
-    public TreeView<T>? Parent { get; set; }
+    public TreeViewDisplay<T>? Parent { get; set; }
 
     private const int DEPTH_PADDING_LEFT_SCALING_IN_PIXELS = 12;
 
@@ -119,7 +119,7 @@ public partial class TreeViewDisplay<T>
 
         _titleSpan.FocusAsync();
     }
-    
+
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEvent)
     {
         if (_previousFocusState == false)
@@ -153,13 +153,80 @@ public partial class TreeViewDisplay<T>
             {
                 if (Parent is not null)
                 {
-                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, Parent));
+                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, Parent.TreeView));
+                }
+            }
+        }
+        else if (keyboardEvent.Key == KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY)
+        {
+            if (IndexAmongSiblings == 0 &&
+                Parent is not null)
+            {
+                Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, Parent.TreeView));
+            }
+            else
+            {
+                var siblingsAndSelf = GetSiblingsAndSelfFunc.Invoke();
+
+                if (IndexAmongSiblings > 0)
+                {
+                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[IndexAmongSiblings - 1]));
+                }
+            }
+        }
+        else if (keyboardEvent.Key == KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY)
+        {
+            var rememberTreeViewChildren = TreeView.Children;
+
+            var siblingsAndSelf = GetSiblingsAndSelfFunc.Invoke();
+
+            if (IndexAmongSiblings == siblingsAndSelf.Length - 1 && 
+                Parent is not null)
+            {
+                var activeTreeViewChanged = RecursivelySetArrowDown(Parent);
+
+                if (!activeTreeViewChanged)
+                {
+                    _previousFocusState = true;
+                }
+            }
+            else if (TreeView.IsExpanded &&
+                     rememberTreeViewChildren.Length > 0)
+            {
+                Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, rememberTreeViewChildren[0]));
+            }
+            else
+            {
+                if (IndexAmongSiblings < siblingsAndSelf.Length - 1)
+                {
+                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[IndexAmongSiblings + 1]));
                 }
             }
         }
         else
         {
             _previousFocusState = true;
+        }
+    }
+
+    private bool RecursivelySetArrowDown(TreeViewDisplay<T> treeViewDisplay)
+    {
+        var parentSiblingsAndSelf = treeViewDisplay.GetSiblingsAndSelfFunc();
+
+        if (treeViewDisplay.IndexAmongSiblings == parentSiblingsAndSelf.Length - 1 &&
+            treeViewDisplay.Parent is not null)
+        {
+            return RecursivelySetArrowDown(treeViewDisplay.Parent);
+        }
+        else if (treeViewDisplay.IndexAmongSiblings == parentSiblingsAndSelf.Length - 1 &&
+            treeViewDisplay.Parent is null)
+        {
+            return false;
+        }
+        else
+        {
+            Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, treeViewDisplay.TreeView));
+            return true;
         }
     }
 }
