@@ -685,110 +685,234 @@ public partial class TransformableDisplay : ComponentBase
 
     private async Task DragEventHandlerSouthEastResizeHandle(MouseEventArgs mouseEventArgs)
     {
-        _resizeEventCounter++;
+        var heightPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
-        var nextDimensionsRecord = HtmlElementRecord.DimensionsRecord with
+        if (heightPixelOffset is null)
         {
-            Height = new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Height.Value + DragState.Value.DeltaY,
-                DimensionUnitKind.Pixels),
-            Width = new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Width.Value + DragState.Value.DeltaX,
-                DimensionUnitKind.Pixels)
-        };
+            heightPixelOffset = new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
+                Value = 0
+            };
 
-        var replaceHtmlElementDimensionsRecordAction =
-            new ReplaceHtmlElementDimensionsRecordAction(HtmlElementRecord.HtmlElementRecordKey, nextDimensionsRecord);
+            Dimensions.HeightCalc.Add(heightPixelOffset);
+        }
 
-        Dispatcher.Dispatch(replaceHtmlElementDimensionsRecordAction);
+        var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
+
+        heightPixelOffset.Value += deltaY;
+        
+        var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+
+        if (widthPixelOffset is null)
+        {
+            widthPixelOffset = new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
+                Value = 0
+            };
+
+            Dimensions.HeightCalc.Add(widthPixelOffset);
+        }
+
+        var deltaX = mouseEventArgs.ClientX + _previousDragMouseEventArgs!.ClientX;
+
+        widthPixelOffset.Value += deltaX;
+
+        await InvokeAsync(StateHasChanged);
     }
 
     private void SubscribeToDragEventWithSouthWestResizeHandle()
     {
         _dragStateEventHandler = DragEventHandlerSouthWestResizeHandle;
-        DispatchSubscribeToDragEventProviderStateAction(DragEventHandlerSouthWestResizeHandle);
     }
 
-    private void DragEventHandlerSouthWestResizeHandle()
+    private async Task DragEventHandlerSouthWestResizeHandle(MouseEventArgs mouseEventArgs)
     {
-        _resizeEventCounter++;
+        var heightPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
-        var nextDimensionsRecord = HtmlElementRecord.DimensionsRecord with
+        if (heightPixelOffset is null)
         {
-            Height = new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Height.Value + DragState.Value.DeltaY,
-                DimensionUnitKind.Pixels),
-            Width = new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Width.Value - DragState.Value.DeltaX,
-                DimensionUnitKind.Pixels),
-            Left = new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Left.Value + DragState.Value.DeltaX, DimensionUnitKind.Pixels)
-        };
+            heightPixelOffset = new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
+                Value = 0
+            };
 
-        var replaceHtmlElementDimensionsRecordAction =
-            new ReplaceHtmlElementDimensionsRecordAction(HtmlElementRecord.HtmlElementRecordKey, nextDimensionsRecord);
+            Dimensions.HeightCalc.Add(heightPixelOffset);
+        }
 
-        Dispatcher.Dispatch(replaceHtmlElementDimensionsRecordAction);
+        var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
+
+        heightPixelOffset.Value += deltaY;
+
+        var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+
+        if (widthPixelOffset is null)
+        {
+            widthPixelOffset = new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
+                Value = 0
+            };
+
+            Dimensions.HeightCalc.Add(widthPixelOffset);
+        }
+
+        var deltaX = mouseEventArgs.ClientX + _previousDragMouseEventArgs!.ClientX;
+
+        widthPixelOffset.Value += deltaX;
+        
+        var leftPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+
+        if (leftPixelOffset is null)
+        {
+            leftPixelOffset = new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
+                Value = 0
+            };
+
+            Dimensions.HeightCalc.Add(leftPixelOffset);
+        }
+
+        leftPixelOffset.Value += deltaX;
+
+        await InvokeAsync(StateHasChanged);
     }
 
     private void SubscribeToDragEventWithNorthWestResizeHandle()
     {
         _dragStateEventHandler = DragEventHandlerNorthWestResizeHandle;
-        DispatchSubscribeToDragEventProviderStateAction(DragEventHandlerNorthWestResizeHandle);
     }
 
-    private void DragEventHandlerNorthWestResizeHandle()
+    private async Task DragEventHandlerNorthWestResizeHandle(MouseEventArgs mouseEventArgs)
     {
-        _resizeEventCounter++;
+        var heightPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
-        var nextDimensionsRecord = HtmlElementRecord.DimensionsRecord with
+        if (heightPixelOffset is null)
         {
-            Height = new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Height.Value - DragState.Value.DeltaY,
-                    DimensionUnitKind.Pixels),
-            Top = new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Top.Value + DragState.Value.DeltaY,
-                    DimensionUnitKind.Pixels),
-            Width = new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Width.Value - DragState.Value.DeltaX,
-                DimensionUnitKind.Pixels),
-            Left = new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Left.Value + DragState.Value.DeltaX, DimensionUnitKind.Pixels)
-        };
+            heightPixelOffset = new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
+                Value = 0
+            };
 
-        var replaceHtmlElementDimensionsRecordAction =
-            new ReplaceHtmlElementDimensionsRecordAction(HtmlElementRecord.HtmlElementRecordKey, nextDimensionsRecord);
+            Dimensions.HeightCalc.Add(heightPixelOffset);
+        }
 
-        Dispatcher.Dispatch(replaceHtmlElementDimensionsRecordAction);
+        var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
+
+        heightPixelOffset.Value += deltaY;
+        
+        var topPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+
+        if (topPixelOffset is null)
+        {
+            topPixelOffset = new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
+                Value = 0
+            };
+
+            Dimensions.HeightCalc.Add(topPixelOffset);
+        }
+
+        topPixelOffset.Value += deltaY;
+
+        var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+
+        if (widthPixelOffset is null)
+        {
+            widthPixelOffset = new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
+                Value = 0
+            };
+
+            Dimensions.HeightCalc.Add(widthPixelOffset);
+        }
+
+        var deltaX = mouseEventArgs.ClientX + _previousDragMouseEventArgs!.ClientX;
+
+        widthPixelOffset.Value += deltaX;
+
+        var leftPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+
+        if (leftPixelOffset is null)
+        {
+            leftPixelOffset = new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
+                Value = 0
+            };
+
+            Dimensions.HeightCalc.Add(leftPixelOffset);
+        }
+
+        leftPixelOffset.Value += deltaX;
+
+        await InvokeAsync(StateHasChanged);
     }
 
     public void SubscribeToDragEventWithMoveHandle()
     {
         _dragStateEventHandler = DragEventHandlerMoveHandle;
-        DispatchSubscribeToDragEventProviderStateAction(DragEventHandlerMoveHandle);
     }
 
-    private void DragEventHandlerMoveHandle()
+    private async Task DragEventHandlerMoveHandle(MouseEventArgs mouseEventArgs)
     {
-        _resizeEventCounter++;
+        var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
 
-        var nextDimensionsRecord = HtmlElementRecord.DimensionsRecord with
+        var topPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+
+        if (topPixelOffset is null)
         {
-            Top = new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Top.Value + DragState.Value.DeltaY,
-                    DimensionUnitKind.Pixels),
-            Left = new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Left.Value + DragState.Value.DeltaX,
-                    DimensionUnitKind.Pixels)
-        };
+            topPixelOffset = new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
+                Value = 0
+            };
 
-        var replaceHtmlElementDimensionsRecordAction =
-            new ReplaceHtmlElementDimensionsRecordAction(HtmlElementRecord.HtmlElementRecordKey, nextDimensionsRecord);
+            Dimensions.HeightCalc.Add(topPixelOffset);
+        }
 
-        Dispatcher.Dispatch(replaceHtmlElementDimensionsRecordAction);
-    }
+        topPixelOffset.Value += deltaY;
 
-    private void ValidateDimensionUnitKindIsSupported(string dimensionName,
-        DimensionValuedUnit dimensionValuedUnit)
-    {
-        if (dimensionValuedUnit.DimensionUnitKind != DimensionUnitKind.Pixels)
-            throw new ApplicationException($"The {nameof(DimensionUnitKind)}: {dimensionValuedUnit.DimensionUnitKind} " +
-                $"is not supported for {nameof(TransformativeDisplay)}. The name of the dimension with this " +
-                $"unsupported type is named: {dimensionName}.");
+        var deltaX = mouseEventArgs.ClientX + _previousDragMouseEventArgs!.ClientX;
+
+        var leftPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+
+        if (leftPixelOffset is null)
+        {
+            leftPixelOffset = new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
+                Value = 0
+            };
+
+            Dimensions.HeightCalc.Add(leftPixelOffset);
+        }
+
+        leftPixelOffset.Value += deltaX;
+
+        await InvokeAsync(StateHasChanged);
     }
 
     protected override void Dispose(bool disposing)
     {
-        DragState.StateChanged -= DragState_StateChanged;
+        DragStateWrap.StateChanged -= DragState_StateChanged;
 
         base.Dispose(disposing);
     }
