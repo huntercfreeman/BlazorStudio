@@ -16,4 +16,8 @@
     <Folder Include="Sequence\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PlainTextEditor.RazorLib\PlainTextEditor.RazorLib.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -3,11 +3,12 @@
 
 <div class="bstudio_tree-view-display">
     
-    <span class="bstudio_tree-view-display-title @IsActiveStyling"
+    <span @ref="_titleSpan"
+          class="bstudio_tree-view-display-title @IsActiveStyling"
           style="padding-left: @(GetScaledByDepthPixelsOffset(Depth));"
           tabindex='@(IsActive ? "0" : "-1")'
           @onclick="SetIsActiveOnClick"
-          @ref="_titleSpan">
+          @onkeydown="HandleOnKeyDown">
         
         <span @onclick="ToggleIsExpandedOnClick"
               @onclick:stopPropagation="true">
@@ -30,12 +31,25 @@
         </div>
         @if (TreeView.IsExpanded)
         {
-            <CascadingValue Name="Depth" Value="Depth + 1">
-                @foreach (var item in TreeView.Children)
-                {
-                    <TreeViewDisplay TreeView="(TreeView<T>) item"/>
-                }
-            </CascadingValue>
+            @if (_isGettingChildren)
+            {
+                <span>Loading...</span>
+            }
+            else
+            {
+                <CascadingValue Name="Depth" Value="Depth + 1">
+                    @for (int i = 0; i < TreeView.Children.Length; i++)
+                    {
+                        int index = i;
+                        var child = (TreeView<T>) TreeView.Children[i];
+
+                        <TreeViewDisplay TreeView="child"
+                                         GetSiblingsAndSelfFunc="() => TreeView.Children"
+                                         IndexAmongSiblings="index"
+                                         Parent="TreeView"/>
+                    }
+                </CascadingValue>
+            }
         }
     </div>
 </div>

@@ -10,22 +10,35 @@
     }
     else
     {
-        @foreach (var treeView in TreeViewWrapStateSelection.Value.ActiveTreeViews)
-        {
-            <div>@ChildContent((T) treeView.ItemUntyped)</div>
-        }
+        var rootTreeViews = TreeViewWrapStateSelection.Value.RootTreeViews.ToArray();
+        var activeTreeViews = TreeViewWrapStateSelection.Value.ActiveTreeViews;
 
-        <CascadingValue Value="GetChildrenFunc">
-            <CascadingValue Value="ChildContent">
-                <CascadingValue Name="Depth" Value="0">
-                    <CascadingValue Value="TreeViewWrapKey">
-                        @foreach (var treeView in TreeViewWrapStateSelection.Value.RootTreeViews)
-                        {
-                            <TreeViewDisplay TreeView="(TreeView<T>) treeView" />
-                        }
+        if (rootTreeViews?.Any() ?? false)
+        {
+            @foreach (var treeView in activeTreeViews)
+            {
+                <div>@ChildContent((T) treeView.ItemUntyped)</div>
+            }
+
+            <CascadingValue Value="GetChildrenFunc">
+                <CascadingValue Value="ChildContent">
+                    <CascadingValue Name="Depth" Value="0">
+                        <CascadingValue Value="TreeViewWrapKey">
+                        
+                            @for (int i = 0; i < rootTreeViews.Length; i++)
+                            {
+                                int index = i;
+                                var child = (TreeView<T>) rootTreeViews[i];
+
+                                <TreeViewDisplay TreeView="child"
+                                                 GetSiblingsAndSelfFunc="() => rootTreeViews"
+                                                 IndexAmongSiblings="index"
+                                                 Parent="null"/>
+                            }
+                        </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
-        </CascadingValue>
+        }
     }
 </div>
