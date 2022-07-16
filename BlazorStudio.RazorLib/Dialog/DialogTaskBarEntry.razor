@@ -1,0 +1,22 @@
+﻿<div class="bstudio_dialog-task-bar-entry">
+    <div class="bstudio_dialog-task-bar-entry-datum">
+        @DialogRecord.Title
+    </div>
+    
+    <div class="bstudio_dialog-task-bar-entry-datum">
+        <div class="bstudio_dialog-task-bar-entry-datum">
+            @if (DialogRecord.IsMinimized)
+            {
+                <IconMaximize/>
+            }
+            else
+            {
+                <IconMinimize/>
+            }
+        </div>
+        
+        <div class="bstudio_dialog-task-bar-entry-datum">
+            <IconClose/>
+        </div>
+    </div>
+</div>

@@ -27,6 +27,7 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="General\SelectDisplay.razor" />
     <_ContentIncludedByDefault Remove="Settings\SettingsDialog.razor" />
+    <_ContentIncludedByDefault Remove="Shared\BodyDisplay.razor" />
     <_ContentIncludedByDefault Remove="TreeView\TreeViewWrapDisplay.razor" />
   </ItemGroup>
 
@@ -40,6 +41,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Settings\SettingsDialog.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Shared\BodyDisplay.razor" />
   </ItemGroup>
 
 </Project>

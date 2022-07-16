@@ -1,5 +1,16 @@
 ﻿<div class="bstudio_dialog-display"
      style="@DialogRecord.Dimensions.DimensionsString">
+    
+    <div class="bstudio_dialog-display-tool-bar">
+        <div class="bstudio_dialog-display-tool-bar-entry bstudio_dialog-display-tool-bar-title">
+            @DialogRecord.Title
+        </div>
+        
+        <div class="bstudio_dialog-display-tool-bar-entry bstudio_dialog-display-tool-bar-control-buttons">
+            @DialogRecord.Title
+        </div>
+    </div>
+
     <DynamicComponent Type="DialogRecord.Type"
-                      Parameters="DialogRecord.Parameters ?? new()" />
+                      Parameters="DialogRecord.Parameters ?? new()"/>
 </div>

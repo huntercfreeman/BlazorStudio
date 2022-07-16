@@ -10,23 +10,11 @@
 
         <ToolbarDisplay/>
 
-        <TreeViewWrapDisplay ShouldDispose="false"
-                             TreeViewWrapKey="_familyTreeViewKey"
-                             RootItems="_rootPeople"
-                             GetChildrenFunc="LoadPersonChildren"
-                             Context="person"
-                             OnEnterKeyDown="FamilyTreeViewOnEnterKeyDown"
-                             OnSpaceKeyDown="FamilyTreeViewOnSpaceKeyDown">
-            @person.DisplayName
-        </TreeViewWrapDisplay>
-
-        <hr/>
-
-        <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
-        <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
-        <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
-        <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
+        <BodyDisplay />
+        
+        <BlazorStudio.RazorLib.Dialog.DialogTaskBar />
     </div>
 </div>
+
 
 
