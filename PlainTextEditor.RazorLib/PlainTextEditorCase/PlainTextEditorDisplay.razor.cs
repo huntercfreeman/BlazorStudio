@@ -40,7 +40,10 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         ? "pte_focused"
         : "";
 
-    private string InputFocusTrapTopStyleCss => $"top: calc({PlainTextEditorSelector.Value!.CurrentRowIndex * 28.4}px - 2px);";
+    /// <summary>
+    /// I need to position this PERFECTLY relative to a changeable font-size
+    /// </summary>
+    private string InputFocusTrapTopStyleCss => $"top: calc({PlainTextEditorSelector.Value!.CurrentRowIndex * 30}px);";
 
     private SequenceKey? _previousSequenceKey;
 
@@ -111,7 +114,16 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
-        _hadOnKeyDownEventCounter++;
+        // I need to fix scroll into view after keypress it is not working
+        // F1 is a temporary hack due to as of this comment
+        // the scrolling occurs EVERY key press.
+        //
+        // It should only scroll into view if key pressed and active
+        // row is out of viewport NOT every key press.
+        if (e.Key == "F1")
+        {
+            _hadOnKeyDownEventCounter++;
+        }
 
         Dispatcher.Dispatch(
             new KeyDownEventAction(PlainTextEditorKey,

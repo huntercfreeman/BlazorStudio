@@ -7,6 +7,9 @@
     --bstudio_primary-border-color: #d1d2ca;
     --pte_primary-cursor-color: #ffffff;
     --pte_secondary-cursor-color: transparent;
-    --pte_active: rgb(42, 122, 211);
-    --pte_active-unfocused: rgb(117, 124, 132);
+    --pte_active-row: rgb(228, 137, 16);
+    --pte_active-unfocused-row: rgb(117, 124, 132);
+    --pte_active-line-number-font-color: rgb(228, 137, 16);
+    --pte_hover-font-color: rgb(42, 122, 211);
+    --pte_active-border-color: rgb(42, 122, 211);
 }
