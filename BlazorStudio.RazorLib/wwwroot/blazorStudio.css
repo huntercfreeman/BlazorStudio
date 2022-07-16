@@ -138,6 +138,8 @@
 
 .bstudio_drag-display {
     position: fixed;
+    top: 0;
+    left: 0;
     z-index: 20;
     outline: none;
     width: 100%;
