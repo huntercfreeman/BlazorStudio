@@ -190,7 +190,8 @@
 
 .bstudio_task-model-manager-task-model-list-display {
     margin-bottom: 15px;
-    height: calc(25% - 20px);
+    max-height: 60%;
+    overflow: auto;
 }
 
 .bstudio_task-model-manager-task-model-list-display-title {
