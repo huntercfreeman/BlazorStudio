@@ -10,6 +10,14 @@
     --bstudio_primary-border-color: #d1d2ca;
     --bstudio_primary-hover-background-color: rgb(228, 137, 16);
     --bstudio_primary-hover-font-color: #ffffff;
+    --bstudio_blazor-ui-error-display-error: #af4343;
+    --bstudio_blazor-ui-error-display-hint: #3d61f3;
+    --bstudio_danger-background-color: #af4343;
+    --bstudio_warning-background-color: #767623;
+    --bstudio_blue-background-color: #3d61f3;
+    --bstudio_success-background-color: #328832;
+    --bstudio_task-model-manager-dialog-entry-point-display-background-color: #3f3f3f;
+    --bstudio_task-model-display-cancel-button-background-color: #af4343;
     --pte_primary-cursor-color: #ffffff;
     --pte_secondary-cursor-color: transparent;
     --pte_active-row: rgb(228, 137, 16);

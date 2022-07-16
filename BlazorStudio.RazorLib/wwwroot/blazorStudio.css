@@ -150,31 +150,31 @@
 /* from BlazorStudioObsolete */
 
 .bstudio_blazor-ui-error-display-error {
-    color: red;
+    color: var(--bstudio_blazor-ui-error-display-error);
 }
 
 .bstudio_blazor-ui-error-display-hint {
-    color: blue;
+    color: var(--bstudio_blazor-ui-error-display-hint);
 }
 
 .bstudio_danger {
-    background-color: rgb(255, 188, 188);
+    background-color: var(--bstudio_danger-background-color);
 }
 
 .bstudio_warning {
-    background-color: #fffbd6;
+    background-color: var(--bstudio_warning-background-color);
 }
 
 .bstudio_primary {
-    background-color: #b6e5ff;
+    background-color: var(--bstudio_blue-background-color);
 }
 
 .bstudio_success {
-    background-color: #cdffcd;
+    background-color: var(--bstudio_success-background-color);
 }
 
 .bstudio_task-model-manager-dialog-entry-point-display {
-    background-color: silver;
+    background-color: var(--bstudio_task-model-manager-dialog-entry-point-display-background-color);
     margin-left: 2px;
 }
 
@@ -207,7 +207,7 @@
     padding: 5px;
 }
 
-.bstudio_task-model-display-cancel-button.bstudio_active {
-    cursor: pointer;
-    background-color: #ff8a8a;
-}
+    .bstudio_task-model-display-cancel-button.bstudio_active {
+        cursor: pointer;
+        background-color: var(--bstudio_task-model-display-cancel-button-background-color);
+    }
