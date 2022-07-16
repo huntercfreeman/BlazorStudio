@@ -10,6 +10,8 @@
     --bstudio_primary-border-color: #d1d2ca;
     --bstudio_primary-hover-background-color: rgb(228, 137, 16);
     --bstudio_primary-hover-font-color: #ffffff;
+    --bstudio_secondary-hover-background-color: rgb(17, 96, 187);
+    --bstudio_secondary-hover-font-color: #ffffff;
     --bstudio_blazor-ui-error-display-error: #af4343;
     --bstudio_blazor-ui-error-display-hint: #3d61f3;
     --bstudio_danger-background-color: #af4343;

@@ -94,11 +94,22 @@
     align-items: center;
 }
 
+    .bstudio_dialog-task-bar-entry:hover {
+        background-color: var(--bstudio_secondary-hover-background-color);
+        color: var(--bstudio_secondary-hover-font-color);
+    }
+
 .bstudio_dialog-task-bar-entry-datum {
     display: inline-flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
+
+    .bstudio_dialog-task-bar-entry-datum:hover {
+        background-color: var(--bstudio_primary-hover-background-color);
+        color: var(--bstudio_primary-hover-font-color);
+    }
 
 .bstudio_transformable-resize-handle-display {
     position: absolute;
