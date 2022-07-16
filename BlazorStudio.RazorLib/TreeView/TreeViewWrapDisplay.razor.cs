@@ -38,13 +38,29 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
         {
             var iterableRootItems = RootItems.ToArray();
 
+            var treeViews = iterableRootItems.Select(x => (ITreeView)
+                    new TreeView<T>(TreeViewKey.NewTreeViewKey(), x))
+                .ToList();
+
+            List<ITreeView> activeTreeViews;
+
+            if (treeViews.Any())
+            {
+                activeTreeViews = new List<ITreeView>
+                {
+                    treeViews[0]
+                };
+            }
+            else
+            {
+                activeTreeViews = new List<ITreeView>();
+            }
+
             // TreeViewWrap is uninitialized
             Dispatcher.Dispatch(new RegisterTreeViewWrapAction(new TreeViewWrap<T>(TreeViewWrapKey)
             {
-                RootTreeViews = iterableRootItems.
-                    Select(x => (ITreeView)
-                        new TreeView<T>(TreeViewKey.NewTreeViewKey(), x))
-                    .ToList()
+                RootTreeViews = treeViews,
+                ActiveTreeViews = activeTreeViews
             }));
         }
 
