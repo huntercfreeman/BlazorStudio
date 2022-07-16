@@ -5,4 +5,8 @@
     --bstudio_primary-active-background-color: rgb(19 81 150);
     --bstudio_primary-active-unfocused-background-color: rgb(57 67 78);
     --bstudio_primary-border-color: #d1d2ca;
+    --pte_primary-cursor-color: #ffffff;
+    --pte_secondary-cursor-color: transparent;
+    --pte_active: rgb(42, 122, 211);
+    --pte_active-unfocused: rgb(117, 124, 132);
 }

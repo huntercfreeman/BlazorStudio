@@ -1,8 +1,8 @@
 ﻿.bstudio_main-layout {
     background-color: var(--bstudio_primary-background-color);
     color: var(--bstudio_primary-font-color);
-    width: 100vw;
-    height: 100vh;
+    min-width: 100vw;
+    min-height: 100vh;
 }
 
 .bstudio_tree-view-display-title {

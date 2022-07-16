@@ -1,3 +1,10 @@
+:root {
+    --pte_primary-cursor-color: #2b2b2b;
+    --pte_secondary-cursor-color: transparent;
+    --pte_active: #008cf3;
+    --pte_active-unfocused: #606060;
+}
+
 .pte_visually-hidden {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
@@ -55,11 +62,11 @@
 
 @keyframes pte_blink {
     0% {
-        background-color: #2b2b2b;
+        background-color: var(--pte_primary-cursor-color);
     }
 
     50% {
-        background-color: transparent;
+        background-color: var(--pte_secondary-cursor-color);
     }
 }
 
@@ -70,7 +77,7 @@
     right: -1px;
     top: -1px;
     height: calc(100% + 2px);
-    background-color: #2b2b2b;
+    background-color: var(--pte_primary-cursor-color);
     animation-name: pte_blink;
     animation-duration: 1.5s;
     animation-iteration-count: infinite
@@ -86,11 +93,11 @@
 }
 
 .pte_focused .pte_plain-text-editor-row-display.pte_active .pte_plain-text-editor-row-display-body {
-    border: 1.5px solid #008cf3;
+    border: 1.5px solid var(--pte_active);
 }
 
 .pte_plain-text-editor-row-display.pte_active .pte_plain-text-editor-row-display-body {
-    border: 1.5px solid #606060;
+    border: 1.5px solid var(--pte_active-unfocused);
 }
 
 .pte_plain-text-editor-line-number-display {
