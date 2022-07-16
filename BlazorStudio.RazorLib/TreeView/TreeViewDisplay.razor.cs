@@ -51,9 +51,11 @@ public partial class TreeViewDisplay<T>
         base.OnInitialized();
     }
 
-    private string GetIsActiveStyling => TreeViewWrapStateSelection.Value?.ActiveTreeViews
+    private bool IsActive => TreeViewWrapStateSelection.Value?.ActiveTreeViews
         .Select(x => x.Key)
-        .Contains(TreeView.Key) ?? false
+        .Contains(TreeView.Key) ?? false;
+    
+    private string IsActiveStyling => IsActive
             ? "bstudio_active"
             : string.Empty;
 

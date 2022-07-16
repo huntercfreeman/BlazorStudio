@@ -3,9 +3,10 @@
 
 <div class="bstudio_tree-view-display">
     
-    <span class="bstudio_tree-view-display-title @GetIsActiveStyling"
+    <span class="bstudio_tree-view-display-title @IsActiveStyling"
           style="padding-left: @(GetScaledByDepthPixelsOffset(Depth));"
-          @onclick="SetIsActiveOnClick">
+          @onclick="SetIsActiveOnClick"
+          tabindex='@(IsActive ? "0" : string.Empty)'>
         
         <span @onclick="ToggleIsExpandedOnClick"
               @onclick:stopPropagation="true">

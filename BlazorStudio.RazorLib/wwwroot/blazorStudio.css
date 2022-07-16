@@ -1,6 +1,12 @@
 ﻿.bstudio_tree-view-display-title.bstudio_active {
-    background-color: aqua;
+    background-color: rgb(208, 208, 234);
 }
+
+    .bstudio_tree-view-display-title.bstudio_active:focus {
+        background-color: rgb(57, 75, 255);
+        color: rgb(255, 255, 255);
+        outline: none;
+    }
 
 .bstudio_tree-view-display-body {
     position: relative;
