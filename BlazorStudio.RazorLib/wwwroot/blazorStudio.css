@@ -99,39 +99,40 @@
     align-items: center;
 }
 
-.bstudio_transformative-resize-handle-display {
+.bstudio_transformable-resize-handle-display {
     position: absolute;
+    background-color: red;
 }
 
-.bstudio_transformative-resize-handle-north-display {
+.bstudio_transformable-resize-handle-north-display {
     cursor: n-resize;
 }
 
-.bstudio_transformative-resize-handle-east-display {
+.bstudio_transformable-resize-handle-east-display {
     cursor: e-resize;
 }
 
-.bstudio_transformative-resize-handle-south-display {
+.bstudio_transformable-resize-handle-south-display {
     cursor: s-resize;
 }
 
-.bstudio_transformative-resize-handle-west-display {
+.bstudio_transformable-resize-handle-west-display {
     cursor: w-resize;
 }
 
-.bstudio_transformative-resize-handle-north-east-display {
+.bstudio_transformable-resize-handle-north-east-display {
     cursor: ne-resize;
 }
 
-.bstudio_transformative-resize-handle-south-east-display {
+.bstudio_transformable-resize-handle-south-east-display {
     cursor: se-resize;
 }
 
-.bstudio_transformative-resize-handle-south-west-display {
+.bstudio_transformable-resize-handle-south-west-display {
     cursor: sw-resize;
 }
 
-.bstudio_transformative-resize-handle-north-west-display {
+.bstudio_transformable-resize-handle-north-west-display {
     cursor: nw-resize;
 }
 

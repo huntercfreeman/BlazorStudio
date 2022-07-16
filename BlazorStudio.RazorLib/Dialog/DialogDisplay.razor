@@ -1,7 +1,11 @@
 ﻿<div class="bstudio_dialog-display"
      style="@DialogRecord.Dimensions.DimensionsCssString">
     
-    <div class="bstudio_dialog-display-tool-bar">
+    <BlazorStudio.RazorLib.Transformable.TransformableDisplay @ref="_transformableDisplay"
+                                                              Dimensions="DialogRecord.Dimensions" />
+
+    <div class="bstudio_dialog-display-tool-bar"
+         @onmousedown="FireSubscribeToDragEventWithMoveHandle">
         <div class="bstudio_dialog-display-tool-bar-entry bstudio_dialog-display-tool-bar-title">
             @DialogRecord.Title
         </div>
