@@ -68,10 +68,10 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
-
-                await ReRenderFunc();
             }
         }
+
+        await ReRenderFunc();
     }
 
     #region HandleCssStylings
@@ -473,7 +473,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     private void SubscribeToDragEventWithNorthResizeHandle()
     {
         _dragStateEventHandler = DragEventHandlerNorthResizeHandle;
-        Dispatcher.Dispatch(new SetDragStateAction(true, new()));
+        Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
     private async Task DragEventHandlerNorthResizeHandle(MouseEventArgs mouseEventArgs)
@@ -497,7 +497,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
 
-        heightPixelOffset.Value += deltaY;
+        heightPixelOffset.Value -= deltaY;
 
         // TOP
         var topPixelOffset = Dimensions.TopCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
@@ -522,7 +522,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     private void SubscribeToDragEventWithEastResizeHandle()
     {
         _dragStateEventHandler = DragEventHandlerEastResizeHandle;
-        Dispatcher.Dispatch(new SetDragStateAction(true, new()));
+        Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
     private async Task DragEventHandlerEastResizeHandle(MouseEventArgs mouseEventArgs)
@@ -551,7 +551,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     private void SubscribeToDragEventWithSouthResizeHandle()
     {
         _dragStateEventHandler = DragEventHandlerSouthResizeHandle;
-        Dispatcher.Dispatch(new SetDragStateAction(true, new()));
+        Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
     private async Task DragEventHandlerSouthResizeHandle(MouseEventArgs mouseEventArgs)
@@ -580,7 +580,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     private void SubscribeToDragEventWithWestResizeHandle()
     {
         _dragStateEventHandler = DragEventHandlerWestResizeHandle;
-        Dispatcher.Dispatch(new SetDragStateAction(true, new()));
+        Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
     private async Task DragEventHandlerWestResizeHandle(MouseEventArgs mouseEventArgs)
@@ -617,7 +617,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             Dimensions.LeftCalc.Add(leftPixelOffset);
         }
 
-        leftPixelOffset.Value -= deltaX;
+        leftPixelOffset.Value += deltaX;
 
         await InvokeAsync(StateHasChanged);
     }
@@ -625,7 +625,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     private void SubscribeToDragEventWithNorthEastResizeHandle()
     {
         _dragStateEventHandler = DragEventHandlerNorthEastResizeHandle;
-        Dispatcher.Dispatch(new SetDragStateAction(true, new()));
+        Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
     private async Task DragEventHandlerNorthEastResizeHandle(MouseEventArgs mouseEventArgs)
@@ -646,7 +646,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
-        widthPixelOffset.Value -= deltaX;
+        widthPixelOffset.Value += deltaX;
 
         var heightPixelOffset = Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
@@ -688,7 +688,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     private void SubscribeToDragEventWithSouthEastResizeHandle()
     {
         _dragStateEventHandler = DragEventHandlerSouthEastResizeHandle;
-        Dispatcher.Dispatch(new SetDragStateAction(true, new()));
+        Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
     private async Task DragEventHandlerSouthEastResizeHandle(MouseEventArgs mouseEventArgs)
@@ -735,7 +735,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     private void SubscribeToDragEventWithSouthWestResizeHandle()
     {
         _dragStateEventHandler = DragEventHandlerSouthWestResizeHandle;
-        Dispatcher.Dispatch(new SetDragStateAction(true, new()));
+        Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
     private async Task DragEventHandlerSouthWestResizeHandle(MouseEventArgs mouseEventArgs)
@@ -798,7 +798,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     private void SubscribeToDragEventWithNorthWestResizeHandle()
     {
         _dragStateEventHandler = DragEventHandlerNorthWestResizeHandle;
-        Dispatcher.Dispatch(new SetDragStateAction(true, new()));
+        Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
     private async Task DragEventHandlerNorthWestResizeHandle(MouseEventArgs mouseEventArgs)
@@ -877,7 +877,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     public void SubscribeToDragEventWithMoveHandle()
     {
         _dragStateEventHandler = DragEventHandlerMoveHandle;
-        Dispatcher.Dispatch(new SetDragStateAction(true, new()));
+        Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
     private async Task DragEventHandlerMoveHandle(MouseEventArgs mouseEventArgs)
