@@ -26,10 +26,17 @@ public partial class TransformableDisplay : FluxorComponent
 
     private int _resizeEventCounter;
 
+    // Cardinal Resize Handles
     private Dimensions _northResizeHandleDimensions = new();
     private Dimensions _eastResizeHandleDimensions = new();
     private Dimensions _southResizeHandleDimensions = new();
     private Dimensions _westResizeHandleDimensions = new();
+
+    // Diagonal Resize Handles
+    private Dimensions _northEastResizeHandleDimensions = new();
+    private Dimensions _southEastResizeHandleDimensions = new();
+    private Dimensions _southWestResizeHandleDimensions = new();
+    private Dimensions _northWestResizeHandleDimensions = new();
 
     protected override void OnInitialized()
     {
@@ -254,138 +261,198 @@ public partial class TransformableDisplay : FluxorComponent
 
     private string GetNorthEastResizeHandleCssStyling()
     {
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Width), HtmlElementRecord.DimensionsRecord.Width);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Height), HtmlElementRecord.DimensionsRecord.Height);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Left), HtmlElementRecord.DimensionsRecord.Left);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Top), HtmlElementRecord.DimensionsRecord.Top);
+        List<DimensionUnit> widthDimension = new()
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+            }
+        };
+        
+        List<DimensionUnit> heightDimension = new()
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+            }
+        };
+        
+        List<DimensionUnit> leftDimension = new(Dimensions.WidthCalc)
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+            }
+        };
+        
+        List<DimensionUnit> topDimension = new(Dimensions.WidthCalc)
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+            }
+        };
 
-        var cssStylingBuilder = new StringBuilder();
+        _northEastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        DimensionValuedUnit widthInPixels =
-            new DimensionValuedUnit(DEFAULT_HANDLE_SIZE_IN_PIXELS.Value,
-                DimensionUnitKind.Pixels);
+        _northEastResizeHandleDimensions.WidthCalc = widthDimension;
+        _northEastResizeHandleDimensions.HeightCalc = heightDimension;
+        _northEastResizeHandleDimensions.LeftCalc = leftDimension;
+        _northEastResizeHandleDimensions.TopCalc = topDimension;
 
-        DimensionValuedUnit heightInPixels =
-            new DimensionValuedUnit(DEFAULT_HANDLE_SIZE_IN_PIXELS.Value,
-            DimensionUnitKind.Pixels);
-
-        DimensionValuedUnit leftInPixels =
-            new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Width.Value - DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0,
-            DimensionUnitKind.Pixels);
-
-        DimensionValuedUnit topInPixels =
-            new DimensionValuedUnit(-1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0,
-            DimensionUnitKind.Pixels);
-
-        cssStylingBuilder.Append($"width: {widthInPixels.BuildCssStyleString()}; ");
-        cssStylingBuilder.Append($"height: {heightInPixels.BuildCssStyleString()}; ");
-
-        cssStylingBuilder.Append($"left: {leftInPixels.BuildCssStyleString()}; ");
-        cssStylingBuilder.Append($"top: {topInPixels.BuildCssStyleString()}; ");
-
-        return cssStylingBuilder.ToString();
+        return _northEastResizeHandleDimensions.DimensionsCssString;
     }
 
     private string GetSouthEastResizeHandleCssStyling()
     {
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Width), HtmlElementRecord.DimensionsRecord.Width);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Height), HtmlElementRecord.DimensionsRecord.Height);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Left), HtmlElementRecord.DimensionsRecord.Left);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Top), HtmlElementRecord.DimensionsRecord.Top);
+        List<DimensionUnit> widthDimension = new()
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+            }
+        };
+        
+        List<DimensionUnit> heightDimension = new()
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+            }
+        };
+        
+        List<DimensionUnit> leftDimension = new(Dimensions.WidthCalc)
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+            }
+        };
+        
+        List<DimensionUnit> topDimension = new(Dimensions.HeightCalc)
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+            }
+        };
 
-        var cssStylingBuilder = new StringBuilder();
+        _southEastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        DimensionValuedUnit widthInPixels =
-            new DimensionValuedUnit(DEFAULT_HANDLE_SIZE_IN_PIXELS.Value,
-                DimensionUnitKind.Pixels);
+        _southEastResizeHandleDimensions.WidthCalc = widthDimension;
+        _southEastResizeHandleDimensions.HeightCalc = heightDimension;
+        _southEastResizeHandleDimensions.LeftCalc = leftDimension;
+        _southEastResizeHandleDimensions.TopCalc = topDimension;
 
-        DimensionValuedUnit heightInPixels =
-            new DimensionValuedUnit(DEFAULT_HANDLE_SIZE_IN_PIXELS.Value,
-            DimensionUnitKind.Pixels);
-
-        DimensionValuedUnit leftInPixels =
-            new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Width.Value - DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0,
-            DimensionUnitKind.Pixels);
-
-        DimensionValuedUnit topInPixels =
-            new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Height.Value - DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0,
-            DimensionUnitKind.Pixels);
-
-        cssStylingBuilder.Append($"width: {widthInPixels.BuildCssStyleString()}; ");
-        cssStylingBuilder.Append($"height: {heightInPixels.BuildCssStyleString()}; ");
-
-        cssStylingBuilder.Append($"left: {leftInPixels.BuildCssStyleString()}; ");
-        cssStylingBuilder.Append($"top: {topInPixels.BuildCssStyleString()}; ");
-
-        return cssStylingBuilder.ToString();
+        return _southEastResizeHandleDimensions.DimensionsCssString;
     }
 
     private string GetSouthWestResizeHandleCssStyling()
     {
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Width), HtmlElementRecord.DimensionsRecord.Width);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Height), HtmlElementRecord.DimensionsRecord.Height);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Left), HtmlElementRecord.DimensionsRecord.Left);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Top), HtmlElementRecord.DimensionsRecord.Top);
+        List<DimensionUnit> widthDimension = new()
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+            }
+        };
+        
+        List<DimensionUnit> heightDimension = new()
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+            }
+        };
+        
+        List<DimensionUnit> leftDimension = new()
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+            }
+        };
+        
+        List<DimensionUnit> topDimension = new(Dimensions.HeightCalc)
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+            }
+        };
 
-        var cssStylingBuilder = new StringBuilder();
+        _southWestResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        DimensionValuedUnit widthInPixels =
-            new DimensionValuedUnit(DEFAULT_HANDLE_SIZE_IN_PIXELS.Value,
-                DimensionUnitKind.Pixels);
+        _southWestResizeHandleDimensions.WidthCalc = widthDimension;
+        _southWestResizeHandleDimensions.HeightCalc = heightDimension;
+        _southWestResizeHandleDimensions.LeftCalc = leftDimension;
+        _southWestResizeHandleDimensions.TopCalc = topDimension;
 
-        DimensionValuedUnit heightInPixels =
-            new DimensionValuedUnit(DEFAULT_HANDLE_SIZE_IN_PIXELS.Value,
-            DimensionUnitKind.Pixels);
-
-        DimensionValuedUnit leftInPixels =
-            new DimensionValuedUnit(-1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0,
-            DimensionUnitKind.Pixels);
-
-        DimensionValuedUnit topInPixels =
-            new DimensionValuedUnit(HtmlElementRecord.DimensionsRecord.Height.Value - DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0,
-            DimensionUnitKind.Pixels);
-
-        cssStylingBuilder.Append($"width: {widthInPixels.BuildCssStyleString()}; ");
-        cssStylingBuilder.Append($"height: {heightInPixels.BuildCssStyleString()}; ");
-
-        cssStylingBuilder.Append($"left: {leftInPixels.BuildCssStyleString()}; ");
-        cssStylingBuilder.Append($"top: {topInPixels.BuildCssStyleString()}; ");
-
-        return cssStylingBuilder.ToString();
+        return _southWestResizeHandleDimensions.DimensionsCssString;
     }
 
     private string GetNorthWestResizeHandleCssStyling()
     {
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Width), HtmlElementRecord.DimensionsRecord.Width);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Height), HtmlElementRecord.DimensionsRecord.Height);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Left), HtmlElementRecord.DimensionsRecord.Left);
-        ValidateDimensionUnitKindIsSupported(nameof(DimensionsRecord.Top), HtmlElementRecord.DimensionsRecord.Top);
+        List<DimensionUnit> widthDimension = new()
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+            }
+        };
+        
+        List<DimensionUnit> heightDimension = new()
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+            }
+        };
+        
+        List<DimensionUnit> leftDimension = new()
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+            }
+        };
+        
+        List<DimensionUnit> topDimension = new()
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+            }
+        };
 
-        var cssStylingBuilder = new StringBuilder();
+        _northWestResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        DimensionValuedUnit widthInPixels =
-            new DimensionValuedUnit(DEFAULT_HANDLE_SIZE_IN_PIXELS.Value,
-                DimensionUnitKind.Pixels);
+        _northWestResizeHandleDimensions.WidthCalc = widthDimension;
+        _northWestResizeHandleDimensions.HeightCalc = heightDimension;
+        _northWestResizeHandleDimensions.LeftCalc = leftDimension;
+        _northWestResizeHandleDimensions.TopCalc = topDimension;
 
-        DimensionValuedUnit heightInPixels =
-            new DimensionValuedUnit(DEFAULT_HANDLE_SIZE_IN_PIXELS.Value,
-            DimensionUnitKind.Pixels);
-
-        DimensionValuedUnit leftInPixels =
-            new DimensionValuedUnit(-1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0,
-            DimensionUnitKind.Pixels);
-
-        DimensionValuedUnit topInPixels =
-            new DimensionValuedUnit(-1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0,
-            DimensionUnitKind.Pixels);
-
-        cssStylingBuilder.Append($"width: {widthInPixels.BuildCssStyleString()}; ");
-        cssStylingBuilder.Append($"height: {heightInPixels.BuildCssStyleString()}; ");
-
-        cssStylingBuilder.Append($"left: {leftInPixels.BuildCssStyleString()}; ");
-        cssStylingBuilder.Append($"top: {topInPixels.BuildCssStyleString()}; ");
-
-        return cssStylingBuilder.ToString();
+        return _northWestResizeHandleDimensions.DimensionsCssString;
     }
     #endregion
 
