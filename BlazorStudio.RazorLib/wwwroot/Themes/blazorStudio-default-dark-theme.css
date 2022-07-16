@@ -1,7 +1,9 @@
 ﻿.bstudio_default-dark-theme {
     --bstudio_primary-background-color: #1e1e1e;
-    --bstudio_secondary-background-color: #575757;
+    --bstudio_secondary-background-color: #2d2f34;
+    --bstudio_tertiary-background-color: #071c57;
     --bstudio_primary-font-color: #d1d2ca;
+    --bstudio_secondary-font-color: #d1d2ca;
     --bstudio_primary-active-font-color: #ffffff;
     --bstudio_primary-active-background-color: rgb(19 81 150);
     --bstudio_primary-active-unfocused-background-color: rgb(57 67 78);

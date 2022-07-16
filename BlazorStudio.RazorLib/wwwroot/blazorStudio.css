@@ -48,12 +48,14 @@
 .bstudio_dialog-display {
     z-index: 10;
     background-color: var(--bstudio_secondary-background-color);
+    color: var(--bstudio_secondary-font-color);
 }
 
 .bstudio_dialog-display-tool-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: var(--bstudio_tertiary-background-color);
 }
 
 .bstudio_dialog-display-tool-bar-entry {
