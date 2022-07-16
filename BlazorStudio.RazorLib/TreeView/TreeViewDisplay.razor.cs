@@ -211,21 +211,21 @@ public partial class TreeViewDisplay<T>
 
     private bool RecursivelySetArrowDown(TreeViewDisplay<T> treeViewDisplay)
     {
-        var parentSiblingsAndSelf = treeViewDisplay.GetSiblingsAndSelfFunc();
+        var siblingsAndSelf = treeViewDisplay.GetSiblingsAndSelfFunc();
 
-        if (treeViewDisplay.IndexAmongSiblings == parentSiblingsAndSelf.Length - 1 &&
+        if (treeViewDisplay.IndexAmongSiblings == siblingsAndSelf.Length - 1 &&
             treeViewDisplay.Parent is not null)
         {
             return RecursivelySetArrowDown(treeViewDisplay.Parent);
         }
-        else if (treeViewDisplay.IndexAmongSiblings == parentSiblingsAndSelf.Length - 1 &&
+        else if (treeViewDisplay.IndexAmongSiblings == siblingsAndSelf.Length - 1 &&
             treeViewDisplay.Parent is null)
         {
             return false;
         }
         else
         {
-            Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, treeViewDisplay.TreeView));
+            Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[treeViewDisplay.IndexAmongSiblings + 1]));
             return true;
         }
     }
