@@ -5,8 +5,9 @@
     
     <span class="bstudio_tree-view-display-title @IsActiveStyling"
           style="padding-left: @(GetScaledByDepthPixelsOffset(Depth));"
+          tabindex='@(IsActive ? "0" : "-1")'
           @onclick="SetIsActiveOnClick"
-          tabindex='@(IsActive ? "0" : string.Empty)'>
+          @ref="_titleSpan">
         
         <span @onclick="ToggleIsExpandedOnClick"
               @onclick:stopPropagation="true">

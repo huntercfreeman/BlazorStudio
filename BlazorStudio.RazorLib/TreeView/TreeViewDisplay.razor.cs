@@ -38,6 +38,7 @@ public partial class TreeViewDisplay<T>
     /// A separate way to force refresh children needs to exist
     /// </summary>
     private bool _shouldLoadChildren = true;
+    private ElementReference _titleSpan;
 
     protected override void OnInitialized()
     {
@@ -85,5 +86,7 @@ public partial class TreeViewDisplay<T>
     private void SetIsActiveOnClick()
     {
         Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, TreeView));
+
+        _titleSpan.FocusAsync();
     }
 }
