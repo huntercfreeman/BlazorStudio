@@ -21,20 +21,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Shared\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <UpToDateCheckInput Remove="General\SelectDisplay.razor" />
   </ItemGroup>
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="General\SelectDisplay.razor" />
+    <_ContentIncludedByDefault Remove="Settings\SettingsDialog.razor" />
     <_ContentIncludedByDefault Remove="TreeView\TreeViewWrapDisplay.razor" />
   </ItemGroup>
 
   <ItemGroup>
     <UpToDateCheckInput Remove="TreeView\TreeViewWrapDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Theme\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Settings\SettingsDialog.razor" />
   </ItemGroup>
 
 </Project>

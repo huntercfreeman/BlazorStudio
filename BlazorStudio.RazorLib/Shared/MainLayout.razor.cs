@@ -15,11 +15,7 @@ public partial class MainLayout : FluxorLayout
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private TreeViewWrapKey _familyTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-    private TreeViewWrapKey _themeTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-
     private List<Person> _rootPeople = GetRootPeople();
-
-    private List<ThemeKey> _rootThemes = GetRootThemes();
 
     private static List<Person> GetRootPeople()
     {
@@ -50,30 +46,13 @@ public partial class MainLayout : FluxorLayout
         return Task.FromResult(person.Children.AsEnumerable());
     }
     
-    private static List<ThemeKey> GetRootThemes()
-    {
-        return ThemeFacts.AllDefaultThemeKeys.ToList();
-    }
     
-    private Task<IEnumerable<ThemeKey>> LoadThemesChildren(ThemeKey themeKey)
-    {
-        return Task.FromResult(Array.Empty<ThemeKey>().AsEnumerable());
-    }
     
     private void FamilyTreeViewOnEnterKeyDown(Person person)
     {
     }
 
     private void FamilyTreeViewOnSpaceKeyDown(Person person)
-    {
-    }
-    
-    private void ThemeTreeViewOnEnterKeyDown(ThemeKey themeKey)
-    {
-        Dispatcher.Dispatch(new SetThemeStateAction(themeKey));
-    }
-
-    private void ThemeTreeViewOnSpaceKeyDown(ThemeKey themeKey)
     {
     }
 }

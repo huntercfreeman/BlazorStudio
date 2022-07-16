@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Folder Include="Family\" />
+    <Folder Include="UserInterface\" />
     <Folder Include="Sequence\" />
   </ItemGroup>
 

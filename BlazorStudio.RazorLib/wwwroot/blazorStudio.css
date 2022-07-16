@@ -27,3 +27,7 @@
     height: 100%;
     border-left: 1px solid var(--bstudio_primary-border-color);
 }
+
+.bstudio_dialog-display {
+    position: fixed;
+}

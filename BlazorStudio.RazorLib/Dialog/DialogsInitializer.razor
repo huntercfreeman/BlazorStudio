@@ -1,0 +1,10 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var dialogStates = DialogStatesWrap.Value;
+
+    foreach (var dialog in dialogStates.List)
+    {
+        <DialogDisplay />
+    }
+}
