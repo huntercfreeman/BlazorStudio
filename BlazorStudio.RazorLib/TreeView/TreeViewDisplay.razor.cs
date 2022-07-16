@@ -109,9 +109,8 @@ public partial class TreeViewDisplay<T>
     {
         if (_shouldLoadChildren)
         {
-            var taskModel = await TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+            _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
                 {
-                    throw new ApplicationException($"Apples");
                     _isGettingChildren = true;
                     await GetChildrenAsync();
                     _isGettingChildren = false;
@@ -119,15 +118,16 @@ public partial class TreeViewDisplay<T>
                 $"{nameof(ToggleIsExpandedOnClick)}",
                 false,
                 TimeSpan.FromSeconds(10),
-                exception => _toggleIsExpandedOnClickRichErrorModel = new RichErrorModel($"{nameof(ToggleIsExpandedOnClick)}: ${exception.Message}",
-                    $"TODO: Add a hint"));
+                exception =>
+                {
+                    _toggleIsExpandedOnClickRichErrorModel = new RichErrorModel(
+                        $"{nameof(ToggleIsExpandedOnClick)}: {exception.Message}",
+                        $"TODO: Add a hint");
 
-            if (taskModel.RichErrorModel is not null)
-            {
-                _toggleIsExpandedOnClickRichErrorModel = taskModel.RichErrorModel;
+                    InvokeAsync(StateHasChanged);
 
-                await InvokeAsync(StateHasChanged);
-            }
+                    return _toggleIsExpandedOnClickRichErrorModel;
+                });
         }
 
         TreeView.IsExpanded = !TreeView.IsExpanded;
