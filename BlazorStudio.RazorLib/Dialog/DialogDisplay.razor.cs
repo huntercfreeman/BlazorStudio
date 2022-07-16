@@ -14,11 +14,14 @@ public partial class DialogDisplay : ComponentBase
     [Parameter]
     public DialogRecord DialogRecord { get; set; } = null!;
 
-    private TransformableDisplay _transformableDisplay = null!;
+    private TransformableDisplay? _transformableDisplay;
 
     private void FireSubscribeToDragEventWithMoveHandle()
     {
-        _transformableDisplay.SubscribeToDragEventWithMoveHandle();
+        if (_transformableDisplay is not null)
+        {
+            _transformableDisplay.SubscribeToDragEventWithMoveHandle();
+        }
     }
 
     private async Task ReRender()
@@ -37,11 +40,14 @@ public partial class DialogDisplay : ComponentBase
     
     private void MaximizeOnClick()
     {
+
         double widthHeightViewportAmount = DialogRecord.IsMaximized ? 60 : 100;
         double leftTopViewportAmount = DialogRecord.IsMaximized ? 20 : 0;
         bool isDisabled = !DialogRecord.IsMaximized;
+        DialogRecord.IsTransformable = DialogRecord.IsMaximized;
 
         DialogRecord.IsMaximized = !DialogRecord.IsMaximized;
+
 
         foreach (var widthDimension in DialogRecord.Dimensions.WidthCalc)
         {
