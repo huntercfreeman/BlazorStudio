@@ -8,7 +8,9 @@
     <div class="bstudio_dialog-display-tool-bar"
          @onmousedown="FireSubscribeToDragEventWithMoveHandle">
         <div class="bstudio_dialog-display-tool-bar-entry bstudio_dialog-display-tool-bar-title">
-            @DialogRecord.Title
+            @(DialogRecord.Title)&nbsp;
+            @(_transformableDisplay?._previousDragMouseEventArgs?.ClientX.ToString() ?? "null")&nbsp;
+            @(_transformableDisplay?._previousDragMouseEventArgs?.ClientY.ToString() ?? "null")
         </div>
         
         <div class="bstudio_dialog-display-tool-bar-entry bstudio_dialog-display-tool-bar-control-buttons">

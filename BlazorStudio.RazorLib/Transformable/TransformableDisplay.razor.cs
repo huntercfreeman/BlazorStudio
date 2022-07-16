@@ -26,7 +26,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     };
 
     private Func<MouseEventArgs, Task>? _dragStateEventHandler;
-    private MouseEventArgs? _previousDragMouseEventArgs;
+    public MouseEventArgs? _previousDragMouseEventArgs;
 
     private int _resizeEventCounter;
 
