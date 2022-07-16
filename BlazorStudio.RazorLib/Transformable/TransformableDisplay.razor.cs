@@ -725,7 +725,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             Dimensions.WidthCalc.Add(widthPixelOffset);
         }
 
-        var deltaX = mouseEventArgs.ClientX + _previousDragMouseEventArgs!.ClientX;
+        var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
         widthPixelOffset.Value += deltaX;
 
@@ -772,9 +772,9 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             Dimensions.WidthCalc.Add(widthPixelOffset);
         }
 
-        var deltaX = mouseEventArgs.ClientX + _previousDragMouseEventArgs!.ClientX;
+        var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
-        widthPixelOffset.Value += deltaX;
+        widthPixelOffset.Value -= deltaX;
         
         var leftPixelOffset = Dimensions.LeftCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
@@ -819,7 +819,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
 
-        heightPixelOffset.Value += deltaY;
+        heightPixelOffset.Value -= deltaY;
         
         var topPixelOffset = Dimensions.TopCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
@@ -851,9 +851,9 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             Dimensions.WidthCalc.Add(widthPixelOffset);
         }
 
-        var deltaX = mouseEventArgs.ClientX + _previousDragMouseEventArgs!.ClientX;
+        var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
-        widthPixelOffset.Value += deltaX;
+        widthPixelOffset.Value -= deltaX;
 
         var leftPixelOffset = Dimensions.LeftCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
