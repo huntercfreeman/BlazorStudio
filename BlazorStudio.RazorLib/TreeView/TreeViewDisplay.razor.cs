@@ -27,6 +27,10 @@ public partial class TreeViewDisplay<T>
     public int Depth { get; set; }
     [CascadingParameter]
     public TreeViewWrapKey TreeViewWrapKey { get; set; } = null!;
+    [CascadingParameter(Name="OnEnterKeyDown")]
+    public Action<T> OnEnterKeyDown { get; set; } = null!;
+    [CascadingParameter(Name= "OnSpaceKeyDown")]
+    public Action<T> OnSpaceKeyDown { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeView<T> TreeView { get; set; } = null!;
@@ -202,6 +206,14 @@ public partial class TreeViewDisplay<T>
                     Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[IndexAmongSiblings + 1]));
                 }
             }
+        }
+        else if (keyboardEvent.Key == KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE)
+        {
+            OnEnterKeyDown(TreeView.Item);
+        }
+        else if (keyboardEvent.Key == KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE)
+        {
+            OnSpaceKeyDown(TreeView.Item);
         }
         else
         {

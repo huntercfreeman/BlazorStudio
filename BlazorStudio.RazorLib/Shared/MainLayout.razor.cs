@@ -1,12 +1,19 @@
 ﻿using BlazorStudio.ClassLib.Family;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Shared;
 
-public partial class MainLayout : LayoutComponentBase
+public partial class MainLayout : FluxorLayout
 {
+    [Inject]
+    private IState<ThemeState> ThemeStateWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+
     private TreeViewWrapKey _familyTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private TreeViewWrapKey _themeTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
 
@@ -51,5 +58,22 @@ public partial class MainLayout : LayoutComponentBase
     private Task<IEnumerable<ThemeKey>> LoadThemesChildren(ThemeKey themeKey)
     {
         return Task.FromResult(Array.Empty<ThemeKey>().AsEnumerable());
+    }
+    
+    private void FamilyTreeViewOnEnterKeyDown(Person person)
+    {
+    }
+
+    private void FamilyTreeViewOnSpaceKeyDown(Person person)
+    {
+    }
+    
+    private void ThemeTreeViewOnEnterKeyDown(ThemeKey themeKey)
+    {
+        Dispatcher.Dispatch(new SetThemeStateAction(themeKey));
+    }
+
+    private void ThemeTreeViewOnSpaceKeyDown(ThemeKey themeKey)
+    {
     }
 }

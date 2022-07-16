@@ -24,6 +24,10 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     public Func<T, Task<IEnumerable<T>>> GetChildrenFunc { get; set; } = null!;
     [Parameter, EditorRequired]
     public RenderFragment<T> ChildContent { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Action<T> OnEnterKeyDown { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Action<T> OnSpaceKeyDown { get; set; } = null!;
 
     protected override void OnInitialized()
     {

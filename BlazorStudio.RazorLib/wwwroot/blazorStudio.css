@@ -1,4 +1,10 @@
-﻿.bstudio_tree-view-display-title.bstudio_active {
+﻿.bstudio_main-layout {
+    background-color: var(--bstudio_primary-background-color);
+    width: 100vw;
+    height: 100vh;
+}
+
+.bstudio_tree-view-display-title.bstudio_active {
     background-color: rgb(208, 208, 234);
 }
 
