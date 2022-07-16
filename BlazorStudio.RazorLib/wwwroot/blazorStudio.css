@@ -29,5 +29,6 @@
 }
 
 .bstudio_dialog-display {
-    position: fixed;
+    z-index: 10;
+    background-color: var(--bstudio_secondary-background-color);
 }
