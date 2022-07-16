@@ -9,6 +9,7 @@ public record DialogRecord(DialogKey DialogKey,
 {
     public Dimensions Dimensions { get; init; } = ConstructDefaultDialogDimensions();
     public bool IsMinimized { get; init; }
+    public bool IsMaximized { get; set; }
 
     public static Dimensions ConstructDefaultDialogDimensions()
     {

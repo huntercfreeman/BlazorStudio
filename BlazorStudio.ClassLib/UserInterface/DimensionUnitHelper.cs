@@ -16,6 +16,9 @@ public static class DimensionUnitHelper
             {
                 var dimensionUnit = dimensionUnitCalc[index];
 
+                if (dimensionUnit.IsDisabled)
+                    continue;
+
                 if (index != 0)
                 {
                     builder.Append($"{Dimensions.STYLE_STRING_WHITESPACE}" +

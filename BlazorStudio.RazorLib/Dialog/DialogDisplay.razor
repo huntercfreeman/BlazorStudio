@@ -15,14 +15,21 @@
             <div class="bstudio_dialog-display-tool-bar-control-buttons-item"
                  @onmousedown:stopPropagation="true"
                  @onclick="MinimizeOnClick">
+
                 <IconMinimize/>
             </div>
             
-            <div class="bstudio_dialog-display-tool-bar-control-buttons-item">
+            <div class="bstudio_dialog-display-tool-bar-control-buttons-item"
+                 @onmousedown:stopPropagation="true"
+                 @onclick="MaximizeOnClick">
+
                 <IconMaximize/>
             </div>
             
-            <div class="bstudio_dialog-display-tool-bar-control-buttons-item">
+            <div class="bstudio_dialog-display-tool-bar-control-buttons-item"
+                 @onmousedown:stopPropagation="true"
+                 @onclick="CloseOnClick">
+
                 <IconClose/>
             </div>
         </div>
