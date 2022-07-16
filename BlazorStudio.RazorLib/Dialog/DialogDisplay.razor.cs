@@ -15,4 +15,9 @@ public partial class DialogDisplay : ComponentBase
     {
         _transformableDisplay.SubscribeToDragEventWithMoveHandle();
     }
+
+    private async Task ReRender()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 }

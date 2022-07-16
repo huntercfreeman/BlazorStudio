@@ -16,6 +16,8 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
     [Parameter, EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Func<Task> ReRenderFunc { get; set; } = null!;
 
     private static readonly DimensionUnit DEFAULT_HANDLE_SIZE_IN_PIXELS = new()
     {
@@ -47,7 +49,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         base.OnInitialized();
     }
 
-    private void DragState_StateChanged(object? sender, EventArgs e)
+    private async void DragState_StateChanged(object? sender, EventArgs e)
     {
         if (!DragStateWrap.Value.IsDisplayed)
         {
@@ -62,10 +64,12 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             {
                 if (_previousDragMouseEventArgs is not null)
                 {
-                    _dragStateEventHandler(mouseEventArgs);
+                    await _dragStateEventHandler(mouseEventArgs);
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
+
+                await ReRenderFunc();
             }
         }
     }

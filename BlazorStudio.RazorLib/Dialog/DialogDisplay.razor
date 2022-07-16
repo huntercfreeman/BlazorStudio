@@ -2,7 +2,8 @@
      style="@DialogRecord.Dimensions.DimensionsCssString">
     
     <BlazorStudio.RazorLib.Transformable.TransformableDisplay @ref="_transformableDisplay"
-                                                              Dimensions="DialogRecord.Dimensions" />
+                                                              Dimensions="DialogRecord.Dimensions"
+                                                              ReRenderFunc="ReRender" />
 
     <div class="bstudio_dialog-display-tool-bar"
          @onmousedown="FireSubscribeToDragEventWithMoveHandle">
