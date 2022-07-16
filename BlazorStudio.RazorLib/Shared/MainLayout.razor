@@ -15,3 +15,11 @@
                      Context="person">
     @person.DisplayName
 </TreeViewWrapDisplay>
+
+<TreeViewWrapDisplay ShouldDispose="false"
+                     TreeViewWrapKey="_themeTreeViewKey"
+                     RootItems="_rootThemes"
+                     GetChildrenFunc="LoadThemesChildren"
+                     Context="theme">
+    @theme.KeyName
+</TreeViewWrapDisplay>

@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.Family;
+using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using Microsoft.AspNetCore.Components;
 
@@ -10,6 +11,8 @@ public partial class MainLayout : LayoutComponentBase
     private TreeViewWrapKey _themeTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
 
     private List<Person> _rootPeople = GetRootPeople();
+
+    private List<ThemeKey> _rootThemes = GetRootThemes();
 
     private static List<Person> GetRootPeople()
     {
@@ -38,5 +41,15 @@ public partial class MainLayout : LayoutComponentBase
     private Task<IEnumerable<Person>> LoadPersonChildren(Person person)
     {
         return Task.FromResult(person.Children.AsEnumerable());
+    }
+    
+    private static List<ThemeKey> GetRootThemes()
+    {
+        return ThemeFacts.AllDefaultThemeKeys.ToList();
+    }
+    
+    private Task<IEnumerable<ThemeKey>> LoadThemesChildren(ThemeKey themeKey)
+    {
+        return Task.FromResult(Array.Empty<ThemeKey>().AsEnumerable());
     }
 }
