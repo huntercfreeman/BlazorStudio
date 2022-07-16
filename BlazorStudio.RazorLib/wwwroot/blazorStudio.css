@@ -69,6 +69,17 @@
 
 }
 
+.bstudio_dialog-display-tool-bar-control-buttons-item {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .bstudio_dialog-display-tool-bar-control-buttons-item:hover {
+        background-color: var(--bstudio_primary-hover-background-color);
+        color: var(--bstudio_primary-hover-font-color);
+    }
+
 .bstudio_dialog-task-bar {
     display: flex;
     height: 2.5rem;
