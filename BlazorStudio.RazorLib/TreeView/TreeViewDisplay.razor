@@ -38,7 +38,11 @@
             }
             else if (_toggleIsExpandedOnClickRichErrorModel is not null)
             {
-                
+                <div class="bstudio_tree-view-display-title"
+                      style="padding-left: @(GetScaledByDepthPixelsOffset(Depth + 1));">
+        
+                    <RichErrorDisplay RichErrorModel="_toggleIsExpandedOnClickRichErrorModel" />
+                </div>
             }
             else
             {

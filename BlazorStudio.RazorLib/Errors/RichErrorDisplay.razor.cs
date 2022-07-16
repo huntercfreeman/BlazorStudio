@@ -1,11 +1,11 @@
 ﻿using BlazorStudio.ClassLib.Errors;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazorStudio.RazorLib.Errors.HelperComponents;
+namespace BlazorStudio.RazorLib.Errors;
 
 public partial class RichErrorDisplay : ComponentBase
 {
-    [Parameter]
+    [Parameter, EditorRequired]
     public RichErrorModel RichErrorModel { get; set; } = null!;
 
     protected override void OnAfterRender(bool firstRender)
