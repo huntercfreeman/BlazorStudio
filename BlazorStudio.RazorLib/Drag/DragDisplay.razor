@@ -1,11 +1,8 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<div @ref="_dragDisplayElement" 
-     class="bstudio_drag-display"
+<div class="bstudio_drag-display"
      style="@StyleCss"
-     tabindex="-1"
      @onmousemove="DispatchNotifyMouseEventOnMouseMove"
-     @onmouseup="DispatchHideOnMouseUp"
-     @onfocusout="DispatchHideOnFocusOut">
+     @onmouseup="DispatchHideOnMouseUp">
     
 </div>
