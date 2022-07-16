@@ -101,7 +101,6 @@
 
 .bstudio_transformable-resize-handle-display {
     position: absolute;
-    background-color: red;
 }
 
 .bstudio_transformable-resize-handle-north-display {
@@ -146,6 +145,4 @@
     height: 100%;
     min-width: 100vw;
     min-height: 100vw;
-    background-color: aqua;
-    opacity: 0.3;
 }

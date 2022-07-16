@@ -68,10 +68,9 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
+                await ReRenderFunc();
             }
         }
-
-        await ReRenderFunc();
     }
 
     #region HandleCssStylings
@@ -900,7 +899,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         topPixelOffset.Value += deltaY;
 
-        var deltaX = mouseEventArgs.ClientX + _previousDragMouseEventArgs!.ClientX;
+        var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
         var leftPixelOffset = Dimensions.LeftCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
