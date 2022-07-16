@@ -108,10 +108,6 @@ public partial class DialogDisplay : ComponentBase
     
     private void CloseOnClick()
     {
-        Dispatcher.Dispatch(new ReplaceDialogAction(DialogRecord,
-            DialogRecord with
-            {
-                IsMinimized = true
-            }));
+        Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
     }
 }
