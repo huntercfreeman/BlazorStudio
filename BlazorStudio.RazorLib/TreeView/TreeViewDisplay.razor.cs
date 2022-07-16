@@ -51,9 +51,11 @@ public partial class TreeViewDisplay<T>
         base.OnInitialized();
     }
 
-    private string GetIsActiveStyling => TreeViewWrapStateSelection.Value?.ActiveTreeViews.Select(x => x.Key).Contains(TreeView.Key) ?? false
-        ? "bstudio_active"
-        : string.Empty;
+    private string GetIsActiveStyling => TreeViewWrapStateSelection.Value?.ActiveTreeViews
+        .Select(x => x.Key)
+        .Contains(TreeView.Key) ?? false
+            ? "bstudio_active"
+            : string.Empty;
 
     private string GetScaledByDepthPixelsOffset(int depth) => $"{depth * DEPTH_PADDING_LEFT_SCALING_IN_PIXELS}px";
 

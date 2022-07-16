@@ -36,8 +36,9 @@ public class TreeViewWrapStatesReducer
         treeViewWrap.ActiveTreeViews.Clear();
         treeViewWrap.ActiveTreeViews.Add(setActiveTreeViewAction.TreeView);
 
-        treeViewWrap.SequenceKey = SequenceKey.NewSequenceKey();
+        var nextTreeViewWrapStatesMap = previousTreeViewWrapStates.Map
+            .SetItem(treeViewWrap.Key, treeViewWrap.CloneShallow());
 
-        return previousTreeViewWrapStates;
+        return new TreeViewWrapStates(nextTreeViewWrapStatesMap);
     }
 }

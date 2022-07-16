@@ -3,8 +3,8 @@
 
 <div class="bstudio_tree-view-display">
     
-    <span class="bstudio_tree-view-display-title"
-          style="padding-left: @(GetScaledByDepthPixelsOffset(Depth)); @GetIsActiveStyling"
+    <span class="bstudio_tree-view-display-title @GetIsActiveStyling"
+          style="padding-left: @(GetScaledByDepthPixelsOffset(Depth));"
           @onclick="SetIsActiveOnClick">
         
         <span @onclick="ToggleIsExpandedOnClick"

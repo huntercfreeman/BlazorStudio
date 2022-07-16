@@ -10,4 +10,6 @@ public interface ITreeViewWrap
     public Type ItemType { get; }
     public List<ITreeView> RootTreeViews { get; }
     public List<ITreeView> ActiveTreeViews { get; }
+
+    public ITreeViewWrap CloneShallow();
 }

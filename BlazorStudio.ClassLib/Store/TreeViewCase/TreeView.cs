@@ -12,6 +12,7 @@ public class TreeView<T> : ITreeView
     }
 
     public TreeViewKey Key { get; }
+    public object ItemUntyped => Item;
     public T Item { get; init; } = null!;
     public Type ItemType => typeof(T);
     public bool IsExpanded { get; set; }

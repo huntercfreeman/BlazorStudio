@@ -12,7 +12,7 @@
     {
         @foreach (var treeView in TreeViewWrapStateSelection.Value.ActiveTreeViews)
         {
-            <div>Aaaaa</div>
+            <div>@ChildContent((T) treeView.ItemUntyped)</div>
         }
 
         <CascadingValue Value="GetChildrenFunc">
