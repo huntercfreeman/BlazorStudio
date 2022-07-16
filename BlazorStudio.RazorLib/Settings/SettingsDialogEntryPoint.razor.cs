@@ -20,7 +20,7 @@ public partial class SettingsDialogEntryPoint : ComponentBase
 
     private void OpenSettingsDialogOnClick()
     {
-        if (!DialogStatesWrap.Value.List.Contains(_settingsDialog))
+        if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _settingsDialog.DialogKey))
             Dispatcher.Dispatch(new RegisterDialogAction(_settingsDialog));
     }
 }
