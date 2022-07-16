@@ -1,16 +1,18 @@
-﻿<TreeViewWrapDisplay ShouldDispose="false"
-                     TreeViewWrapKey="_familyTreeViewKey"
-                     RootItems="_rootPeople"
-                     GetChildrenFunc="LoadPersonChildren"
-                     Context="person"
-                     OnEnterKeyDown="FamilyTreeViewOnEnterKeyDown"
-                     OnSpaceKeyDown="FamilyTreeViewOnSpaceKeyDown">
-    @person.DisplayName
-</TreeViewWrapDisplay>
+﻿<div class="bstudio_body-display">
+    <TreeViewWrapDisplay ShouldDispose="false"
+                         TreeViewWrapKey="_familyTreeViewKey"
+                         RootItems="_rootPeople"
+                         GetChildrenFunc="LoadPersonChildren"
+                         Context="person"
+                         OnEnterKeyDown="FamilyTreeViewOnEnterKeyDown"
+                         OnSpaceKeyDown="FamilyTreeViewOnSpaceKeyDown">
+        @person.DisplayName
+    </TreeViewWrapDisplay>
 
-<hr/>
+    <hr/>
 
-<PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
-<PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
-<PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
-<PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
+    <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
+    <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
+    <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
+    <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn/>
+</div>
