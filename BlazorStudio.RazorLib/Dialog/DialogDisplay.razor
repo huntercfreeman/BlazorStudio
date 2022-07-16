@@ -12,7 +12,9 @@
         </div>
         
         <div class="bstudio_dialog-display-tool-bar-entry bstudio_dialog-display-tool-bar-control-buttons">
-            <div class="bstudio_dialog-display-tool-bar-control-buttons-item">
+            <div class="bstudio_dialog-display-tool-bar-control-buttons-item"
+                 @onmousedown:stopPropagation="true"
+                 @onclick="MinimizeOnClick">
                 <IconMinimize/>
             </div>
             

@@ -5,6 +5,9 @@
 
     foreach (var dialog in dialogStates.List)
     {
-        <DialogDisplay DialogRecord="dialog" />
+        if (!dialog.IsMinimized)
+        {
+            <DialogDisplay DialogRecord="dialog" />
+        }
     }
 }

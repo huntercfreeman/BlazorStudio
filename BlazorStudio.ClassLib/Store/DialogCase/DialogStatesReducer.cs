@@ -19,4 +19,12 @@ public class DialogStatesReducer
         return new DialogStates(previousDialogStates.List
             .Remove(disposeDialogAction.DialogRecord));
     }
+    
+    [ReducerMethod]
+    public static DialogStates ReduceReplaceDialogAction(DialogStates previousDialogStates,
+        ReplaceDialogAction replaceDialogAction)
+    {
+        return new DialogStates(previousDialogStates.List
+            .Replace(replaceDialogAction.PreviousDialogRecord, replaceDialogAction.NextDialogRecord));
+    }
 }
