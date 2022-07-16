@@ -170,7 +170,7 @@ public partial class TreeViewDisplay<T>
 
                 if (IndexAmongSiblings > 0)
                 {
-                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[IndexAmongSiblings - 1]));
+                    RecursivelySetArrowUp(siblingsAndSelf[IndexAmongSiblings - 1]);
                 }
             }
         }
@@ -227,6 +227,19 @@ public partial class TreeViewDisplay<T>
         {
             Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[treeViewDisplay.IndexAmongSiblings + 1]));
             return true;
+        }
+    }
+    
+    private void RecursivelySetArrowUp(ITreeView treeView)
+    {
+        if (treeView.IsExpanded &&
+            treeView.Children.Length > 0)
+        {
+            RecursivelySetArrowUp(treeView.Children[^1]);
+        }
+        else
+        {
+            Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, treeView));
         }
     }
 }
