@@ -12,11 +12,25 @@ public static class DimensionUnitHelper
         {
             builder.Append($"{styleAttribute}: calc(");
 
-            foreach (var widthDimensionUnit in dimensionUnitCalc)
+            for (var index = 0; index < dimensionUnitCalc.Count; index++)
             {
-                builder.Append($"{widthDimensionUnit.Value}" +
-                               $"{widthDimensionUnit.DimensionUnitKind.ToCssString()}" +
-                               $"{Dimensions.STYLE_STRING_WHITESPACE}");
+                var dimensionUnit = dimensionUnitCalc[index];
+
+                if (index != 0)
+                {
+                    builder.Append($"{Dimensions.STYLE_STRING_WHITESPACE}" +
+                                   $"{dimensionUnit.DimensionUnitOperationKind.ToCssString()}" +
+                                   $"{Dimensions.STYLE_STRING_WHITESPACE}");
+                }
+
+                builder.Append($"{Dimensions.STYLE_STRING_WHITESPACE}" +
+                               $"{dimensionUnit.Value}" +
+                               $"{dimensionUnit.DimensionUnitKind.ToCssString()}");
+
+                if (index != dimensionUnitCalc.Count - 1)
+                {
+                    builder.Append($"{Dimensions.STYLE_STRING_WHITESPACE}");
+                }
             }
 
             builder.Append($"){Dimensions.STYLE_STRING_DELIMITER}{Dimensions.STYLE_STRING_WHITESPACE}");

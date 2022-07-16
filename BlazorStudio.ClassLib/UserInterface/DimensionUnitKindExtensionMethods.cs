@@ -14,7 +14,7 @@ public static class DimensionUnitKindExtensionMethods
             DimensionUnitKind.RootCharacterHeight => "rem",
             DimensionUnitKind.CharacterWidth => "ch",
             DimensionUnitKind.CharacterHeight => "em",
-            _ => throw new ApplicationException($"The {nameof(dimensionUnitKind)}: '{dimensionUnitKind}' was not recognized.")
+            _ => throw new ApplicationException($"The {nameof(DimensionUnitKind)}: '{dimensionUnitKind}' was not recognized.")
         };
     }
 }

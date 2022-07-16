@@ -98,3 +98,39 @@
     justify-content: center;
     align-items: center;
 }
+
+.bstudio_transformative-resize-handle-display {
+    position: absolute;
+}
+
+.bstudio_transformative-resize-handle-north-display {
+    cursor: n-resize;
+}
+
+.bstudio_transformative-resize-handle-east-display {
+    cursor: e-resize;
+}
+
+.bstudio_transformative-resize-handle-south-display {
+    cursor: s-resize;
+}
+
+.bstudio_transformative-resize-handle-west-display {
+    cursor: w-resize;
+}
+
+.bstudio_transformative-resize-handle-north-east-display {
+    cursor: ne-resize;
+}
+
+.bstudio_transformative-resize-handle-south-east-display {
+    cursor: se-resize;
+}
+
+.bstudio_transformative-resize-handle-south-west-display {
+    cursor: sw-resize;
+}
+
+.bstudio_transformative-resize-handle-north-west-display {
+    cursor: nw-resize;
+}

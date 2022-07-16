@@ -28,6 +28,7 @@
     <_ContentIncludedByDefault Remove="General\SelectDisplay.razor" />
     <_ContentIncludedByDefault Remove="Settings\SettingsDialog.razor" />
     <_ContentIncludedByDefault Remove="Shared\BodyDisplay.razor" />
+    <_ContentIncludedByDefault Remove="Transformable\TransformableDisplay.razor" />
     <_ContentIncludedByDefault Remove="TreeView\TreeViewWrapDisplay.razor" />
   </ItemGroup>
 
@@ -45,6 +46,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Shared\BodyDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Transformable\TransformableDisplay.razor" />
   </ItemGroup>
 
 </Project>
