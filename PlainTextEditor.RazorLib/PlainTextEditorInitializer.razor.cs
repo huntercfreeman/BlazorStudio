@@ -12,6 +12,9 @@ public partial class PlainTextEditorInitializer : ComponentBase, IDisposable
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
+    [Parameter]
+    public bool InitializeFluxor { get; set; } = true;
+
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

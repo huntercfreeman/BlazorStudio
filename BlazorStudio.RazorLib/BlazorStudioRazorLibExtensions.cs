@@ -1,6 +1,5 @@
 using BlazorStudio.ClassLib;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib;
 

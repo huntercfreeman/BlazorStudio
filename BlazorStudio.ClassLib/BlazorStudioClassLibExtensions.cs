@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
+using PlainTextEditor.ClassLib;
 
 namespace BlazorStudio.ClassLib;
 
@@ -9,6 +10,10 @@ public static class BlazorStudioClassLibExtensions
     {
         return services
             .AddFluxor(options => options
-                .ScanAssemblies(typeof(BlazorStudioClassLibExtensions).Assembly));
+                .ScanAssemblies(
+                    typeof(BlazorStudioClassLibExtensions).Assembly, 
+                    typeof(PlainTextEditorClassLibExtensionMethods).Assembly
+                ))
+            .AddPlainTextEditorService();
     }
 }

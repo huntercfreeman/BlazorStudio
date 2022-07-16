@@ -14,7 +14,7 @@ public static class PlainTextEditorClassLibExtensionMethods
             .AddPlainTextEditorService();
     }
     
-    private static IServiceCollection AddPlainTextEditorService(this IServiceCollection services)
+    public static IServiceCollection AddPlainTextEditorService(this IServiceCollection services)
     {
         return services.AddScoped<IPlainTextEditorService, PlainTextEditorService>();
     }
