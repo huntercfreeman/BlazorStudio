@@ -124,6 +124,16 @@ public partial class TreeViewDisplay<T>
         _titleSpan.FocusAsync();
     }
 
+    /// <summary>
+    /// Need to conditionally call PreventDefault
+    ///
+    /// Tab key to go to next focusable element should work
+    ///
+    /// However, ArrowDown to scroll the viewport should be prevent defaulted
+    ///
+    /// If the active tree view entry goes out of viewport then scroll manually
+    /// </summary>
+    /// <param name="keyboardEvent"></param>
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEvent)
     {
         if (_previousFocusState == false)

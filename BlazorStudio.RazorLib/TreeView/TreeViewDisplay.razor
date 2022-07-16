@@ -8,6 +8,7 @@
           style="padding-left: @(GetScaledByDepthPixelsOffset(Depth));"
           tabindex='@(IsActive ? "0" : "-1")'
           @onclick="SetIsActiveOnClick"
+          @onkeydown:preventDefault="true"
           @onkeydown="HandleOnKeyDown">
         
         <span @onclick="ToggleIsExpandedOnClick"
