@@ -12,6 +12,7 @@ public static class MenuOptionFacts
     public static class File
     {
         public static readonly MenuOptionRecord OpenFolder = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
+            "Open Folder",
             ImmutableList<MenuOptionRecord>.Empty);
     }
 }

@@ -2,6 +2,12 @@
 
 @if (DropdownStateWrap.Value.ActiveDropdownKey == DropdownKey)
 {
+    if (CloseOnOutOfBoundsClick)
+    {
+        <BlazorStudio.RazorLib.OutOfBoundsClick.OutOfBoundsClickDisplay ClickedOutOfBounds="ClickedOutOfBoundsOnClick"
+                                                                        ZIndex="40" />
+    }
+
     <div class="bstudio_dropdown-display"
          style="@Dimensions.DimensionsCssString">
     

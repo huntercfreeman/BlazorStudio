@@ -3,12 +3,10 @@
 namespace BlazorStudio.ClassLib.Store.DropdownCase;
 
 [FeatureState]
-public record DropdownState(DropdownKey? ActiveDropdownKey = null!);
-
-public record DropdownKey(Guid Guid)
+public record DropdownState(DropdownKey? ActiveDropdownKey)
 {
-    public static DropdownKey NewDropdownKey()
+    public DropdownState() : this(default(DropdownKey?))
     {
-        return new DropdownKey(Guid.NewGuid());
+
     }
 }

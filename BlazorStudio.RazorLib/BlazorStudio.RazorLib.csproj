@@ -28,6 +28,7 @@
     <_ContentIncludedByDefault Remove="General\SelectDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuOptionDisplay.razor" />
+    <_ContentIncludedByDefault Remove="OutOfBoundsClick\OutOfBoundsClickDisplay.razor" />
     <_ContentIncludedByDefault Remove="Settings\SettingsDialog.razor" />
     <_ContentIncludedByDefault Remove="Shared\BodyDisplay.razor" />
     <_ContentIncludedByDefault Remove="Transformable\TransformableDisplay.razor" />
@@ -69,6 +70,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Menu\MenuOptionDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="OutOfBoundsClick\OutOfBoundsClickDisplay.razor" />
   </ItemGroup>
 
 </Project>
