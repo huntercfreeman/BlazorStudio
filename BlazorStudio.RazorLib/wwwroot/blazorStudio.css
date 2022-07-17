@@ -8,10 +8,12 @@
 }
 
 .bstudio_toolbar-display {
+    background-color: var(--bstudio_header-footer-background-color);
     height: 3.5rem;
     padding: .35rem;
     font-size: 1rem;
-    display: flex;;
+    display: flex;
+    ;
     align-items: center;
 }
 
@@ -91,6 +93,7 @@
     height: 2.5rem;
     padding: .35rem;
     font-size: 1rem;
+    background-color: var(--bstudio_header-footer-background-color);
 }
 
 .bstudio_dialog-task-bar-entry {
