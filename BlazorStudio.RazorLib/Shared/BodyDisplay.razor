@@ -2,6 +2,10 @@
     <div style="display: flex; height: 100%; width: 100%;">
         <div style="display: inline-flex; background-color: rgb(238, 63, 63); @_leftDimensions.DimensionsCssString">
         </div>
+        
+        <BlazorStudio.RazorLib.Transformable.TransformableColumnSeparator LeftDimensions="_leftDimensions"
+                                                                          RightDimensions="_rightDimensions"
+                                                                          ReRenderFunc="ReRender" />
 
         <div style="display: inline-flex; background-color: rgb(63, 63, 238); @_rightDimensions.DimensionsCssString">
         </div>

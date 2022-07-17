@@ -265,5 +265,7 @@
     color: var(--bstudio_primary-hover-font-color);
 }
 
-
-
+.bstudio_transformable-column-separator {
+    width: 4px;
+    cursor: e-resize;
+}

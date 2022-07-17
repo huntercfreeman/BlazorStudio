@@ -18,7 +18,12 @@ public partial class BodyDisplay : ComponentBase
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
                 Value = 50
-            }
+            },
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = 2
+            },
         },
         HeightCalc = new List<DimensionUnit>
         {
@@ -39,7 +44,12 @@ public partial class BodyDisplay : ComponentBase
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
                 Value = 50
-            }
+            },
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = 2
+            },
         },
         HeightCalc = new List<DimensionUnit>
         {
@@ -50,4 +60,9 @@ public partial class BodyDisplay : ComponentBase
             }
         }
     };
+
+    private async Task ReRender()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 }
