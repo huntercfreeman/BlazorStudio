@@ -1,12 +1,14 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_dialog-task-bar">
+    <BlazorStudio.RazorLib.TaskModelManager.TaskModelManagerDialogEntryPointDisplay />
+
     @{
         var dialogStates = DialogStatesWrap.Value;
 
         foreach (var dialog in dialogStates.List)
         {
-            <DialogTaskBarEntry DialogRecord="dialog" />
+            <DialogTaskBarEntry DialogRecord="dialog"/>
         }
     }
 </div>

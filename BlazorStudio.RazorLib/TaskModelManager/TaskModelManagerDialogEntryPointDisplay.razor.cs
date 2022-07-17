@@ -21,7 +21,7 @@ public partial class TaskModelManagerDialogEntryPointDisplay : ComponentBase
 
     private void OpenTaskModelManagerDialogOnClick()
     {
-        if (!DialogStatesWrap.Value.List.Contains(_taskModelManagerDialog))
+        if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _taskModelManagerDialog.DialogKey))
             Dispatcher.Dispatch(new RegisterDialogAction(_taskModelManagerDialog));
     }
 }
