@@ -1,13 +1,15 @@
 ﻿<div class="bstudio_body-display">
-    <div style="display: flex; height: 100%; width: 100%;">
-        <div style="display: inline-flex; background-color: rgb(238, 63, 63); @_leftDimensions.DimensionsCssString">
-        </div>
-        
-        <BlazorStudio.RazorLib.Transformable.TransformableColumnSeparator LeftDimensions="_leftDimensions"
-                                                                          RightDimensions="_rightDimensions"
-                                                                          ReRenderFunc="ReRender" />
+    <BlazorStudio.RazorLib.Transformable.DebugRow RowDimensions="_topDimensions" />
 
-        <div style="display: inline-flex; background-color: rgb(63, 63, 238); @_rightDimensions.DimensionsCssString">
-        </div>
-    </div>
+    <BlazorStudio.RazorLib.Transformable.TransformableRowSeparator TopDimensions="_topDimensions"
+                                                                   BottomDimensions="_middleDimensions"
+                                                                   ReRenderFunc="ReRender" />
+
+    <BlazorStudio.RazorLib.Transformable.DebugRow RowDimensions="_middleDimensions" />
+
+    <BlazorStudio.RazorLib.Transformable.TransformableRowSeparator TopDimensions="_middleDimensions"
+                                                                   BottomDimensions="_bottomDimensions"
+                                                                   ReRenderFunc="ReRender" />
+
+    <BlazorStudio.RazorLib.Transformable.DebugRow RowDimensions="_bottomDimensions" />
 </div>

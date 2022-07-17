@@ -1,26 +1,17 @@
-﻿using BlazorStudio.ClassLib.Family;
-using BlazorStudio.ClassLib.Store.ThemeCase;
-using BlazorStudio.ClassLib.Store.TreeViewCase;
-using BlazorStudio.ClassLib.UserInterface;
-using Fluxor;
+﻿using BlazorStudio.ClassLib.UserInterface;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazorStudio.RazorLib.Shared;
+namespace BlazorStudio.RazorLib.Transformable;
 
-public partial class BodyDisplay : ComponentBase
+public partial class DebugRow : ComponentBase
 {
-    private Dimensions _topDimensions = new Dimensions
+    [Parameter]
+    public Dimensions RowDimensions { get; set; } = null!;
+
+    private Dimensions _leftDimensions = new Dimensions
     {
         DimensionsPositionKind = DimensionsPositionKind.Static,
         WidthCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 100
-            }
-        },
-        HeightCalc = new List<DimensionUnit>
         {
             new()
             {
@@ -32,6 +23,14 @@ public partial class BodyDisplay : ComponentBase
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 Value = -2.66
             },
+        },
+        HeightCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 100
+            }
         }
     };
 
@@ -43,14 +42,6 @@ public partial class BodyDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 100
-            }
-        },
-        HeightCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Percentage,
                 Value = 33.33
             },
             new()
@@ -58,10 +49,18 @@ public partial class BodyDisplay : ComponentBase
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 Value = -2.66
             },
+        },
+        HeightCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 100
+            }
         }
     };
 
-    private Dimensions _bottomDimensions = new Dimensions
+    private Dimensions _rightDimensions = new Dimensions
     {
         DimensionsPositionKind = DimensionsPositionKind.Static,
         WidthCalc = new List<DimensionUnit>
@@ -69,14 +68,6 @@ public partial class BodyDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 100
-            }
-        },
-        HeightCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Percentage,
                 Value = 33.33
             },
             new()
@@ -84,6 +75,14 @@ public partial class BodyDisplay : ComponentBase
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 Value = -2.66
             },
+        },
+        HeightCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 100
+            }
         }
     };
 
