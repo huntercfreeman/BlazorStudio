@@ -1,0 +1,10 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@if (DropdownStateWrap.Value.ActiveDropdownKey == DropdownKey)
+{
+    <div class="bstudio_dropdown-display"
+         style="@Dimensions.DimensionsCssString">
+    
+        @ChildContent
+    </div>
+}
