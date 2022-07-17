@@ -1,6 +1,6 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@if (DropdownStateWrap.Value.ActiveDropdownKey == DropdownKey)
+@if (DropdownStateWrap.Value.ActiveDropdownKeys.Any(x => x == DropdownKey))
 {
     if (CloseOnOutOfBoundsClick)
     {

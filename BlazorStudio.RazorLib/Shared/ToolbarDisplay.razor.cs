@@ -33,8 +33,8 @@ public partial class ToolbarDisplay : ComponentBase
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
 
-    private void DispatchSetActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
+    private void DispatchAddActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
     {
-        Dispatcher.Dispatch(new SetActiveDropdownKeyAction(fileDropdownKey));
+        Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
     }
 }

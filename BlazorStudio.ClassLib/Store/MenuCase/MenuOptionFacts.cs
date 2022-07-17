@@ -14,5 +14,17 @@ public static class MenuOptionFacts
         public static readonly MenuOptionRecord OpenFolder = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
             "Open Folder",
             ImmutableList<MenuOptionRecord>.Empty);
+
+        public static readonly MenuOptionRecord OpenFile = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
+            "Open File",
+            ImmutableList<MenuOptionRecord>.Empty);
+
+        public static readonly MenuOptionRecord Open = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
+            "Open",
+            new MenuOptionRecord[]
+            {
+                OpenFolder,
+                OpenFile
+            }.ToImmutableList());
     }
 }

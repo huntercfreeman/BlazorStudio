@@ -1,3 +1,20 @@
-﻿<div class="bstudio_menu-option-display">
+﻿@using BlazorStudio.ClassLib.Store.MenuCase
+<div class="bstudio_menu-option-display">
     @MenuOptionRecord.DisplayName
+    
+    @if (MenuOptionRecord.Children.Any())
+    {
+        <div class="bstudio_toolbar-display-file-dropdown"
+             @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_dropdownKey)">
+        
+            File
+
+            <DropdownDisplay Dimensions="_dropdownDimensions"
+                             DropdownKey="_dropdownKey">
+            
+                <MenuDisplay MenuOptionRecords="MenuOptionRecord.Children" />
+
+            </DropdownDisplay>
+        </div>
+    }
 </div>

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Dropdown;
 
-public partial class DropdownDisplay : FluxorComponent
+public partial class DropdownDisplay : FluxorComponent, IDisposable
 {
     [Inject]
     private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
@@ -35,6 +35,13 @@ public partial class DropdownDisplay : FluxorComponent
 
     private void ClickedOutOfBoundsOnClick(MouseEventArgs mouseEventArgs)
     {
-        Dispatcher.Dispatch(new SetActiveDropdownKeyAction(null));
+        Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(DropdownKey));
+
+        base.Dispose(disposing);
     }
 }

@@ -1,11 +1,12 @@
-﻿using Fluxor;
+﻿using System.Collections.Immutable;
+using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.DropdownCase;
 
 [FeatureState]
-public record DropdownState(DropdownKey? ActiveDropdownKey)
+public record DropdownState(ImmutableList<DropdownKey> ActiveDropdownKeys)
 {
-    public DropdownState() : this(default(DropdownKey?))
+    public DropdownState() : this(ImmutableList<DropdownKey>.Empty)
     {
 
     }
