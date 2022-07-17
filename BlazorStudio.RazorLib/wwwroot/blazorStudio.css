@@ -238,6 +238,8 @@
     height: 100%;
     min-width: 100vw;
     min-height: 100vw;
+    opacity: 0.3;
+    background-color: aqua;
 }
 
 .bstudio_dropdown-display {
@@ -251,6 +253,11 @@
 .bstudio_menu-option-display {
     white-space: nowrap;
 }
+
+    .bstudio_menu-option-display.bstudio_sub-menu-is-open {
+        background-color: var(--bstudio_primary-hover-background-color);
+        color: var(--bstudio_primary-hover-font-color);
+    }
 
 .bstudio_menu-option-display:hover {
     background-color: var(--bstudio_primary-hover-background-color);

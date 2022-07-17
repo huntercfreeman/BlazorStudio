@@ -9,10 +9,16 @@ namespace BlazorStudio.RazorLib.Menu;
 public partial class MenuOptionDisplay : ComponentBase
 {
     [Inject]
+    private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter]
     public MenuOptionRecord MenuOptionRecord { get; set; } = null!;
+
+    private string HasSubmenuOpenCssClass => DropdownStateWrap.Value.ActiveDropdownKeys.Any(x => x == _dropdownKey)
+        ? "bstudio_sub-menu-is-open"
+        : string.Empty;
 
     private Dimensions _dropdownDimensions = new()
     {
@@ -37,8 +43,11 @@ public partial class MenuOptionDisplay : ComponentBase
 
     private DropdownKey _dropdownKey = DropdownKey.NewDropdownKey();
 
-    private void DispatchAddActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
+    private void DispatchToggleActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
     {
-        Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
+        if (DropdownStateWrap.Value.ActiveDropdownKeys.Any(x => x == _dropdownKey))
+            Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(fileDropdownKey));
+        else
+            Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
     }
 }

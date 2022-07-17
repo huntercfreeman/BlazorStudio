@@ -1,16 +1,19 @@
 ﻿@using BlazorStudio.ClassLib.Store.MenuCase
+@using BlazorStudio.ClassLib.Store.DropdownCase
 <div class="bstudio_menu-option-display">
     @MenuOptionRecord.DisplayName
     
     @if (MenuOptionRecord.Children.Any())
     {
-        <div class="bstudio_toolbar-display-file-dropdown"
-             @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_dropdownKey)">
+        <div class="bstudio_menu-option-display @HasSubmenuOpenCssClass"
+             @onclick="() => DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey)">
         
             File
 
             <DropdownDisplay Dimensions="_dropdownDimensions"
-                             DropdownKey="_dropdownKey">
+                             DropdownKey="_dropdownKey"
+                             DropdownKind="DropdownKind.Horizontal"
+                             CloseOnOutOfBoundsClick="false">
             
                 <MenuDisplay MenuOptionRecords="MenuOptionRecord.Children" />
 
