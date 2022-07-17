@@ -1,4 +1,5 @@
-﻿<div class="bstudio_toolbar-display">
+﻿@using BlazorStudio.ClassLib.Store.MenuCase
+<div class="bstudio_toolbar-display">
     <BlazorStudio.RazorLib.Settings.SettingsDialogEntryPoint />
     
     <div class="bstudio_toolbar-display-file-dropdown"
@@ -8,8 +9,8 @@
 
         <DropdownDisplay Dimensions="_fileDropdownDimensions"
                          DropdownKey="_fileDropdownKey">
-
-            Hello Wordl11! - Dropdown
+            
+            <MenuDisplay MenuOptionRecords="new[] { MenuOptionFacts.File.OpenFolder }" />
 
         </DropdownDisplay>
     </div>

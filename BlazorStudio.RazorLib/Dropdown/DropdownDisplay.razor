@@ -2,15 +2,14 @@
 
 @if (DropdownStateWrap.Value.ActiveDropdownKey == DropdownKey)
 {
-    <div class="bstudio_dropdown-display"
-         style="@Dimensions.DimensionsCssString"
-         @onclick:stopPropagation="true">
+    if (CloseOnOutOfBoundsClick)
+    {
+        <BlazorStudio.RazorLib.OutOfBoundsClick.OutOfBoundsClickDisplay ClickedOutOfBounds="ClickedOutOfBoundsOnClick"
+                                                                        ZIndex="25" />
+    }
 
-        if (CloseOnOutOfBoundsClick)
-        {
-            <BlazorStudio.RazorLib.OutOfBoundsClick.OutOfBoundsClickDisplay ClickedOutOfBounds="ClickedOutOfBoundsOnClick"
-                                                                            ZIndex="40" />
-        }
+    <div class="bstudio_dropdown-display"
+         style="@Dimensions.DimensionsCssString">
 
         @ChildContent
     </div>

@@ -241,9 +241,19 @@
 
 .bstudio_dropdown-display {
     z-index: 30;
+    background-color: var(--bstudio_secondary-background-color);
+    color: var(--bstudio_secondary-font-color);
+    padding: 5px;
 }
 
+.bstudio_menu-option-display {
+    white-space: nowrap;
+}
 
+.bstudio_menu-option-display:hover {
+    background-color: var(--bstudio_primary-hover-background-color);
+    color: var(--bstudio_primary-hover-font-color);
+}
 
 
 
