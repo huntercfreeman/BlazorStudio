@@ -1,6 +1,7 @@
 ﻿using BlazorStudio.ClassLib.Family;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
+using BlazorStudio.ClassLib.UserInterface;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -8,43 +9,45 @@ namespace BlazorStudio.RazorLib.Shared;
 
 public partial class BodyDisplay : ComponentBase
 {
-    private TreeViewWrapKey _familyTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-    private List<Person> _rootPeople = GetRootPeople();
-
-    private static List<Person> GetRootPeople()
+    private Dimensions _leftDimensions = new Dimensions
     {
-        var children = new List<Person>
+        DimensionsPositionKind = DimensionsPositionKind.Static,
+        WidthCalc = new List<DimensionUnit>
         {
-            new("OneChild", "Francisco"),
-            new("TwoChild", "Francisco"),
-            new("ThreeChild", "Francisco"),
-        };
-
-        var rootPeople = new List<Person>
-        {
-            new("Bob", "Francisco")
+            new()
             {
-                Children = children
-            },
-            new("Lisa", "Francisco")
-            {
-                Children = children
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 50
             }
-        };
-
-        return rootPeople;
-    }
-
-    private Task<IEnumerable<Person>> LoadPersonChildren(Person person)
+        },
+        HeightCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 100
+            }
+        }
+    };
+    
+    private Dimensions _rightDimensions = new Dimensions
     {
-        return Task.FromResult(person.Children.AsEnumerable());
-    }
-
-    private void FamilyTreeViewOnEnterKeyDown(Person person)
-    {
-    }
-
-    private void FamilyTreeViewOnSpaceKeyDown(Person person)
-    {
-    }
+        DimensionsPositionKind = DimensionsPositionKind.Static,
+        WidthCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 50
+            }
+        },
+        HeightCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 100
+            }
+        }
+    };
 }
