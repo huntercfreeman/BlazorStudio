@@ -15,6 +15,7 @@
     <Folder Include="Family\" />
     <Folder Include="Mouse\" />
     <Folder Include="Store\DragCase\" />
+    <Folder Include="Store\MenuCase\" />
     <Folder Include="UserInterface\" />
     <Folder Include="Sequence\" />
   </ItemGroup>
