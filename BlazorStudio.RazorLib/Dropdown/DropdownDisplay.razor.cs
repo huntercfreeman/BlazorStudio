@@ -21,7 +21,17 @@ public partial class DropdownDisplay : FluxorComponent
     [Parameter]
     public bool CloseOnOutOfBoundsClick { get; set; } = true;
     [Parameter]
+    public DropdownKind DropdownKind { get; set; }
+    [Parameter]
     public RenderFragment ChildContent { get; set; } = null!;
+
+    private string DropdownKindCssString => DropdownKind switch
+    {
+        DropdownKind.Vertical => "position: relative;",
+        DropdownKind.Horizontal => "position: relative; display: inline;",
+        DropdownKind.Unset => string.Empty,
+        _ => throw new ApplicationException($"The {nameof(DropdownKind)}: '{DropdownKind}' was not recognized.")
+    };
 
     private void ClickedOutOfBoundsOnClick(MouseEventArgs mouseEventArgs)
     {

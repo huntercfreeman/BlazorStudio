@@ -53,6 +53,7 @@
     z-index: 10;
     background-color: var(--bstudio_secondary-background-color);
     color: var(--bstudio_secondary-font-color);
+    box-shadow: var(--bstudio_primary-overlay-box-shadow);
 }
 
 .bstudio_dialog-display-tool-bar {
@@ -244,6 +245,7 @@
     background-color: var(--bstudio_secondary-background-color);
     color: var(--bstudio_secondary-font-color);
     padding: 5px;
+    box-shadow: var(--bstudio_primary-overlay-box-shadow);
 }
 
 .bstudio_menu-option-display {
