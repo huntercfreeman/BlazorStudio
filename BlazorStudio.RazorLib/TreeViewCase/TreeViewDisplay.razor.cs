@@ -31,6 +31,8 @@ public partial class TreeViewDisplay<T>
     public Action<T> OnEnterKeyDown { get; set; } = null!;
     [CascadingParameter(Name= "OnSpaceKeyDown")]
     public Action<T> OnSpaceKeyDown { get; set; } = null!;
+    [CascadingParameter(Name = "IsExpandable")]
+    public Func<T, bool> IsExpandable { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeView<T> TreeView { get; set; } = null!;
@@ -157,6 +159,9 @@ public partial class TreeViewDisplay<T>
 
         if (keyboardEvent.Key == KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY)
         {
+            if (!IsExpandable(TreeView.Item))
+                return;
+
             if (!TreeView.IsExpanded)
             {
                 _ = ToggleIsExpandedOnClick();

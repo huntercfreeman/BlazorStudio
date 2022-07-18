@@ -11,17 +11,24 @@
           @onkeydown:preventDefault="true"
           @onkeydown="HandleOnKeyDown">
         
-        <span @onclick="ToggleIsExpandedOnClick"
-              @onclick:stopPropagation="true">
-            @if (TreeView.IsExpanded)
-            {
-                <IconChevronDown />
-            }
-            else
-            {
-                <IconChevronRight />
-            }
-        </span>
+        @if (IsExpandable(TreeView.Item))
+        {
+            <span @onclick="ToggleIsExpandedOnClick"
+                  @onclick:stopPropagation="true">
+                @if (TreeView.IsExpanded)
+                {
+                    <IconChevronDown />
+                }
+                else
+                {
+                    <IconChevronRight />
+                }
+            </span>
+        }
+        else
+        {
+            <IconBlank />
+        }
 
         @ChildContent(TreeView.Item)
     </span>

@@ -68,4 +68,9 @@ public partial class InputFileDialog : ComponentBase
     private void InputFileTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath)
     {
     }
+    
+    private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)
+    {
+        return absoluteFilePath.IsDirectory;
+    }
 }

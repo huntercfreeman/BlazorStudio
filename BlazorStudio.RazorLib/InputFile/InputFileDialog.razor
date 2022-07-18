@@ -10,7 +10,8 @@
                          GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
                          Context="absoluteFilePath"
                          OnEnterKeyDown="InputFileTreeViewOnEnterKeyDown"
-                         OnSpaceKeyDown="InputFileTreeViewOnSpaceKeyDown">
+                         OnSpaceKeyDown="InputFileTreeViewOnSpaceKeyDown"
+                         IsExpandable="GetIsExpandable">
         <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
             @absoluteFilePath.GetFilenameWithExtension
         </span>

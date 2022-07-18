@@ -27,6 +27,8 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     public Action<T> OnEnterKeyDown { get; set; } = null!;
     [Parameter, EditorRequired]
     public Action<T> OnSpaceKeyDown { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Func<T, bool> IsExpandable { get; set; } = null!;
 
     protected override void OnInitialized()
     {

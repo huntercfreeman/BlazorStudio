@@ -19,18 +19,20 @@
                     <CascadingValue Name="Depth" Value="0">
                         <CascadingValue Name="OnEnterKeyDown" Value="OnEnterKeyDown">
                             <CascadingValue Name="OnSpaceKeyDown" Value="OnSpaceKeyDown">
-                                <CascadingValue Value="TreeViewWrapKey">
-                                
-                                    @for (int i = 0; i < rootTreeViews.Length; i++)
-                                    {
-                                        int index = i;
-                                        var child = (TreeView<T>) rootTreeViews[i];
+                                <CascadingValue Name="IsExpandable" Value="IsExpandable">
+                                    <CascadingValue Value="TreeViewWrapKey">
+                                    
+                                        @for (int i = 0; i < rootTreeViews.Length; i++)
+                                        {
+                                            int index = i;
+                                            var child = (TreeView<T>) rootTreeViews[i];
 
-                                        <TreeViewDisplay TreeView="child"
-                                                         GetSiblingsAndSelfFunc="() => rootTreeViews"
-                                                         IndexAmongSiblings="index"
-                                                         Parent="null"/>
-                                    }
+                                            <TreeViewDisplay TreeView="child"
+                                                             GetSiblingsAndSelfFunc="() => rootTreeViews"
+                                                             IndexAmongSiblings="index"
+                                                             Parent="null"/>
+                                        }
+                                    </CascadingValue>
                                 </CascadingValue>
                             </CascadingValue>
                         </CascadingValue>
