@@ -1,7 +1,9 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+﻿using BlazorStudio.ClassLib.Errors;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
+using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -29,6 +31,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
     private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
+    private RichErrorModel? _workspaceStateWrapStateChangedRichErrorModel;
 
     protected override void OnInitialized()
     {
@@ -43,15 +46,37 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
 
         if (workspaceState.WorkspaceAbsoluteFilePath is not null)
         {
+            _isInitialized = false;
+            _workspaceStateWrapStateChangedRichErrorModel = null;
+
+            await InvokeAsync(StateHasChanged);
+
             _treeViewWrap = new TreeViewWrap<IAbsoluteFilePath>(
                 TreeViewWrapKey.NewTreeViewWrapKey());
 
-            _rootAbsoluteFilePaths = (await LoadAbsoluteFilePathChildrenAsync(workspaceState.WorkspaceAbsoluteFilePath))
-                .ToList();
+            _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+                {
+                    _rootAbsoluteFilePaths = (await LoadAbsoluteFilePathChildrenAsync(workspaceState.WorkspaceAbsoluteFilePath))
+                        .ToList();
 
-            _isInitialized = true;
+                    _isInitialized = true;
 
-            await InvokeAsync(StateHasChanged);
+                    await InvokeAsync(StateHasChanged);
+                },
+                $"{nameof(WorkspaceStateWrap_StateChanged)}",
+                false,
+                TimeSpan.FromSeconds(10),
+                exception =>
+                {
+                    _isInitialized = true;
+                    _workspaceStateWrapStateChangedRichErrorModel = new RichErrorModel(
+                        $"{nameof(WorkspaceStateWrap_StateChanged)}: {exception.Message}",
+                        $"TODO: Add a hint");
+
+                    InvokeAsync(StateHasChanged);
+
+                    return _workspaceStateWrapStateChangedRichErrorModel;
+                });
         }
     }
 

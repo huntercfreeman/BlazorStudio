@@ -302,12 +302,12 @@
 }
 
 .bstudio_input-file-dialog-body {
-    height: calc(100% - 4rem - 2.25rem);
+    height: calc(100% - 4.5rem - 2.25rem);
     overflow-y: auto;
 }
 
 .bstudio_input-file-dialog-control-buttons {
-    height: 4rem;
+    height: 4.5rem;
     padding: .25rem;
     font-size: 1rem;
     background-color: var(--bstudio_tertiary-background-color);

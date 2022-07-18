@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
@@ -14,6 +15,9 @@ public partial class InputFileDialog : ComponentBase
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+
+    [CascadingParameter]
+    public DialogRecord DialogRecord { get; set; } = null!;
 
     private bool _isInitialized;
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
@@ -67,14 +71,29 @@ public partial class InputFileDialog : ComponentBase
     private void InputFileTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath)
     {
         Dispatcher.Dispatch(new SetWorkspaceAction(absoluteFilePath));
+        Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
     }
 
     private void InputFileTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath)
     {
     }
-    
+
     private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)
     {
         return absoluteFilePath.IsDirectory;
+    }
+    
+    private void ConfirmOnClick(ImmutableArray<IAbsoluteFilePath> absoluteFilePaths)
+    {
+        if (absoluteFilePaths.Any())
+        {
+            Dispatcher.Dispatch(new SetWorkspaceAction(absoluteFilePaths[0]));
+            Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
+        }
+    }
+    
+    private void CancelOnClick()
+    {
+        Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
     }
 }

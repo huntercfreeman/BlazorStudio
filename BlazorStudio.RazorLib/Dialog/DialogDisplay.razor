@@ -39,7 +39,9 @@
     </div>
     
     <div class="bstudio_dialog-display-body">
-        <DynamicComponent Type="DialogRecord.Type"
-                          Parameters="DialogRecord.Parameters ?? new()"/>
+        <CascadingValue Value="DialogRecord">
+            <DynamicComponent Type="DialogRecord.Type"
+                              Parameters="DialogRecord.Parameters ?? new()"/>
+        </CascadingValue>
     </div>
 </div>

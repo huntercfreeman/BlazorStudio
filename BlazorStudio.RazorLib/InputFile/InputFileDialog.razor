@@ -36,6 +36,26 @@
                         {
                             @activeItem.FilenameWithExtension
                         }
+                        
+                        <div>
+                            @if (activeItems[0].IsDirectory)
+                            {
+                                <button class="btn btn-primary" @onclick="() => ConfirmOnClick(activeItems)">
+                                    Confirm
+                                    <span class="pte_unselectable" style="visibility: hidden;">a Directory</span>
+                                </button>
+                            }
+                            else
+                            {
+                                <button disabled class="btn btn-primary">
+                                    Choose a Directory
+                                </button>
+                            }
+
+                            <button class="btn btn-warning" style="margin-left: 6px;" @onclick="CancelOnClick">
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </FooterRenderFragment>
             </TreeViewWrapDisplay>

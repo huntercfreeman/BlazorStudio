@@ -21,44 +21,45 @@
         }
         else
         {
-            <div class="bstudio_input-file-dialog">
-                <TreeViewWrapDisplay ShouldDispose="false"
-                             TreeViewWrapKey="_inputFileTreeViewKey"
-                             T="IAbsoluteFilePath"
-                             RootItems="_rootAbsoluteFilePaths"
-                             GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
-                             Context="absoluteFilePath"
-                             OnEnterKeyDown="InputFileTreeViewOnEnterKeyDown"
-                             OnSpaceKeyDown="InputFileTreeViewOnSpaceKeyDown"
-                             IsExpandable="GetIsExpandable"
-                             StyleString="height: 100%;"
-                             BodyCssClassAttribute="bstudio_input-file-dialog-body">
+            if (_isInitialized)
+            {
+                if (_workspaceStateWrapStateChangedRichErrorModel is not null)
+                {
+                    <RichErrorDisplay RichErrorModel="_workspaceStateWrapStateChangedRichErrorModel"/>
+                }
+                else
+                {
+                    <div class="bstudio_input-file-dialog">
+                        <TreeViewWrapDisplay ShouldDispose="false"
+                                             TreeViewWrapKey="_inputFileTreeViewKey"
+                                             T="IAbsoluteFilePath"
+                                             RootItems="_rootAbsoluteFilePaths"
+                                             GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
+                                             Context="absoluteFilePath"
+                                             OnEnterKeyDown="InputFileTreeViewOnEnterKeyDown"
+                                             OnSpaceKeyDown="InputFileTreeViewOnSpaceKeyDown"
+                                             IsExpandable="GetIsExpandable"
+                                             StyleString="height: 100%;"
+                                             BodyCssClassAttribute="bstudio_input-file-dialog-body">
 
-                    <ItemRenderFragment>
-                        <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
-                            @absoluteFilePath.FilenameWithExtension
-                        </span>
-                    </ItemRenderFragment>
+                            <ItemRenderFragment>
+                                <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
+                                    @absoluteFilePath.FilenameWithExtension
+                                </span>
+                            </ItemRenderFragment>
 
-                    <HeaderRenderFragment Context="activeItems">
-                        <div class="bstudio_input-file-dialog-header">
-                            @foreach (var activeItem in activeItems)
-                            {
-                                @activeItem.GetAbsoluteFilePathString()
-                            }
-                        </div>
-                    </HeaderRenderFragment>
-
-                    <FooterRenderFragment Context="activeItems">
-                        <div class="bstudio_input-file-dialog-control-buttons">
-                            @foreach (var activeItem in activeItems)
-                            {
-                                @activeItem.FilenameWithExtension
-                            }
-                        </div>
-                    </FooterRenderFragment>
-                </TreeViewWrapDisplay>
-            </div>
+                            <HeaderRenderFragment Context="activeItems">
+                                <div class="bstudio_input-file-dialog-header">
+                                    @foreach (var activeItem in activeItems)
+                                    {
+                                        @activeItem.GetAbsoluteFilePathString()
+                                    }
+                                </div>
+                            </HeaderRenderFragment>
+                        </TreeViewWrapDisplay>
+                    </div>
+                }
+            }
         }
     }
 </div>
