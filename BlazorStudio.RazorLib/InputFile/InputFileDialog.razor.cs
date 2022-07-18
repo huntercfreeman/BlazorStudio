@@ -6,6 +6,8 @@ using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
+using BlazorStudio.RazorLib.Forms;
+using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -101,11 +103,19 @@ public partial class InputFileDialog : ComponentBase
         Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
     }
 
-    private IEnumerable<MenuOptionRecord> GetMenuOptionRecords()
+    private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
+        TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
-        var openFolder = MenuOptionFacts.File
-            .ConstructOpenFolder(() => Console.WriteLine($"${nameof(GetMenuOptionRecords)} delete this debug log"));
+        var createNewFile = MenuOptionFacts.File
+            .ConstructCreateNewFile(typeof(CreateNewFileForm),
+                new Dictionary<string, object?>()
+                {
+                    {
+                        nameof(CreateNewFileForm.ParentDirectory),
+                        contextMenuEventDto.Item
+                    }
+                });
 
-        return new[] { openFolder };
+        return new[] { createNewFile };
     }
 }

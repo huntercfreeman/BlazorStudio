@@ -273,6 +273,13 @@
     color: var(--bstudio_primary-hover-font-color);
 }
 
+.bstudio_menu-option-display-widget {
+    padding: 2px;
+    border: 1.5px solid var(--bstudio_primary-hover-background-color);
+    background-color: var(--bstudio_primary-background-color);
+    color: var(--bstudio_primary-font-color);
+}
+
 .bstudio_transformable-column-separator {
     width: 4px;
     cursor: e-resize;
@@ -326,3 +333,13 @@ em {
     color: var(--bstudio_primary-emphasis-font-color);
     font-style: normal;
 }
+
+.bstudio_input-text {
+    background-color: var(--bstudio_secondary-background-color);
+    color: var(--bstudio_secondary-font-color);
+}
+
+    .bstudio_input-text:focus {
+        outline: solid 2px var(--bstudio_primary-emphasis-font-color);
+        box-shadow: 0 0 21px var(--bstudio_primary-emphasis-font-color);
+    }

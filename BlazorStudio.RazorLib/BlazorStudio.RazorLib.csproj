@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Editor\EditorDisplay.razor" />
+    <_ContentIncludedByDefault Remove="Forms\CreateNewFileForm.razor" />
     <_ContentIncludedByDefault Remove="General\SelectDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuOptionDisplay.razor" />
@@ -80,6 +81,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Editor\EditorDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Forms\CreateNewFileForm.razor" />
   </ItemGroup>
 
 </Project>

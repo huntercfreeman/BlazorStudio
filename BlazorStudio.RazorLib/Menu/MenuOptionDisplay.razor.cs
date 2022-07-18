@@ -2,11 +2,12 @@
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.UserInterface;
 using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Menu;
 
-public partial class MenuOptionDisplay : ComponentBase
+public partial class MenuOptionDisplay : FluxorComponent
 {
     [Inject]
     private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
@@ -19,6 +20,8 @@ public partial class MenuOptionDisplay : ComponentBase
     private string HasSubmenuOpenCssClass => DropdownStateWrap.Value.ActiveDropdownKeys.Any(x => x == _dropdownKey)
         ? "bstudio_sub-menu-is-open"
         : string.Empty;
+
+    private bool _displayWidget;
 
     private Dimensions _dropdownDimensions = new()
     {

@@ -1,5 +1,8 @@
-﻿@using BlazorStudio.ClassLib.Store.MenuCase
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using BlazorStudio.ClassLib.Store.MenuCase
 @using BlazorStudio.ClassLib.Store.DropdownCase
+
 <div class="bstudio_menu-option-display @HasSubmenuOpenCssClass"
      @onclick:stopPropagation="true"
      @onclick="() => DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey)">
@@ -20,6 +23,17 @@
     }
     else
     {
-        @MenuOptionRecord.DisplayName
+        <div @onclick="() => _displayWidget = !_displayWidget">
+            @MenuOptionRecord.DisplayName
+        </div>
+
+        @if (_displayWidget && (MenuOptionRecord.WidgetType is not null))
+        {
+            <div @onclick:stopPropagation="true"
+                 class="bstudio_menu-option-display-widget">
+                <DynamicComponent Type="MenuOptionRecord.WidgetType"
+                                  Parameters="MenuOptionRecord.WidgetParameters" />
+            </div>
+        }
     }
 </div>

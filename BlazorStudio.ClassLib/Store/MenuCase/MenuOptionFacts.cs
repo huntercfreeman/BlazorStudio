@@ -15,5 +15,13 @@ public static class MenuOptionFacts
             "Open File",
             ImmutableList<MenuOptionRecord>.Empty,
             onClickAction);
+        
+        public static MenuOptionRecord ConstructCreateNewFile(Type widgetType, Dictionary<string, object?>? widgetParameters) => 
+            new(MenuOptionKey.NewMenuOptionKey(),
+                "New File",
+                ImmutableList<MenuOptionRecord>.Empty,
+                null,
+                WidgetType: widgetType,
+                WidgetParameters: widgetParameters);
     }
 }
