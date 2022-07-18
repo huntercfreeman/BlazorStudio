@@ -1,5 +1,18 @@
-﻿<div class="bstudio_editor-display"
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_editor-display"
      style="@Dimensions.DimensionsCssString">
     
     <h5 class="bstudio_h5-title">Editor Display</h5>
+    
+    @if (EditorStateWrap.Value.OpenedAbsoluteFilePath is null)
+    {
+        <div>OpenedAbsoluteFilePath is null</div>
+    }
+    else
+    {
+        <div>@EditorStateWrap.Value.OpenedAbsoluteFilePath.GetAbsoluteFilePathString()</div>
+        
+        <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn />
+    }
 </div>

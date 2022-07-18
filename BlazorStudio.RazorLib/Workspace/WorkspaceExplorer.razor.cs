@@ -1,6 +1,7 @@
 ﻿using BlazorStudio.ClassLib.Errors;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TaskModelManager;
@@ -108,11 +109,13 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
             .Union(childFileAbsolutePaths);
     }
 
-    private void InputFileTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath)
+    private void WorkspaceExplorerTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath)
     {
+        if (!absoluteFilePath.IsDirectory)
+            Dispatcher.Dispatch(new SetOpenedAbsoluteFilePathAction(absoluteFilePath));
     }
 
-    private void InputFileTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath)
+    private void WorkspaceExplorerTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath)
     {
     }
 

@@ -70,8 +70,11 @@ public partial class InputFileDialog : ComponentBase
 
     private void InputFileTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath)
     {
-        Dispatcher.Dispatch(new SetWorkspaceAction(absoluteFilePath));
-        Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
+        if (absoluteFilePath.IsDirectory)
+        {
+            Dispatcher.Dispatch(new SetWorkspaceAction(absoluteFilePath));
+            Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
+        }
     }
 
     private void InputFileTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath)
