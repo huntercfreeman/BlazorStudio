@@ -13,6 +13,7 @@
     {
         <div>@EditorStateWrap.Value.OpenedAbsoluteFilePath.GetAbsoluteFilePathString()</div>
         
-        <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn />
+        <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn @ref="_plainTextEditorSpawn"
+                                                                           AfterInitializationCallback="ReadFileContentsIntoEditor" />
     }
 </div>

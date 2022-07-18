@@ -321,3 +321,8 @@
     background-color: var(--bstudio_primary-background-color);
     color: var(--bstudio_primary-font-color);
 }
+
+em {
+    color: var(--bstudio_primary-emphasis-font-color);
+    font-style: normal;
+}

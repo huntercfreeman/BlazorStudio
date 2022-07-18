@@ -3,6 +3,7 @@ using PlainTextEditor.ClassLib.Sequence;
 using PlainTextEditor.ClassLib.Store.KeyDownEventCase;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using PlainTextEditor.ClassLib.Keyboard;
 
 namespace PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
 
@@ -108,6 +109,87 @@ public partial record PlainTextEditorStates
                 await _effectSemaphoreSlim.WaitAsync();
 
                 if(_concurrentQueueForEffects.TryDequeue(out var effect))
+                    await effect.Invoke();
+            }
+            finally
+            {
+                _effectSemaphoreSlim.Release();
+            }
+        }
+        
+        [EffectMethod]
+        public async Task HandlePlainTextEditorInitializeAction(PlainTextEditorInitializeAction plainTextEditorInitializeAction,
+            IDispatcher dispatcher)
+        {
+            _queuedEffectsCounter++;
+
+            try
+            {
+                _concurrentQueueForEffects.Enqueue(async () =>
+                {
+                    var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
+
+                    var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
+                    var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
+
+                    var plainTextEditor = previousPlainTextEditorStates.Map[plainTextEditorInitializeAction.PlainTextEditorKey]
+                        as PlainTextEditorRecord;
+
+                    if (plainTextEditor is null)
+                        return;
+
+                    var content = await File
+                        .ReadAllTextAsync(plainTextEditorInitializeAction.AbsoluteFilePathString);
+
+                    PlainTextEditorRecord replacementPlainTextEditor = plainTextEditor;
+
+                    foreach (var character in content)
+                    {
+                        if (character == '\r')
+                            continue;
+
+                        var code = character switch
+                        {
+                            '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
+                            ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
+                            '\n' => KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE,
+                            _ => character.ToString()
+                        };
+
+                        var keyDown = new KeyDownEventAction(plainTextEditorInitializeAction.PlainTextEditorKey,
+                            new KeyDownEventRecord(
+                                character.ToString(),
+                                code,
+                                false,
+                                false,
+                                false
+                            )
+                        );
+
+                        replacementPlainTextEditor = PlainTextEditorStates.StateMachine
+                                .HandleKeyDownEvent(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
+                            {
+                                SequenceKey = SequenceKey.NewSequenceKey()
+                            };
+                    }
+
+                    nextPlainTextEditorMap[plainTextEditorInitializeAction.PlainTextEditorKey] = replacementPlainTextEditor;
+
+                    var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
+                    var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
+
+                    await Task.Delay(1);
+
+                    _queuedEffectsCounter--;
+
+                    dispatcher.Dispatch(
+                        new SetPlainTextEditorStatesAction(
+                            new PlainTextEditorStates(nextImmutableMap, nextImmutableArray)));
+                });
+
+                await _effectSemaphoreSlim.WaitAsync();
+
+                if (_concurrentQueueForEffects.TryDequeue(out var effect))
                     await effect.Invoke();
             }
             finally

@@ -10,7 +10,10 @@ public partial class PlainTextEditorSpawn : ComponentBase, IDisposable
     [Inject]
     private IPlainTextEditorService PlainTextEditorService { get; set; } = null!;
 
-    private PlainTextEditorKey _plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+    [Parameter]
+    public Func<Task>? AfterInitializationCallback { get; set; }
+
+    public PlainTextEditorKey PlainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
     private bool _plainTextEditorWasInitialized;
     
     protected override void OnInitialized()
@@ -18,11 +21,14 @@ public partial class PlainTextEditorSpawn : ComponentBase, IDisposable
         _ = Task.Run(async () => 
             {
                 await PlainTextEditorService
-                    .ConstructPlainTextEditorAsync(_plainTextEditorKey, 
+                    .ConstructPlainTextEditorAsync(PlainTextEditorKey, 
                         async () => 
                         {
                             _plainTextEditorWasInitialized = true;
                             await InvokeAsync(StateHasChanged);
+
+                            if (AfterInitializationCallback is not null)
+                                await AfterInitializationCallback();
                         });
             });
 
@@ -31,6 +37,6 @@ public partial class PlainTextEditorSpawn : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        PlainTextEditorService.DeconstructPlainTextEditor(_plainTextEditorKey);
+        PlainTextEditorService.DeconstructPlainTextEditor(PlainTextEditorKey);
     }
 }
