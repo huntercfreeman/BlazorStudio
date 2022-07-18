@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.Store.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.TreeViewCase;
 
@@ -30,6 +31,24 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     public Action<T> OnSpaceKeyDown { get; set; } = null!;
     [Parameter, EditorRequired]
     public Func<T, bool> IsExpandable { get; set; } = null!;
+    /// <summary>
+    /// If <see cref="OnContextMenu"/> is provided then:
+    /// upon ContextMenuEvent event the Action will be invoked.
+    /// 
+    /// If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
+    /// the MouseEventArgs will be null.
+    /// </summary>
+    [Parameter]
+    public Action<T, MouseEventArgs?>? OnContextMenu { get; set; }
+    /// <summary>
+    /// If <see cref="OnContextMenuRenderFragment"/> is provided then:
+    /// upon ContextMenuEvent event the RenderFragment will be rendered.
+    ///
+    /// If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
+    /// the MouseEventArgs will be null.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<ContextMenuEventDto<T>>? OnContextMenuRenderFragment { get; set; }
     [Parameter]
     public RenderFragment<ImmutableArray<T>>? FooterRenderFragment { get; set; }
     [Parameter]
@@ -123,5 +142,11 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
         }
 
         base.Dispose(disposing);
+    }
+
+    public class ContextMenuEventDto<T>
+    {
+        public T Item { get; set; }
+        public MouseEventArgs? MouseEventArgs { get; set; }
     }
 }

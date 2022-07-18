@@ -20,6 +20,13 @@
                         @absoluteFilePath.FilenameWithExtension
                     </span>
                 </ItemRenderFragment>
+                
+                <OnContextMenuRenderFragment Context="contextMenuEventDto">
+                    
+                    <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
+
+                    <MenuDisplay MenuOptionRecords="GetMenuOptionRecords()"/>
+                </OnContextMenuRenderFragment>
 
                 <HeaderRenderFragment Context="activeItems">
                     <div class="bstudio_input-file-dialog-header">

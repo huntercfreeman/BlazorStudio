@@ -1,6 +1,10 @@
 ﻿using BlazorStudio.ClassLib.Errors;
+using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.DropdownCase;
+using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.TaskModelManager;
+using BlazorStudio.ClassLib.UserInterface;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -31,6 +35,24 @@ public partial class TreeViewDisplay<T>
     public Action<T> OnEnterKeyDown { get; set; } = null!;
     [CascadingParameter(Name= "OnSpaceKeyDown")]
     public Action<T> OnSpaceKeyDown { get; set; } = null!;
+    /// <summary>
+    /// If <see cref="OnContextMenu"/> is provided then:
+    /// upon ContextMenuEvent event the Action will be invoked.
+    /// 
+    /// If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
+    /// the MouseEventArgs will be null.
+    /// </summary>
+    [CascadingParameter(Name="OnContextMenu")]
+    public Action<T, MouseEventArgs?>? OnContextMenu { get; set; }
+    /// <summary>
+    /// If <see cref="OnContextMenuRenderFragment"/> is provided then:
+    /// upon ContextMenuEvent event the RenderFragment will be rendered.
+    ///
+    /// If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
+    /// the MouseEventArgs will be null.
+    /// </summary>
+    [CascadingParameter(Name="OnContextMenuRenderFragment")]
+    public RenderFragment<TreeViewWrapDisplay<T>.ContextMenuEventDto<T>>? OnContextMenuRenderFragment { get; set; }
     [CascadingParameter(Name = "IsExpandable")]
     public Func<T, bool> IsExpandable { get; set; } = null!;
 
@@ -56,6 +78,30 @@ public partial class TreeViewDisplay<T>
     private bool _isGettingChildren;
     private bool _previousFocusState;
     private RichErrorModel? _toggleIsExpandedOnClickRichErrorModel;
+    private MouseEventArgs? _mostRecentMouseEventArgs;
+
+    private Dimensions _fileDropdownDimensions = new()
+    {
+        DimensionsPositionKind = DimensionsPositionKind.Absolute,
+        LeftCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = 0
+            }
+        },
+        TopCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = 0
+            }
+        },
+    };
+
+    private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
 
     protected override void OnInitialized()
     {
@@ -150,15 +196,15 @@ public partial class TreeViewDisplay<T>
     ///
     /// If the active tree view entry goes out of viewport then scroll manually
     /// </summary>
-    /// <param name="keyboardEvent"></param>
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEvent)
+    /// <param name="keyboardEventArgs"></param>
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (_previousFocusState == false)
             return;
 
         _previousFocusState = false;
 
-        if (keyboardEvent.Key == KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY)
+        if (keyboardEventArgs.Key == KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY)
         {
             if (!IsExpandable(TreeView.Item))
                 return;
@@ -177,7 +223,7 @@ public partial class TreeViewDisplay<T>
                 }
             }
         }
-        else if (keyboardEvent.Key == KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY)
+        else if (keyboardEventArgs.Key == KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY)
         {
             if (TreeView.IsExpanded)
             {
@@ -191,7 +237,7 @@ public partial class TreeViewDisplay<T>
                 }
             }
         }
-        else if (keyboardEvent.Key == KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY)
+        else if (keyboardEventArgs.Key == KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY)
         {
             if (IndexAmongSiblings == 0 &&
                 Parent is not null)
@@ -208,7 +254,7 @@ public partial class TreeViewDisplay<T>
                 }
             }
         }
-        else if (keyboardEvent.Key == KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY)
+        else if (keyboardEventArgs.Key == KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY)
         {
             var rememberTreeViewChildren = TreeView.Children;
 
@@ -237,17 +283,36 @@ public partial class TreeViewDisplay<T>
                 }
             }
         }
-        else if (keyboardEvent.Key == KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE)
+        else if (keyboardEventArgs.Key == KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE)
         {
             OnEnterKeyDown(TreeView.Item);
         }
-        else if (keyboardEvent.Key == KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE)
+        else if (keyboardEventArgs.Key == KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE)
         {
             OnSpaceKeyDown(TreeView.Item);
+        }
+        else if (KeyboardKeyFacts.CheckIsAlternateContextMenuEvent(keyboardEventArgs.Key, keyboardEventArgs.ShiftKey))
+        {
+            HandleOnContextMenu(null);
         }
         else
         {
             _previousFocusState = true;
+        }
+    }
+    
+    private void HandleOnContextMenu(MouseEventArgs? mouseEventArgs)
+    {
+        _mostRecentMouseEventArgs = mouseEventArgs;
+
+        if (OnContextMenu is not null)
+        {
+            OnContextMenu(TreeView.Item, mouseEventArgs);
+        }
+
+        if (OnContextMenuRenderFragment is not null)
+        {
+            DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey);
         }
     }
 
@@ -283,5 +348,10 @@ public partial class TreeViewDisplay<T>
         {
             Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, treeView));
         }
+    }
+
+    private void DispatchAddActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
+    {
+        Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
     }
 }

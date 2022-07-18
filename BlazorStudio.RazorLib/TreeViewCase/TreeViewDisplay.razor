@@ -9,7 +9,8 @@
           tabindex='@(IsActive ? "0" : "-1")'
           @onclick="SetIsActiveOnClick"
           @onkeydown:preventDefault="true"
-          @onkeydown="HandleOnKeyDown">
+          @onkeydown="HandleOnKeyDown"
+          @oncontextmenu="HandleOnContextMenu">
         
         @if (IsExpandable(TreeView.Item))
         {
@@ -34,6 +35,22 @@
     </span>
 
     <div class="bstudio_tree-view-display-body">
+        <DropdownDisplay Dimensions="_fileDropdownDimensions"
+                         DropdownKey="_fileDropdownKey">
+                         
+            @if (OnContextMenuRenderFragment is not null)
+            {
+                var contextMenuEventDto = new TreeViewWrapDisplay<T>.ContextMenuEventDto<T>
+                {
+                    Item = TreeView.Item,
+                    MouseEventArgs = _mostRecentMouseEventArgs
+                }; 
+                
+                @OnContextMenuRenderFragment(contextMenuEventDto)
+            }
+
+        </DropdownDisplay>
+
         <div class="bstudio_tree-view-display-body-border"
              style="left: @GetScaledByDepthPixelsOffset(Depth + 1)">
         </div>
@@ -46,9 +63,9 @@
             else if (_toggleIsExpandedOnClickRichErrorModel is not null)
             {
                 <div class="bstudio_tree-view-display-title"
-                      style="padding-left: @(GetScaledByDepthPixelsOffset(Depth + 1));">
-        
-                    <RichErrorDisplay RichErrorModel="_toggleIsExpandedOnClickRichErrorModel" />
+                     style="padding-left: @(GetScaledByDepthPixelsOffset(Depth + 1));">
+
+                    <RichErrorDisplay RichErrorModel="_toggleIsExpandedOnClickRichErrorModel"/>
                 </div>
             }
             else
@@ -57,7 +74,7 @@
                     @for (int i = 0; i < TreeView.Children.Length; i++)
                     {
                         int index = i;
-                        var child = (TreeView<T>) TreeView.Children[i];
+                        var child = (TreeView<T>)TreeView.Children[i];
 
                         <TreeViewDisplay TreeView="child"
                                          GetSiblingsAndSelfFunc="() => TreeView.Children"

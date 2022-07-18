@@ -2,6 +2,7 @@
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
@@ -98,5 +99,13 @@ public partial class InputFileDialog : ComponentBase
     private void CancelOnClick()
     {
         Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
+    }
+
+    private IEnumerable<MenuOptionRecord> GetMenuOptionRecords()
+    {
+        var openFolder = MenuOptionFacts.File
+            .ConstructOpenFolder(() => Console.WriteLine($"${nameof(GetMenuOptionRecords)} delete this debug log"));
+
+        return new[] { openFolder };
     }
 }

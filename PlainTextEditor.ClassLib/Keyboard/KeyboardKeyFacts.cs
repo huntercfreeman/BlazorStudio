@@ -66,6 +66,24 @@ public static class KeyboardKeyFacts
         public const string ARROW_RIGHT_KEY = "l";
     }
 
+    public static bool CheckIsAlternateContextMenuEvent(KeyDownEventRecord keyDownEventRecord)
+    {
+        string keyOne = "F10";
+        string keyTwo = "f10";
+
+        return (keyDownEventRecord.Key == keyOne || keyDownEventRecord.Key == keyTwo)
+               && keyDownEventRecord.ShiftWasPressed;
+    }
+    
+    public static bool CheckIsAlternateContextMenuEvent(string key, bool shiftWasPressed)
+    {
+        string keyOne = "F10";
+        string keyTwo = "f10";
+
+        return (key == keyOne || key == keyTwo)
+               && shiftWasPressed;
+    }
+
     public static bool IsMovementKey(KeyDownEventRecord onKeyDownEventArgs)
     {
         switch (onKeyDownEventArgs.Key)
