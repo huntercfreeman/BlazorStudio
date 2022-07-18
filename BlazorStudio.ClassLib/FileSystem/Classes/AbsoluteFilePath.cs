@@ -45,31 +45,39 @@ public class AbsoluteFilePath : IAbsoluteFilePath
 
         var fileNameWithExtension = _tokenBuilder.ToString();
 
-        var splitFileName = fileNameWithExtension.Split('.');
+        if (!IsDirectory)
+        {
+            var splitFileName = fileNameWithExtension.Split('.');
 
-        if (splitFileName.Length == 2)
-        {
-            FileNameNoExtension = splitFileName[0];
-            ExtensionNoPeriod = splitFileName[1];
-        }
-        else if (splitFileName.Length == 1)
-        {
-            FileNameNoExtension = splitFileName[0];
-            ExtensionNoPeriod = string.Empty;
+            if (splitFileName.Length == 2)
+            {
+                FileNameNoExtension = splitFileName[0];
+                ExtensionNoPeriod = splitFileName[1];
+            }
+            else if (splitFileName.Length == 1)
+            {
+                FileNameNoExtension = splitFileName[0];
+                ExtensionNoPeriod = string.Empty;
+            }
+            else
+            {
+                StringBuilder fileNameBuilder = new();
+
+                foreach (var split in splitFileName.SkipLast(1))
+                {
+                    fileNameBuilder.Append($"{split}.");
+                }
+
+                fileNameBuilder.Remove(fileNameBuilder.Length - 1, 1);
+
+                FileNameNoExtension = fileNameBuilder.ToString();
+                ExtensionNoPeriod = splitFileName.Last();
+            }
         }
         else
         {
-            StringBuilder fileNameBuilder = new();
-
-            foreach (var split in splitFileName.SkipLast(1))
-            {
-                fileNameBuilder.Append($"{split}.");
-            }
-
-            fileNameBuilder.Remove(fileNameBuilder.Length - 1, 1);
-
-            FileNameNoExtension = fileNameBuilder.ToString();
-            ExtensionNoPeriod = splitFileName.Last();
+            FileNameNoExtension = fileNameWithExtension;
+            ExtensionNoPeriod = string.Empty;
         }
     }
     

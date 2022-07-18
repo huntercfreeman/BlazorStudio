@@ -11,7 +11,9 @@
                          Context="absoluteFilePath"
                          OnEnterKeyDown="InputFileTreeViewOnEnterKeyDown"
                          OnSpaceKeyDown="InputFileTreeViewOnSpaceKeyDown">
-        @absoluteFilePath.GetFilenameWithExtension
+        <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
+            @absoluteFilePath.GetFilenameWithExtension
+        </span>
     </TreeViewWrapDisplay>
 }
 else
