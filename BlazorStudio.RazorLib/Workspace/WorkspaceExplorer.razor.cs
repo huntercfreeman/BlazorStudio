@@ -39,6 +39,29 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
     private RichErrorModel? _workspaceStateWrapStateChangedRichErrorModel;
     private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
     private Func<Task> _mostRecentRefreshContextMenuTarget;
+    
+    private Dimensions _fileDropdownDimensions = new()
+    {
+        DimensionsPositionKind = DimensionsPositionKind.Absolute,
+        LeftCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = 0
+            }
+        },
+        TopCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = 0
+            }
+        },
+    };
+
+    private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
 
     protected override void OnInitialized()
     {
@@ -217,6 +240,11 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
             $"{nameof(CreateNewDirectoryFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
+    }
+
+    private void DispatchAddActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
+    {
+        Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
     }
 
     protected override void Dispose(bool disposing)
