@@ -1,11 +1,15 @@
-﻿using BlazorStudio.ClassLib.Errors;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Errors;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
+using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
+using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -34,6 +38,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
     private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
     private RichErrorModel? _workspaceStateWrapStateChangedRichErrorModel;
     private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
+    private Func<Task> _mostRecentRefreshContextMenuTarget;
 
     protected override void OnInitialized()
     {
@@ -122,6 +127,96 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
     private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)
     {
         return absoluteFilePath.IsDirectory;
+    }
+    
+    private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
+        TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
+    {
+        var createNewFile = MenuOptionFacts.File
+            .ConstructCreateNewFile(typeof(CreateNewFileForm),
+                new Dictionary<string, object?>()
+                {
+                    {
+                        nameof(CreateNewFileForm.ParentDirectory),
+                        contextMenuEventDto.Item
+                    },
+                    {
+                        nameof(CreateNewFileForm.OnAfterSubmitForm),
+                        new Action<string, string>(CreateNewFileFormOnAfterSubmitForm)
+                    },
+                });
+
+        var createNewDirectory = MenuOptionFacts.File
+            .ConstructCreateNewDirectory(typeof(CreateNewDirectoryForm),
+                new Dictionary<string, object?>()
+                {
+                    {
+                        nameof(CreateNewFileForm.ParentDirectory),
+                        contextMenuEventDto.Item
+                    },
+                    {
+                        nameof(CreateNewFileForm.OnAfterSubmitForm),
+                        new Action<string, string>(CreateNewDirectoryFormOnAfterSubmitForm)
+                    },
+                });
+
+        _mostRecentRefreshContextMenuTarget = contextMenuEventDto.RefreshContextMenuTarget;
+
+        List<MenuOptionRecord> menuOptionRecords = new();
+
+        if (contextMenuEventDto.Item.IsDirectory)
+        {
+            menuOptionRecords.Add(createNewFile);
+            menuOptionRecords.Add(createNewDirectory);
+        }
+
+        return menuOptionRecords.Any()
+            ? menuOptionRecords
+            : new[]
+            {
+                new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
+                    "No Context Menu Options for this item",
+                    ImmutableList<MenuOptionRecord>.Empty,
+                    null)
+            };
+    }
+
+    private void CreateNewFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
+        string fileName)
+    {
+        var localRefreshContextMenuTarget = _mostRecentRefreshContextMenuTarget;
+
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        {
+            await File
+                .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName,
+                    string.Empty);
+
+            await localRefreshContextMenuTarget();
+
+            Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+        },
+            $"{nameof(CreateNewFileFormOnAfterSubmitForm)}",
+            false,
+            TimeSpan.FromSeconds(10));
+    }
+
+    private void CreateNewDirectoryFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
+        string directoryName)
+    {
+        var localRefreshContextMenuTarget = _mostRecentRefreshContextMenuTarget;
+
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        {
+            Directory.CreateDirectory(parentDirectoryAbsoluteFilePathString + directoryName);
+
+            await localRefreshContextMenuTarget();
+
+            Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+        },
+            $"{nameof(CreateNewDirectoryFormOnAfterSubmitForm)}",
+            false,
+            TimeSpan.FromSeconds(10));
     }
 
     protected override void Dispose(bool disposing)

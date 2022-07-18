@@ -299,6 +299,7 @@
 }
 
 .bstudio_workspace-explorer {
+    height: calc(100% - 2rem);
     padding: 5px;
     display: inline-flex;
     flex-direction: column;
@@ -309,7 +310,12 @@
 }
 
 .bstudio_input-file-dialog-body {
-    height: calc(100% - 4.5rem - 2.8rem);
+    height: calc(100% - 4.5rem - 3.8rem);
+    overflow-y: auto;
+}
+
+.bstudio_workspace-explorer-tree-view-body {
+    height: calc(100% - 4.5rem);
     overflow-y: auto;
 }
 
@@ -321,7 +327,16 @@
 }
 
 .bstudio_input-file-dialog-header {
-    height: 2.8rem;
+    height: 3.8rem;
+    padding: 0.1rem;
+    overflow-x: auto;
+    font-size: 1rem;
+    background-color: var(--bstudio_primary-background-color);
+    color: var(--bstudio_primary-font-color);
+}
+
+.bstudio_workspace-explorer-tree-view-header {
+    height: 3.8rem;
     padding: 0.1rem;
     overflow-x: auto;
     font-size: 1rem;

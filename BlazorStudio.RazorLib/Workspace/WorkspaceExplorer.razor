@@ -4,7 +4,9 @@
 <div class="bstudio_workspace-explorer"
      style="@Dimensions.DimensionsCssString">
 
-    <h5 class="bstudio_h5-title">Workspace Explorer</h5>
+    <h5 class="bstudio_h5-title" style="height: 2rem;">
+        Workspace Explorer&nbsp;
+    </h5>
 
     @{
         var workspaceState = WorkspaceStateWrap.Value;
@@ -25,23 +27,23 @@
             {
                 if (_workspaceStateWrapStateChangedRichErrorModel is not null)
                 {
-                    <RichErrorDisplay RichErrorModel="_workspaceStateWrapStateChangedRichErrorModel"/>
+                    <RichErrorDisplay RichErrorModel="_workspaceStateWrapStateChangedRichErrorModel" />
                 }
                 else
                 {
-                    <div class="bstudio_input-file-dialog">
+                    <div class="bstudio_workspace-explorer">
                         <TreeViewWrapDisplay @ref="_treeViewWrapDisplay"
-                                             ShouldDispose="false"
-                                             TreeViewWrapKey="_inputFileTreeViewKey"
-                                             T="IAbsoluteFilePath"
-                                             RootItems="_rootAbsoluteFilePaths"
-                                             GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
-                                             Context="absoluteFilePath"
-                                             OnEnterKeyDown="WorkspaceExplorerTreeViewOnEnterKeyDown"
-                                             OnSpaceKeyDown="WorkspaceExplorerTreeViewOnSpaceKeyDown"
-                                             IsExpandable="GetIsExpandable"
-                                             StyleString="height: 100%;"
-                                             BodyCssClassAttribute="bstudio_input-file-dialog-body">
+                             ShouldDispose="false"
+                             TreeViewWrapKey="_inputFileTreeViewKey"
+                             T="IAbsoluteFilePath"
+                             RootItems="_rootAbsoluteFilePaths"
+                             GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
+                             Context="absoluteFilePath"
+                             OnEnterKeyDown="WorkspaceExplorerTreeViewOnEnterKeyDown"
+                             OnSpaceKeyDown="WorkspaceExplorerTreeViewOnSpaceKeyDown"
+                             IsExpandable="GetIsExpandable"
+                             StyleString="height: 100%;"
+                             BodyCssClassAttribute="bstudio_workspace-explorer-tree-view-body">
 
                             <ItemRenderFragment>
                                 <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
@@ -49,12 +51,22 @@
                                 </span>
                             </ItemRenderFragment>
 
+                            <OnContextMenuRenderFragment Context="contextMenuEventDto">
+
+                                <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
+
+                                <MenuDisplay MenuOptionRecords="GetMenuOptionRecords(contextMenuEventDto)" />
+
+                            </OnContextMenuRenderFragment>
+
                             <HeaderRenderFragment Context="activeItems">
-                                <div class="bstudio_input-file-dialog-header">
+                                <div class="bstudio_workspace-explorer-tree-view-header">
                                     @foreach (var activeItem in activeItems)
                                     {
                                         @activeItem.GetAbsoluteFilePathString()
                                     }
+
+                                    <div>(<IconAdd /> New File)</div>
                                 </div>
                             </HeaderRenderFragment>
                         </TreeViewWrapDisplay>
