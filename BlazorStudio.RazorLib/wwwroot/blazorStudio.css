@@ -69,7 +69,7 @@
 }
 
 .bstudio_dialog-display-body {
-    height: calc(100% - 2.25rem);
+    height: calc(100% - 2rem);
     overflow: auto;
 }
 
@@ -295,4 +295,20 @@
     padding: 5px;
     display: inline-flex;
     flex-direction: column;
+}
+
+.bstudio_input-file-dialog {
+    height: 100%;
+}
+
+.bstudio_input-file-dialog-body {
+    height: calc(100% - 4rem);
+    overflow-y: auto;
+}
+
+.bstudio_input-file-dialog-control-buttons {
+    height: 4rem;
+    padding: .25rem;
+    font-size: 1rem;
+    background-color: var(--bstudio_tertiary-background-color);
 }
