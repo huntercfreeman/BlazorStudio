@@ -4,27 +4,16 @@ namespace BlazorStudio.ClassLib.Store.MenuCase;
 
 public static class MenuOptionFacts
 {
-    public static readonly ImmutableArray<MenuOptionRecord> InitialMenuOptions = new MenuOptionRecord[]
-    {
-        File.OpenFolder
-    }.ToImmutableArray();
-
     public static class File
     {
-        public static readonly MenuOptionRecord OpenFolder = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
+        public static MenuOptionRecord ConstructOpenFolder(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
             "Open Folder",
-            ImmutableList<MenuOptionRecord>.Empty);
+            ImmutableList<MenuOptionRecord>.Empty,
+            onClickAction);
 
-        public static readonly MenuOptionRecord OpenFile = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
+        public static MenuOptionRecord ConstructOpenFile(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
             "Open File",
-            ImmutableList<MenuOptionRecord>.Empty);
-
-        public static readonly MenuOptionRecord Open = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
-            "Open",
-            new MenuOptionRecord[]
-            {
-                OpenFolder,
-                OpenFile
-            }.ToImmutableList());
+            ImmutableList<MenuOptionRecord>.Empty,
+            onClickAction);
     }
 }

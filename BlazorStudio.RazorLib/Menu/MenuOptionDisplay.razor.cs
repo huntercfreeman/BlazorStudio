@@ -45,6 +45,15 @@ public partial class MenuOptionDisplay : ComponentBase
 
     private void DispatchToggleActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
     {
+        if (MenuOptionRecord.OnClickAction is not null)
+        {
+            MenuOptionRecord.OnClickAction();
+
+            Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+
+            return;
+        }
+
         if (DropdownStateWrap.Value.ActiveDropdownKeys.Any(x => x == _dropdownKey))
             Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(fileDropdownKey));
         else

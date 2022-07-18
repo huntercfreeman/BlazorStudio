@@ -1,16 +1,16 @@
 ﻿@using BlazorStudio.ClassLib.Store.MenuCase
 <div class="bstudio_toolbar-display">
     <BlazorStudio.RazorLib.Settings.SettingsDialogEntryPoint />
-    
+
     <div class="bstudio_toolbar-display-file-dropdown"
          @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)">
-        
+
         File
 
         <DropdownDisplay Dimensions="_fileDropdownDimensions"
                          DropdownKey="_fileDropdownKey">
-            
-            <MenuDisplay MenuOptionRecords="new[] { MenuOptionFacts.File.Open }" />
+
+            <MenuDisplay MenuOptionRecords="GetMenuOptionRecords()" />
 
         </DropdownDisplay>
     </div>

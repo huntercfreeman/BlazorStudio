@@ -1,24 +1,22 @@
 ﻿@using BlazorStudio.ClassLib.Store.MenuCase
 @using BlazorStudio.ClassLib.Store.DropdownCase
-<div class="bstudio_menu-option-display">
+<div class="bstudio_menu-option-display @HasSubmenuOpenCssClass"
+     @onclick:stopPropagation="true"
+     @onclick="() => DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey)">
 
     @if (MenuOptionRecord.Children.Any())
     {
-        <div class="bstudio_menu-option-display @HasSubmenuOpenCssClass"
-         @onclick="() => DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey)">
+        <text>@(MenuOptionRecord.DisplayName)&nbsp;</text>
+        <IconChevronRight />
 
-            @MenuOptionRecord.DisplayName&nbsp;
-            <IconChevronRight />
+        <DropdownDisplay Dimensions="_dropdownDimensions"
+                     DropdownKey="_dropdownKey"
+                     DropdownKind="DropdownKind.Horizontal"
+                     CloseOnOutOfBoundsClick="false">
 
-            <DropdownDisplay Dimensions="_dropdownDimensions"
-                         DropdownKey="_dropdownKey"
-                         DropdownKind="DropdownKind.Horizontal"
-                         CloseOnOutOfBoundsClick="false">
+            <MenuDisplay MenuOptionRecords="MenuOptionRecord.Children" />
 
-                <MenuDisplay MenuOptionRecords="MenuOptionRecord.Children" />
-
-            </DropdownDisplay>
-        </div>
+        </DropdownDisplay>
     }
     else
     {
