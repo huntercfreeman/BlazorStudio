@@ -1,5 +1,6 @@
 ﻿@typeparam T
 @using BlazorStudio.ClassLib.Store.TreeViewCase
+@using BlazorStudio.ClassLib.Store.DropdownCase
 
 <div class="bstudio_tree-view-display">
     
@@ -43,7 +44,8 @@
                 var contextMenuEventDto = new TreeViewWrapDisplay<T>.ContextMenuEventDto<T>
                 {
                     Item = TreeView.Item,
-                    MouseEventArgs = _mostRecentMouseEventArgs
+                    MouseEventArgs = _mostRecentMouseEventArgs,
+                    RefreshContextMenuTarget = async () => GetChildrenAsync()
                 }; 
                 
                 @OnContextMenuRenderFragment(contextMenuEventDto)

@@ -140,45 +140,47 @@ public partial class TreeViewDisplay<T>
 
     private string GetScaledByDepthPixelsOffset(int depth) => $"{depth * DEPTH_PADDING_LEFT_SCALING_IN_PIXELS}px";
 
-    private async Task GetChildrenAsync()
+    private void GetChildrenAsync()
     {
-        TreeView.Children = (await GetChildrenFunc(TreeView.Item))
-            .Select(x => (ITreeView) new TreeView<T>(TreeViewKey.NewTreeViewKey(), x)) 
-            .ToArray();
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+            {
+                _isGettingChildren = true;
+                
+                TreeView.Children = (await GetChildrenFunc(TreeView.Item))
+                    .Select(x => (ITreeView)new TreeView<T>(TreeViewKey.NewTreeViewKey(), x))
+                    .ToArray();
 
-        _shouldLoadChildren = false;
-        _isGettingChildren = false;
-
-        await InvokeAsync(StateHasChanged);
+                _isGettingChildren = false;
+                _shouldLoadChildren = false;
+                
+                await InvokeAsync(StateHasChanged);
+            },
+            $"{nameof(ToggleIsExpandedOnClick)}",
+            false,
+            TimeSpan.FromSeconds(10),
+            HandleExceptionForToggleIsExpandedOnClick);
     }
     
-    private async Task ToggleIsExpandedOnClick()
+    private void ToggleIsExpandedOnClick()
     {
         if (_shouldLoadChildren)
         {
-            _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
-                {
-                    _isGettingChildren = true;
-                    await GetChildrenAsync();
-                    _isGettingChildren = false;
-                },
-                $"{nameof(ToggleIsExpandedOnClick)}",
-                false,
-                TimeSpan.FromSeconds(10),
-                exception =>
-                {
-                    _isGettingChildren = false;
-                    _toggleIsExpandedOnClickRichErrorModel = new RichErrorModel(
-                        $"{nameof(ToggleIsExpandedOnClick)}: {exception.Message}",
-                        $"TODO: Add a hint");
-
-                    InvokeAsync(StateHasChanged);
-
-                    return _toggleIsExpandedOnClickRichErrorModel;
-                });
+            GetChildrenAsync();
         }
 
         TreeView.IsExpanded = !TreeView.IsExpanded;
+    }
+    
+    private RichErrorModel HandleExceptionForToggleIsExpandedOnClick(Exception exception)
+    {
+        _isGettingChildren = false;
+        _toggleIsExpandedOnClickRichErrorModel = new RichErrorModel(
+            $"{nameof(ToggleIsExpandedOnClick)}: {exception.Message}",
+            $"TODO: Add a hint");
+
+        InvokeAsync(StateHasChanged);
+
+        return _toggleIsExpandedOnClickRichErrorModel;
     }
     
     private void SetIsActiveOnClick()
@@ -212,7 +214,7 @@ public partial class TreeViewDisplay<T>
 
             if (!TreeView.IsExpanded)
             {
-                _ = ToggleIsExpandedOnClick();
+                ToggleIsExpandedOnClick();
             }
             else
             {
@@ -228,7 +230,7 @@ public partial class TreeViewDisplay<T>
         {
             if (TreeView.IsExpanded)
             {
-                _ = ToggleIsExpandedOnClick();
+                ToggleIsExpandedOnClick();
             }
             else
             {

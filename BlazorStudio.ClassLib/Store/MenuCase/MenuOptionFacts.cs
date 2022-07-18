@@ -23,5 +23,13 @@ public static class MenuOptionFacts
                 null,
                 WidgetType: widgetType,
                 WidgetParameters: widgetParameters);
+        
+        public static MenuOptionRecord ConstructCreateNewDirectory(Type widgetType, Dictionary<string, object?>? widgetParameters) => 
+            new(MenuOptionKey.NewMenuOptionKey(),
+                "New Directory",
+                ImmutableList<MenuOptionRecord>.Empty,
+                null,
+                WidgetType: widgetType,
+                WidgetParameters: widgetParameters);
     }
 }
