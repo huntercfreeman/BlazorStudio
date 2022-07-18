@@ -1,4 +1,16 @@
 ﻿<div class="bstudio_workspace-explorer"
      style="@Dimensions.DimensionsCssString">
-    Workspace Explorer
+    
+    <h5 class="bstudio_h5-title">Workspace Explorer</h5>
+    
+    @if (WorkspaceStateWrap.Value.WorkspaceAbsoluteFilePath is null)
+    {
+        <div>
+            WorkspaceAbsoluteFilePath is null, use the InputFile dialog to select a Workspace
+            directory.
+        </div>
+        <div>
+            <BlazorStudio.RazorLib.InputFile.InputFileDialogEntryPoint />
+        </div>
+    }
 </div>

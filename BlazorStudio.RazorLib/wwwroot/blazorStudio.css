@@ -56,6 +56,7 @@
     background-color: var(--bstudio_secondary-background-color);
     color: var(--bstudio_secondary-font-color);
     box-shadow: var(--bstudio_primary-overlay-box-shadow);
+    overflow-y: auto;
 }
 
 .bstudio_dialog-display-tool-bar {
@@ -280,9 +281,11 @@
 .bstudio_editor-display {
     padding: 5px;
     display: inline-flex;
+    flex-direction: column;
 }
 
 .bstudio_workspace-explorer {
     padding: 5px;
     display: inline-flex;
+    flex-direction: column;
 }

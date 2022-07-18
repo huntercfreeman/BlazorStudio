@@ -1,14 +1,12 @@
-﻿using System.Collections.Immutable;
-using BlazorStudio.ClassLib.Errors;
+﻿using BlazorStudio.ClassLib.Errors;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using PlainTextEditor.ClassLib.Keyboard;
 
-namespace BlazorStudio.RazorLib.TreeView;
+namespace BlazorStudio.RazorLib.TreeViewCase;
 
 public partial class TreeViewDisplay<T>
     where T : class

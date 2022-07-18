@@ -33,11 +33,11 @@
     <_ContentIncludedByDefault Remove="Settings\SettingsDialog.razor" />
     <_ContentIncludedByDefault Remove="Shared\BodyDisplay.razor" />
     <_ContentIncludedByDefault Remove="Transformable\TransformableDisplay.razor" />
-    <_ContentIncludedByDefault Remove="TreeView\TreeViewWrapDisplay.razor" />
+    <_ContentIncludedByDefault Remove="TreeViewCase\TreeViewWrapDisplay.razor" />
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="TreeView\TreeViewWrapDisplay.razor" />
+    <UpToDateCheckInput Remove="TreeViewCase\TreeViewWrapDisplay.razor" />
   </ItemGroup>
 
   <ItemGroup>

@@ -12,7 +12,7 @@ public partial class TaskModelManagerDialogEntryPointDisplay : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private DialogRecord _taskModelManagerDialog = new DialogRecord(
+    private readonly DialogRecord _taskModelManagerDialog = new DialogRecord(
         DialogKey.NewDialogKey(),
         "Task Manager",
         typeof(TaskModelManagerDialogDisplay),

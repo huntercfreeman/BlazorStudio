@@ -1,10 +1,9 @@
-﻿using System.Collections.Immutable;
-using BlazorStudio.ClassLib.Store.TreeViewCase;
+﻿using BlazorStudio.ClassLib.Store.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazorStudio.RazorLib.TreeView;
+namespace BlazorStudio.RazorLib.TreeViewCase;
 
 public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     where T : class

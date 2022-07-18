@@ -1,0 +1,20 @@
+﻿@using BlazorStudio.ClassLib.FileSystem.Interfaces
+<h3>InputFileDisplay</h3>
+
+@if (_isInitialized)
+{
+    <TreeViewWrapDisplay ShouldDispose="false"
+                         TreeViewWrapKey="_inputFileTreeViewKey"
+                         T="IAbsoluteFilePath"
+                         RootItems="_rootAbsoluteFilePaths"
+                         GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
+                         Context="absoluteFilePath"
+                         OnEnterKeyDown="InputFileTreeViewOnEnterKeyDown"
+                         OnSpaceKeyDown="InputFileTreeViewOnSpaceKeyDown">
+        @absoluteFilePath.GetFilenameWithExtension
+    </TreeViewWrapDisplay>
+}
+else
+{
+    <div>Loading...</div>
+}
