@@ -1,24 +1,64 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+﻿@using BlazorStudio.ClassLib.FileSystem.Interfaces
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_workspace-explorer"
      style="@Dimensions.DimensionsCssString">
-    
+
     <h5 class="bstudio_h5-title">Workspace Explorer</h5>
-    
-    @if (WorkspaceStateWrap.Value.WorkspaceAbsoluteFilePath is null)
-    {
-        <div>
-            WorkspaceAbsoluteFilePath is null, use the InputFile dialog to select a Workspace
-            directory.
-        </div>
-        <div>
-            <BlazorStudio.RazorLib.InputFile.InputFileDialogEntryPoint />
-        </div>
-    }
-    else
-    {
-        <div>
-            @WorkspaceStateWrap.Value.WorkspaceAbsoluteFilePath.GetAbsoluteFilePathString()
-        </div>
+
+    @{
+        var workspaceState = WorkspaceStateWrap.Value;
+
+        if (workspaceState.WorkspaceAbsoluteFilePath is null)
+        {
+            <div>
+                WorkspaceAbsoluteFilePath is null, use the InputFile dialog to select a Workspace
+                directory.
+            </div>
+            <div>
+                <BlazorStudio.RazorLib.InputFile.InputFileDialogEntryPoint />
+            </div>
+        }
+        else
+        {
+            <div class="bstudio_input-file-dialog">
+                <TreeViewWrapDisplay ShouldDispose="false"
+                             TreeViewWrapKey="_inputFileTreeViewKey"
+                             T="IAbsoluteFilePath"
+                             RootItems="_rootAbsoluteFilePaths"
+                             GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
+                             Context="absoluteFilePath"
+                             OnEnterKeyDown="InputFileTreeViewOnEnterKeyDown"
+                             OnSpaceKeyDown="InputFileTreeViewOnSpaceKeyDown"
+                             IsExpandable="GetIsExpandable"
+                             StyleString="height: 100%;"
+                             BodyCssClassAttribute="bstudio_input-file-dialog-body">
+
+                    <ItemRenderFragment>
+                        <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
+                            @absoluteFilePath.FilenameWithExtension
+                        </span>
+                    </ItemRenderFragment>
+
+                    <HeaderRenderFragment Context="activeItems">
+                        <div class="bstudio_input-file-dialog-header">
+                            @foreach (var activeItem in activeItems)
+                            {
+                                @activeItem.GetAbsoluteFilePathString()
+                            }
+                        </div>
+                    </HeaderRenderFragment>
+
+                    <FooterRenderFragment Context="activeItems">
+                        <div class="bstudio_input-file-dialog-control-buttons">
+                            @foreach (var activeItem in activeItems)
+                            {
+                                @activeItem.FilenameWithExtension
+                            }
+                        </div>
+                    </FooterRenderFragment>
+                </TreeViewWrapDisplay>
+            </div>
+        }
     }
 </div>
