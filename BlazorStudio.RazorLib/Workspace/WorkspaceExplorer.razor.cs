@@ -5,6 +5,7 @@ using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
+using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -16,6 +17,8 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
 {
     [Inject]
     private IState<WorkspaceState> WorkspaceStateWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
@@ -24,14 +27,12 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
     {
     }
 
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-
     private bool _isInitialized;
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
     private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
     private RichErrorModel? _workspaceStateWrapStateChangedRichErrorModel;
+    private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
 
     protected override void OnInitialized()
     {
@@ -48,6 +49,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
         {
             _isInitialized = false;
             _workspaceStateWrapStateChangedRichErrorModel = null;
+            _rootAbsoluteFilePaths = null;
 
             await InvokeAsync(StateHasChanged);
 
@@ -62,6 +64,11 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
                     _isInitialized = true;
 
                     await InvokeAsync(StateHasChanged);
+
+                    if (_treeViewWrapDisplay is not null)
+                    {
+                        _treeViewWrapDisplay.Reload();
+                    }
                 },
                 $"{nameof(WorkspaceStateWrap_StateChanged)}",
                 false,

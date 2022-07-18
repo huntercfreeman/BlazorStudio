@@ -30,7 +30,8 @@
                 else
                 {
                     <div class="bstudio_input-file-dialog">
-                        <TreeViewWrapDisplay ShouldDispose="false"
+                        <TreeViewWrapDisplay @ref="_treeViewWrapDisplay"
+                                             ShouldDispose="false"
                                              TreeViewWrapKey="_inputFileTreeViewKey"
                                              T="IAbsoluteFilePath"
                                              RootItems="_rootAbsoluteFilePaths"

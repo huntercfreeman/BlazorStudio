@@ -83,12 +83,36 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
         base.OnInitialized();
     }
 
-    private RenderFragment GetInnerRenderFragment(ITreeView[] rootTreeViews)
+    public void Reload()
     {
-        return builder =>
+        Dispatcher.Dispatch(new DisposeTreeViewWrapAction(TreeViewWrapKey));
+
+        var iterableRootItems = RootItems.ToArray();
+
+        var treeViews = iterableRootItems.Select(x => (ITreeView)
+                new TreeView<T>(TreeViewKey.NewTreeViewKey(), x))
+            .ToList();
+
+        List<ITreeView> activeTreeViews;
+
+        if (treeViews.Any())
         {
-            
-        };
+            activeTreeViews = new List<ITreeView>
+            {
+                treeViews[0]
+            };
+        }
+        else
+        {
+            activeTreeViews = new List<ITreeView>();
+        }
+
+        // TreeViewWrap is uninitialized
+        Dispatcher.Dispatch(new RegisterTreeViewWrapAction(new TreeViewWrap<T>(TreeViewWrapKey)
+        {
+            RootTreeViews = treeViews,
+            ActiveTreeViews = activeTreeViews
+        }));
     }
 
     protected override void Dispose(bool disposing)
