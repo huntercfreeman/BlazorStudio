@@ -1,15 +1,11 @@
 ﻿<div class="bstudio_body-display">
-    <BlazorStudio.RazorLib.Transformable.DebugRow RowDimensions="_topDimensions" />
+    <div style="height: 100%; display: flex;">
+        <BlazorStudio.RazorLib.Editor.EditorDisplay Dimensions="_editorDisplayDimensions"/>
+        
+        <BlazorStudio.RazorLib.Transformable.TransformableColumnSeparator LeftDimensions="_editorDisplayDimensions"
+                                                                          RightDimensions="_workspaceExplorerDimensions"
+                                                                          ReRenderFunc="ReRender" />
 
-    <BlazorStudio.RazorLib.Transformable.TransformableRowSeparator TopDimensions="_topDimensions"
-                                                                   BottomDimensions="_middleDimensions"
-                                                                   ReRenderFunc="ReRender" />
-
-    <BlazorStudio.RazorLib.Transformable.DebugRow RowDimensions="_middleDimensions" />
-
-    <BlazorStudio.RazorLib.Transformable.TransformableRowSeparator TopDimensions="_middleDimensions"
-                                                                   BottomDimensions="_bottomDimensions"
-                                                                   ReRenderFunc="ReRender" />
-
-    <BlazorStudio.RazorLib.Transformable.DebugRow RowDimensions="_bottomDimensions" />
+        <BlazorStudio.RazorLib.Workspace.WorkspaceExplorer Dimensions="_workspaceExplorerDimensions"/>
+    </div>
 </div>

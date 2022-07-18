@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="Editor\EditorDisplay.razor" />
     <_ContentIncludedByDefault Remove="General\SelectDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuOptionDisplay.razor" />
@@ -43,6 +44,7 @@
     <Folder Include="Drag\" />
     <Folder Include="Dropdown\" />
     <Folder Include="Theme\" />
+    <Folder Include="Workspace\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -74,6 +76,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="OutOfBoundsClick\OutOfBoundsClickDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Editor\EditorDisplay.razor" />
   </ItemGroup>
 
 </Project>

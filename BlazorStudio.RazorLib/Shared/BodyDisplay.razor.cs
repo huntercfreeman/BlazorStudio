@@ -9,7 +9,7 @@ namespace BlazorStudio.RazorLib.Shared;
 
 public partial class BodyDisplay : ComponentBase
 {
-    private Dimensions _topDimensions = new Dimensions
+    private Dimensions _editorDisplayDimensions = new Dimensions
     {
         DimensionsPositionKind = DimensionsPositionKind.Static,
         WidthCalc = new List<DimensionUnit>
@@ -17,7 +17,12 @@ public partial class BodyDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 100
+                Value = 50
+            },
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -2
             }
         },
         HeightCalc = new List<DimensionUnit>
@@ -25,17 +30,12 @@ public partial class BodyDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 33.33
-            },
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -2.66
-            },
+                Value = 100
+            }
         }
     };
 
-    private Dimensions _middleDimensions = new Dimensions
+    private Dimensions _workspaceExplorerDimensions = new Dimensions
     {
         DimensionsPositionKind = DimensionsPositionKind.Static,
         WidthCalc = new List<DimensionUnit>
@@ -43,7 +43,12 @@ public partial class BodyDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 100
+                Value = 50
+            },
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -2
             }
         },
         HeightCalc = new List<DimensionUnit>
@@ -51,39 +56,8 @@ public partial class BodyDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 33.33
-            },
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -2.66
-            },
-        }
-    };
-
-    private Dimensions _bottomDimensions = new Dimensions
-    {
-        DimensionsPositionKind = DimensionsPositionKind.Static,
-        WidthCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Percentage,
                 Value = 100
             }
-        },
-        HeightCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 33.33
-            },
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -2.66
-            },
         }
     };
 
