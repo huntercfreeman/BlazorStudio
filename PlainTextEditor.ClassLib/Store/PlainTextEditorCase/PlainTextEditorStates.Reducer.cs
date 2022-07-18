@@ -64,7 +64,7 @@ public partial record PlainTextEditorStates
                 {
                     var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
 
-                    var startTimeUtc = DateTime.UtcNow;
+                    //var startTimeUtc = DateTime.UtcNow;
 
                     //var delayInMiliseconds = 1;
                     //Console.WriteLine($"delayInMiliseconds: {delayInMiliseconds}");
@@ -90,14 +90,15 @@ public partial record PlainTextEditorStates
                     var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
                     var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
 
-                    var endTimeUtc = DateTime.UtcNow;
+                    //var endTimeUtc = DateTime.UtcNow;
 
-                    var elapsedTimeSpan = endTimeUtc - startTimeUtc;
+                    //var elapsedTimeSpan = endTimeUtc - startTimeUtc;
 
-                    Console.WriteLine($"zMiliseconds: {elapsedTimeSpan.TotalMilliseconds}");
+                    //Console.WriteLine($"zMiliseconds: {elapsedTimeSpan.TotalMilliseconds}");
                     //Console.WriteLine($"_queuedEffectsCounter: {_queuedEffectsCounter}");
 
-                    await Task.Delay(1);
+                    // If hosted in WebAssembly this is needed as Blazor WA is currently single threaded.
+                    //await Task.Delay(1);
 
                     _queuedEffectsCounter--;
 
@@ -131,12 +132,9 @@ public partial record PlainTextEditorStates
 
                     var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
                     var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
-
-                    var plainTextEditor = previousPlainTextEditorStates.Map[plainTextEditorInitializeAction.PlainTextEditorKey]
-                        as PlainTextEditorRecord;
-
-                    if (plainTextEditor is null)
-                        return;
+                    
+                    var plainTextEditor = new
+                        PlainTextEditorRecord(plainTextEditorInitializeAction.PlainTextEditorKey);
 
                     var content = await File
                         .ReadAllTextAsync(plainTextEditorInitializeAction.AbsoluteFilePathString);
