@@ -123,7 +123,8 @@ public partial class TreeViewDisplay<T>
         {
             _previousFocusState = localIsActive;
 
-            _titleSpan.FocusAsync();
+            if (_previousFocusState)
+                _titleSpan.FocusAsync();
         }
 
         base.OnAfterRender(firstRender);
