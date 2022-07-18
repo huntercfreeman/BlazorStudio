@@ -1,21 +1,39 @@
 ﻿@using BlazorStudio.ClassLib.FileSystem.Interfaces
 
 <div class="bstudio_input-file-dialog">
-    <div class="bstudio_input-file-dialog-body">
         @if (_isInitialized)
         {
             <TreeViewWrapDisplay ShouldDispose="false"
-                                 TreeViewWrapKey="_inputFileTreeViewKey"
-                                 T="IAbsoluteFilePath"
-                                 RootItems="_rootAbsoluteFilePaths"
-                                 GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
-                                 Context="absoluteFilePath"
-                                 OnEnterKeyDown="InputFileTreeViewOnEnterKeyDown"
-                                 OnSpaceKeyDown="InputFileTreeViewOnSpaceKeyDown"
-                                 IsExpandable="GetIsExpandable">
-                <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
-                    @absoluteFilePath.GetFilenameWithExtension
-                </span>
+                             TreeViewWrapKey="_inputFileTreeViewKey"
+                             T="IAbsoluteFilePath"
+                             RootItems="_rootAbsoluteFilePaths"
+                             GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
+                             Context="absoluteFilePath"
+                             OnEnterKeyDown="InputFileTreeViewOnEnterKeyDown"
+                             OnSpaceKeyDown="InputFileTreeViewOnSpaceKeyDown"
+                             IsExpandable="GetIsExpandable"
+                             StyleString="height: 100%;">
+                             
+                <BodyRenderFragment Context="innerRenderFragment">
+                    <div class="bstudio_input-file-dialog-body">
+                        @innerRenderFragment
+                    </div>
+                </BodyRenderFragment>
+
+                <ItemRenderFragment>
+                    <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
+                        @absoluteFilePath.GetFilenameWithExtension
+                    </span>
+                </ItemRenderFragment>
+
+                <FooterRenderFragment Context="activeItems">
+                    <div class="bstudio_input-file-dialog-control-buttons">
+                        @foreach (var activeItem in activeItems)
+                        {
+                            @activeItem.GetAbsoluteFilePathString()
+                        }
+                    </div>
+                </FooterRenderFragment>
             </TreeViewWrapDisplay>
         }
         else
@@ -23,6 +41,3 @@
             <div>Loading...</div>
         }
     </div>
-    <div class="bstudio_input-file-dialog-control-buttons">
-    </div>
-</div>

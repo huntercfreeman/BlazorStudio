@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.Store.TreeViewCase;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Store.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -22,13 +23,21 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     [Parameter, EditorRequired]
     public Func<T, Task<IEnumerable<T>>> GetChildrenFunc { get; set; } = null!;
     [Parameter, EditorRequired]
-    public RenderFragment<T> ChildContent { get; set; } = null!;
+    public RenderFragment<T> ItemRenderFragment { get; set; } = null!;
     [Parameter, EditorRequired]
     public Action<T> OnEnterKeyDown { get; set; } = null!;
     [Parameter, EditorRequired]
     public Action<T> OnSpaceKeyDown { get; set; } = null!;
     [Parameter, EditorRequired]
     public Func<T, bool> IsExpandable { get; set; } = null!;
+    [Parameter]
+    public RenderFragment<ImmutableArray<T>>? FooterRenderFragment { get; set; }
+    [Parameter]
+    public RenderFragment<RenderFragment>? BodyRenderFragment { get; set; }
+    [Parameter]
+    public string StyleString { get; set; } = string.Empty;
+
+    private int _sequence;
 
     protected override void OnInitialized()
     {
@@ -70,6 +79,26 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
         }
 
         base.OnInitialized();
+    }
+
+    private RenderFragment GetInnerRenderFragment(ITreeView[] rootTreeViews)
+    {
+        return builder =>
+        {
+            for (int i = 0; i < rootTreeViews.Length; i++)
+            {
+                var child = (TreeView<T>)rootTreeViews[i];
+
+                builder.OpenComponent<TreeViewDisplay<T>>(_sequence++);
+
+                builder.AddAttribute(_sequence++, "TreeView", child);
+                builder.AddAttribute(_sequence++, "GetSiblingsAndSelfFunc", () => rootTreeViews);
+                builder.AddAttribute(_sequence++, "IndexAmongSiblings", i);
+                builder.AddAttribute(_sequence++, "Parent", (T?) null);
+
+                builder.CloseComponent();
+            }
+        };
     }
 
     protected override void Dispose(bool disposing)

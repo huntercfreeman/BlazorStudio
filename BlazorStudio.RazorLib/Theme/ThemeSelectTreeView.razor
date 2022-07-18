@@ -2,9 +2,11 @@
                      TreeViewWrapKey="_themeTreeViewKey"
                      RootItems="_rootThemes"
                      GetChildrenFunc="LoadThemesChildren"
-                     Context="theme"
                      OnEnterKeyDown="ThemeTreeViewOnEnterKeyDown"
                      OnSpaceKeyDown="ThemeTreeViewOnEnterKeyDown"
                      IsExpandable="_ => false">
-    @theme.KeyName
+    
+    <ItemRenderFragment Context="theme">
+        @theme.KeyName
+    </ItemRenderFragment>
 </TreeViewWrapDisplay>
