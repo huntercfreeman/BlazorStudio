@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
+using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -65,6 +66,7 @@ public partial class InputFileDialog : ComponentBase
 
     private void InputFileTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath)
     {
+        Dispatcher.Dispatch(new SetWorkspaceAction(absoluteFilePath));
     }
 
     private void InputFileTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath)

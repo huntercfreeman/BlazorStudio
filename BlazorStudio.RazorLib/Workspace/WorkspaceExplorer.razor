@@ -1,4 +1,6 @@
-﻿<div class="bstudio_workspace-explorer"
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_workspace-explorer"
      style="@Dimensions.DimensionsCssString">
     
     <h5 class="bstudio_h5-title">Workspace Explorer</h5>
@@ -11,6 +13,12 @@
         </div>
         <div>
             <BlazorStudio.RazorLib.InputFile.InputFileDialogEntryPoint />
+        </div>
+    }
+    else
+    {
+        <div>
+            @WorkspaceStateWrap.Value.WorkspaceAbsoluteFilePath.GetAbsoluteFilePathString()
         </div>
     }
 </div>
