@@ -97,7 +97,7 @@ public class DotNetSolutionFileModel : FileModelBase, IDotNetSolutionFileModel
             if (!Guid.TryParse(guidOneAsString, out var guidOneAsGuid))
             {
                 throw new ApplicationException($"The dotnet solution file named: " +
-                    $"{AbsoluteFilePath.GetFilenameWithExtension} " +
+                    $"{AbsoluteFilePath.FilenameWithExtension} " +
                     $"was malformed at position: {fileContentStreamer.GetStreamPositionIndex}.");
             }
             else
@@ -108,7 +108,7 @@ public class DotNetSolutionFileModel : FileModelBase, IDotNetSolutionFileModel
         else
         {
             throw new ApplicationException($"The dotnet solution file named: " +
-                $"{AbsoluteFilePath.GetFilenameWithExtension} " +
+                $"{AbsoluteFilePath.FilenameWithExtension} " +
                 $"was malformed at position: {fileContentStreamer.GetStreamPositionIndex}.");
         }
     }
@@ -137,7 +137,7 @@ public class DotNetSolutionFileModel : FileModelBase, IDotNetSolutionFileModel
         if (!Guid.TryParse(guidTwoAsString, out var guidTwoAsGuid))
         {
             throw new ApplicationException($"The dotnet solution file named: " +
-                $"{AbsoluteFilePath.GetFilenameWithExtension} " +
+                $"{AbsoluteFilePath.FilenameWithExtension} " +
                 $"was malformed at position: {fileContentStreamer.GetStreamPositionIndex}.");
         }
         else

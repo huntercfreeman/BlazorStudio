@@ -33,7 +33,9 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     [Parameter]
     public RenderFragment<ImmutableArray<T>>? FooterRenderFragment { get; set; }
     [Parameter]
-    public RenderFragment<RenderFragment>? BodyRenderFragment { get; set; }
+    public RenderFragment<ImmutableArray<T>>? HeaderRenderFragment { get; set; }
+    [Parameter]
+    public string BodyCssClassAttribute { get; set; } = string.Empty;
     [Parameter]
     public string StyleString { get; set; } = string.Empty;
 
@@ -85,19 +87,7 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     {
         return builder =>
         {
-            for (int i = 0; i < rootTreeViews.Length; i++)
-            {
-                var child = (TreeView<T>)rootTreeViews[i];
-
-                builder.OpenComponent<TreeViewDisplay<T>>(_sequence++);
-
-                builder.AddAttribute(_sequence++, "TreeView", child);
-                builder.AddAttribute(_sequence++, "GetSiblingsAndSelfFunc", () => rootTreeViews);
-                builder.AddAttribute(_sequence++, "IndexAmongSiblings", i);
-                builder.AddAttribute(_sequence++, "Parent", (T?) null);
-
-                builder.CloseComponent();
-            }
+            
         };
     }
 

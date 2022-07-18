@@ -120,6 +120,7 @@ public partial class TreeViewDisplay<T>
                 TimeSpan.FromSeconds(10),
                 exception =>
                 {
+                    _isGettingChildren = false;
                     _toggleIsExpandedOnClickRichErrorModel = new RichErrorModel(
                         $"{nameof(ToggleIsExpandedOnClick)}: {exception.Message}",
                         $"TODO: Add a hint");

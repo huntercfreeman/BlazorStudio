@@ -90,10 +90,10 @@ public class RelativeFilePath : IRelativeFilePath
 
         if (Directories.Any())
         {
-            absoluteFilePathStringBuilder.Append(Directories.Select(d => d.GetFilenameWithExtension));
+            absoluteFilePathStringBuilder.Append(Directories.Select(d => d.FilenameWithExtension));
         }
 
-        absoluteFilePathStringBuilder.Append(GetFilenameWithExtension);
+        absoluteFilePathStringBuilder.Append(FilenameWithExtension);
 
         return absoluteFilePathStringBuilder.ToString();
     }
@@ -103,5 +103,5 @@ public class RelativeFilePath : IRelativeFilePath
     public List<IFilePath> Directories { get; } = new();
     public string FileNameNoExtension { get; protected set; }
     public string ExtensionNoPeriod { get; protected set; }
-    public string GetFilenameWithExtension => FileNameNoExtension + (IsDirectory ? "\\" : $".{ExtensionNoPeriod}");
+    public string FilenameWithExtension => FileNameNoExtension + (IsDirectory ? "\\" : $".{ExtensionNoPeriod}");
 }

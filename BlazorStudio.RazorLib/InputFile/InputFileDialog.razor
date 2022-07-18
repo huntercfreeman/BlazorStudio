@@ -12,25 +12,29 @@
                              OnEnterKeyDown="InputFileTreeViewOnEnterKeyDown"
                              OnSpaceKeyDown="InputFileTreeViewOnSpaceKeyDown"
                              IsExpandable="GetIsExpandable"
-                             StyleString="height: 100%;">
-                             
-                <BodyRenderFragment Context="innerRenderFragment">
-                    <div class="bstudio_input-file-dialog-body">
-                        @innerRenderFragment
-                    </div>
-                </BodyRenderFragment>
+                             StyleString="height: 100%;"
+                             BodyCssClassAttribute="bstudio_input-file-dialog-body">
 
                 <ItemRenderFragment>
                     <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
-                        @absoluteFilePath.GetFilenameWithExtension
+                        @absoluteFilePath.FilenameWithExtension
                     </span>
                 </ItemRenderFragment>
 
+                <HeaderRenderFragment Context="activeItems">
+                    <div class="bstudio_input-file-dialog-header">
+                        @foreach (var activeItem in activeItems)
+                        {
+                            @activeItem.GetAbsoluteFilePathString()
+                        }
+                    </div>
+                </HeaderRenderFragment>
+                
                 <FooterRenderFragment Context="activeItems">
                     <div class="bstudio_input-file-dialog-control-buttons">
                         @foreach (var activeItem in activeItems)
                         {
-                            @activeItem.GetAbsoluteFilePathString()
+                            @activeItem.FilenameWithExtension
                         }
                     </div>
                 </FooterRenderFragment>

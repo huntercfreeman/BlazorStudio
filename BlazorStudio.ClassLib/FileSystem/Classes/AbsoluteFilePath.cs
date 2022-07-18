@@ -148,7 +148,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
     public List<IFilePath> Directories { get; } = new();
     public string FileNameNoExtension { get; protected set; }
     public string ExtensionNoPeriod { get; protected set; }
-    public string GetFilenameWithExtension => FileNameNoExtension + (IsDirectory ? "\\" : $".{ExtensionNoPeriod}");
+    public string FilenameWithExtension => FileNameNoExtension + (IsDirectory ? "\\" : $".{ExtensionNoPeriod}");
 
     public IFileSystemDrive? RootDrive { get; private set; }
 
@@ -164,10 +164,10 @@ public class AbsoluteFilePath : IAbsoluteFilePath
 
         foreach (var directory in Directories)
         {
-            absoluteFilePathStringBuilder.Append(directory.GetFilenameWithExtension);
+            absoluteFilePathStringBuilder.Append(directory.FilenameWithExtension);
         }
 
-        absoluteFilePathStringBuilder.Append(GetFilenameWithExtension);
+        absoluteFilePathStringBuilder.Append(FilenameWithExtension);
 
         var absoluteFilePathString = absoluteFilePathStringBuilder.ToString();
 

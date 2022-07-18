@@ -14,5 +14,5 @@ public interface IFilePath
     public List<IFilePath> Directories { get; }
     public string FileNameNoExtension { get; }
     public string ExtensionNoPeriod { get; }
-    public string GetFilenameWithExtension { get; }
+    public string FilenameWithExtension { get; }
 }

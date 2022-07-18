@@ -26,14 +26,23 @@
                                 <CascadingValue Name="IsExpandable" Value="IsExpandable">
                                     <CascadingValue Value="TreeViewWrapKey">
                                         
-                                        @if (BodyRenderFragment is not null)
+                                        @if (HeaderRenderFragment is not null)
                                         {
-                                            @BodyRenderFragment(GetInnerRenderFragment(rootTreeViews))
+                                            @HeaderRenderFragment(activeItems)
                                         }
-                                        else
-                                        {
-                                            @GetInnerRenderFragment(rootTreeViews)
-                                        }
+
+                                        <div class="@BodyCssClassAttribute">
+                                            @for (int i = 0; i < rootTreeViews.Length; i++)
+                                            {
+                                                int index = i;
+                                                var child = (TreeView<T>) rootTreeViews[i];
+
+                                                <TreeViewDisplay TreeView="child"
+                                                                 GetSiblingsAndSelfFunc="() => rootTreeViews"
+                                                                 IndexAmongSiblings="index"
+                                                                 Parent="null"/>
+                                            }
+                                        </div>
 
                                         @if (FooterRenderFragment is not null)
                                         {
