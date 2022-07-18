@@ -11,15 +11,9 @@
     else
     {
         var rootTreeViews = TreeViewWrapStateSelection.Value.RootTreeViews.ToArray();
-        var activeTreeViews = TreeViewWrapStateSelection.Value.ActiveTreeViews;
 
         if (rootTreeViews?.Any() ?? false)
         {
-            @foreach (var treeView in activeTreeViews)
-            {
-                <div>@ChildContent((T) treeView.ItemUntyped)</div>
-            }
-
             <CascadingValue Value="GetChildrenFunc">
                 <CascadingValue Value="ChildContent">
                     <CascadingValue Name="Depth" Value="0">

@@ -56,14 +56,21 @@
     background-color: var(--bstudio_secondary-background-color);
     color: var(--bstudio_secondary-font-color);
     box-shadow: var(--bstudio_primary-overlay-box-shadow);
-    overflow-y: auto;
 }
 
 .bstudio_dialog-display-tool-bar {
+    height: 2rem;
+    padding: .25rem;
+    font-size: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: var(--bstudio_tertiary-background-color);
+}
+
+.bstudio_dialog-display-body {
+    height: calc(100% - 2.25rem);
+    overflow: auto;
 }
 
 .bstudio_dialog-display-tool-bar-entry {

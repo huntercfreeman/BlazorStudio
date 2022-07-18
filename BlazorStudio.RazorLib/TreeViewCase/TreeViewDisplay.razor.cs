@@ -159,7 +159,7 @@ public partial class TreeViewDisplay<T>
         {
             if (!TreeView.IsExpanded)
             {
-                ToggleIsExpandedOnClick();
+                _ = ToggleIsExpandedOnClick();
             }
             else
             {
@@ -175,7 +175,7 @@ public partial class TreeViewDisplay<T>
         {
             if (TreeView.IsExpanded)
             {
-                ToggleIsExpandedOnClick();
+                _ = ToggleIsExpandedOnClick();
             }
             else
             {
@@ -208,8 +208,13 @@ public partial class TreeViewDisplay<T>
 
             var siblingsAndSelf = GetSiblingsAndSelfFunc.Invoke();
 
-            if (IndexAmongSiblings == siblingsAndSelf.Length - 1 && 
-                Parent is not null)
+            if (TreeView.IsExpanded &&
+                rememberTreeViewChildren.Length > 0)
+            {
+                Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, rememberTreeViewChildren[0]));
+            }
+            else if (IndexAmongSiblings == siblingsAndSelf.Length - 1 &&
+                     Parent is not null)
             {
                 var activeTreeViewChanged = RecursivelySetArrowDown(Parent);
 
@@ -217,11 +222,6 @@ public partial class TreeViewDisplay<T>
                 {
                     _previousFocusState = true;
                 }
-            }
-            else if (TreeView.IsExpanded &&
-                     rememberTreeViewChildren.Length > 0)
-            {
-                Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, rememberTreeViewChildren[0]));
             }
             else
             {
