@@ -16,6 +16,11 @@
             .Select(x => (T) x.ItemUntyped)
             .ToImmutableArray();
 
+        if (HeaderRenderFragment is not null)
+        {
+            @HeaderRenderFragment(activeItems)
+        }
+
         if (rootTreeViews?.Any() ?? false)
         {
             <CascadingValue Value="GetChildrenFunc">
@@ -27,12 +32,6 @@
                                     <CascadingValue Name="OnContextMenuRenderFragment" Value="OnContextMenuRenderFragment">
                                         <CascadingValue Name="IsExpandable" Value="IsExpandable">
                                             <CascadingValue Value="TreeViewWrapKey">
-                                            
-                                                @if (HeaderRenderFragment is not null)
-                                                {
-                                                    @HeaderRenderFragment(activeItems)
-                                                }
-
                                                 <div class="@BodyCssClassAttribute">
                                                     @for (int i = 0; i < rootTreeViews.Length; i++)
                                                     {
@@ -45,11 +44,6 @@
                                                                          Parent="null"/>
                                                     }
                                                 </div>
-
-                                                @if (FooterRenderFragment is not null)
-                                                {
-                                                    @FooterRenderFragment(activeItems)
-                                                }
                                             </CascadingValue>
                                         </CascadingValue>
                                     </CascadingValue>
@@ -59,6 +53,11 @@
                     </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
+        }
+
+        if (FooterRenderFragment is not null)
+        {
+            @FooterRenderFragment(activeItems)
         }
     }
 </div>
