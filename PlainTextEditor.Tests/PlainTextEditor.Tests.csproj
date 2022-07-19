@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="TestData\TEST_BlazorStudio.sln">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Fluxor" Version="5.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
@@ -28,6 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestData\Hamlet_ Entire Play.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestData\helloWorld.c">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

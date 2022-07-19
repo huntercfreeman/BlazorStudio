@@ -1,0 +1,18 @@
+body {
+  color: black;
+  background: white;
+  background-position: top left;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.play {
+  font-family: sans-serif;
+  font-size: 150%;
+  font-weight: bold;
+}
+
+.nav {
+  font-family: sans-serif;
+}
+
