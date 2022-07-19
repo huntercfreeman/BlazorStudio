@@ -76,22 +76,12 @@ public partial record PlainTextEditorStates
 
             focusedPlainTextEditorRecord = ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);
 
-            var nextTokenMap = new Dictionary<TextTokenKey, ITextToken>(
-                focusedPlainTextEditorRecord.CurrentPlainTextEditorRow.Map
-            );
-
-            nextTokenMap[textToken.Key] = textToken;
-            
-            var nextTokenList = new List<TextTokenKey>(
-                focusedPlainTextEditorRecord.CurrentPlainTextEditorRow.Array
-            );
-
-            nextTokenList.Insert(focusedPlainTextEditorRecord.CurrentTokenIndex + 1, textToken.Key);
+            var nextTokenList = focusedPlainTextEditorRecord.CurrentPlainTextEditorRow.List
+                .Insert(focusedPlainTextEditorRecord.CurrentTokenIndex + 1, textToken);
 
             var nextRowInstance = focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>() with
             {
-                Map = nextTokenMap.ToImmutableDictionary(),
-                Array = nextTokenList.ToImmutableArray(),
+                List = nextTokenList,
                 SequenceKey = SequenceKey.NewSequenceKey()
             };
 
@@ -110,20 +100,24 @@ public partial record PlainTextEditorStates
             if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.StartOfRow)
                 return RemoveStartOfRowToken(focusedPlainTextEditorRecord);
 
-            var toBeRemovedTokenKey = focusedPlainTextEditorRecord.CurrentTextTokenKey;
+            var toBeRemovedToken = focusedPlainTextEditorRecord.CurrentTextToken;
             var toBeChangedRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
 
             focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
 
-            var toBeChangedRow = focusedPlainTextEditorRecord.List[toBeChangedRowIndex];
+            var toBeChangedRow = focusedPlainTextEditorRecord
+                                         .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
+                                             focusedPlainTextEditorRecord.List[toBeChangedRowIndex]) ;
 
-            var nextRowInstance = toBeChangedRow
-                .With()
-                .Remove(toBeRemovedTokenKey)
-                .Build();
+            var nextTokenList = toBeChangedRow.List
+                .Remove(toBeRemovedToken);
 
             var nextRowList = focusedPlainTextEditorRecord.List
-                .Replace(toBeChangedRow, nextRowInstance);
+                .Replace(toBeChangedRow, toBeChangedRow with
+                {
+                    List = nextTokenList,
+                    SequenceKey = SequenceKey.NewSequenceKey()
+                });
 
             return focusedPlainTextEditorRecord with
             {
@@ -138,7 +132,7 @@ public partial record PlainTextEditorStates
                 return focusedPlainTextEditorRecord;
             }
             
-            if (focusedPlainTextEditorRecord.CurrentPlainTextEditorRow.Array.Length == 1)
+            if (focusedPlainTextEditorRecord.CurrentPlainTextEditorRow.List.Count == 1)
             {
                 return RemoveCurrentRow(focusedPlainTextEditorRecord);
             }
@@ -166,19 +160,15 @@ public partial record PlainTextEditorStates
             return focusedPlainTextEditorRecord;
         }
         
-        // The replacement token must have the same Key as the one being replaced
         private static PlainTextEditorRecord ReplaceCurrentTokenWith(PlainTextEditorRecord focusedPlainTextEditorRecord,
             ITextToken textToken)
         {
-            var nextTokenMap = new Dictionary<TextTokenKey, ITextToken>(
-                focusedPlainTextEditorRecord.CurrentPlainTextEditorRow.Map
-            );
+            var currentRow = focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>();
+            var currentToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<TextTokenBase>();
 
-            nextTokenMap[textToken.Key] = textToken;
-
-            var nextRowInstance = focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>() with
+            var nextRowInstance = currentRow with
             {
-                Map = nextTokenMap.ToImmutableDictionary(),
+                List = currentRow.List.Replace(currentToken, textToken),
                 SequenceKey = SequenceKey.NewSequenceKey()
             };
 

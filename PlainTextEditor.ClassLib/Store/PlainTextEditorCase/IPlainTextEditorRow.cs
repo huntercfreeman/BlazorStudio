@@ -6,9 +6,6 @@ namespace PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
 public interface IPlainTextEditorRow
 {
     public PlainTextEditorRowKey Key { get; } 
-    public SequenceKey SequenceKey { get; } 
-    public ImmutableDictionary<TextTokenKey, ITextToken> Map { get; }
-    public ImmutableArray<TextTokenKey> Array { get; }
-    
-    public IPlainTextEditorRowBuilder With();
+    public SequenceKey SequenceKey { get; }
+    public ImmutableList<ITextToken> List { get; }
 }

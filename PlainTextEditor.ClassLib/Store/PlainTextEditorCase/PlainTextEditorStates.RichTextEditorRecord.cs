@@ -26,7 +26,7 @@ public partial record PlainTextEditorStates
             CurrentTokenIndex: 0,
             new RichTextEditorOptions())
         {
-            var startingRow = new PlainTextEditorRow();
+            var startingRow = new PlainTextEditorRow(null);
 
             List = List.Add(startingRow);
         }
@@ -43,13 +43,26 @@ public partial record PlainTextEditorStates
                    ?? throw new ApplicationException($"Expected {typeof(T).Name}");
         }
 
+        /// <summary>
+        /// TODO: Remove this and in its place use <see cref="ConvertIPlainTextEditorRowAs"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ApplicationException"></exception>
         public T GetCurrentPlainTextEditorRowAs<T>()
             where T : class
         {
             return CurrentPlainTextEditorRow as T
                    ?? throw new ApplicationException($"Expected {typeof(T).Name}");
         }
-        
+
+        public T ConvertIPlainTextEditorRowAs<T>(IPlainTextEditorRow plainTextEditorRow)
+            where T : class
+        {
+            return plainTextEditorRow as T
+                   ?? throw new ApplicationException($"Expected {typeof(T).Name}");
+        }
+
         public string GetPlainText()
         {
             var builder = new StringBuilder();
