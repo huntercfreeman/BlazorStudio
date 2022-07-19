@@ -11,4 +11,6 @@ public interface IPlainTextEditor
     public int CurrentRowIndex { get; }
     public int CurrentTokenIndex { get; }
     public RichTextEditorOptions RichTextEditorOptions { get; }
+
+    public string GetPlainText();
 }
