@@ -100,14 +100,16 @@ public partial record PlainTextEditorStates
             if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.StartOfRow)
                 return RemoveStartOfRowToken(focusedPlainTextEditorRecord);
 
-            var toBeRemovedToken = focusedPlainTextEditorRecord.CurrentTextToken;
+            var toBeRemovedTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex;
             var toBeChangedRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
 
             focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
 
             var toBeChangedRow = focusedPlainTextEditorRecord
                                          .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
-                                             focusedPlainTextEditorRecord.List[toBeChangedRowIndex]) ;
+                                             focusedPlainTextEditorRecord.List[toBeChangedRowIndex]);
+
+            var toBeRemovedToken = toBeChangedRow.List[toBeRemovedTokenIndex];
 
             var nextTokenList = toBeChangedRow.List
                 .Remove(toBeRemovedToken);
@@ -204,12 +206,14 @@ public partial record PlainTextEditorStates
 
                 replacementRow = replacementRow with
                 {
-                    List = replacementRow.List.Remove(token)
+                    List = replacementRow.List.Remove(token),
+                    SequenceKey = SequenceKey.NewSequenceKey()
                 };
 
                 constructedRow = constructedRow with
                 {
-                    List = constructedRow.List.Add(token)
+                    List = constructedRow.List.Add(token),
+                    SequenceKey = SequenceKey.NewSequenceKey()
                 };
             }
 
@@ -499,7 +503,8 @@ public partial record PlainTextEditorStates
 
                 replacementRow = replacementRow with
                 {
-                    List = replacementRow.List.Add(token)
+                    List = replacementRow.List.Add(token),
+                    SequenceKey = SequenceKey.NewSequenceKey()
                 };
             }
 

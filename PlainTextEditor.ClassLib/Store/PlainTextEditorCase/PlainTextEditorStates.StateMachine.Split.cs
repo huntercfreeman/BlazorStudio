@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PlainTextEditor.ClassLib.Keyboard;
+using PlainTextEditor.ClassLib.Sequence;
 
 namespace PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
 
@@ -54,7 +55,7 @@ public partial record PlainTextEditorStates
                 Content = secondSplitContent
             };
 
-            var toBeRemovedToken = focusedPlainTextEditorRecord.CurrentTextToken;
+            var toBeRemovedTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex;
             var toBeChangedRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
 
             focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
@@ -71,6 +72,8 @@ public partial record PlainTextEditorStates
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
                     focusedPlainTextEditorRecord.List[toBeChangedRowIndex]);
 
+            var toBeRemovedToken = toBeChangedRow.List[toBeRemovedTokenIndex];
+
             var nextRow = toBeChangedRow;
 
             int insertionOffset = 0;
@@ -79,7 +82,8 @@ public partial record PlainTextEditorStates
             {
                 List = nextRow.List
                     .Remove(toBeRemovedToken)
-                    .Insert(rememberTokenIndex + insertionOffset++, tokenFirst)
+                    .Insert(rememberTokenIndex + insertionOffset++, tokenFirst),
+                SequenceKey = SequenceKey.NewSequenceKey()
             };
 
             if (tokenToInsertBetweenSplit is not null)
@@ -87,14 +91,16 @@ public partial record PlainTextEditorStates
                 nextRow = nextRow with
                 {
                     List = nextRow.List
-                        .Insert(rememberTokenIndex + insertionOffset++, tokenToInsertBetweenSplit)
+                        .Insert(rememberTokenIndex + insertionOffset++, tokenToInsertBetweenSplit),
+                    SequenceKey = SequenceKey.NewSequenceKey()
                 };
             }
 
             nextRow = nextRow with
             {
                 List = nextRow.List
-                    .Insert(rememberTokenIndex + insertionOffset++, tokenSecond)
+                    .Insert(rememberTokenIndex + insertionOffset++, tokenSecond),
+                SequenceKey = SequenceKey.NewSequenceKey()
             };
 
             var nextRowList = focusedPlainTextEditorRecord.List.Replace(toBeChangedRow,
@@ -117,14 +123,12 @@ public partial record PlainTextEditorStates
             if (rememberCurrentToken.WhitespaceKind != WhitespaceKind.Tab)
                 return focusedPlainTextEditorRecord;
 
-            var toBeRemovedToken = focusedPlainTextEditorRecord.CurrentTextToken;
+            var toBeRemovedTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex;
             var toBeRemovedTokenIndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText;
-            var rememberTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex;
             var toBeChangedRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
 
             focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
-
-
+            
             var replacementCurrentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>() with
                 {
@@ -136,10 +140,13 @@ public partial record PlainTextEditorStates
             var toBeChangedRow = focusedPlainTextEditorRecord
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
                     focusedPlainTextEditorRecord.List[toBeChangedRowIndex]);
+            
+            var toBeRemovedToken = toBeChangedRow.List[toBeRemovedTokenIndex];
 
             var nextRow = toBeChangedRow with
             {
-                List = toBeChangedRow.List.Remove(toBeRemovedToken)
+                List = toBeChangedRow.List.Remove(toBeRemovedToken),
+                SequenceKey = SequenceKey.NewSequenceKey()
             };
 
             var spaceKeyDownEventRecord = new KeyDownEventRecord(
@@ -159,7 +166,8 @@ public partial record PlainTextEditorStates
 
                 nextRow = nextRow with
                 {
-                    List = toBeChangedRow.List.Insert(rememberTokenIndex + i, spaceWhiteSpaceToken)
+                    List = nextRow.List.Insert(toBeRemovedTokenIndex + i, spaceWhiteSpaceToken),
+                    SequenceKey = SequenceKey.NewSequenceKey()
                 };
             }
 
@@ -167,9 +175,10 @@ public partial record PlainTextEditorStates
             {
                 nextRow = nextRow with
                 {
-                    List = toBeChangedRow.List
-                        .Insert(rememberTokenIndex + toBeRemovedTokenIndexInPlainText!.Value + 1,
-                            tokenToInsertBetweenSplit)
+                    List = nextRow.List
+                        .Insert(toBeRemovedTokenIndex + toBeRemovedTokenIndexInPlainText!.Value + 1,
+                            tokenToInsertBetweenSplit),
+                    SequenceKey = SequenceKey.NewSequenceKey()
                 };
             }
 
@@ -179,8 +188,8 @@ public partial record PlainTextEditorStates
             return focusedPlainTextEditorRecord with
             {
                 List = nextRowList,
-                CurrentTokenIndex = rememberTokenIndex + toBeRemovedTokenIndexInPlainText!.Value + 
-                    (tokenToInsertBetweenSplit is not null ? 1 : 0)
+                CurrentTokenIndex = toBeRemovedTokenIndex + toBeRemovedTokenIndexInPlainText!.Value + 
+                                    (tokenToInsertBetweenSplit is not null ? 1 : 0)
             };
         }
     }

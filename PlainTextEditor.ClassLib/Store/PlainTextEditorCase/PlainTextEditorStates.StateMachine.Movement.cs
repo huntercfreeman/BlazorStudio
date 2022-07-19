@@ -120,7 +120,8 @@ public partial record PlainTextEditorStates
                 List = currentRow.List.Replace(currentToken, currentToken with
                 {
                     IndexInPlainText = null
-                })
+                }),
+                SequenceKey = SequenceKey.NewSequenceKey()
             };
 
             int? indexInPlainText;
