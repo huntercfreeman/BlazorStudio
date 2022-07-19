@@ -37,7 +37,10 @@
     <None Update="TestData\Hamlet_ Entire Play.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\helloWorld.c">
+    <None Update="TestData\helloWorld_CARRIAGE-RETURN-NEW-LINE.c">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\helloWorld_NEW-LINE.c">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

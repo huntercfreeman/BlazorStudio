@@ -1,3 +1,5 @@
+using PlainTextEditor.ClassLib.Keyboard;
+using PlainTextEditor.ClassLib.Store.KeyDownEventCase;
 using PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
 
 namespace PlainTextEditor.Tests;
@@ -5,7 +7,8 @@ namespace PlainTextEditor.Tests;
 public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 {
     [Theory]
-    [InlineData("./TestData/helloWorld.c")]
+    [InlineData("./TestData/helloWorld_NEW-LINE.c")]
+    [InlineData("./TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c")]
     [InlineData("./TestData/TEST_BlazorStudio.sln")]
     public async Task READ_FILE_INTO_EDITOR(string relativeFilePath)
     {
@@ -66,19 +69,27 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     //    Assert.Single(State.Value.Array);
     //}
 
-    [Fact]
-    public async Task SHOULD_NEW_LINE()
+    [Theory]
+    [InlineData("./TestData/helloWorld_NEW-LINE.c", "\n")]
+    [InlineData("./TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c", "\r\n")]
+    public async Task CARRIAGE_RETURN_MATCHING_ON_NEW_LINE(string relativeFilePath,
+        string expectedAdditionToText)
     {
+        var keyboardEvent = new KeyDownEventRecord(KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
+            KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
+            false,
+            false,
+            false);
+
+
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
         Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
 
-        string helloWorldRelativeFilePath = "./TestData/helloWorld.c";
-
         var expectedContent = await File
-            .ReadAllTextAsync(helloWorldRelativeFilePath);
+            .ReadAllTextAsync(relativeFilePath);
 
         await DispatchHelperAsync(
-            new PlainTextEditorInitializeAction(plainTextEditorKey, helloWorldRelativeFilePath),
+            new PlainTextEditorInitializeAction(plainTextEditorKey, relativeFilePath),
             State);
 
         var documentPlainText = State.Value.Map[plainTextEditorKey]
@@ -86,29 +97,16 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         Assert.Equal(expectedContent, documentPlainText);
 
-        Assert.Single(State.Value.Map);
-        Assert.Single(State.Value.Array);
-    }
-
-    [Fact]
-    public async Task SHOULD_CARRIAGE_RETURN_NEW_LINE()
-    {
-        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-        Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
-
-        string helloWorldRelativeFilePath = "./TestData/helloWorld.c";
-
-        var expectedContent = await File
-            .ReadAllTextAsync(helloWorldRelativeFilePath);
+        var newLineEventExpectedContent = expectedContent + expectedAdditionToText;
 
         await DispatchHelperAsync(
-            new PlainTextEditorInitializeAction(plainTextEditorKey, helloWorldRelativeFilePath),
+            new KeyDownEventAction(plainTextEditorKey, keyboardEvent),
             State);
 
-        var documentPlainText = State.Value.Map[plainTextEditorKey]
+        var newLineEventDocumentPlainText = State.Value.Map[plainTextEditorKey]
             .GetPlainText();
 
-        Assert.Equal(expectedContent, documentPlainText);
+        Assert.Equal(newLineEventExpectedContent, newLineEventDocumentPlainText);
 
         Assert.Single(State.Value.Map);
         Assert.Single(State.Value.Array);
