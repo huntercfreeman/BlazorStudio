@@ -35,7 +35,7 @@ public partial record PlainTextEditorStates
             }
 
             if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.StartOfRow &&
-                focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>().Array.Length > 1)
+                focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>().List.Count > 1)
             {
                 Console.WriteLine("MoveCurrentRowToEndOfPreviousRow");
                 focusedPlainTextEditorRecord = MoveCurrentRowToEndOfPreviousRow(focusedPlainTextEditorRecord);

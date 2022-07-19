@@ -33,8 +33,8 @@ public partial record PlainTextEditorStates
 
         public IPlainTextEditorRow CurrentPlainTextEditorRow => List[CurrentRowIndex];
 
-        public TextTokenKey CurrentTextTokenKey => CurrentPlainTextEditorRow.Array[CurrentTokenIndex];
-        public ITextToken CurrentTextToken => CurrentPlainTextEditorRow.Map[CurrentTextTokenKey];
+        public TextTokenKey CurrentTextTokenKey => CurrentPlainTextEditorRow.List[CurrentTokenIndex].Key;
+        public ITextToken CurrentTextToken => CurrentPlainTextEditorRow.List[CurrentTokenIndex];
 
         public T GetCurrentTextTokenAs<T>()
             where T : class
@@ -69,9 +69,9 @@ public partial record PlainTextEditorStates
 
             foreach (var row in List)
             {
-                foreach (var tokenKey in row.Array)
+                foreach (var token in row.List)
                 {
-                    if (tokenKey == List[0].Array[0])
+                    if (token.Key == List[0].List[0].Key)
                     {
                         // Is first start of row so skip
                         // as it would insert a enter key stroke at start
@@ -80,9 +80,7 @@ public partial record PlainTextEditorStates
                         continue;
                     }
 
-                    var currentToken = row.Map[tokenKey];
-
-                    builder.Append(currentToken.CopyText);
+                    builder.Append(token.CopyText);
                 }
             }
 
