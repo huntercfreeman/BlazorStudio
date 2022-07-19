@@ -39,13 +39,13 @@
                 </HeaderRenderFragment>
                 
                 <FooterRenderFragment Context="activeItems">
-                    <div class="bstudio_input-file-dialog-control-buttons">
+                    <div class="bstudio_input-file-tree-view-footer">
                         @foreach (var activeItem in activeItems)
                         {
                             @activeItem.FilenameWithExtension
                         }
                         
-                        <div>
+                        <div class="bstudio_input-file-dialog-control-buttons">
                             @if (activeItems[0].IsDirectory)
                             {
                                 <button class="btn btn-primary" @onclick="() => ConfirmOnClick(activeItems)">

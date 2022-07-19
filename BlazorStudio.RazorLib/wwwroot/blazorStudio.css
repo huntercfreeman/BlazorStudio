@@ -13,7 +13,6 @@
     padding: .35rem;
     font-size: 1rem;
     display: flex;
-    ;
     align-items: center;
 }
 
@@ -314,7 +313,7 @@
 }
 
 .bstudio_input-file-dialog-body {
-    height: calc(100% - 4.5rem - 3.8rem);
+    height: calc(100% - 4.5rem - 2rem);
     overflow-y: auto;
 }
 
@@ -323,16 +322,21 @@
     overflow-y: auto;
 }
 
-.bstudio_input-file-dialog-control-buttons {
+.bstudio_input-file-tree-view-footer {
     height: 4.5rem;
     padding: .25rem;
     font-size: 1rem;
     background-color: var(--bstudio_tertiary-background-color);
 }
 
+.bstudio_input-file-dialog-control-buttons {
+    display: flex;
+    justify-content: end;
+}
+
 .bstudio_input-file-dialog-header {
-    height: 3.8rem;
-    padding: 0.1rem;
+    height: 2rem;
+    padding: 0.2rem;
     overflow-x: auto;
     font-size: 1rem;
     background-color: var(--bstudio_primary-background-color);
