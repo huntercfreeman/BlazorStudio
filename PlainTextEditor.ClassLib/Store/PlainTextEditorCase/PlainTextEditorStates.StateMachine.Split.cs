@@ -54,7 +54,7 @@ public partial record PlainTextEditorStates
                 Content = secondSplitContent
             };
 
-            var toBeRemovedTokenKey = focusedPlainTextEditorRecord.CurrentTextTokenKey;
+            var toBeRemovedToken = focusedPlainTextEditorRecord.CurrentTextToken;
             var toBeChangedRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
 
             focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
@@ -67,28 +67,38 @@ public partial record PlainTextEditorStates
 
             focusedPlainTextEditorRecord = ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);
 
-            var toBeChangedRow = focusedPlainTextEditorRecord.List[toBeChangedRowIndex];
+            var toBeChangedRow = focusedPlainTextEditorRecord
+                .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
+                    focusedPlainTextEditorRecord.List[toBeChangedRowIndex]);
 
-            var nextRowBuilder = toBeChangedRow
-                .With();
-
-            nextRowBuilder.Remove(toBeRemovedTokenKey);
+            var nextRow = toBeChangedRow;
 
             int insertionOffset = 0;
 
-            nextRowBuilder.Insert(rememberTokenIndex + insertionOffset++, tokenFirst);
+            nextRow = nextRow with
+            {
+                List = nextRow.List
+                    .Remove(toBeRemovedToken)
+                    .Insert(rememberTokenIndex + insertionOffset++, tokenFirst)
+            };
 
             if (tokenToInsertBetweenSplit is not null)
             {
-                nextRowBuilder.Insert(rememberTokenIndex + insertionOffset++, tokenToInsertBetweenSplit);
+                nextRow = nextRow with
+                {
+                    List = nextRow.List
+                        .Insert(rememberTokenIndex + insertionOffset++, tokenToInsertBetweenSplit)
+                };
             }
-            
-            nextRowBuilder.Insert(rememberTokenIndex + insertionOffset++, tokenSecond);
-            
-            var nextRowInstance = nextRowBuilder.Build();
-            
+
+            nextRow = nextRow with
+            {
+                List = nextRow.List
+                    .Insert(rememberTokenIndex + insertionOffset++, tokenSecond)
+            };
+
             var nextRowList = focusedPlainTextEditorRecord.List.Replace(toBeChangedRow,
-                nextRowInstance);
+                nextRow);
 
             return focusedPlainTextEditorRecord with
             {
@@ -107,7 +117,7 @@ public partial record PlainTextEditorStates
             if (rememberCurrentToken.WhitespaceKind != WhitespaceKind.Tab)
                 return focusedPlainTextEditorRecord;
 
-            var toBeRemovedTokenKey = focusedPlainTextEditorRecord.CurrentTextTokenKey;
+            var toBeRemovedToken = focusedPlainTextEditorRecord.CurrentTextToken;
             var toBeRemovedTokenIndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText;
             var rememberTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex;
             var toBeChangedRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
@@ -122,13 +132,15 @@ public partial record PlainTextEditorStates
                 };
 
             focusedPlainTextEditorRecord = ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);
-            
-            var toBeChangedRow = focusedPlainTextEditorRecord.List[toBeChangedRowIndex];
 
-            var nextRowBuilder = toBeChangedRow
-                .With();
+            var toBeChangedRow = focusedPlainTextEditorRecord
+                .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
+                    focusedPlainTextEditorRecord.List[toBeChangedRowIndex]);
 
-            nextRowBuilder.Remove(toBeRemovedTokenKey);
+            var nextRow = toBeChangedRow with
+            {
+                List = toBeChangedRow.List.Remove(toBeRemovedToken)
+            };
 
             var spaceKeyDownEventRecord = new KeyDownEventRecord(
                 KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
@@ -145,17 +157,24 @@ public partial record PlainTextEditorStates
                     IndexInPlainText = null
                 };
 
-                nextRowBuilder.Insert(rememberTokenIndex + i, spaceWhiteSpaceToken);
+                nextRow = nextRow with
+                {
+                    List = toBeChangedRow.List.Insert(rememberTokenIndex + i, spaceWhiteSpaceToken)
+                };
             }
 
             if (tokenToInsertBetweenSplit is not null)
-                nextRowBuilder.Insert(rememberTokenIndex + toBeRemovedTokenIndexInPlainText!.Value + 1, 
-                    tokenToInsertBetweenSplit);
-            
-            var nextRowInstance = nextRowBuilder.Build();
+            {
+                nextRow = nextRow with
+                {
+                    List = toBeChangedRow.List
+                        .Insert(rememberTokenIndex + toBeRemovedTokenIndexInPlainText!.Value + 1,
+                            tokenToInsertBetweenSplit)
+                };
+            }
 
             var nextRowList = focusedPlainTextEditorRecord.List
-                .Replace(toBeChangedRow, nextRowInstance);
+                .Replace(toBeChangedRow, nextRow);
 
             return focusedPlainTextEditorRecord with
             {

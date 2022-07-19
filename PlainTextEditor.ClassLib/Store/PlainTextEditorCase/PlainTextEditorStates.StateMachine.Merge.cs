@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PlainTextEditor.ClassLib.Keyboard;
+using PlainTextEditor.ClassLib.Sequence;
 
 namespace PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
 
@@ -43,12 +44,14 @@ public partial record PlainTextEditorStates
             var currentRow = focusedPlainTextEditorRecord
                 .GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>();
 
-            var replacementRow = currentRow
-                .With()
-                .Remove(nextTokenTuple.token.Key)
-                .Remove(focusedPlainTextEditorRecord.CurrentTextTokenKey)
-                .Insert(focusedPlainTextEditorRecord.CurrentTokenIndex, replacementToken)
-                .Build();
+            var replacementRow = currentRow with
+            {
+                List = currentRow.List
+                    .Remove(nextTokenTuple.token)
+                    .Remove(focusedPlainTextEditorRecord.CurrentTextToken)
+                    .Insert(focusedPlainTextEditorRecord.CurrentTokenIndex, replacementToken),
+                SequenceKey = SequenceKey.NewSequenceKey()
+            };
 
             var nextRowList = focusedPlainTextEditorRecord.List.Replace(currentRow,
                 replacementRow);
