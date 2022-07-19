@@ -81,7 +81,6 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             false,
             false);
 
-
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
         Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
 
@@ -97,7 +96,7 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         Assert.Equal(expectedContent, documentPlainText);
 
-        var newLineEventExpectedContent = expectedContent + expectedAdditionToText;
+        var keyboardEventExpectedContent = expectedContent + expectedAdditionToText;
 
         await DispatchHelperAsync(
             new KeyDownEventAction(plainTextEditorKey, keyboardEvent),
@@ -106,7 +105,7 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         var newLineEventDocumentPlainText = State.Value.Map[plainTextEditorKey]
             .GetPlainText();
 
-        Assert.Equal(newLineEventExpectedContent, newLineEventDocumentPlainText);
+        Assert.Equal(keyboardEventExpectedContent, newLineEventDocumentPlainText);
 
         Assert.Single(State.Value.Map);
         Assert.Single(State.Value.Array);
