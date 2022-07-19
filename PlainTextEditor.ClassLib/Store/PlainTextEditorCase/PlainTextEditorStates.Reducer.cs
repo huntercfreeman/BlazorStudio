@@ -64,12 +64,6 @@ public partial record PlainTextEditorStates
                 {
                     var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
 
-                    //var startTimeUtc = DateTime.UtcNow;
-
-                    //var delayInMiliseconds = 1;
-                    //Console.WriteLine($"delayInMiliseconds: {delayInMiliseconds}");
-                    //await Task.Delay(delayInMiliseconds);
-
                     var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
                     var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
@@ -78,6 +72,17 @@ public partial record PlainTextEditorStates
 
                     if (focusedPlainTextEditor is null)
                         return;
+
+                    // TODO: This is not a good way to do Keymaps but am testing save functionality before building Keymaps logic
+                    //if (keyDownEventAction.KeyDownEventRecord.CtrlWasPressed)
+                    //{
+                    //    if (keyDownEventAction.KeyDownEventRecord.Key == "s" ||
+                    //        keyDownEventAction.KeyDownEventRecord.Key == "S")
+                    //    {
+                    //        await SavePlainTextEditor(focusedPlainTextEditor);
+                    //        return;
+                    //    }
+                    //}
 
                     var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
                         .HandleKeyDownEvent(focusedPlainTextEditor, keyDownEventAction.KeyDownEventRecord) with
@@ -89,16 +94,6 @@ public partial record PlainTextEditorStates
 
                     var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
                     var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
-
-                    //var endTimeUtc = DateTime.UtcNow;
-
-                    //var elapsedTimeSpan = endTimeUtc - startTimeUtc;
-
-                    //Console.WriteLine($"zMiliseconds: {elapsedTimeSpan.TotalMilliseconds}");
-                    //Console.WriteLine($"_queuedEffectsCounter: {_queuedEffectsCounter}");
-
-                    // If hosted in WebAssembly this is needed as Blazor WA is currently single threaded.
-                    //await Task.Delay(1);
 
                     _queuedEffectsCounter--;
 
@@ -226,6 +221,15 @@ public partial record PlainTextEditorStates
 
             return new PlainTextEditorStates(nextPlainTextEditorMap.ToImmutableDictionary(), nextPlainTextEditorList.ToImmutableArray());
         }
+        
+        // TODO: Look into Unit Testing save plain text editor before ever allowing a save keybind in the editor (as an aside this ended up working quite well. A current issue is '\r\n' converted to '\n' when saving)
+        //private static async Task SavePlainTextEditor(PlainTextEditorRecord focusedPlainTextEditor)
+        //{
+        //    var documentPlainText = focusedPlainTextEditor.GetPlainText();
+
+        //    await File.WriteAllTextAsync("C:\\Users\\hunte\\source\\repos\\TestBlazorStudio\\main.c",
+        //        documentPlainText);
+        //}
     }
 
     /// <summary>

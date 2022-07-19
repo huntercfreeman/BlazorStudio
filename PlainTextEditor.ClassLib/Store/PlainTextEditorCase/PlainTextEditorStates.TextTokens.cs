@@ -11,6 +11,7 @@ public partial record PlainTextEditorStates
     private abstract record TextTokenBase : ITextToken
     {
         public abstract string PlainText { get; }
+        public abstract string CopyText { get; }
         public abstract TextTokenKind Kind { get; }
         public TextTokenKey Key { get; init; } = TextTokenKey.NewTextTokenKey();
         public int? IndexInPlainText { get; init; }
@@ -19,6 +20,7 @@ public partial record PlainTextEditorStates
     private record StartOfRowTextToken : TextTokenBase
     {
         public override string PlainText => "\n";
+        public override string CopyText => PlainText;
         public override TextTokenKind Kind => TextTokenKind.StartOfRow;
     }
 
@@ -28,6 +30,7 @@ public partial record PlainTextEditorStates
         public string Content { get; init; }
         
         public override string PlainText => Content;
+        public override string CopyText => PlainText;
         public override TextTokenKind Kind => TextTokenKind.Default;
     }
 
@@ -57,6 +60,11 @@ public partial record PlainTextEditorStates
         }
         
         public override string PlainText => _content;
+        
+        public override string CopyText => WhitespaceKind == WhitespaceKind.Space
+            ? PlainText
+            : "\t";
+
         public override TextTokenKind Kind => TextTokenKind.Whitespace;
         
         public WhitespaceKind WhitespaceKind { get; }

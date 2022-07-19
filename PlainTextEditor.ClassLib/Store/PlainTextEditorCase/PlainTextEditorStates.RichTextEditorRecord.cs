@@ -49,5 +49,31 @@ public partial record PlainTextEditorStates
             return CurrentPlainTextEditorRow as T
                    ?? throw new ApplicationException($"Expected {typeof(T).Name}");
         }
+        
+        public string GetPlainText()
+        {
+            var builder = new StringBuilder();
+
+            foreach (var row in List)
+            {
+                foreach (var tokenKey in row.Array)
+                {
+                    if (tokenKey == List[0].Array[0])
+                    {
+                        // Is first start of row so skip
+                        // as it would insert a enter key stroke at start
+                        // of document otherwise.
+
+                        continue;
+                    }
+
+                    var currentToken = row.Map[tokenKey];
+
+                    builder.Append(currentToken.CopyText);
+                }
+            }
+
+            return builder.ToString();
+        }
     }
 }
