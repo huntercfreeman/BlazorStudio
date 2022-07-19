@@ -1,5 +1,6 @@
 using PlainTextEditor.ClassLib.Sequence;
 using System.Collections.Immutable;
+using PlainTextEditor.ClassLib.Keyboard;
 
 namespace PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
 
@@ -16,7 +17,31 @@ public partial record PlainTextEditorStates
             new Dictionary<TextTokenKey, ITextToken>().ToImmutableDictionary(),
             new TextTokenKey[0].ToImmutableArray())
         {
-            var startOfRowToken = new StartOfRowTextToken()
+            var startOfRowToken = new StartOfRowTextToken(null)
+            {
+                IndexInPlainText = 0
+            };
+
+            Map = new Dictionary<TextTokenKey, ITextToken>
+            {
+                { 
+                    startOfRowToken.Key, 
+                    startOfRowToken
+                }
+            }.ToImmutableDictionary();
+
+            Array = new TextTokenKey[]
+            {
+                startOfRowToken.Key
+            }.ToImmutableArray();
+        }
+        
+        public PlainTextEditorRow(KeyDownEventRecord keyDownEventRecord) : this(PlainTextEditorRowKey.NewPlainTextEditorRowKey(),
+            SequenceKey.NewSequenceKey(),
+            new Dictionary<TextTokenKey, ITextToken>().ToImmutableDictionary(),
+            new TextTokenKey[0].ToImmutableArray())
+        {
+            var startOfRowToken = new StartOfRowTextToken(keyDownEventRecord)
             {
                 IndexInPlainText = 0
             };

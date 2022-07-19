@@ -136,16 +136,23 @@ public partial record PlainTextEditorStates
 
                     PlainTextEditorRecord replacementPlainTextEditor = plainTextEditor;
 
+                    var previousCharacterWasCarriageReturn = false;
+
                     foreach (var character in content)
                     {
                         if (character == '\r')
+                        {
+                            previousCharacterWasCarriageReturn = true;
                             continue;
+                        }
 
                         var code = character switch
                         {
                             '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
                             ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
-                            '\n' => KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE,
+                            '\n' => previousCharacterWasCarriageReturn 
+                                ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
+                                : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE,
                             _ => character.ToString()
                         };
 
@@ -164,6 +171,8 @@ public partial record PlainTextEditorStates
                             {
                                 SequenceKey = SequenceKey.NewSequenceKey()
                             };
+
+                        previousCharacterWasCarriageReturn = false;
                     }
 
                     nextPlainTextEditorMap[plainTextEditorInitializeAction.PlainTextEditorKey] = replacementPlainTextEditor;

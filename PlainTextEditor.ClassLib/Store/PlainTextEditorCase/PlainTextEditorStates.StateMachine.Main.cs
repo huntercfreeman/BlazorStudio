@@ -191,7 +191,8 @@ public partial record PlainTextEditorStates
             };
         }
 
-        private static PlainTextEditorRecord InsertNewLine(PlainTextEditorRecord focusedPlainTextEditorRecord)
+        private static PlainTextEditorRecord InsertNewLine(PlainTextEditorRecord focusedPlainTextEditorRecord,
+            KeyDownEventRecord keyDownEventRecord)
         {
             var replacementCurrentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>() with
@@ -206,7 +207,7 @@ public partial record PlainTextEditorStates
 
             var replacementRowBuilder = currentRow.With();
 
-            var constructedRowBuilder = new PlainTextEditorRow().With();
+            var constructedRowBuilder = new PlainTextEditorRow(keyDownEventRecord).With();
             
             for (int i = focusedPlainTextEditorRecord.CurrentTokenIndex + 1; i < currentRow.Array.Length; i++)
             {

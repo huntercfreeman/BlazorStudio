@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 namespace PlainTextEditor.ClassLib.Keyboard;
 
 public static class KeyboardKeyFacts
@@ -23,6 +25,8 @@ public static class KeyboardKeyFacts
         {
             case "\t":
             case WhitespaceKeys.TAB_CODE:
+            case "\r":
+            case WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE:
             case "\n":
             case WhitespaceKeys.ENTER_CODE:
             case " ":
@@ -45,7 +49,20 @@ public static class KeyboardKeyFacts
     {
         public const string TAB_CODE = "Tab";
         public const string ENTER_CODE = "Enter";
+        public const string CARRIAGE_RETURN_NEW_LINE_CODE = "CarriageReturnNewLine";
         public const string SPACE_CODE = "Space";
+    }
+    
+    public static class NewLineCodes
+    {
+        public const string ENTER_CODE = WhitespaceKeys.ENTER_CODE;
+        public const string CARRIAGE_RETURN_NEW_LINE_CODE = WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE;
+
+        public static readonly ImmutableArray<string> ALL_NEW_LINE_CODES = new string[]
+        {
+            ENTER_CODE,
+            CARRIAGE_RETURN_NEW_LINE_CODE
+        }.ToImmutableArray();
     }
 
     public static class MovementKeys

@@ -20,14 +20,15 @@ public partial record PlainTextEditorStates
 
             if (rememberToken.IndexInPlainText!.Value != rememberToken.PlainText.Length - 1)
             {
-                if (KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE == keyDownEventRecord.Code)
+                if (KeyboardKeyFacts.NewLineCodes.ALL_NEW_LINE_CODES.Contains(keyDownEventRecord.Code))
                 {
                     focusedPlainTextEditorRecord = SplitCurrentToken(
                         focusedPlainTextEditorRecord,
                         null
                     );
 
-                    return InsertNewLine(focusedPlainTextEditorRecord);
+                    return InsertNewLine(focusedPlainTextEditorRecord,
+                        keyDownEventRecord);
                 }
 
                 return SplitCurrentToken(
@@ -37,9 +38,10 @@ public partial record PlainTextEditorStates
             }
             else
             {
-                if (KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE == keyDownEventRecord.Code)
+                if (KeyboardKeyFacts.NewLineCodes.ALL_NEW_LINE_CODES.Contains(keyDownEventRecord.Code))
                 {
-                    return InsertNewLine(focusedPlainTextEditorRecord);
+                    return InsertNewLine(focusedPlainTextEditorRecord,
+                        keyDownEventRecord);
                 }
 
                 return InsertNewCurrentTokenAfterCurrentPosition(focusedPlainTextEditorRecord,

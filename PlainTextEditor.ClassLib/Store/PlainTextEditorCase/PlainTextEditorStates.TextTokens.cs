@@ -17,11 +17,25 @@ public partial record PlainTextEditorStates
         public int? IndexInPlainText { get; init; }
     }
 
-    private record StartOfRowTextToken : TextTokenBase
+    private record StartOfRowTextToken(KeyDownEventRecord? KeyDownEventRecord) : TextTokenBase
     {
         public override string PlainText => "\n";
-        public override string CopyText => PlainText;
+        public override string CopyText => IsCarriageReturn()
+            ? "\r\n"
+            : PlainText;
+
         public override TextTokenKind Kind => TextTokenKind.StartOfRow;
+
+        public bool IsCarriageReturn()
+        {
+            if (KeyDownEventRecord is null)
+            {
+                return false;
+            }
+
+            return
+                KeyDownEventRecord.Code == KeyboardKeyFacts.NewLineCodes.CARRIAGE_RETURN_NEW_LINE_CODE;
+        }
     }
 
     private record DefaultTextToken : TextTokenBase
