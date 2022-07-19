@@ -101,13 +101,13 @@ public partial record PlainTextEditorStates
 
             var targetRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex + 1;
 
-            var rowBelow = focusedPlainTextEditorRecord
+            var belowRow = focusedPlainTextEditorRecord
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
                     focusedPlainTextEditorRecord.List[targetRowIndex]);
 
             var tokenInRowBelowTuple = CalculateTokenAtColumnIndexRespectiveToRow(
                 focusedPlainTextEditorRecord,
-                rowBelow
+                belowRow
                     as PlainTextEditorRow
                 ?? throw new ApplicationException($"Expected type {nameof(PlainTextEditorRow)}"),
                 currentColumnIndexWithIndexInPlainTextAccountedFor);
@@ -137,17 +137,18 @@ public partial record PlainTextEditorStates
                 indexInPlainText = tokenInRowBelowTuple.token.PlainText.Length - 1;
             }
 
-            var belowRowReplacement = rowBelow with
+            var belowRowReplacement = belowRow with
             {
-                List = rowBelow.List.Replace(tokenInRowBelowTuple.token, tokenInRowBelowTuple.token with
+                List = belowRow.List.Replace(tokenInRowBelowTuple.token, tokenInRowBelowTuple.token with
                 {
                     IndexInPlainText = indexInPlainText
-                })
+                }),
+                SequenceKey = SequenceKey.NewSequenceKey()
             };
 
             var nextRowList = focusedPlainTextEditorRecord.List
                 .Replace(currentRow, currentRowReplacement)
-                .Replace(rowBelow, belowRowReplacement);
+                .Replace(belowRow, belowRowReplacement);
 
             return focusedPlainTextEditorRecord with
             {
@@ -172,13 +173,13 @@ public partial record PlainTextEditorStates
 
             var targetRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex - 1;
 
-            var rowAbove = focusedPlainTextEditorRecord
+            var aboveRow = focusedPlainTextEditorRecord
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
                     focusedPlainTextEditorRecord.List[targetRowIndex]);
 
             var tokenInRowAboveMetaData = CalculateTokenAtColumnIndexRespectiveToRow(
                 focusedPlainTextEditorRecord,
-                rowAbove
+                aboveRow
                     as PlainTextEditorRow
                 ?? throw new ApplicationException($"Expected type {nameof(PlainTextEditorRow)}"),
                 currentColumnIndexWithIndexInPlainTextAccountedFor);
@@ -208,9 +209,9 @@ public partial record PlainTextEditorStates
                 indexInPlainText = tokenInRowAboveMetaData.token.PlainText.Length - 1;
             }
 
-            var aboveRowReplacement = rowAbove with
+            var aboveRowReplacement = aboveRow with
             {
-                List = rowAbove.List.Replace(tokenInRowAboveMetaData.token, tokenInRowAboveMetaData.token with
+                List = aboveRow.List.Replace(tokenInRowAboveMetaData.token, tokenInRowAboveMetaData.token with
                 {
                     IndexInPlainText = indexInPlainText
                 }),
@@ -219,7 +220,7 @@ public partial record PlainTextEditorStates
 
             var nextRowList = focusedPlainTextEditorRecord.List
                 .Replace(currentRow, currentRowReplacement)
-                .Replace(rowAbove, aboveRowReplacement);
+                .Replace(aboveRow, aboveRowReplacement);
 
             return focusedPlainTextEditorRecord with
             {
