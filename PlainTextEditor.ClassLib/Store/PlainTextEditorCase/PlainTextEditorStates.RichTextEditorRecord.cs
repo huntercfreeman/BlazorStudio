@@ -16,7 +16,8 @@ public partial record PlainTextEditorStates
             ImmutableList<IPlainTextEditorRow> List,
             int CurrentRowIndex,
             int CurrentTokenIndex,
-            RichTextEditorOptions RichTextEditorOptions)
+            RichTextEditorOptions RichTextEditorOptions,
+            bool UseCarriageReturnNewLine = false)
         : IPlainTextEditor
     {
         public PlainTextEditorRecord(PlainTextEditorKey plainTextEditorKey) : this(plainTextEditorKey,

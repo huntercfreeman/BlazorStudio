@@ -4,31 +4,23 @@ namespace PlainTextEditor.Tests;
 
 public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 {
-    private bool asyncEffectFinished;
-
-    [Fact]
-    public async Task HELLO_WORLD_C()
+    [Theory]
+    [InlineData("./TestData/helloWorld.c")]
+    [InlineData("./TestData/TEST_BlazorStudio.sln")]
+    public async Task READ_FILE_INTO_EDITOR(string relativeFilePath)
     {
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
         Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
 
-        string helloWorldRelativeFilePath = "./TestData/helloWorld.c";
-
         var expectedContent = await File
-            .ReadAllTextAsync(helloWorldRelativeFilePath);
+            .ReadAllTextAsync(relativeFilePath);
+
+        await DispatchHelperAsync(
+            new PlainTextEditorInitializeAction(plainTextEditorKey, relativeFilePath),
+            State);
 
         Dispatcher.Dispatch(new PlainTextEditorInitializeAction(plainTextEditorKey,
-            helloWorldRelativeFilePath));
-
-        State.StateChanged += StateOnStateChanged;
-
-        while (true)
-        {
-            if (asyncEffectFinished)
-                break;
-
-            await Task.Delay(500);
-        }
+            relativeFilePath));
 
         var documentPlainText = State.Value.Map[plainTextEditorKey]
             .GetPlainText();
@@ -38,40 +30,7 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         Assert.Single(State.Value.Map);
         Assert.Single(State.Value.Array);
     }
-    
-    [Fact]
-    public async Task BlazorStudioSolution()
-    {
-        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-        Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
 
-        string blazorStudioSlnRelativeFilePath = "./TestData/TEST_BlazorStudio.sln";
-
-        var expectedContent = await File
-            .ReadAllTextAsync(blazorStudioSlnRelativeFilePath);
-
-        Dispatcher.Dispatch(new PlainTextEditorInitializeAction(plainTextEditorKey,
-            blazorStudioSlnRelativeFilePath));
-
-        State.StateChanged += StateOnStateChanged;
-
-        while (true)
-        {
-            if (asyncEffectFinished)
-                break;
-
-            await Task.Delay(500);
-        }
-
-        var documentPlainText = State.Value.Map[plainTextEditorKey]
-            .GetPlainText();
-
-        Assert.Equal(expectedContent, documentPlainText);
-
-        Assert.Single(State.Value.Map);
-        Assert.Single(State.Value.Array);
-    }
-    
     // TODO: This never finishes when I run it. I need to fix this. It appears to be an optimization issue of speed. Perhaps streaming file content instead of reading a massive lump of text into memory is in order at this point.
     //[Fact]
     //public async Task HamletEntirePlayHtml()
@@ -84,10 +43,11 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     //    var expectedContent = await File
     //        .ReadAllTextAsync(blazorStudioSlnRelativeFilePath);
 
+    //    State.StateChanged += StateOnStateChanged;
+
     //    Dispatcher.Dispatch(new PlainTextEditorInitializeAction(plainTextEditorKey,
     //        blazorStudioSlnRelativeFilePath));
 
-    //    State.StateChanged += StateOnStateChanged;
 
     //    while (true)
     //    {
@@ -106,8 +66,51 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     //    Assert.Single(State.Value.Array);
     //}
 
-    private void StateOnStateChanged(object? sender, EventArgs e)
+    [Fact]
+    public async Task SHOULD_NEW_LINE()
     {
-        asyncEffectFinished = true;
+        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+        Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
+
+        string helloWorldRelativeFilePath = "./TestData/helloWorld.c";
+
+        var expectedContent = await File
+            .ReadAllTextAsync(helloWorldRelativeFilePath);
+
+        await DispatchHelperAsync(
+            new PlainTextEditorInitializeAction(plainTextEditorKey, helloWorldRelativeFilePath),
+            State);
+
+        var documentPlainText = State.Value.Map[plainTextEditorKey]
+            .GetPlainText();
+
+        Assert.Equal(expectedContent, documentPlainText);
+
+        Assert.Single(State.Value.Map);
+        Assert.Single(State.Value.Array);
+    }
+
+    [Fact]
+    public async Task SHOULD_CARRIAGE_RETURN_NEW_LINE()
+    {
+        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+        Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
+
+        string helloWorldRelativeFilePath = "./TestData/helloWorld.c";
+
+        var expectedContent = await File
+            .ReadAllTextAsync(helloWorldRelativeFilePath);
+
+        await DispatchHelperAsync(
+            new PlainTextEditorInitializeAction(plainTextEditorKey, helloWorldRelativeFilePath),
+            State);
+
+        var documentPlainText = State.Value.Map[plainTextEditorKey]
+            .GetPlainText();
+
+        Assert.Equal(expectedContent, documentPlainText);
+
+        Assert.Single(State.Value.Map);
+        Assert.Single(State.Value.Array);
     }
 }

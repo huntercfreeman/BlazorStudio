@@ -84,8 +84,19 @@ public partial record PlainTextEditorStates
                     //    }
                     //}
 
+                    var overrideKeyDownEventRecord = keyDownEventAction.KeyDownEventRecord;
+
+                    if (keyDownEventAction.KeyDownEventRecord.Code == KeyboardKeyFacts.NewLineCodes.ENTER_CODE &&
+                        focusedPlainTextEditor.UseCarriageReturnNewLine)
+                    {
+                        overrideKeyDownEventRecord = keyDownEventAction.KeyDownEventRecord with
+                        {
+                            Code = KeyboardKeyFacts.NewLineCodes.CARRIAGE_RETURN_NEW_LINE_CODE
+                        };
+                    }
+
                     var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                        .HandleKeyDownEvent(focusedPlainTextEditor, keyDownEventAction.KeyDownEventRecord) with
+                        .HandleKeyDownEvent(focusedPlainTextEditor, overrideKeyDownEventRecord) with
                     {
                         SequenceKey = SequenceKey.NewSequenceKey()
                     };
@@ -136,7 +147,23 @@ public partial record PlainTextEditorStates
 
                     PlainTextEditorRecord replacementPlainTextEditor = plainTextEditor;
 
+                    var allEnterKeysAreCarriageReturnNewLine = true;
+                    var seenEnterKey = false;
                     var previousCharacterWasCarriageReturn = false;
+
+                    string MutateIfPreviousCharacterWasCarriageReturn()
+                    {
+                        seenEnterKey = true;
+
+                        if (!previousCharacterWasCarriageReturn)
+                        {
+                            allEnterKeysAreCarriageReturnNewLine = false;
+                        }
+
+                        return previousCharacterWasCarriageReturn
+                            ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
+                            : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
+                    }
 
                     foreach (var character in content)
                     {
@@ -150,9 +177,7 @@ public partial record PlainTextEditorStates
                         {
                             '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
                             ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
-                            '\n' => previousCharacterWasCarriageReturn 
-                                ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
-                                : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE,
+                            '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
                             _ => character.ToString()
                         };
 
@@ -173,6 +198,14 @@ public partial record PlainTextEditorStates
                             };
 
                         previousCharacterWasCarriageReturn = false;
+                    }
+
+                    if (seenEnterKey && allEnterKeysAreCarriageReturnNewLine)
+                    {
+                        replacementPlainTextEditor = replacementPlainTextEditor with
+                        {
+                            UseCarriageReturnNewLine = true
+                        };
                     }
 
                     nextPlainTextEditorMap[plainTextEditorInitializeAction.PlainTextEditorKey] = replacementPlainTextEditor;

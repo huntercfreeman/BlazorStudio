@@ -37,4 +37,28 @@ public class PLAIN_TEXT_EDITOR_STATES_TESTS
 
         Store.InitializeAsync().Wait();
     }
+
+    public async Task DispatchHelperAsync<T>(object action, IState<T> state, TimeSpan? pollTimeSpan = null)
+    {
+        if (pollTimeSpan is null)
+            pollTimeSpan = TimeSpan.FromMilliseconds(500);
+
+        bool asyncEffectFinished = false;
+
+        void OnAsyncEventFinished(object? sender, EventArgs args) => 
+            asyncEffectFinished = true;
+
+        state.StateChanged += OnAsyncEventFinished;
+        Dispatcher.Dispatch(action);
+
+        while (true)
+        {
+            if (asyncEffectFinished)
+                break;
+
+            await Task.Delay(pollTimeSpan.Value);
+        }
+
+        state.StateChanged -= OnAsyncEventFinished;
+    }
 }
