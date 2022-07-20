@@ -107,7 +107,7 @@ public static class FileCoordinateGridFactory
             }
         }
 
-        public async Task<(int Index, string RowText)> Request(FileCoordinateGridRequest fileCoordinateGridRequest)
+        public async Task<string> Request(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
 
         }
@@ -128,7 +128,7 @@ public interface IFileCoordinateGrid
     public IAbsoluteFilePath? CopyAbsoluteFilePath { get; }
     public ImmutableArray<long> ByteMarkerForStartOfARow { get; }
 
-    public Task<(int Index, string RowText)> Request(FileCoordinateGridRequest fileCoordinateGridRequest);
+    public Task<string> Request(FileCoordinateGridRequest fileCoordinateGridRequest);
     /// <summary>
     /// Added this Dispose declaration so I can call it when Unit Testing
     /// IDisposable should call Dispose() for you.

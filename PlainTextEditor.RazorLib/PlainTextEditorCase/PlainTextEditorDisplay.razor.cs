@@ -180,8 +180,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         {
             var rowIndexTextTuples = await currentPlainTextEditor.FileCoordinateGrid
                 .Request(new FileCoordinateGridRequest(request.StartIndex, numberOfRows, request.CancellationToken));
-
-            Dispatcher.Dispatch(new );
         }
 
         return ValueTask.FromResult(new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,

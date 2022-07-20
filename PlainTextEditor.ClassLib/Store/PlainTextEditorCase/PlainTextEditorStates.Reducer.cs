@@ -149,9 +149,6 @@ public partial record PlainTextEditorStates
                         FileCoordinateGrid = fileCoordinateGrid
                     };
 
-                    var content = await File
-                        .ReadAllTextAsync(plainTextEditorInitializeAction.AbsoluteFilePath.GetAbsoluteFilePathString());
-
                     PlainTextEditorRecord replacementPlainTextEditor = plainTextEditor;
 
                     var allEnterKeysAreCarriageReturnNewLine = true;
@@ -171,6 +168,9 @@ public partial record PlainTextEditorStates
                             ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
                             : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
                     }
+
+                    var content = await plainTextEditor.FileCoordinateGrid
+                        .Request(new FileCoordinateGridRequest(0, 1000, CancellationToken.None));
 
                     foreach (var character in content)
                     {
@@ -216,6 +216,119 @@ public partial record PlainTextEditorStates
                     }
 
                     nextPlainTextEditorMap[plainTextEditorInitializeAction.PlainTextEditorKey] = replacementPlainTextEditor;
+
+                    var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
+                    var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
+
+                    await Task.Delay(1);
+
+                    _queuedEffectsCounter--;
+
+                    dispatcher.Dispatch(
+                        new SetPlainTextEditorStatesAction(
+                            new PlainTextEditorStates(nextImmutableMap, nextImmutableArray)));
+                });
+
+                await _effectSemaphoreSlim.WaitAsync();
+
+                if (_concurrentQueueForEffects.TryDequeue(out var effect))
+                    await effect.Invoke();
+            }
+            finally
+            {
+                _effectSemaphoreSlim.Release();
+            }
+        }
+        
+        [EffectMethod]
+        public async Task HandleRequestAction(PlainTextEditorRequestAction plainTextEditorRequestAction,
+            IDispatcher dispatcher)
+        {
+            _queuedEffectsCounter++;
+
+            try
+            {
+                _concurrentQueueForEffects.Enqueue(async () =>
+                {
+                    var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
+
+                    var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
+                    var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
+
+                    var focusedPlainTextEditor = previousPlainTextEditorStates.Map[plainTextEditorRequestAction.FocusedPlainTextEditorKey]
+                        as PlainTextEditorRecord;
+
+                    if (focusedPlainTextEditor is null)
+                        return;
+
+                    PlainTextEditorRecord replacementPlainTextEditor = focusedPlainTextEditor;
+
+                    var allEnterKeysAreCarriageReturnNewLine = true;
+                    var seenEnterKey = false;
+                    var previousCharacterWasCarriageReturn = false;
+
+                    string MutateIfPreviousCharacterWasCarriageReturn()
+                    {
+                        seenEnterKey = true;
+
+                        if (!previousCharacterWasCarriageReturn)
+                        {
+                            allEnterKeysAreCarriageReturnNewLine = false;
+                        }
+
+                        return previousCharacterWasCarriageReturn
+                            ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
+                            : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
+                    }
+
+                    var content = await focusedPlainTextEditor.FileCoordinateGrid
+                        .Request(plainTextEditorRequestAction
+                            .FileCoordinateGridRequest);
+
+                    foreach (var character in content)
+                    {
+                        if (character == '\r')
+                        {
+                            previousCharacterWasCarriageReturn = true;
+                            continue;
+                        }
+
+                        var code = character switch
+                        {
+                            '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
+                            ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
+                            '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
+                            _ => character.ToString()
+                        };
+
+                        var keyDown = new KeyDownEventAction(plainTextEditorRequestAction.FocusedPlainTextEditorKey,
+                            new KeyDownEventRecord(
+                                character.ToString(),
+                                code,
+                                false,
+                                false,
+                                false
+                            )
+                        );
+
+                        replacementPlainTextEditor = PlainTextEditorStates.StateMachine
+                                .HandleKeyDownEvent(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
+                        {
+                            SequenceKey = SequenceKey.NewSequenceKey()
+                        };
+
+                        previousCharacterWasCarriageReturn = false;
+                    }
+
+                    if (seenEnterKey && allEnterKeysAreCarriageReturnNewLine)
+                    {
+                        replacementPlainTextEditor = replacementPlainTextEditor with
+                        {
+                            UseCarriageReturnNewLine = true
+                        };
+                    }
+
+                    nextPlainTextEditorMap[plainTextEditorRequestAction.FocusedPlainTextEditorKey] = replacementPlainTextEditor;
 
                     var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
                     var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
