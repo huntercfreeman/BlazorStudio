@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BlazorStudio.Shared\BlazorStudio.Shared.csproj" />
     <ProjectReference Include="..\PlainTextEditor.ClassLib\PlainTextEditor.ClassLib.csproj" />
   </ItemGroup>
 

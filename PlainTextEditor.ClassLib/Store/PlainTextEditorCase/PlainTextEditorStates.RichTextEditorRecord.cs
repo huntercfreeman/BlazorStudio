@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BlazorStudio.Shared.FileSystem.Classes;
 using Fluxor;
 using PlainTextEditor.ClassLib.Sequence;
 
@@ -16,6 +17,7 @@ public partial record PlainTextEditorStates
             ImmutableList<IPlainTextEditorRow> List,
             int CurrentRowIndex,
             int CurrentTokenIndex,
+            IFileCoordinateGrid? FileCoordinateGrid,
             RichTextEditorOptions RichTextEditorOptions,
             bool UseCarriageReturnNewLine = false)
         : IPlainTextEditor
@@ -25,6 +27,7 @@ public partial record PlainTextEditorStates
             ImmutableList<IPlainTextEditorRow>.Empty,
             CurrentRowIndex: 0,
             CurrentTokenIndex: 0,
+            null,
             new RichTextEditorOptions())
         {
             var startingRow = new PlainTextEditorRow(null);
