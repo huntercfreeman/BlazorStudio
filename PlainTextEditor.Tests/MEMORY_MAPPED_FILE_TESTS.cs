@@ -17,37 +17,17 @@ public class MEMORY_MAPPED_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     [Fact]
     public void MEMORY_MAPPED_FILE_IS_EQUAL_TO_STREAM_READER()
     {
-        // The default constructor does not provide a preamble.
-        UTF8Encoding UTF8NoPreamble = new UTF8Encoding();
-        UTF8Encoding UTF8WithPreamble = new UTF8Encoding(true);
-
-        var preambleNo = UTF8NoPreamble.GetPreamble();
-        var preambleYes = UTF8WithPreamble.GetPreamble();
-
-        /////
-
         string path = "./TestData/Hamlet_ Entire Play.html";
 
-        int offset = 0;
-        int length = 256;
-
-        string encoding;
-        long streamReaderStartingPosition;
-        long streamReaderPositionAfterFirstPeek;
+        Encoding encoding;
         long streamReaderEndingPosition;
         string streamReaderResult;
 
         using (StreamReader streamReader = new StreamReader(path, true))
         {
-            streamReaderStartingPosition = streamReader.BaseStream.Position;
-
-            _ = streamReader.Peek();
-
-            streamReaderPositionAfterFirstPeek = streamReader.BaseStream.Position;
-
             var builder = new StringBuilder();
 
-            for (int i = offset; i < length; i++)
+            while (streamReader.Peek() != -1)
             {
                 builder.Append((char)streamReader.Read());
             }
@@ -55,26 +35,44 @@ public class MEMORY_MAPPED_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             streamReaderEndingPosition = streamReader.BaseStream.Position;
 
             streamReaderResult = builder.ToString();
-            encoding = streamReader.CurrentEncoding.BodyName;
+            encoding = streamReader.CurrentEncoding;
         }
+
+        // TODO: startOfText is seemingly not needed it appears MemoryMappedFile.CreateFromFile will skip the BOM for us
+        // var startOfText = streamReaderStartingPosition + encoding.Preamble.Length;
+        var contentLength = streamReaderEndingPosition;
+
+        var buffer = new byte[contentLength];
 
         using (var mmf = MemoryMappedFile.CreateFromFile(path, FileMode.Open, "blazorStudio"))
         {
-            using (var accessor = mmf.CreateViewAccessor(streamReaderStartingPosition, streamReaderEndingPosition))
+            using (var accessor = mmf.CreateViewAccessor(0, streamReaderEndingPosition))
             {
-                var z = 2;
-                //int colorSize = Marshal.SizeOf<MyColor>();
-                //MyColor color;
+                if (contentLength > Int32.MaxValue)
+                {
+                    throw new ApplicationException(
+                        $"Requested {nameof(contentLength)}: '{contentLength}' is larger than {nameof(Int32)} {nameof(Int32.MaxValue)}.");
+                }
 
-                //// Make changes to the view. 
-                //for (long i = 0; i < length; i += colorSize)
-                //{
-                //    accessor.Read(i, out color);
-                //    color.Brighten(10);
-                //    accessor.Write(i, ref color);
-                //}
+                accessor.ReadArray(0, buffer, 0, (int) contentLength);
             }
         }
+
+        string memoryMappedFileResult;
+
+        using (StreamReader streamReader = new StreamReader(new MemoryStream(buffer), encoding))
+        {
+            var builder = new StringBuilder();
+
+            while (streamReader.Peek() != -1)
+            {
+                builder.Append((char)streamReader.Read());
+            }
+
+            memoryMappedFileResult = builder.ToString();
+        }
+
+        Assert.Equal(streamReaderResult, memoryMappedFileResult);
     }
     
     ////https://stackoverflow.com/questions/30251443/how-to-read-and-write-a-file-using-memory-mapped-file-c
