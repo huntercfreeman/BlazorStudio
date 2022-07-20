@@ -43,6 +43,9 @@
     <None Update="TestData\helloWorld_NEW-LINE.c">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\NaturalLanguages\chineseText.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
