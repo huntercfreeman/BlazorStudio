@@ -42,7 +42,7 @@
                     <div class="bstudio_input-file-tree-view-footer">
                         @foreach (var activeItem in activeItems)
                         {
-                            @activeItem.FilenameWithExtension
+                            <div style="white-space: nowrap; overflow-x: auto;">@activeItem.FilenameWithExtension</div>
                         }
                         
                         <div class="bstudio_input-file-dialog-control-buttons">

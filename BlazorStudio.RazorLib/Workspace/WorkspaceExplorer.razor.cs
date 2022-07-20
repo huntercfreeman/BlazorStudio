@@ -48,15 +48,15 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 0
+                Value = 5
             }
         },
         TopCalc = new List<DimensionUnit>
         {
             new()
             {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 0
+                DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
+                Value = 2.5
             }
         },
     };

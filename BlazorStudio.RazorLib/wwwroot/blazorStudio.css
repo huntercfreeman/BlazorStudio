@@ -27,6 +27,7 @@
 
 .bstudio_tree-view-display-title {
     outline: none;
+    white-space: nowrap;
 }
     .bstudio_tree-view-display-title.bstudio_active {
         background-color: var(--bstudio_primary-active-unfocused-background-color);
@@ -311,7 +312,7 @@
 }
 
 .bstudio_input-file-dialog-body {
-    height: calc(100% - 4.5rem - 2rem);
+    height: calc(100% - 4.5rem - 3rem);
     overflow-y: auto;
 }
 
@@ -333,7 +334,8 @@
 }
 
 .bstudio_input-file-dialog-header {
-    height: 2rem;
+    height: 3rem;
+    white-space: nowrap;
     padding: 0.2rem;
     overflow-x: auto;
     font-size: 1rem;

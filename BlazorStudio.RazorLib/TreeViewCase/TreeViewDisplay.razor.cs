@@ -88,7 +88,7 @@ public partial class TreeViewDisplay<T>
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 0
+                Value = 5
             }
         },
         TopCalc = new List<DimensionUnit>
