@@ -28,6 +28,8 @@ public static class FileCoordinateGridFactory
             0 // Start of document
         };
 
+        private readonly string _copyFileIdentifier = "~$bstudio_";
+
         private IAbsoluteFilePath? _copyAbsoluteFilePath = null;
 
         public Encoding Encoding { get; private set; }
@@ -38,7 +40,7 @@ public static class FileCoordinateGridFactory
             if (AbsoluteFilePath.IsDirectory)
                 throw new ApplicationException($"{nameof(FileCoordinateGrid)} does not support directories.");
 
-            if (AbsoluteFilePath.Directories?.Any() ?? true)
+            if (AbsoluteFilePath.Directories is null || !AbsoluteFilePath.Directories.Any())
                 throw new ApplicationException($"{nameof(AbsoluteFilePath)}.{nameof(AbsoluteFilePath.Directories)} was null or empty");
 
             var parentDirectory = AbsoluteFilePath.Directories.Last();
@@ -51,14 +53,21 @@ public static class FileCoordinateGridFactory
                 ((AbsoluteFilePath)parentDirectory).GetAbsoluteFilePathString();
 
             _copyAbsoluteFilePath =
-                new AbsoluteFilePath(containingDirectoryAbsoluteFilePathString + AbsoluteFilePath.FilenameWithExtension,
+                new AbsoluteFilePath(containingDirectoryAbsoluteFilePathString + _copyFileIdentifier + AbsoluteFilePath.FilenameWithExtension,
                     false);
 
             string path = _copyAbsoluteFilePath.GetAbsoluteFilePathString();
 
-            // TODO: Perhaps a way around making a temporary copy of the file is possible
-            File.Copy(AbsoluteFilePath.GetAbsoluteFilePathString(),
-                path);
+            try
+            {
+                // TODO: Perhaps a way around making a temporary copy of the file is possible
+                File.Copy(AbsoluteFilePath.GetAbsoluteFilePathString(),
+                    path);
+            }
+            catch (System.IO.IOException)
+            {
+                // File already exists so use the existing one
+            }
 
             int characterCounter = 0;
             int? bytesPerEncodedCharacter = null;
@@ -108,4 +117,9 @@ public interface IFileCoordinateGrid
     public IAbsoluteFilePath AbsoluteFilePath { get; }
     public Encoding Encoding { get; }
     public int RowCount { get; }
+    /// <summary>
+    /// Added this Dispose declaration so I can call it when Unit Testing
+    /// IDisposable should call Dispose() for you.
+    /// </summary>
+    public void Dispose();
 }

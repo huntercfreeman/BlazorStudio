@@ -14,5 +14,7 @@ public class FILE_COORDINATE_GRID_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var fileCoordinateGrid = await FileCoordinateGridFactory
             .ConstructFileCoordinateGridAsync(absoluteFilePath);
+
+        fileCoordinateGrid.Dispose();
     }
 }
