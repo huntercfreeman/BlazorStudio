@@ -18,7 +18,17 @@
 
 .bstudio_toolbar-display-file-dropdown {
     position: relative;
+    margin-left: 5px;
+    padding: 0 10px;
+    display: flex;
+    height: 100%;
+    align-items: center;
 }
+
+    .bstudio_toolbar-display-file-dropdown:hover {
+        background-color: var(--bstudio_primary-hover-background-color);
+        color: var(--bstudio_primary-hover-font-color);
+    }
 
 .bstudio_body-display {
     overflow: auto;
@@ -307,22 +317,25 @@
     
 }
 
-.bstudio_input-file-dialog {
-    height: 100%;
-}
-
-.bstudio_input-file-dialog-body {
-    height: calc(100% - 4.5rem - 3rem);
-    overflow-y: auto;
-}
-
 .bstudio_workspace-explorer-tree-view-body {
     height: calc(100% - 4.5rem);
     overflow-y: auto;
 }
 
+.bstudio_input-file-dialog {
+    height: 100%;
+}
+
+.bstudio_input-file-dialog-body {
+    height: calc(100% - 5.5rem - 3rem);
+    overflow-y: auto;
+}
+
 .bstudio_input-file-tree-view-footer {
-    height: 4.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 5.5rem;
     padding: .25rem;
     font-size: 1rem;
     background-color: var(--bstudio_tertiary-background-color);

@@ -29,16 +29,16 @@ public partial class ToolbarDisplay : ComponentBase
         {
             new()
             {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 0
+                DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
+                Value = -2
             }
         },
         TopCalc = new List<DimensionUnit>
         {
             new()
             {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 0
+                DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
+                Value = 0.7
             }
         },
     };
