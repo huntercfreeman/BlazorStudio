@@ -1,3 +1,5 @@
+using BlazorStudio.Shared.FileSystem.Classes;
+using BlazorStudio.Shared.FileSystem.Interfaces;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using PlainTextEditor.ClassLib;
@@ -11,6 +13,8 @@ public class PLAIN_TEXT_EDITOR_STATES_TESTS
     protected readonly IDispatcher Dispatcher;
     protected readonly IStore Store;
     protected readonly IState<PlainTextEditorStates> State;
+    protected readonly IAbsoluteFilePath CurrentDirectoryAbsoluteFilePath =
+        new AbsoluteFilePath(Directory.GetCurrentDirectory(), true);
 
     public PLAIN_TEXT_EDITOR_STATES_TESTS()
     {

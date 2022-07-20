@@ -1,3 +1,4 @@
+using BlazorStudio.Shared.FileSystem.Classes;
 using PlainTextEditor.ClassLib.Keyboard;
 using PlainTextEditor.ClassLib.Store.KeyDownEventCase;
 using PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
@@ -10,20 +11,21 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     [InlineData("./TestData/helloWorld_NEW-LINE.c")]
     [InlineData("./TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c")]
     [InlineData("./TestData/TEST_BlazorStudio.sln")]
-    public async Task READ_FILE_INTO_EDITOR(string relativeFilePath)
+    public async Task READ_FILE_INTO_EDITOR(string relativeFilePathString)
     {
+        var relativeFilePath = new RelativeFilePath(relativeFilePathString, false);
+
+        var absoluteFilePath = new AbsoluteFilePath(CurrentDirectoryAbsoluteFilePath, relativeFilePath);
+
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
         Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
 
         var expectedContent = await File
-            .ReadAllTextAsync(relativeFilePath);
+            .ReadAllTextAsync(absoluteFilePath.GetAbsoluteFilePathString());
 
         await DispatchHelperAsync(
-            new PlainTextEditorInitializeAction(plainTextEditorKey, relativeFilePath),
+            new PlainTextEditorInitializeAction(plainTextEditorKey, absoluteFilePath),
             State);
-
-        Dispatcher.Dispatch(new PlainTextEditorInitializeAction(plainTextEditorKey,
-            relativeFilePath));
 
         var documentPlainText = State.Value.Map[plainTextEditorKey]
             .GetPlainText();
@@ -34,47 +36,16 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         Assert.Single(State.Value.Array);
     }
 
-    // TODO: This never finishes when I run it. I need to fix this. It appears to be an optimization issue of speed. Perhaps streaming file content instead of reading a massive lump of text into memory is in order at this point.
-    //[Fact]
-    //public async Task HamletEntirePlayHtml()
-    //{
-    //    var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-    //    Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
-
-    //    string blazorStudioSlnRelativeFilePath = "./TestData/Hamlet_ Entire Play.html";
-
-    //    var expectedContent = await File
-    //        .ReadAllTextAsync(blazorStudioSlnRelativeFilePath);
-
-    //    State.StateChanged += StateOnStateChanged;
-
-    //    Dispatcher.Dispatch(new PlainTextEditorInitializeAction(plainTextEditorKey,
-    //        blazorStudioSlnRelativeFilePath));
-
-
-    //    while (true)
-    //    {
-    //        if (asyncEffectFinished)
-    //            break;
-
-    //        await Task.Delay(500);
-    //    }
-
-    //    var documentPlainText = State.Value.Map[plainTextEditorKey]
-    //        .GetPlainText();
-
-    //    Assert.Equal(expectedContent, documentPlainText);
-
-    //    Assert.Single(State.Value.Map);
-    //    Assert.Single(State.Value.Array);
-    //}
-
     [Theory]
     [InlineData("./TestData/helloWorld_NEW-LINE.c", "\n")]
     [InlineData("./TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c", "\r\n")]
-    public async Task CARRIAGE_RETURN_MATCHING_ON_NEW_LINE(string relativeFilePath,
+    public async Task CARRIAGE_RETURN_MATCHING_ON_NEW_LINE(string relativeFilePathString,
         string expectedAdditionToText)
     {
+        var relativeFilePath = new RelativeFilePath(relativeFilePathString, false);
+
+        var absoluteFilePath = new AbsoluteFilePath(CurrentDirectoryAbsoluteFilePath, relativeFilePath);
+
         var keyboardEvent = new KeyDownEventRecord(KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
             KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
             false,
@@ -85,10 +56,10 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
 
         var expectedContent = await File
-            .ReadAllTextAsync(relativeFilePath);
+            .ReadAllTextAsync(absoluteFilePath.GetAbsoluteFilePathString());
 
         await DispatchHelperAsync(
-            new PlainTextEditorInitializeAction(plainTextEditorKey, relativeFilePath),
+            new PlainTextEditorInitializeAction(plainTextEditorKey, absoluteFilePath),
             State);
 
         var documentPlainText = State.Value.Map[plainTextEditorKey]

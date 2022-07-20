@@ -41,7 +41,7 @@ public partial class EditorDisplay : FluxorComponent
         {
             Dispatcher.Dispatch(
                 new PlainTextEditorInitializeAction(_plainTextEditorSpawn.PlainTextEditorKey, 
-                    EditorStateWrap.Value.OpenedAbsoluteFilePath.GetAbsoluteFilePathString())
+                    EditorStateWrap.Value.OpenedAbsoluteFilePath)
             );
         }
     }

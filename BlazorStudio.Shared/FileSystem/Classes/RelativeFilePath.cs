@@ -21,6 +21,26 @@ public class RelativeFilePath : IRelativeFilePath
 
     public RelativeFilePath(string relativeFilePathString, bool isDirectory)
     {
+        // TODO: Handle ../../myFile.c
+
+        if (relativeFilePathString.StartsWith('.'))
+        {
+            while (_position < relativeFilePathString.Length)
+            {
+                char currentCharacter = relativeFilePathString[_position++];
+
+                /*
+                 * System.IO.Path.DirectorySeparatorChar is not a constant character
+                 * As a result this is an if statement instead of a switch statement
+                 */
+                if (currentCharacter == System.IO.Path.DirectorySeparatorChar ||
+                    currentCharacter == System.IO.Path.AltDirectorySeparatorChar)
+                {
+                    break;
+                }
+            }
+        }
+        
         IsDirectory = isDirectory;
         
         while (_position < relativeFilePathString.Length)

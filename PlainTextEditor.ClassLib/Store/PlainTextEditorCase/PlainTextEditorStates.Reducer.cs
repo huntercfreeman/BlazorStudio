@@ -125,7 +125,7 @@ public partial record PlainTextEditorStates
         }
         
         [EffectMethod]
-        public async Task HandlePlainTextEditorInitializeAction(PlainTextEditorInitializeAction plainTextEditorInitializeAction,
+        public async Task HandleInitializeAction(PlainTextEditorInitializeAction plainTextEditorInitializeAction,
             IDispatcher dispatcher)
         {
             _queuedEffectsCounter++;
@@ -143,7 +143,7 @@ public partial record PlainTextEditorStates
                         PlainTextEditorRecord(plainTextEditorInitializeAction.PlainTextEditorKey);
 
                     var content = await File
-                        .ReadAllTextAsync(plainTextEditorInitializeAction.AbsoluteFilePathString);
+                        .ReadAllTextAsync(plainTextEditorInitializeAction.AbsoluteFilePath.GetAbsoluteFilePathString());
 
                     PlainTextEditorRecord replacementPlainTextEditor = plainTextEditor;
 
