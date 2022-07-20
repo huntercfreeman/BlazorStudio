@@ -172,51 +172,51 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         (int Index, IPlainTextEditorRow PlainTextEditorRow)[] rowTuples =
             Array.Empty<(int Index, IPlainTextEditorRow PlainTextEditorRow)>();
-
-        if (currentPlainTextEditor is null)
-        {
-            _previousSequenceKeyRowItemsProvider = currentPlainTextEditor.SequenceKey;
-            _previousItemsProviderRequest = request;
-            _previousItemsProviderResult = new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
-                0);
-
-            return _previousItemsProviderResult.Value;
-        }
-
-        // If the same data is requested as the previous request return the previous request
-        if (_previousSequenceKeyRowItemsProvider is not null &&
-            currentPlainTextEditor.SequenceKey == _previousSequenceKeyRowItemsProvider &&
-            _previousItemsProviderRequest is not null &&
-            request.StartIndex == _previousItemsProviderRequest.Value.StartIndex &&
-            request.Count == _previousItemsProviderRequest.Value.Count)
-        {
-            return new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
-                0);
-        }
-
+        
         var numberOfRows = Math.Min(request.Count, currentPlainTextEditor.List.Count - request.StartIndex);
 
         if (numberOfRows > 0)
         {
-            Dispatcher.Dispatch(new PlainTextEditorRequestAction(
-                PlainTextEditorKey, 
-                new FileCoordinateGridRequest(request.StartIndex,
-                    numberOfRows, 
-                    request.CancellationToken)));
+            if (currentPlainTextEditor is null ||
+                _previousSequenceKeyRowItemsProvider is null ||
+                _previousItemsProviderRequest is null)
+            {
+                Dispatcher.Dispatch(new PlainTextEditorRequestAction(
+                    PlainTextEditorKey,
+                    new FileCoordinateGridRequest(request.StartIndex,
+                        numberOfRows,
+                        request.CancellationToken)));
 
-            rowTuples = currentPlainTextEditor.List
-                .Select((row, index) => (index, row))
-                .Skip(request.StartIndex)
-                .Take(numberOfRows)
-                .ToArray();
+                _previousSequenceKeyRowItemsProvider = currentPlainTextEditor.SequenceKey;
+                _previousItemsProviderRequest = request;
+                _previousItemsProviderResult = new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
+                    0);
+
+                return _previousItemsProviderResult.Value;
+            }
+            else if (currentPlainTextEditor.SequenceKey != _previousSequenceKeyRowItemsProvider)
+            {
+                rowTuples = currentPlainTextEditor.List
+                    .Select((row, index) => (index, row))
+                    .Skip(request.StartIndex)
+                    .Take(numberOfRows)
+                    .ToArray();
+
+                return new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
+                    currentPlainTextEditor.FileCoordinateGrid.RowCount);
+            }
+            else
+            {
+                Dispatcher.Dispatch(new PlainTextEditorRequestAction(
+                    PlainTextEditorKey,
+                    new FileCoordinateGridRequest(request.StartIndex,
+                        numberOfRows,
+                        request.CancellationToken)));
+            }
         }
 
-        _previousSequenceKeyRowItemsProvider = currentPlainTextEditor.SequenceKey;
-        _previousItemsProviderRequest = request;
-        _previousItemsProviderResult = new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
-            currentPlainTextEditor.FileCoordinateGrid.RowCount);
-
-        return _previousItemsProviderResult.Value;
+        return new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
+            0);
     }
 
     protected override void Dispose(bool disposing)

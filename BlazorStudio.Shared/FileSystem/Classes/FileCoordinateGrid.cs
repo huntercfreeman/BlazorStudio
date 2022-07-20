@@ -110,9 +110,23 @@ public static class FileCoordinateGridFactory
         public async Task<string> Request(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
             long inclusiveStartingByte = ByteMarkerForStartOfARow[fileCoordinateGridRequest.StartingRowIndex];
-            long exclusiveEndingByte = ByteMarkerForStartOfARow[fileCoordinateGridRequest.StartingRowIndex + fileCoordinateGridRequest.RowCount];
+
+            var endingRowIndex = fileCoordinateGridRequest.StartingRowIndex + fileCoordinateGridRequest.RowCount;
+            
+            if (endingRowIndex > ByteMarkerForStartOfARow.Length - 1)
+            {
+                endingRowIndex = ByteMarkerForStartOfARow.Length - 1;
+            }
+
+            //if (fileCoordinateGridRequest.StartingRowIndex == endingRowIndex)
+            //{
+            //    longByteLengthOfRequest = 
+            //}
+
+            long exclusiveEndingByte = ByteMarkerForStartOfARow[endingRowIndex];
 
             long longByteLengthOfRequest = exclusiveEndingByte - inclusiveStartingByte;
+
 
             if (longByteLengthOfRequest > Int32.MaxValue)
             {
