@@ -1,7 +1,5 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Errors;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
@@ -11,6 +9,8 @@ using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.TreeViewCase;
+using BlazorStudio.Shared.FileSystem.Classes;
+using BlazorStudio.Shared.FileSystem.Interfaces;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;

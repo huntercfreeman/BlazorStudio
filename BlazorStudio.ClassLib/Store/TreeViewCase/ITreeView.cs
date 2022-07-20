@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace BlazorStudio.ClassLib.Store.TreeViewCase;
+﻿namespace BlazorStudio.ClassLib.Store.TreeViewCase;
 
 public interface ITreeView
 {

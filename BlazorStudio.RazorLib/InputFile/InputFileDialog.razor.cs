@@ -1,7 +1,4 @@
-﻿using BlazorStudio.ClassLib.Errors;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Store.DialogCase;
+﻿using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
@@ -12,6 +9,8 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Store.DropdownCase;
+using BlazorStudio.Shared.FileSystem.Classes;
+using BlazorStudio.Shared.FileSystem.Interfaces;
 
 namespace BlazorStudio.RazorLib.InputFile;
 

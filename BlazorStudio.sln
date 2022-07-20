@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStudio.RazorLib", "Bl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStudio.ClassLib", "BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj", "{4CA31C1C-0A96-4E65-A2A8-4BB549C25F70}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorStudio.Shared", "BlazorStudio.Shared\BlazorStudio.Shared.csproj", "{9EB70E15-8793-415F-844E-9FF927ED6868}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{4CA31C1C-0A96-4E65-A2A8-4BB549C25F70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CA31C1C-0A96-4E65-A2A8-4BB549C25F70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CA31C1C-0A96-4E65-A2A8-4BB549C25F70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EB70E15-8793-415F-844E-9FF927ED6868}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EB70E15-8793-415F-844E-9FF927ED6868}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EB70E15-8793-415F-844E-9FF927ED6868}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EB70E15-8793-415F-844E-9FF927ED6868}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
