@@ -109,7 +109,48 @@ public static class FileCoordinateGridFactory
 
         public async Task<string> Request(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
+            long inclusiveStartingByte = ByteMarkerForStartOfARow[fileCoordinateGridRequest.StartingRowIndex];
+            long exclusiveEndingByte = ByteMarkerForStartOfARow[fileCoordinateGridRequest.StartingRowIndex + fileCoordinateGridRequest.RowCount];
 
+            long longByteLengthOfRequest = exclusiveEndingByte - inclusiveStartingByte;
+
+            if (longByteLengthOfRequest > Int32.MaxValue)
+            {
+                throw new ApplicationException($"Requested: byte[{longByteLengthOfRequest}]," +
+                                               $" but the length cannot exceed: byte[{Int32.MaxValue}]");
+            }
+
+            int intByteLengthOfRequest = (int)longByteLengthOfRequest;
+
+            // TODO: Virtualize the columns in addition to the rows
+            var buffer = new byte[intByteLengthOfRequest];
+
+            using (var mmf = MemoryMappedFile
+                       .CreateFromFile(CopyAbsoluteFilePath.GetAbsoluteFilePathString(),
+                           FileMode.Open,
+                           "blazorStudio"))
+            {
+                using (var accessor = mmf.CreateViewAccessor(inclusiveStartingByte, intByteLengthOfRequest))
+                {
+                    accessor.ReadArray(0, buffer, 0, intByteLengthOfRequest);
+                }
+            }
+
+            string memoryMappedFileResult;
+
+            using (StreamReader streamReader = new StreamReader(new MemoryStream(buffer), Encoding))
+            {
+                var builder = new StringBuilder();
+
+                while (streamReader.Peek() != -1)
+                {
+                    builder.Append((char)streamReader.Read());
+                }
+
+                memoryMappedFileResult = builder.ToString();
+            }
+
+            return memoryMappedFileResult;
         }
 
         public void Dispose()

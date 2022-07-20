@@ -33,6 +33,11 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private Virtualize<(int Index, IPlainTextEditorRow PlainTextEditorRow)> _rowVirtualizeComponent = null!;
     private int _hadOnKeyDownEventCounter;
 
+    private SequenceKey? _previousSequenceKeyShouldRender;
+    private SequenceKey? _previousSequenceKeyRowItemsProvider;
+    private ItemsProviderRequest? _previousItemsProviderRequest;
+    private ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _previousItemsProviderResult;
+
     private string PlainTextEditorDisplayId => $"pte_plain-text-editor-display_{PlainTextEditorKey.Guid}";
     private string ActiveRowPositionMarkerId => $"pte_active-row-position-marker_{PlainTextEditorKey.Guid}";
     private string ActiveRowId => $"pte_active-row_{PlainTextEditorKey.Guid}";
@@ -45,8 +50,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     /// I need to position this PERFECTLY relative to a changeable font-size
     /// </summary>
     private string InputFocusTrapTopStyleCss => $"top: calc({PlainTextEditorSelector.Value!.CurrentRowIndex * 30}px);";
-
-    private SequenceKey? _previousSequenceKey;
 
     protected override void OnInitialized()
     {
@@ -98,10 +101,10 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         var shouldRender = false;
 
-        if(PlainTextEditorSelector.Value.SequenceKey != _previousSequenceKey)
+        if(PlainTextEditorSelector.Value.SequenceKey != _previousSequenceKeyShouldRender)
             shouldRender = true;
 
-        _previousSequenceKey = PlainTextEditorSelector.Value.SequenceKey;
+        _previousSequenceKeyShouldRender = PlainTextEditorSelector.Value.SequenceKey;
 
         return shouldRender;
     }
@@ -141,19 +144,19 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     
     private void OnFocusIn()
     {
-        _previousSequenceKey = null;
+        _previousSequenceKeyShouldRender = null;
         _isFocused = true;
     }
 
     private void OnFocusOut()
     {
-        _previousSequenceKey = null;
+        _previousSequenceKeyShouldRender = null;
         _isFocused = false;
     }
 
     private void FocusPlainTextEditorOnClick()
     {
-        _previousSequenceKey = null;
+        _previousSequenceKeyShouldRender = null;
         _plainTextEditor.FocusAsync();
     }
 
@@ -171,19 +174,49 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             Array.Empty<(int Index, IPlainTextEditorRow PlainTextEditorRow)>();
 
         if (currentPlainTextEditor is null)
-            return ValueTask.FromResult(new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
-                0));
+        {
+            _previousSequenceKeyRowItemsProvider = currentPlainTextEditor.SequenceKey;
+            _previousItemsProviderRequest = request;
+            _previousItemsProviderResult = new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
+                0);
+
+            return _previousItemsProviderResult.Value;
+        }
+
+        // If the same data is requested as the previous request return the previous request
+        if (_previousSequenceKeyRowItemsProvider is not null &&
+            currentPlainTextEditor.SequenceKey == _previousSequenceKeyRowItemsProvider &&
+            _previousItemsProviderRequest is not null &&
+            request.StartIndex == _previousItemsProviderRequest.Value.StartIndex &&
+            request.Count == _previousItemsProviderRequest.Value.Count)
+        {
+            return new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
+                0);
+        }
 
         var numberOfRows = Math.Min(request.Count, currentPlainTextEditor.List.Count - request.StartIndex);
 
         if (numberOfRows > 0)
         {
-            var rowIndexTextTuples = await currentPlainTextEditor.FileCoordinateGrid
-                .Request(new FileCoordinateGridRequest(request.StartIndex, numberOfRows, request.CancellationToken));
+            Dispatcher.Dispatch(new PlainTextEditorRequestAction(
+                PlainTextEditorKey, 
+                new FileCoordinateGridRequest(request.StartIndex,
+                    numberOfRows, 
+                    request.CancellationToken)));
+
+            rowTuples = currentPlainTextEditor.List
+                .Select((row, index) => (index, row))
+                .Skip(request.StartIndex)
+                .Take(numberOfRows)
+                .ToArray();
         }
 
-        return ValueTask.FromResult(new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
-            currentPlainTextEditor.FileCoordinateGrid.RowCount));
+        _previousSequenceKeyRowItemsProvider = currentPlainTextEditor.SequenceKey;
+        _previousItemsProviderRequest = request;
+        _previousItemsProviderResult = new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
+            currentPlainTextEditor.FileCoordinateGrid.RowCount);
+
+        return _previousItemsProviderResult.Value;
     }
 
     protected override void Dispose(bool disposing)
