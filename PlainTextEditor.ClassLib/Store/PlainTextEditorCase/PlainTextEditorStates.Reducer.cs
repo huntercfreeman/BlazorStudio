@@ -3,6 +3,7 @@ using PlainTextEditor.ClassLib.Sequence;
 using PlainTextEditor.ClassLib.Store.KeyDownEventCase;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using BlazorStudio.Shared.FileSystem.Classes;
 using PlainTextEditor.ClassLib.Keyboard;
 
 namespace PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
@@ -17,7 +18,7 @@ public partial record PlainTextEditorStates
         {
             _plainTextEditorStatesWrap = plainTextEditorStatesWrap;
         }
-        
+
         private readonly SemaphoreSlim _effectSemaphoreSlim = new(1, 1);
         private readonly ConcurrentQueue<Func<Task>> _concurrentQueueForEffects = new();
 
@@ -30,7 +31,7 @@ public partial record PlainTextEditorStates
             var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
             var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
-            var plainTextEditor = new 
+            var plainTextEditor = new
                 PlainTextEditorRecord(constructPlainTextEditorRecordAction.PlainTextEditorKey);
 
             nextPlainTextEditorMap[constructPlainTextEditorRecordAction.PlainTextEditorKey] = plainTextEditor;
@@ -38,7 +39,7 @@ public partial record PlainTextEditorStates
 
             return new PlainTextEditorStates(nextPlainTextEditorMap.ToImmutableDictionary(), nextPlainTextEditorList.ToImmutableArray());
         }
-        
+
         [ReducerMethod]
         public static PlainTextEditorStates ReduceDeconstructPlainTextEditorRecordAction(PlainTextEditorStates previousPlainTextEditorStates,
             DeconstructPlainTextEditorRecordAction deconstructPlainTextEditorRecordAction)
@@ -51,7 +52,7 @@ public partial record PlainTextEditorStates
 
             return new PlainTextEditorStates(nextPlainTextEditorMap.ToImmutableDictionary(), nextPlainTextEditorList.ToImmutableArray());
         }
-        
+
         [EffectMethod]
         public async Task HandleKeyDownEventAction(KeyDownEventAction keyDownEventAction,
             IDispatcher dispatcher)
@@ -115,7 +116,7 @@ public partial record PlainTextEditorStates
 
                 await _effectSemaphoreSlim.WaitAsync();
 
-                if(_concurrentQueueForEffects.TryDequeue(out var effect))
+                if (_concurrentQueueForEffects.TryDequeue(out var effect))
                     await effect.Invoke();
             }
             finally
@@ -123,7 +124,7 @@ public partial record PlainTextEditorStates
                 _effectSemaphoreSlim.Release();
             }
         }
-        
+
         [EffectMethod]
         public async Task HandleInitializeAction(PlainTextEditorInitializeAction plainTextEditorInitializeAction,
             IDispatcher dispatcher)
@@ -138,9 +139,15 @@ public partial record PlainTextEditorStates
 
                     var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
                     var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
-                    
+
+                    var fileCoordinateGrid = await FileCoordinateGridFactory
+                        .ConstructFileCoordinateGridAsync(plainTextEditorInitializeAction.AbsoluteFilePath);
+
                     var plainTextEditor = new
-                        PlainTextEditorRecord(plainTextEditorInitializeAction.PlainTextEditorKey);
+                        PlainTextEditorRecord(plainTextEditorInitializeAction.PlainTextEditorKey)
+                    {
+                        FileCoordinateGrid = fileCoordinateGrid
+                    };
 
                     var content = await File
                         .ReadAllTextAsync(plainTextEditorInitializeAction.AbsoluteFilePath.GetAbsoluteFilePathString());
@@ -193,9 +200,9 @@ public partial record PlainTextEditorStates
 
                         replacementPlainTextEditor = PlainTextEditorStates.StateMachine
                                 .HandleKeyDownEvent(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
-                            {
-                                SequenceKey = SequenceKey.NewSequenceKey()
-                            };
+                        {
+                            SequenceKey = SequenceKey.NewSequenceKey()
+                        };
 
                         previousCharacterWasCarriageReturn = false;
                     }
@@ -232,25 +239,25 @@ public partial record PlainTextEditorStates
                 _effectSemaphoreSlim.Release();
             }
         }
-        
+
         [ReducerMethod]
         public static PlainTextEditorStates ReduceSetPlainTextEditorStatesAction(PlainTextEditorStates previousPlainTextEditorStates,
             SetPlainTextEditorStatesAction setPlainTextEditorStatesAction)
         {
             return setPlainTextEditorStatesAction.PlainTextEditorStates;
         }
-        
+
         [ReducerMethod]
         public static PlainTextEditorStates ReducePlainTextEditorOnClickAction(PlainTextEditorStates previousPlainTextEditorStates,
             PlainTextEditorOnClickAction plainTextEditorOnClickAction)
         {
             var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
             var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
-            
+
             var focusedPlainTextEditor = previousPlainTextEditorStates.Map[plainTextEditorOnClickAction.FocusedPlainTextEditorKey]
                 as PlainTextEditorRecord;
 
-            if (focusedPlainTextEditor is null) 
+            if (focusedPlainTextEditor is null)
                 return previousPlainTextEditorStates;
 
             var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
@@ -263,7 +270,7 @@ public partial record PlainTextEditorStates
 
             return new PlainTextEditorStates(nextPlainTextEditorMap.ToImmutableDictionary(), nextPlainTextEditorList.ToImmutableArray());
         }
-        
+
         // TODO: Look into Unit Testing save plain text editor before ever allowing a save keybind in the editor (as an aside this ended up working quite well. A current issue is '\r\n' converted to '\n' when saving)
         //private static async Task SavePlainTextEditor(PlainTextEditorRecord focusedPlainTextEditor)
         //{

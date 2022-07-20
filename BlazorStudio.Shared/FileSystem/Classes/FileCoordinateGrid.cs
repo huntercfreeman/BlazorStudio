@@ -28,9 +28,12 @@ public static class FileCoordinateGridFactory
             0 // Start of document
         };
 
+        public ImmutableArray<long> ByteMarkerForStartOfARow => 
+            _byteMarkerForStartOfARow.ToImmutableArray();
+
         private readonly string _copyFileIdentifier = "~$bstudio_";
 
-        private IAbsoluteFilePath? _copyAbsoluteFilePath = null;
+        public IAbsoluteFilePath? CopyAbsoluteFilePath { get; private set; } = null;
 
         public Encoding Encoding { get; private set; }
         public int RowCount => _byteMarkerForStartOfARow.Count;
@@ -52,11 +55,11 @@ public static class FileCoordinateGridFactory
             var containingDirectoryAbsoluteFilePathString =
                 ((AbsoluteFilePath)parentDirectory).GetAbsoluteFilePathString();
 
-            _copyAbsoluteFilePath =
+            CopyAbsoluteFilePath =
                 new AbsoluteFilePath(containingDirectoryAbsoluteFilePathString + _copyFileIdentifier + AbsoluteFilePath.FilenameWithExtension,
                     false);
 
-            string path = _copyAbsoluteFilePath.GetAbsoluteFilePathString();
+            string path = CopyAbsoluteFilePath.GetAbsoluteFilePathString();
 
             try
             {
@@ -104,10 +107,15 @@ public static class FileCoordinateGridFactory
             }
         }
 
+        public async Task<(int Index, string RowText)> Request(FileCoordinateGridRequest fileCoordinateGridRequest)
+        {
+
+        }
+
         public void Dispose()
         {
-            if (_copyAbsoluteFilePath is not null)
-                File.Delete(_copyAbsoluteFilePath.GetAbsoluteFilePathString());
+            if (CopyAbsoluteFilePath is not null)
+                File.Delete(CopyAbsoluteFilePath.GetAbsoluteFilePathString());
         }
     }
 }
@@ -117,6 +125,10 @@ public interface IFileCoordinateGrid
     public IAbsoluteFilePath AbsoluteFilePath { get; }
     public Encoding Encoding { get; }
     public int RowCount { get; }
+    public IAbsoluteFilePath? CopyAbsoluteFilePath { get; }
+    public ImmutableArray<long> ByteMarkerForStartOfARow { get; }
+
+    public Task<(int Index, string RowText)> Request(FileCoordinateGridRequest fileCoordinateGridRequest);
     /// <summary>
     /// Added this Dispose declaration so I can call it when Unit Testing
     /// IDisposable should call Dispose() for you.

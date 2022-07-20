@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlazorStudio.Shared.FileSystem.Classes;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -161,7 +162,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         return $"font-size: {PlainTextEditorSelector.Value?.RichTextEditorOptions.FontSizeInPixels ?? 0}px;";
     }
 
-    private ValueTask<ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>> RowItemsProvider(
+    private async ValueTask<ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>> RowItemsProvider(
         ItemsProviderRequest request)
     {
         var currentPlainTextEditor = PlainTextEditorSelector.Value;
@@ -177,15 +178,14 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         if (numberOfRows > 0)
         {
-            rowTuples = currentPlainTextEditor.List
-                .Select((row, index) => (index, row))
-                .Skip(request.StartIndex)
-                .Take(numberOfRows)
-                .ToArray();
+            var rowIndexTextTuples = await currentPlainTextEditor.FileCoordinateGrid
+                .Request(new FileCoordinateGridRequest(request.StartIndex, numberOfRows, request.CancellationToken));
+
+            Dispatcher.Dispatch(new );
         }
 
         return ValueTask.FromResult(new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
-                currentPlainTextEditor.List.Count));
+            currentPlainTextEditor.FileCoordinateGrid.RowCount));
     }
 
     protected override void Dispose(bool disposing)
