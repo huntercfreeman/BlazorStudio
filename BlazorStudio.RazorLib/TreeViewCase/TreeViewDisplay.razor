@@ -6,7 +6,7 @@
     
     <span @ref="_titleSpan"
           class="bstudio_tree-view-display-title @IsActiveStyling"
-          style="padding-left: @(GetScaledByDepthPixelsOffset(Depth));"
+          style="padding-left: calc(@(GetScaledByDepthPixelsOffset(Depth)) + 5px);"
           tabindex='@(IsActive ? "0" : "-1")'
           @onclick="SetIsActiveOnClick"
           @onkeydown:preventDefault="true"
@@ -52,38 +52,44 @@
             }
 
         </DropdownDisplay>
+        
+        @{
+            var paddingLeftFromTreeDepth = GetScaledByDepthPixelsOffset(Depth + 1);
 
-        <div class="bstudio_tree-view-display-body-border"
-             style="left: @GetScaledByDepthPixelsOffset(Depth + 1)">
-        </div>
-        @if (TreeView.IsExpanded)
-        {
-            @if (_isGettingChildren)
-            {
-                <span>Loading...</span>
-            }
-            else if (_toggleIsExpandedOnClickRichErrorModel is not null)
-            {
-                <div class="bstudio_tree-view-display-title"
-                     style="padding-left: @(GetScaledByDepthPixelsOffset(Depth + 1));">
+            <div class="bstudio_tree-view-display-body-border"
+                 style="left: @paddingLeftFromTreeDepth">
+            </div>
 
-                    <RichErrorDisplay RichErrorModel="_toggleIsExpandedOnClickRichErrorModel"/>
-                </div>
-            }
-            else
+            @if (TreeView.IsExpanded)
             {
-                <CascadingValue Name="Depth" Value="Depth + 1">
-                    @for (int i = 0; i < TreeView.Children.Length; i++)
-                    {
-                        int index = i;
-                        var child = (TreeView<T>)TreeView.Children[i];
 
-                        <TreeViewDisplay TreeView="child"
-                                         GetSiblingsAndSelfFunc="() => TreeView.Children"
-                                         IndexAmongSiblings="index"
-                                         Parent="this"/>
-                    }
-                </CascadingValue>
+                @if (_isGettingChildren)
+                {
+                    <span>Loading...</span>
+                }
+                else if (_toggleIsExpandedOnClickRichErrorModel is not null)
+                {
+                    <div class="bstudio_tree-view-display-title"
+                         style="padding-left: calc(@paddingLeftFromTreeDepth + 5px);">
+
+                        <RichErrorDisplay RichErrorModel="_toggleIsExpandedOnClickRichErrorModel"/>
+                    </div>
+                }
+                else
+                {
+                    <CascadingValue Name="Depth" Value="Depth + 1">
+                        @for (int i = 0; i < TreeView.Children.Length; i++)
+                        {
+                            int index = i;
+                            var child = (TreeView<T>)TreeView.Children[i];
+
+                            <TreeViewDisplay TreeView="child"
+                                             GetSiblingsAndSelfFunc="() => TreeView.Children"
+                                             IndexAmongSiblings="index"
+                                             Parent="this"/>
+                        }
+                    </CascadingValue>
+                }
             }
         }
     </div>
