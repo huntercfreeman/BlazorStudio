@@ -10,7 +10,7 @@ namespace PlainTextEditor.Tests;
 public class MEMORY_MAPPED_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 {
     /// <summary>
-    /// Goal with this Test is not to look at using <see cref="MemoryMappedFile"/> Virtualization but instead
+    /// Goal with this Test is NOT to look at using <see cref="MemoryMappedFile"/> Virtualization but instead
     /// read the entire file and compare it against <see cref="StreamReader"/> so it can be asserted that the binary
     /// is being transcoded properly.
     /// </summary>
@@ -74,32 +74,70 @@ public class MEMORY_MAPPED_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         Assert.Equal(streamReaderResult, memoryMappedFileResult);
     }
-    
-    ////https://stackoverflow.com/questions/30251443/how-to-read-and-write-a-file-using-memory-mapped-file-c
-    //[Fact]
-    //public void MEMORY_MAPPED_FILE_USAGE()
-    //{
-    //    long offset = 0x10000000; // 256 megabytes 
-    //    long length = 0x20000000; // 512 megabytes 
 
-    //    // Create the memory-mapped file. 
-    //    using (var mmf = MemoryMappedFile.CreateFromFile(@"c:\ExtremelyLargeImage.data", FileMode.Open, "ImgA"))
-    //    {
-    //        // Create a random access view, from the 256th megabyte (the offset) 
-    //        // to the 768th megabyte (the offset plus length). 
-    //        using (var accessor = mmf.CreateViewAccessor(offset, length))
-    //        {
-    //            int colorSize = Marshal.SizeOf<MyColor>();
-    //            MyColor color;
+    /// <summary>
+    /// Goal with this Test is to look at using
+    /// <see cref="MemoryMappedFile"/> Virtualization by random access memory
+    /// </summary>
+    [Theory]
+    [InlineData("./TestData/Hamlet_ Entire Play.html", 0, 1024)]
+    [InlineData("./TestData/Hamlet_ Entire Play.html", 1024, 1024)]
+    public void RANDOM_ACCESS_MEMORY_MAPPED_FILE_IS_EQUAL_TO_STREAM_READER(string path,
+        long startingPosition,
+        int readLength)
+    {
+        Encoding encoding;
+        string streamReaderResult;
 
-    //            // Make changes to the view. 
-    //            for (long i = 0; i < length; i += colorSize)
-    //            {
-    //                accessor.Read(i, out color);
-    //                color.Brighten(10);
-    //                accessor.Write(i, ref color);
-    //            }
-    //        }
-    //    }
-    //}
+        using (StreamReader streamReader = new StreamReader(path, true))
+        {
+            if (!streamReader.BaseStream.CanSeek)
+            {
+                throw new ApplicationException(
+                    $"{nameof(streamReader.BaseStream.CanSeek)} was {streamReader.BaseStream.CanSeek}.");
+            }
+            
+            streamReader.BaseStream.Seek(startingPosition, SeekOrigin.Begin);
+
+            var builder = new StringBuilder();
+
+            var i = 0;
+
+            while (i++ < readLength && streamReader.Peek() != -1)
+            {
+                builder.Append((char)streamReader.Read());
+            }
+
+            streamReaderResult = builder.ToString();
+            encoding = streamReader.CurrentEncoding;
+        }
+
+        var buffer = new byte[readLength];
+
+        using (var mmf = MemoryMappedFile.CreateFromFile(path, FileMode.Open, "blazorStudio"))
+        {
+            using (var accessor = mmf.CreateViewAccessor(startingPosition, readLength))
+            {
+                accessor.ReadArray(0, buffer, 0, readLength);
+            }
+        }
+
+        string memoryMappedFileResult;
+
+        using (StreamReader streamReader = new StreamReader(new MemoryStream(buffer), encoding))
+        {
+            var builder = new StringBuilder();
+
+            var i = 0;
+
+            while (i++ < readLength && streamReader.Peek() != -1)
+            {
+                builder.Append((char)streamReader.Read());
+            }
+
+            memoryMappedFileResult = builder.ToString();
+        }
+
+        Assert.Equal(streamReaderResult, memoryMappedFileResult);
+    }
 }
