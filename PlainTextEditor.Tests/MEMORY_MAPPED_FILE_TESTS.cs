@@ -9,46 +9,72 @@ namespace PlainTextEditor.Tests;
 
 public class MEMORY_MAPPED_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 {
+    /// <summary>
+    /// Goal with this Test is not to look at using <see cref="MemoryMappedFile"/> Virtualization but instead
+    /// read the entire file and compare it against <see cref="StreamReader"/> so it can be asserted that the binary
+    /// is being transcoded properly.
+    /// </summary>
     [Fact]
-    public void HAMLET_ENTIRE_PLAY_HTML()
+    public void MEMORY_MAPPED_FILE_IS_EQUAL_TO_STREAM_READER()
     {
+        // The default constructor does not provide a preamble.
+        UTF8Encoding UTF8NoPreamble = new UTF8Encoding();
+        UTF8Encoding UTF8WithPreamble = new UTF8Encoding(true);
+
+        var preambleNo = UTF8NoPreamble.GetPreamble();
+        var preambleYes = UTF8WithPreamble.GetPreamble();
+
+        /////
+
         string path = "./TestData/Hamlet_ Entire Play.html";
 
         int offset = 0;
         int length = 256;
 
-        using (StreamReader sr = new StreamReader(path, true))
+        string encoding;
+        long streamReaderStartingPosition;
+        long streamReaderPositionAfterFirstPeek;
+        long streamReaderEndingPosition;
+        string streamReaderResult;
+
+        using (StreamReader streamReader = new StreamReader(path, true))
         {
-            var srBuilder = new StringBuilder();
+            streamReaderStartingPosition = streamReader.BaseStream.Position;
+
+            _ = streamReader.Peek();
+
+            streamReaderPositionAfterFirstPeek = streamReader.BaseStream.Position;
+
+            var builder = new StringBuilder();
 
             for (int i = offset; i < length; i++)
             {
-                srBuilder.Append((char)sr.Read());
+                builder.Append((char)streamReader.Read());
             }
 
-            var srResult = srBuilder.ToString();
-            var encoding = sr.CurrentEncoding.BodyName;
+            streamReaderEndingPosition = streamReader.BaseStream.Position;
 
-            var z = 2;
+            streamReaderResult = builder.ToString();
+            encoding = streamReader.CurrentEncoding.BodyName;
         }
 
-        //using (var mmf = MemoryMappedFile.CreateFromFile(hamletEntirePlayRelativePath, FileMode.Open, "hamlet"))
-        //{
-        //    using (var accessor = mmf.CreateViewAccessor(0, 10))
-        //    {
-        //        var z = 2;
-        //        //int colorSize = Marshal.SizeOf<MyColor>();
-        //        //MyColor color;
+        using (var mmf = MemoryMappedFile.CreateFromFile(path, FileMode.Open, "blazorStudio"))
+        {
+            using (var accessor = mmf.CreateViewAccessor(streamReaderStartingPosition, streamReaderEndingPosition))
+            {
+                var z = 2;
+                //int colorSize = Marshal.SizeOf<MyColor>();
+                //MyColor color;
 
-        //        //// Make changes to the view. 
-        //        //for (long i = 0; i < length; i += colorSize)
-        //        //{
-        //        //    accessor.Read(i, out color);
-        //        //    color.Brighten(10);
-        //        //    accessor.Write(i, ref color);
-        //        //}
-        //    }
-        //}
+                //// Make changes to the view. 
+                //for (long i = 0; i < length; i += colorSize)
+                //{
+                //    accessor.Read(i, out color);
+                //    color.Brighten(10);
+                //    accessor.Write(i, ref color);
+                //}
+            }
+        }
     }
     
     ////https://stackoverflow.com/questions/30251443/how-to-read-and-write-a-file-using-memory-mapped-file-c
