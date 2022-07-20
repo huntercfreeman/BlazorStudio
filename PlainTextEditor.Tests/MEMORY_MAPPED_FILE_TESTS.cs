@@ -82,6 +82,7 @@ public class MEMORY_MAPPED_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     [Theory]
     [InlineData("./TestData/Hamlet_ Entire Play.html", 0, 1024)]
     [InlineData("./TestData/Hamlet_ Entire Play.html", 1024, 1024)]
+    [InlineData("./TestData/Hamlet_ Entire Play.html", 2159, 123)]
     public void RANDOM_ACCESS_MEMORY_MAPPED_FILE_IS_EQUAL_TO_STREAM_READER(string path,
         long startingPosition,
         int readLength)
