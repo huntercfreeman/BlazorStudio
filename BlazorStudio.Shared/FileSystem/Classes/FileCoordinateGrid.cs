@@ -23,20 +23,23 @@ public static class FileCoordinateGridFactory
         /// Index using the Row index and this returns the
         /// starting position of that row within the text file.
         /// </summary>
-        private readonly List<long> _byteMarkerForStartOfARow = new()
+        private readonly List<long> _characterIndexMarkerForStartOfARow = new()
         {
             0 // Start of document
         };
 
-        public ImmutableArray<long> ByteMarkerForStartOfARow => 
-            _byteMarkerForStartOfARow.ToImmutableArray();
+        public ImmutableArray<long> CharacterIndexMarkerForStartOfARow => 
+            _characterIndexMarkerForStartOfARow.ToImmutableArray();
 
         private readonly string _copyFileIdentifier = "~$bstudio_";
+        private int _exclusiveEndOfFileCharacterIndex;
+        private MemoryMappedFile? _memoryMappedFile;
 
         public IAbsoluteFilePath? CopyAbsoluteFilePath { get; private set; } = null;
 
         public Encoding Encoding { get; private set; }
-        public int RowCount => _byteMarkerForStartOfARow.Count;
+        public int RowCount => _characterIndexMarkerForStartOfARow.Count;
+        public int ExclusiveEndOfFileCharacterIndex => _exclusiveEndOfFileCharacterIndex;
 
         public async Task InitializeAsync()
         {
@@ -55,22 +58,24 @@ public static class FileCoordinateGridFactory
             var containingDirectoryAbsoluteFilePathString =
                 ((AbsoluteFilePath)parentDirectory).GetAbsoluteFilePathString();
 
-            CopyAbsoluteFilePath =
-                new AbsoluteFilePath(containingDirectoryAbsoluteFilePathString + _copyFileIdentifier + AbsoluteFilePath.FilenameWithExtension,
-                    false);
+            //CopyAbsoluteFilePath =
+            //    new AbsoluteFilePath(containingDirectoryAbsoluteFilePathString + _copyFileIdentifier + AbsoluteFilePath.FilenameWithExtension,
+            //        false);
+            //
+            CopyAbsoluteFilePath = AbsoluteFilePath;
 
             string path = CopyAbsoluteFilePath.GetAbsoluteFilePathString();
 
-            try
-            {
-                // TODO: Perhaps a way around making a temporary copy of the file is possible
-                File.Copy(AbsoluteFilePath.GetAbsoluteFilePathString(),
-                    path);
-            }
-            catch (System.IO.IOException)
-            {
-                // File already exists so use the existing one
-            }
+            //try
+            //{
+            //    // TODO: Perhaps a way around making a temporary copy of the file is possible
+            //    File.Copy(AbsoluteFilePath.GetAbsoluteFilePathString(),
+            //        path);
+            //}
+            //catch (System.IO.IOException)
+            //{
+            //    // File already exists so use the existing one
+            //}
 
             int characterCounter = 0;
             int? bytesPerEncodedCharacter = null;
@@ -101,29 +106,41 @@ public static class FileCoordinateGridFactory
                         //    var vav = 2;
                         //}
 
-                        _byteMarkerForStartOfARow.Add(characterCounter);
+                        _characterIndexMarkerForStartOfARow.Add(characterCounter);
                     }
                 }
             }
+
+            _exclusiveEndOfFileCharacterIndex = characterCounter;
+
+            _memoryMappedFile = MemoryMappedFile
+                .CreateFromFile(CopyAbsoluteFilePath.GetAbsoluteFilePathString(),
+                    FileMode.Open,
+                    "blazorStudio");
         }
 
-        public async Task<string> Request(FileCoordinateGridRequest fileCoordinateGridRequest)
+        public string Request(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
-            long inclusiveStartingByte = ByteMarkerForStartOfARow[fileCoordinateGridRequest.StartingRowIndex];
+            long inclusiveStartingByte = CharacterIndexMarkerForStartOfARow[fileCoordinateGridRequest.StartingRowIndex];
 
-            var endingRowIndex = fileCoordinateGridRequest.StartingRowIndex + fileCoordinateGridRequest.RowCount;
+            var exclusiveEndingRowIndex = fileCoordinateGridRequest.StartingRowIndex + fileCoordinateGridRequest.RowCount;
             
-            if (endingRowIndex > ByteMarkerForStartOfARow.Length - 1)
+            if (exclusiveEndingRowIndex > CharacterIndexMarkerForStartOfARow.Length - 1)
             {
-                endingRowIndex = ByteMarkerForStartOfARow.Length - 1;
+                exclusiveEndingRowIndex = CharacterIndexMarkerForStartOfARow.Length - 1;
             }
 
-            //if (fileCoordinateGridRequest.StartingRowIndex == endingRowIndex)
-            //{
-            //    longByteLengthOfRequest = 
-            //}
+            long exclusiveEndingByte;
 
-            long exclusiveEndingByte = ByteMarkerForStartOfARow[endingRowIndex];
+            if (fileCoordinateGridRequest.StartingRowIndex == exclusiveEndingRowIndex)
+            {
+                exclusiveEndingByte = ExclusiveEndOfFileCharacterIndex;
+            }
+            else
+            {
+                exclusiveEndingByte = CharacterIndexMarkerForStartOfARow[exclusiveEndingRowIndex];
+            }
+
 
             long longByteLengthOfRequest = exclusiveEndingByte - inclusiveStartingByte;
 
@@ -139,15 +156,9 @@ public static class FileCoordinateGridFactory
             // TODO: Virtualize the columns in addition to the rows
             var buffer = new byte[intByteLengthOfRequest];
 
-            using (var mmf = MemoryMappedFile
-                       .CreateFromFile(CopyAbsoluteFilePath.GetAbsoluteFilePathString(),
-                           FileMode.Open,
-                           "blazorStudio"))
+            using (MemoryMappedViewAccessor accessor = _memoryMappedFile.CreateViewAccessor(inclusiveStartingByte, intByteLengthOfRequest))
             {
-                using (var accessor = mmf.CreateViewAccessor(inclusiveStartingByte, intByteLengthOfRequest))
-                {
-                    accessor.ReadArray(0, buffer, 0, intByteLengthOfRequest);
-                }
+                accessor.ReadArray(0, buffer, 0, intByteLengthOfRequest);
             }
 
             string memoryMappedFileResult;
@@ -169,8 +180,11 @@ public static class FileCoordinateGridFactory
 
         public void Dispose()
         {
-            if (CopyAbsoluteFilePath is not null)
-                File.Delete(CopyAbsoluteFilePath.GetAbsoluteFilePathString());
+            if (_memoryMappedFile is not null)
+                _memoryMappedFile.Dispose();
+
+            //if (CopyAbsoluteFilePath is not null)
+            //    File.Delete(CopyAbsoluteFilePath.GetAbsoluteFilePathString());
         }
     }
 }
@@ -181,9 +195,9 @@ public interface IFileCoordinateGrid
     public Encoding Encoding { get; }
     public int RowCount { get; }
     public IAbsoluteFilePath? CopyAbsoluteFilePath { get; }
-    public ImmutableArray<long> ByteMarkerForStartOfARow { get; }
+    public ImmutableArray<long> CharacterIndexMarkerForStartOfARow { get; }
 
-    public Task<string> Request(FileCoordinateGridRequest fileCoordinateGridRequest);
+    public string Request(FileCoordinateGridRequest fileCoordinateGridRequest);
     /// <summary>
     /// Added this Dispose declaration so I can call it when Unit Testing
     /// IDisposable should call Dispose() for you.
