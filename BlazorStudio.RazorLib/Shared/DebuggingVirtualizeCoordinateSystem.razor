@@ -1,9 +1,10 @@
 ﻿@using PlainTextEditor.ClassLib.Html
 
 <div style="font-family: monospace;">
-    <BlazorStudio.RazorLib.Virtualize.VirtualizeCoordinateSystem InitialVirtualizeCoordinateSystemResult="VirtualizeCoordinateSystemResult"
+    <BlazorStudio.RazorLib.Virtualize.VirtualizeCoordinateSystem InitialVirtualizeCoordinateSystemResult="GetVirtualizeCoordinateSystemResultFunc()"
                                                                  Context="row"
-                                                                 RequestCallbackAction="(_, _) => Console.Write(string.Empty)">
+                                                                 RequestCallbackAction="(_, _) => Console.Write(string.Empty)"
+                                                                 @ref="_virtualizeCoordinateSystem">
         <div class="bstudio_test-row">
                 
             @foreach (var character in row.RowText)

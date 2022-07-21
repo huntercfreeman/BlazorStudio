@@ -33,23 +33,25 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     public bool ShowDebugInfo { get; set; }
 
     private CancellationTokenSource _cancellationTokenSource = new();
-    protected ImmutableArray<T> _data = ImmutableArray<T>.Empty;
-    protected Dimensions _dimensions = null!;
+    public ImmutableArray<T> _data = ImmutableArray<T>.Empty;
+    public Dimensions _dimensions = null!;
     
-    protected Dimensions _leftBoundaryDimensions = null!;
-    protected Dimensions _rightBoundaryDimensions = null!;
-    protected Dimensions _topBoundaryDimensions = null!;
-    protected Dimensions _bottomBoundaryDimensions = null!;
+    public Dimensions _leftBoundaryDimensions = null!;
+    public Dimensions _rightBoundaryDimensions = null!;
+    public Dimensions _topBoundaryDimensions = null!;
+    public Dimensions _bottomBoundaryDimensions = null!;
 
-    protected double _scrollRight;
-    protected double _scrollLeft;
+    public double _scrollRight;
+    public double _scrollLeft;
 
-    protected Guid _guid;
+    public Guid _guid;
 
-    protected string _leftElementId = $"virtualize-coordinate-system_left_{Guid.NewGuid()}";
-    protected string _rightElementId = $"virtualize-coordinate-system_right_{Guid.NewGuid()}";
-    protected string _topElementId = $"virtualize-coordinate-system_top_{Guid.NewGuid()}";
-    protected string _bottomElementId = $"virtualize-coordinate-system_bottom_{Guid.NewGuid()}";
+    public string _leftElementId = $"virtualize-coordinate-system_left_{Guid.NewGuid()}";
+    public string _rightElementId = $"virtualize-coordinate-system_right_{Guid.NewGuid()}";
+    public string _topElementId = $"virtualize-coordinate-system_top_{Guid.NewGuid()}";
+    public string _bottomElementId = $"virtualize-coordinate-system_bottom_{Guid.NewGuid()}";
+
+    public event EventHandler _componentStateChanged;
 
     protected override void OnInitialized()
     {
@@ -110,6 +112,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         _bottomBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.BottomBoundaryDimensions;
 
         InvokeAsync(StateHasChanged);
+
+        _componentStateChanged?.Invoke(null, EventArgs.Empty);
     }
     
     public CancellationToken CancelTokenSourceAndGetNewToken()
@@ -120,7 +124,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         return _cancellationTokenSource.Token;
     }
 
-    public void Dispose()
+
+    public virtual void Dispose()
     {
         _cancellationTokenSource?.Cancel();
 

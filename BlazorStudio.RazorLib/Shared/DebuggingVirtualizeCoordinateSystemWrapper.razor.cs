@@ -15,19 +15,9 @@ public partial class DebuggingVirtualizeCoordinateSystemWrapper : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private readonly DialogRecord _virtualizeCoordinateSystemDialog = new DialogRecord(
-        DialogKey.NewDialogKey(),
-        "VirtualizeCoordinateSystem<T>",
-        typeof(DebuggingVirtualizeCoordinateSystem),
-        null
-    );
-    
-    private readonly DialogRecord _debugDataVirtualizeCoordinateSystemDialog = new DialogRecord(
-        DialogKey.NewDialogKey(),
-        "Debug Data VirtualizeCoordinateSystem<T>",
-        typeof(DebugVirtualizeCoordinateSystem<DebugRow>),
-        null
-    );
+    private DialogRecord _virtualizeCoordinateSystemDialog = null!;
+
+    private DialogRecord _debugDataVirtualizeCoordinateSystemDialog = null!;
 
     private void OpenVirtualizeCoordinateSystemDialogDialogOnClick()
     {
@@ -42,6 +32,7 @@ public partial class DebuggingVirtualizeCoordinateSystemWrapper : ComponentBase
     }
 
     private VirtualizeCoordinateSystemResult<DebugRow> _initialVirtualizeCoordinateSystemResult;
+    private VirtualizeCoordinateSystem<DebugRow> _renderedComponent;
 
     private List<DebugRow> _rows = new List<DebugRow>();
 
@@ -66,6 +57,36 @@ public partial class DebuggingVirtualizeCoordinateSystemWrapper : ComponentBase
 
     protected override void OnInitialized()
     {
+        _virtualizeCoordinateSystemDialog = new DialogRecord(
+            DialogKey.NewDialogKey(),
+            "VirtualizeCoordinateSystem<T>",
+            typeof(DebuggingVirtualizeCoordinateSystem),
+            new()
+            {
+                {
+                    nameof(DebuggingVirtualizeCoordinateSystem.GetVirtualizeCoordinateSystemResultFunc),
+                    () => _initialVirtualizeCoordinateSystemResult
+                },
+                {
+                    nameof(DebuggingVirtualizeCoordinateSystem.OnAfterRenderVirtualizeCoordinateSystemCallback),
+                    new Action<VirtualizeCoordinateSystem<DebugRow>>((renderedComponent) => _renderedComponent = renderedComponent) 
+                },
+            }
+        );
+
+        _debugDataVirtualizeCoordinateSystemDialog = new DialogRecord(
+            DialogKey.NewDialogKey(),
+            "Debug Data VirtualizeCoordinateSystem<T>",
+            typeof(DebugVirtualizeCoordinateSystem<DebugRow>),
+            new()
+            {
+                {
+                    nameof(DebugVirtualizeCoordinateSystem<DebugRow>.GetVirtualizeCoordinateSystemComponentFunc),
+                    () => _renderedComponent
+                },
+            }
+        );
+
         for (int i = 0; i < rowCount; i++)
         {
             var row = new DebugRow();

@@ -1,35 +1,42 @@
 ﻿@typeparam T
 @inherits VirtualizeCoordinateSystem<T>
 
-<div class="bstudio_virtualize-coordinate-system">
-    <div>
-        @@_data.Length
+<button @onclick="SetTargetComponent">Set Target Component</button>
 
-        &nbsp;->&nbsp;
+@if (_virtualizeCoordinateSystemComponent is null)
+{
+    <div>_virtualizeCoordinateSystemComponent is null</div>
+}
+else
+{
+    <div class="bstudio_virtualize-coordinate-system">
+        <div>
+            @@_data.Length
 
-        @VirtualizeCoordinateSystem._data.Length
-    </div>
-    <div>
-        @@_scrollRight
+            &nbsp;->&nbsp;
 
-        &nbsp;->&nbsp;
+            @_virtualizeCoordinateSystemComponent._data.Length
+        </div>
+        <div>
+            @@_scrollRight
 
-        @VirtualizeCoordinateSystem._scrollRight
-    </div>
-    <div>
-        @@_scrollLeft
+            &nbsp;->&nbsp;
+
+            @_virtualizeCoordinateSystemComponent._scrollRight
+        </div>
+        <div>
+            @@_scrollLeft
             
-        &nbsp;->&nbsp;
+            &nbsp;->&nbsp;
             
-        @VirtualizeCoordinateSystem._scrollLeft
-    </div>
+            @_virtualizeCoordinateSystemComponent._scrollLeft
+        </div>
 
-    _dimensions = null!;
+        _dimensions = null!;
     
-    private Dimensions _leftBoundaryDimensions = null!;
-    private Dimensions _rightBoundaryDimensions = null!;
-    private Dimensions _topBoundaryDimensions = null!;
-    private Dimensions _bottomBoundaryDimensions = null!;
-
-        
-</div>
+        private Dimensions _leftBoundaryDimensions = null!;
+        private Dimensions _rightBoundaryDimensions = null!;
+        private Dimensions _topBoundaryDimensions = null!;
+        private Dimensions _bottomBoundaryDimensions = null!;
+    </div>
+}
