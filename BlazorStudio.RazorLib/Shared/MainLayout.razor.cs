@@ -44,10 +44,110 @@ public partial class MainLayout : FluxorLayout
                     Value = 5 * _personHeight
                 }
             },
+            LeftCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Percentage,
+                    Value = 35
+                }
+            },
+            TopCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Percentage,
+                    Value = 35
+                }
+            },
+        };
+
+        var dimensionsOfLeftBoundary = new Dimensions()
+        {
+            WidthCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Pixels,
+                    Value = 10 * _personWidth
+                }
+            },
+            HeightCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Pixels,
+                    Value = 10 * _personHeight
+                }
+            }
+        };
+
+        var dimensionsOfRightBoundary = new Dimensions()
+        {
+            WidthCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Pixels,
+                    Value = 5 * _personWidth
+                }
+            },
+            HeightCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Pixels,
+                    Value = 5 * _personHeight
+                }
+            }
+        };
+
+        var dimensionsOfTopBoundary = new Dimensions()
+        {
+            WidthCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Pixels,
+                    Value = 5 * _personWidth
+                }
+            },
+            HeightCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Pixels,
+                    Value = 5 * _personHeight
+                }
+            }
+        };
+
+        var dimensionsOfBottomBoundary = new Dimensions()
+        {
+            WidthCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Pixels,
+                    Value = 5 * _personWidth
+                }
+            },
+            HeightCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Pixels,
+                    Value = 5 * _personHeight
+                }
+            }
         };
 
         _initialVirtualizeCoordinateSystemResult = new(_people, 
-            dimensionsOfCoordinateSystem);
+            dimensionsOfCoordinateSystem,
+            dimensionsOfLeftBoundary,
+            dimensionsOfRightBoundary,
+            dimensionsOfTopBoundary,
+            dimensionsOfBottomBoundary);
 
         base.OnInitialized();
     }

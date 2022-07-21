@@ -25,9 +25,19 @@ public class VirtualizeCoordinateSystemResult<T>
 
     /// <param name="items">The items to provide.</param>
     /// <param name="totalItemCount">The total item count in the source generating the items provided.</param>
-    public VirtualizeCoordinateSystemResult(IEnumerable<T> items, Dimensions coordinateSystemDimensions)
+    public VirtualizeCoordinateSystemResult(IEnumerable<T> items, 
+        Dimensions coordinateSystemDimensions,
+        Dimensions leftBoundaryDimensions,
+        Dimensions rightBoundaryDimensions,
+        Dimensions topBoundaryDimensions,
+        Dimensions bottomBoundaryDimensions)
     {
         Items = items;
         CoordinateSystemDimensions = coordinateSystemDimensions;
+
+        LeftBoundaryDimensions = leftBoundaryDimensions;
+        RightBoundaryDimensions = rightBoundaryDimensions;
+        TopBoundaryDimensions = topBoundaryDimensions;
+        BottomBoundaryDimensions = bottomBoundaryDimensions;
     }
 }

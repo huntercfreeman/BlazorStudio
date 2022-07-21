@@ -379,3 +379,7 @@ em {
         outline: solid 2px var(--bstudio_primary-emphasis-font-color);
         box-shadow: 0 0 21px var(--bstudio_primary-emphasis-font-color);
     }
+
+.bstudio_virtualize-coordinate-system {
+    overflow: auto;
+}
