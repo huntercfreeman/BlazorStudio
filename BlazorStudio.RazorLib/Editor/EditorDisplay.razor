@@ -1,4 +1,5 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+﻿@using BlazorStudio.RazorLib.PlainTextEditorCase
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_editor-display"
      style="@Dimensions.DimensionsCssString">
@@ -13,7 +14,7 @@
     {
         <div style="white-space: nowrap; overflow-x: auto; height: 3rem;">@EditorStateWrap.Value.OpenedAbsoluteFilePath.GetAbsoluteFilePathString()</div>
         
-        <PlainTextEditor.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn @ref="_plainTextEditorSpawn"
+        <BlazorStudio.RazorLib.PlainTextEditorCase.PlainTextEditorSpawn @ref="_plainTextEditorSpawn"
                                                                            AfterInitializationCallback="ReadFileContentsIntoEditor" />
     }
 </div>

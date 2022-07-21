@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.Errors;
+using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
@@ -8,7 +9,6 @@ using BlazorStudio.ClassLib.UserInterface;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using PlainTextEditor.ClassLib.Keyboard;
 
 namespace BlazorStudio.RazorLib.TreeViewCase;
 

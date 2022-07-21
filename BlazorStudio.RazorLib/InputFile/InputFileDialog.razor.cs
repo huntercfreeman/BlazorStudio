@@ -8,9 +8,9 @@ using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DropdownCase;
-using BlazorStudio.Shared.FileSystem.Classes;
-using BlazorStudio.Shared.FileSystem.Interfaces;
 
 namespace BlazorStudio.RazorLib.InputFile;
 

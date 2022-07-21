@@ -1,0 +1,3 @@
+namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
+
+public record DeconstructPlainTextEditorRecordAction(PlainTextEditorKey PlainTextEditorKey);

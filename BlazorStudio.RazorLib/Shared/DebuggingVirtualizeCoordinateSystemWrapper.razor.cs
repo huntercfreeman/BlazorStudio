@@ -2,7 +2,7 @@
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.ClassLib.Virtualize;
-using BlazorStudio.RazorLib.Virtualize;
+using BlazorStudio.RazorLib.VirtualizeComponents;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -110,7 +110,7 @@ public partial class DebuggingVirtualizeCoordinateSystemWrapper : ComponentBase
             _rows.Add(row);
         }
 
-        var dimensionsOfCoordinateSystem = new Dimensions()
+        var dimensionsOfCoordinateSystem = new ClassLib.UserInterface.Dimensions()
         {
             DimensionsPositionKind = DimensionsPositionKind.Relative,
             WidthCalc = new List<DimensionUnit>()
@@ -158,7 +158,7 @@ public partial class DebuggingVirtualizeCoordinateSystemWrapper : ComponentBase
             }
         };
 
-        var dimensionsOfLeftBoundary = new Dimensions()
+        var dimensionsOfLeftBoundary = new ClassLib.UserInterface.Dimensions()
         {
             WidthCalc = new List<DimensionUnit>()
             {
@@ -178,7 +178,7 @@ public partial class DebuggingVirtualizeCoordinateSystemWrapper : ComponentBase
             }
         };
 
-        var dimensionsOfRightBoundary = new Dimensions()
+        var dimensionsOfRightBoundary = new ClassLib.UserInterface.Dimensions()
         {
             WidthCalc = new List<DimensionUnit>()
             {
@@ -206,7 +206,7 @@ public partial class DebuggingVirtualizeCoordinateSystemWrapper : ComponentBase
             },
         };
 
-        var dimensionsOfTopBoundary = new Dimensions()
+        var dimensionsOfTopBoundary = new ClassLib.UserInterface.Dimensions()
         {
             WidthCalc = new List<DimensionUnit>()
             {
@@ -226,7 +226,7 @@ public partial class DebuggingVirtualizeCoordinateSystemWrapper : ComponentBase
             }
         };
 
-        var dimensionsOfBottomBoundary = new Dimensions()
+        var dimensionsOfBottomBoundary = new ClassLib.UserInterface.Dimensions()
         {
             WidthCalc = new List<DimensionUnit>()
             {

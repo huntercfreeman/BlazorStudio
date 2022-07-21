@@ -1,7 +1,7 @@
 ﻿using BlazorStudio.ClassLib.Family;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.ClassLib.Virtualize;
-using BlazorStudio.RazorLib.Virtualize;
+using BlazorStudio.RazorLib.VirtualizeComponents;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Shared;
@@ -15,13 +15,11 @@ public partial class DebuggingVirtualizeCoordinateSystem : ComponentBase
     public Action<VirtualizeCoordinateSystem<DebuggingVirtualizeCoordinateSystemWrapper.DebugRow>>
         OnAfterRenderVirtualizeCoordinateSystemCallback { get; set; } = null!;
 
-    private VirtualizeCoordinateSystem<DebuggingVirtualizeCoordinateSystemWrapper.DebugRow> _virtualizeCoordinateSystem = null!;
-
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            OnAfterRenderVirtualizeCoordinateSystemCallback(_virtualizeCoordinateSystem);
+            //OnAfterRenderVirtualizeCoordinateSystemCallback(_virtualizeCoordinateSystem);
         }
         
         return base.OnAfterRenderAsync(firstRender);

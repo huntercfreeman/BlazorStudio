@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Fluxor" Version="5.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
@@ -20,12 +21,6 @@
     <Folder Include="Store\WorkspaceCase\" />
     <Folder Include="UserInterface\" />
     <Folder Include="Sequence\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\BlazorStudio.Shared\BlazorStudio.Shared.csproj" />
-    <ProjectReference Include="..\PlainTextEditor.ClassLib\PlainTextEditor.ClassLib.csproj" />
-    <ProjectReference Include="..\PlainTextEditor.RazorLib\PlainTextEditor.RazorLib.csproj" />
   </ItemGroup>
 
 </Project>
