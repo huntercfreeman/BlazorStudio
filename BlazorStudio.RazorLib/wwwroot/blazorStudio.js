@@ -37,7 +37,7 @@
 
         plainTextEditorDisplay.scrollTop = element.offsetTop - 5;
     },
-    initializeIntersectionObserver: function () {
+    initializeVirtualizeCoordinateSystemIntersectionObserver: function () {
         let options = {
             rootMargin: '0px',
             threshold: [
@@ -50,11 +50,8 @@
                 this.dotNetObjectReferenceByVirtualizeCoordinateSystemElementId),
             options);
     },
-    subscribeVirtualizeCoordinateSystemScrollIntoView: function (elementId, plainTextEditorGuid) {
-        this.dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.set(elementId, {
-            intersectionRatio: 0,
-            plainTextEditorGuid: plainTextEditorGuid
-        });
+    subscribeVirtualizeCoordinateSystemScrollIntoView: function (elementId, dotNetObjectReference) {
+        this.dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.set(elementId, dotNetObjectReference);
 
         let element = document.getElementById(elementId);
         this.intersectionObserver.observe(element);
@@ -67,12 +64,9 @@
         for (let i = 0; i < entries.length; i++) {
             let currentEntry = entries[i];
 
-            let previousValue = dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.get(currentEntry.target.id);
+            let storedDotNetObjectReference = dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.get(currentEntry.target.id);
 
-            dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.set(currentEntry.target.id, {
-                intersectionRatio: currentEntry.intersectionRatio,
-                plainTextEditorGuid: previousValue.plainTextEditorGuid
-            });
+            storedDotNetObjectReference.invokeMethodAsync("FireRequestCallbackAction", currentEntry.target.id);
         }
     }
 };

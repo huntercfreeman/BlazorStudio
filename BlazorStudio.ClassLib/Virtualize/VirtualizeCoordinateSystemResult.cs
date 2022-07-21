@@ -14,21 +14,15 @@ public class VirtualizeCoordinateSystemResult<T>
     public IEnumerable<T> Items { get; }
 
     /// <summary>
-    /// The total item count in the source generating the items provided.
-    /// </summary>
-    public int TotalItemCount { get; }
-
-    /// <summary>
     /// Used to render the Generic Item
     /// </summary>
     public Dimensions CoordinateSystemDimensions { get; set; } = null!;
 
     /// <param name="items">The items to provide.</param>
     /// <param name="totalItemCount">The total item count in the source generating the items provided.</param>
-    public VirtualizeCoordinateSystemResult(IEnumerable<T> items, int totalItemCount, Dimensions coordinateSystemDimensions)
+    public VirtualizeCoordinateSystemResult(IEnumerable<T> items, Dimensions coordinateSystemDimensions)
     {
         Items = items;
-        TotalItemCount = totalItemCount;
         CoordinateSystemDimensions = coordinateSystemDimensions;
     }
 }

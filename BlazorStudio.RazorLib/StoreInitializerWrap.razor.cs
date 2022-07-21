@@ -15,7 +15,7 @@ public partial class StoreInitializerWrap : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            JsRuntime.InvokeVoidAsync("blazorStudio.VirtualizeCoordinateSystem");
+            JsRuntime.InvokeVoidAsync("blazorStudio.initializeVirtualizeCoordinateSystemIntersectionObserver");
         }
 
         return base.OnAfterRenderAsync(firstRender);
