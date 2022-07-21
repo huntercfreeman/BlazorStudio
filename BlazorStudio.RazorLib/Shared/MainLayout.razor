@@ -7,7 +7,7 @@
 <div class="bstudio_theme-wrapper @ThemeStateWrap.Value.ThemeKey.KeyName">
     <div class="bstudio_main-layout">
 
-        @*<BlazorStudio.RazorLib.Dialog.DialogsInitializer/>
+        <BlazorStudio.RazorLib.Dialog.DialogsInitializer/>
 
         <ToolbarDisplay/>
 
@@ -15,20 +15,6 @@
         
         <BlazorStudio.RazorLib.Dialog.DialogTaskBar />
         
-        <BlazorStudio.RazorLib.Drag.DragDisplay />*@
-        
-        <div style="font-family: monospace;">
-            <BlazorStudio.RazorLib.Virtualize.VirtualizeCoordinateSystem InitialVirtualizeCoordinateSystemResult="_initialVirtualizeCoordinateSystemResult"
-                                                                         Context="row"
-                                                                         RequestCallbackAction="(_, _) => Console.Write(string.Empty)">
-                <div class="bstudio_test-row">
-                    
-                    @foreach (var character in row.RowText)
-                    {
-                        @((MarkupString) character.Value.EscapeHtml())
-                    }
-                </div>
-            </BlazorStudio.RazorLib.Virtualize.VirtualizeCoordinateSystem>
-        </div>
+        <BlazorStudio.RazorLib.Drag.DragDisplay />
     </div>
 </div>

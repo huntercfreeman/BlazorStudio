@@ -45,6 +45,7 @@
   <ItemGroup>
     <Folder Include="Drag\" />
     <Folder Include="Dropdown\" />
+    <Folder Include="DimensionsDisplays\" />
     <Folder Include="Theme\" />
     <Folder Include="Workspace\" />
   </ItemGroup>

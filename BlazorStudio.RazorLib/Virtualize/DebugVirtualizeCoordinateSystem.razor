@@ -1,0 +1,35 @@
+﻿@typeparam T
+@inherits VirtualizeCoordinateSystem<T>
+
+<div class="bstudio_virtualize-coordinate-system">
+    <div>
+        @@_data.Length
+
+        &nbsp;->&nbsp;
+
+        @VirtualizeCoordinateSystem._data.Length
+    </div>
+    <div>
+        @@_scrollRight
+
+        &nbsp;->&nbsp;
+
+        @VirtualizeCoordinateSystem._scrollRight
+    </div>
+    <div>
+        @@_scrollLeft
+            
+        &nbsp;->&nbsp;
+            
+        @VirtualizeCoordinateSystem._scrollLeft
+    </div>
+
+    _dimensions = null!;
+    
+    private Dimensions _leftBoundaryDimensions = null!;
+    private Dimensions _rightBoundaryDimensions = null!;
+    private Dimensions _topBoundaryDimensions = null!;
+    private Dimensions _bottomBoundaryDimensions = null!;
+
+        
+</div>

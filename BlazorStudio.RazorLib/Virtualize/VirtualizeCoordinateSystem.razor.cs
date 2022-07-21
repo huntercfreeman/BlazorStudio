@@ -26,25 +26,30 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     /// </summary>
     [Parameter, EditorRequired]
     public RenderFragment<T> ChildContent { get; set; } = null!;
+    /// <summary>
+    /// Show a HTML element to help with debugging
+    /// </summary>
+    [Parameter]
+    public bool ShowDebugInfo { get; set; }
 
     private CancellationTokenSource _cancellationTokenSource = new();
-    private ImmutableArray<T> _data = ImmutableArray<T>.Empty;
-    private Dimensions _dimensions = null!;
+    protected ImmutableArray<T> _data = ImmutableArray<T>.Empty;
+    protected Dimensions _dimensions = null!;
     
-    private Dimensions _leftBoundaryDimensions = null!;
-    private Dimensions _rightBoundaryDimensions = null!;
-    private Dimensions _topBoundaryDimensions = null!;
-    private Dimensions _bottomBoundaryDimensions = null!;
+    protected Dimensions _leftBoundaryDimensions = null!;
+    protected Dimensions _rightBoundaryDimensions = null!;
+    protected Dimensions _topBoundaryDimensions = null!;
+    protected Dimensions _bottomBoundaryDimensions = null!;
 
-    private double _scrollRight;
-    private double _scrollLeft;
+    protected double _scrollRight;
+    protected double _scrollLeft;
 
-    private Guid _guid;
+    protected Guid _guid;
 
-    private string _leftElementId = $"virtualize-coordinate-system_left_{Guid.NewGuid()}";
-    private string _rightElementId = $"virtualize-coordinate-system_right_{Guid.NewGuid()}";
-    private string _topElementId = $"virtualize-coordinate-system_top_{Guid.NewGuid()}";
-    private string _bottomElementId = $"virtualize-coordinate-system_bottom_{Guid.NewGuid()}";
+    protected string _leftElementId = $"virtualize-coordinate-system_left_{Guid.NewGuid()}";
+    protected string _rightElementId = $"virtualize-coordinate-system_right_{Guid.NewGuid()}";
+    protected string _topElementId = $"virtualize-coordinate-system_top_{Guid.NewGuid()}";
+    protected string _bottomElementId = $"virtualize-coordinate-system_bottom_{Guid.NewGuid()}";
 
     protected override void OnInitialized()
     {

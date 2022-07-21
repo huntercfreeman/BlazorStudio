@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Immutable;
+using System.Text;
 
 namespace BlazorStudio.ClassLib.UserInterface;
 
@@ -14,7 +15,8 @@ public class Dimensions
     public List<DimensionUnit> RightCalc { get; set; } = new();
     public List<DimensionUnit> TopCalc { get; set; } = new();
     public List<DimensionUnit> BottomCalc { get; set; } = new();
-    
+    public List<ArbitraryDimensionUnitList> ArbitraryDimensionUnitLists { get; set; } = new();
+
     public string DimensionsCssString => GetDimensionsString();
 
     private string GetDimensionsString()
@@ -29,6 +31,13 @@ public class Dimensions
         DimensionUnitHelper.AppendToStyleString(builder, RightCalc, "right");
         DimensionUnitHelper.AppendToStyleString(builder, TopCalc, "top");
         DimensionUnitHelper.AppendToStyleString(builder, BottomCalc, "bottom");
+
+        foreach (var arbitraryDimensionUnitList in ArbitraryDimensionUnitLists)
+        {
+            DimensionUnitHelper.AppendToStyleString(builder, 
+                arbitraryDimensionUnitList.DimensionUnits,
+                arbitraryDimensionUnitList.StyleAttributeName);
+        }
 
         return builder.ToString();
     }
