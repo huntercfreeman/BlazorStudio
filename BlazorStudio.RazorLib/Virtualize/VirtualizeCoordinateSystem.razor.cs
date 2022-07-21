@@ -25,13 +25,14 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     /// Used to render the Generic Item
     /// </summary>
     [Parameter, EditorRequired]
-    public RenderFragment<T> ItemRenderFragment { get; set; } = null!;
+    public RenderFragment<T> ChildContent { get; set; } = null!;
 
     private CancellationTokenSource _cancellationTokenSource = new();
     private ImmutableArray<T> _data = ImmutableArray<T>.Empty;
     private Dimensions _dimensions = null!;
     private double _scrollRight;
     private double _scrollLeft;
+    private Guid _guid;
 
     private string _leftElementId = $"virtualize-coordinate-system_left_{Guid.NewGuid()}";
     private string _rightElementId = $"virtualize-coordinate-system_right_{Guid.NewGuid()}";
@@ -40,6 +41,13 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
+        _guid = Guid.NewGuid();
+
+        _leftElementId = $"virtualize-coordinate-system_left_{_guid}";
+        _rightElementId = $"virtualize-coordinate-system_right_{_guid}";
+        _topElementId = $"virtualize-coordinate-system_top_{_guid}";
+        _bottomElementId = $"virtualize-coordinate-system_bottom_{_guid}";
+
         _data = InitialVirtualizeCoordinateSystemResult.Items.ToImmutableArray();
         _dimensions = InitialVirtualizeCoordinateSystemResult.CoordinateSystemDimensions;
 
@@ -63,9 +71,12 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
+    /// <param name="id">The id of the specific Boundary that was scrolled into view</param>
     [JSInvokable]
-    public void FireRequestCallbackAction()
+    public void FireRequestCallbackAction(string id, double scrollTop, double scrollLeft)
     {
+        Console.WriteLine($"id: {id}, scrollTop: {scrollTop}, scrollLeft: {scrollLeft}");
+
         var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest();
 
         RequestCallbackAction(virtualizeCoordinateSystemRequest, CancelTokenSourceAndGetNewToken());

@@ -64,9 +64,23 @@
         for (let i = 0; i < entries.length; i++) {
             let currentEntry = entries[i];
 
+            if (currentEntry.intersectionRatio < 0.1) {
+                // Scrolling out of view
+                continue;
+            }
+
+            // Scrolling into view
+            const splitId = currentEntry.target.id.split("_");
+
+            const virtualizeCoordinateSystemGuid = splitId[splitId.length - 1];
+            let elementVirtualizeCoordinateSystem = document.getElementById(virtualizeCoordinateSystemGuid);
+
             let storedDotNetObjectReference = dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.get(currentEntry.target.id);
 
-            storedDotNetObjectReference.invokeMethodAsync("FireRequestCallbackAction", currentEntry.target.id);
+            storedDotNetObjectReference.invokeMethodAsync("FireRequestCallbackAction",
+                currentEntry.target.id,
+                elementVirtualizeCoordinateSystem.scrollTop,
+                elementVirtualizeCoordinateSystem.scrollLeft);
         }
     }
 };

@@ -18,5 +18,10 @@
     <div id="@_bottomElementId">
 
     </div>
+    
+    @foreach (var item in _data)
+    {
+        @ChildContent(item)
+    }
 
 </div>
