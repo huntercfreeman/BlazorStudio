@@ -12,7 +12,10 @@ public partial record PlainTextEditorStates
 {
     public class PlainTextEditorStatesReducer
     {
+        private record AbsoluteFilePathString(string Value);
+
         private readonly IState<PlainTextEditorStates> _plainTextEditorStatesWrap;
+        private readonly Dictionary<AbsoluteFilePathString, PlainTextEditorRecord> absoluteFilePathStringToExistingEditorMap = new();
 
         public PlainTextEditorStatesReducer(IState<PlainTextEditorStates> plainTextEditorStatesWrap)
         {
@@ -135,92 +138,37 @@ public partial record PlainTextEditorStates
             {
                 _concurrentQueueForEffects.Enqueue(async () =>
                 {
+                    var absoluteFilePathString = new AbsoluteFilePathString(plainTextEditorInitializeAction.AbsoluteFilePath
+                        .GetAbsoluteFilePathString());
+
+                    if (absoluteFilePathStringToExistingEditorMap.ContainsKey(absoluteFilePathString))
+                        return;
+
                     var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
 
                     var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
                     var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
+                    var focusedPlainTextEditor = previousPlainTextEditorStates.Map[plainTextEditorInitializeAction.FocusedPlainTextEditorKey]
+                        as PlainTextEditorRecord;
+
+                    if (focusedPlainTextEditor is null)
+                        return;
+
                     var fileCoordinateGrid = await FileCoordinateGridFactory
                         .ConstructFileCoordinateGridAsync(plainTextEditorInitializeAction.AbsoluteFilePath);
 
-                    var plainTextEditor = new
-                        PlainTextEditorRecord(plainTextEditorInitializeAction.PlainTextEditorKey)
+                    var plainTextEditor = focusedPlainTextEditor with
                     {
                         FileCoordinateGrid = fileCoordinateGrid
                     };
 
-                    PlainTextEditorRecord replacementPlainTextEditor = plainTextEditor;
-
-                    var allEnterKeysAreCarriageReturnNewLine = true;
-                    var seenEnterKey = false;
-                    var previousCharacterWasCarriageReturn = false;
-
-                    string MutateIfPreviousCharacterWasCarriageReturn()
-                    {
-                        seenEnterKey = true;
-
-                        if (!previousCharacterWasCarriageReturn)
-                        {
-                            allEnterKeysAreCarriageReturnNewLine = false;
-                        }
-
-                        return previousCharacterWasCarriageReturn
-                            ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
-                            : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
-                    }
-
-                    var content = await plainTextEditor.FileCoordinateGrid
-                        .Request(new FileCoordinateGridRequest(0, 1000, CancellationToken.None));
-
-                    foreach (var character in content)
-                    {
-                        if (character == '\r')
-                        {
-                            previousCharacterWasCarriageReturn = true;
-                            continue;
-                        }
-
-                        var code = character switch
-                        {
-                            '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
-                            ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
-                            '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
-                            _ => character.ToString()
-                        };
-
-                        var keyDown = new KeyDownEventAction(plainTextEditorInitializeAction.PlainTextEditorKey,
-                            new KeyDownEventRecord(
-                                character.ToString(),
-                                code,
-                                false,
-                                false,
-                                false
-                            )
-                        );
-
-                        replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                                .HandleKeyDownEvent(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
-                        {
-                            SequenceKey = SequenceKey.NewSequenceKey()
-                        };
-
-                        previousCharacterWasCarriageReturn = false;
-                    }
-
-                    if (seenEnterKey && allEnterKeysAreCarriageReturnNewLine)
-                    {
-                        replacementPlainTextEditor = replacementPlainTextEditor with
-                        {
-                            UseCarriageReturnNewLine = true
-                        };
-                    }
-
-                    nextPlainTextEditorMap[plainTextEditorInitializeAction.PlainTextEditorKey] = replacementPlainTextEditor;
+                    nextPlainTextEditorMap[plainTextEditorInitializeAction.FocusedPlainTextEditorKey] = plainTextEditor;
 
                     var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
                     var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
 
-                    await Task.Delay(1);
+                    // await Task.Delay(1);
 
                     _queuedEffectsCounter--;
 
@@ -261,8 +209,12 @@ public partial record PlainTextEditorStates
                     if (focusedPlainTextEditor is null)
                         return;
 
-                    PlainTextEditorRecord replacementPlainTextEditor = focusedPlainTextEditor;
-
+                    var replacementPlainTextEditor = new PlainTextEditorRecord(PlainTextEditorKey.NewPlainTextEditorKey())
+                    {
+                        FileCoordinateGrid = focusedPlainTextEditor.FileCoordinateGrid,
+                        RichTextEditorOptions = focusedPlainTextEditor.RichTextEditorOptions,
+                    };
+                    
                     var allEnterKeysAreCarriageReturnNewLine = true;
                     var seenEnterKey = false;
                     var previousCharacterWasCarriageReturn = false;
@@ -281,7 +233,7 @@ public partial record PlainTextEditorStates
                             : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
                     }
 
-                    var content = await focusedPlainTextEditor.FileCoordinateGrid
+                    var content = focusedPlainTextEditor.FileCoordinateGrid
                         .Request(plainTextEditorRequestAction
                             .FileCoordinateGridRequest);
 
@@ -333,7 +285,7 @@ public partial record PlainTextEditorStates
                     var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
                     var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
 
-                    await Task.Delay(1);
+                    // await Task.Delay(1);
 
                     _queuedEffectsCounter--;
 

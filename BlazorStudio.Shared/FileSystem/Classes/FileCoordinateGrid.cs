@@ -33,7 +33,6 @@ public static class FileCoordinateGridFactory
 
         private readonly string _copyFileIdentifier = "~$bstudio_";
         private int _exclusiveEndOfFileCharacterIndex;
-        private MemoryMappedFile? _memoryMappedFile;
 
         public IAbsoluteFilePath? CopyAbsoluteFilePath { get; private set; } = null;
 
@@ -112,16 +111,11 @@ public static class FileCoordinateGridFactory
             }
 
             _exclusiveEndOfFileCharacterIndex = characterCounter;
-
-            _memoryMappedFile = MemoryMappedFile
-                .CreateFromFile(CopyAbsoluteFilePath.GetAbsoluteFilePathString(),
-                    FileMode.Open,
-                    "blazorStudio");
         }
 
         public string Request(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
-            long inclusiveStartingByte = CharacterIndexMarkerForStartOfARow[fileCoordinateGridRequest.StartingRowIndex];
+            long inclusiveStartingCharacter = CharacterIndexMarkerForStartOfARow[fileCoordinateGridRequest.StartingRowIndex];
 
             var exclusiveEndingRowIndex = fileCoordinateGridRequest.StartingRowIndex + fileCoordinateGridRequest.RowCount;
             
@@ -130,35 +124,63 @@ public static class FileCoordinateGridFactory
                 exclusiveEndingRowIndex = CharacterIndexMarkerForStartOfARow.Length - 1;
             }
 
-            long exclusiveEndingByte;
+            long exclusiveEndingCharacter;
 
-            if (fileCoordinateGridRequest.StartingRowIndex == exclusiveEndingRowIndex)
+            if (exclusiveEndingRowIndex == CharacterIndexMarkerForStartOfARow.Length - 1)
             {
-                exclusiveEndingByte = ExclusiveEndOfFileCharacterIndex;
+                exclusiveEndingCharacter = ExclusiveEndOfFileCharacterIndex;
             }
             else
             {
-                exclusiveEndingByte = CharacterIndexMarkerForStartOfARow[exclusiveEndingRowIndex];
+                exclusiveEndingCharacter = CharacterIndexMarkerForStartOfARow[exclusiveEndingRowIndex];
             }
 
 
-            long longByteLengthOfRequest = exclusiveEndingByte - inclusiveStartingByte;
+            long longCharacterLengthOfRequest = exclusiveEndingCharacter - inclusiveStartingCharacter;
 
 
-            if (longByteLengthOfRequest > Int32.MaxValue)
+            if (longCharacterLengthOfRequest > Int32.MaxValue)
             {
-                throw new ApplicationException($"Requested: byte[{longByteLengthOfRequest}]," +
+                throw new ApplicationException($"Requested: byte[{longCharacterLengthOfRequest}]," +
                                                $" but the length cannot exceed: byte[{Int32.MaxValue}]");
             }
 
-            int intByteLengthOfRequest = (int)longByteLengthOfRequest;
+            int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
 
             // TODO: Virtualize the columns in addition to the rows
-            var buffer = new byte[intByteLengthOfRequest];
 
-            using (MemoryMappedViewAccessor accessor = _memoryMappedFile.CreateViewAccessor(inclusiveStartingByte, intByteLengthOfRequest))
+            var mapName = _copyFileIdentifier + AbsoluteFilePath.FilenameWithExtension;
+
+            try
             {
-                accessor.ReadArray(0, buffer, 0, intByteLengthOfRequest);
+                using (var memoryMappedFile = MemoryMappedFile
+                        .CreateFromFile(CopyAbsoluteFilePath.GetAbsoluteFilePathString(),
+                            FileMode.Open,
+                            mapName))
+                {
+                    return ReadMemoryMappedFile(memoryMappedFile,
+                        inclusiveStartingCharacter,
+                        intCharacterLengthOfRequest);
+                }
+            }
+            catch (IOException e)
+            {
+                var z = 2;
+
+                return e.Message;
+            }
+        }
+
+        private string ReadMemoryMappedFile(MemoryMappedFile memoryMappedFile, 
+            long inclusiveStartingCharacter,
+            int intCharacterLengthOfRequest)
+        {
+            var buffer = new byte[intCharacterLengthOfRequest];
+
+            using (MemoryMappedViewAccessor accessor = memoryMappedFile.CreateViewAccessor(inclusiveStartingCharacter,
+                       intCharacterLengthOfRequest))
+            {
+                accessor.ReadArray(0, buffer, 0, intCharacterLengthOfRequest);
             }
 
             string memoryMappedFileResult;
@@ -180,8 +202,8 @@ public static class FileCoordinateGridFactory
 
         public void Dispose()
         {
-            if (_memoryMappedFile is not null)
-                _memoryMappedFile.Dispose();
+            //if (_memoryMappedFile is not null)
+            //    _memoryMappedFile.Dispose();
 
             //if (CopyAbsoluteFilePath is not null)
             //    File.Delete(CopyAbsoluteFilePath.GetAbsoluteFilePathString());
