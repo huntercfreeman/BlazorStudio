@@ -41,8 +41,10 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     public Dimensions _topBoundaryDimensions = null!;
     public Dimensions _bottomBoundaryDimensions = null!;
 
-    public double _scrollRight;
     public double _scrollLeft;
+    public double _scrollTop;
+    public double _javascriptWidthResult;
+    public double _javascriptHeightResult;
 
     public Guid _guid;
 
@@ -50,6 +52,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     public string _rightElementId = $"virtualize-coordinate-system_right_{Guid.NewGuid()}";
     public string _topElementId = $"virtualize-coordinate-system_top_{Guid.NewGuid()}";
     public string _bottomElementId = $"virtualize-coordinate-system_bottom_{Guid.NewGuid()}";
+
+    private DotNetObjectReference<VirtualizeCoordinateSystem<T>> _dotNetObjectReference = null!;
 
     public event EventHandler _componentStateChanged;
 
@@ -75,26 +79,37 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-            _leftElementId);
+        _dotNetObjectReference = DotNetObjectReference.Create(this);
 
         await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-            _rightElementId);
+            _leftElementId,
+            _dotNetObjectReference);
 
         await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-            _topElementId);
+            _rightElementId,
+            _dotNetObjectReference);
 
         await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-            _bottomElementId);
+            _topElementId,
+            _dotNetObjectReference);
+
+        await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
+            _bottomElementId,
+            _dotNetObjectReference);
 
         await base.OnAfterRenderAsync(firstRender);
     }
 
     /// <param name="id">The id of the specific Boundary that was scrolled into view</param>
     [JSInvokable]
-    public void FireRequestCallbackAction(string id, double scrollTop, double scrollLeft)
+    public void FireRequestCallbackAction(string id, double scrollTop, double scrollLeft, double width, double height)
     {
-        Console.WriteLine($"id: {id}, scrollTop: {scrollTop}, scrollLeft: {scrollLeft}");
+        _scrollLeft = scrollLeft;
+        _scrollTop = scrollTop;
+        _javascriptWidthResult = width;
+        _javascriptHeightResult = height;
+
+        _componentStateChanged?.Invoke(null, EventArgs.Empty);
 
         var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest();
 

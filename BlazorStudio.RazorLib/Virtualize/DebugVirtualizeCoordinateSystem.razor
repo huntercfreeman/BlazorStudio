@@ -20,11 +20,11 @@ else
             @_virtualizeCoordinateSystemComponent._data.Length
         </div>
         <div>
-            @@_scrollRight
+            @@_scrollTop
 
             &nbsp;->&nbsp;
 
-            @_virtualizeCoordinateSystemComponent._scrollRight
+            @_virtualizeCoordinateSystemComponent._scrollTop
         </div>
         <div>
             @@_scrollLeft
@@ -33,12 +33,19 @@ else
             
             @_virtualizeCoordinateSystemComponent._scrollLeft
         </div>
+        <div>
+            @@_javascriptWidthResult
 
-        _dimensions = null!;
-    
-        private Dimensions _leftBoundaryDimensions = null!;
-        private Dimensions _rightBoundaryDimensions = null!;
-        private Dimensions _topBoundaryDimensions = null!;
-        private Dimensions _bottomBoundaryDimensions = null!;
+            &nbsp;->&nbsp;
+
+            @_virtualizeCoordinateSystemComponent._javascriptWidthResult
+        </div>
+        <div>
+            @@_javascriptHeightResult
+            
+            &nbsp;->&nbsp;
+            
+            @_virtualizeCoordinateSystemComponent._javascriptHeightResult
+        </div>
     </div>
 }
