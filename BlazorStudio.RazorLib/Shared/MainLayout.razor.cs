@@ -14,16 +14,58 @@ public partial class MainLayout : FluxorLayout
     private IState<ThemeState> ThemeStateWrap { get; set; } = null!;
 
     private List<Person> _people = new List<Person>();
-    private VirtualizeCoordinateSystemResult<Person> _initialVirtualizeCoordinateSystemResult;
-    private double _personWidth = 50;
-    private double _personHeight = 50;
-    private int _personInitialCount = 100;
+    private VirtualizeCoordinateSystemResult<Row> _initialVirtualizeCoordinateSystemResult;
+    private DimensionUnit _characterFontSize = new DimensionUnit()
+    {
+        DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
+        Value = 1
+    };
+
+    private List<Row> _rows = new List<Row>();
+
+    private int rowCount = 200;
+    private int characterCount = 200;
+
+    private bool _printSpace;
+    private bool _printEmptyRow;
+
+    private class Row
+    {
+        public List<Character> RowText { get; set; } = new();
+    }
+    
+    private class Character
+    {
+        /// <summary>
+        /// Some escaped Html Characters like &nbsp; require more than
+        /// 1 character to represent itself therefore this is a string Type
+        /// </summary>
+        public string Value { get; set; }
+    }
 
     protected override void OnInitialized()
     {
-        for (int i = 0; i < _personInitialCount; i++)
+        for (int i = 0; i < rowCount; i++)
         {
-            _people.Add(new Person(i.ToString(), i.ToString()));
+            var row = new Row();
+
+            _printEmptyRow = !_printEmptyRow;
+
+            if (_printEmptyRow)
+            {
+                row.RowText.Add(new Character() { Value = _printSpace ? "    " : "." });
+            }
+            else
+            {
+                for (int j = 0; j < characterCount; j++)
+                {
+                    _printSpace = !_printSpace;
+
+                    row.RowText.Add(new Character() { Value = _printSpace ? "    " : "." });
+                }
+            }
+
+            _rows.Add(row);
         }
 
         var dimensionsOfCoordinateSystem = new Dimensions()
@@ -32,16 +74,16 @@ public partial class MainLayout : FluxorLayout
             {
                 new DimensionUnit()
                 {
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    Value = 5 * _personWidth
+                    DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
+                    Value = 50
                 }
             },
             HeightCalc = new List<DimensionUnit>()
             {
                 new DimensionUnit()
                 {
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    Value = 5 * _personHeight
+                    DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
+                    Value = 50
                 }
             },
             LeftCalc = new List<DimensionUnit>()
@@ -49,7 +91,7 @@ public partial class MainLayout : FluxorLayout
                 new DimensionUnit()
                 {
                     DimensionUnitKind = DimensionUnitKind.Percentage,
-                    Value = 35
+                    Value = 25
                 }
             },
             TopCalc = new List<DimensionUnit>()
@@ -57,7 +99,7 @@ public partial class MainLayout : FluxorLayout
                 new DimensionUnit()
                 {
                     DimensionUnitKind = DimensionUnitKind.Percentage,
-                    Value = 35
+                    Value = 8
                 }
             },
         };
@@ -68,16 +110,16 @@ public partial class MainLayout : FluxorLayout
             {
                 new DimensionUnit()
                 {
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    Value = 10 * _personWidth
+                    DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
+                    Value = 5
                 }
             },
             HeightCalc = new List<DimensionUnit>()
             {
                 new DimensionUnit()
                 {
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    Value = 10 * _personHeight
+                    DimensionUnitKind = DimensionUnitKind.Percentage,
+                    Value = 100
                 }
             }
         };
@@ -88,16 +130,16 @@ public partial class MainLayout : FluxorLayout
             {
                 new DimensionUnit()
                 {
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    Value = 5 * _personWidth
+                    DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
+                    Value = 5
                 }
             },
             HeightCalc = new List<DimensionUnit>()
             {
                 new DimensionUnit()
                 {
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    Value = 5 * _personHeight
+                    DimensionUnitKind = DimensionUnitKind.Percentage,
+                    Value = 100
                 }
             }
         };
@@ -108,16 +150,16 @@ public partial class MainLayout : FluxorLayout
             {
                 new DimensionUnit()
                 {
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    Value = 5 * _personWidth
+                    DimensionUnitKind = DimensionUnitKind.Percentage,
+                    Value = 100
                 }
             },
             HeightCalc = new List<DimensionUnit>()
             {
                 new DimensionUnit()
                 {
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    Value = 5 * _personHeight
+                    DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
+                    Value = 5
                 }
             }
         };
@@ -128,21 +170,21 @@ public partial class MainLayout : FluxorLayout
             {
                 new DimensionUnit()
                 {
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    Value = 5 * _personWidth
+                    DimensionUnitKind = DimensionUnitKind.Percentage,
+                    Value = 100
                 }
             },
             HeightCalc = new List<DimensionUnit>()
             {
                 new DimensionUnit()
                 {
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    Value = 5 * _personHeight
+                    DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
+                    Value = 5
                 }
             }
         };
 
-        _initialVirtualizeCoordinateSystemResult = new(_people, 
+        _initialVirtualizeCoordinateSystemResult = new(_rows, 
             dimensionsOfCoordinateSystem,
             dimensionsOfLeftBoundary,
             dimensionsOfRightBoundary,

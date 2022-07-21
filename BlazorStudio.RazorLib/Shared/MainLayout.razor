@@ -1,4 +1,5 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorLayout
+﻿@using PlainTextEditor.ClassLib.Html
+@inherits Fluxor.Blazor.Web.Components.FluxorLayout
 
 <BlazorStudio.RazorLib.StoreInitializerWrap/>
 <PlainTextEditor.RazorLib.PlainTextEditorInitializer InitializeFluxor="false" />
@@ -16,9 +17,18 @@
         
         <BlazorStudio.RazorLib.Drag.DragDisplay />*@
         
-        <BlazorStudio.RazorLib.Virtualize.VirtualizeCoordinateSystem InitialVirtualizeCoordinateSystemResult="_initialVirtualizeCoordinateSystemResult"
-                                                                     Context="person">
-            <div>DisplayName: @person.DisplayName</div>
-        </BlazorStudio.RazorLib.Virtualize.VirtualizeCoordinateSystem>
+        <div style="font-family: monospace;">
+            <BlazorStudio.RazorLib.Virtualize.VirtualizeCoordinateSystem InitialVirtualizeCoordinateSystemResult="_initialVirtualizeCoordinateSystemResult"
+                                                                         Context="row"
+                                                                         RequestCallbackAction="(_, _) => Console.Write(string.Empty)">
+                <div class="bstudio_test-row">
+                    
+                    @foreach (var character in row.RowText)
+                    {
+                        @((MarkupString) character.Value.EscapeHtml())
+                    }
+                </div>
+            </BlazorStudio.RazorLib.Virtualize.VirtualizeCoordinateSystem>
+        </div>
     </div>
 </div>
