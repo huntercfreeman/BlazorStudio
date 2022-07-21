@@ -1,7 +1,9 @@
 ﻿@typeparam T
-@inherits VirtualizeCoordinateSystem<T>
 
-<button @onclick="SetTargetComponent">Set Target Component</button>
+<button @onclick="SetTargetComponent"
+        class="btn btn-primary">
+    Set Target Component
+</button>
 
 @if (_virtualizeCoordinateSystemComponent is null)
 {

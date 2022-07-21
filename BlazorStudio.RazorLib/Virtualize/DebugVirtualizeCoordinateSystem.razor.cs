@@ -4,7 +4,7 @@ using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.Virtualize;
 
-public partial class DebugVirtualizeCoordinateSystem<T> : VirtualizeCoordinateSystem<T>, IDisposable
+public partial class DebugVirtualizeCoordinateSystem<T> : IDisposable
 {
     [Parameter]
     public Func<VirtualizeCoordinateSystem<T>> GetVirtualizeCoordinateSystemComponentFunc { get; set; } = null!;
@@ -20,8 +20,11 @@ public partial class DebugVirtualizeCoordinateSystem<T> : VirtualizeCoordinateSy
 
         _virtualizeCoordinateSystemComponent = GetVirtualizeCoordinateSystemComponentFunc();
 
-        _virtualizeCoordinateSystemComponent._componentStateChanged +=
-            VirtualizeCoordinateSystemComponentOn_componentStateChanged;
+        if (_virtualizeCoordinateSystemComponent is not null)
+        {
+            _virtualizeCoordinateSystemComponent._componentStateChanged +=
+                VirtualizeCoordinateSystemComponentOn_componentStateChanged;
+        }
     }
 
     private async void VirtualizeCoordinateSystemComponentOn_componentStateChanged(object? sender, EventArgs e)
@@ -29,13 +32,11 @@ public partial class DebugVirtualizeCoordinateSystem<T> : VirtualizeCoordinateSy
         await InvokeAsync(StateHasChanged);
     }
 
-    public override void Dispose()
+    public void Dispose()
     {
         if (_virtualizeCoordinateSystemComponent is not null)
         {
             _virtualizeCoordinateSystemComponent._componentStateChanged -= VirtualizeCoordinateSystemComponentOn_componentStateChanged;
         }
-
-        base.Dispose();
     }
 }
