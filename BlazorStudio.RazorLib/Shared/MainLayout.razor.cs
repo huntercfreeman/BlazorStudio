@@ -111,7 +111,7 @@ public partial class MainLayout : FluxorLayout
                 new DimensionUnit()
                 {
                     DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
-                    Value = 5
+                    Value = 2
                 }
             },
             HeightCalc = new List<DimensionUnit>()
@@ -131,7 +131,7 @@ public partial class MainLayout : FluxorLayout
                 new DimensionUnit()
                 {
                     DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
-                    Value = 5
+                    Value = 2
                 }
             },
             HeightCalc = new List<DimensionUnit>()
@@ -141,7 +141,15 @@ public partial class MainLayout : FluxorLayout
                     DimensionUnitKind = DimensionUnitKind.Percentage,
                     Value = 100
                 }
-            }
+            },
+            LeftCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Pixels,
+                    Value = 100
+                }
+            },
         };
 
         var dimensionsOfTopBoundary = new Dimensions()
@@ -159,7 +167,7 @@ public partial class MainLayout : FluxorLayout
                 new DimensionUnit()
                 {
                     DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
-                    Value = 5
+                    Value = 2
                 }
             }
         };
@@ -179,7 +187,15 @@ public partial class MainLayout : FluxorLayout
                 new DimensionUnit()
                 {
                     DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
-                    Value = 5
+                    Value = 2
+                }
+            },
+            BottomCalc = new List<DimensionUnit>()
+            {
+                new DimensionUnit()
+                {
+                    DimensionUnitKind = DimensionUnitKind.Pixels,
+                    Value = 100
                 }
             }
         };
