@@ -14,9 +14,14 @@ public class VirtualizeCoordinateSystemResult<T>
     public IEnumerable<T> Items { get; }
 
     /// <summary>
-    /// Used to render the Generic Item
+    /// Used to render CoordinateSystem in its entirety NOT just the viewport
     /// </summary>
     public Dimensions CoordinateSystemDimensions { get; set; } = null!;
+    
+    public Dimensions LeftBoundaryDimensions { get; set; } = null!;
+    public Dimensions RightBoundaryDimensions { get; set; } = null!;
+    public Dimensions TopBoundaryDimensions { get; set; } = null!;
+    public Dimensions BottomBoundaryDimensions { get; set; } = null!;
 
     /// <param name="items">The items to provide.</param>
     /// <param name="totalItemCount">The total item count in the source generating the items provided.</param>

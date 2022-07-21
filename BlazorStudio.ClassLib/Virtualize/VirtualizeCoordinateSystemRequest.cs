@@ -11,12 +11,6 @@ public readonly struct VirtualizeCoordinateSystemRequest
     public int StartIndex { get; }
 
     /// <summary>
-    /// The requested number of items to be provided. The actual number of provided items does not need to match
-    /// this value.
-    /// </summary>
-    public int Count { get; }
-
-    /// <summary>
     /// The <see cref="System.Threading.CancellationToken"/> used to relay cancellation of the request.
     /// </summary>
     public CancellationToken CancellationToken { get; }
@@ -29,7 +23,6 @@ public readonly struct VirtualizeCoordinateSystemRequest
     public VirtualizeCoordinateSystemRequest(int startIndex, int count, CancellationToken cancellationToken)
     {
         StartIndex = startIndex;
-        Count = count;
         CancellationToken = cancellationToken;
     }
 }

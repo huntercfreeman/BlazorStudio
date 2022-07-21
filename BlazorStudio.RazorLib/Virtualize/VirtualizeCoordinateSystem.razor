@@ -1,21 +1,25 @@
 ﻿@typeparam T
 
 <div class="bstudio_virtualize-coordinate-system"
-     style="position: absolute; @(_dimensions.DimensionsCssString)">
+     style="@(_dimensions.DimensionsCssString)">
     
-    <div id="@_leftElementId">
+    <div id="@_leftElementId"
+         style="background-color: red; @(_leftBoundaryDimensions.DimensionsCssString)">
 
     </div>
     
-    <div id="@_rightElementId">
+    <div id="@_rightElementId"
+         style="background-color: green; @(_rightBoundaryDimensions.DimensionsCssString)">
 
     </div>
     
-    <div id="@_topElementId">
+    <div id="@_topElementId"
+         style="background-color: blue; @(_topBoundaryDimensions.DimensionsCssString)">
 
     </div>
     
-    <div id="@_bottomElementId">
+    <div id="@_bottomElementId"
+         style="background-color: orange; @(_bottomBoundaryDimensions.DimensionsCssString)">
 
     </div>
     

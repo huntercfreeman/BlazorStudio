@@ -30,8 +30,15 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     private CancellationTokenSource _cancellationTokenSource = new();
     private ImmutableArray<T> _data = ImmutableArray<T>.Empty;
     private Dimensions _dimensions = null!;
+    
+    private Dimensions _leftBoundaryDimensions = null!;
+    private Dimensions _rightBoundaryDimensions = null!;
+    private Dimensions _topBoundaryDimensions = null!;
+    private Dimensions _bottomBoundaryDimensions = null!;
+
     private double _scrollRight;
     private double _scrollLeft;
+
     private Guid _guid;
 
     private string _leftElementId = $"virtualize-coordinate-system_left_{Guid.NewGuid()}";
@@ -50,6 +57,11 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
         _data = InitialVirtualizeCoordinateSystemResult.Items.ToImmutableArray();
         _dimensions = InitialVirtualizeCoordinateSystemResult.CoordinateSystemDimensions;
+        
+        _leftBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.LeftBoundaryDimensions;
+        _rightBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.RightBoundaryDimensions;
+        _topBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.TopBoundaryDimensions;
+        _bottomBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.BottomBoundaryDimensions;
 
         base.OnInitialized();
     }
@@ -86,6 +98,11 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     {
         _data = virtualizeCoordinateSystemResult.Items.ToImmutableArray();
         _dimensions = virtualizeCoordinateSystemResult.CoordinateSystemDimensions;
+
+        _leftBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.LeftBoundaryDimensions;
+        _rightBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.RightBoundaryDimensions;
+        _topBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.TopBoundaryDimensions;
+        _bottomBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.BottomBoundaryDimensions;
 
         InvokeAsync(StateHasChanged);
     }
