@@ -50,44 +50,38 @@
                 this.dotNetObjectReferenceByVirtualizeCoordinateSystemElementId),
             options);
     },
-    subscribeVirtualizeCoordinateSystemScrollIntoView: function (elementId, dotNetObjectReference) {
-        this.dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.set(elementId, dotNetObjectReference);
+    subscribeVirtualizeCoordinateSystemInsersectionObserver: function (dotNetObjectReference, elementIds) {
+        for (let i = 0; i < elementIds.length; i++) {
+            let elementId = elementIds[i];
 
-        let element = document.getElementById(elementId);
-        this.intersectionObserver.observe(element);
+            this.dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.set(elementId, {
+                    dotNetObjectReference: dotNetObjectReference,
+                    intersectionRatio: 0
+            });
+
+            let element = document.getElementById(elementId);
+
+            this.intersectionObserver.observe(element);
+        };
     },
-    disposeVirtualizeCoordinateSystemScrollIntoView: function (elementId) {
-        let element = document.getElementById(elementId);
-        this.intersectionObserver.unobserve(element);
+    disposeVirtualizeCoordinateSystemScrollIntoView: function (elementIds) {
+        for (let i = 0; i < elementIds.length; i++) {
+            let elementId = elementIds[i];
+
+            let element = document.getElementById(elementId);
+            this.intersectionObserver.unobserve(element);
+        };
     },
     handleThresholdChange: function (entries, dotNetObjectReferenceByVirtualizeCoordinateSystemElementId) {
         for (let i = 0; i < entries.length; i++) {
             let currentEntry = entries[i];
 
-            if (currentEntry.intersectionRatio < 0.1) {
-                // Scrolling out of view
-                continue;
-            }
+            let mapValue = dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.get(currentEntry.target.id);
 
-            // Scrolling into view
-            const splitId = currentEntry.target.id.split("_");
-
-            const isolatedGuid = splitId[splitId.length - 1];
-
-            var virtualizeCoordinateSystemElementId = `bstudio_virtualize-coordinate-system_${isolatedGuid}`;
-
-            let elementVirtualizeCoordinateSystem = document.getElementById(virtualizeCoordinateSystemElementId);
-
-            let storedDotNetObjectReference = dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.get(currentEntry.target.id);
-
-            storedDotNetObjectReference.invokeMethodAsync("FireRequestCallbackAction",
-                currentEntry.target.id,
-                elementVirtualizeCoordinateSystem.scrollLeft,
-                elementVirtualizeCoordinateSystem.scrollTop,
-                elementVirtualizeCoordinateSystem.scrollWidth,
-                elementVirtualizeCoordinateSystem.scrollHeight,
-                elementVirtualizeCoordinateSystem.offsetWidth,
-                elementVirtualizeCoordinateSystem.offsetHeight);
+            dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.set(currentEntry.target.id, {
+                dotNetObjectReference: mapValue.dotNetObjectReference,
+                intersectionRatio: currentEntry.intersectionRatio
+            });
         }
     },
     getDimensions: function (elementId, dotNetObjectReference) {
@@ -101,5 +95,42 @@
             elementReference.scrollHeight,
             elementReference.offsetWidth,
             elementReference.offsetHeight);
-    }
+    },
+    checkIfInView: function(dotNetObjectReference, elementIds) {
+        for (let i = 0; i < elementIds.length; i++) {
+            let elementId = elementIds[i];
+
+            let mapValue = this.dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.get(elementId);
+
+            if (mapValue.intersectionRatio > 0) {
+                let boundaryElement = document.getElementById(virtualizeCoordinateSystemElementId);
+
+                if (boundaryElement.offsetWidth === 0 || boundaryElement.offsetHeight === 0) {
+                    return;
+                }
+
+                // Scrolling into view
+                const splitId = elementId.split("_");
+
+                const isolatedGuid = splitId[splitId.length - 1];
+
+                var virtualizeCoordinateSystemElementId = `bstudio_virtualize-coordinate-system_${isolatedGuid}`;
+
+                let elementVirtualizeCoordinateSystem = document.getElementById(virtualizeCoordinateSystemElementId);
+
+                let storedDotNetObjectReference = dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.get(elementId);
+
+                storedDotNetObjectReference.invokeMethodAsync("FireRequestCallbackAction",
+                    elementId,
+                    elementVirtualizeCoordinateSystem.scrollLeft,
+                    elementVirtualizeCoordinateSystem.scrollTop,
+                    elementVirtualizeCoordinateSystem.scrollWidth,
+                    elementVirtualizeCoordinateSystem.scrollHeight,
+                    elementVirtualizeCoordinateSystem.offsetWidth,
+                    elementVirtualizeCoordinateSystem.offsetHeight);
+
+                return;
+            }
+        };
+    },
 };

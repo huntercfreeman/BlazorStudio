@@ -86,20 +86,14 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             _dotNetObjectReference = DotNetObjectReference.Create(this);
 
             await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-                _leftElementId,
-                _dotNetObjectReference);
-
-            await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-                _rightElementId,
-                _dotNetObjectReference);
-
-            await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-                _topElementId,
-                _dotNetObjectReference);
-
-            await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-                _bottomElementId,
-                _dotNetObjectReference);
+                _dotNetObjectReference,
+                new string[]
+                {
+                    _leftElementId,
+                    _rightElementId,
+                    _topElementId,
+                    _bottomElementId,
+                });
 
             await JsRuntime.InvokeVoidAsync("blazorStudio.getDimensions",
                 ComponentId,
@@ -150,7 +144,15 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
     private async void OnScroll()
     {
-
+        await JsRuntime.InvokeVoidAsync("blazorStudio.checkIfInView",
+            _dotNetObjectReference,
+            new string[]
+            {
+                _leftElementId,
+                _rightElementId,
+                _topElementId,
+                _bottomElementId,
+            });
     }
 
     public CancellationToken CancelTokenSourceAndGetNewToken()
@@ -233,15 +235,12 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         _cancellationTokenSource?.Cancel();
 
         JsRuntime.InvokeVoidAsync("blazorStudio.disposeVirtualizeCoordinateSystemScrollIntoView",
-            _leftElementId);
-
-        JsRuntime.InvokeVoidAsync("blazorStudio.disposeVirtualizeCoordinateSystemScrollIntoView",
-            _rightElementId);
-
-        JsRuntime.InvokeVoidAsync("blazorStudio.disposeVirtualizeCoordinateSystemScrollIntoView",
-            _topElementId);
-
-        JsRuntime.InvokeVoidAsync("blazorStudio.disposeVirtualizeCoordinateSystemScrollIntoView",
-            _bottomElementId);
+            new string[]
+            {
+                _leftElementId,
+                _rightElementId,
+                _topElementId,
+                _bottomElementId,
+            });
     }
 }
