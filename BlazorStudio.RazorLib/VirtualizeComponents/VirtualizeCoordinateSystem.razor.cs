@@ -174,7 +174,10 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
                                     localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth,
             localVirtualizeCoordinateSystemResult.ScrollWidth);
         
-        var widthInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollWidth - leftInPixels,
+        var widthInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollWidth -
+                                     leftInPixels -
+                                     Math.Max(localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth,
+                                         localVirtualizeCoordinateSystemResult.ScrollWidth),
             0);
 
         return $"left: {leftInPixels}px; width: {widthInPixels}px; height: 100%;";

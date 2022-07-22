@@ -136,12 +136,12 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
                 plainTextEditor.List
                     .Select((row, index) => (index, row)),
-                plainTextEditor.VirtualizeCoordinateSystemResult.ScrollLeft,
-                plainTextEditor.VirtualizeCoordinateSystemResult.ScrollTop,
                 scrollWidth,
                 scrollHeight,
                 virtualizeRenderBlockWidth,
-                virtualizeRenderBlockHeight
+                virtualizeRenderBlockHeight,
+                plainTextEditor.VirtualizeCoordinateSystemResult.ScrollLeft,
+                plainTextEditor.VirtualizeCoordinateSystemResult.ScrollTop
             ));
     }
 
