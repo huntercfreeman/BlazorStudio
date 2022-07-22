@@ -29,7 +29,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private bool _isFocused;
     private ElementReference _plainTextEditor;
     private int _hadOnKeyDownEventCounter;
-    private bool _isInitialized;
     private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)> _virtualizeCoordinateSystem = null!;
 
     private SequenceKey? _previousSequenceKeyShouldRender;
@@ -39,7 +38,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private Dimensions _dimensionsOfCoordinateSystemViewport = new()
     {
-        DimensionsPositionKind = DimensionsPositionKind.Static,
+        DimensionsPositionKind = DimensionsPositionKind.Relative,
         WidthCalc = new List<DimensionUnit>
         {
             new DimensionUnit
@@ -152,14 +151,14 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             ActiveRowPositionMarkerId,
             PlainTextEditorKey.Guid);
 
-        OnRequestCallbackAction(new VirtualizeCoordinateSystemRequest(
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            CancellationToken.None));
+        //OnRequestCallbackAction(new VirtualizeCoordinateSystemRequest(
+        //    0,
+        //    0,
+        //    0,
+        //    0,
+        //    0,
+        //    0,
+        //    CancellationToken.None));
     }
 
     private async Task OnKeyDown(KeyboardEventArgs e)

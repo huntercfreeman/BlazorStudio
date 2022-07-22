@@ -382,4 +382,9 @@ em {
 
 .bstudio_virtualize-coordinate-system {
     overflow: auto;
+    position: relative;
+}
+
+.bstudio_virtualize-coordinate-system-boundary {
+    position: absolute;
 }

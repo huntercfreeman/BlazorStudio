@@ -170,7 +170,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
-        var leftInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollLeft + 
+        var leftInPixels = Math.Min(localVirtualizeCoordinateSystemResult.ScrollLeft + 
                                     localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth,
             localVirtualizeCoordinateSystemResult.ScrollWidth);
         
