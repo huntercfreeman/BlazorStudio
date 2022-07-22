@@ -36,6 +36,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     public double PaddingInPixels { get; set; }
     [Parameter]
     public Func<Task>? OnAfterFirstRenderCallbackFunc { get; set; }
+    [Parameter]
+    public string ContentWrapperCssClass { get; set; } = string.Empty;
     /// <summary>
     /// Show a HTML element to help with debugging
     /// </summary>
@@ -162,51 +164,56 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         var widthInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollLeft - PaddingInPixels, 
             0);
 
-        return $"left: 0px; width: {widthInPixels}px; height: 100%;";
+        return $"width: {widthInPixels}px; height: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockHeight}px;";
     }
     
-    private string GetRightBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
+    private string GetRightBoundaryCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
     {
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
-        var leftInPixels = Math.Min(localVirtualizeCoordinateSystemResult.ScrollLeft + 
-                                    localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth,
-            localVirtualizeCoordinateSystemResult.ScrollWidth);
-        
-        var widthInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollWidth -
-                                     leftInPixels -
-                                     Math.Max(localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth,
-                                         localVirtualizeCoordinateSystemResult.ScrollWidth),
-            0);
+        var widthInPixels = localVirtualizeCoordinateSystemResult.ScrollWidth 
+                            - localVirtualizeCoordinateSystemResult.ScrollLeft 
+                            - localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth
+                            - PaddingInPixels;
 
-        return $"left: {leftInPixels}px; width: {widthInPixels}px; height: 100%;";
+        if (widthInPixels < 0)
+        {
+            widthInPixels = 0;
+        }
+        
+        if (widthInPixels > 0)
+        {
+            widthInPixels = localVirtualizeCoordinateSystemResult.ScrollWidth;
+        }
+
+        return $"width: {widthInPixels}px; height: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockHeight}px;";
     }
 
-    private string GetTopBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
+    private string GetTopBoundaryCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
     {
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
         var heightInPixels = localVirtualizeCoordinateSystemResult.ScrollTop;
 
-        return $"top: 0px; width: 100%; height: {heightInPixels}px";
+        return $"width: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth}px; height: {heightInPixels}px";
     }
 
-    private string GetBottomBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
+    private string GetBottomBoundaryCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
     {
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
-        var topInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollTop +
+        var paddingTopInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollTop +
                                    localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockHeight,
             localVirtualizeCoordinateSystemResult.ScrollTop);
 
         var heightInPixels = Math.Min(localVirtualizeCoordinateSystemResult.ScrollTop -
-                             topInPixels,
+                             paddingTopInPixels,
             0);
 
-        return $"top: {topInPixels}px; width: 100%; height: {heightInPixels}px";
+        return $"width: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth}px; height: {heightInPixels}px";
     }
 
     public virtual void Dispose()

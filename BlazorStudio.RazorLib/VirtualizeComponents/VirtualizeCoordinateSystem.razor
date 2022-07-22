@@ -1,14 +1,5 @@
 ﻿@typeparam T
 
-@*<div class="bstudio_debug-info">
-    <div>@@_scrollTop = @_scrollTop;</div>
-    <div>@@_scrollLeft = @_scrollLeft;</div>
-    <div>@@_scrollViewportWidth = @_scrollViewportWidth;</div>
-    <div>@@_scrollViewportHeight = @_scrollViewportHeight;</div>
-    <div>@@_width = @_width;</div>
-    <div>@@_height = @_height;</div>
-</div>*@
-
 <div class="bstudio_virtualize-coordinate-system"
      style="@(DimensionsOfCoordinateSystemViewport.DimensionsCssString)"
      id="@ComponentId">
@@ -17,37 +8,56 @@
         // Create a local reference to avoid a new instance being set while rendering.
         var localVirtualizeCoordinateSystemResult = _virtualizeCoordinateSystemResult;
 
-        <div id="@_leftElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="background-color: red; @GetLeftBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+            <div style="display: flex; flex-direction: column;">
+                <div style="display: flex;" class="bstudio_row-top">
+                    <div id="@_topElementId"
+                         class="bstudio_virtualize-coordinate-system-boundary"
+                         style="background-color: blue; @GetTopBoundaryCssString(localVirtualizeCoordinateSystemResult)">
 
-        </div>
-    
-        <div id="@_rightElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="background-color: green; @GetRightBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+                    </div>
+                </div>
+            
+                <div style="display: flex;" class="bstudio_row-middle">
+                    <div id="@_leftElementId"
+                         class="bstudio_virtualize-coordinate-system-boundary"
+                         style="background-color: red; @GetLeftBoundaryCssString(localVirtualizeCoordinateSystemResult)">
 
-        </div>
-    
-        <div id="@_topElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="background-color: blue; @GetTopBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+                    </div>
+                    
+                    @{
+                        var localData = _data;
 
-        </div>
-    
-        <div id="@_bottomElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="background-color: orange; @GetBottomBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+                        <div class="@ContentWrapperCssClass">
+                            @foreach (var item in localData)
+                            {
+                                @ChildContent(item)
+                            }
+                        </div>
+                    }
+                    
+                    <div id="@_rightElementId"
+                         class="bstudio_virtualize-coordinate-system-boundary"
+                         style="background-color: green; @GetRightBoundaryCssString(localVirtualizeCoordinateSystemResult)">
 
-        </div>
-    }
-    
-    @{
-        var localData = _data;
+                    </div>
+                </div>
+            
+                <div style="display: flex;" class="bstudio_row-bottom">
+                    <div id="@_bottomElementId"
+                         class="bstudio_virtualize-coordinate-system-boundary"
+                         style="background-color: orange; @GetBottomBoundaryCssString(localVirtualizeCoordinateSystemResult)">
 
-        foreach (var item in localData)
-        {
-            @ChildContent(item)
-        }
+                    </div>
+                </div>
+            </div>
     }
 </div>
+
+@*<div class="bstudio_debug-info">
+    <div>@@_scrollTop = @_scrollTop;</div>
+    <div>@@_scrollLeft = @_scrollLeft;</div>
+    <div>@@_scrollViewportWidth = @_scrollViewportWidth;</div>
+    <div>@@_scrollViewportHeight = @_scrollViewportHeight;</div>
+    <div>@@_width = @_width;</div>
+    <div>@@_height = @_height;</div>
+</div>*@

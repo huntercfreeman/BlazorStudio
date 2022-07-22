@@ -28,7 +28,9 @@ public class VirtualizeCoordinateSystemResult<T>
         double scrollWidth,
         double scrollHeight, 
         double virtualizeRenderBlockWidth, 
-        double virtualizeRenderBlockHeight, double scrollLeft, double scrollTop)
+        double virtualizeRenderBlockHeight, 
+        double scrollLeft, 
+        double scrollTop)
     {
         Items = items;
         ScrollLeft = scrollLeft;
