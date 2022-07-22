@@ -19,7 +19,8 @@ public struct VirtualizeCoordinateSystemRequest
     /// <param name="cancellationToken">
     /// The <see cref="System.Threading.CancellationToken"/> used to relay cancellation of the request.
     /// </param>
-    public VirtualizeCoordinateSystemRequest(double scrollLeft, 
+    public VirtualizeCoordinateSystemRequest(
+        double scrollLeft, 
         double scrollTop,
         double scrollWidth,
         double scrollHeight,

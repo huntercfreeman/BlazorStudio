@@ -153,12 +153,12 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             PlainTextEditorKey.Guid);
 
         OnRequestCallbackAction(new VirtualizeCoordinateSystemRequest(
-            _virtualizeCoordinateSystem.ScrollLeft,
-            _virtualizeCoordinateSystem.ScrollTop,
-            _virtualizeCoordinateSystem.ScrollWidth,
-            _virtualizeCoordinateSystem.ScrollHeight,
-            _virtualizeCoordinateSystem.ViewportWidth,
-            _virtualizeCoordinateSystem.ViewportHeight,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
             CancellationToken.None));
     }
 

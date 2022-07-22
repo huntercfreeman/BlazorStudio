@@ -51,12 +51,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     private Dimensions _topBoundaryDimensions = null!;
     private Dimensions _bottomBoundaryDimensions = null!;
 
-    public double ScrollTop { get; private set; }
-    public double ScrollLeft { get; private set; }
-    public double ScrollWidth { get; private set; }
-    public double ScrollHeight { get; private set; }
-    public double ViewportWidth { get; private set; }
-    public double ViewportHeight { get; private set; }
+    private VirtualizeCoordinateSystemRequest? _mostRecentvirtualizeCoordinateSystemRequest;
 
     private Guid _guid;
 
@@ -125,23 +120,18 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         double viewportWidth, 
         double viewportHeight)
     {
-        ScrollLeft = scrollLeft;
-        ScrollTop = scrollTop;
-        ScrollWidth = scrollWidth;
-        ScrollHeight = scrollHeight;
-        ViewportWidth = viewportWidth;
-        ViewportHeight = viewportHeight;
-
         var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest(
-            ScrollLeft,
-            ScrollTop,
-            ScrollWidth,
-            ScrollHeight,
-            ViewportWidth,
-            ViewportHeight,
+            scrollLeft,
+            scrollTop,
+            scrollWidth,
+            scrollHeight,
+            viewportWidth,
+            viewportHeight,
             CancelTokenSourceAndGetNewToken());
 
         RequestCallbackAction(virtualizeCoordinateSystemRequest);
+
+        _mostRecentvirtualizeCoordinateSystemRequest = virtualizeCoordinateSystemRequest;
     }
 
     public void SetData(VirtualizeCoordinateSystemResult<T> virtualizeCoordinateSystemResult)
@@ -164,8 +154,11 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         return _cancellationTokenSource.Token;
     }
     
-    private string GetLeftBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
+    private string GetLeftBoundaryCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
     {
+        if (localVirtualizeCoordinateSystemResult is null)
+            return string.Empty;
+
         var widthInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollLeft - PaddingInPixels, 
             0);
 
@@ -174,9 +167,12 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     
     private string GetRightBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
     {
+        if (localVirtualizeCoordinateSystemResult is null)
+            return string.Empty;
+
         var leftInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollLeft + 
                                     localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth,
-            ScrollWidth);
+            localVirtualizeCoordinateSystemResult.ScrollWidth);
         
         var widthInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollWidth - leftInPixels,
             0);
@@ -186,6 +182,9 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
     private string GetTopBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
     {
+        if (localVirtualizeCoordinateSystemResult is null)
+            return string.Empty;
+
         var heightInPixels = localVirtualizeCoordinateSystemResult.ScrollTop;
 
         return $"top: 0px; width: 100%; height: {heightInPixels}px";
@@ -193,6 +192,9 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
     private string GetBottomBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
     {
+        if (localVirtualizeCoordinateSystemResult is null)
+            return string.Empty;
+
         var topInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollTop +
                                    localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockHeight,
             localVirtualizeCoordinateSystemResult.ScrollTop);
