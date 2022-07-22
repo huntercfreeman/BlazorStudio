@@ -50,6 +50,37 @@ public partial record PlainTextEditorStates
 
             return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
         }
+        
+        [ReducerMethod]
+        public PlainTextEditorStates ReduceMemoryMappedFileReadRequestAction(PlainTextEditorStates previousPlainTextEditorStates,
+            MemoryMappedFileReadRequestAction memoryMappedFileReadRequestAction)
+        {
+            var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
+            var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
+
+            var plainTextEditor = previousPlainTextEditorStates
+                    .Map[memoryMappedFileReadRequestAction.PlainTextEditorKey]
+                        as PlainTextEditorRecord;
+
+            if (plainTextEditor is null)
+                return previousPlainTextEditorStates;
+
+            var replacementPlainTextEditor = plainTextEditor with
+            {
+                CurrentRowIndex = 0,
+                CurrentTokenIndex = 0,
+                SequenceKey = SequenceKey.NewSequenceKey(),
+                List = ImmutableList<IPlainTextEditorRow>.Empty
+                    .Add(plainTextEditor.GetEmptyPlainTextEditorRow())
+            };
+
+            nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = replacementPlainTextEditor;
+
+            var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
+            var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
+
+            return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
+        }
 
         [ReducerMethod]
         public static PlainTextEditorStates ReduceDeconstructPlainTextEditorRecordAction(PlainTextEditorStates previousPlainTextEditorStates,
@@ -65,22 +96,22 @@ public partial record PlainTextEditorStates
         }
 
         [ReducerMethod]
-        public PlainTextEditorStates HandleKeyDownEventAction(PlainTextEditorStates previousPlainTextEditorStates, 
+        public PlainTextEditorStates ReduceKeyDownEventAction(PlainTextEditorStates previousPlainTextEditorStates, 
             KeyDownEventAction keyDownEventAction)
         {
             var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
             var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
-            var focusedPlainTextEditor = previousPlainTextEditorStates.Map[keyDownEventAction.FocusedPlainTextEditorKey]
+            var plainTextEditor = previousPlainTextEditorStates.Map[keyDownEventAction.PlainTextEditorKey]
                 as PlainTextEditorRecord;
 
-            if (focusedPlainTextEditor is null)
+            if (plainTextEditor is null)
                 return previousPlainTextEditorStates;
 
             var overrideKeyDownEventRecord = keyDownEventAction.KeyDownEventRecord;
 
             if (keyDownEventAction.KeyDownEventRecord.Code == KeyboardKeyFacts.NewLineCodes.ENTER_CODE &&
-                focusedPlainTextEditor.UseCarriageReturnNewLine)
+                plainTextEditor.UseCarriageReturnNewLine)
             {
                 overrideKeyDownEventRecord = keyDownEventAction.KeyDownEventRecord with
                 {
@@ -89,12 +120,12 @@ public partial record PlainTextEditorStates
             }
 
             var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                .HandleKeyDownEvent(focusedPlainTextEditor, overrideKeyDownEventRecord) with
+                .HandleKeyDownEvent(plainTextEditor, overrideKeyDownEventRecord) with
             {
                 SequenceKey = SequenceKey.NewSequenceKey()
             };
 
-            nextPlainTextEditorMap[keyDownEventAction.FocusedPlainTextEditorKey] = replacementPlainTextEditor;
+            nextPlainTextEditorMap[keyDownEventAction.PlainTextEditorKey] = replacementPlainTextEditor;
 
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
             var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
@@ -110,19 +141,19 @@ public partial record PlainTextEditorStates
             var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
             var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
-            var focusedPlainTextEditor = previousPlainTextEditorStates.Map[plainTextEditorOnClickAction.FocusedPlainTextEditorKey]
+            var plainTextEditor = previousPlainTextEditorStates.Map[plainTextEditorOnClickAction.PlainTextEditorKey]
                 as PlainTextEditorRecord;
 
-            if (focusedPlainTextEditor is null)
+            if (plainTextEditor is null)
                 return previousPlainTextEditorStates;
 
             var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                .HandleOnClickEvent(focusedPlainTextEditor, plainTextEditorOnClickAction) with
+                .HandleOnClickEvent(plainTextEditor, plainTextEditorOnClickAction) with
             {
                 SequenceKey = SequenceKey.NewSequenceKey()
             };
 
-            nextPlainTextEditorMap[plainTextEditorOnClickAction.FocusedPlainTextEditorKey] = replacementPlainTextEditor;
+            nextPlainTextEditorMap[plainTextEditorOnClickAction.PlainTextEditorKey] = replacementPlainTextEditor;
 
             return new PlainTextEditorStates(nextPlainTextEditorMap.ToImmutableDictionary(), nextPlainTextEditorList.ToImmutableArray());
         }

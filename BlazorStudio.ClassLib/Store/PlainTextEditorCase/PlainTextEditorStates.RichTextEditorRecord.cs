@@ -25,9 +25,7 @@ public partial record PlainTextEditorStates
             null,
             new RichTextEditorOptions())
         {
-            var startingRow = new PlainTextEditorRow(null);
-
-            List = List.Add(startingRow);
+            List = List.Add(GetEmptyPlainTextEditorRow());
         }
 
         public IPlainTextEditorRow CurrentPlainTextEditorRow => List[CurrentRowIndex];
@@ -84,6 +82,11 @@ public partial record PlainTextEditorStates
             }
 
             return builder.ToString();
+        }
+        
+        public IPlainTextEditorRow GetEmptyPlainTextEditorRow()
+        {
+            return new PlainTextEditorRow(null);
         }
     }
 }

@@ -14,16 +14,23 @@ public class VirtualizeCoordinateSystemResult<T>
     public IEnumerable<T> Items { get; }
 
     /// <summary>
-    /// Used to render CoordinateSystem in its entirety NOT just the viewport
+    /// Used to render CoordinateSystem viewport
     /// </summary>
-    public Dimensions CoordinateSystemDimensions { get; set; } = null!;
+    public Dimensions CoordinateSystemViewportDimensions { get; set; } = null!;
+    
+    public double ScrollWidth { get; set; }
+    public double ScrollHeight { get; set; }
 
     /// <param name="items">The items to provide.</param>
     /// <param name="totalItemCount">The total item count in the source generating the items provided.</param>
     public VirtualizeCoordinateSystemResult(IEnumerable<T> items, 
-        Dimensions coordinateSystemDimensions)
+        Dimensions coordinateSystemViewportDimensions,
+        double scrollWidth,
+        double scrollHeight)
     {
         Items = items;
-        CoordinateSystemDimensions = coordinateSystemDimensions;
+        CoordinateSystemViewportDimensions = coordinateSystemViewportDimensions;
+        ScrollWidth = scrollWidth;
+        ScrollHeight = scrollHeight;
     }
 }

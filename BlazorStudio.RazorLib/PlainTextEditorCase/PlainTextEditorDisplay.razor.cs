@@ -30,9 +30,11 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private int _hadOnKeyDownEventCounter;
     private bool _isInitialized;
     private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)> _virtualizeCoordinateSystem = null!;
-    private VirtualizeCoordinateSystemRequest _mostRecentVirtualizeCoordinateSystemRequest;
 
     private SequenceKey? _previousSequenceKeyShouldRender;
+    
+    private double _heightOfEachRowInPixels => 2 * PlainTextEditorSelector.Value!.RichTextEditorOptions.FontSizeInPixels;
+    private double _widthOfEachCharacterInPixels => PlainTextEditorSelector.Value!.RichTextEditorOptions.FontSizeInPixels;
 
     private Dimensions _dimensionsOfCoordinateSystemViewport = new()
     {
@@ -67,7 +69,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     /// I need to position this PERFECTLY relative to a changeable font-size
     /// </summary>
     private string InputFocusTrapTopStyleCss => $"top: calc({PlainTextEditorSelector.Value!.CurrentRowIndex * 30}px);";
-
+    
     protected override void OnInitialized()
     {
         PlainTextEditorSelector.Select(x => 
@@ -133,13 +135,22 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             if (plainTextEditor is null)
                 return;
 
+            var verticalSkip = (int) (_virtualizeCoordinateSystem.ScrollTop / _heightOfEachRowInPixels);
+            var verticalTake = (int) (_virtualizeCoordinateSystem.Height / _heightOfEachRowInPixels);
+            
+            var scrollWidth = (int)(plainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow * _widthOfEachCharacterInPixels);
+            var scrollHeight = (int) (plainTextEditor.FileCoordinateGrid.RowCount * _heightOfEachRowInPixels);
+
             _virtualizeCoordinateSystem.SetData(
                 new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
                     plainTextEditor.List
                         .Select((row, index) => (index, row))
-                        .Take(10),
-                _dimensionsOfCoordinateSystemViewport                    
-            ));
+                        .Skip(verticalSkip)
+                        .Take(verticalTake),
+                _dimensionsOfCoordinateSystemViewport,
+                    scrollWidth,
+                    scrollHeight
+                ));
         }
 
         await InvokeAsync(StateHasChanged);
@@ -196,7 +207,27 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     
     private void OnRequestCallbackAction(VirtualizeCoordinateSystemRequest virtualizeCoordinateSystemRequest)
     {
-        _mostRecentVirtualizeCoordinateSystemRequest = virtualizeCoordinateSystemRequest;
+        var plainTextEditor = PlainTextEditorSelector.Value;
+
+        if (plainTextEditor is null)
+            return;
+
+        var verticalSkip = (int)(_virtualizeCoordinateSystem.ScrollTop / _heightOfEachRowInPixels);
+        var verticalTake = (int)(_virtualizeCoordinateSystem.Height / _heightOfEachRowInPixels);
+
+        var scrollWidth = (int)(plainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow * _widthOfEachCharacterInPixels);
+        var scrollHeight = (int)(plainTextEditor.FileCoordinateGrid.RowCount * _heightOfEachRowInPixels);
+
+        _virtualizeCoordinateSystem.SetData(
+            new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
+                plainTextEditor.List
+                    .Select((row, index) => (index, row))
+                    .Skip(verticalSkip)
+                    .Take(verticalTake),
+                _dimensionsOfCoordinateSystemViewport,
+                scrollWidth,
+                scrollHeight
+            ));
     }
 
     protected override void Dispose(bool disposing)

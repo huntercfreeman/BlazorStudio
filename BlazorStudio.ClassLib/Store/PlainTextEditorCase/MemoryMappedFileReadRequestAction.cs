@@ -1,0 +1,5 @@
+using BlazorStudio.ClassLib.FileSystem.Classes;
+
+namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
+
+public record MemoryMappedFileReadRequestAction(PlainTextEditorKey PlainTextEditorKey, FileCoordinateGridRequest FileCoordinateGridRequest);

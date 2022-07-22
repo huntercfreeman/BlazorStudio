@@ -49,12 +49,12 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     private Dimensions _topBoundaryDimensions = null!;
     private Dimensions _bottomBoundaryDimensions = null!;
 
-    private double _scrollTop;
-    private double _scrollLeft;
-    private double _scrollWidth;
-    private double _scrollHeight;
-    private double _width;
-    private double _height;
+    public double ScrollTop { get; private set; }
+    public double ScrollLeft { get; private set; }
+    public double ScrollWidth { get; private set; }
+    public double ScrollHeight { get; private set; }
+    public double Width { get; private set; }
+    public double Height { get; private set; }
 
     private Guid _guid;
 
@@ -97,8 +97,6 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             _bottomElementId,
             _dotNetObjectReference);
 
-        
-
         await base.OnAfterRenderAsync(firstRender);
     }
 
@@ -112,13 +110,13 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         double viewportWidth, 
         double viewportHeight)
     {
-        _scrollLeft = scrollLeft;
-        _scrollTop = scrollTop;
-        _scrollWidth = scrollWidth;
-        _scrollHeight = scrollHeight;
+        ScrollLeft = scrollLeft;
+        ScrollTop = scrollTop;
+        ScrollWidth = scrollWidth;
+        ScrollHeight = scrollHeight;
 
-        var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest(_scrollLeft,
-            _scrollTop,
+        var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest(ScrollLeft,
+            ScrollTop,
             scrollWidth,
             scrollHeight,
             viewportWidth,
@@ -131,7 +129,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     public void SetData(VirtualizeCoordinateSystemResult<T> virtualizeCoordinateSystemResult)
     {
         _data = virtualizeCoordinateSystemResult.Items.ToImmutableArray();
-        _dimensions = virtualizeCoordinateSystemResult.CoordinateSystemDimensions;
+        _dimensions = virtualizeCoordinateSystemResult.CoordinateSystemViewportDimensions;
 
         InvokeAsync(StateHasChanged);
     }

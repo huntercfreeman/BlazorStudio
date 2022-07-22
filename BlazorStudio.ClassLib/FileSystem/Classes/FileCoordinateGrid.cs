@@ -36,14 +36,22 @@ public static class FileCoordinateGridFactory
         {
             0 // Start of document
         };
+        
 
         public ImmutableArray<long> CharacterIndexMarkerForStartOfARow => 
             _characterIndexMarkerForStartOfARow.ToImmutableArray();
 
-        private readonly string _copyFileIdentifier = "~$bstudio_";
+        // Replace first 2 characters with '~$' to ensure the maximum file path
+        // length file system constraint is not hit
+        private readonly Func<string> _getMapFileIdentifierFunc = () =>
+                new string(new [] { '~', '$' }
+                    .Union(AbsoluteFilePath.FilenameWithExtension.Skip(2))
+                    .ToArray());
+            
         private int _exclusiveEndOfFileCharacterIndex;
 
         public Encoding Encoding { get; private set; }
+        public long CharacterLengthOfLongestRow { get; private set; }
         public int RowCount => _characterIndexMarkerForStartOfARow.Count;
         public int ExclusiveEndOfFileCharacterIndex => _exclusiveEndOfFileCharacterIndex;
 
@@ -72,6 +80,8 @@ public static class FileCoordinateGridFactory
                 _ = streamReader.Peek();
                 Encoding = streamReader.CurrentEncoding;
 
+                var previousCharacter = '\0';
+
                 while (streamReader.Peek() != -1)
                 {
                     var currentCharacter = (char)streamReader.Read();
@@ -93,7 +103,19 @@ public static class FileCoordinateGridFactory
                         //}
 
                         _characterIndexMarkerForStartOfARow.Add(characterCounter);
+
+                        if (characterCounter > CharacterLengthOfLongestRow)
+                        {
+                            CharacterLengthOfLongestRow = characterCounter;
+                        }
                     }
+                    else if (previousCharacter == '\r')
+                    {
+                        // Count '\r\n' as 1 character
+                        characterCounter--;
+                    }
+
+                    previousCharacter = currentCharacter;
                 }
             }
 
@@ -139,7 +161,7 @@ public static class FileCoordinateGridFactory
 
             int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
 
-            var mapName = _copyFileIdentifier + AbsoluteFilePath.FilenameWithExtension;
+            var mapName = _getMapFileIdentifierFunc.Invoke();
 
             try
             {
@@ -194,6 +216,7 @@ public interface IFileCoordinateGrid
 {
     public IAbsoluteFilePath AbsoluteFilePath { get; }
     public Encoding Encoding { get; }
+    public long CharacterLengthOfLongestRow { get; }
     public int RowCount { get; }
     public ImmutableArray<long> CharacterIndexMarkerForStartOfARow { get; }
 
