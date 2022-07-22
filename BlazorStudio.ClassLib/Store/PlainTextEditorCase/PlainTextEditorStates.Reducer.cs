@@ -67,6 +67,7 @@ public partial record PlainTextEditorStates
                 return previousPlainTextEditorStates;
 
             var heightOfEachRowInPixels = 2 * plainTextEditor.RichTextEditorOptions.FontSizeInPixels;
+            var widthOfEachCharacterInPixels = plainTextEditor.RichTextEditorOptions.FontSizeInPixels;
 
             var startingRowIndex = 
                 (int)(memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollTop / heightOfEachRowInPixels);
@@ -74,8 +75,16 @@ public partial record PlainTextEditorStates
             var rowCount = 
                 (int)(memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ViewportHeight / heightOfEachRowInPixels);
 
+            var startingCharacterIndex =
+                (int)(memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollLeft / widthOfEachCharacterInPixels);
+
+            var characterCount =
+                (int)(memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ViewportWidth / widthOfEachCharacterInPixels);
+
             var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex, 
                 rowCount,
+                startingCharacterIndex,
+                characterCount,
                 memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.CancellationToken);
 
             var content = plainTextEditor.FileCoordinateGrid!

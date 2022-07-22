@@ -137,8 +137,6 @@ public static class FileCoordinateGridFactory
                         FileMode.Open,
                         _getMapFileIdentifierFunc.Invoke());
             }
-
-            
         }
 
         public async Task InitializeAsync()
@@ -146,63 +144,66 @@ public static class FileCoordinateGridFactory
             Initialize();
         }
 
-        public string Request(FileCoordinateGridRequest fileCoordinateGridRequest)
+        public List<string> Request(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
-            long inclusiveStartingCharacter = CharacterIndexMarkerForStartOfARow[fileCoordinateGridRequest.StartingRowIndex];
+            var rowBuilders = new List<StringBuilder>();
 
-            var exclusiveEndingRowIndex = fileCoordinateGridRequest.StartingRowIndex + fileCoordinateGridRequest.RowCount;
-            
-            if (exclusiveEndingRowIndex > CharacterIndexMarkerForStartOfARow.Length - 1)
-            {
-                exclusiveEndingRowIndex = CharacterIndexMarkerForStartOfARow.Length - 1;
-            }
-
-            long exclusiveEndingCharacter;
-
-            if (exclusiveEndingRowIndex == CharacterIndexMarkerForStartOfARow.Length - 1)
-            {
-                exclusiveEndingCharacter = ExclusiveEndOfFileCharacterIndex;
-            }
-            else
-            {
-                exclusiveEndingCharacter = CharacterIndexMarkerForStartOfARow[exclusiveEndingRowIndex];
-            }
-
-
-            long longCharacterLengthOfRequest = exclusiveEndingCharacter - inclusiveStartingCharacter;
-
-
-            if (longCharacterLengthOfRequest > Int32.MaxValue)
-            {
-                throw new ApplicationException($"Requested: byte[{longCharacterLengthOfRequest}]," +
-                                               $" but the length cannot exceed: byte[{Int32.MaxValue}]");
-            }
-
-            int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
-
-            var buffer = new byte[intCharacterLengthOfRequest];
-
-            using (MemoryMappedViewAccessor accessor = _memoryMappedFile.CreateViewAccessor(inclusiveStartingCharacter,
-                       intCharacterLengthOfRequest))
-            {
-                accessor.ReadArray(0, buffer, 0, intCharacterLengthOfRequest);
-            }
-
-            string memoryMappedFileResult;
-
-            using (StreamReader streamReader = new StreamReader(new MemoryStream(buffer), Encoding))
+            for (int i = fileCoordinateGridRequest.StartingRowIndex; i < fileCoordinateGridRequest.RowCount; i++)
             {
                 var builder = new StringBuilder();
+                rowBuilders.Add(builder);
 
-                while (streamReader.Peek() != -1)
+                long inclusiveStartingCharacterIndex = CharacterIndexMarkerForStartOfARow[i] +
+                                                  fileCoordinateGridRequest.StartingCharacterIndex;
+
+                var exclusiveEndingCharacterIndex = inclusiveStartingCharacterIndex + fileCoordinateGridRequest.CharacterCount;
+
+                // Ensure within bounds of file
+                exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > ExclusiveEndOfFileCharacterIndex
+                    ? ExclusiveEndOfFileCharacterIndex
+                    : exclusiveEndingCharacterIndex;
+
+                // Ensure within bounds of row
+                if (i < CharacterIndexMarkerForStartOfARow.Length - 1)
                 {
-                    builder.Append((char)streamReader.Read());
+                    long startOfNextRowCharacterIndex = CharacterIndexMarkerForStartOfARow[i + 1];
+
+                    exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > startOfNextRowCharacterIndex
+                        ? startOfNextRowCharacterIndex
+                        : exclusiveEndingCharacterIndex;
                 }
 
-                memoryMappedFileResult = builder.ToString();
+                long longCharacterLengthOfRequest = exclusiveEndingCharacterIndex - inclusiveStartingCharacterIndex;
+
+
+                if (longCharacterLengthOfRequest > Int32.MaxValue)
+                {
+                    throw new ApplicationException($"Requested: byte[{longCharacterLengthOfRequest}]," +
+                                                   $" but the length cannot exceed: byte[{Int32.MaxValue}]");
+                }
+
+                int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
+
+                var buffer = new byte[intCharacterLengthOfRequest];
+
+                using (MemoryMappedViewAccessor accessor = _memoryMappedFile.CreateViewAccessor(inclusiveStartingCharacterIndex,
+                           intCharacterLengthOfRequest))
+                {
+                    accessor.ReadArray(0, buffer, 0, intCharacterLengthOfRequest);
+                }
+
+                using (StreamReader streamReader = new StreamReader(new MemoryStream(buffer), Encoding))
+                {
+                    while (streamReader.Peek() != -1)
+                    {
+                        builder.Append((char)streamReader.Read());
+                    }
+                }
             }
 
-            return memoryMappedFileResult;
+            return rowBuilders
+                .Select(x => x.ToString())
+                .ToList();
         }
 
         public void Dispose()
@@ -220,7 +221,7 @@ public interface IFileCoordinateGrid
     public int RowCount { get; }
     public ImmutableArray<long> CharacterIndexMarkerForStartOfARow { get; }
 
-    public string Request(FileCoordinateGridRequest fileCoordinateGridRequest);
+    public List<string> Request(FileCoordinateGridRequest fileCoordinateGridRequest);
     /// <summary>
     /// Needed when Unit Testing as it won't auto dispose
     /// </summary>
