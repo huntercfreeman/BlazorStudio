@@ -64,7 +64,7 @@
             this.intersectionObserver.observe(element);
         };
     },
-    disposeVirtualizeCoordinateSystemScrollIntoView: function (elementIds) {
+    disposeVirtualizeCoordinateSystemInsersectionObserver: function (elementIds) {
         for (let i = 0; i < elementIds.length; i++) {
             let elementId = elementIds[i];
 
@@ -103,7 +103,7 @@
             let mapValue = this.dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.get(elementId);
 
             if (mapValue.intersectionRatio > 0) {
-                let boundaryElement = document.getElementById(virtualizeCoordinateSystemElementId);
+                let boundaryElement = document.getElementById(elementId);
 
                 if (boundaryElement.offsetWidth === 0 || boundaryElement.offsetHeight === 0) {
                     return;

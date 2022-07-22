@@ -85,7 +85,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         {
             _dotNetObjectReference = DotNetObjectReference.Create(this);
 
-            await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
+            await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemInsersectionObserver",
                 _dotNetObjectReference,
                 new string[]
                 {
@@ -234,7 +234,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     {
         _cancellationTokenSource?.Cancel();
 
-        JsRuntime.InvokeVoidAsync("blazorStudio.disposeVirtualizeCoordinateSystemScrollIntoView",
+        JsRuntime.InvokeVoidAsync("blazorStudio.disposeVirtualizeCoordinateSystemInsersectionObserver",
             new string[]
             {
                 _leftElementId,
