@@ -85,8 +85,17 @@ public partial record PlainTextEditorStates
             var seenEnterKey = false;
             var previousCharacterWasCarriageReturn = false;
 
+            var currentRowCharacterLength = 0;
+            var longestRowCharacterLength = 0;
+
             string MutateIfPreviousCharacterWasCarriageReturn()
             {
+                longestRowCharacterLength = currentRowCharacterLength > longestRowCharacterLength
+                    ? currentRowCharacterLength
+                    : longestRowCharacterLength;
+
+                currentRowCharacterLength = 0;
+
                 seenEnterKey = true;
 
                 if (!previousCharacterWasCarriageReturn)
@@ -105,8 +114,9 @@ public partial record PlainTextEditorStates
                 CurrentTokenIndex = 0,
                 SequenceKey = SequenceKey.NewSequenceKey(),
                 List = ImmutableList<IPlainTextEditorRow>.Empty
-                    .Add(plainTextEditor.GetEmptyPlainTextEditorRow())
+                    .Add(plainTextEditor.GetEmptyPlainTextEditorRow()),
             };
+
 
             foreach (var character in content)
             {
@@ -115,6 +125,8 @@ public partial record PlainTextEditorStates
                     previousCharacterWasCarriageReturn = true;
                     continue;
                 }
+
+                currentRowCharacterLength++;
 
                 var code = character switch
                 {
@@ -150,6 +162,11 @@ public partial record PlainTextEditorStates
                     UseCarriageReturnNewLine = true
                 };
             }
+
+            replacementPlainTextEditor = replacementPlainTextEditor with
+            {
+                LongestRowCharacterLength = longestRowCharacterLength
+            };
 
             nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = replacementPlainTextEditor;
 

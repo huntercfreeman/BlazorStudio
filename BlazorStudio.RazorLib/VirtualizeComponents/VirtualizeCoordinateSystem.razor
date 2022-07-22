@@ -13,25 +13,31 @@
      style="@(DimensionsOfCoordinateSystemViewport.DimensionsCssString)"
      id="@ComponentId">
     
-    <div id="@_leftElementId"
-         style="background-color: red; @GetLeftBoundaryCssString()">
+    @{
+        // Create a local reference to avoid a new instance being set while rendering.
+        var localVirtualizeCoordinateSystemResult = _virtualizeCoordinateSystemResult;
 
-    </div>
+        <div id="@_leftElementId"
+             style="background-color: red; @GetLeftBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+
+        </div>
     
-    <div id="@_rightElementId"
-         style="background-color: green; @GetRightBoundaryCssString()">
+        <div id="@_rightElementId"
+             style="background-color: green; @GetRightBoundaryCssString(localVirtualizeCoordinateSystemResult)">
 
-    </div>
+        </div>
     
-    <div id="@_topElementId"
-         style="background-color: blue; @GetTopBoundaryCssString()">
+        <div id="@_topElementId"
+             style="background-color: blue; @GetTopBoundaryCssString(localVirtualizeCoordinateSystemResult)">
 
-    </div>
+        </div>
     
-    <div id="@_bottomElementId"
-         style="background-color: orange; @GetBottomBoundaryCssString()">
+        <div id="@_bottomElementId"
+             style="background-color: orange; @GetBottomBoundaryCssString(localVirtualizeCoordinateSystemResult)">
 
-    </div>
+        </div>
+    }
+    
     @{
         var localData = _data;
 

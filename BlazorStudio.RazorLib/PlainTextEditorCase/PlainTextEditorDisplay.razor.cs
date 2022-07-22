@@ -127,16 +127,20 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         if (plainTextEditor is null)
             return;
 
-        var scrollWidth = (int)(plainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow * _widthOfEachCharacterInPixels);
-        var scrollHeight = (int)(plainTextEditor.FileCoordinateGrid.RowCount * _heightOfEachRowInPixels);
+        var scrollWidth = Math.Ceiling(plainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow * _widthOfEachCharacterInPixels);
+        var scrollHeight = Math.Ceiling(plainTextEditor.FileCoordinateGrid.RowCount * _heightOfEachRowInPixels);
+        
+        var virtualizeRenderBlockWidth = plainTextEditor.LongestRowCharacterLength * _widthOfEachCharacterInPixels;
+        var virtualizeRenderBlockHeight = Math.Ceiling(plainTextEditor.List.Count * _heightOfEachRowInPixels);
 
         _virtualizeCoordinateSystem.SetData(
             new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
                 plainTextEditor.List
                     .Select((row, index) => (index, row)),
-                _dimensionsOfCoordinateSystemViewport,
                 scrollWidth,
-                scrollHeight
+                scrollHeight,
+                virtualizeRenderBlockWidth,
+                virtualizeRenderBlockHeight
             ));
     }
 

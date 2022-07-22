@@ -66,7 +66,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     private string _bottomElementId = $"virtualize-coordinate-system_bottom_{Guid.NewGuid()}";
 
     private DotNetObjectReference<VirtualizeCoordinateSystem<T>> _dotNetObjectReference = null!;
-    
+    private VirtualizeCoordinateSystemResult<T> _virtualizeCoordinateSystemResult;
+
     private string ComponentId => $"bstudio_virtualize-coordinate-system_{_guid}";
 
     protected override void OnInitialized()
@@ -147,9 +148,11 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     {
         _data = virtualizeCoordinateSystemResult.Items.ToImmutableArray();
         _dimensions = virtualizeCoordinateSystemResult.CoordinateSystemViewportDimensions;
+
+        _virtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult;
     }
 
-    public async Task RerenderAsync(VirtualizeCoordinateSystemResult<T> virtualizeCoordinateSystemResult)
+    public async Task RerenderAsync()
     {
         // The caller of this method is not guaranteed to be on the UI thread.
         await InvokeAsync(StateHasChanged);
@@ -163,8 +166,10 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         return _cancellationTokenSource.Token;
     }
     
-    private string GetLeftBoundaryCssString()
+    private string GetLeftBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
     {
+        var z = localVirtualizeCoordinateSystemResult.
+
         return $"";
     }
     

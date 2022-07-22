@@ -13,6 +13,7 @@ public interface IPlainTextEditor
     public int CurrentTokenIndex { get; }
     public IFileCoordinateGrid? FileCoordinateGrid { get; }
     public RichTextEditorOptions RichTextEditorOptions { get; }
+    public int LongestRowCharacterLength { get; }
 
     public string GetPlainText();
 }
