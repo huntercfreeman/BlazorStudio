@@ -182,6 +182,9 @@ public static class FileCoordinateGridFactory
 
                 long longCharacterLengthOfRequest = exclusiveEndingCharacterIndex - inclusiveStartingCharacterIndex;
 
+                if (longCharacterLengthOfRequest <= 0)
+                    continue;
+
                 if (longCharacterLengthOfRequest > Int32.MaxValue)
                 {
                     throw new ApplicationException($"Requested: byte[{longCharacterLengthOfRequest}]," +

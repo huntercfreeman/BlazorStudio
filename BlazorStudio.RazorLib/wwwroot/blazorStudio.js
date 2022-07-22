@@ -41,7 +41,7 @@
         let options = {
             rootMargin: '0px',
             threshold: [
-                0.1
+                0
             ]
         }
 
@@ -106,7 +106,7 @@
                 let boundaryElement = document.getElementById(elementId);
 
                 if (boundaryElement.offsetWidth === 0 || boundaryElement.offsetHeight === 0) {
-                    return;
+                    continue;
                 }
 
                 // Scrolling into view
@@ -118,9 +118,7 @@
 
                 let elementVirtualizeCoordinateSystem = document.getElementById(virtualizeCoordinateSystemElementId);
 
-                let storedDotNetObjectReference = dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.get(elementId);
-
-                storedDotNetObjectReference.invokeMethodAsync("FireRequestCallbackAction",
+                dotNetObjectReference.invokeMethodAsync("FireRequestCallbackAction",
                     elementId,
                     elementVirtualizeCoordinateSystem.scrollLeft,
                     elementVirtualizeCoordinateSystem.scrollTop,

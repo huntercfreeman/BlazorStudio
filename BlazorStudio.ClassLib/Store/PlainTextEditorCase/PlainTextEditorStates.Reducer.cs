@@ -165,7 +165,7 @@ public partial record PlainTextEditorStates
                     previousCharacterWasCarriageReturn = false;
                 }
 
-                if (row[^1] != '\n')
+                if (row.LastOrDefault() != '\n')
                 {
                     var forceNewLine = new KeyDownEventRecord(
                         KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
