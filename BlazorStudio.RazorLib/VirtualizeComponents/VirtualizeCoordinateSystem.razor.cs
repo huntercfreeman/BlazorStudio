@@ -25,7 +25,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     /// Used to render the Generic Item
     /// </summary>
     [Parameter, EditorRequired]
-    public RenderFragment<T> ChildContent { get; set; } = null!;
+    public RenderFragment<T> ItemRenderFragment { get; set; } = null!;
     /// <summary>
     /// Load more pixels of context just out of viewport to reduce
     /// use seeing a loading template.
@@ -39,13 +39,27 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     [Parameter]
     public string ContentWrapperCssClass { get; set; } = string.Empty;
     /// <summary>
+    /// Running into a timing problem and am using this as a temporary fix while developing
+    /// </summary>
+    [Parameter]
+    public int ForceRerender { get; set; }
+    /// <summary>
+    /// This is an optional RenderFragment that is typically used
+    /// to mark the position of an item out of scroll viewport
+    ///
+    /// Example: One can position: absolute and mark the position of an active element even if it is not rendered.
+    ///
+    /// In general position: absolute must be used to not break virtualization.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? MarkerRenderFragment { get; set; }
+    /// <summary>
     /// Show a HTML element to help with debugging
     /// </summary>
     [Parameter]
     public bool ShowDebugInfo { get; set; }
 
     private CancellationTokenSource _cancellationTokenSource = new();
-    private ImmutableArray<T> _data = ImmutableArray<T>.Empty;
     private Dimensions _dimensions = null!;
     
     private Dimensions _leftBoundaryDimensions = null!;
@@ -63,9 +77,11 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     private string _bottomElementId = $"virtualize-coordinate-system_bottom_{Guid.NewGuid()}";
 
     private DotNetObjectReference<VirtualizeCoordinateSystem<T>> _dotNetObjectReference = null!;
-    private VirtualizeCoordinateSystemResult<T> _virtualizeCoordinateSystemResult;
 
     private string ComponentId => $"bstudio_virtualize-coordinate-system_{_guid}";
+
+    public VirtualizeCoordinateSystemResult<T> VirtualizeCoordinateSystemResult { get; private set; }
+    public ImmutableArray<T> Data { get; private set; } = ImmutableArray<T>.Empty;
 
     protected override void OnInitialized()
     {
@@ -132,8 +148,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
     public void SetData(VirtualizeCoordinateSystemResult<T> virtualizeCoordinateSystemResult)
     {
-        _data = virtualizeCoordinateSystemResult.Items.ToImmutableArray();
-        _virtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult;
+        Data = virtualizeCoordinateSystemResult.Items.ToImmutableArray();
+        VirtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult;
     }
 
     public async Task RerenderAsync()

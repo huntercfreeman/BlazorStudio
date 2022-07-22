@@ -30,11 +30,12 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private ElementReference _plainTextEditor;
     private int _hadOnKeyDownEventCounter;
     private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)> _virtualizeCoordinateSystem = null!;
+    private int _forceRerender;
 
     private SequenceKey? _previousSequenceKeyShouldRender;
-    
-    private double _heightOfEachRowInPixels => 2 * PlainTextEditorSelector.Value!.RichTextEditorOptions.FontSizeInPixels;
-    private double _widthOfEachCharacterInPixels => PlainTextEditorSelector.Value!.RichTextEditorOptions.FontSizeInPixels;
+
+    private double _heightOfEachRowInPixels = 27;
+    private double _widthOfEachCharacterInPixels = 9.91;
 
     private Dimensions _dimensionsOfCoordinateSystemViewport = new()
     {

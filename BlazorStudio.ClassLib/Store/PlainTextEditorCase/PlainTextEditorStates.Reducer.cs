@@ -72,8 +72,9 @@ public partial record PlainTextEditorStates
             if (plainTextEditor is null)
                 return previousPlainTextEditorStates;
 
-            var heightOfEachRowInPixels = 2 * plainTextEditor.RichTextEditorOptions.FontSizeInPixels;
-            var widthOfEachCharacterInPixels = plainTextEditor.RichTextEditorOptions.FontSizeInPixels;
+            // TODO: The font-size style attribute does not equal the size of the div that encapsulates the singular character. Figure out EXACTLY these values based off the font-size instead of hard coding what developer tools says
+            var heightOfEachRowInPixels = 27;
+            var widthOfEachCharacterInPixels = 9.91;
 
             var paddingInPixels = 250;
 

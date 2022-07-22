@@ -10,11 +10,30 @@
 else
 {
     <div class="pte_plain-text-editor-wrapping">
-        <div>
+        @*<div>
             Font Size: @(PlainTextEditorSelector.Value.RichTextEditorOptions.FontSizeInPixels)px
         </div>
         <div>
             Use the '<em>F1</em>' key to scroll the caret row into view if it is offscreen.
+        </div>
+        *@
+        <div class="bstudio_debug-info">
+            @if (_virtualizeCoordinateSystem is not null)
+            {
+                <div>Total Row Count = @(PlainTextEditorSelector.Value.FileCoordinateGrid?.RowCount ?? 0)</div>
+                <div>Most characters on a single row = @(PlainTextEditorSelector.Value.FileCoordinateGrid?.CharacterLengthOfLongestRow ?? 0)</div>
+                <div>_data.Length = @_virtualizeCoordinateSystem.Data.Length</div>
+                <div>_scrollWidth = @_virtualizeCoordinateSystem.VirtualizeCoordinateSystemResult.ScrollWidth</div>
+                <div>_scrollHeight = @_virtualizeCoordinateSystem.VirtualizeCoordinateSystemResult.ScrollHeight</div>
+                <div>_scrollLeft = @_virtualizeCoordinateSystem.VirtualizeCoordinateSystemResult.ScrollLeft</div>
+                <div>_scrollTop = @_virtualizeCoordinateSystem.VirtualizeCoordinateSystemResult.ScrollTop</div>
+                <div>VirtualizeRenderBlockWidth = @_virtualizeCoordinateSystem.VirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth</div>
+                <div>VirtualizeRenderBlockHeight = @_virtualizeCoordinateSystem.VirtualizeCoordinateSystemResult.VirtualizeRenderBlockHeight</div>
+            }
+            else
+            {
+                <div>_virtualizeCoordinateSystem is null</div>
+            }
         </div>
 
         <div id="@PlainTextEditorDisplayId"
@@ -27,12 +46,7 @@ else
              @onfocusin="OnFocusIn"
              @onfocusout="OnFocusOut"
              tabindex="-1">
-            
-            <span id="@ActiveRowPositionMarkerId"
-                  class="pte_visually-hidden pte_unselectable pte_active-row-position-marker"
-                  style="position: absolute; @InputFocusTrapTopStyleCss">
-            </span>
-            
+
             @{
                 // Ensure reference to PlainTextEditorSelector does
                 // not change while looping over rows
@@ -42,28 +56,37 @@ else
                 var mostDigitsInARowNumber = currentPlainTextEditor.FileCoordinateGrid.RowCount.ToString().Length;
 
                 <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
-                <CascadingValue Value="_isFocused">
-                    <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
-                        <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
-                            <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
-                                <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
-                                                                                                       T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
-                                                                                                       Context="rowTuple"
-                                                                                                       DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
-                                                                                                       RequestCallbackAction="OnRequestCallbackAction"
-                                                                                                       PaddingInPixels="250"
-                                                                                                       OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
-                                    <CascadingValue Name="RowIndex" Value="rowTuple.Index">
-                                        <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
-                                                                   PlainTextEditorRow="rowTuple.PlainTextEditorRow"
-                                                                   MostDigitsInARowNumber="mostDigitsInARowNumber" />
-                                    </CascadingValue>                                    
-                                </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
+                    <CascadingValue Value="_isFocused">
+                        <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
+                            <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
+                                <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
+                                    <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
+                                                                                                           T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
+                                                                                                           DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
+                                                                                                           RequestCallbackAction="OnRequestCallbackAction"
+                                                                                                           PaddingInPixels="250"
+                                                                                                           OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc"
+                                                                                                           ForceRerender="_forceRerender++">
+                                        <ItemRenderFragment Context="rowTuple">
+                                            <CascadingValue Name="RowIndex" Value="rowTuple.Index">
+                                                <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
+                                                                           PlainTextEditorRow="rowTuple.PlainTextEditorRow"
+                                                                           MostDigitsInARowNumber="mostDigitsInARowNumber"/>
+                                            </CascadingValue>
+                                        </ItemRenderFragment>
+
+                                        <MarkerRenderFragment>
+                                            <span id="@ActiveRowPositionMarkerId"
+                                                  class="pte_visually-hidden pte_unselectable pte_active-row-position-marker"
+                                                  style="position: absolute; @InputFocusTrapTopStyleCss">
+                                            </span>
+                                        </MarkerRenderFragment>
+                                    </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
+                                </CascadingValue>
                             </CascadingValue>
                         </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
-            </CascadingValue>
             }
         </div>
     </div>

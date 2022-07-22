@@ -38,7 +38,7 @@
 .pte_plain-text-editor-display {
     min-height: 100px;
     min-width: 100px;
-    height: calc(100% - 3em - 10px);
+    height: calc(100% - 13em - 10px);
     margin: 10px;
     overflow: auto;
     border: 1.5px solid black;
