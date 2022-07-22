@@ -89,5 +89,17 @@
                 elementVirtualizeCoordinateSystem.offsetWidth,
                 elementVirtualizeCoordinateSystem.offsetHeight);
         }
+    },
+    getDimensions: function (elementId, dotNetObjectReference) {
+        let elementReference = document.getElementById(elementId);
+
+        dotNetObjectReference.invokeMethodAsync("FireRequestCallbackAction",
+            "",
+            elementReference.scrollLeft,
+            elementReference.scrollTop,
+            elementReference.scrollWidth,
+            elementReference.scrollHeight,
+            elementReference.offsetWidth,
+            elementReference.offsetHeight);
     }
 };

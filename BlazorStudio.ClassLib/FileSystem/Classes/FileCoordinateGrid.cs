@@ -26,7 +26,7 @@ public static class FileCoordinateGridFactory
     }
 
     private record FileCoordinateGrid(IAbsoluteFilePath AbsoluteFilePath)
-        : IFileCoordinateGrid
+        : IFileCoordinateGrid, IDisposable
     {
         /// <summary>
         /// Index using the Row index and this returns the
@@ -37,7 +37,6 @@ public static class FileCoordinateGridFactory
             0 // Start of document
         };
         
-
         public ImmutableArray<long> CharacterIndexMarkerForStartOfARow => 
             _characterIndexMarkerForStartOfARow.ToImmutableArray();
 
@@ -49,6 +48,7 @@ public static class FileCoordinateGridFactory
                     .ToArray());
             
         private int _exclusiveEndOfFileCharacterIndex;
+        private MemoryMappedFile _memoryMappedFile;
 
         public Encoding Encoding { get; private set; }
         public long CharacterLengthOfLongestRow { get; private set; }
@@ -120,6 +120,25 @@ public static class FileCoordinateGridFactory
             }
 
             _exclusiveEndOfFileCharacterIndex = characterCounter;
+
+            try
+            {
+                _memoryMappedFile = MemoryMappedFile
+                    .CreateFromFile(AbsoluteFilePath.GetAbsoluteFilePathString(),
+                        FileMode.Open,
+                        _getMapFileIdentifierFunc.Invoke());
+            }
+            catch (IOException e)
+            {
+                File.Delete(_getMapFileIdentifierFunc.Invoke());
+
+                _memoryMappedFile = MemoryMappedFile
+                    .CreateFromFile(AbsoluteFilePath.GetAbsoluteFilePathString(),
+                        FileMode.Open,
+                        _getMapFileIdentifierFunc.Invoke());
+            }
+
+            
         }
 
         public async Task InitializeAsync()
@@ -161,33 +180,9 @@ public static class FileCoordinateGridFactory
 
             int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
 
-            var mapName = _getMapFileIdentifierFunc.Invoke();
-
-            try
-            {
-                using (var memoryMappedFile = MemoryMappedFile
-                        .CreateFromFile(AbsoluteFilePath.GetAbsoluteFilePathString(),
-                            FileMode.Open,
-                            mapName))
-                {
-                    return ReadMemoryMappedFile(memoryMappedFile,
-                        inclusiveStartingCharacter,
-                        intCharacterLengthOfRequest);
-                }
-            }
-            catch (IOException e)
-            {
-                return e.Message;
-            }
-        }
-
-        private string ReadMemoryMappedFile(MemoryMappedFile memoryMappedFile, 
-            long inclusiveStartingCharacter,
-            int intCharacterLengthOfRequest)
-        {
             var buffer = new byte[intCharacterLengthOfRequest];
 
-            using (MemoryMappedViewAccessor accessor = memoryMappedFile.CreateViewAccessor(inclusiveStartingCharacter,
+            using (MemoryMappedViewAccessor accessor = _memoryMappedFile.CreateViewAccessor(inclusiveStartingCharacter,
                        intCharacterLengthOfRequest))
             {
                 accessor.ReadArray(0, buffer, 0, intCharacterLengthOfRequest);
@@ -209,6 +204,11 @@ public static class FileCoordinateGridFactory
 
             return memoryMappedFileResult;
         }
+
+        public void Dispose()
+        {
+            _memoryMappedFile.Dispose();
+        }
     }
 }
 
@@ -221,4 +221,8 @@ public interface IFileCoordinateGrid
     public ImmutableArray<long> CharacterIndexMarkerForStartOfARow { get; }
 
     public string Request(FileCoordinateGridRequest fileCoordinateGridRequest);
+    /// <summary>
+    /// Needed when Unit Testing as it won't auto dispose
+    /// </summary>
+    public void Dispose();
 }

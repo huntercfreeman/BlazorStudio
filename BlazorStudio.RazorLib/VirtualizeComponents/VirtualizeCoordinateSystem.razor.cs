@@ -64,6 +64,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     private string _bottomElementId = $"virtualize-coordinate-system_bottom_{Guid.NewGuid()}";
 
     private DotNetObjectReference<VirtualizeCoordinateSystem<T>> _dotNetObjectReference = null!;
+    
+    private string ComponentId => $"bstudio_virtualize-coordinate-system_{_guid}";
 
     protected override void OnInitialized()
     {
@@ -79,24 +81,31 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _dotNetObjectReference = DotNetObjectReference.Create(this);
+        if (firstRender)
+        {
+            _dotNetObjectReference = DotNetObjectReference.Create(this);
 
-        await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-            _leftElementId,
-            _dotNetObjectReference);
+            await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
+                _leftElementId,
+                _dotNetObjectReference);
 
-        await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-            _rightElementId,
-            _dotNetObjectReference);
+            await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
+                _rightElementId,
+                _dotNetObjectReference);
 
-        await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-            _topElementId,
-            _dotNetObjectReference);
+            await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
+                _topElementId,
+                _dotNetObjectReference);
 
-        await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
-            _bottomElementId,
-            _dotNetObjectReference);
+            await JsRuntime.InvokeVoidAsync("blazorStudio.subscribeVirtualizeCoordinateSystemScrollIntoView",
+                _bottomElementId,
+                _dotNetObjectReference);
 
+            await JsRuntime.InvokeVoidAsync("blazorStudio.getDimensions",
+                ComponentId,
+                _dotNetObjectReference);
+        }
+        
         await base.OnAfterRenderAsync(firstRender);
     }
 
@@ -114,13 +123,15 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         ScrollTop = scrollTop;
         ScrollWidth = scrollWidth;
         ScrollHeight = scrollHeight;
+        Width = viewportWidth;
+        Height = viewportHeight;
 
         var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest(ScrollLeft,
             ScrollTop,
-            scrollWidth,
-            scrollHeight,
-            viewportWidth,
-            viewportHeight,
+            ScrollWidth,
+            ScrollHeight,
+            Width,
+            Height,
             CancelTokenSourceAndGetNewToken());
 
         RequestCallbackAction(virtualizeCoordinateSystemRequest);
@@ -161,7 +172,6 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     {
         return $"";
     }
-
 
     public virtual void Dispose()
     {
