@@ -34,22 +34,16 @@ public partial record PlainTextEditorStates
             var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
             var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
-            var focusedPlainTextEditor = previousPlainTextEditorStates.Map
-                    [constructMemoryMappedFilePlainTextEditorRecordAction.FocusedPlainTextEditorKey]
-                as PlainTextEditorRecord;
-
-            if (focusedPlainTextEditor is null)
-                return previousPlainTextEditorStates;
-
             var fileCoordinateGrid = FileCoordinateGridFactory
                 .ConstructFileCoordinateGrid(constructMemoryMappedFilePlainTextEditorRecordAction.AbsoluteFilePath);
 
-            var plainTextEditor = focusedPlainTextEditor with
-            {
-                FileCoordinateGrid = fileCoordinateGrid
-            };
+            var plainTextEditor = new
+                PlainTextEditorRecord(constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey)
+                {
+                    FileCoordinateGrid = fileCoordinateGrid
+                };
 
-            nextPlainTextEditorMap[constructMemoryMappedFilePlainTextEditorRecordAction.FocusedPlainTextEditorKey] = plainTextEditor;
+            nextPlainTextEditorMap[constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey] = plainTextEditor;
 
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
             var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();

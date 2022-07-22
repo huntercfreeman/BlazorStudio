@@ -53,12 +53,12 @@ else
                                                                                                        T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
                                                                                                        Context="rowTuple"
                                                                                                        DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
-                                                                                                       RequestCallbackAction="OnRequestCallbackAction">
+                                                                                                       RequestCallbackAction="OnRequestCallbackAction"
+                                                                                                       PaddingInPixels="250">
                                     <CascadingValue Name="RowIndex" Value="rowTuple.Index">
                                         <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
                                                                    PlainTextEditorRow="rowTuple.PlainTextEditorRow"
-                                                                   MostDigitsInARowNumber="mostDigitsInARowNumber"
-                                                                   PaddingInPixels="250" />
+                                                                   MostDigitsInARowNumber="mostDigitsInARowNumber" />
                                     </CascadingValue>                                    
                                 </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
                             }
