@@ -16,6 +16,7 @@ public interface IPlainTextEditor
     public RichTextEditorOptions RichTextEditorOptions { get; }
     public int LongestRowCharacterLength { get; }
     public VirtualizeCoordinateSystemRequest VirtualizeCoordinateSystemResult { get; }
+    public int RowIndexOffset { get; }
 
     public string GetPlainText();
 }

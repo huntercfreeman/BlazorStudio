@@ -32,19 +32,20 @@ else
                   class="pte_visually-hidden pte_unselectable pte_active-row-position-marker"
                   style="position: absolute; @InputFocusTrapTopStyleCss">
             </span>
+            
+            @{
+                // Ensure reference to PlainTextEditorSelector does
+                // not change while looping over rows
+                // by making a local reference to it.
+                var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
-            <CascadingValue Value="PlainTextEditorKey">
+                var mostDigitsInARowNumber = currentPlainTextEditor.FileCoordinateGrid.RowCount.ToString().Length;
+
+                <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
                 <CascadingValue Value="_isFocused">
-                    <CascadingValue Name="CurrentRowIndex" Value="PlainTextEditorSelector.Value.CurrentRowIndex">
-                        <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
-                            @{
-                                // Ensure reference to PlainTextEditorSelector does
-                                // not change while looping over rows
-                                // by making a local reference to it.
-                                var currentPlainTextEditorSelector = PlainTextEditorSelector.Value;
-
-                                var mostDigitsInARowNumber = currentPlainTextEditorSelector.FileCoordinateGrid.RowCount.ToString().Length;
-
+                    <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
+                        <CascadingValue Name="StartingRowIndex" Value="currentPlainTextEditor.RowIndexOffset">
+                            <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
                                 <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
                                                                                                        T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
                                                                                                        Context="rowTuple"
@@ -58,11 +59,12 @@ else
                                                                    MostDigitsInARowNumber="mostDigitsInARowNumber" />
                                     </CascadingValue>                                    
                                 </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
-                            }
+                            </CascadingValue>
                         </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
+            }
         </div>
     </div>
 }
