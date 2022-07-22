@@ -41,31 +41,29 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     public bool ShowDebugInfo { get; set; }
 
     private CancellationTokenSource _cancellationTokenSource = new();
-    public ImmutableArray<T> _data = ImmutableArray<T>.Empty;
-    public Dimensions _dimensions = null!;
+    private ImmutableArray<T> _data = ImmutableArray<T>.Empty;
+    private Dimensions _dimensions = null!;
     
-    public Dimensions _leftBoundaryDimensions = null!;
-    public Dimensions _rightBoundaryDimensions = null!;
-    public Dimensions _topBoundaryDimensions = null!;
-    public Dimensions _bottomBoundaryDimensions = null!;
+    private Dimensions _leftBoundaryDimensions = null!;
+    private Dimensions _rightBoundaryDimensions = null!;
+    private Dimensions _topBoundaryDimensions = null!;
+    private Dimensions _bottomBoundaryDimensions = null!;
 
-    public double _scrollTop;
-    public double _scrollLeft;
-    public double _scrollWidth;
-    public double _scrollHeight;
-    public double _width;
-    public double _height;
+    private double _scrollTop;
+    private double _scrollLeft;
+    private double _scrollWidth;
+    private double _scrollHeight;
+    private double _width;
+    private double _height;
 
-    public Guid _guid;
+    private Guid _guid;
 
-    public string _leftElementId = $"virtualize-coordinate-system_left_{Guid.NewGuid()}";
-    public string _rightElementId = $"virtualize-coordinate-system_right_{Guid.NewGuid()}";
-    public string _topElementId = $"virtualize-coordinate-system_top_{Guid.NewGuid()}";
-    public string _bottomElementId = $"virtualize-coordinate-system_bottom_{Guid.NewGuid()}";
+    private string _leftElementId = $"virtualize-coordinate-system_left_{Guid.NewGuid()}";
+    private string _rightElementId = $"virtualize-coordinate-system_right_{Guid.NewGuid()}";
+    private string _topElementId = $"virtualize-coordinate-system_top_{Guid.NewGuid()}";
+    private string _bottomElementId = $"virtualize-coordinate-system_bottom_{Guid.NewGuid()}";
 
     private DotNetObjectReference<VirtualizeCoordinateSystem<T>> _dotNetObjectReference = null!;
-
-    public event EventHandler _componentStateChanged;
 
     protected override void OnInitialized()
     {
@@ -75,28 +73,6 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         _rightElementId = $"virtualize-coordinate-system_right_{_guid}";
         _topElementId = $"virtualize-coordinate-system_top_{_guid}";
         _bottomElementId = $"virtualize-coordinate-system_bottom_{_guid}";
-
-        //_leftBoundaryDimensions = new Dimensions
-        //{
-        //    // Width is:
-        //    // scrollLeft
-        //    WidthCalc = new List<DimensionUnit>()
-        //    {
-        //        _scrollLeft
-        //    }
-        //};
-
-        //_rightBoundaryDimensions = new Dimensions
-        //{
-        //};
-
-        //_topBoundaryDimensions = new Dimensions
-        //{
-        //};
-
-        //_bottomBoundaryDimensions = new Dimensions
-        //{
-        //};
 
         base.OnInitialized();
     }
@@ -141,8 +117,6 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         _scrollWidth = scrollWidth;
         _scrollHeight = scrollHeight;
 
-        _componentStateChanged?.Invoke(null, EventArgs.Empty);
-
         var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest(_scrollLeft,
             _scrollTop,
             scrollWidth,
@@ -159,14 +133,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         _data = virtualizeCoordinateSystemResult.Items.ToImmutableArray();
         _dimensions = virtualizeCoordinateSystemResult.CoordinateSystemDimensions;
 
-        //_leftBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.LeftBoundaryDimensions;
-        //_rightBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.RightBoundaryDimensions;
-        //_topBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.TopBoundaryDimensions;
-        //_bottomBoundaryDimensions = InitialVirtualizeCoordinateSystemResult.BottomBoundaryDimensions;
-
         InvokeAsync(StateHasChanged);
-
-        _componentStateChanged?.Invoke(null, EventArgs.Empty);
     }
     
     public CancellationToken CancelTokenSourceAndGetNewToken()
@@ -175,6 +142,26 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         _cancellationTokenSource = new();
 
         return _cancellationTokenSource.Token;
+    }
+    
+    private string GetLeftBoundaryCssString()
+    {
+        return $"";
+    }
+    
+    private string GetRightBoundaryCssString()
+    {
+        return $"";
+    }
+
+    private string GetTopBoundaryCssString()
+    {
+        return $"";
+    }
+
+    private string GetBottomBoundaryCssString()
+    {
+        return $"";
     }
 
 
