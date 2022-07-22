@@ -18,13 +18,13 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         var absoluteFilePath = new AbsoluteFilePath(CurrentDirectoryAbsoluteFilePath, relativeFilePath);
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-        Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
+        Dispatcher.Dispatch(new ConstructInMemoryPlainTextEditorRecordAction(plainTextEditorKey));
 
         var expectedContent = await File
             .ReadAllTextAsync(absoluteFilePath.GetAbsoluteFilePathString());
 
         await DispatchHelperAsync(
-            new PlainTextEditorInitializeAction(plainTextEditorKey, absoluteFilePath),
+            new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey, absoluteFilePath),
             State);
 
         var documentPlainText = State.Value.Map[plainTextEditorKey]
@@ -53,13 +53,13 @@ public class INSERTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             false);
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-        Dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
+        Dispatcher.Dispatch(new ConstructInMemoryPlainTextEditorRecordAction(plainTextEditorKey));
 
         var expectedContent = await File
             .ReadAllTextAsync(absoluteFilePath.GetAbsoluteFilePathString());
 
         await DispatchHelperAsync(
-            new PlainTextEditorInitializeAction(plainTextEditorKey, absoluteFilePath),
+            new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey, absoluteFilePath),
             State);
 
         var documentPlainText = State.Value.Map[plainTextEditorKey]

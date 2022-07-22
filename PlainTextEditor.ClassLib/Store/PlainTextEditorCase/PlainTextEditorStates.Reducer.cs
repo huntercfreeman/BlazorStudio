@@ -29,16 +29,16 @@ public partial record PlainTextEditorStates
 
         [ReducerMethod]
         public static PlainTextEditorStates ReduceConstructPlainTextEditorAction(PlainTextEditorStates previousPlainTextEditorStates,
-            ConstructPlainTextEditorRecordAction constructPlainTextEditorRecordAction)
+            ConstructInMemoryPlainTextEditorRecordAction constructInMemoryPlainTextEditorRecordAction)
         {
             var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
             var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
             var plainTextEditor = new
-                PlainTextEditorRecord(constructPlainTextEditorRecordAction.PlainTextEditorKey);
+                PlainTextEditorRecord(constructInMemoryPlainTextEditorRecordAction.PlainTextEditorKey);
 
-            nextPlainTextEditorMap[constructPlainTextEditorRecordAction.PlainTextEditorKey] = plainTextEditor;
-            nextPlainTextEditorList.Add(constructPlainTextEditorRecordAction.PlainTextEditorKey);
+            nextPlainTextEditorMap[constructInMemoryPlainTextEditorRecordAction.PlainTextEditorKey] = plainTextEditor;
+            nextPlainTextEditorList.Add(constructInMemoryPlainTextEditorRecordAction.PlainTextEditorKey);
 
             return new PlainTextEditorStates(nextPlainTextEditorMap.ToImmutableDictionary(), nextPlainTextEditorList.ToImmutableArray());
         }
@@ -129,7 +129,7 @@ public partial record PlainTextEditorStates
         }
 
         [EffectMethod]
-        public async Task HandleInitializeAction(PlainTextEditorInitializeAction plainTextEditorInitializeAction,
+        public async Task HandleInitializeAction(ConstructMemoryMappedFilePlainTextEditorRecordAction plainTextEditorInitializeAction,
             IDispatcher dispatcher)
         {
             _queuedEffectsCounter++;

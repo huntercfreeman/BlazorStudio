@@ -1,4 +1,6 @@
-using Fluxor;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Services;
+using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using Microsoft.AspNetCore.Components;
 using PlainTextEditor.ClassLib.Services;
 using PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
@@ -10,8 +12,10 @@ public partial class PlainTextEditorSpawn : ComponentBase, IDisposable
     [Inject]
     private IPlainTextEditorService PlainTextEditorService { get; set; } = null!;
 
-    [Parameter]
+    [Parameter, EditorRequired]
     public Func<Task>? AfterInitializationCallback { get; set; }
+    [Parameter]
+    public IAbsoluteFilePath? AbsoluteFilePath { get; set; }
 
     public PlainTextEditorKey PlainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
     private bool _plainTextEditorWasInitialized;
@@ -21,7 +25,7 @@ public partial class PlainTextEditorSpawn : ComponentBase, IDisposable
         _ = Task.Run(async () => 
             {
                 await PlainTextEditorService
-                    .ConstructPlainTextEditorAsync(PlainTextEditorKey, 
+                    .ConstructPlainTextEditorAsync(PlainTextEditorKey,
                         async () => 
                         {
                             _plainTextEditorWasInitialized = true;

@@ -38,6 +38,27 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private ItemsProviderRequest? _previousItemsProviderRequest;
     private ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _previousItemsProviderResult;
 
+    private Dimensions _dimensionsOfCoordinateSystemViewport = new()
+    {
+        DimensionsPositionKind = DimensionsPositionKind.Static,
+        WidthCalc = new List<DimensionUnit>
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 100
+            }
+        },
+        HeightCalc = new List<DimensionUnit>
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.CharacterHeight,
+                Value = 2
+            }
+        }
+    };
+
     private string PlainTextEditorDisplayId => $"pte_plain-text-editor-display_{PlainTextEditorKey.Guid}";
     private string ActiveRowPositionMarkerId => $"pte_active-row-position-marker_{PlainTextEditorKey.Guid}";
     private string ActiveRowId => $"pte_active-row_{PlainTextEditorKey.Guid}";

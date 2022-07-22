@@ -20,7 +20,7 @@ public partial class EditorDisplay : FluxorComponent
     [Parameter, EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
 
-    private PlainTextEditorSpawn? _plainTextEditorSpawn;
+    private PlainTextEditorKey _plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
     protected override void OnInitialized()
     {
@@ -31,18 +31,13 @@ public partial class EditorDisplay : FluxorComponent
 
     private async void EditorStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        await ReadFileContentsIntoEditor();
-    }
+        Dispatcher.Dispatch(new DeconstructPlainTextEditorRecordAction(_plainTextEditorKey));
 
-    private async Task ReadFileContentsIntoEditor()
-    {
-        if (_plainTextEditorSpawn is not null &&
-            EditorStateWrap.Value.OpenedAbsoluteFilePath is not null)
-        {
-            Dispatcher.Dispatch(
-                new PlainTextEditorInitializeAction(_plainTextEditorSpawn.PlainTextEditorKey, 
-                    EditorStateWrap.Value.OpenedAbsoluteFilePath)
-            );
-        }
+        _plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+        Dispatcher.Dispatch(
+            new ConstructMemoryMappedFilePlainTextEditorRecordAction(_plainTextEditorSpawn.PlainTextEditorKey,
+                EditorStateWrap.Value.OpenedAbsoluteFilePath)
+        );
     }
 }

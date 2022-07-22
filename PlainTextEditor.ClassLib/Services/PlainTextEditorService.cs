@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using Fluxor;
 using PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
 
@@ -46,7 +44,8 @@ public class PlainTextEditorService : IPlainTextEditorService, IDisposable
         }
     }
 
-    public async Task ConstructPlainTextEditorAsync(PlainTextEditorKey plainTextEditorKey, Func<Task> plainTextEditorWasConstructedCallback)
+    public async Task ConstructPlainTextEditorAsync(PlainTextEditorKey plainTextEditorKey,
+        Func<Task> plainTextEditorWasConstructedCallback)
     {
         try
         {
@@ -58,7 +57,7 @@ public class PlainTextEditorService : IPlainTextEditorService, IDisposable
             _onPlainTextEditorConstructedActionsSemaphoreSlim.Release();
         }
 
-        _dispatcher.Dispatch(new ConstructPlainTextEditorRecordAction(plainTextEditorKey));
+        _dispatcher.Dispatch(new ConstructInMemoryPlainTextEditorRecordAction(plainTextEditorKey));
     }
     
     public void DeconstructPlainTextEditor(PlainTextEditorKey plainTextEditorKey)
