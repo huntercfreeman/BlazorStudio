@@ -1,6 +1,5 @@
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using BlazorStudio.ClassLib.Services;
 

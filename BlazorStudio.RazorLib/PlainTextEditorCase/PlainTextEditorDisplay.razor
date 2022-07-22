@@ -1,7 +1,5 @@
 @using Fluxor.Blazor.Web.Components
-@using Microsoft.AspNetCore.Components.Web.Virtualization
 @using BlazorStudio.ClassLib.Store.PlainTextEditorCase
-@using BlazorStudio.RazorLib.VirtualizeComponents
 
 @inherits FluxorComponent
 
@@ -51,10 +49,11 @@ else
 
                                 //</Virtualize>
 
-                                <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
-                                                                                                         Context="rowTuple"
-                                                                                                         DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
-                                                                                                         RequestCallbackAction="OnRequestCallbackAction">
+                                <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
+                                                                                                       T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
+                                                                                                       Context="rowTuple"
+                                                                                                       DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
+                                                                                                       RequestCallbackAction="OnRequestCallbackAction">
                                     <CascadingValue Name="RowIndex" Value="rowTuple.Index">
                                         <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
                                                                    PlainTextEditorRow="rowTuple.PlainTextEditorRow"

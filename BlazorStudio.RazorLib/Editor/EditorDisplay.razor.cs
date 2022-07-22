@@ -34,7 +34,7 @@ public partial class EditorDisplay : FluxorComponent
         _plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
         Dispatcher.Dispatch(
-            new ConstructMemoryMappedFilePlainTextEditorRecordAction(_plainTextEditorSpawn.PlainTextEditorKey,
+            new ConstructMemoryMappedFilePlainTextEditorRecordAction(_plainTextEditorKey,
                 EditorStateWrap.Value.OpenedAbsoluteFilePath)
         );
     }

@@ -17,27 +17,13 @@ public class VirtualizeCoordinateSystemResult<T>
     /// Used to render CoordinateSystem in its entirety NOT just the viewport
     /// </summary>
     public Dimensions CoordinateSystemDimensions { get; set; } = null!;
-    
-    public Dimensions LeftBoundaryDimensions { get; set; } = null!;
-    public Dimensions RightBoundaryDimensions { get; set; } = null!;
-    public Dimensions TopBoundaryDimensions { get; set; } = null!;
-    public Dimensions BottomBoundaryDimensions { get; set; } = null!;
 
     /// <param name="items">The items to provide.</param>
     /// <param name="totalItemCount">The total item count in the source generating the items provided.</param>
     public VirtualizeCoordinateSystemResult(IEnumerable<T> items, 
-        Dimensions coordinateSystemDimensions,
-        Dimensions leftBoundaryDimensions,
-        Dimensions rightBoundaryDimensions,
-        Dimensions topBoundaryDimensions,
-        Dimensions bottomBoundaryDimensions)
+        Dimensions coordinateSystemDimensions)
     {
         Items = items;
         CoordinateSystemDimensions = coordinateSystemDimensions;
-
-        LeftBoundaryDimensions = leftBoundaryDimensions;
-        RightBoundaryDimensions = rightBoundaryDimensions;
-        TopBoundaryDimensions = topBoundaryDimensions;
-        BottomBoundaryDimensions = bottomBoundaryDimensions;
     }
 }

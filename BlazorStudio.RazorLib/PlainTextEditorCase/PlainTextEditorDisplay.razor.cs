@@ -1,20 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BlazorStudio.Shared.FileSystem.Classes;
+using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Sequence;
+using BlazorStudio.ClassLib.Store.KeyDownEventCase;
+using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
+using BlazorStudio.ClassLib.UserInterface;
+using BlazorStudio.ClassLib.Virtualize;
+using BlazorStudio.RazorLib.VirtualizeComponents;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.JSInterop;
-using PlainTextEditor.ClassLib.Keyboard;
-using PlainTextEditor.ClassLib.Sequence;
-using PlainTextEditor.ClassLib.Store.KeyDownEventCase;
-using PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
 
-namespace PlainTextEditor.RazorLib.PlainTextEditorCase;
+namespace BlazorStudio.RazorLib.PlainTextEditorCase;
 
 public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 {
@@ -30,13 +27,12 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private bool _isFocused;
     private ElementReference _plainTextEditor;
-    private Virtualize<(int Index, IPlainTextEditorRow PlainTextEditorRow)> _rowVirtualizeComponent = null!;
     private int _hadOnKeyDownEventCounter;
+    private bool _isInitialized;
+    private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)> _virtualizeCoordinateSystem = null!;
+    private VirtualizeCoordinateSystemRequest _mostRecentVirtualizeCoordinateSystemRequest;
 
     private SequenceKey? _previousSequenceKeyShouldRender;
-    private SequenceKey? _previousSequenceKeyRowItemsProvider;
-    private ItemsProviderRequest? _previousItemsProviderRequest;
-    private ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _previousItemsProviderResult;
 
     private Dimensions _dimensionsOfCoordinateSystemViewport = new()
     {
@@ -87,21 +83,12 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeScrollIntoView",
-                ActiveRowPositionMarkerId,
-                PlainTextEditorKey.Guid);
-        }
-
         if (_hadOnKeyDownEventCounter > 0)
         {
             _hadOnKeyDownEventCounter = 0;
 
             await JsRuntime.InvokeVoidAsync("plainTextEditor.scrollIntoViewIfOutOfViewport",
                 ActiveRowPositionMarkerId);
-            
-            Console.WriteLine("scrollIntoViewIfOutOfViewport");
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -132,7 +119,28 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private async void PlainTextEditorSelectorOnSelectedValueChanged(object? sender, IPlainTextEditor? e)
     {
-        await _rowVirtualizeComponent.RefreshDataAsync();
+        if (!_isInitialized)
+        {
+            await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeScrollIntoView",
+                ActiveRowPositionMarkerId,
+                PlainTextEditorKey.Guid);
+        }
+
+        if (_virtualizeCoordinateSystem is not null)
+        {
+            var plainTextEditor = PlainTextEditorSelector.Value;
+
+            if (plainTextEditor is null)
+                return;
+
+            _virtualizeCoordinateSystem.SetData(
+                new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
+                    plainTextEditor.List
+                        .Select((row, index) => (index, row))
+                        .Take(10),
+                _dimensionsOfCoordinateSystemViewport                    
+            ));
+        }
 
         await InvokeAsync(StateHasChanged);
     }
@@ -152,7 +160,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         Dispatcher.Dispatch(
             new KeyDownEventAction(PlainTextEditorKey,
-                new ClassLib.Keyboard.KeyDownEventRecord(
+                new KeyDownEventRecord(
                     e.Key,
                     e.Code,
                     e.CtrlKey,
@@ -185,59 +193,10 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     {
         return $"font-size: {PlainTextEditorSelector.Value?.RichTextEditorOptions.FontSizeInPixels ?? 0}px;";
     }
-
-    private async ValueTask<ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>> RowItemsProvider(
-        ItemsProviderRequest request)
+    
+    private void OnRequestCallbackAction(VirtualizeCoordinateSystemRequest virtualizeCoordinateSystemRequest)
     {
-        var currentPlainTextEditor = PlainTextEditorSelector.Value;
-
-        (int Index, IPlainTextEditorRow PlainTextEditorRow)[] rowTuples =
-            Array.Empty<(int Index, IPlainTextEditorRow PlainTextEditorRow)>();
-        
-        var numberOfRows = Math.Min(request.Count, currentPlainTextEditor.List.Count - request.StartIndex);
-
-        if (numberOfRows > 0)
-        {
-            if (currentPlainTextEditor is null ||
-                _previousSequenceKeyRowItemsProvider is null ||
-                _previousItemsProviderRequest is null)
-            {
-                Dispatcher.Dispatch(new PlainTextEditorRequestAction(
-                    PlainTextEditorKey,
-                    new FileCoordinateGridRequest(request.StartIndex,
-                        numberOfRows,
-                        request.CancellationToken)));
-
-                _previousSequenceKeyRowItemsProvider = currentPlainTextEditor.SequenceKey;
-                _previousItemsProviderRequest = request;
-                _previousItemsProviderResult = new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
-                    0);
-
-                return _previousItemsProviderResult.Value;
-            }
-            else if (currentPlainTextEditor.SequenceKey != _previousSequenceKeyRowItemsProvider)
-            {
-                rowTuples = currentPlainTextEditor.List
-                    .Select((row, index) => (index, row))
-                    .Skip(request.StartIndex)
-                    .Take(numberOfRows)
-                    .ToArray();
-
-                return new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
-                    currentPlainTextEditor.FileCoordinateGrid.RowCount);
-            }
-            else
-            {
-                Dispatcher.Dispatch(new PlainTextEditorRequestAction(
-                    PlainTextEditorKey,
-                    new FileCoordinateGridRequest(request.StartIndex,
-                        numberOfRows,
-                        request.CancellationToken)));
-            }
-        }
-
-        return new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
-            0);
+        _mostRecentVirtualizeCoordinateSystemRequest = virtualizeCoordinateSystemRequest;
     }
 
     protected override void Dispose(bool disposing)

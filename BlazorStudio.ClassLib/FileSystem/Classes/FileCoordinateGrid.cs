@@ -15,6 +15,15 @@ public static class FileCoordinateGridFactory
 
         return fileCoordinateGrid;
     }
+    
+    public static IFileCoordinateGrid ConstructFileCoordinateGrid(IAbsoluteFilePath absoluteFilePath)
+    {
+        var fileCoordinateGrid = new FileCoordinateGrid(absoluteFilePath);
+
+        fileCoordinateGrid.Initialize();
+
+        return fileCoordinateGrid;
+    }
 
     private record FileCoordinateGrid(IAbsoluteFilePath AbsoluteFilePath)
         : IFileCoordinateGrid
@@ -38,7 +47,7 @@ public static class FileCoordinateGridFactory
         public int RowCount => _characterIndexMarkerForStartOfARow.Count;
         public int ExclusiveEndOfFileCharacterIndex => _exclusiveEndOfFileCharacterIndex;
 
-        public async Task InitializeAsync()
+        public void Initialize()
         {
             if (AbsoluteFilePath.IsDirectory)
                 throw new ApplicationException($"{nameof(FileCoordinateGrid)} does not support directories.");
@@ -66,7 +75,7 @@ public static class FileCoordinateGridFactory
                 while (streamReader.Peek() != -1)
                 {
                     var currentCharacter = (char)streamReader.Read();
-                    
+
                     characterCounter++;
 
                     if (currentCharacter == '\n')
@@ -89,6 +98,11 @@ public static class FileCoordinateGridFactory
             }
 
             _exclusiveEndOfFileCharacterIndex = characterCounter;
+        }
+
+        public async Task InitializeAsync()
+        {
+            Initialize();
         }
 
         public string Request(FileCoordinateGridRequest fileCoordinateGridRequest)
