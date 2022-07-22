@@ -60,12 +60,45 @@ public partial record PlainTextEditorStates
 
             var plainTextEditor = previousPlainTextEditorStates
                     .Map[memoryMappedFileReadRequestAction.PlainTextEditorKey]
-                        as PlainTextEditorRecord;
+                as PlainTextEditorRecord;
 
             if (plainTextEditor is null)
                 return previousPlainTextEditorStates;
 
-            var replacementPlainTextEditor = plainTextEditor with
+            var heightOfEachRowInPixels = 2 * plainTextEditor.RichTextEditorOptions.FontSizeInPixels;
+
+            var startingRowIndex = 
+                (int)(memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollTop / heightOfEachRowInPixels);
+
+            var rowCount = 
+                (int)(memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ViewportHeight / heightOfEachRowInPixels);
+
+            var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex, 
+                rowCount,
+                memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.CancellationToken);
+
+            var content = plainTextEditor.FileCoordinateGrid!
+                .Request(fileCoordinateGridRequest);
+
+            var allEnterKeysAreCarriageReturnNewLine = true;
+            var seenEnterKey = false;
+            var previousCharacterWasCarriageReturn = false;
+
+            string MutateIfPreviousCharacterWasCarriageReturn()
+            {
+                seenEnterKey = true;
+
+                if (!previousCharacterWasCarriageReturn)
+                {
+                    allEnterKeysAreCarriageReturnNewLine = false;
+                }
+
+                return previousCharacterWasCarriageReturn
+                    ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
+                    : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
+            }
+
+            PlainTextEditorRecord replacementPlainTextEditor = plainTextEditor with
             {
                 CurrentRowIndex = 0,
                 CurrentTokenIndex = 0,
@@ -73,6 +106,49 @@ public partial record PlainTextEditorStates
                 List = ImmutableList<IPlainTextEditorRow>.Empty
                     .Add(plainTextEditor.GetEmptyPlainTextEditorRow())
             };
+
+            foreach (var character in content)
+            {
+                if (character == '\r')
+                {
+                    previousCharacterWasCarriageReturn = true;
+                    continue;
+                }
+
+                var code = character switch
+                {
+                    '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
+                    ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
+                    '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
+                    _ => character.ToString()
+                };
+
+                var keyDown = new KeyDownEventAction(plainTextEditor.PlainTextEditorKey,
+                    new KeyDownEventRecord(
+                        character.ToString(),
+                        code,
+                        false,
+                        false,
+                        false
+                    )
+                );
+
+                replacementPlainTextEditor = PlainTextEditorStates.StateMachine
+                        .HandleKeyDownEvent(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
+                    {
+                        SequenceKey = SequenceKey.NewSequenceKey()
+                    };
+
+                previousCharacterWasCarriageReturn = false;
+            }
+
+            if (seenEnterKey && allEnterKeysAreCarriageReturnNewLine)
+            {
+                replacementPlainTextEditor = replacementPlainTextEditor with
+                {
+                    UseCarriageReturnNewLine = true
+                };
+            }
 
             nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = replacementPlainTextEditor;
 

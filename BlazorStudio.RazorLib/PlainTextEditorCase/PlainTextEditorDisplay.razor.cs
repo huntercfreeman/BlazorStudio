@@ -1,3 +1,4 @@
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.KeyDownEventCase;
@@ -130,27 +131,14 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         if (_virtualizeCoordinateSystem is not null)
         {
-            var plainTextEditor = PlainTextEditorSelector.Value;
-
-            if (plainTextEditor is null)
-                return;
-
-            var verticalSkip = (int) (_virtualizeCoordinateSystem.ScrollTop / _heightOfEachRowInPixels);
-            var verticalTake = (int) (_virtualizeCoordinateSystem.Height / _heightOfEachRowInPixels);
-            
-            var scrollWidth = (int)(plainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow * _widthOfEachCharacterInPixels);
-            var scrollHeight = (int) (plainTextEditor.FileCoordinateGrid.RowCount * _heightOfEachRowInPixels);
-
-            _virtualizeCoordinateSystem.SetData(
-                new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
-                    plainTextEditor.List
-                        .Select((row, index) => (index, row))
-                        .Skip(verticalSkip)
-                        .Take(verticalTake),
-                _dimensionsOfCoordinateSystemViewport,
-                    scrollWidth,
-                    scrollHeight
-                ));
+            OnRequestCallbackAction(new VirtualizeCoordinateSystemRequest(
+                _virtualizeCoordinateSystem.ScrollLeft,
+                _virtualizeCoordinateSystem.ScrollTop,
+                _virtualizeCoordinateSystem.ScrollWidth,
+                _virtualizeCoordinateSystem.ScrollHeight,
+                _virtualizeCoordinateSystem.ViewportWidth,
+                _virtualizeCoordinateSystem.ViewportHeight,
+                CancellationToken.None));
         }
 
         await InvokeAsync(StateHasChanged);
@@ -207,13 +195,13 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     
     private void OnRequestCallbackAction(VirtualizeCoordinateSystemRequest virtualizeCoordinateSystemRequest)
     {
+        Dispatcher.Dispatch(new MemoryMappedFileReadRequestAction(PlainTextEditorKey,
+            virtualizeCoordinateSystemRequest));
+
         var plainTextEditor = PlainTextEditorSelector.Value;
 
         if (plainTextEditor is null)
             return;
-
-        var verticalSkip = (int)(_virtualizeCoordinateSystem.ScrollTop / _heightOfEachRowInPixels);
-        var verticalTake = (int)(_virtualizeCoordinateSystem.Height / _heightOfEachRowInPixels);
 
         var scrollWidth = (int)(plainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow * _widthOfEachCharacterInPixels);
         var scrollHeight = (int)(plainTextEditor.FileCoordinateGrid.RowCount * _heightOfEachRowInPixels);
@@ -221,9 +209,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         _virtualizeCoordinateSystem.SetData(
             new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
                 plainTextEditor.List
-                    .Select((row, index) => (index, row))
-                    .Skip(verticalSkip)
-                    .Take(verticalTake),
+                    .Select((row, index) => (index, row)),
                 _dimensionsOfCoordinateSystemViewport,
                 scrollWidth,
                 scrollHeight

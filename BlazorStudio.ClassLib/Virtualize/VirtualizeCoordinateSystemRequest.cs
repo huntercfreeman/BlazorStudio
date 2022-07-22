@@ -4,11 +4,11 @@ public struct VirtualizeCoordinateSystemRequest
 {
     public double ScrollLeft { get; set; }
     public double ScrollTop { get; set; }
-    public double ViewportWidthResult { get; set; }
-    public double ViewportHeightResult { get; set; }
     public double ScrollWidth { get; set; }
     public double ScrollHeight { get; set; }
-
+    public double ViewportWidth { get; set; }
+    public double ViewportHeight { get; set; }
+    
     /// <summary>
     /// The <see cref="System.Threading.CancellationToken"/> used to relay cancellation of the request.
     /// </summary>
@@ -23,16 +23,16 @@ public struct VirtualizeCoordinateSystemRequest
         double scrollTop,
         double scrollWidth,
         double scrollHeight,
-        double viewportWidthResult,
-        double viewportHeightResult,
+        double viewportWidth,
+        double viewportHeight,
         CancellationToken cancellationToken)
     {
         ScrollLeft = scrollLeft;
         ScrollTop = scrollTop;
         ScrollWidth = scrollWidth;
         ScrollHeight = scrollHeight;
-        ViewportWidthResult = viewportWidthResult;
-        ViewportHeightResult = viewportHeightResult;
+        ViewportWidth = viewportWidth;
+        ViewportHeight = viewportHeight;
         CancellationToken = cancellationToken;
     }
 }

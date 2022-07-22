@@ -8,8 +8,10 @@ public readonly struct FileCoordinateGridRequest
     public int RowCount { get; }
     public CancellationToken CancellationToken { get; }
 
-    public FileCoordinateGridRequest(VirtualizeCoordinateSystemRequest virtualizeCoordinateSystemRequest)
+    public FileCoordinateGridRequest(int startingRowIndex, int rowCount, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        StartingRowIndex = startingRowIndex;
+        RowCount = rowCount;
+        CancellationToken = cancellationToken;
     }
 }

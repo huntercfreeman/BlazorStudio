@@ -53,8 +53,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     public double ScrollLeft { get; private set; }
     public double ScrollWidth { get; private set; }
     public double ScrollHeight { get; private set; }
-    public double Width { get; private set; }
-    public double Height { get; private set; }
+    public double ViewportWidth { get; private set; }
+    public double ViewportHeight { get; private set; }
 
     private Guid _guid;
 
@@ -123,15 +123,16 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         ScrollTop = scrollTop;
         ScrollWidth = scrollWidth;
         ScrollHeight = scrollHeight;
-        Width = viewportWidth;
-        Height = viewportHeight;
+        ViewportWidth = viewportWidth;
+        ViewportHeight = viewportHeight;
 
-        var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest(ScrollLeft,
+        var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest(
+            ScrollLeft,
             ScrollTop,
             ScrollWidth,
             ScrollHeight,
-            Width,
-            Height,
+            ViewportWidth,
+            ViewportHeight,
             CancelTokenSourceAndGetNewToken());
 
         RequestCallbackAction(virtualizeCoordinateSystemRequest);
