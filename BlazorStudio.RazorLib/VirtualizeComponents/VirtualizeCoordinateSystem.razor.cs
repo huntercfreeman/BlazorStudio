@@ -227,7 +227,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
-        return $"left: {localVirtualizeCoordinateSystemResult.ScrollLeft}px; top: {localVirtualizeCoordinateSystemResult.ScrollTop}px;";
+        return $"left: {localVirtualizeCoordinateSystemResult.ScrollLeft}px; top: {localVirtualizeCoordinateSystemResult.ScrollTop}px; min-width: 100%; min-height: 100%;";
     }
 
     public virtual void Dispose()
