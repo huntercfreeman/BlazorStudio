@@ -79,6 +79,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             return value;
         });
 
+        PlainTextEditorSelector.SelectedValueChanged += PlainTextEditorSelectorOnSelectedValueChanged;
+
         base.OnInitialized();
     }
 
@@ -116,6 +118,26 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         _previousSequenceKeyShouldRender = PlainTextEditorSelector.Value.SequenceKey;
 
         return shouldRender;
+    }
+
+    private void PlainTextEditorSelectorOnSelectedValueChanged(object? sender, IPlainTextEditor? e)
+    {
+        var plainTextEditor = PlainTextEditorSelector.Value;
+
+        if (plainTextEditor is null)
+            return;
+
+        var scrollWidth = (int)(plainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow * _widthOfEachCharacterInPixels);
+        var scrollHeight = (int)(plainTextEditor.FileCoordinateGrid.RowCount * _heightOfEachRowInPixels);
+
+        _virtualizeCoordinateSystem.SetData(
+            new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
+                plainTextEditor.List
+                    .Select((row, index) => (index, row)),
+                _dimensionsOfCoordinateSystemViewport,
+                scrollWidth,
+                scrollHeight
+            ));
     }
 
     private async Task OnAfterFirstRenderCallbackFunc()
@@ -158,23 +180,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
                 )
             )
         );
-
-        var plainTextEditor = PlainTextEditorSelector.Value;
-
-        if (plainTextEditor is null)
-            return;
-
-        var scrollWidth = (int)(plainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow * _widthOfEachCharacterInPixels);
-        var scrollHeight = (int)(plainTextEditor.FileCoordinateGrid.RowCount * _heightOfEachRowInPixels);
-
-        _virtualizeCoordinateSystem.SetData(
-            new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
-                plainTextEditor.List
-                    .Select((row, index) => (index, row)),
-                _dimensionsOfCoordinateSystemViewport,
-                scrollWidth,
-                scrollHeight
-            ));
     }
     
     private void OnFocusIn()
@@ -204,27 +209,12 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     {
         Dispatcher.Dispatch(new MemoryMappedFileReadRequestAction(PlainTextEditorKey,
             virtualizeCoordinateSystemRequest));
-
-        var plainTextEditor = PlainTextEditorSelector.Value;
-
-        if (plainTextEditor is null)
-            return;
-
-        var scrollWidth = (int)(plainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow * _widthOfEachCharacterInPixels);
-        var scrollHeight = (int)(plainTextEditor.FileCoordinateGrid.RowCount * _heightOfEachRowInPixels);
-
-        _virtualizeCoordinateSystem.SetData(
-            new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
-                plainTextEditor.List
-                    .Select((row, index) => (index, row)),
-                _dimensionsOfCoordinateSystemViewport,
-                scrollWidth,
-                scrollHeight
-            ));
     }
 
     protected override void Dispose(bool disposing)
     {
+        PlainTextEditorSelector.SelectedValueChanged -= PlainTextEditorSelectorOnSelectedValueChanged;
+
         _ = Task.Run(() => JsRuntime.InvokeVoidAsync("plainTextEditor.disposeScrollIntoView",
             ActiveRowPositionMarkerId));
 
