@@ -87,7 +87,7 @@ public partial record PlainTextEditorStates
                 characterCount,
                 memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.CancellationToken);
 
-            var content = plainTextEditor.FileCoordinateGrid!
+            var contentOfRows = plainTextEditor.FileCoordinateGrid!
                 .Request(fileCoordinateGridRequest);
 
             var allEnterKeysAreCarriageReturnNewLine = true;
@@ -126,42 +126,61 @@ public partial record PlainTextEditorStates
                     .Add(plainTextEditor.GetEmptyPlainTextEditorRow()),
             };
 
-
-            foreach (var character in content)
+            foreach (var row in contentOfRows)
             {
-                if (character == '\r')
+                foreach (var character in row)
                 {
-                    previousCharacterWasCarriageReturn = true;
-                    continue;
-                }
-
-                currentRowCharacterLength++;
-
-                var code = character switch
-                {
-                    '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
-                    ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
-                    '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
-                    _ => character.ToString()
-                };
-
-                var keyDown = new KeyDownEventAction(plainTextEditor.PlainTextEditorKey,
-                    new KeyDownEventRecord(
-                        character.ToString(),
-                        code,
-                        false,
-                        false,
-                        false
-                    )
-                );
-
-                replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                        .HandleKeyDownEvent(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
+                    if (character == '\r')
                     {
-                        SequenceKey = SequenceKey.NewSequenceKey()
+                        previousCharacterWasCarriageReturn = true;
+                        continue;
+                    }
+
+                    currentRowCharacterLength++;
+
+                    var code = character switch
+                    {
+                        '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
+                        ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
+                        '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
+                        _ => character.ToString()
                     };
 
-                previousCharacterWasCarriageReturn = false;
+                    var keyDown = new KeyDownEventAction(plainTextEditor.PlainTextEditorKey,
+                        new KeyDownEventRecord(
+                            character.ToString(),
+                            code,
+                            false,
+                            false,
+                            false
+                        )
+                    );
+
+                    replacementPlainTextEditor = PlainTextEditorStates.StateMachine
+                            .HandleKeyDownEvent(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
+                        {
+                            SequenceKey = SequenceKey.NewSequenceKey()
+                        };
+
+                    previousCharacterWasCarriageReturn = false;
+                }
+
+                if (row[^1] != '\n')
+                {
+                    var forceNewLine = new KeyDownEventRecord(
+                        KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
+                        KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
+                        false,
+                        false,
+                        false);
+
+                    replacementPlainTextEditor = PlainTextEditorStates.StateMachine
+                        .HandleKeyDownEvent(replacementPlainTextEditor, forceNewLine) with
+                        {
+                            SequenceKey = SequenceKey.NewSequenceKey(),
+                            
+                        };
+                }
             }
 
             if (seenEnterKey && allEnterKeysAreCarriageReturnNewLine)

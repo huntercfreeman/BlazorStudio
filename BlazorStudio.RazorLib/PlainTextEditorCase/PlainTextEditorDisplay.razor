@@ -38,16 +38,12 @@ else
                     <CascadingValue Name="CurrentRowIndex" Value="PlainTextEditorSelector.Value.CurrentRowIndex">
                         <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
                             @{
-                                var mostDigitsInARowNumber = PlainTextEditorSelector.Value.List.Count.ToString().Length;
-
                                 // Ensure reference to PlainTextEditorSelector does
                                 // not change while looping over rows
                                 // by making a local reference to it.
                                 var currentPlainTextEditorSelector = PlainTextEditorSelector.Value;
 
-                                //<Virtualize @ref="_rowVirtualizeComponent" ItemsProvider="RowItemsProvider" Context="rowTuple" ItemSize="50">
-
-                                //</Virtualize>
+                                var mostDigitsInARowNumber = currentPlainTextEditorSelector.FileCoordinateGrid.RowCount.ToString().Length;
 
                                 <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
                                                                                                        T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"

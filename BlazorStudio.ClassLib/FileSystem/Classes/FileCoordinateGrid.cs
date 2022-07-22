@@ -148,7 +148,9 @@ public static class FileCoordinateGridFactory
         {
             var rowBuilders = new List<StringBuilder>();
 
-            for (int i = fileCoordinateGridRequest.StartingRowIndex; i < fileCoordinateGridRequest.RowCount; i++)
+            var availableRowCount = Math.Min(fileCoordinateGridRequest.RowCount, CharacterIndexMarkerForStartOfARow.Length);
+
+            for (int i = fileCoordinateGridRequest.StartingRowIndex; i < availableRowCount; i++)
             {
                 var builder = new StringBuilder();
                 rowBuilders.Add(builder);
