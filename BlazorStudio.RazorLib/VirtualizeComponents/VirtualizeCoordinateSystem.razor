@@ -1,0 +1,41 @@
+﻿@typeparam T
+
+<div class="bstudio_debug-info">
+    <div>@@_scrollTop = @_scrollTop;</div>
+    <div>@@_scrollLeft = @_scrollLeft;</div>
+    <div>@@_scrollWidth = @_scrollWidth;</div>
+    <div>@@_scrollHeight = @_scrollHeight;</div>
+    <div>@@_width = @_width;</div>
+    <div>@@_height = @_height;</div>
+</div>
+
+<div class="bstudio_virtualize-coordinate-system"
+     style="@(DimensionsOfCoordinateSystemViewport.DimensionsCssString)"
+     id="bstudio_virtualize-coordinate-system_@_guid">
+    
+    <div id="@_leftElementId"
+         style="background-color: red; @GetLeftBoundaryCssString()">
+
+    </div>
+    
+    <div id="@_rightElementId"
+         style="background-color: green; @GetRightBoundaryCssString()">
+
+    </div>
+    
+    <div id="@_topElementId"
+         style="background-color: blue; @GetTopBoundaryCssString()">
+
+    </div>
+    
+    <div id="@_bottomElementId"
+         style="background-color: orange; @GetBottomBoundaryCssString()">
+
+    </div>
+    
+    @foreach (var item in _data)
+    {
+        @ChildContent(item)
+    }
+
+</div>

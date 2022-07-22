@@ -1,4 +1,4 @@
-﻿using BlazorStudio.Shared.FileSystem.Interfaces;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
 namespace BlazorStudio.ClassLib.Store.WorkspaceCase;
 

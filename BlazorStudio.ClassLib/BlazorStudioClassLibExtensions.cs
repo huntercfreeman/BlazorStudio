@@ -1,6 +1,5 @@
 ﻿using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
-using PlainTextEditor.ClassLib;
 
 namespace BlazorStudio.ClassLib;
 

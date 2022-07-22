@@ -1,14 +1,13 @@
 ﻿namespace BlazorStudio.ClassLib.Virtualize;
 
-/// <summary>
-/// Copy of Microsoft's Virtualize component ItemsProviderRequest
-/// </summary>
-public readonly struct VirtualizeCoordinateSystemRequest
+public struct VirtualizeCoordinateSystemRequest
 {
-    /// <summary>
-    /// The start index of the data segment requested.
-    /// </summary>
-    public int StartIndex { get; }
+    public double ScrollLeft { get; set; }
+    public double ScrollTop { get; set; }
+    public double ViewportWidthResult { get; set; }
+    public double ViewportHeightResult { get; set; }
+    public double ScrollWidth { get; set; }
+    public double ScrollHeight { get; set; }
 
     /// <summary>
     /// The <see cref="System.Threading.CancellationToken"/> used to relay cancellation of the request.
@@ -20,9 +19,20 @@ public readonly struct VirtualizeCoordinateSystemRequest
     /// <param name="cancellationToken">
     /// The <see cref="System.Threading.CancellationToken"/> used to relay cancellation of the request.
     /// </param>
-    public VirtualizeCoordinateSystemRequest(int startIndex, int count, CancellationToken cancellationToken)
+    public VirtualizeCoordinateSystemRequest(double scrollLeft, 
+        double scrollTop,
+        double scrollWidth,
+        double scrollHeight,
+        double viewportWidthResult,
+        double viewportHeightResult,
+        CancellationToken cancellationToken)
     {
-        StartIndex = startIndex;
+        ScrollLeft = scrollLeft;
+        ScrollTop = scrollTop;
+        ScrollWidth = scrollWidth;
+        ScrollHeight = scrollHeight;
+        ViewportWidthResult = viewportWidthResult;
+        ViewportHeightResult = viewportHeightResult;
         CancellationToken = cancellationToken;
     }
 }
