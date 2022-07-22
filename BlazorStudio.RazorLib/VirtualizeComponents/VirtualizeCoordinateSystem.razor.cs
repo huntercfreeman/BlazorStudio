@@ -34,6 +34,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     /// </summary>
     [Parameter, EditorRequired]
     public double PaddingInPixels { get; set; }
+    [Parameter]
+    public Func<Task>? OnAfterFirstRenderCallbackFunc { get; set; }
     /// <summary>
     /// Show a HTML element to help with debugging
     /// </summary>
@@ -104,6 +106,9 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             await JsRuntime.InvokeVoidAsync("blazorStudio.getDimensions",
                 ComponentId,
                 _dotNetObjectReference);
+
+            if (OnAfterFirstRenderCallbackFunc is not null)
+                await OnAfterFirstRenderCallbackFunc.Invoke();
         }
         
         await base.OnAfterRenderAsync(firstRender);

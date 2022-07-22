@@ -20,6 +20,9 @@ public class VirtualizeCoordinateSystemResult<T>
     
     public double ScrollWidth { get; set; }
     public double ScrollHeight { get; set; }
+    
+    public double ResultWidth { get; set; }
+    public double ResultHeight { get; set; }
 
     /// <param name="items">The items to provide.</param>
     /// <param name="totalItemCount">The total item count in the source generating the items provided.</param>

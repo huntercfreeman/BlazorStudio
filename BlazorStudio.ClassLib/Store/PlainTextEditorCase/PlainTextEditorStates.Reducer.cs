@@ -44,6 +44,7 @@ public partial record PlainTextEditorStates
                 };
 
             nextPlainTextEditorMap[constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey] = plainTextEditor;
+            nextPlainTextEditorList.Add(constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey);
 
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
             var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();

@@ -79,8 +79,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             return value;
         });
 
-        PlainTextEditorSelector.SelectedValueChanged += PlainTextEditorSelectorOnSelectedValueChanged;
-
         base.OnInitialized();
     }
 
@@ -120,28 +118,20 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         return shouldRender;
     }
 
-    private async void PlainTextEditorSelectorOnSelectedValueChanged(object? sender, IPlainTextEditor? e)
+    private async Task OnAfterFirstRenderCallbackFunc()
     {
-        if (!_isInitialized)
-        {
-            await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeScrollIntoView",
-                ActiveRowPositionMarkerId,
-                PlainTextEditorKey.Guid);
-        }
+        await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeScrollIntoView",
+            ActiveRowPositionMarkerId,
+            PlainTextEditorKey.Guid);
 
-        if (_virtualizeCoordinateSystem is not null)
-        {
-            OnRequestCallbackAction(new VirtualizeCoordinateSystemRequest(
-                _virtualizeCoordinateSystem.ScrollLeft,
-                _virtualizeCoordinateSystem.ScrollTop,
-                _virtualizeCoordinateSystem.ScrollWidth,
-                _virtualizeCoordinateSystem.ScrollHeight,
-                _virtualizeCoordinateSystem.ViewportWidth,
-                _virtualizeCoordinateSystem.ViewportHeight,
-                CancellationToken.None));
-        }
-
-        await InvokeAsync(StateHasChanged);
+        OnRequestCallbackAction(new VirtualizeCoordinateSystemRequest(
+            _virtualizeCoordinateSystem.ScrollLeft,
+            _virtualizeCoordinateSystem.ScrollTop,
+            _virtualizeCoordinateSystem.ScrollWidth,
+            _virtualizeCoordinateSystem.ScrollHeight,
+            _virtualizeCoordinateSystem.ViewportWidth,
+            _virtualizeCoordinateSystem.ViewportHeight,
+            CancellationToken.None));
     }
 
     private async Task OnKeyDown(KeyboardEventArgs e)
@@ -168,6 +158,23 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
                 )
             )
         );
+
+        var plainTextEditor = PlainTextEditorSelector.Value;
+
+        if (plainTextEditor is null)
+            return;
+
+        var scrollWidth = (int)(plainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow * _widthOfEachCharacterInPixels);
+        var scrollHeight = (int)(plainTextEditor.FileCoordinateGrid.RowCount * _heightOfEachRowInPixels);
+
+        _virtualizeCoordinateSystem.SetData(
+            new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
+                plainTextEditor.List
+                    .Select((row, index) => (index, row)),
+                _dimensionsOfCoordinateSystemViewport,
+                scrollWidth,
+                scrollHeight
+            ));
     }
     
     private void OnFocusIn()
@@ -218,8 +225,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     protected override void Dispose(bool disposing)
     {
-        PlainTextEditorSelector.SelectedValueChanged -= PlainTextEditorSelectorOnSelectedValueChanged;
-
         _ = Task.Run(() => JsRuntime.InvokeVoidAsync("plainTextEditor.disposeScrollIntoView",
             ActiveRowPositionMarkerId));
 
