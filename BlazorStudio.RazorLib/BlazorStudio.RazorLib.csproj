@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Fluxor.Blazor.Web" Version="5.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.7" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,7 +35,6 @@
     <_ContentIncludedByDefault Remove="Shared\BodyDisplay.razor" />
     <_ContentIncludedByDefault Remove="Transformable\TransformableDisplay.razor" />
     <_ContentIncludedByDefault Remove="TreeViewCase\TreeViewWrapDisplay.razor" />
-    <_ContentIncludedByDefault Remove="Virtualize\VirtualizeCoordinateSystem.razor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -87,10 +86,6 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Forms\CreateNewFileForm.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Virtualize\VirtualizeCoordinateSystem.razor" />
   </ItemGroup>
 
 </Project>

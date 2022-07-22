@@ -1,12 +1,10 @@
 ﻿using BlazorStudio.ClassLib.Store.EditorCase;
+using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using BlazorStudio.ClassLib.UserInterface;
+using BlazorStudio.RazorLib.PlainTextEditorCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using PlainTextEditor.ClassLib.Keyboard;
-using PlainTextEditor.ClassLib.Store.KeyDownEventCase;
-using PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
-using PlainTextEditor.RazorLib.PlainTextEditorCase;
 
 namespace BlazorStudio.RazorLib.Editor;
 
@@ -18,7 +16,7 @@ public partial class EditorDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public Dimensions Dimensions { get; set; } = null!;
+    public ClassLib.UserInterface.Dimensions Dimensions { get; set; } = null!;
 
     private PlainTextEditorKey _plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 

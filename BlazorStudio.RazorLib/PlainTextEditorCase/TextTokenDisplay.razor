@@ -1,0 +1,41 @@
+@using ClassLib.Store.PlainTextEditorCase
+@using BlazorStudio.ClassLib.Html
+
+<span class="pte_plain-text-editor-text-token-display">
+    @switch (TextToken.Kind)
+    {
+        case TextTokenKind.StartOfRow:
+            <CharacterRenderer Character="@string.Empty"
+                               CharacterIndex="0"
+                               ShouldDisplayCursor="TextToken.IndexInPlainText is not null" />
+            break;
+        case TextTokenKind.Default:
+            <text>
+                @{
+                    for (int i = 0; i < TextToken.PlainText.Length; i++)
+                    {
+                        var index = i;
+
+                        <CharacterRenderer Character="@TextToken.PlainText[index].ToString()"
+                                           CharacterIndex="index"
+                                           ShouldDisplayCursor="(TextToken.IndexInPlainText ?? -1) == index" />
+                    }
+                }
+            </text>
+            break;
+        case TextTokenKind.Whitespace:
+            <text>
+                @{
+                    for (int i = 0; i < TextToken.PlainText.Length; i++)
+                    {
+                        var index = i;
+
+                        <CharacterRenderer Character="@TextToken.PlainText[index].ToString().EscapeHtml()"
+                                            CharacterIndex="index"
+                                            ShouldDisplayCursor="(TextToken.IndexInPlainText ?? -1) == index" />
+                    }
+                }
+            </text>
+            break;
+    }
+</span>

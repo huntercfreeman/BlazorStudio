@@ -1,4 +1,4 @@
-﻿using BlazorStudio.Shared.FileSystem.Interfaces;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.EditorCase;

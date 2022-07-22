@@ -72,15 +72,22 @@
             // Scrolling into view
             const splitId = currentEntry.target.id.split("_");
 
-            const virtualizeCoordinateSystemGuid = splitId[splitId.length - 1];
-            let elementVirtualizeCoordinateSystem = document.getElementById(virtualizeCoordinateSystemGuid);
+            const isolatedGuid = splitId[splitId.length - 1];
+
+            var virtualizeCoordinateSystemElementId = `bstudio_virtualize-coordinate-system_${isolatedGuid}`;
+
+            let elementVirtualizeCoordinateSystem = document.getElementById(virtualizeCoordinateSystemElementId);
 
             let storedDotNetObjectReference = dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.get(currentEntry.target.id);
 
             storedDotNetObjectReference.invokeMethodAsync("FireRequestCallbackAction",
                 currentEntry.target.id,
+                elementVirtualizeCoordinateSystem.scrollLeft,
                 elementVirtualizeCoordinateSystem.scrollTop,
-                elementVirtualizeCoordinateSystem.scrollLeft);
+                elementVirtualizeCoordinateSystem.scrollWidth,
+                elementVirtualizeCoordinateSystem.scrollHeight,
+                elementVirtualizeCoordinateSystem.offsetWidth,
+                elementVirtualizeCoordinateSystem.offsetHeight);
         }
     }
 };
