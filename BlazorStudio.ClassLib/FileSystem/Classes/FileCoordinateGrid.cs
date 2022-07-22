@@ -17,7 +17,7 @@ public static class FileCoordinateGridFactory
     }
 
     private record FileCoordinateGrid(IAbsoluteFilePath AbsoluteFilePath)
-        : IFileCoordinateGrid, IDisposable
+        : IFileCoordinateGrid
     {
         /// <summary>
         /// Index using the Row index and this returns the
@@ -33,8 +33,6 @@ public static class FileCoordinateGridFactory
 
         private readonly string _copyFileIdentifier = "~$bstudio_";
         private int _exclusiveEndOfFileCharacterIndex;
-
-        public IAbsoluteFilePath? CopyAbsoluteFilePath { get; private set; } = null;
 
         public Encoding Encoding { get; private set; }
         public int RowCount => _characterIndexMarkerForStartOfARow.Count;
@@ -54,27 +52,7 @@ public static class FileCoordinateGridFactory
                 throw new ApplicationException(
                     $"{nameof(FilePathType)}: '{parentDirectory.FilePathType}' is not currently supported.");
 
-            var containingDirectoryAbsoluteFilePathString =
-                ((AbsoluteFilePath)parentDirectory).GetAbsoluteFilePathString();
-
-            //CopyAbsoluteFilePath =
-            //    new AbsoluteFilePath(containingDirectoryAbsoluteFilePathString + _copyFileIdentifier + AbsoluteFilePath.FilenameWithExtension,
-            //        false);
-            //
-            CopyAbsoluteFilePath = AbsoluteFilePath;
-
-            string path = CopyAbsoluteFilePath.GetAbsoluteFilePathString();
-
-            //try
-            //{
-            //    // TODO: Perhaps a way around making a temporary copy of the file is possible
-            //    File.Copy(AbsoluteFilePath.GetAbsoluteFilePathString(),
-            //        path);
-            //}
-            //catch (System.IO.IOException)
-            //{
-            //    // File already exists so use the existing one
-            //}
+            string path = AbsoluteFilePath.GetAbsoluteFilePathString();
 
             int characterCounter = 0;
             int? bytesPerEncodedCharacter = null;
@@ -147,14 +125,12 @@ public static class FileCoordinateGridFactory
 
             int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
 
-            // TODO: Virtualize the columns in addition to the rows
-
             var mapName = _copyFileIdentifier + AbsoluteFilePath.FilenameWithExtension;
 
             try
             {
                 using (var memoryMappedFile = MemoryMappedFile
-                        .CreateFromFile(CopyAbsoluteFilePath.GetAbsoluteFilePathString(),
+                        .CreateFromFile(AbsoluteFilePath.GetAbsoluteFilePathString(),
                             FileMode.Open,
                             mapName))
                 {
@@ -165,8 +141,6 @@ public static class FileCoordinateGridFactory
             }
             catch (IOException e)
             {
-                var z = 2;
-
                 return e.Message;
             }
         }
@@ -199,15 +173,6 @@ public static class FileCoordinateGridFactory
 
             return memoryMappedFileResult;
         }
-
-        public void Dispose()
-        {
-            //if (_memoryMappedFile is not null)
-            //    _memoryMappedFile.Dispose();
-
-            //if (CopyAbsoluteFilePath is not null)
-            //    File.Delete(CopyAbsoluteFilePath.GetAbsoluteFilePathString());
-        }
     }
 }
 
@@ -216,13 +181,7 @@ public interface IFileCoordinateGrid
     public IAbsoluteFilePath AbsoluteFilePath { get; }
     public Encoding Encoding { get; }
     public int RowCount { get; }
-    public IAbsoluteFilePath? CopyAbsoluteFilePath { get; }
     public ImmutableArray<long> CharacterIndexMarkerForStartOfARow { get; }
 
     public string Request(FileCoordinateGridRequest fileCoordinateGridRequest);
-    /// <summary>
-    /// Added this Dispose declaration so I can call it when Unit Testing
-    /// IDisposable should call Dispose() for you.
-    /// </summary>
-    public void Dispose();
 }

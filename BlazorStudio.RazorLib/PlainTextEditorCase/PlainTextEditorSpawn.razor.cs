@@ -1,11 +1,10 @@
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Services;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
-using PlainTextEditor.ClassLib.Services;
-using PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
+using BlazorStudio.ClassLib.Services;
 
-namespace PlainTextEditor.RazorLib.PlainTextEditorCase;
+namespace BlazorStudio.RazorLib.PlainTextEditorCase;
 
 public partial class PlainTextEditorSpawn : ComponentBase, IDisposable
 {

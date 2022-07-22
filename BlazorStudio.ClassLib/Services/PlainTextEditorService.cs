@@ -1,9 +1,7 @@
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using Fluxor;
-using PlainTextEditor.ClassLib.Store.PlainTextEditorCase;
 
-namespace PlainTextEditor.ClassLib.Services;
+namespace BlazorStudio.ClassLib.Services;
 
 public class PlainTextEditorService : IPlainTextEditorService, IDisposable
 {

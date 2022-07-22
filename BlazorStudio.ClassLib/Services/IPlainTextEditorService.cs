@@ -1,7 +1,6 @@
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
-namespace PlainTextEditor.ClassLib.Services;
+namespace BlazorStudio.ClassLib.Services;
 
 public interface IPlainTextEditorService
 {
