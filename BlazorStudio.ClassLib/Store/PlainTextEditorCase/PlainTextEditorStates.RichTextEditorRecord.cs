@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Sequence;
+using BlazorStudio.ClassLib.Virtualize;
 
 namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
@@ -33,6 +34,7 @@ public partial record PlainTextEditorStates
         public TextTokenKey CurrentTextTokenKey => CurrentPlainTextEditorRow.List[CurrentTokenIndex].Key;
         public ITextToken CurrentTextToken => CurrentPlainTextEditorRow.List[CurrentTokenIndex];
         public int LongestRowCharacterLength { get; init; }
+        public VirtualizeCoordinateSystemRequest VirtualizeCoordinateSystemResult { get; init; }
 
         public T GetCurrentTextTokenAs<T>()
             where T : class

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Sequence;
+using BlazorStudio.ClassLib.Virtualize;
 
 namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
@@ -14,6 +15,7 @@ public interface IPlainTextEditor
     public IFileCoordinateGrid? FileCoordinateGrid { get; }
     public RichTextEditorOptions RichTextEditorOptions { get; }
     public int LongestRowCharacterLength { get; }
+    public VirtualizeCoordinateSystemRequest VirtualizeCoordinateSystemResult { get; }
 
     public string GetPlainText();
 }

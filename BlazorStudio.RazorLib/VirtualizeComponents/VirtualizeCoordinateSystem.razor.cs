@@ -147,8 +147,6 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     public void SetData(VirtualizeCoordinateSystemResult<T> virtualizeCoordinateSystemResult)
     {
         _data = virtualizeCoordinateSystemResult.Items.ToImmutableArray();
-        _dimensions = virtualizeCoordinateSystemResult.CoordinateSystemViewportDimensions;
-
         _virtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult;
     }
 
@@ -168,22 +166,29 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     
     private string GetLeftBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
     {
-        var z = localVirtualizeCoordinateSystemResult.
+        var widthInPixels = Math.Max(localVirtualizeCoordinateSystemResult. - PaddingInPixels, 
+            0);
 
-        return $"";
+        return $"left: 0px; width: {widthInPixels}px; height: 100%;";
     }
     
-    private string GetRightBoundaryCssString()
+    private string GetRightBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
+    {
+        var leftInPixels = Math.Min(localVirtualizeCoordinateSystemResult.ScrollWidth - PaddingInPixels,
+            0);
+        
+        var widthInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollWidth - PaddingInPixels,
+            0);
+
+        return $"left: 0px; width: {widthInPixels}px; height: 100%;";
+    }
+
+    private string GetTopBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
     {
         return $"";
     }
 
-    private string GetTopBoundaryCssString()
-    {
-        return $"";
-    }
-
-    private string GetBottomBoundaryCssString()
+    private string GetBottomBoundaryCssString(VirtualizeCoordinateSystemResult<T> localVirtualizeCoordinateSystemResult)
     {
         return $"";
     }

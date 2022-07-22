@@ -165,7 +165,8 @@ public partial record PlainTextEditorStates
 
             replacementPlainTextEditor = replacementPlainTextEditor with
             {
-                LongestRowCharacterLength = longestRowCharacterLength
+                LongestRowCharacterLength = longestRowCharacterLength,
+                VirtualizeCoordinateSystemResult = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest
             };
 
             nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = replacementPlainTextEditor;

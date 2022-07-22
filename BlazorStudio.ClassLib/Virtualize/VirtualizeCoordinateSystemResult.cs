@@ -13,6 +13,9 @@ public class VirtualizeCoordinateSystemResult<T>
     /// </summary>
     public IEnumerable<T> Items { get; }
     
+    public double ScrollLeft { get; set; }
+    public double ScrollTop { get; set; }
+    
     public double ScrollWidth { get; set; }
     public double ScrollHeight { get; set; }
     
@@ -25,9 +28,11 @@ public class VirtualizeCoordinateSystemResult<T>
         double scrollWidth,
         double scrollHeight, 
         double virtualizeRenderBlockWidth, 
-        double virtualizeRenderBlockHeight)
+        double virtualizeRenderBlockHeight, double scrollLeft, double scrollTop)
     {
         Items = items;
+        ScrollLeft = scrollLeft;
+        ScrollTop = scrollTop;
         ScrollWidth = scrollWidth;
         ScrollHeight = scrollHeight;
         VirtualizeRenderBlockWidth = virtualizeRenderBlockWidth;
