@@ -75,17 +75,51 @@ public partial record PlainTextEditorStates
             var heightOfEachRowInPixels = 2 * plainTextEditor.RichTextEditorOptions.FontSizeInPixels;
             var widthOfEachCharacterInPixels = plainTextEditor.RichTextEditorOptions.FontSizeInPixels;
 
+            var paddingInPixels = 250;
+
+            var scrollTopWithPadding = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollTop -
+                                       paddingInPixels;
+
+            scrollTopWithPadding = scrollTopWithPadding < 0
+                ? 0
+                : scrollTopWithPadding;
+
             var startingRowIndex = 
-                (int)(memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollTop / heightOfEachRowInPixels);
+                (int)(scrollTopWithPadding / heightOfEachRowInPixels);
+
+            var viewportHeightWithPadding = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ViewportHeight
+                + 250;
+
+            viewportHeightWithPadding = viewportHeightWithPadding >
+                                        memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest
+                                            .ScrollHeight
+                                        ? memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest
+                                            .ScrollHeight
+                                        : viewportHeightWithPadding;
 
             var rowCount = 
-                (int)(memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ViewportHeight / heightOfEachRowInPixels);
+                (int)(viewportHeightWithPadding / heightOfEachRowInPixels);
+
+            var scrollLeftWithPadding = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollLeft
+                - 250;
+
+            scrollLeftWithPadding = scrollLeftWithPadding < 0
+                ? 0
+                : scrollLeftWithPadding;
 
             var startingCharacterIndex =
-                (int)(memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollLeft / widthOfEachCharacterInPixels);
+                (int)(scrollLeftWithPadding / widthOfEachCharacterInPixels);
+
+            var viewportWidthWithPadding =
+                memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ViewportWidth + 250;
+
+            viewportWidthWithPadding = viewportWidthWithPadding >
+                                       memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollWidth
+                ? memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollWidth
+                : viewportWidthWithPadding;
 
             var characterCount =
-                (int)(memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ViewportWidth / widthOfEachCharacterInPixels);
+                (int)(viewportWidthWithPadding / widthOfEachCharacterInPixels);
 
             var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex, 
                 rowCount,

@@ -109,8 +109,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     /// <param name="id">The id of the specific Boundary that was scrolled into view</param>
     [JSInvokable]
     public void FireRequestCallbackAction(string id, 
-        double scrollTop, 
         double scrollLeft, 
+        double scrollTop, 
         double scrollWidth, 
         double scrollHeight, 
         double viewportWidth, 

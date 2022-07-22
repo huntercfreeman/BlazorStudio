@@ -31,7 +31,7 @@
                  style="position: absolute; background-color: orange; opacity: 0.1; @GetBottomBoundaryCssString(localVirtualizeCoordinateSystemResult)">
             </div>
 
-            <div style="position: absolute;" class="@GetContentCssString(localVirtualizeCoordinateSystemResult); @ContentWrapperCssClass">
+            <div style="position: absolute; @GetContentCssString(localVirtualizeCoordinateSystemResult);" class="@ContentWrapperCssClass">
                 @foreach (var item in localData)
             {
                     @ChildContent(item)
