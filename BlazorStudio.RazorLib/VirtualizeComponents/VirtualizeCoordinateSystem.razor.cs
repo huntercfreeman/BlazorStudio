@@ -148,6 +148,11 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
+    private async void OnScroll()
+    {
+
+    }
+
     public CancellationToken CancelTokenSourceAndGetNewToken()
     {
         _cancellationTokenSource.Cancel();

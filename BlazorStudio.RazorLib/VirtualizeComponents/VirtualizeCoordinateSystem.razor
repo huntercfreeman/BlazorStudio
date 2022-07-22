@@ -2,39 +2,40 @@
 
 <div class="bstudio_virtualize-coordinate-system"
      style="@(DimensionsOfCoordinateSystemViewport.DimensionsCssString)"
-     id="@ComponentId">
+     id="@ComponentId"
+     @onscroll="OnScroll">
 
     @{
         // Create a local reference to avoid a new instance being set while rendering.
         var localVirtualizeCoordinateSystemResult = _virtualizeCoordinateSystemResult;
         var localData = _data;
 
-        <div id="@_topElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; background-color: blue; @GetTopBoundaryCssString(localVirtualizeCoordinateSystemResult)">
-        </div>
+            <div id="@_topElementId"
+                 class="bstudio_virtualize-coordinate-system-boundary"
+                 style="position: absolute; background-color: blue; opacity: 0.1; @GetTopBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+            </div>
 
-        <div id="@_leftElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; background-color: red; @GetLeftBoundaryCssString(localVirtualizeCoordinateSystemResult)">
-        </div>
+            <div id="@_leftElementId"
+                 class="bstudio_virtualize-coordinate-system-boundary"
+                 style="position: absolute; background-color: red; opacity: 0.1; @GetLeftBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+            </div>
 
-        <div id="@_rightElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; background-color: green; @GetRightBoundaryCssString(localVirtualizeCoordinateSystemResult)">
-        </div>
+            <div id="@_rightElementId"
+                 class="bstudio_virtualize-coordinate-system-boundary"
+                 style="position: absolute; background-color: green; opacity: 0.1; @GetRightBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+            </div>
 
 
-        <div id="@_bottomElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; background-color: orange; @GetBottomBoundaryCssString(localVirtualizeCoordinateSystemResult)">
-        </div>
+            <div id="@_bottomElementId"
+                 class="bstudio_virtualize-coordinate-system-boundary"
+                 style="position: absolute; background-color: orange; opacity: 0.1; @GetBottomBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+            </div>
 
-        <div style="position: absolute;" class="@GetContentCssString(localVirtualizeCoordinateSystemResult); @ContentWrapperCssClass">
-            @foreach (var item in localData)
+            <div style="position: absolute;" class="@GetContentCssString(localVirtualizeCoordinateSystemResult); @ContentWrapperCssClass">
+                @foreach (var item in localData)
             {
-                @ChildContent(item)
+                    @ChildContent(item)
             }
-        </div>
+            </div>
     }
 </div>
