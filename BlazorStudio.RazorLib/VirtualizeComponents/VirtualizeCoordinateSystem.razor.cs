@@ -161,10 +161,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
-        var widthInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollLeft - PaddingInPixels, 
-            0);
-
-        return $"width: {widthInPixels}px; height: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockHeight}px;";
+        return $"left: 0px; width: {localVirtualizeCoordinateSystemResult.ScrollLeft}px; height: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockHeight}px;";
     }
     
     private string GetRightBoundaryCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
@@ -172,10 +169,12 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
-        var widthInPixels = localVirtualizeCoordinateSystemResult.ScrollWidth 
-                            - localVirtualizeCoordinateSystemResult.ScrollLeft 
-                            - localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth
-                            - PaddingInPixels;
+        var leftInPixels = Math.Min(localVirtualizeCoordinateSystemResult.ScrollLeft 
+                           + localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth,
+            localVirtualizeCoordinateSystemResult.ScrollWidth);
+
+        var widthInPixels = localVirtualizeCoordinateSystemResult.ScrollWidth
+                            - leftInPixels;
 
         if (widthInPixels < 0)
         {
@@ -187,7 +186,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             widthInPixels = localVirtualizeCoordinateSystemResult.ScrollWidth;
         }
 
-        return $"width: {widthInPixels}px; height: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockHeight}px;";
+        return $"left: {leftInPixels}px;  top: {localVirtualizeCoordinateSystemResult.ScrollTop}px; width: {widthInPixels}px; height: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockHeight}px;";
     }
 
     private string GetTopBoundaryCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
@@ -197,7 +196,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
         var heightInPixels = localVirtualizeCoordinateSystemResult.ScrollTop;
 
-        return $"width: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth}px; height: {heightInPixels}px";
+        return $"top: 0px; left: {localVirtualizeCoordinateSystemResult.ScrollLeft}px; width: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth}px; height: {heightInPixels}px";
     }
 
     private string GetBottomBoundaryCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
@@ -205,15 +204,15 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
-        var paddingTopInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollTop +
+        var topInPixels = Math.Min(localVirtualizeCoordinateSystemResult.ScrollTop +
                                    localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockHeight,
-            localVirtualizeCoordinateSystemResult.ScrollTop);
+            localVirtualizeCoordinateSystemResult.ScrollHeight);
 
-        var heightInPixels = Math.Min(localVirtualizeCoordinateSystemResult.ScrollTop -
-                             paddingTopInPixels,
+        var heightInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollHeight -
+                             topInPixels,
             0);
 
-        return $"width: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth}px; height: {heightInPixels}px";
+        return $"top: {topInPixels}px; left: {localVirtualizeCoordinateSystemResult.ScrollLeft}px; width: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth}px; height: {heightInPixels}px";
     }
     
     private string GetContentCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
@@ -221,10 +220,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
-        var widthInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollLeft - PaddingInPixels,
-            0);
-
-        return $"left: {widthInPixels}px; top: {localVirtualizeCoordinateSystemResult.ScrollTop}";
+        return $"left: {localVirtualizeCoordinateSystemResult.ScrollLeft}px; top: {localVirtualizeCoordinateSystemResult.ScrollTop}px;";
     }
 
     public virtual void Dispose()
