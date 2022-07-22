@@ -56,6 +56,12 @@ public partial record PlainTextEditorStates
         public PlainTextEditorStates ReduceMemoryMappedFileReadRequestAction(PlainTextEditorStates previousPlainTextEditorStates,
             MemoryMappedFileReadRequestAction memoryMappedFileReadRequestAction)
         {
+            if (memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.CancellationToken
+                .IsCancellationRequested)
+            {
+                return previousPlainTextEditorStates;
+            }
+
             var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
             var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
@@ -201,6 +207,12 @@ public partial record PlainTextEditorStates
 
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
             var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
+
+            if (memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.CancellationToken
+                .IsCancellationRequested)
+            {
+                return previousPlainTextEditorStates;
+            }
 
             return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
         }
