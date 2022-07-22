@@ -32,10 +32,12 @@
          style="background-color: orange; @GetBottomBoundaryCssString()">
 
     </div>
-    
-    @foreach (var item in _data)
-    {
-        @ChildContent(item)
-    }
+    @{
+        var localData = _data;
 
+        foreach (var item in localData)
+        {
+            @ChildContent(item)
+        }
+    }
 </div>

@@ -142,15 +142,19 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
         RequestCallbackAction(virtualizeCoordinateSystemRequest);
     }
-    
+
     public void SetData(VirtualizeCoordinateSystemResult<T> virtualizeCoordinateSystemResult)
     {
         _data = virtualizeCoordinateSystemResult.Items.ToImmutableArray();
         _dimensions = virtualizeCoordinateSystemResult.CoordinateSystemViewportDimensions;
-
-        InvokeAsync(StateHasChanged);
     }
-    
+
+    public async Task RerenderAsync(VirtualizeCoordinateSystemResult<T> virtualizeCoordinateSystemResult)
+    {
+        // The caller of this method is not guaranteed to be on the UI thread.
+        await InvokeAsync(StateHasChanged);
+    }
+
     public CancellationToken CancelTokenSourceAndGetNewToken()
     {
         _cancellationTokenSource.Cancel();
