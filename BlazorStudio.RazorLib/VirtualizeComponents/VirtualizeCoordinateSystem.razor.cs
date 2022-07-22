@@ -215,6 +215,17 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
         return $"width: {localVirtualizeCoordinateSystemResult.VirtualizeRenderBlockWidth}px; height: {heightInPixels}px";
     }
+    
+    private string GetContentCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
+    {
+        if (localVirtualizeCoordinateSystemResult is null)
+            return string.Empty;
+
+        var widthInPixels = Math.Max(localVirtualizeCoordinateSystemResult.ScrollLeft - PaddingInPixels,
+            0);
+
+        return $"left: {widthInPixels}px; top: {localVirtualizeCoordinateSystemResult.ScrollTop}";
+    }
 
     public virtual void Dispose()
     {
