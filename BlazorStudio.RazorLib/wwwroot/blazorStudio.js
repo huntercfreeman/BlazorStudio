@@ -84,6 +84,8 @@
                 currentEntry.target.id,
                 elementVirtualizeCoordinateSystem.scrollLeft,
                 elementVirtualizeCoordinateSystem.scrollTop,
+                elementVirtualizeCoordinateSystem.scrollWidth,
+                elementVirtualizeCoordinateSystem.scrollHeight,
                 elementVirtualizeCoordinateSystem.offsetWidth,
                 elementVirtualizeCoordinateSystem.offsetHeight);
         }

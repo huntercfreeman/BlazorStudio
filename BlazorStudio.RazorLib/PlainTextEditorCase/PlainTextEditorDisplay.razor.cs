@@ -181,8 +181,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         return $"font-size: {PlainTextEditorSelector.Value?.RichTextEditorOptions.FontSizeInPixels ?? 0}px;";
     }
 
-    private void OnRequestCallbackAction(VirtualizeCoordinateSystemRequest virtualizeCoordinateSystemRequest, 
-        CancellationToken cancellationToken) 
+    private void OnRequestCallbackAction(VirtualizeCoordinateSystemRequest virtualizeCoordinateSystemRequest) 
     {
         Dispatcher.Dispatch(new FileCoordinateGridRequest(virtualizeCoordinateSystemRequest));
     }

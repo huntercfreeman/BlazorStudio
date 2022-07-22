@@ -15,7 +15,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     /// Used when scrolling and the cached content runs out and different cache needs loading
     /// </summary>
     [Parameter, EditorRequired]
-    public Action<VirtualizeCoordinateSystemRequest, CancellationToken> RequestCallbackAction { get; set; } = null!;
+    public Action<VirtualizeCoordinateSystemRequest> RequestCallbackAction { get; set; } = null!;
     /// <summary>
     /// Used to render the Generic Item
     /// </summary>
@@ -26,6 +26,14 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     /// </summary>
     [Parameter, EditorRequired]
     public RenderFragment<T> ChildContent { get; set; } = null!;
+    /// <summary>
+    /// Load more pixels of context just out of viewport to reduce
+    /// use seeing a loading template.
+    ///
+    /// Padding is applied left, right, top, bottom.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public double PaddingInPixels { get; set; }
     /// <summary>
     /// Show a HTML element to help with debugging
     /// </summary>
@@ -41,10 +49,12 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     public Dimensions _topBoundaryDimensions = null!;
     public Dimensions _bottomBoundaryDimensions = null!;
 
-    public double _scrollLeft;
     public double _scrollTop;
-    public double _javascriptWidthResult;
-    public double _javascriptHeightResult;
+    public double _scrollLeft;
+    public double _scrollWidth;
+    public double _scrollHeight;
+    public double _width;
+    public double _height;
 
     public Guid _guid;
 
@@ -65,6 +75,28 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         _rightElementId = $"virtualize-coordinate-system_right_{_guid}";
         _topElementId = $"virtualize-coordinate-system_top_{_guid}";
         _bottomElementId = $"virtualize-coordinate-system_bottom_{_guid}";
+
+        //_leftBoundaryDimensions = new Dimensions
+        //{
+        //    // Width is:
+        //    // scrollLeft
+        //    WidthCalc = new List<DimensionUnit>()
+        //    {
+        //        _scrollLeft
+        //    }
+        //};
+
+        //_rightBoundaryDimensions = new Dimensions
+        //{
+        //};
+
+        //_topBoundaryDimensions = new Dimensions
+        //{
+        //};
+
+        //_bottomBoundaryDimensions = new Dimensions
+        //{
+        //};
 
         base.OnInitialized();
     }
@@ -96,18 +128,30 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
     /// <param name="id">The id of the specific Boundary that was scrolled into view</param>
     [JSInvokable]
-    public void FireRequestCallbackAction(string id, double scrollTop, double scrollLeft, double width, double height)
+    public void FireRequestCallbackAction(string id, 
+        double scrollTop, 
+        double scrollLeft, 
+        double scrollWidth, 
+        double scrollHeight, 
+        double viewportWidth, 
+        double viewportHeight)
     {
         _scrollLeft = scrollLeft;
         _scrollTop = scrollTop;
-        _javascriptWidthResult = width;
-        _javascriptHeightResult = height;
+        _scrollWidth = scrollWidth;
+        _scrollHeight = scrollHeight;
 
         _componentStateChanged?.Invoke(null, EventArgs.Empty);
 
-        var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest();
+        var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest(_scrollLeft,
+            _scrollTop,
+            scrollWidth,
+            scrollHeight,
+            viewportWidth,
+            viewportHeight,
+            CancelTokenSourceAndGetNewToken());
 
-        RequestCallbackAction(virtualizeCoordinateSystemRequest, CancelTokenSourceAndGetNewToken());
+        RequestCallbackAction(virtualizeCoordinateSystemRequest);
     }
     
     public void SetData(VirtualizeCoordinateSystemResult<T> virtualizeCoordinateSystemResult)
