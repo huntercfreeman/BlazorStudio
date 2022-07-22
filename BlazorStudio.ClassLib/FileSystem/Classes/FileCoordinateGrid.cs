@@ -72,6 +72,7 @@ public static class FileCoordinateGridFactory
             string path = AbsoluteFilePath.GetAbsoluteFilePathString();
 
             int characterCounter = 0;
+            int rowCharacterCount = 0;
             int? bytesPerEncodedCharacter = null;
 
             using (StreamReader streamReader = new StreamReader(path, true))
@@ -87,6 +88,7 @@ public static class FileCoordinateGridFactory
                     var currentCharacter = (char)streamReader.Read();
 
                     characterCounter++;
+                    rowCharacterCount++;
 
                     if (currentCharacter == '\n')
                     {
@@ -104,15 +106,18 @@ public static class FileCoordinateGridFactory
 
                         _characterIndexMarkerForStartOfARow.Add(characterCounter);
 
-                        if (characterCounter > CharacterLengthOfLongestRow)
+                        if (rowCharacterCount > CharacterLengthOfLongestRow)
                         {
-                            CharacterLengthOfLongestRow = characterCounter;
+                            CharacterLengthOfLongestRow = rowCharacterCount;
                         }
+
+                        rowCharacterCount = 0;
                     }
                     else if (previousCharacter == '\r')
                     {
                         // Count '\r\n' as 1 character
                         characterCounter--;
+                        rowCharacterCount--;
                     }
 
                     previousCharacter = currentCharacter;
@@ -176,7 +181,6 @@ public static class FileCoordinateGridFactory
                 }
 
                 long longCharacterLengthOfRequest = exclusiveEndingCharacterIndex - inclusiveStartingCharacterIndex;
-
 
                 if (longCharacterLengthOfRequest > Int32.MaxValue)
                 {
