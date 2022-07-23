@@ -15,7 +15,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     /// Used when scrolling and the cached content runs out and different cache needs loading
     /// </summary>
     [Parameter, EditorRequired]
-    public Action<VirtualizeCoordinateSystemRequest> RequestCallbackAction { get; set; } = null!;
+    public Action<VirtualizeCoordinateSystemMessage> RequestCallbackAction { get; set; } = null!;
     /// <summary>
     /// Used to render the Generic Item
     /// </summary>
@@ -127,7 +127,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             viewportHeight,
             CancelTokenSourceAndGetNewToken());
 
-        RequestCallbackAction(virtualizeCoordinateSystemRequest);
+        RequestCallbackAction(new VirtualizeCoordinateSystemMessage(
+            virtualizeCoordinateSystemRequest, null));
     }
 
     public void SetData(VirtualizeCoordinateSystemMessage message)

@@ -56,7 +56,7 @@
 
         <div style="position: absolute; @contentStyle" class="@ContentWrapperCssClass">
             
-            if (result?.Any() ?? false)
+            @if (result?.ItemsWithType?.Any() ?? false)
             {
                 foreach (var item in result.ItemsWithType)
                 {
