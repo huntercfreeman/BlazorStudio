@@ -153,9 +153,15 @@ public static class FileCoordinateGridFactory
         {
             var rowBuilders = new List<StringBuilder>();
 
-            var availableRowCount = Math.Min(fileCoordinateGridRequest.RowCount, CharacterIndexMarkerForStartOfARow.Length);
+            var availableRowCount = Math.Max(CharacterIndexMarkerForStartOfARow.Length - fileCoordinateGridRequest.StartingRowIndex,
+                0);
 
-            for (int i = fileCoordinateGridRequest.StartingRowIndex; i < availableRowCount; i++)
+            availableRowCount = Math.Min(fileCoordinateGridRequest.RowCount, availableRowCount);
+
+            int rowIndex = fileCoordinateGridRequest.StartingRowIndex;
+            int rowCount = 0;
+
+            for (; rowCount++ < availableRowCount && rowIndex++ < CharacterIndexMarkerForStartOfARow.Length;)
             {
                 if (fileCoordinateGridRequest.CancellationToken.IsCancellationRequested)
                 {
@@ -167,7 +173,7 @@ public static class FileCoordinateGridFactory
                 var builder = new StringBuilder();
                 rowBuilders.Add(builder);
 
-                long inclusiveStartingCharacterIndex = CharacterIndexMarkerForStartOfARow[i] +
+                long inclusiveStartingCharacterIndex = CharacterIndexMarkerForStartOfARow[rowIndex] +
                                                   fileCoordinateGridRequest.StartingCharacterIndex;
 
                 var exclusiveEndingCharacterIndex = inclusiveStartingCharacterIndex + fileCoordinateGridRequest.CharacterCount;
@@ -178,9 +184,9 @@ public static class FileCoordinateGridFactory
                     : exclusiveEndingCharacterIndex;
 
                 // Ensure within bounds of row
-                if (i < CharacterIndexMarkerForStartOfARow.Length - 1)
+                if (rowIndex < CharacterIndexMarkerForStartOfARow.Length - 1)
                 {
-                    long startOfNextRowCharacterIndex = CharacterIndexMarkerForStartOfARow[i + 1];
+                    long startOfNextRowCharacterIndex = CharacterIndexMarkerForStartOfARow[rowIndex + 1];
 
                     exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > startOfNextRowCharacterIndex
                         ? startOfNextRowCharacterIndex
