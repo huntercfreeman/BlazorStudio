@@ -161,7 +161,7 @@ public static class FileCoordinateGridFactory
             int rowIndex = fileCoordinateGridRequest.StartingRowIndex;
             int rowCount = 0;
 
-            for (; rowCount++ < availableRowCount && rowIndex++ < CharacterIndexMarkerForStartOfARow.Length;)
+            for (; rowCount < availableRowCount && rowIndex < CharacterIndexMarkerForStartOfARow.Length; rowCount++, rowIndex++)
             {
                 if (fileCoordinateGridRequest.CancellationToken.IsCancellationRequested)
                 {
