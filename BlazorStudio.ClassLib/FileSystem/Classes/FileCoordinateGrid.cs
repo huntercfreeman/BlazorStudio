@@ -54,6 +54,7 @@ public static class FileCoordinateGridFactory
         public long CharacterLengthOfLongestRow { get; private set; }
         public int RowCount => _characterIndexMarkerForStartOfARow.Count;
         public int ExclusiveEndOfFileCharacterIndex => _exclusiveEndOfFileCharacterIndex;
+        public int PreambleBytesLength { get; private set; }
 
         public void Initialize()
         {
@@ -82,6 +83,11 @@ public static class FileCoordinateGridFactory
                 Encoding = streamReader.CurrentEncoding;
 
                 var previousCharacter = '\0';
+
+                PreambleBytesLength = streamReader.CurrentEncoding.Preamble.Length;
+
+                characterCounter = PreambleBytesLength;
+                rowCharacterCount = PreambleBytesLength;
 
                 while (streamReader.Peek() != -1)
                 {
@@ -116,8 +122,8 @@ public static class FileCoordinateGridFactory
                     else if (previousCharacter == '\r')
                     {
                         // Count '\r\n' as 1 character
-                        characterCounter--;
-                        rowCharacterCount--;
+                        // characterCounter--;
+                        // rowCharacterCount--;
                     }
 
                     previousCharacter = currentCharacter;
