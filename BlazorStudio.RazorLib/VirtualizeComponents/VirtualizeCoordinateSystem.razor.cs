@@ -238,8 +238,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
                                      + contentHeight;
 
         var boundaryHeightInPixels = Math.Max(result.TotalHeightInPixels
-                                     - topInPixels
-                                     - contentHeight,
+                                     - topInPixels,
             0);
 
         var leftInPixels = request.ScrollLeftInPixels;
