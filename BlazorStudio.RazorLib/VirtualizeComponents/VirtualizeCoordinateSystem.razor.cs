@@ -123,13 +123,19 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         double viewportWidth, 
         double viewportHeight)
     {
+        var paddedScrollLeft = Math.Max(0, scrollLeft - PaddingInPixels);
+        var paddedScrollTop = Math.Max(0, scrollTop - PaddingInPixels);
+
+        var paddedViewportWidth = viewportWidth + PaddingInPixels;
+        var paddedViewportHeight = viewportHeight + PaddingInPixels;
+
         var virtualizeCoordinateSystemRequest = new VirtualizeCoordinateSystemRequest(
-            scrollLeft,
-            scrollTop,
+            paddedScrollLeft,
+            paddedScrollTop,
             scrollWidth,
             scrollHeight,
-            viewportWidth,
-            viewportHeight,
+            paddedViewportWidth,
+            paddedViewportHeight,
             CancelTokenSourceAndGetNewToken());
 
         RequestCallbackAction(new VirtualizeCoordinateSystemMessage(
