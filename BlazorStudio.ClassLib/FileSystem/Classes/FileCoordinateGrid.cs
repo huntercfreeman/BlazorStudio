@@ -86,9 +86,6 @@ public static class FileCoordinateGridFactory
 
                 PreambleBytesLength = streamReader.CurrentEncoding.Preamble.Length;
 
-                characterCounter = PreambleBytesLength;
-                rowCharacterCount = PreambleBytesLength;
-
                 while (streamReader.Peek() != -1)
                 {
                     var currentCharacter = (char)streamReader.Read();
@@ -109,6 +106,9 @@ public static class FileCoordinateGridFactory
 
                         //    var vav = 2;
                         //}
+
+                        characterCounter += PreambleBytesLength + 2;
+                        rowCharacterCount += PreambleBytesLength + 2;
 
                         _characterIndexMarkerForStartOfARow.Add(characterCounter);
 
