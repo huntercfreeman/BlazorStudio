@@ -193,7 +193,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         var contentWidth = Math.Max(result.WidthOfResultInPixels, 
             request.ViewportWidthInPixels);
         
-        var leftInPixels = Math.Min(request.ScrollLeftInPixels + contentWidth,
+        var leftInPixels = Math.Max(request.ScrollLeftInPixels + contentWidth,
             result.TotalWidthInPixels);
 
         var boundaryWidthInPixels = Math.Max(result.TotalWidthInPixels - leftInPixels,
@@ -237,18 +237,20 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         var topInPixels = request.ScrollTopInPixels
                                      + contentHeight;
 
-        var boundaryHeightInPixels = result.TotalHeightInPixels
+        var boundaryHeightInPixels = Math.Max(result.TotalHeightInPixels
                                      - topInPixels
-                                     - contentHeight;
+                                     - contentHeight,
+            0);
 
         var leftInPixels = request.ScrollLeftInPixels;
 
         var contentWidth = Math.Max(result.WidthOfResultInPixels,
             request.ViewportWidthInPixels);
 
-        var boundaryWidthInPixels = result.TotalWidthInPixels 
+        var boundaryWidthInPixels = Math.Max(result.TotalWidthInPixels 
                                     - leftInPixels 
-                                    - contentWidth;
+                                    - contentWidth,
+            request.ViewportWidthInPixels);
 
         return $"top: {topInPixels}px; left: {leftInPixels}px; width: {boundaryWidthInPixels}px; height: {boundaryHeightInPixels}px";
     }
