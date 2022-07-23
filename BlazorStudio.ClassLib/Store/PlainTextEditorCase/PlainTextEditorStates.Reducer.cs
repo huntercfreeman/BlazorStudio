@@ -80,42 +80,14 @@ public partial record PlainTextEditorStates
             var heightOfEachRowInPixels = 27;
             var widthOfEachCharacterInPixels = 9.91;
 
-            var paddingInPixels = 250;
-
-            var scrollTopWithPadding = request.ScrollTopInPixels - paddingInPixels;
-
-            scrollTopWithPadding = scrollTopWithPadding < 0
-                ? 0
-                : scrollTopWithPadding;
-
             var startingRowIndex = 
-                (int)(scrollTopWithPadding / heightOfEachRowInPixels);
+                (int)(request.ScrollTopInPixels / heightOfEachRowInPixels);
+            
+            var requestRowCount = (int)(request.ViewportHeightInPixels / heightOfEachRowInPixels);
 
-            var viewportHeightWithPadding = request.ViewportHeightInPixels
-                + 250;
-
-            viewportHeightWithPadding = viewportHeightWithPadding > request.ScrollHeightInPixels
-                                        ? request.ScrollHeightInPixels
-                                        : viewportHeightWithPadding;
-
-            var requestRowCount = (int)(viewportHeightWithPadding / heightOfEachRowInPixels);
-
-            var scrollLeftWithPadding = request.ScrollLeftInPixels
-                - 250;
-
-            scrollLeftWithPadding = scrollLeftWithPadding < 0
-                ? 0
-                : scrollLeftWithPadding;
-
-            var startingCharacterIndex = (int)(scrollLeftWithPadding / widthOfEachCharacterInPixels);
-
-            var viewportWidthWithPadding = request.ViewportWidthInPixels + 250;
-
-            viewportWidthWithPadding = viewportWidthWithPadding > request.ScrollWidthInPixels
-                ? request.ScrollWidthInPixels
-                : viewportWidthWithPadding;
-
-            var requestCharacterCount = (int)(viewportWidthWithPadding / widthOfEachCharacterInPixels);
+            var startingCharacterIndex = (int)(request.ScrollLeftInPixels / widthOfEachCharacterInPixels);
+            
+            var requestCharacterCount = (int)(request.ViewportWidthInPixels / widthOfEachCharacterInPixels);
 
             var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex, 
                 requestRowCount,
