@@ -1,4 +1,5 @@
-﻿@typeparam T
+﻿@using BlazorStudio.ClassLib.Virtualize
+@typeparam T
 
 <div class="bstudio_virtualize-coordinate-system"
      style="@(DimensionsOfCoordinateSystemViewport.DimensionsCssString)"
@@ -7,38 +8,60 @@
 
     @{
         // Create a local reference to avoid a new instance being set while rendering.
-        var localVirtualizeCoordinateSystemResult = VirtualizeCoordinateSystemResult;
-        var localData = Data;
+        var localMostRecentMessage = MostRecentMessage;
 
         @if (MarkerRenderFragment is not null)
         {
             @MarkerRenderFragment
         }
 
-        <div id="@_topElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; background-color: blue; opacity: 0.1; @GetTopBoundaryCssString(localVirtualizeCoordinateSystemResult)">
-        </div>
+        var request = localMostRecentMessage?.VirtualizeCoordinateSystemRequest;
+
+        VirtualizeCoordinateSystemResult<T>? result;
+
+        if (localMostRecentMessage?.VirtualizeCoordinateSystemResult is null)
+        {
+            result = null;
+        }
+        else
+        {
+            result = (VirtualizeCoordinateSystemResult<T>?) localMostRecentMessage?.VirtualizeCoordinateSystemResult;
+        }
+
+        var leftStyle = GetLeftBoundaryCssString(request, result);
+        var rightStyle = GetRightBoundaryCssString(request, result);
+        var topStyle = GetTopBoundaryCssString(request, result);
+        var bottomStyle = GetBottomBoundaryCssString(request, result);
+        var contentStyle = GetContentCssString(request, result);
 
         <div id="@_leftElementId"
              class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; background-color: red; opacity: 0.1; @GetLeftBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+             style="position: absolute; background-color: red; opacity: 0.1; @leftStyle">
         </div>
 
         <div id="@_rightElementId"
              class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; background-color: green; opacity: 0.1; @GetRightBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+             style="position: absolute; background-color: green; opacity: 0.1; @rightStyle">
+        </div>
+
+        <div id="@_topElementId"
+             class="bstudio_virtualize-coordinate-system-boundary"
+             style="position: absolute; background-color: blue; opacity: 0.1; @topStyle">
         </div>
 
         <div id="@_bottomElementId"
              class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; background-color: orange; opacity: 0.1; @GetBottomBoundaryCssString(localVirtualizeCoordinateSystemResult)">
+             style="position: absolute; background-color: orange; opacity: 0.1; @bottomStyle">
         </div>
 
-        <div style="position: absolute; @GetContentCssString(localVirtualizeCoordinateSystemResult);" class="@ContentWrapperCssClass">
-            @foreach (var item in localData)
+        <div style="position: absolute; @contentStyle" class="@ContentWrapperCssClass">
+            
+            if (result?.Any() ?? false)
             {
+                foreach (var item in result.ItemsWithType)
+                {
                     @ItemRenderFragment(item)
+                }
             }
         </div>
     }

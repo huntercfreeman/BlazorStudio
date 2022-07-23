@@ -67,7 +67,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
     private string ComponentId => $"bstudio_virtualize-coordinate-system_{_guid}";
 
-    public VirtualizeCoordinateSystemResult<T> VirtualizeCoordinateSystemResult { get; private set; }
+    public VirtualizeCoordinateSystemMessage MostRecentMessage { get; private set; }
     public ImmutableArray<T> Data { get; private set; } = ImmutableArray<T>.Empty;
 
     protected override void OnInitialized()
@@ -131,10 +131,9 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         RequestCallbackAction(virtualizeCoordinateSystemRequest);
     }
 
-    public void SetData(VirtualizeCoordinateSystemResult<T> virtualizeCoordinateSystemResult)
+    public void SetData(VirtualizeCoordinateSystemMessage message)
     {
-        Data = virtualizeCoordinateSystemResult.Items.ToImmutableArray();
-        VirtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult;
+        MostRecentMessage = message;
     }
 
     public async Task RerenderAsync()
@@ -164,16 +163,28 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         return _cancellationTokenSource.Token;
     }
     
-    private string GetLeftBoundaryCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
+    private string GetLeftBoundaryCssString(VirtualizeCoordinateSystemRequest? request, VirtualizeCoordinateSystemResult<T>? result)
     {
+        if (request is null ||
+            resultUntyped is null)
+        {
+            return string.Empty;
+        }
+
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
         return $"left: 0px; width: {localVirtualizeCoordinateSystemResult.VirtualizeCoordinateSystemRequest.ScrollLeft}px; min-height: 100%; height: {localVirtualizeCoordinateSystemResult.ActualHeightOfResult}px;";
     }
     
-    private string GetRightBoundaryCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
+    private string GetRightBoundaryCssString(VirtualizeCoordinateSystemRequest? request, VirtualizeCoordinateSystemResult<T>? result)
     {
+        if (request is null ||
+            result is null)
+        {
+            return string.Empty;
+        }
+
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
@@ -197,8 +208,14 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         return $"left: {leftInPixels}px;  top: {localVirtualizeCoordinateSystemResult.VirtualizeCoordinateSystemRequest.ScrollTop}px; width: {widthInPixels}px; height: {localVirtualizeCoordinateSystemResult.ActualHeightOfResult}px;";
     }
 
-    private string GetTopBoundaryCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
+    private string GetTopBoundaryCssString(VirtualizeCoordinateSystemRequest? request, VirtualizeCoordinateSystemResult<T>? result)
     {
+        if (request is null ||
+            result is null)
+        {
+            return string.Empty;
+        }
+
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
@@ -207,8 +224,14 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         return $"top: 0px; left: {localVirtualizeCoordinateSystemResult.VirtualizeCoordinateSystemRequest.ScrollLeft}px; width: {localVirtualizeCoordinateSystemResult.ActualWidthOfResult}px; height: {heightInPixels}px";
     }
 
-    private string GetBottomBoundaryCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
+    private string GetBottomBoundaryCssString(VirtualizeCoordinateSystemRequest? request, VirtualizeCoordinateSystemResult<T>? result)
     {
+        if (request is null ||
+            result is null)
+        {
+            return string.Empty;
+        }
+
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
@@ -223,8 +246,14 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         return $"top: {topInPixels}px; left: {localVirtualizeCoordinateSystemResult.VirtualizeCoordinateSystemRequest.ScrollLeft}px; width: {localVirtualizeCoordinateSystemResult.ActualWidthOfResult}px; height: {heightInPixels}px";
     }
     
-    private string GetContentCssString(VirtualizeCoordinateSystemResult<T>? localVirtualizeCoordinateSystemResult)
+    private string GetContentCssString(VirtualizeCoordinateSystemRequest? request, VirtualizeCoordinateSystemResult<T>? result)
     {
+        if (request is null ||
+            result is null)
+        {
+            return string.Empty;
+        }
+
         if (localVirtualizeCoordinateSystemResult is null)
             return string.Empty;
 
