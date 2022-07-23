@@ -56,7 +56,7 @@
 }
 
 .pte_plain-text-editor-text-token-display:hover {
-    border: 1.5px solid var(--pte_hover-font-color);
+    outline: 1.5px solid var(--pte_hover-font-color);
 }
 
 .pte_character-renderer {

@@ -107,9 +107,6 @@ public static class FileCoordinateGridFactory
                         //    var vav = 2;
                         //}
 
-                        characterCounter += PreambleBytesLength + 2;
-                        rowCharacterCount += PreambleBytesLength + 2;
-
                         _characterIndexMarkerForStartOfARow.Add(characterCounter);
 
                         if (rowCharacterCount > CharacterLengthOfLongestRow)
