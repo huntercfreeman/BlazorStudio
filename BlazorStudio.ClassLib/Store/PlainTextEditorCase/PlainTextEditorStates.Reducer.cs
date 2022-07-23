@@ -98,7 +98,7 @@ public partial record PlainTextEditorStates
                                         ? request.ScrollHeight
                                         : viewportHeightWithPadding;
 
-            var rowCount = (int)(viewportHeightWithPadding / heightOfEachRowInPixels);
+            var requestRowCount = (int)(viewportHeightWithPadding / heightOfEachRowInPixels);
 
             var scrollLeftWithPadding = request.ScrollLeft
                 - 250;
@@ -115,12 +115,12 @@ public partial record PlainTextEditorStates
                 ? request.ScrollWidth
                 : viewportWidthWithPadding;
 
-            var characterCount = (int)(viewportWidthWithPadding / widthOfEachCharacterInPixels);
+            var requestCharacterCount = (int)(viewportWidthWithPadding / widthOfEachCharacterInPixels);
 
             var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex, 
-                rowCount,
+                requestRowCount,
                 startingCharacterIndex,
-                characterCount,
+                requestCharacterCount,
                 request.CancellationToken);
 
             var contentOfRows = plainTextEditor.FileCoordinateGrid
@@ -234,16 +234,14 @@ public partial record PlainTextEditorStates
             if (replacementPlainTextEditor.FileCoordinateGrid is null)
                 return previousPlainTextEditorStates;
 
+            var actualWidthOfResult = widthOfEachCharacterInPixels * requestCharacterCount;
+
+            var actualHeightOfResult = heightOfEachRowInPixels * requestRowCount;
+
             var totalWidth = widthOfEachCharacterInPixels *
                                       replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow;
             
             var totalHeight = heightOfEachRowInPixels * 
-                                       replacementPlainTextEditor.FileCoordinateGrid.RowCount;
-            
-            var actualWidthOfResult = widthOfEachCharacterInPixels *
-                                      replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow;
-            
-            var actualHeightOfResult = heightOfEachRowInPixels * 
                                        replacementPlainTextEditor.FileCoordinateGrid.RowCount;
 
             var result = new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
