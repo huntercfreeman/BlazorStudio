@@ -234,17 +234,25 @@ public partial record PlainTextEditorStates
             if (replacementPlainTextEditor.FileCoordinateGrid is null)
                 return previousPlainTextEditorStates;
 
+            var totalWidth = widthOfEachCharacterInPixels *
+                                      replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow;
+            
+            var totalHeight = heightOfEachRowInPixels * 
+                                       replacementPlainTextEditor.FileCoordinateGrid.RowCount;
+            
             var actualWidthOfResult = widthOfEachCharacterInPixels *
                                       replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow;
             
             var actualHeightOfResult = heightOfEachRowInPixels * 
-                                       replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow;
+                                       replacementPlainTextEditor.FileCoordinateGrid.RowCount;
 
             var result = new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
                 items,
                 items.Select(x => (object) x),
                 actualWidthOfResult,
-                actualHeightOfResult);
+                actualHeightOfResult,
+                totalWidth,
+                totalHeight);
 
             var message = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemMessage with
             {

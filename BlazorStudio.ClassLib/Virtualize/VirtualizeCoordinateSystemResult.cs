@@ -2,6 +2,8 @@
 
 public record VirtualizeCoordinateSystemResult<T>(IEnumerable<T> ItemsWithType,
         IEnumerable<object?> ItemsUntyped,
-        double ActualWidthOfResult,
-        double ActualHeightOfResult)
+        double WidthOfResultInPixels,
+        double HeightOfResultInPixels,
+        double TotalWidthInPixels,
+        double TotalHeightInPixels)
     : IVirtualizeCoordinateSystemResult;

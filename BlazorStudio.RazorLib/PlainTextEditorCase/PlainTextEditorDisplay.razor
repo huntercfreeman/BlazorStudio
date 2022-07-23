@@ -41,8 +41,6 @@ else
                 <div>
                     @NullSafeToMarkupString(nameof(itemsEnumerated.Length), itemsEnumerated?.Length)
                 </div>
-
-                <hr/>
                 
                 <div>
                     @NullSafeToMarkupString(nameof(request.ScrollLeft), request?.ScrollLeft)
@@ -56,9 +54,7 @@ else
                 <div>
                     @NullSafeToMarkupString(nameof(request.ScrollHeight), request?.ScrollHeight)
                 </div>
-
-                <hr/>
-
+                
                 <div>
                     @NullSafeToMarkupString(nameof(request.ViewportWidth), request?.ViewportWidth)
                 </div>
@@ -66,10 +62,16 @@ else
                     @NullSafeToMarkupString(nameof(request.ViewportHeight), request?.ViewportHeight)
                 </div>
                 <div>
-                    @NullSafeToMarkupString(nameof(result.ActualWidthOfResult), result?.ActualWidthOfResult)
+                    @NullSafeToMarkupString(nameof(result.WidthOfResultInPixels), result?.WidthOfResultInPixels)
                 </div>
                 <div>
-                    @NullSafeToMarkupString(nameof(result.ActualHeightOfResult), result?.ActualHeightOfResult)
+                    @NullSafeToMarkupString(nameof(result.HeightOfResultInPixels), result?.HeightOfResultInPixels)
+                </div>
+                <div>
+                    @NullSafeToMarkupString(nameof(result.TotalWidthInPixels), result?.TotalWidthInPixels)
+                </div>
+                <div>
+                    @NullSafeToMarkupString(nameof(result.TotalHeightInPixels), result?.TotalHeightInPixels)
                 </div>
             }
             else

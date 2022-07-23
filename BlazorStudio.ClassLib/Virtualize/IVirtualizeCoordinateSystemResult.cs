@@ -16,7 +16,7 @@ public interface IVirtualizeCoordinateSystemResult
     /// This is a requirement for variable width elements where the result might
     /// not always be a consistent ratio of width / element
     /// </summary>
-    public double ActualWidthOfResult { get; }
+    public double WidthOfResultInPixels { get; }
 
     /// <summary>
     /// The height of the rendered result does not have to equal the requested height.
@@ -26,5 +26,19 @@ public interface IVirtualizeCoordinateSystemResult
     /// This is a requirement for variable height elements where the result might
     /// not always be a consistent ratio of height / element
     /// </summary>
-    public double ActualHeightOfResult { get; }
+    public double HeightOfResultInPixels { get; }
+
+    /// <summary>
+    /// Total width of all elements in pixels
+    ///
+    /// Used to render horizontal scrollbar
+    /// </summary>
+    public double TotalWidthInPixels { get; }
+
+    /// <summary>
+    /// Total height of all elements in pixels
+    ///
+    /// Used to render vertical scrollbar
+    /// </summary>
+    public double TotalHeightInPixels { get; }
 }

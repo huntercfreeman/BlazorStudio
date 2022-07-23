@@ -171,7 +171,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             return string.Empty;
         }
 
-        return $"left: 0px; width: {request.ScrollLeft}px; min-height: 100%; height: {result.ActualHeightOfResult}px;";
+        return $"left: 0px; width: {request.ScrollLeft}px; height: {result.ActualHeightOfResult}px;";
     }
     
     private string GetRightBoundaryCssString(VirtualizeCoordinateSystemRequest? request, VirtualizeCoordinateSystemResult<T>? result)
@@ -184,7 +184,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
         var leftInPixels = Math.Min(request.ScrollLeft 
                            + result.ActualWidthOfResult,
-            request.ScrollWidth);
+            );
 
         var widthInPixels = request.ScrollWidth
                             - leftInPixels;
