@@ -1,6 +1,6 @@
 ﻿namespace BlazorStudio.ClassLib.Virtualize;
 
-public struct VirtualizeCoordinateSystemRequest
+public class VirtualizeCoordinateSystemRequest<T>
 {
     public double ScrollLeft { get; set; }
     public double ScrollTop { get; set; }
@@ -8,6 +8,8 @@ public struct VirtualizeCoordinateSystemRequest
     public double ScrollHeight { get; set; }
     public double ViewportWidth { get; set; }
     public double ViewportHeight { get; set; }
+
+    public VirtualizeCoordinateSystemResult<T>? Result { get; set; }
     
     /// <summary>
     /// The <see cref="System.Threading.CancellationToken"/> used to relay cancellation of the request.

@@ -2,42 +2,20 @@
 
 namespace BlazorStudio.ClassLib.Virtualize;
 
-/// <summary>
-/// Copy of Microsoft's Virtualize component ItemsProviderResult
-/// </summary>
 /// <typeparam name="T">The type of the context for each item in the list.</typeparam>
 public class VirtualizeCoordinateSystemResult<T>
 {
-    /// <summary>
-    /// The items to provide.
-    /// </summary>
     public IEnumerable<T> Items { get; }
     
-    public double ScrollLeft { get; set; }
-    public double ScrollTop { get; set; }
-    
-    public double ScrollWidth { get; set; }
-    public double ScrollHeight { get; set; }
-    
-    public double VirtualizeRenderBlockWidth { get; set; }
-    public double VirtualizeRenderBlockHeight { get; set; }
+    public double ActualWidthOfResult { get; set; }
+    public double ActualHeightOfResult { get; set; }
 
-    /// <param name="items">The items to provide.</param>
-    /// <param name="totalItemCount">The total item count in the source generating the items provided.</param>
-    public VirtualizeCoordinateSystemResult(IEnumerable<T> items, 
-        double scrollWidth,
-        double scrollHeight, 
-        double virtualizeRenderBlockWidth, 
-        double virtualizeRenderBlockHeight, 
-        double scrollLeft, 
-        double scrollTop)
+    public VirtualizeCoordinateSystemResult(IEnumerable<T> items,
+        double actualWidthOfResult, 
+        double actualHeightOfResult)
     {
         Items = items;
-        ScrollLeft = scrollLeft;
-        ScrollTop = scrollTop;
-        ScrollWidth = scrollWidth;
-        ScrollHeight = scrollHeight;
-        VirtualizeRenderBlockWidth = virtualizeRenderBlockWidth;
-        VirtualizeRenderBlockHeight = virtualizeRenderBlockHeight;
+        ActualWidthOfResult = actualWidthOfResult;
+        ActualHeightOfResult = actualHeightOfResult;
     }
 }

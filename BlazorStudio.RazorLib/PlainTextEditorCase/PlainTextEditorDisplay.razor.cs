@@ -70,10 +70,10 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     /// I need to position this PERFECTLY relative to a changeable font-size
     /// </summary>
     private string InputFocusTrapTopStyleCss => $"top: calc({PlainTextEditorSelector.Value!.CurrentRowIndex * 30}px);";
-    
+
     protected override void OnInitialized()
     {
-        PlainTextEditorSelector.Select(x => 
+        PlainTextEditorSelector.Select(x =>
         {
             x.Map.TryGetValue(PlainTextEditorKey, out var value);
             return value;
@@ -112,7 +112,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         var shouldRender = false;
 
-        if(PlainTextEditorSelector.Value.SequenceKey != _previousSequenceKeyShouldRender)
+        if (PlainTextEditorSelector.Value.SequenceKey != _previousSequenceKeyShouldRender)
             shouldRender = true;
 
         _previousSequenceKeyShouldRender = PlainTextEditorSelector.Value.SequenceKey;
@@ -127,22 +127,16 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         if (plainTextEditor is null)
             return;
 
-        var scrollWidth = Math.Ceiling(plainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow * _widthOfEachCharacterInPixels);
-        var scrollHeight = Math.Ceiling(plainTextEditor.FileCoordinateGrid.RowCount * _heightOfEachRowInPixels);
-        
         var virtualizeRenderBlockWidth = plainTextEditor.LongestRowCharacterLength * _widthOfEachCharacterInPixels;
         var virtualizeRenderBlockHeight = Math.Ceiling(plainTextEditor.List.Count * _heightOfEachRowInPixels);
 
         _virtualizeCoordinateSystem.SetData(
             new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
-                plainTextEditor.List
-                    .Select((row, index) => (index, row)),
-                scrollWidth,
-                scrollHeight,
-                virtualizeRenderBlockWidth,
-                virtualizeRenderBlockHeight,
-                plainTextEditor.VirtualizeCoordinateSystemResult.ScrollLeft,
-                plainTextEditor.VirtualizeCoordinateSystemResult.ScrollTop
+                plainTextEditor.VirtualizeCoordinateSystemResult,
+                    plainTextEditor.List
+                        .Select((row, index) => (index, row)),
+                    virtualizeRenderBlockWidth,
+                    virtualizeRenderBlockHeight
             ));
     }
 
@@ -187,7 +181,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             )
         );
     }
-    
+
     private void OnFocusIn()
     {
         _previousSequenceKeyShouldRender = null;
@@ -210,7 +204,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     {
         return $"font-size: {PlainTextEditorSelector.Value?.RichTextEditorOptions.FontSizeInPixels ?? 0}px;";
     }
-    
+
     private void OnRequestCallbackAction(VirtualizeCoordinateSystemRequest virtualizeCoordinateSystemRequest)
     {
         Dispatcher.Dispatch(new MemoryMappedFileReadRequestAction(PlainTextEditorKey,

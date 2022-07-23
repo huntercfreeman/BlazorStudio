@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.KeyDownEventCase;
+using BlazorStudio.ClassLib.Virtualize;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
@@ -235,8 +236,13 @@ public partial record PlainTextEditorStates
             replacementPlainTextEditor = replacementPlainTextEditor with
             {
                 LongestRowCharacterLength = longestRowCharacterLength,
-                VirtualizeCoordinateSystemResult = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest,
-                RowIndexOffset = startingRowIndex
+                RowIndexOffset = startingRowIndex,
+                VirtualizeCoordinateSystemResult = new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
+                    memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest,
+                    replacementPlainTextEditor.List
+                        .Select((row, index) => (index, row)),
+                    widthOfEachCharacterInPixels * replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow,
+                    heightOfEachRowInPixels * replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow),
             };
 
             nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = replacementPlainTextEditor;
@@ -301,8 +307,8 @@ public partial record PlainTextEditorStates
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
             var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
          
-            return new PlainTextEditorStates(nextPlainTextEditorMap.ToImmutableDictionary(), 
-                nextPlainTextEditorList.ToImmutableArray());
+            return new PlainTextEditorStates(nextImmutableMap,
+                nextImmutableArray);
         }
 
         [ReducerMethod]
