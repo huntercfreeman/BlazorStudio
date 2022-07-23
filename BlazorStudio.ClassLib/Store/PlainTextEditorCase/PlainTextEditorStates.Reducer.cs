@@ -227,16 +227,35 @@ public partial record PlainTextEditorStates
                 };
             }
 
+            var items = replacementPlainTextEditor.List
+                .Select((row, index) => (index, row))
+                .ToList();
+
+            if (replacementPlainTextEditor.FileCoordinateGrid is null)
+                return previousPlainTextEditorStates;
+
+            var actualWidthOfResult = widthOfEachCharacterInPixels *
+                                      replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow;
+            
+            var actualHeightOfResult = heightOfEachRowInPixels * 
+                                       replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow;
+
+            var result = new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
+                items,
+                items.Select(x => (object) x),
+                actualWidthOfResult,
+                actualHeightOfResult);
+
+            var message = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemMessage with
+            {
+                VirtualizeCoordinateSystemResult = result
+            };
+
             replacementPlainTextEditor = replacementPlainTextEditor with
             {
                 LongestRowCharacterLength = longestRowCharacterLength,
                 RowIndexOffset = startingRowIndex,
-                VirtualizeCoordinateSystemResult = new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
-                    memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest,
-                    replacementPlainTextEditor.List
-                        .Select((row, index) => (index, row)),
-                    widthOfEachCharacterInPixels * replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow,
-                    heightOfEachRowInPixels * replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow),
+                VirtualizeCoordinateSystemMessage = message,
             };
 
             nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = replacementPlainTextEditor;
@@ -244,11 +263,8 @@ public partial record PlainTextEditorStates
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
             var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
 
-            if (memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.CancellationToken
-                .IsCancellationRequested)
-            {
+            if (request.CancellationToken.IsCancellationRequested)
                 return previousPlainTextEditorStates;
-            }
 
             return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
         }
