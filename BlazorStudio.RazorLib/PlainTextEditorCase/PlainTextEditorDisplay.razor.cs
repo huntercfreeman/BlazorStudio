@@ -1,4 +1,5 @@
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.Html;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.KeyDownEventCase;
@@ -192,9 +193,9 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             virtualizeCoordinateSystemMessage));
     }
 
-    private string NullSafeToString(string name, object? obj)
+    private MarkupString NullSafeToMarkupString(string name, object? obj)
     {
-        return $"{name}&nbsp;->&nbsp;{obj?.ToString() ?? "null"}";
+        return (MarkupString) (name + "&nbsp;->&nbsp;" + obj?.ToString() ?? "null");
     }
 
     protected override void Dispose(bool disposing)

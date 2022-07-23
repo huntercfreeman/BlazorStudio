@@ -15,8 +15,6 @@ else
     var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
     var localMostRecentMessage = currentPlainTextEditor.VirtualizeCoordinateSystemMessage;
-    var request = localMostRecentMessage.VirtualizeCoordinateSystemRequest;
-    var result = localMostRecentMessage.VirtualizeCoordinateSystemResult;
 
     <div class="pte_plain-text-editor-wrapping">
         @*<div>
@@ -29,46 +27,49 @@ else
         <div class="bstudio_debug-info">
             @if (localMostRecentMessage is not null)
             {
+                var request = localMostRecentMessage.VirtualizeCoordinateSystemRequest;
+                var result = localMostRecentMessage.VirtualizeCoordinateSystemResult;
+
                 var itemsEnumerated = result?.ItemsUntyped.ToArray();
                 
                 <div>
-                    @NullSafeToString(nameof(currentPlainTextEditor.FileCoordinateGrid.RowCount), currentPlainTextEditor.FileCoordinateGrid?.RowCount)
+                    @NullSafeToMarkupString(nameof(currentPlainTextEditor.FileCoordinateGrid.RowCount), currentPlainTextEditor.FileCoordinateGrid?.RowCount)
                 </div>
                 <div>
-                    @NullSafeToString(nameof(currentPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow), currentPlainTextEditor.FileCoordinateGrid?.CharacterLengthOfLongestRow)
+                    @NullSafeToMarkupString(nameof(currentPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow), currentPlainTextEditor.FileCoordinateGrid?.CharacterLengthOfLongestRow)
                 </div>
                 <div>
-                    @NullSafeToString(nameof(itemsEnumerated.Length), itemsEnumerated?.Length)
+                    @NullSafeToMarkupString(nameof(itemsEnumerated.Length), itemsEnumerated?.Length)
                 </div>
 
                 <hr/>
                 
                 <div>
-                    @NullSafeToString(nameof(request.ScrollLeft), request?.ScrollLeft)
+                    @NullSafeToMarkupString(nameof(request.ScrollLeft), request?.ScrollLeft)
                 </div>
                 <div>
-                    @NullSafeToString(nameof(request.ScrollTop), request?.ScrollTop)
+                    @NullSafeToMarkupString(nameof(request.ScrollTop), request?.ScrollTop)
                 </div>
                 <div>
-                    @NullSafeToString(nameof(request.ScrollWidth), request?.ScrollWidth)
+                    @NullSafeToMarkupString(nameof(request.ScrollWidth), request?.ScrollWidth)
                 </div>
                 <div>
-                    @NullSafeToString(nameof(request.ScrollHeight), request?.ScrollHeight)
+                    @NullSafeToMarkupString(nameof(request.ScrollHeight), request?.ScrollHeight)
                 </div>
 
                 <hr/>
 
                 <div>
-                    @NullSafeToString(nameof(request.ViewportWidth), request?.ViewportWidth)
+                    @NullSafeToMarkupString(nameof(request.ViewportWidth), request?.ViewportWidth)
                 </div>
                 <div>
-                    @NullSafeToString(nameof(request.ViewportHeight), request?.ViewportHeight)
+                    @NullSafeToMarkupString(nameof(request.ViewportHeight), request?.ViewportHeight)
                 </div>
                 <div>
-                    @NullSafeToString(nameof(result.ActualWidthOfResult), result?.ActualWidthOfResult)
+                    @NullSafeToMarkupString(nameof(result.ActualWidthOfResult), result?.ActualWidthOfResult)
                 </div>
                 <div>
-                    @NullSafeToString(nameof(result.ActualHeightOfResult), result?.ActualHeightOfResult)
+                    @NullSafeToMarkupString(nameof(result.ActualHeightOfResult), result?.ActualHeightOfResult)
                 </div>
             }
             else
