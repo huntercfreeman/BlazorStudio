@@ -15,7 +15,7 @@ public interface IPlainTextEditor
     public IFileCoordinateGrid? FileCoordinateGrid { get; }
     public RichTextEditorOptions RichTextEditorOptions { get; }
     public int LongestRowCharacterLength { get; }
-    public VirtualizeCoordinateSystemRequest<(int Index, IPlainTextEditorRow PlainTextEditorRow)> VirtualizeCoordinateSystemResult { get; }
+    public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get; }
     public int RowIndexOffset { get; }
 
     public string GetPlainText();

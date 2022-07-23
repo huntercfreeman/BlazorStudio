@@ -57,8 +57,11 @@ public partial record PlainTextEditorStates
         public PlainTextEditorStates ReduceMemoryMappedFileReadRequestAction(PlainTextEditorStates previousPlainTextEditorStates,
             MemoryMappedFileReadRequestAction memoryMappedFileReadRequestAction)
         {
-            if (memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.CancellationToken
-                .IsCancellationRequested)
+            var request = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemMessage
+                .VirtualizeCoordinateSystemRequest;
+
+            if (request is null || 
+                request.CancellationToken.IsCancellationRequested)
             {
                 return previousPlainTextEditorStates;
             }
@@ -70,7 +73,7 @@ public partial record PlainTextEditorStates
                     .Map[memoryMappedFileReadRequestAction.PlainTextEditorKey]
                 as PlainTextEditorRecord;
 
-            if (plainTextEditor is null)
+            if (plainTextEditor?.FileCoordinateGrid is null)
                 return previousPlainTextEditorStates;
 
             // TODO: The font-size style attribute does not equal the size of the div that encapsulates the singular character. Figure out EXACTLY these values based off the font-size instead of hard coding what developer tools says
@@ -79,8 +82,7 @@ public partial record PlainTextEditorStates
 
             var paddingInPixels = 250;
 
-            var scrollTopWithPadding = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollTop -
-                                       paddingInPixels;
+            var scrollTopWithPadding = request.ScrollTop - paddingInPixels;
 
             scrollTopWithPadding = scrollTopWithPadding < 0
                 ? 0
@@ -89,47 +91,39 @@ public partial record PlainTextEditorStates
             var startingRowIndex = 
                 (int)(scrollTopWithPadding / heightOfEachRowInPixels);
 
-            var viewportHeightWithPadding = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ViewportHeight
+            var viewportHeightWithPadding = request.ViewportHeight
                 + 250;
 
-            viewportHeightWithPadding = viewportHeightWithPadding >
-                                        memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest
-                                            .ScrollHeight
-                                        ? memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest
-                                            .ScrollHeight
+            viewportHeightWithPadding = viewportHeightWithPadding > request.ScrollHeight
+                                        ? request.ScrollHeight
                                         : viewportHeightWithPadding;
 
-            var rowCount = 
-                (int)(viewportHeightWithPadding / heightOfEachRowInPixels);
+            var rowCount = (int)(viewportHeightWithPadding / heightOfEachRowInPixels);
 
-            var scrollLeftWithPadding = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollLeft
+            var scrollLeftWithPadding = request.ScrollLeft
                 - 250;
 
             scrollLeftWithPadding = scrollLeftWithPadding < 0
                 ? 0
                 : scrollLeftWithPadding;
 
-            var startingCharacterIndex =
-                (int)(scrollLeftWithPadding / widthOfEachCharacterInPixels);
+            var startingCharacterIndex = (int)(scrollLeftWithPadding / widthOfEachCharacterInPixels);
 
-            var viewportWidthWithPadding =
-                memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ViewportWidth + 250;
+            var viewportWidthWithPadding = request.ViewportWidth + 250;
 
-            viewportWidthWithPadding = viewportWidthWithPadding >
-                                       memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollWidth
-                ? memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.ScrollWidth
+            viewportWidthWithPadding = viewportWidthWithPadding > request.ScrollWidth
+                ? request.ScrollWidth
                 : viewportWidthWithPadding;
 
-            var characterCount =
-                (int)(viewportWidthWithPadding / widthOfEachCharacterInPixels);
+            var characterCount = (int)(viewportWidthWithPadding / widthOfEachCharacterInPixels);
 
             var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex, 
                 rowCount,
                 startingCharacterIndex,
                 characterCount,
-                memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemRequest.CancellationToken);
+                request.CancellationToken);
 
-            var contentOfRows = plainTextEditor.FileCoordinateGrid!
+            var contentOfRows = plainTextEditor.FileCoordinateGrid
                 .Request(fileCoordinateGridRequest);
 
             var allEnterKeysAreCarriageReturnNewLine = true;

@@ -157,6 +157,13 @@ public static class FileCoordinateGridFactory
 
             for (int i = fileCoordinateGridRequest.StartingRowIndex; i < availableRowCount; i++)
             {
+                if (fileCoordinateGridRequest.CancellationToken.IsCancellationRequested)
+                {
+                    return rowBuilders
+                        .Select(x => x.ToString())
+                        .ToList();
+                }
+
                 var builder = new StringBuilder();
                 rowBuilders.Add(builder);
 
