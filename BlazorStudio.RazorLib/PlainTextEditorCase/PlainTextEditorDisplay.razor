@@ -14,6 +14,10 @@ else
     // by making a local reference to it.
     var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
+    var localMostRecentMessage = currentPlainTextEditor.VirtualizeCoordinateSystemMessage;
+    var request = localMostRecentMessage.VirtualizeCoordinateSystemRequest;
+    var result = localMostRecentMessage.VirtualizeCoordinateSystemResult;
+
     <div class="pte_plain-text-editor-wrapping">
         @*<div>
             Font Size: @(PlainTextEditorSelector.Value.RichTextEditorOptions.FontSizeInPixels)px
@@ -23,61 +27,53 @@ else
         </div>
         *@
         <div class="bstudio_debug-info">
-            @if (_virtualizeCoordinateSystem is not null)
+            @if (localMostRecentMessage is not null)
             {
-                <div>Total Row Count = @(PlainTextEditorSelector.Value.FileCoordinateGrid?.RowCount ?? 0)</div>
-                <div>Most characters on a single row = @(PlainTextEditorSelector.Value.FileCoordinateGrid?.CharacterLengthOfLongestRow ?? 0)</div>
-                <div>_data.Length = @_virtualizeCoordinateSystem.Data.Length</div>
+                var itemsEnumerated = result?.ItemsUntyped.ToArray();
+                
+                <div>
+                    @NullSafeToString(nameof(currentPlainTextEditor.FileCoordinateGrid.RowCount), currentPlainTextEditor.FileCoordinateGrid?.RowCount)
+                </div>
+                <div>
+                    @NullSafeToString(nameof(currentPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow), currentPlainTextEditor.FileCoordinateGrid?.CharacterLengthOfLongestRow)
+                </div>
+                <div>
+                    @NullSafeToString(nameof(itemsEnumerated.Length), itemsEnumerated?.Length)
+                </div>
 
                 <hr/>
                 
                 <div>
-                    ScrollLeft
-                    &nbsp;->&nbsp; 
-                    @currentPlainTextEditor.VirtualizeCoordinateSystemResult.ScrollLeft
+                    @NullSafeToString(nameof(request.ScrollLeft), request?.ScrollLeft)
                 </div>
                 <div>
-                    ScrollTop
-                    &nbsp;->&nbsp; 
-                    @currentPlainTextEditor.VirtualizeCoordinateSystemResult.ScrollTop
+                    @NullSafeToString(nameof(request.ScrollTop), request?.ScrollTop)
                 </div>
                 <div>
-                    ScrollWidth
-                    &nbsp;->&nbsp;
-                    @currentPlainTextEditor.VirtualizeCoordinateSystemResult.ScrollWidth
+                    @NullSafeToString(nameof(request.ScrollWidth), request?.ScrollWidth)
                 </div>
                 <div>
-                    ScrollHeight
-                    &nbsp;->&nbsp;
-                    @currentPlainTextEditor.VirtualizeCoordinateSystemResult.ScrollHeight
+                    @NullSafeToString(nameof(request.ScrollHeight), request?.ScrollHeight)
                 </div>
 
                 <hr/>
 
                 <div>
-                    ViewportWidth
-                    &nbsp;->&nbsp;
-                    @currentPlainTextEditor.VirtualizeCoordinateSystemResult.ViewportWidth
+                    @NullSafeToString(nameof(request.ViewportWidth), request?.ViewportWidth)
                 </div>
                 <div>
-                    ViewportHeight
-                    &nbsp;->&nbsp; 
-                    @currentPlainTextEditor.VirtualizeCoordinateSystemResult.ViewportHeight
+                    @NullSafeToString(nameof(request.ViewportHeight), request?.ViewportHeight)
                 </div>
                 <div>
-                    Content width
-                    &nbsp;->&nbsp; 
-                    @currentPlainTextEditor.VirtualizeCoordinateSystemResult.ActualWidthOfResult
+                    @NullSafeToString(nameof(result.ActualWidthOfResult), result?.ActualWidthOfResult)
                 </div>
                 <div>
-                    Content height
-                    &nbsp;->&nbsp;
-                    @currentPlainTextEditor.VirtualizeCoordinateSystemResult.ActualHeightOfResult
+                    @NullSafeToString(nameof(result.ActualHeightOfResult), result?.ActualHeightOfResult)
                 </div>
             }
             else
             {
-                <div>_virtualizeCoordinateSystem is null</div>
+                <div>virtualization message was null</div>
             }
         </div>
 

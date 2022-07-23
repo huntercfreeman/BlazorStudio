@@ -68,7 +68,6 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     private string ComponentId => $"bstudio_virtualize-coordinate-system_{_guid}";
 
     public VirtualizeCoordinateSystemMessage MostRecentMessage { get; private set; }
-    public ImmutableArray<T> Data { get; private set; } = ImmutableArray<T>.Empty;
 
     protected override void OnInitialized()
     {

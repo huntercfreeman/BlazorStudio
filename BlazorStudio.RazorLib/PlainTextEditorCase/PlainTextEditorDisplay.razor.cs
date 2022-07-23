@@ -127,17 +127,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         if (plainTextEditor is null)
             return;
 
-        var virtualizeRenderBlockWidth = plainTextEditor.LongestRowCharacterLength * _widthOfEachCharacterInPixels;
-        var virtualizeRenderBlockHeight = Math.Ceiling(plainTextEditor.List.Count * _heightOfEachRowInPixels);
-
-        _virtualizeCoordinateSystem.SetData(
-            new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
-                plainTextEditor.VirtualizeCoordinateSystemResult,
-                    plainTextEditor.List
-                        .Select((row, index) => (index, row)),
-                    virtualizeRenderBlockWidth,
-                    virtualizeRenderBlockHeight
-            ));
+        _virtualizeCoordinateSystem.SetData(plainTextEditor.VirtualizeCoordinateSystemMessage);
     }
 
     private async Task OnAfterFirstRenderCallbackFunc()
@@ -145,15 +135,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeScrollIntoView",
             ActiveRowPositionMarkerId,
             PlainTextEditorKey.Guid);
-
-        //OnRequestCallbackAction(new VirtualizeCoordinateSystemRequest(
-        //    0,
-        //    0,
-        //    0,
-        //    0,
-        //    0,
-        //    0,
-        //    CancellationToken.None));
     }
 
     private async Task OnKeyDown(KeyboardEventArgs e)
@@ -205,10 +186,15 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         return $"font-size: {PlainTextEditorSelector.Value?.RichTextEditorOptions.FontSizeInPixels ?? 0}px;";
     }
 
-    private void OnRequestCallbackAction(VirtualizeCoordinateSystemRequest virtualizeCoordinateSystemRequest)
+    private void OnRequestCallbackAction(VirtualizeCoordinateSystemMessage virtualizeCoordinateSystemMessage)
     {
         Dispatcher.Dispatch(new MemoryMappedFileReadRequestAction(PlainTextEditorKey,
-            virtualizeCoordinateSystemRequest));
+            virtualizeCoordinateSystemMessage));
+    }
+
+    private string NullSafeToString(string name, object? obj)
+    {
+        return $"{name}&nbsp;->&nbsp;{obj?.ToString() ?? "null"}";
     }
 
     protected override void Dispose(bool disposing)
