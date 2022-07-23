@@ -53,6 +53,11 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     /// </summary>
     [Parameter]
     public bool ShowDebugInfo { get; set; }
+    /// <summary>
+    /// Using this for debugging purposes temporarily
+    /// </summary>
+    [Parameter]
+    public int ForceRerender { get; set; }
 
     private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -171,7 +176,10 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             return string.Empty;
         }
 
-        return $"left: 0px; width: {request.ScrollLeft}px; height: {result.HeightOfResultInPixels}px;";
+        var height = Math.Max(result.HeightOfResultInPixels,
+            request.ViewportHeightInPixels);
+
+        return $"left: 0px; width: {request.ScrollLeftInPixels}px; height: {height}px;";
     }
     
     private string GetRightBoundaryCssString(VirtualizeCoordinateSystemRequest? request, VirtualizeCoordinateSystemResult<T>? result)
@@ -182,24 +190,19 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             return string.Empty;
         }
 
-        var leftInPixels = Math.Min(request.ScrollLeft 
-                           + result.WidthOfResultInPixels,
+        var contentWidth = Math.Max(result.WidthOfResultInPixels, 
+            request.ViewportWidthInPixels);
+        
+        var leftInPixels = Math.Min(request.ScrollLeftInPixels + contentWidth,
             result.TotalWidthInPixels);
 
-        var widthInPixels = request.ScrollWidth
-                            - leftInPixels;
+        var boundaryWidthInPixels = Math.Max(result.TotalWidthInPixels - leftInPixels,
+            0);
 
-        if (widthInPixels < 0)
-        {
-            widthInPixels = 0;
-        }
-        
-        if (widthInPixels > 0)
-        {
-            widthInPixels = request.ScrollWidth;
-        }
+        var height = Math.Max(result.HeightOfResultInPixels,
+            request.ViewportHeightInPixels);
 
-        return $"left: {leftInPixels}px;  top: {request.ScrollTop}px; width: {widthInPixels}px; height: {result.HeightOfResultInPixels}px;";
+        return $"left: {leftInPixels}px;  top: {request.ScrollTopInPixels}px; width: {boundaryWidthInPixels}px; height: {height}px;";
     }
 
     private string GetTopBoundaryCssString(VirtualizeCoordinateSystemRequest? request, VirtualizeCoordinateSystemResult<T>? result)
@@ -210,9 +213,14 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             return string.Empty;
         }
 
-        var heightInPixels = request.ScrollTop;
+        var boundaryHeightInPixels = request.ScrollTopInPixels;
 
-        return $"top: 0px; left: {request.ScrollLeft}px; width: {result.WidthOfResultInPixels}px; height: {heightInPixels}px";
+        var boundaryWidthInPixels = Math.Max(result.WidthOfResultInPixels,
+            request.ViewportWidthInPixels);
+
+        var leftInPixels = request.ScrollLeftInPixels;
+
+        return $"top: 0px; left: {leftInPixels}px; width: {boundaryWidthInPixels}px; height: {boundaryHeightInPixels}px";
     }
 
     private string GetBottomBoundaryCssString(VirtualizeCoordinateSystemRequest? request, VirtualizeCoordinateSystemResult<T>? result)
@@ -223,15 +231,26 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             return string.Empty;
         }
 
-        var topInPixels = Math.Min(request.ScrollTop +
-                                   result.HeightOfResultInPixels,
-            result.TotalHeightInPixels);
+        var contentHeight = Math.Max(result.HeightOfResultInPixels,
+            request.ViewportHeightInPixels);
 
-        var heightInPixels = Math.Max(request.ScrollHeight -
-                             topInPixels,
-            0);
+        var topInPixels = request.ScrollTopInPixels
+                                     + contentHeight;
 
-        return $"top: {topInPixels}px; left: {request.ScrollLeft}px; width: {result.WidthOfResultInPixels}px; height: {heightInPixels}px";
+        var boundaryHeightInPixels = result.TotalHeightInPixels
+                                     - topInPixels
+                                     - contentHeight;
+
+        var leftInPixels = request.ScrollLeftInPixels;
+
+        var contentWidth = Math.Max(result.WidthOfResultInPixels,
+            request.ViewportWidthInPixels);
+
+        var boundaryWidthInPixels = result.TotalWidthInPixels 
+                                    - leftInPixels 
+                                    - contentWidth;
+
+        return $"top: {topInPixels}px; left: {leftInPixels}px; width: {boundaryWidthInPixels}px; height: {boundaryHeightInPixels}px";
     }
     
     private string GetContentCssString(VirtualizeCoordinateSystemRequest? request, VirtualizeCoordinateSystemResult<T>? result)
@@ -242,7 +261,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             return string.Empty;
         }
 
-        return $"left: {request.ScrollLeft}px; top: {request.ScrollTop}px; min-width: 100%; min-height: 100%;";
+        return $"left: {request.ScrollLeftInPixels}px; top: {request.ScrollTopInPixels}px; min-width: 100%; min-height: 100%;";
     }
 
     public virtual void Dispose()

@@ -35,9 +35,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private SequenceKey? _previousSequenceKeyShouldRender;
 
-    private double _heightOfEachRowInPixels = 27;
-    private double _widthOfEachCharacterInPixels = 9.91;
-
     private Dimensions _dimensionsOfCoordinateSystemViewport = new()
     {
         DimensionsPositionKind = DimensionsPositionKind.Relative,

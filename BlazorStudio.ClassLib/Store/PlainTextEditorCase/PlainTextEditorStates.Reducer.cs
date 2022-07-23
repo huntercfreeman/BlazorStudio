@@ -82,7 +82,7 @@ public partial record PlainTextEditorStates
 
             var paddingInPixels = 250;
 
-            var scrollTopWithPadding = request.ScrollTop - paddingInPixels;
+            var scrollTopWithPadding = request.ScrollTopInPixels - paddingInPixels;
 
             scrollTopWithPadding = scrollTopWithPadding < 0
                 ? 0
@@ -91,16 +91,16 @@ public partial record PlainTextEditorStates
             var startingRowIndex = 
                 (int)(scrollTopWithPadding / heightOfEachRowInPixels);
 
-            var viewportHeightWithPadding = request.ViewportHeight
+            var viewportHeightWithPadding = request.ViewportHeightInPixels
                 + 250;
 
-            viewportHeightWithPadding = viewportHeightWithPadding > request.ScrollHeight
-                                        ? request.ScrollHeight
+            viewportHeightWithPadding = viewportHeightWithPadding > request.ScrollHeightInPixels
+                                        ? request.ScrollHeightInPixels
                                         : viewportHeightWithPadding;
 
             var requestRowCount = (int)(viewportHeightWithPadding / heightOfEachRowInPixels);
 
-            var scrollLeftWithPadding = request.ScrollLeft
+            var scrollLeftWithPadding = request.ScrollLeftInPixels
                 - 250;
 
             scrollLeftWithPadding = scrollLeftWithPadding < 0
@@ -109,10 +109,10 @@ public partial record PlainTextEditorStates
 
             var startingCharacterIndex = (int)(scrollLeftWithPadding / widthOfEachCharacterInPixels);
 
-            var viewportWidthWithPadding = request.ViewportWidth + 250;
+            var viewportWidthWithPadding = request.ViewportWidthInPixels + 250;
 
-            viewportWidthWithPadding = viewportWidthWithPadding > request.ScrollWidth
-                ? request.ScrollWidth
+            viewportWidthWithPadding = viewportWidthWithPadding > request.ScrollWidthInPixels
+                ? request.ScrollWidthInPixels
                 : viewportWidthWithPadding;
 
             var requestCharacterCount = (int)(viewportWidthWithPadding / widthOfEachCharacterInPixels);

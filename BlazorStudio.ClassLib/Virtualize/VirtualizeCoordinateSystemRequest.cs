@@ -1,9 +1,10 @@
 ﻿namespace BlazorStudio.ClassLib.Virtualize;
 
-public record VirtualizeCoordinateSystemRequest(double ScrollLeft,
-    double ScrollTop,
-    double ScrollWidth,
-    double ScrollHeight,
-    double ViewportWidth,
-    double ViewportHeight,
+public record VirtualizeCoordinateSystemRequest(
+    double ScrollLeftInPixels,
+    double ScrollTopInPixels,
+    double ScrollWidthInPixels,
+    double ScrollHeightInPixels,
+    double ViewportWidthInPixels,
+    double ViewportHeightInPixels,
     CancellationToken CancellationToken);

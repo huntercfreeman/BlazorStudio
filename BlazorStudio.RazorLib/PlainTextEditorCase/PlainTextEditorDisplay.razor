@@ -52,23 +52,23 @@ else
                 </div>
                 
                 <div>
-                    @NullSafeToMarkupString(nameof(request.ScrollLeft), request?.ScrollLeft)
+                    @NullSafeToMarkupString(nameof(request.ScrollLeftInPixels), request?.ScrollLeftInPixels)
                 </div>
                 <div>
-                    @NullSafeToMarkupString(nameof(request.ScrollTop), request?.ScrollTop)
+                    @NullSafeToMarkupString(nameof(request.ScrollTopInPixels), request?.ScrollTopInPixels)
                 </div>
                 <div>
-                    @NullSafeToMarkupString(nameof(request.ScrollWidth), request?.ScrollWidth)
+                    @NullSafeToMarkupString(nameof(request.ScrollWidthInPixels), request?.ScrollWidthInPixels)
                 </div>
                 <div>
-                    @NullSafeToMarkupString(nameof(request.ScrollHeight), request?.ScrollHeight)
+                    @NullSafeToMarkupString(nameof(request.ScrollHeightInPixels), request?.ScrollHeightInPixels)
                 </div>
                 
                 <div>
-                    @NullSafeToMarkupString(nameof(request.ViewportWidth), request?.ViewportWidth)
+                    @NullSafeToMarkupString(nameof(request.ViewportWidthInPixels), request?.ViewportWidthInPixels)
                 </div>
                 <div>
-                    @NullSafeToMarkupString(nameof(request.ViewportHeight), request?.ViewportHeight)
+                    @NullSafeToMarkupString(nameof(request.ViewportHeightInPixels), request?.ViewportHeightInPixels)
                 </div>
                 <div>
                     @NullSafeToMarkupString(nameof(result.WidthOfResultInPixels), result?.WidthOfResultInPixels)
@@ -113,7 +113,8 @@ else
                                                                                                            DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
                                                                                                            RequestCallbackAction="OnRequestCallbackAction"
                                                                                                            PaddingInPixels="250"
-                                                                                                           OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
+                                                                                                           OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc"
+                                                                                                           ForceRerender="_forceRerender++">
                                                     <ItemRenderFragment Context="rowTuple">
                                                         <CascadingValue Name="RowIndex" Value="rowTuple.Index">
                                                             <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
