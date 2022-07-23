@@ -199,8 +199,8 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         var contentWidth = Math.Max(result.WidthOfResultInPixels, 
             request.ViewportWidthInPixels);
         
-        var leftInPixels = Math.Min(request.ScrollLeftInPixels + contentWidth,
-            result.TotalWidthInPixels);
+        var leftInPixels = Math.Max(request.ScrollLeftInPixels + contentWidth,
+            request.ViewportWidthInPixels);
 
         var boundaryWidthInPixels = Math.Max(result.TotalWidthInPixels - leftInPixels,
             0);
