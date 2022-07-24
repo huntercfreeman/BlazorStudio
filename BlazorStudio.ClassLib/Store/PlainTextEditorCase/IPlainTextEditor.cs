@@ -18,6 +18,7 @@ public interface IPlainTextEditor
     public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get; }
     public FileCoordinateGridRequest FileCoordinateGridRequest { get; }
     public int RowIndexOffset { get; }
+    public bool IsReadonly { get; }
 
     public string GetPlainText();
 }

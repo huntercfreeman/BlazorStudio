@@ -15,6 +15,7 @@ public partial record PlainTextEditorStates
             int CurrentTokenIndex,
             IFileCoordinateGrid? FileCoordinateGrid,
             RichTextEditorOptions RichTextEditorOptions,
+            bool IsReadonly = true,
             bool UseCarriageReturnNewLine = false)
         : IPlainTextEditor
     {

@@ -392,6 +392,30 @@ public partial record PlainTextEditorStates
 
             return new PlainTextEditorStates(nextPlainTextEditorMap.ToImmutableDictionary(), nextPlainTextEditorList.ToImmutableArray());
         }
+        
+        [ReducerMethod]
+        public static PlainTextEditorStates ReduceSetIsReadonlyAction(PlainTextEditorStates previousPlainTextEditorStates,
+            SetIsReadonlyAction setIsReadonlyAction)
+        {
+            var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
+            var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
+
+            var plainTextEditor = previousPlainTextEditorStates.Map[setIsReadonlyAction.PlainTextEditorKey]
+                as PlainTextEditorRecord;
+
+            if (plainTextEditor is null)
+                return previousPlainTextEditorStates;
+
+            var replacementPlainTextEditor = plainTextEditor with
+            {
+                SequenceKey = SequenceKey.NewSequenceKey(),
+                IsReadonly = setIsReadonlyAction.IsReadonly
+            };
+
+            nextPlainTextEditorMap[setIsReadonlyAction.PlainTextEditorKey] = replacementPlainTextEditor;
+
+            return new PlainTextEditorStates(nextPlainTextEditorMap.ToImmutableDictionary(), nextPlainTextEditorList.ToImmutableArray());
+        }
     }
 }
 

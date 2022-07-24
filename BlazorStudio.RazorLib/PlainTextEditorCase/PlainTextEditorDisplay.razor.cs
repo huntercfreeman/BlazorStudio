@@ -211,6 +211,13 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         return (MarkupString) (name + "&nbsp;->&nbsp;" + obj?.ToString() ?? "null");
     }
 
+    private void IsReadonlyCheckboxOnChange(ChangeEventArgs e)
+    {
+        var plainTextEditorKey = PlainTextEditorSelector.Value.PlainTextEditorKey;
+
+        Dispatcher.Dispatch(new SetIsReadonlyAction(plainTextEditorKey, (bool) (e.Value ?? true)));
+    }
+
     protected override void Dispose(bool disposing)
     {
         PlainTextEditorSelector.SelectedValueChanged -= PlainTextEditorSelectorOnSelectedValueChanged;
