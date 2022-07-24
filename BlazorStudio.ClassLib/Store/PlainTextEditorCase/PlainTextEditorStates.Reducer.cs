@@ -261,8 +261,15 @@ public partial record PlainTextEditorStates
             var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
             var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
+            var plainTextEditor = previousPlainTextEditorStates
+                    .Map[deconstructPlainTextEditorRecordAction.PlainTextEditorKey]
+                as PlainTextEditorRecord;
+
             nextPlainTextEditorMap.Remove(deconstructPlainTextEditorRecordAction.PlainTextEditorKey);
             nextPlainTextEditorList.Remove(deconstructPlainTextEditorRecordAction.PlainTextEditorKey);
+
+            if (plainTextEditor?.FileCoordinateGrid is not null)
+                plainTextEditor.FileCoordinateGrid.Dispose();
 
             return new PlainTextEditorStates(nextPlainTextEditorMap.ToImmutableDictionary(), nextPlainTextEditorList.ToImmutableArray());
         }

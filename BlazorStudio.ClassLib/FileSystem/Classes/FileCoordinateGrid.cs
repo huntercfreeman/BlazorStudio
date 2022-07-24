@@ -245,7 +245,10 @@ public static class FileCoordinateGridFactory
 
         public void Dispose()
         {
-            _memoryMappedFile.Dispose();
+            if (_memoryMappedFile is not null)
+            {
+                _memoryMappedFile.Dispose();
+            }
         }
     }
 }

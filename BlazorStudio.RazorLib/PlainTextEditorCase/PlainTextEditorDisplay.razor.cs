@@ -26,6 +26,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     [Parameter, EditorRequired]
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public bool AutomateDispose { get; set; } = true;
 
     private bool _isFocused;
     private ElementReference _plainTextEditor;
@@ -216,7 +218,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         _ = Task.Run(() => JsRuntime.InvokeVoidAsync("plainTextEditor.disposeScrollIntoView",
             ActiveRowPositionMarkerId));
 
-        Dispatcher.Dispatch(new DeconstructPlainTextEditorRecordAction(PlainTextEditorKey));
+        if (AutomateDispose)
+            Dispatcher.Dispatch(new DeconstructPlainTextEditorRecordAction(PlainTextEditorKey));
 
         base.Dispose(disposing);
     }
