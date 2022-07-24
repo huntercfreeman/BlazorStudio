@@ -205,6 +205,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         _ = Task.Run(() => JsRuntime.InvokeVoidAsync("plainTextEditor.disposeScrollIntoView",
             ActiveRowPositionMarkerId));
 
+        Dispatcher.Dispatch(new DeconstructPlainTextEditorRecordAction(PlainTextEditorKey));
+
         base.Dispose(disposing);
     }
 }

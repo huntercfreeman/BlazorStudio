@@ -5,6 +5,7 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
+using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TaskModelManager;
@@ -140,7 +141,14 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
     private void WorkspaceExplorerTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath)
     {
         if (!absoluteFilePath.IsDirectory)
-            Dispatcher.Dispatch(new SetOpenedAbsoluteFilePathAction(absoluteFilePath));
+        {
+            var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+            Dispatcher.Dispatch(
+                new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
+                    absoluteFilePath)
+            );
+        }
     }
 
     private void WorkspaceExplorerTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath)

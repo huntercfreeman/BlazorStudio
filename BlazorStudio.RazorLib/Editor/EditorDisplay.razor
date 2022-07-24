@@ -5,14 +5,19 @@
     
     <h5 class="bstudio_h5-title">Editor Display</h5>
     
-    @if (EditorStateWrap.Value.OpenedAbsoluteFilePath is null)
-    {
-        <div>OpenedAbsoluteFilePath is null</div>
-    }
-    else
-    {
-        <div style="white-space: nowrap; overflow-x: auto; height: 3rem;">@EditorStateWrap.Value.OpenedAbsoluteFilePath.GetAbsoluteFilePathString()</div>
-        
-        <BlazorStudio.RazorLib.PlainTextEditorCase.PlainTextEditorDisplay PlainTextEditorKey="_plainTextEditorKey" />
+    @{
+        var plainTextEditorStates = PlainTextEditorStatesWrap.Value;
+
+        if (plainTextEditorStates.Map.Any())
+        {
+            foreach (var plainTextEditorKey in PlainTextEditorStatesWrap.Value.Map.Keys)
+            {
+                <BlazorStudio.RazorLib.PlainTextEditorCase.PlainTextEditorDisplay PlainTextEditorKey="plainTextEditorKey" />
+            }
+        }
+        else
+        {
+            <div>No opened files</div>
+        }
     }
 </div>

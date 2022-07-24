@@ -32,6 +32,13 @@ public partial record PlainTextEditorStates
         public PlainTextEditorStates ReduceConstructMemoryMappedFilePlainTextEditorRecordAction(PlainTextEditorStates previousPlainTextEditorStates,
             ConstructMemoryMappedFilePlainTextEditorRecordAction constructMemoryMappedFilePlainTextEditorRecordAction)
         {
+            var anEditorIsAlreadyOpenedForTheFile = previousPlainTextEditorStates.Map.Any(x =>
+                (x.Value.FileCoordinateGrid?.AbsoluteFilePath.GetAbsoluteFilePathString() ?? string.Empty) == 
+                    constructMemoryMappedFilePlainTextEditorRecordAction.AbsoluteFilePath.GetAbsoluteFilePathString());
+
+            if (anEditorIsAlreadyOpenedForTheFile)
+                return previousPlainTextEditorStates;
+
             var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
             var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
