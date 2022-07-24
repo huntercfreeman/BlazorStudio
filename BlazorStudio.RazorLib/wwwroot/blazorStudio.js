@@ -131,4 +131,12 @@
             }
         };
     },
+    setScrollPosition: function (scrollLeft, scrollTop, elementId) {
+        let element = document.getElementById(elementId);
+
+        element.scrollLeft = scrollLeft;
+        element.scrollTop = scrollTop;
+
+        return;
+    },
 };

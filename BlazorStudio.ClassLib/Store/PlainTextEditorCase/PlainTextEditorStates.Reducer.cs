@@ -33,7 +33,7 @@ public partial record PlainTextEditorStates
             ConstructMemoryMappedFilePlainTextEditorRecordAction constructMemoryMappedFilePlainTextEditorRecordAction)
         {
             var anEditorIsAlreadyOpenedForTheFile = previousPlainTextEditorStates.Map.Any(x =>
-                (x.Value.FileCoordinateGrid?.AbsoluteFilePath.GetAbsoluteFilePathString() ?? string.Empty) == 
+                (x.Value.FileCoordinateGrid?.AbsoluteFilePath.GetAbsoluteFilePathString() ?? string.Empty) ==
                     constructMemoryMappedFilePlainTextEditorRecordAction.AbsoluteFilePath.GetAbsoluteFilePathString());
 
             if (anEditorIsAlreadyOpenedForTheFile)
@@ -47,9 +47,9 @@ public partial record PlainTextEditorStates
 
             var plainTextEditor = new
                 PlainTextEditorRecord(constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey)
-                {
-                    FileCoordinateGrid = fileCoordinateGrid
-                };
+            {
+                FileCoordinateGrid = fileCoordinateGrid
+            };
 
             nextPlainTextEditorMap[constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey] = plainTextEditor;
             nextPlainTextEditorList.Add(constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey);
@@ -59,7 +59,7 @@ public partial record PlainTextEditorStates
 
             return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
         }
-        
+
         [ReducerMethod]
         public PlainTextEditorStates ReduceMemoryMappedFileReadRequestAction(PlainTextEditorStates previousPlainTextEditorStates,
             MemoryMappedFileReadRequestAction memoryMappedFileReadRequestAction)
@@ -67,7 +67,7 @@ public partial record PlainTextEditorStates
             var request = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemMessage
                 .VirtualizeCoordinateSystemRequest;
 
-            if (request is null || 
+            if (request is null ||
                 request.CancellationToken.IsCancellationRequested)
             {
                 return previousPlainTextEditorStates;
@@ -79,7 +79,7 @@ public partial record PlainTextEditorStates
             var plainTextEditor = previousPlainTextEditorStates
                     .Map[memoryMappedFileReadRequestAction.PlainTextEditorKey]
                 as PlainTextEditorRecord;
-            
+
             if (plainTextEditor?.FileCoordinateGrid is null)
                 return previousPlainTextEditorStates;
 
@@ -87,84 +87,23 @@ public partial record PlainTextEditorStates
             var heightOfEachRowInPixels = 27;
             var widthOfEachCharacterInPixels = 9.91;
 
-            var startingRowIndex = 
+            var startingRowIndex =
                 (int)(request.ScrollTopInPixels / heightOfEachRowInPixels);
-            
+
             var requestRowCount = (int)(request.ViewportHeightInPixels / heightOfEachRowInPixels);
 
             var startingCharacterIndex = (int)(request.ScrollLeftInPixels / widthOfEachCharacterInPixels);
-            
+
             var requestCharacterCount = (int)(request.ViewportWidthInPixels / widthOfEachCharacterInPixels);
 
-            var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex, 
+            var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex,
                 requestRowCount,
                 startingCharacterIndex,
                 requestCharacterCount,
                 request.CancellationToken);
 
-            List<(int RowIndex, int CharacterIndex)> requestCoordinates = 
-                GetFileCoordinates(fileCoordinateGridRequest);
-
-            var uncachedData = requestCoordinates;
-
-            var hasSeenCachedData = false;
-
-            foreach (var chunk in plainTextEditor.Cache)
-            {
-                List<(int StartingRowIndex, int CharacterIndex)> chunkCoordinates = 
-                    GetFileCoordinates(chunk.FileCoordinateGridRequest);
-
-                var chunkContainedCachedData = false;
-
-                uncachedData = uncachedData
-                    .Where(x =>
-                    {
-                        var isContained = chunkCoordinates.Contains(x);
-
-                        if (isContained)
-                        {
-                            hasSeenCachedData = true;
-                            chunkContainedCachedData = true;
-                        }
-                        
-                        return !isContained;
-                    })
-                    .ToList();
-
-                // Short circuit searching through cache as
-                // the cache is sorted.
-                if (hasSeenCachedData && !chunkContainedCachedData)
-                {
-                    break;
-                }
-            }
-
-            var uncachedStartingRowIndex = uncachedData
-                .Min(tuple => tuple.RowIndex);
-            
-            var uncachedRowCount = uncachedData.Max(tuple => tuple.RowIndex) -
-                                   uncachedStartingRowIndex +
-                                   1;
-
-            var uncachedStartingCharacterIndex = uncachedData
-                .Min(tuple => tuple.CharacterIndex);
-
-            var uncachedStartingCharacterCount = uncachedData.Max(tuple => tuple.CharacterIndex) - 
-                                                 uncachedStartingCharacterIndex + 
-                                                 1;
-
-            fileCoordinateGridRequest = new FileCoordinateGridRequest(
-                uncachedStartingRowIndex,
-                uncachedRowCount,
-                uncachedStartingCharacterIndex,
-                uncachedStartingCharacterCount,
-                request.CancellationToken);
-
             var contentOfRows = plainTextEditor.FileCoordinateGrid
                 .Request(fileCoordinateGridRequest);
-
-            if (contentOfRows.All(x => x.Length == 0))
-                return previousPlainTextEditorStates;
 
             var allEnterKeysAreCarriageReturnNewLine = true;
             var seenEnterKey = false;
@@ -234,9 +173,9 @@ public partial record PlainTextEditorStates
 
                     replacementPlainTextEditor = PlainTextEditorStates.StateMachine
                             .HandleKeyDownEvent(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
-                        {
-                            SequenceKey = SequenceKey.NewSequenceKey()
-                        };
+                    {
+                        SequenceKey = SequenceKey.NewSequenceKey()
+                    };
 
                     previousCharacterWasCarriageReturn = false;
                 }
@@ -252,10 +191,10 @@ public partial record PlainTextEditorStates
 
                     replacementPlainTextEditor = PlainTextEditorStates.StateMachine
                         .HandleKeyDownEvent(replacementPlainTextEditor, forceNewLine) with
-                        {
-                            SequenceKey = SequenceKey.NewSequenceKey(),
-                            
-                        };
+                    {
+                        SequenceKey = SequenceKey.NewSequenceKey(),
+
+                    };
                 }
             }
 
@@ -280,13 +219,13 @@ public partial record PlainTextEditorStates
 
             var totalWidth = widthOfEachCharacterInPixels *
                                       replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow;
-            
-            var totalHeight = heightOfEachRowInPixels * 
+
+            var totalHeight = heightOfEachRowInPixels *
                                        replacementPlainTextEditor.FileCoordinateGrid.RowCount;
 
             var result = new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
                 items,
-                items.Select(x => (object) x),
+                items.Select(x => (object)x),
                 actualWidthOfResult,
                 actualHeightOfResult,
                 totalWidth,
@@ -302,10 +241,7 @@ public partial record PlainTextEditorStates
                 LongestRowCharacterLength = longestRowCharacterLength,
                 RowIndexOffset = startingRowIndex,
                 VirtualizeCoordinateSystemMessage = message,
-                FileCoordinateGridRequest = fileCoordinateGridRequest
             };
-
-            replacementPlainTextEditor.Cache.Add(new PlainTextEditorRecordChunk(replacementPlainTextEditor));
 
             nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = replacementPlainTextEditor;
 
@@ -316,31 +252,6 @@ public partial record PlainTextEditorStates
                 return previousPlainTextEditorStates;
 
             return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
-        }
-
-        private List<(int RowIndex, int CharacterIndex)> GetFileCoordinates(FileCoordinateGridRequest fileCoordinateGridRequest)
-        {
-            List<(int StartingRowIndex, int CharacterIndex)> coordinates = new();
-
-            var exclusiveEndingRowIndex = fileCoordinateGridRequest.StartingRowIndex +
-                                          fileCoordinateGridRequest.RowCount;
-
-            for (int rowIndex = fileCoordinateGridRequest.StartingRowIndex;
-                 rowIndex < exclusiveEndingRowIndex;
-                 rowIndex++)
-            {
-                var exclusiveEndingCharacterIndex = fileCoordinateGridRequest.StartingCharacterIndex +
-                                                    fileCoordinateGridRequest.CharacterCount;
-
-                for (int characterIndex = fileCoordinateGridRequest.StartingCharacterIndex;
-                     characterIndex < exclusiveEndingCharacterIndex;
-                     characterIndex++)
-                {
-                    coordinates.Add((rowIndex, characterIndex));
-                }
-            }
-
-            return coordinates;
         }
 
         [ReducerMethod]
@@ -364,7 +275,7 @@ public partial record PlainTextEditorStates
         }
 
         [ReducerMethod]
-        public PlainTextEditorStates ReduceKeyDownEventAction(PlainTextEditorStates previousPlainTextEditorStates, 
+        public PlainTextEditorStates ReduceKeyDownEventAction(PlainTextEditorStates previousPlainTextEditorStates,
             KeyDownEventAction keyDownEventAction)
         {
             var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
@@ -425,7 +336,7 @@ public partial record PlainTextEditorStates
 
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
             var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
-         
+
             return new PlainTextEditorStates(nextImmutableMap,
                 nextImmutableArray);
         }

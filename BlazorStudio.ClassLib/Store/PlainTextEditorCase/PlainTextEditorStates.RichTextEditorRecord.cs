@@ -8,21 +8,6 @@ namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
 public partial record PlainTextEditorStates
 {
-    private record PlainTextEditorRecordChunk(VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage,
-        FileCoordinateGridRequest FileCoordinateGridRequest,
-        ImmutableList<IPlainTextEditorRow> List,
-        bool UseCarriageReturnNewLine = false)
-    {
-        public PlainTextEditorRecordChunk(PlainTextEditorRecord PlainTextEditorRecord) 
-            : this(PlainTextEditorRecord.VirtualizeCoordinateSystemMessage,
-                PlainTextEditorRecord.FileCoordinateGridRequest,
-                PlainTextEditorRecord.List,
-                PlainTextEditorRecord.UseCarriageReturnNewLine)
-        {
-
-        }
-    }
-
     private record PlainTextEditorRecord(PlainTextEditorKey PlainTextEditorKey,
             SequenceKey SequenceKey,
             ImmutableList<IPlainTextEditorRow> List,
@@ -30,7 +15,6 @@ public partial record PlainTextEditorStates
             int CurrentTokenIndex,
             IFileCoordinateGrid? FileCoordinateGrid,
             RichTextEditorOptions RichTextEditorOptions,
-            List<PlainTextEditorRecordChunk> Cache,
             bool UseCarriageReturnNewLine = false)
         : IPlainTextEditor
     {
@@ -40,8 +24,7 @@ public partial record PlainTextEditorStates
             CurrentRowIndex: 0,
             CurrentTokenIndex: 0,
             null,
-            new RichTextEditorOptions(),
-            new List<PlainTextEditorRecordChunk>())
+            new RichTextEditorOptions())
         {
             List = List.Add(GetEmptyPlainTextEditorRow());
         }

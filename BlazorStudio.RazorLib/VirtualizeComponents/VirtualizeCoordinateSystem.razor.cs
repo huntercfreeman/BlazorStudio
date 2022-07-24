@@ -270,7 +270,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             ComponentId,
             _dotNetObjectReference);
     }
-
+    
     public async Task ResetStateAsync()
     {
         await JsRuntime.InvokeVoidAsync("blazorStudio.getDimensions",
