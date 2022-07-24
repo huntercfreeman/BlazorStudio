@@ -18,6 +18,8 @@ public partial class EditorTabDisplay : ComponentBase
     /// </summary>
     [Parameter, EditorRequired]
     public Action<int> SetActiveTabIndexOnClick { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Action<PlainTextEditorKey> DisposePlainTextEditorOnClick { get; set; } = null!;
 
     private string IsActiveCssClass => ActiveTabIndex == TabIndex
         ? "bstudio_active"
@@ -26,5 +28,10 @@ public partial class EditorTabDisplay : ComponentBase
     private void FireSetActiveTabIndexOnClick()
     {
         SetActiveTabIndexOnClick.Invoke(TabIndex);
+    }
+    
+    private void FireDisposePlainTextEditorOnClick()
+    {
+        DisposePlainTextEditorOnClick.Invoke(PlainTextEditor.PlainTextEditorKey);
     }
 }

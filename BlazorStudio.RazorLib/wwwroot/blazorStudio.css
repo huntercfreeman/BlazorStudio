@@ -330,6 +330,20 @@
         box-shadow: var(--bstudio_primary-overlay-box-shadow);
     }
 
+.bstudio_editor-tab-close-display {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
+    margin-left: 5px;
+    background-color: var(--bstudio_secondary-background-color);
+}
+
+    .bstudio_editor-tab-close-display:hover {
+        background-color: var(--bstudio_tertiary-hover-background-color);
+        color: var(--bstudio_tertiary-hover-font-color);
+    }
+
 .bstudio_workspace-explorer {
     height: calc(100% - 2rem);
     padding: 5px;

@@ -4,4 +4,14 @@
     {
         <text>@PlainTextEditor.FileCoordinateGrid.AbsoluteFilePath.FilenameWithExtension</text>
     }
+    else
+    {
+        <text>InMemory.unsaved</text>
+    }
+    
+    <div class="bstudio_editor-tab-close-display"
+         @onclick:stopPropagation="true"
+         @onclick="FireDisposePlainTextEditorOnClick">
+        <IconClose />
+    </div>
 </div>

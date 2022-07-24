@@ -24,4 +24,9 @@ public partial class EditorDisplay : FluxorComponent
     {
         Dispatcher.Dispatch(new SetActiveTabIndexAction(tabIndex));
     }
+    
+    private void DisposePlainTextEditorOnClick(PlainTextEditorKey plainTextEditorKey)
+    {
+        Dispatcher.Dispatch(new DeconstructPlainTextEditorRecordAction(plainTextEditorKey));
+    }
 }
