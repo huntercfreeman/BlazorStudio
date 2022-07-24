@@ -33,6 +33,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)> _virtualizeCoordinateSystem = null!;
 
     private SequenceKey? _previousSequenceKeyShouldRender;
+    private PlainTextEditorKey? _previousPlainTextEditorKey;
 
     private Dimensions _dimensionsOfCoordinateSystemViewport = new()
     {
@@ -99,20 +100,30 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     /// many redundant StateHasChanged calls.
     /// 
     /// Fluxor IStateSelection correctly does not render in certain conditions but
-    /// the EventCallback implicitely calling StateHasChanged results in ShouldRender being necessary
+    /// the EventCallback implicitly calling StateHasChanged results in ShouldRender being necessary
     /// </summary>
     /// <returns></returns>
     protected override bool ShouldRender()
     {
-        if (PlainTextEditorSelector.Value is null)
+        var plainTextEditor = PlainTextEditorSelector.Value;
+
+        if (plainTextEditor is null)
             return true;
 
         var shouldRender = false;
 
-        if (PlainTextEditorSelector.Value.SequenceKey != _previousSequenceKeyShouldRender)
+        if (plainTextEditor.SequenceKey != _previousSequenceKeyShouldRender)
             shouldRender = true;
 
-        _previousSequenceKeyShouldRender = PlainTextEditorSelector.Value.SequenceKey;
+        _previousSequenceKeyShouldRender = plainTextEditor.SequenceKey;
+
+        if (plainTextEditor.PlainTextEditorKey != _previousPlainTextEditorKey)
+        {
+            // Parameter changed and the VirtualizeCoordinateSystem must reset
+            _virtualizeCoordinateSystem.ResetState();
+        }
+
+        _previousPlainTextEditorKey = plainTextEditor.PlainTextEditorKey;
 
         return shouldRender;
     }

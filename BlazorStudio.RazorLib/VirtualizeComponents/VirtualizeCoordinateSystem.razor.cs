@@ -100,12 +100,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
                     _bottomElementId,
                 });
 
-            await JsRuntime.InvokeVoidAsync("blazorStudio.getDimensions",
-                ComponentId,
-                _dotNetObjectReference);
-
-            if (OnAfterFirstRenderCallbackFunc is not null)
-                await OnAfterFirstRenderCallbackFunc.Invoke();
+            await ResetStateAsync();
         }
         
         await base.OnAfterRenderAsync(firstRender);
@@ -267,6 +262,23 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
         }
 
         return $"left: {request.ScrollLeftInPixels}px; top: {request.ScrollTopInPixels}px; min-width: 100%; min-height: 100%;";
+    }
+
+    public void ResetState()
+    {
+        JsRuntime.InvokeVoidAsync("blazorStudio.getDimensions",
+            ComponentId,
+            _dotNetObjectReference);
+    }
+
+    public async Task ResetStateAsync()
+    {
+        await JsRuntime.InvokeVoidAsync("blazorStudio.getDimensions",
+            ComponentId,
+            _dotNetObjectReference);
+
+        if (OnAfterFirstRenderCallbackFunc is not null)
+            await OnAfterFirstRenderCallbackFunc.Invoke();
     }
 
     public virtual void Dispose()
