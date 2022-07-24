@@ -80,7 +80,23 @@ public partial record PlainTextEditorStates
                     .Map[memoryMappedFileReadRequestAction.PlainTextEditorKey]
                 as PlainTextEditorRecord;
 
-            if (plainTextEditor?.FileCoordinateGrid is null)
+            if (plainTextEditor is null)
+                return previousPlainTextEditorStates;
+
+            foreach (var chunk in plainTextEditor.Cache)
+            {
+                if (chunk.FileCoordinateGridRequest.StartingRowIndex)
+                {
+
+                }
+            }
+
+            if (plainTextEditor.Cache.Select(x => x.).Contains())
+            {
+
+            }
+
+            if (plainTextEditor.FileCoordinateGrid is null)
                 return previousPlainTextEditorStates;
 
             // TODO: The font-size style attribute does not equal the size of the div that encapsulates the singular character. Figure out EXACTLY these values based off the font-size instead of hard coding what developer tools says
@@ -241,7 +257,10 @@ public partial record PlainTextEditorStates
                 LongestRowCharacterLength = longestRowCharacterLength,
                 RowIndexOffset = startingRowIndex,
                 VirtualizeCoordinateSystemMessage = message,
+                FileCoordinateGridRequest = fileCoordinateGridRequest
             };
+
+            replacementPlainTextEditor.Cache.Add(new PlainTextEditorRecordChunk(replacementPlainTextEditor));
 
             nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = replacementPlainTextEditor;
 

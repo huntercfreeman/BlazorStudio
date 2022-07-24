@@ -8,6 +8,21 @@ namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
 public partial record PlainTextEditorStates
 {
+    private record PlainTextEditorRecordChunk(VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage,
+        FileCoordinateGridRequest FileCoordinateGridRequest,
+        ImmutableList<IPlainTextEditorRow> List,
+        bool UseCarriageReturnNewLine = false)
+    {
+        public PlainTextEditorRecordChunk(PlainTextEditorRecord PlainTextEditorRecord) 
+            : this(PlainTextEditorRecord.VirtualizeCoordinateSystemMessage,
+                PlainTextEditorRecord.FileCoordinateGridRequest,
+                PlainTextEditorRecord.List,
+                PlainTextEditorRecord.UseCarriageReturnNewLine)
+        {
+
+        }
+    }
+
     private record PlainTextEditorRecord(PlainTextEditorKey PlainTextEditorKey,
             SequenceKey SequenceKey,
             ImmutableList<IPlainTextEditorRow> List,
@@ -15,6 +30,7 @@ public partial record PlainTextEditorStates
             int CurrentTokenIndex,
             IFileCoordinateGrid? FileCoordinateGrid,
             RichTextEditorOptions RichTextEditorOptions,
+            List<PlainTextEditorRecordChunk> Cache,
             bool UseCarriageReturnNewLine = false)
         : IPlainTextEditor
     {
@@ -24,7 +40,8 @@ public partial record PlainTextEditorStates
             CurrentRowIndex: 0,
             CurrentTokenIndex: 0,
             null,
-            new RichTextEditorOptions())
+            new RichTextEditorOptions(),
+            new List<PlainTextEditorRecordChunk>())
         {
             List = List.Add(GetEmptyPlainTextEditorRow());
         }
@@ -35,6 +52,7 @@ public partial record PlainTextEditorStates
         public ITextToken CurrentTextToken => CurrentPlainTextEditorRow.List[CurrentTokenIndex];
         public int LongestRowCharacterLength { get; init; }
         public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get; init; }
+        public FileCoordinateGridRequest FileCoordinateGridRequest { get; init; }
         public int RowIndexOffset { get; init; }
 
         public T GetCurrentTextTokenAs<T>()
