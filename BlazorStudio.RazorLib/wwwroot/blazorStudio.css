@@ -306,6 +306,30 @@
     flex-direction: column;
 }
 
+.bstudio_editor-tabs-listing {
+    display: flex;
+}
+
+.bstudio_editor-tab-display {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
+    margin: 2px;
+    background-color: var(--bstudio_secondary-background-color);
+}
+
+    .bstudio_editor-tab-display:hover {
+        background-color: var(--bstudio_primary-hover-background-color);
+        color: var(--bstudio_primary-hover-font-color);
+    }
+
+    .bstudio_editor-tab-display.bstudio_active {
+        color: var(--bstudio_primary-active-font-color);
+        background-color: var(--bstudio_primary-active-background-color);
+        box-shadow: var(--bstudio_primary-overlay-box-shadow);
+    }
+
 .bstudio_workspace-explorer {
     height: calc(100% - 2rem);
     padding: 5px;

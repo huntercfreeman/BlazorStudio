@@ -2,4 +2,4 @@
 
 namespace BlazorStudio.ClassLib.Store.EditorCase;
 
-public record SetOpenedAbsoluteFilePathAction(IAbsoluteFilePath? AbsoluteFilePath);
+public record SetActiveTabIndexAction(int TabIndex);

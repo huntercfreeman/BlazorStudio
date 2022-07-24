@@ -4,9 +4,9 @@ using Fluxor;
 namespace BlazorStudio.ClassLib.Store.EditorCase;
 
 [FeatureState]
-public record EditorState(IAbsoluteFilePath? OpenedAbsoluteFilePath)
+public record EditorState(int TabIndex)
 {
-    public EditorState() : this(default(IAbsoluteFilePath?))
+    public EditorState() : this(0)
     {
 
     }

@@ -19,4 +19,9 @@ public partial class EditorDisplay : FluxorComponent
 
     [Parameter, EditorRequired]
     public ClassLib.UserInterface.Dimensions Dimensions { get; set; } = null!;
+
+    private void SetActiveTabIndexOnClick(int tabIndex)
+    {
+        Dispatcher.Dispatch(new SetActiveTabIndexAction(tabIndex));
+    }
 }

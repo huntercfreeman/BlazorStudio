@@ -5,9 +5,9 @@ namespace BlazorStudio.ClassLib.Store.EditorCase;
 public class EditorStateReducer
 {
     [ReducerMethod]
-    public static EditorState ReduceSetOpenedAbsoluteFilePathAction(EditorState previousEditorState,
-        SetOpenedAbsoluteFilePathAction setOpenedAbsoluteFilePathAction)
+    public static EditorState ReduceSetActiveTabIndexAction(EditorState previousEditorState,
+        SetActiveTabIndexAction setActiveTabIndexAction)
     {
-        return new EditorState(setOpenedAbsoluteFilePathAction.AbsoluteFilePath);
+        return new EditorState(setActiveTabIndexAction.TabIndex);
     }
 }
