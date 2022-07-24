@@ -79,24 +79,8 @@ public partial record PlainTextEditorStates
             var plainTextEditor = previousPlainTextEditorStates
                     .Map[memoryMappedFileReadRequestAction.PlainTextEditorKey]
                 as PlainTextEditorRecord;
-
-            if (plainTextEditor is null)
-                return previousPlainTextEditorStates;
-
-            foreach (var chunk in plainTextEditor.Cache)
-            {
-                if (chunk.FileCoordinateGridRequest.StartingRowIndex)
-                {
-
-                }
-            }
-
-            if (plainTextEditor.Cache.Select(x => x.).Contains())
-            {
-
-            }
-
-            if (plainTextEditor.FileCoordinateGrid is null)
+            
+            if (plainTextEditor?.FileCoordinateGrid is null)
                 return previousPlainTextEditorStates;
 
             // TODO: The font-size style attribute does not equal the size of the div that encapsulates the singular character. Figure out EXACTLY these values based off the font-size instead of hard coding what developer tools says
@@ -118,8 +102,69 @@ public partial record PlainTextEditorStates
                 requestCharacterCount,
                 request.CancellationToken);
 
+            List<(int RowIndex, int CharacterIndex)> requestCoordinates = 
+                GetFileCoordinates(fileCoordinateGridRequest);
+
+            var uncachedData = requestCoordinates;
+
+            var hasSeenCachedData = false;
+
+            foreach (var chunk in plainTextEditor.Cache)
+            {
+                List<(int StartingRowIndex, int CharacterIndex)> chunkCoordinates = 
+                    GetFileCoordinates(chunk.FileCoordinateGridRequest);
+
+                var chunkContainedCachedData = false;
+
+                uncachedData = uncachedData
+                    .Where(x =>
+                    {
+                        var isContained = chunkCoordinates.Contains(x);
+
+                        if (isContained)
+                        {
+                            hasSeenCachedData = true;
+                            chunkContainedCachedData = true;
+                        }
+                        
+                        return !isContained;
+                    })
+                    .ToList();
+
+                // Short circuit searching through cache as
+                // the cache is sorted.
+                if (hasSeenCachedData && !chunkContainedCachedData)
+                {
+                    break;
+                }
+            }
+
+            var uncachedStartingRowIndex = uncachedData
+                .Min(tuple => tuple.RowIndex);
+            
+            var uncachedRowCount = uncachedData.Max(tuple => tuple.RowIndex) -
+                                   uncachedStartingRowIndex +
+                                   1;
+
+            var uncachedStartingCharacterIndex = uncachedData
+                .Min(tuple => tuple.CharacterIndex);
+
+            var uncachedStartingCharacterCount = uncachedData.Max(tuple => tuple.CharacterIndex) - 
+                                                 uncachedStartingCharacterIndex + 
+                                                 1;
+
+            fileCoordinateGridRequest = new FileCoordinateGridRequest(
+                uncachedStartingRowIndex,
+                uncachedRowCount,
+                uncachedStartingCharacterIndex,
+                uncachedStartingCharacterCount,
+                request.CancellationToken);
+
             var contentOfRows = plainTextEditor.FileCoordinateGrid
                 .Request(fileCoordinateGridRequest);
+
+            if (contentOfRows.All(x => x.Length == 0))
+                return previousPlainTextEditorStates;
 
             var allEnterKeysAreCarriageReturnNewLine = true;
             var seenEnterKey = false;
@@ -271,6 +316,31 @@ public partial record PlainTextEditorStates
                 return previousPlainTextEditorStates;
 
             return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
+        }
+
+        private List<(int RowIndex, int CharacterIndex)> GetFileCoordinates(FileCoordinateGridRequest fileCoordinateGridRequest)
+        {
+            List<(int StartingRowIndex, int CharacterIndex)> coordinates = new();
+
+            var exclusiveEndingRowIndex = fileCoordinateGridRequest.StartingRowIndex +
+                                          fileCoordinateGridRequest.RowCount;
+
+            for (int rowIndex = fileCoordinateGridRequest.StartingRowIndex;
+                 rowIndex < exclusiveEndingRowIndex;
+                 rowIndex++)
+            {
+                var exclusiveEndingCharacterIndex = fileCoordinateGridRequest.StartingCharacterIndex +
+                                                    fileCoordinateGridRequest.CharacterCount;
+
+                for (int characterIndex = fileCoordinateGridRequest.StartingCharacterIndex;
+                     characterIndex < exclusiveEndingCharacterIndex;
+                     characterIndex++)
+                {
+                    coordinates.Add((rowIndex, characterIndex));
+                }
+            }
+
+            return coordinates;
         }
 
         [ReducerMethod]
