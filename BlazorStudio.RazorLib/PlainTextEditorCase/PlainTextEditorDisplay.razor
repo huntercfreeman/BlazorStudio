@@ -17,13 +17,13 @@ else
     var localMostRecentMessage = currentPlainTextEditor.VirtualizeCoordinateSystemMessage;
 
     <div class="pte_plain-text-editor-wrapping">
-        @*<div>
+        <div>
             Font Size: @(PlainTextEditorSelector.Value.RichTextEditorOptions.FontSizeInPixels)px
         </div>
         <div>
             Use the '<em>F1</em>' key to scroll the caret row into view if it is offscreen.
         </div>
-        *@
+        
         <div class="bstudio_debug-info">
             @if (localMostRecentMessage is not null)
             {
@@ -32,7 +32,7 @@ else
 
                 var itemsEnumerated = result?.ItemsUntyped.ToArray();
                 
-                <div>
+                @*<div>
                     @NullSafeToMarkupString(nameof(currentPlainTextEditor.FileCoordinateGrid.RowCount), string.Empty)
                     
                     @if (currentPlainTextEditor.FileCoordinateGrid?.RowCount is null)
@@ -81,7 +81,7 @@ else
                 </div>
                 <div>
                     @NullSafeToMarkupString(nameof(result.TotalHeightInPixels), result?.TotalHeightInPixels)
-                </div>
+                </div>*@
             }
             else
             {
@@ -109,12 +109,12 @@ else
                                         <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
                                             <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
                                                 <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
-                                                                                                           T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
-                                                                                                           DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
-                                                                                                           RequestCallbackAction="OnRequestCallbackAction"
-                                                                                                           PaddingInPixels="250"
-                                                                                                           OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc"
-                                                                                                           ForceRerender="_forceRerender++">
+                                                                                                                       T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
+                                                                                                                       VirtualizeCoordinateSystemMessage="currentPlainTextEditor.VirtualizeCoordinateSystemMessage"
+                                                                                                                       DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
+                                                                                                                       RequestCallbackAction="OnRequestCallbackAction"
+                                                                                                                       PaddingInPixels="250"
+                                                                                                                       OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
                                                     <ItemRenderFragment Context="rowTuple">
                                                         <CascadingValue Name="RowIndex" Value="rowTuple.Index">
                                                             <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"

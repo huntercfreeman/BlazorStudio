@@ -290,6 +290,34 @@ public partial record PlainTextEditorStates
                 SequenceKey = SequenceKey.NewSequenceKey()
             };
 
+            if (replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult is null)
+            {
+                throw new ApplicationException(
+                    $"{nameof(replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult)} was null.");
+            }
+
+            var previousResult = (VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>)
+                replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult;
+
+            var items = replacementPlainTextEditor.List
+                .Select((row, index) => (index, row))
+                .ToList();
+
+            var virtualizeCoordinateSystemResult = previousResult with
+            {
+                ItemsWithType = items,
+                ItemsUntyped = items.Select(x => (object)x)
+            };
+
+            replacementPlainTextEditor = replacementPlainTextEditor with
+            {
+                SequenceKey = SequenceKey.NewSequenceKey(),
+                VirtualizeCoordinateSystemMessage = replacementPlainTextEditor.VirtualizeCoordinateSystemMessage with
+                {
+                    VirtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult
+                }
+            };
+
             nextPlainTextEditorMap[keyDownEventAction.PlainTextEditorKey] = replacementPlainTextEditor;
 
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
@@ -316,6 +344,34 @@ public partial record PlainTextEditorStates
                 .HandleOnClickEvent(plainTextEditor, plainTextEditorOnClickAction) with
             {
                 SequenceKey = SequenceKey.NewSequenceKey()
+            };
+
+            if (replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult is null)
+            {
+                throw new ApplicationException(
+                    $"{nameof(replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult)} was null.");
+            }
+
+            var previousResult = (VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>)
+                replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult;
+
+            var items = replacementPlainTextEditor.List
+                .Select((row, index) => (index, row))
+                .ToList();
+
+            var virtualizeCoordinateSystemResult = previousResult with
+            {
+                ItemsWithType = items,
+                ItemsUntyped = items.Select(x => (object)x)
+            };
+
+            replacementPlainTextEditor = replacementPlainTextEditor with
+            {
+                SequenceKey = SequenceKey.NewSequenceKey(),
+                VirtualizeCoordinateSystemMessage = replacementPlainTextEditor.VirtualizeCoordinateSystemMessage with
+                {
+                    VirtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult
+                }
             };
 
             nextPlainTextEditorMap[plainTextEditorOnClickAction.PlainTextEditorKey] = replacementPlainTextEditor;

@@ -31,7 +31,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private ElementReference _plainTextEditor;
     private int _hadOnKeyDownEventCounter;
     private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)> _virtualizeCoordinateSystem = null!;
-    private int _forceRerender;
 
     private SequenceKey? _previousSequenceKeyShouldRender;
 
@@ -118,14 +117,18 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         return shouldRender;
     }
 
-    private void PlainTextEditorSelectorOnSelectedValueChanged(object? sender, IPlainTextEditor? e)
+    private async void PlainTextEditorSelectorOnSelectedValueChanged(object? sender, IPlainTextEditor? e)
     {
-        var plainTextEditor = PlainTextEditorSelector.Value;
+        //var plainTextEditor = PlainTextEditorSelector.Value;
 
-        if (plainTextEditor is null)
-            return;
+        //if (plainTextEditor is null)
+        //    return;
 
-        _virtualizeCoordinateSystem.SetData(plainTextEditor.VirtualizeCoordinateSystemMessage);
+        //_virtualizeCoordinateSystem.SetData(plainTextEditor.VirtualizeCoordinateSystemMessage);
+
+        //await InvokeAsync(StateHasChanged);
+
+        //await _virtualizeCoordinateSystem.RerenderAsync();
     }
 
     private async Task OnAfterFirstRenderCallbackFunc()

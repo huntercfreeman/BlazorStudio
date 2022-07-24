@@ -17,6 +17,11 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public Action<VirtualizeCoordinateSystemMessage> RequestCallbackAction { get; set; } = null!;
     /// <summary>
+    /// Data to be used in rendering
+    /// </summary>
+    [Parameter, EditorRequired]
+    public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get; set; } = null!;
+    /// <summary>
     /// Used to render the Generic Item
     /// </summary>
     [Parameter, EditorRequired]
@@ -53,11 +58,6 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     /// </summary>
     [Parameter]
     public bool ShowDebugInfo { get; set; }
-    /// <summary>
-    /// Using this for debugging purposes temporarily
-    /// </summary>
-    [Parameter]
-    public int ForceRerender { get; set; }
 
     private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -71,8 +71,6 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     private DotNetObjectReference<VirtualizeCoordinateSystem<T>> _dotNetObjectReference = null!;
 
     private string ComponentId => $"bstudio_virtualize-coordinate-system_{_guid}";
-
-    public VirtualizeCoordinateSystemMessage MostRecentMessage { get; private set; }
 
     protected override void OnInitialized()
     {
@@ -142,16 +140,16 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             virtualizeCoordinateSystemRequest, null));
     }
 
-    public void SetData(VirtualizeCoordinateSystemMessage message)
-    {
-        MostRecentMessage = message;
-    }
+    //public void SetData(VirtualizeCoordinateSystemMessage message)
+    //{
+    //    MostRecentMessage = message;
+    //}
 
-    public async Task RerenderAsync()
-    {
-        // The caller of this method is not guaranteed to be on the UI thread.
-        await InvokeAsync(StateHasChanged);
-    }
+    //public async Task RerenderAsync()
+    //{
+    //    // The caller of this method is not guaranteed to be on the UI thread.
+    //    await InvokeAsync(StateHasChanged);
+    //}
 
     private async void OnScroll()
     {
