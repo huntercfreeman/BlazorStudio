@@ -27,9 +27,7 @@ else
         <div>
             Toggle Readonly:&nbsp;
             <input type="checkbox" @onchange="IsReadonlyCheckboxOnChange" checked="@currentPlainTextEditor.IsReadonly" />
-        </div>
-
-        <div>
+            &nbsp;->&nbsp;
             @if (currentPlainTextEditor.IsReadonly)
             {
                 <text>Currently <em>ReadOnly</em></text>
