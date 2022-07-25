@@ -98,7 +98,7 @@ public partial record PlainTextEditorStates
             return new PlainTextEditorRow(null);
         }
 
-        public List<(int index, IPlainTextEditorRow row)> UpdateCache(FileCoordinateGridRequest fileCoordinateGridRequest)
+        public PlainTextEditorChunk UpdateCache(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
             int lastIndexOfOverlap = -1;
             
@@ -150,9 +150,7 @@ public partial record PlainTextEditorStates
                 constructedPlainTextEditor.Cache.Add(resultingChunk);
             }
 
-            return resultingChunk.PlainTextEditorRecord.List
-                .Select((row, index) => (index, row))
-                .ToList();
+            return resultingChunk;
         }
 
         private static PlainTextEditorChunk ConstructChunk(PlainTextEditorRecord plainTextEditorRecord,

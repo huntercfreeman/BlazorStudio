@@ -102,17 +102,21 @@ public partial record PlainTextEditorStates
                 requestCharacterCount,
                 request.CancellationToken);
 
-            var items = plainTextEditor.UpdateCache(fileCoordinateGridRequest);
+            var chunk = plainTextEditor.UpdateCache(fileCoordinateGridRequest);
+
+            var items = chunk.PlainTextEditorRecord.List
+                .Select((row, index) => (index, row))
+                .ToList();
 
             var actualWidthOfResult = widthOfEachCharacterInPixels * requestCharacterCount;
 
             var actualHeightOfResult = heightOfEachRowInPixels * requestRowCount;
 
             var totalWidth = widthOfEachCharacterInPixels *
-                                      replacementPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow;
+                             chunk.PlainTextEditorRecord.FileCoordinateGrid.CharacterLengthOfLongestRow;
 
             var totalHeight = heightOfEachRowInPixels *
-                                       replacementPlainTextEditor.FileCoordinateGrid.RowCount;
+                              chunk.PlainTextEditorRecord.FileCoordinateGrid.RowCount;
 
             var result = new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
                 items,
@@ -127,14 +131,14 @@ public partial record PlainTextEditorStates
                 VirtualizeCoordinateSystemResult = result
             };
 
-            replacementPlainTextEditor = replacementPlainTextEditor with
+            var resultingPlainTextEditor = chunk.PlainTextEditorRecord with
             {
-                LongestRowCharacterLength = longestRowCharacterLength,
+                LongestRowCharacterLength = (int) chunk.PlainTextEditorRecord.FileCoordinateGrid.CharacterLengthOfLongestRow,
                 RowIndexOffset = startingRowIndex,
                 VirtualizeCoordinateSystemMessage = message
             };
 
-            nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = replacementPlainTextEditor;
+            nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = resultingPlainTextEditor;
 
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
             var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
