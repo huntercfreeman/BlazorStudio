@@ -98,7 +98,6 @@ public partial record PlainTextEditorStates
 
         public void UpdateCache(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
-            PlainTextEditorChunk chunk;
             bool hadOverlap = false;
             
             for (var index = 0; index < Cache.Count; index++)
@@ -108,7 +107,7 @@ public partial record PlainTextEditorStates
                 // Search chunk for any overlapping characters.
                 // Overlapping characters will EXTEND that overlapping chunk
                 if (cachedChunk.OverlapsRequest(fileCoordinateGridRequest,
-                        out chunk))
+                        out var chunk))
                 {
                     Cache[index] = chunk;
 
