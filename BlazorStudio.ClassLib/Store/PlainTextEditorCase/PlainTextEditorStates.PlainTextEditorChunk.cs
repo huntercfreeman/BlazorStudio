@@ -50,46 +50,86 @@ public partial record PlainTextEditorStates
              * 13: was withdrawn and was then approved under ISO/IEC 23270:2006.[35] The 23270:2006 is withdrawn under 23270:2018 and
              * 14: approved with this version.[36]
              *
-             * # Chunk 0
-             *
-             * John went to the store and
-             * came back with food
-             * for dinner.
              */
 
             /*
              * # Chunk 0
              *
-             * John went to the store and
-             * came back with food
-             * for dinner.
+             * InclusiveStartingRowIndex -> 0
+             * ExclusingEndingRowIndex -> 5
+             *
+             * InclusiveStartingCharacterIndex -> 0
+             * ExclusiveEndingCharacterIndex -> 25
+             *
+             * Since the release of C# 2
+             * trajectories, becoming tw John went to the store and
+             * to both languages, with v came back with food
+             * objects that can be used  for dinner.
+             * has added several major f
+             * released with C# 3.0 and 
+             */
+
+            /*
+             * # Chunk 1
+             *
+             * InclusiveStartingRowIndex -> 0
+             * ExclusingEndingRowIndex -> 5
+             *
+             * InclusiveStartingCharacterIndex -> 25
+             * ExclusiveEndingCharacterIndex -> 50
+             *
+             * .0 in November 2005, the 
+             * o quite different languag
+             * astly different implement
+             * like any other class, wit
+             * eatures to accommodate fu
+             * its supporting framework 
+             *
+             */
+
+            /*
+             * # Request
+             *
+             * InclusiveStartingRowIndex -> 2
+             * ExclusingEndingRowIndex -> 7
+             *
+             * InclusiveStartingCharacterIndex -> 19
+             * ExclusiveEndingCharacterIndex -> 44
+             *
+             * with vastly different im
+             * e used like any other cla
+             * major features to accommo
+             * .0 and its supporting fra
+             * ble C# programmers to use
+             * on. The LINQ extensions a
+             *
              */
 
 
             if (chunkInclusiveStartingRowIndex < currentRequestInclusiveStartingRowIndex ||
-                (chunkInclusiveStartingRowIndex == currentRequestInclusiveStartingRowIndex 
-                    && chunkInclusiveStartingCharacterIndex < currentRequestInclusiveStartingCharacterIndex))
-            {
-                // If the chunk has content that comes BEFORE the currentRequest
+    (chunkInclusiveStartingRowIndex == currentRequestInclusiveStartingRowIndex 
+        && chunkInclusiveStartingCharacterIndex < currentRequestInclusiveStartingCharacterIndex))
+{
+    // If the chunk has content that comes BEFORE the currentRequest
 
-                if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex)
-                {
-                    // If the chunk has content that OVERLAPS the currentRequest
+    if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex)
+    {
+        // If the chunk has content that OVERLAPS the currentRequest
 
-                }
-            }
-            else if (chunkExclusiveEndingRowIndex > currentRequestExclusiveEndingRowIndex ||
-                     (chunkExclusiveEndingRowIndex == currentRequestExclusiveEndingRowIndex
-                      && chunkExclusiveEndingCharacterIndex < currentRequestExclusiveEndingCharacterIndex))
-            {
-                // If the chunk has content that comes AFTER the currentRequest
-
-                if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex)
-                {
-                    // If the chunk has content that OVERLAPS the currentRequest
-
-                }
-            }
-        }
     }
+}
+else if (chunkExclusiveEndingRowIndex > currentRequestExclusiveEndingRowIndex ||
+         (chunkExclusiveEndingRowIndex == currentRequestExclusiveEndingRowIndex
+          && chunkExclusiveEndingCharacterIndex < currentRequestExclusiveEndingCharacterIndex))
+{
+    // If the chunk has content that comes AFTER the currentRequest
+
+    if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex)
+    {
+        // If the chunk has content that OVERLAPS the currentRequest
+
+    }
+}
+}
+}
 }
