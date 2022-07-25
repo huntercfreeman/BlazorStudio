@@ -102,6 +102,8 @@ public partial record PlainTextEditorStates
                 requestCharacterCount,
                 request.CancellationToken);
 
+            plainTextEditor.UpdateCache(fileCoordinateGridRequest);
+
             
 
             var items = replacementPlainTextEditor.List

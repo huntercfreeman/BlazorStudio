@@ -15,7 +15,7 @@ public partial record PlainTextEditorStates
         public bool OverlapsRequest(FileCoordinateGridRequest currentRequest,
             out PlainTextEditorChunk outPlainTextEditorChunk)
         {
-            // Chunk variables
+            // Chunk coordinate variables
             var chunkInclusiveStartingRowIndex = FileCoordinateGridRequest.StartingRowIndex;
             var chunkInclusiveStartingCharacterIndex = FileCoordinateGridRequest.StartingCharacterIndex;
 
@@ -24,7 +24,7 @@ public partial record PlainTextEditorStates
             var chunkExclusiveEndingCharacterIndex = FileCoordinateGridRequest.StartingCharacterIndex +
                                                      FileCoordinateGridRequest.CharacterCount;
 
-            // Current Request variables
+            // Current Request coordinate variables
             var currentRequestInclusiveStartingRowIndex = currentRequest.StartingRowIndex;
             var currentRequestInclusiveStartingCharacterIndex = currentRequest.StartingCharacterIndex;
 
@@ -40,7 +40,6 @@ public partial record PlainTextEditorStates
                         && chunkInclusiveStartingCharacterIndex < currentRequestInclusiveStartingCharacterIndex))
             {
                 // If the chunk has content that comes BEFORE the currentRequest
-
                 if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex &&
                     currentRequestExclusiveEndingRowIndex > chunkExclusiveEndingRowIndex)
                 {
@@ -146,16 +145,20 @@ public partial record PlainTextEditorStates
 
                 var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
 
-                var c = PlainTextEditorRecord.CurrentTextToken;
-
                 if (currentRequestInclusiveStartingCharacterIndex < chunkExclusiveEndingCharacterIndex)
                 {
                     var characterOverlapCounter = 
                         chunkExclusiveEndingCharacterIndex - currentRequestInclusiveStartingCharacterIndex;
 
-                    while (characterOverlapCounter > 0)
+                    var arrowRightEvent = new KeyDownEventRecord(KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY,
+                        KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY,
+                        false,
+                        false,
+                        false);
+
+                    while (characterOverlapCounter-- > 0)
                     {
-                        replacementPlainTextEditor = replacementPlainTextEditor
+                        replacementPlainTextEditor = StateMachine.HandleKeyDownEvent(replacementPlainTextEditor, arrowRightEvent);
                     }
                 }
 

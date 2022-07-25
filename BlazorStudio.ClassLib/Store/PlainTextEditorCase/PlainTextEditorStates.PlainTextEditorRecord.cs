@@ -96,20 +96,31 @@ public partial record PlainTextEditorStates
             return new PlainTextEditorRow(null);
         }
 
-        public PlainTextEditorChunk SearchCache(FileCoordinateGridRequest fileCoordinateGridRequest)
+        public void UpdateCache(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
-            foreach (var cachedChunk in Cache)
+            PlainTextEditorChunk chunk;
+            bool hadOverlap = false;
+            
+            for (var index = 0; index < Cache.Count; index++)
             {
+                var cachedChunk = Cache[index];
+
                 // Search chunk for any overlapping characters.
                 // Overlapping characters will EXTEND that overlapping chunk
-                //
-                // If there are no chunks that overlap then a NEW chunk is made
                 if (cachedChunk.OverlapsRequest(fileCoordinateGridRequest,
-                        out var chunk))
+                        out chunk))
                 {
-                    return chunk;
+                    Cache[index] = chunk;
+
+                    // In the case that the request is 'sandwiched' between
+                    // between two chunks AND overlaps both sandwiching chunks
+                    // one cannot return immediately and must allow all overlaps to merge.
+                    hadOverlap = true;
                 }
             }
+
+            if (hadOverlap)
+                return;
 
             // If there are no chunks that overlap then a NEW chunk is made
             var content = FileCoordinateGrid
@@ -121,15 +132,15 @@ public partial record PlainTextEditorStates
                 CurrentTokenIndex = 0,
                 SequenceKey = SequenceKey.NewSequenceKey(),
                 List = ImmutableList<IPlainTextEditorRow>.Empty
-                    .Add(GetEmptyPlainTextEditorRow()),
+                    .Add(GetEmptyPlainTextEditorRow())
             };
 
             constructedPlainTextEditor = PlainTextEditorChunk.AlterChunk(constructedPlainTextEditor, content);
 
-            return new PlainTextEditorChunk(
+            constructedPlainTextEditor.Cache.Add(new PlainTextEditorChunk(
                 fileCoordinateGridRequest,
                 content,
-                constructedPlainTextEditor);
+                constructedPlainTextEditor));
         }
     }
 }
