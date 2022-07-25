@@ -124,7 +124,59 @@ public partial record PlainTextEditorStates
                 replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
                     content);
             }
-            
+            else if (chunkInclusiveStartingRowIndex < currentRequestInclusiveStartingRowIndex)
+            {
+                var subrequestInclusiveStartingRowIndex = chunkInclusiveStartingRowIndex;
+
+                var subrequestRowCount = currentRequestInclusiveStartingRowIndex - chunkInclusiveStartingRowIndex ;
+
+                var subrequestStartingCharacterIndex = Math.Min(currentRequestInclusiveStartingCharacterIndex,
+                    chunkInclusiveStartingCharacterIndex);
+
+                var subrequestCharacterCount = Math.Max(currentRequestExclusiveEndingCharacterIndex,
+                                                   chunkExclusiveEndingCharacterIndex)
+                                               - subrequestStartingCharacterIndex;
+
+                subrequest = new FileCoordinateGridRequest(
+                    subrequestInclusiveStartingRowIndex,
+                    subrequestRowCount,
+                    subrequestStartingCharacterIndex,
+                    subrequestCharacterCount,
+                    currentRequest.CancellationToken);
+
+                var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
+
+                var c = PlainTextEditorRecord.CurrentTextToken;
+
+                if (currentRequestInclusiveStartingCharacterIndex < chunkExclusiveEndingCharacterIndex)
+                {
+                    var characterOverlapCounter = 
+                        chunkExclusiveEndingCharacterIndex - currentRequestInclusiveStartingCharacterIndex;
+
+                    while (characterOverlapCounter > 0)
+                    {
+                        replacementPlainTextEditor = replacementPlainTextEditor
+                    }
+                }
+
+                int i = 
+
+                while ()
+                {
+
+                }
+
+                replacementPlainTextEditor = replacementPlainTextEditor with
+                {
+                    CurrentRowIndex = subrequestInclusiveStartingRowIndex,
+                    CurrentTokenIndex = 0,
+                    SequenceKey = SequenceKey.NewSequenceKey()
+                };
+
+                replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
+                    content);
+            }
+
             // Square off south end
             if (currentRequestExclusiveEndingRowIndex > chunkExclusiveEndingRowIndex)
             {
