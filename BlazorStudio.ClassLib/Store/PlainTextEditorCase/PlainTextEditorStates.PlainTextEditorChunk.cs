@@ -14,7 +14,7 @@ public partial record PlainTextEditorStates
         PlainTextEditorRecord PlainTextEditorRecord)
     {
         public bool OverlapsRequest(FileCoordinateGridRequest currentRequest,
-            out PlainTextEditorRecord plainTextEditorRecord)
+            out PlainTextEditorChunk outPlainTextEditorChunk)
         {
             // Chunk variables
             var chunkInclusiveStartingRowIndex = FileCoordinateGridRequest.StartingRowIndex;
@@ -40,7 +40,8 @@ public partial record PlainTextEditorStates
             {
                 // If the chunk has content that comes BEFORE the currentRequest
 
-                if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex)
+                if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex &&
+                    currentRequestExclusiveEndingRowIndex > chunkExclusiveEndingRowIndex)
                 {
                     // If the chunk has content that OVERLAPS the currentRequest
 
@@ -62,12 +63,29 @@ public partial record PlainTextEditorStates
                         SequenceKey = SequenceKey.NewSequenceKey(),
                     };
 
-                    
+                    replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
+                            content);
+
+                    var combinedFileCoordinateGridRequest = new FileCoordinateGridRequest(
+                        FileCoordinateGridRequest.StartingRowIndex,
+                        FileCoordinateGridRequest.RowCount + fileCoordinateGridRequest.RowCount,
+                        FileCoordinateGridRequest.StartingCharacterIndex,
+                        FileCoordinateGridRequest.CharacterCount + fileCoordinateGridRequest.CharacterCount,
+                        currentRequest.CancellationToken);
+
+                    // TODO: Combine Chunk Content with result content
+                    outPlainTextEditorChunk = this with
+                    {
+                        FileCoordinateGridRequest = combinedFileCoordinateGridRequest,
+                        PlainTextEditorRecord = replacementPlainTextEditor
+                    };
+
+                    return true;
                 }
                 else
                 {
                     // chunkExclusiveEndingRowIndex encompasses the smaller request
-                    plainTextEditorRecord = PlainTextEditorRecord;
+                    outPlainTextEditorChunk = this;
                     return true;
                 }
             }
@@ -77,17 +95,60 @@ public partial record PlainTextEditorStates
             {
                 // If the chunk has content that comes AFTER the currentRequest
 
-                if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex)
+                // TODO: I need to square off the combined chunk otherwise this seems nearly impossible
+
+                if (chunkExclusiveEndingRowIndex > currentRequestExclusiveEndingRowIndex &&
+                    chunkInclusiveStartingRowIndex > currentRequestInclusiveStartingRowIndex)
                 {
                     // If the chunk has content that OVERLAPS the currentRequest
+                    
+                    var fileCoordinateGridRequest = new FileCoordinateGridRequest(currentRequestInclusiveStartingRowIndex,
+                            chunkInclusiveStartingRowIndex - currentRequestInclusiveStartingRowIndex,
+                            chunkExclusiveEndingCharacterIndex,
+                            currentRequestExclusiveEndingCharacterIndex - chunkExclusiveEndingCharacterIndex,
+                            currentRequest.CancellationToken);
 
-                    var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex,
-                        requestRowCount,
-                        startingCharacterIndex,
-                        requestCharacterCount,
-                        request.CancellationToken);
+                    var content = PlainTextEditorRecord.FileCoordinateGrid.Request(fileCoordinateGridRequest);
+
+                    var lastRowIndex = PlainTextEditorRecord.List.Count - 1;
+                    var lastTokenIndex = PlainTextEditorRecord.List[lastRowIndex].List.Count - 1;
+
+                    PlainTextEditorRecord replacementPlainTextEditor = PlainTextEditorRecord with
+                    {
+                        CurrentRowIndex = lastRowIndex,
+                        CurrentTokenIndex = lastTokenIndex,
+                        SequenceKey = SequenceKey.NewSequenceKey(),
+                    };
+
+                    replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
+                            content);
+
+                    var combinedFileCoordinateGridRequest = new FileCoordinateGridRequest(
+                        FileCoordinateGridRequest.StartingRowIndex,
+                        FileCoordinateGridRequest.RowCount + fileCoordinateGridRequest.RowCount,
+                        FileCoordinateGridRequest.StartingCharacterIndex,
+                        FileCoordinateGridRequest.CharacterCount + fileCoordinateGridRequest.CharacterCount,
+                        currentRequest.CancellationToken);
+
+                    // TODO: Combine Chunk Content with result content
+                    outPlainTextEditorChunk = this with
+                    {
+                        FileCoordinateGridRequest = combinedFileCoordinateGridRequest,
+                        PlainTextEditorRecord = replacementPlainTextEditor
+                    };
+
+                    return true;
+                }
+                else
+                {
+                    // chunkExclusiveEndingRowIndex encompasses the smaller request
+                    outPlainTextEditorChunk = this;
+                    return true;
                 }
             }
+
+            outPlainTextEditorChunk = this;
+            return false;
         }
 
         private PlainTextEditorRecord AlterChunk(PlainTextEditorRecord plainTextEditorRecord,
