@@ -89,6 +89,9 @@ public partial record PlainTextEditorStates
                 SequenceKey = SequenceKey.NewSequenceKey()
             };
 
+            FileCoordinateGridRequest subrequest;
+
+            // Square off north end
             if (currentRequestInclusiveStartingRowIndex < chunkInclusiveStartingRowIndex)
             {
                 var subrequestInclusiveStartingRowIndex = currentRequestInclusiveStartingRowIndex;
@@ -102,7 +105,7 @@ public partial record PlainTextEditorStates
                     chunkExclusiveEndingCharacterIndex)
                         - subrequestStartingCharacterIndex;
 
-                var subrequest = new FileCoordinateGridRequest(
+                subrequest = new FileCoordinateGridRequest(
                     subrequestInclusiveStartingRowIndex,
                     subrequestRowCount,
                     subrequestStartingCharacterIndex,
@@ -122,6 +125,7 @@ public partial record PlainTextEditorStates
                     content);
             }
             
+            // Square off south end
             if (currentRequestExclusiveEndingRowIndex > chunkExclusiveEndingRowIndex)
             {
                 var subrequestInclusiveStartingRowIndex = chunkExclusiveEndingRowIndex;
@@ -135,7 +139,7 @@ public partial record PlainTextEditorStates
                     chunkExclusiveEndingCharacterIndex)
                         - subrequestStartingCharacterIndex;
 
-                var subrequest = new FileCoordinateGridRequest(
+                subrequest = new FileCoordinateGridRequest(
                     subrequestInclusiveStartingRowIndex,
                     subrequestRowCount,
                     subrequestStartingCharacterIndex,
@@ -154,6 +158,47 @@ public partial record PlainTextEditorStates
                 replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
                     content);
             }
+
+            // Square off center
+
+            {
+                int subrequestInclusiveStartingRowIndex = chunkInclusiveStartingRowIndex;
+                int subrequestRowCount = chunkExclusiveEndingRowIndex - chunkInclusiveStartingRowIndex;
+
+                int subrequestStartingCharacterIndex = currentRequestInclusiveStartingCharacterIndex;
+                int subrequestCharacterCount = currentRequestExclusiveEndingCharacterIndex -
+                                                   Math.Min(currentRequestInclusiveStartingCharacterIndex,
+                                                       chunkInclusiveStartingCharacterIndex);
+
+                subrequest = new FileCoordinateGridRequest(
+                    subrequestInclusiveStartingRowIndex,
+                    subrequestRowCount,
+                    subrequestStartingCharacterIndex,
+                    subrequestCharacterCount,
+                    currentRequest.CancellationToken);
+
+                var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
+
+                replacementPlainTextEditor = replacementPlainTextEditor with
+                {
+                    CurrentRowIndex = 0,
+                    CurrentTokenIndex = 0,
+                    SequenceKey = SequenceKey.NewSequenceKey()
+                };
+
+                replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
+                    content);
+            }
+
+            outPlainTextEditorChunk = new PlainTextEditorChunk(
+                subrequest,
+
+                // TODO: Track Content
+                new(),
+
+                replacementPlainTextEditor);
+
+            return true;
         }
 
         public static PlainTextEditorRecord AlterChunk(PlainTextEditorRecord plainTextEditorRecord,
