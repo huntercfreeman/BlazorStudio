@@ -227,6 +227,8 @@ public partial record PlainTextEditorStates
                 }
             };
 
+            replacementPlainTextEditor.SetCache(replacementPlainTextEditor);
+
             nextPlainTextEditorMap[keyDownEventAction.PlainTextEditorKey] = replacementPlainTextEditor;
 
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
@@ -282,6 +284,8 @@ public partial record PlainTextEditorStates
                     VirtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult
                 }
             };
+
+            replacementPlainTextEditor.SetCache(replacementPlainTextEditor);
 
             nextPlainTextEditorMap[plainTextEditorOnClickAction.PlainTextEditorKey] = replacementPlainTextEditor;
 

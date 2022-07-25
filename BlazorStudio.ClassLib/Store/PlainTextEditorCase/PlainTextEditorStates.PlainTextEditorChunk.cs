@@ -55,11 +55,11 @@ public partial record PlainTextEditorStates
             }
             else if (chunkExclusiveEndingRowIndex > currentRequestExclusiveEndingRowIndex ||
                      (chunkExclusiveEndingRowIndex == currentRequestExclusiveEndingRowIndex
-                      && chunkExclusiveEndingCharacterIndex < currentRequestExclusiveEndingCharacterIndex))
+                      && chunkExclusiveEndingCharacterIndex <= currentRequestExclusiveEndingCharacterIndex))
             {
                 // If the chunk has content that comes AFTER the currentRequest
                 if (chunkExclusiveEndingRowIndex > currentRequestExclusiveEndingRowIndex &&
-                    chunkInclusiveStartingRowIndex > currentRequestInclusiveStartingRowIndex)
+                    chunkInclusiveStartingRowIndex >= currentRequestInclusiveStartingRowIndex)
                 {
                     // If the chunk has content that OVERLAPS the currentRequest
 

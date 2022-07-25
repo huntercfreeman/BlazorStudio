@@ -19,6 +19,7 @@ public interface IPlainTextEditor
     public int RowIndexOffset { get; }
     public int CharacterIndexOffsetRelativeToRow { get; }
     public bool IsReadonly { get; }
+    public int CachedChunkIndex { get; }
 
     public string GetPlainText();
 }

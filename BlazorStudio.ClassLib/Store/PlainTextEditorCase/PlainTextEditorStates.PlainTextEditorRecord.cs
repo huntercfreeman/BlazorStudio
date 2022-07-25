@@ -40,8 +40,9 @@ public partial record PlainTextEditorStates
         public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get; init; }
         public int RowIndexOffset { get; init; }
         public int CharacterIndexOffsetRelativeToRow { get; init; }
-        public List<PlainTextEditorChunk> Cache { get; init; }
-        
+        public List<PlainTextEditorChunk> Cache { get; init; } = new();
+        public int CachedChunkIndex { get; private set; }
+
         public T GetCurrentTextTokenAs<T>()
             where T : class
         {
@@ -97,6 +98,16 @@ public partial record PlainTextEditorStates
         {
             return new PlainTextEditorRow(null);
         }
+        
+        public void SetCache(PlainTextEditorRecord plainTextEditorRecord)
+        {
+            var previousCache = Cache[CachedChunkIndex];
+
+            Cache[CachedChunkIndex] = previousCache with
+            {
+                PlainTextEditorRecord = plainTextEditorRecord
+            };
+        }
 
         public PlainTextEditorChunk UpdateCache(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
@@ -127,6 +138,8 @@ public partial record PlainTextEditorStates
                 // An existing chunk was overlapping the request
 
                 resultingChunk = Cache[lastIndexOfOverlap];
+
+                CachedChunkIndex = lastIndexOfOverlap;
             }
             else
             {
@@ -140,7 +153,7 @@ public partial record PlainTextEditorStates
                     CurrentTokenIndex = 0,
                     SequenceKey = SequenceKey.NewSequenceKey(),
                     List = ImmutableList<IPlainTextEditorRow>.Empty
-                        .Add(GetEmptyPlainTextEditorRow())
+                        .Add(GetEmptyPlainTextEditorRow()),
                 };
 
                 resultingChunk = ConstructChunk(constructedPlainTextEditor,
@@ -148,6 +161,9 @@ public partial record PlainTextEditorStates
                     fileCoordinateGridRequest);
 
                 constructedPlainTextEditor.Cache.Add(resultingChunk);
+
+                // TODO: This is sketchy because of threading concerns however, the Reducer is synchronous as of writing this
+                CachedChunkIndex = Cache.Count - 1;
             }
 
             return resultingChunk;
