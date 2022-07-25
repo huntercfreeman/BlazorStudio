@@ -176,7 +176,6 @@ public partial record PlainTextEditorStates
             }
 
             // Square off center
-
             {
                 int subrequestInclusiveStartingRowIndex = chunkInclusiveStartingRowIndex;
                 int subrequestRowCount = chunkExclusiveEndingRowIndex - chunkInclusiveStartingRowIndex;

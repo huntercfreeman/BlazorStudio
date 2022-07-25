@@ -155,10 +155,37 @@ public partial record PlainTextEditorStates
                 .ToList();
         }
 
-        private static PlainTextEditorChunk ConstructChunk(PlainTextEditorRecord constructedPlainTextEditor,
+        private static PlainTextEditorChunk ConstructChunk(PlainTextEditorRecord plainTextEditorRecord,
             List<string> content,
             FileCoordinateGridRequest fileCoordinateGridRequest)
         {
+            var allEnterKeysAreCarriageReturnNewLine = true;
+            var seenEnterKey = false;
+            var previousCharacterWasCarriageReturn = false;
+
+            var currentRowCharacterLength = 0;
+            var longestRowCharacterLength = 0;
+
+            string MutateIfPreviousCharacterWasCarriageReturn()
+            {
+                longestRowCharacterLength = currentRowCharacterLength > longestRowCharacterLength
+                    ? currentRowCharacterLength
+                    : longestRowCharacterLength;
+
+                currentRowCharacterLength = 0;
+
+                seenEnterKey = true;
+
+                if (!previousCharacterWasCarriageReturn)
+                {
+                    allEnterKeysAreCarriageReturnNewLine = false;
+                }
+
+                return previousCharacterWasCarriageReturn
+                    ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
+                    : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
+            }
+
             foreach (var row in content)
             {
                 foreach (var character in row)
@@ -218,7 +245,7 @@ public partial record PlainTextEditorStates
             return new PlainTextEditorChunk(
                 fileCoordinateGridRequest,
                 content,
-                constructedPlainTextEditor)
+                plainTextEditorRecord);
         }
     }
 }
