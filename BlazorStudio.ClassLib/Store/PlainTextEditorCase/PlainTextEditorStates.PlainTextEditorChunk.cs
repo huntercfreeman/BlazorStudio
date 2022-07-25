@@ -140,29 +140,10 @@ public partial record PlainTextEditorStates
 
                 var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
 
-
-
-                replacementPlainTextEditor = replacementPlainTextEditor with
-                {
-                    CurrentRowIndex = 
-                };
-
-                int i = 
-
-                while ()
-                {
-
-                }
-
-                replacementPlainTextEditor = replacementPlainTextEditor with
-                {
-                    CurrentRowIndex = subrequestInclusiveStartingRowIndex,
-                    CurrentTokenIndex = 0,
-                    SequenceKey = SequenceKey.NewSequenceKey()
-                };
-
                 replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
-                    content);
+                    content,
+                    subrequest,
+                    FileCoordinateGridRequest);
             }
 
             // Square off south end
@@ -188,15 +169,10 @@ public partial record PlainTextEditorStates
 
                 var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
 
-                replacementPlainTextEditor = replacementPlainTextEditor with
-                {
-                    CurrentRowIndex = 0,
-                    CurrentTokenIndex = 0,
-                    SequenceKey = SequenceKey.NewSequenceKey()
-                };
-
                 replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
-                    content);
+                    content,
+                    subrequest,
+                    FileCoordinateGridRequest);
             }
 
             // Square off center
@@ -219,15 +195,10 @@ public partial record PlainTextEditorStates
 
                 var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
 
-                replacementPlainTextEditor = replacementPlainTextEditor with
-                {
-                    CurrentRowIndex = 0,
-                    CurrentTokenIndex = 0,
-                    SequenceKey = SequenceKey.NewSequenceKey()
-                };
-
                 replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
-                    content);
+                    content,
+                    subrequest,
+                    FileCoordinateGridRequest);
             }
 
             outPlainTextEditorChunk = new PlainTextEditorChunk(
@@ -414,74 +385,6 @@ public partial record PlainTextEditorStates
                         };
 
                     previousCharacterWasCarriageReturn = false;
-                }
-            }
-
-            foreach (var row in content)
-            {
-                var targetRow = 
-
-                // Position the cursor within the plainTextEditorRecord
-                // to the correct row and (token / character) position
-                plainTextEditorRecord = plainTextEditorRecord with
-                {
-                    CurrentRowIndex = 
-                };
-            }
-
-            foreach (var row in content)
-            {
-                foreach (var character in row)
-                {
-                    if (character == '\r')
-                    {
-                        previousCharacterWasCarriageReturn = true;
-                        continue;
-                    }
-
-                    currentRowCharacterLength++;
-
-                    var code = character switch
-                    {
-                        '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
-                        ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
-                        '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
-                        _ => character.ToString()
-                    };
-
-                    var keyDown = new KeyDownEventAction(plainTextEditorRecord.PlainTextEditorKey,
-                        new KeyDownEventRecord(
-                            character.ToString(),
-                            code,
-                            false,
-                            false,
-                            false
-                        )
-                    );
-
-                    plainTextEditorRecord = PlainTextEditorStates.StateMachine
-                            .HandleKeyDownEvent(plainTextEditorRecord, keyDown.KeyDownEventRecord) with
-                    {
-                        SequenceKey = SequenceKey.NewSequenceKey()
-                    };
-
-                    previousCharacterWasCarriageReturn = false;
-                }
-
-                if (row.LastOrDefault() != '\n')
-                {
-                    var forceNewLine = new KeyDownEventRecord(
-                        KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
-                        KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
-                        false,
-                        false,
-                        false);
-
-                    plainTextEditorRecord = PlainTextEditorStates.StateMachine
-                        .HandleKeyDownEvent(plainTextEditorRecord, forceNewLine) with
-                    {
-                        SequenceKey = SequenceKey.NewSequenceKey(),
-                    };
                 }
             }
 

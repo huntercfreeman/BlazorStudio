@@ -102,16 +102,7 @@ public partial record PlainTextEditorStates
                 requestCharacterCount,
                 request.CancellationToken);
 
-            plainTextEditor.UpdateCache(fileCoordinateGridRequest);
-
-            
-
-            var items = replacementPlainTextEditor.List
-                .Select((row, index) => (index, row))
-                .ToList();
-
-            if (replacementPlainTextEditor.FileCoordinateGrid is null)
-                return previousPlainTextEditorStates;
+            var items = plainTextEditor.UpdateCache(fileCoordinateGridRequest);
 
             var actualWidthOfResult = widthOfEachCharacterInPixels * requestCharacterCount;
 
