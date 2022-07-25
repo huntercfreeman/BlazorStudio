@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
+using BlazorStudio.ClassLib.Store.KeyDownEventCase;
 
 namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
@@ -9,10 +10,11 @@ public partial record PlainTextEditorStates
 {
     private record PlainTextEditorChunk(PlainTextEditorRowKey Key,
         FileCoordinateGridRequest FileCoordinateGridRequest,
-        List<string> ContentOfRows)
+        List<string> Content,
+        PlainTextEditorRecord PlainTextEditorRecord)
     {
-        public FileCoordinateGridRequest SearchChunk(FileCoordinateGridRequest currentRequest,
-            out List<string> contentFoundInCache)
+        public bool OverlapsRequest(FileCoordinateGridRequest currentRequest,
+            out PlainTextEditorRecord plainTextEditorRecord)
         {
             // Chunk variables
             var chunkInclusiveStartingRowIndex = FileCoordinateGridRequest.StartingRowIndex;
@@ -32,104 +34,157 @@ public partial record PlainTextEditorStates
             var currentRequestExclusiveEndingCharacterIndex = currentRequest.StartingCharacterIndex +
                                                      currentRequest.CharacterCount;
 
-            /*
-             * # Sample text as an example with line numbers
-             *
-             *  1: Since the release of C# 2.0 in November 2005, the C# and Java languages have evolved on increasingly divergent
-             *  2: trajectories, becoming two quite different languages. One of the first major departures came with the addition of generics
-             *  3: to both languages, with vastly different implementations. C# makes use of reification to provide "first-class" generic
-             *  4: objects that can be used like any other class, with code generation performed at class-load time.[29] Furthermore, C#
-             *  5: has added several major features to accommodate functional-style programming, culminating in the LINQ extensions
-             *  6: released with C# 3.0 and its supporting framework of lambda expressions, extension methods, and anonymous types.[30]
-             *  7: These features enable C# programmers to use functional programming techniques, such as closures, when it is advantageous
-             *  8: to their application. The LINQ extensions and the functional imports help developers reduce the amount of boilerplate
-             *  9: code that is included in common tasks like querying a database, parsing an xml file, or searching through a data structure,
-             * 10: shifting the emphasis onto the actual program logic to help improve readability and maintainability.[31]
-             * 11: C# used to have a mascot called Andy (named after Anders Hejlsberg). It was retired on January 29, 2004.[32]
-             * 12: C# was originally submitted to the ISO/IEC JTC 1 subcommittee SC 22 for review,[33] under ISO/IEC 23270:2003,[34]
-             * 13: was withdrawn and was then approved under ISO/IEC 23270:2006.[35] The 23270:2006 is withdrawn under 23270:2018 and
-             * 14: approved with this version.[36]
-             *
-             */
-
-            /*
-             * # Chunk 0
-             *
-             * InclusiveStartingRowIndex -> 0
-             * ExclusingEndingRowIndex -> 5
-             *
-             * InclusiveStartingCharacterIndex -> 0
-             * ExclusiveEndingCharacterIndex -> 25
-             *
-             * Since the release of C# 2
-             * trajectories, becoming tw John went to the store and
-             * to both languages, with v came back with food
-             * objects that can be used  for dinner.
-             * has added several major f
-             * released with C# 3.0 and 
-             */
-
-            /*
-             * # Chunk 1
-             *
-             * InclusiveStartingRowIndex -> 0
-             * ExclusingEndingRowIndex -> 5
-             *
-             * InclusiveStartingCharacterIndex -> 25
-             * ExclusiveEndingCharacterIndex -> 50
-             *
-             * .0 in November 2005, the 
-             * o quite different languag
-             * astly different implement
-             * like any other class, wit
-             * eatures to accommodate fu
-             * its supporting framework 
-             *
-             */
-
-            /*
-             * # Request
-             *
-             * InclusiveStartingRowIndex -> 2
-             * ExclusingEndingRowIndex -> 7
-             *
-             * InclusiveStartingCharacterIndex -> 19
-             * ExclusiveEndingCharacterIndex -> 44
-             *
-             * with vastly different im
-             * e used like any other cla
-             * major features to accommo
-             * .0 and its supporting fra
-             * ble C# programmers to use
-             * on. The LINQ extensions a
-             *
-             */
-
-
             if (chunkInclusiveStartingRowIndex < currentRequestInclusiveStartingRowIndex ||
-    (chunkInclusiveStartingRowIndex == currentRequestInclusiveStartingRowIndex 
-        && chunkInclusiveStartingCharacterIndex < currentRequestInclusiveStartingCharacterIndex))
-{
-    // If the chunk has content that comes BEFORE the currentRequest
+                    (chunkInclusiveStartingRowIndex == currentRequestInclusiveStartingRowIndex
+                        && chunkInclusiveStartingCharacterIndex < currentRequestInclusiveStartingCharacterIndex))
+            {
+                // If the chunk has content that comes BEFORE the currentRequest
 
-    if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex)
-    {
-        // If the chunk has content that OVERLAPS the currentRequest
+                if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex)
+                {
+                    // If the chunk has content that OVERLAPS the currentRequest
 
+                    var fileCoordinateGridRequest = new FileCoordinateGridRequest(chunkExclusiveEndingRowIndex,
+                        currentRequestExclusiveEndingRowIndex - chunkExclusiveEndingRowIndex,
+                        chunkExclusiveEndingCharacterIndex,
+                        currentRequestExclusiveEndingCharacterIndex - chunkExclusiveEndingCharacterIndex,
+                        currentRequest.CancellationToken);
+
+                    var content = PlainTextEditorRecord.FileCoordinateGrid.Request(fileCoordinateGridRequest);
+
+                    var lastRowIndex = PlainTextEditorRecord.List.Count - 1;
+                    var lastTokenIndex = PlainTextEditorRecord.List[lastRowIndex].List.Count - 1;
+
+                    PlainTextEditorRecord replacementPlainTextEditor = PlainTextEditorRecord with
+                    {
+                        CurrentRowIndex = lastRowIndex,
+                        CurrentTokenIndex = lastTokenIndex,
+                        SequenceKey = SequenceKey.NewSequenceKey(),
+                    };
+
+                    
+                }
+                else
+                {
+                    // chunkExclusiveEndingRowIndex encompasses the smaller request
+                    plainTextEditorRecord = PlainTextEditorRecord;
+                    return true;
+                }
+            }
+            else if (chunkExclusiveEndingRowIndex > currentRequestExclusiveEndingRowIndex ||
+                     (chunkExclusiveEndingRowIndex == currentRequestExclusiveEndingRowIndex
+                      && chunkExclusiveEndingCharacterIndex < currentRequestExclusiveEndingCharacterIndex))
+            {
+                // If the chunk has content that comes AFTER the currentRequest
+
+                if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex)
+                {
+                    // If the chunk has content that OVERLAPS the currentRequest
+
+                    var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex,
+                        requestRowCount,
+                        startingCharacterIndex,
+                        requestCharacterCount,
+                        request.CancellationToken);
+                }
+            }
+        }
+
+        private PlainTextEditorRecord AlterChunk(PlainTextEditorRecord plainTextEditorRecord,
+            List<string> content)
+        {
+            var allEnterKeysAreCarriageReturnNewLine = true;
+            var seenEnterKey = false;
+            var previousCharacterWasCarriageReturn = false;
+
+            var currentRowCharacterLength = 0;
+            var longestRowCharacterLength = 0;
+
+            string MutateIfPreviousCharacterWasCarriageReturn()
+            {
+                longestRowCharacterLength = currentRowCharacterLength > longestRowCharacterLength
+                    ? currentRowCharacterLength
+                    : longestRowCharacterLength;
+
+                currentRowCharacterLength = 0;
+
+                seenEnterKey = true;
+
+                if (!previousCharacterWasCarriageReturn)
+                {
+                    allEnterKeysAreCarriageReturnNewLine = false;
+                }
+
+                return previousCharacterWasCarriageReturn
+                    ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
+                    : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
+            }
+
+            foreach (var row in content)
+            {
+                foreach (var character in row)
+                {
+                    if (character == '\r')
+                    {
+                        previousCharacterWasCarriageReturn = true;
+                        continue;
+                    }
+
+                    currentRowCharacterLength++;
+
+                    var code = character switch
+                    {
+                        '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
+                        ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
+                        '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
+                        _ => character.ToString()
+                    };
+
+                    var keyDown = new KeyDownEventAction(PlainTextEditorRecord.PlainTextEditorKey,
+                        new KeyDownEventRecord(
+                            character.ToString(),
+                            code,
+                            false,
+                            false,
+                            false
+                        )
+                    );
+
+                    plainTextEditorRecord = PlainTextEditorStates.StateMachine
+                            .HandleKeyDownEvent(plainTextEditorRecord, keyDown.KeyDownEventRecord) with
+                    {
+                        SequenceKey = SequenceKey.NewSequenceKey()
+                    };
+
+                    previousCharacterWasCarriageReturn = false;
+                }
+
+                if (row.LastOrDefault() != '\n')
+                {
+                    var forceNewLine = new KeyDownEventRecord(
+                        KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
+                        KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
+                        false,
+                        false,
+                        false);
+
+                    plainTextEditorRecord = PlainTextEditorStates.StateMachine
+                        .HandleKeyDownEvent(plainTextEditorRecord, forceNewLine) with
+                    {
+                        SequenceKey = SequenceKey.NewSequenceKey(),
+                    };
+                }
+            }
+
+            if (seenEnterKey && allEnterKeysAreCarriageReturnNewLine)
+            {
+                plainTextEditorRecord = plainTextEditorRecord with
+                {
+                    UseCarriageReturnNewLine = true
+                };
+            }
+
+            return plainTextEditorRecord;
+        }
     }
-}
-else if (chunkExclusiveEndingRowIndex > currentRequestExclusiveEndingRowIndex ||
-         (chunkExclusiveEndingRowIndex == currentRequestExclusiveEndingRowIndex
-          && chunkExclusiveEndingCharacterIndex < currentRequestExclusiveEndingCharacterIndex))
-{
-    // If the chunk has content that comes AFTER the currentRequest
-
-    if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex)
-    {
-        // If the chunk has content that OVERLAPS the currentRequest
-
-    }
-}
-}
-}
 }

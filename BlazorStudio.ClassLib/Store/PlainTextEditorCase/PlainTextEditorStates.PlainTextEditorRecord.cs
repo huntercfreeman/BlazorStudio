@@ -96,16 +96,22 @@ public partial record PlainTextEditorStates
             return new PlainTextEditorRow(null);
         }
 
-        public FileCoordinateGridRequest SearchCache(FileCoordinateGridRequest fileCoordinateGridRequest,
-            out List<string> contentFoundInCache)
+        public List<string> SearchCache(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
             foreach (var chunk in Cache)
             {
-                // Search chunk for any bytes already read.
-                // Any bytes NOT read are returned as a new 'FileCoordinateGridRequest'
-                var afterSearchingCacheFileCoordinateGridRequest = chunk
-                    .SearchChunk(out contentFoundInCache);
+                // Search chunk for any overlapping characters.
+                // Overlapping characters will EXTEND that overlapping chunk
+                //
+                // If there are no chunks that overlap then a NEW chunk is made
+                if (chunk.OverlapsRequest(fileCoordinateGridRequest,
+                        out var content))
+                {
+                    return content;
+                }
             }
+
+            throw new ApplicationException($"TODO: Make a new chunk");
         }
     }
 }
