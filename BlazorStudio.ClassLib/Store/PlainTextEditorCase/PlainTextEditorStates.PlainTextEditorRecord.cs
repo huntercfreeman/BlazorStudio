@@ -109,6 +109,7 @@ public partial record PlainTextEditorStates
             };
         }
 
+        // TODO: This seems be good progress and I will keep it but I need to revisit this and create a sort of 'LinkedList' like structure or something 'new line' messes everything up I think?
         public PlainTextEditorChunk UpdateCache(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
             int lastIndexOfOverlap = -1;
