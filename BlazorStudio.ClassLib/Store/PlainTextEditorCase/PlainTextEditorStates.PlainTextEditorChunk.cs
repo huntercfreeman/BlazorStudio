@@ -43,6 +43,21 @@ public partial record PlainTextEditorStates
                 if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex &&
                     currentRequestExclusiveEndingRowIndex > chunkExclusiveEndingRowIndex)
                 {
+                    // (min row index, min character index)
+
+
+
+                    // for subsection 
+
+
+
+
+
+
+                    // (max row index, max character index)
+
+                    
+
                     // If the chunk has content that OVERLAPS the currentRequest
 
                     var fileCoordinateGridRequest = new FileCoordinateGridRequest(chunkExclusiveEndingRowIndex,
