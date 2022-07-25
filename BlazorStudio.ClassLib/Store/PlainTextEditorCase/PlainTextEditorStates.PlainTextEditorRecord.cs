@@ -37,7 +37,9 @@ public partial record PlainTextEditorStates
         public int LongestRowCharacterLength { get; init; }
         public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get; init; }
         public int RowIndexOffset { get; init; }
-
+        public int CharacterIndexOffsetRelativeToRow { get; init; }
+        public List<PlainTextEditorChunk> Cache { get; init; }
+        
         public T GetCurrentTextTokenAs<T>()
             where T : class
         {
@@ -92,6 +94,18 @@ public partial record PlainTextEditorStates
         public IPlainTextEditorRow GetEmptyPlainTextEditorRow()
         {
             return new PlainTextEditorRow(null);
+        }
+
+        public FileCoordinateGridRequest SearchCache(FileCoordinateGridRequest fileCoordinateGridRequest,
+            out List<string> contentFoundInCache)
+        {
+            foreach (var chunk in Cache)
+            {
+                // Search chunk for any bytes already read.
+                // Any bytes NOT read are returned as a new 'FileCoordinateGridRequest'
+                var afterSearchingCacheFileCoordinateGridRequest = chunk
+                    .SearchChunk(out contentFoundInCache);
+            }
         }
     }
 }

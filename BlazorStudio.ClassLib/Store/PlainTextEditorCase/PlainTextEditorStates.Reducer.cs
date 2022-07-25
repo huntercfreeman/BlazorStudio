@@ -102,6 +102,13 @@ public partial record PlainTextEditorStates
                 requestCharacterCount,
                 request.CancellationToken);
 
+            var contentFoundInCache = new List<string>();
+
+            // Search cache for any bytes already read.
+            // Any bytes NOT read are returned as a new 'FileCoordinateGridRequest'
+            var afterSearchingCacheFileCoordinateGridRequest = plainTextEditor
+                .SearchCache(fileCoordinateGridRequest, out contentFoundInCache);
+
             var contentOfRows = plainTextEditor.FileCoordinateGrid
                 .Request(fileCoordinateGridRequest);
 
@@ -193,7 +200,6 @@ public partial record PlainTextEditorStates
                         .HandleKeyDownEvent(replacementPlainTextEditor, forceNewLine) with
                     {
                         SequenceKey = SequenceKey.NewSequenceKey(),
-
                     };
                 }
             }
@@ -240,7 +246,7 @@ public partial record PlainTextEditorStates
             {
                 LongestRowCharacterLength = longestRowCharacterLength,
                 RowIndexOffset = startingRowIndex,
-                VirtualizeCoordinateSystemMessage = message,
+                VirtualizeCoordinateSystemMessage = message
             };
 
             nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = replacementPlainTextEditor;

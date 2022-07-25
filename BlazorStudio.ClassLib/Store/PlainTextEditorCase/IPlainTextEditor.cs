@@ -17,6 +17,7 @@ public interface IPlainTextEditor
     public int LongestRowCharacterLength { get; }
     public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get; }
     public int RowIndexOffset { get; }
+    public int CharacterIndexOffsetRelativeToRow { get; }
     public bool IsReadonly { get; }
 
     public string GetPlainText();
