@@ -76,11 +76,84 @@ public partial record PlainTextEditorStates
 
             if (!hasOverlappingContent)
             {
+                outPlainTextEditorChunk = this;
                 return false;
             }
 
-            outPlainTextEditorChunk = this;
-            return false;
+            // Has overlapping content so square off the overlap and return it as a new chunk
+
+            PlainTextEditorRecord replacementPlainTextEditor = PlainTextEditorRecord with
+            {
+                CurrentRowIndex = 0,
+                CurrentTokenIndex = 0,
+                SequenceKey = SequenceKey.NewSequenceKey()
+            };
+
+            if (currentRequestInclusiveStartingRowIndex < chunkInclusiveStartingRowIndex)
+            {
+                var subrequestInclusiveStartingRowIndex = currentRequestInclusiveStartingRowIndex;
+
+                var subrequestRowCount = chunkInclusiveStartingRowIndex - currentRequestInclusiveStartingRowIndex;
+
+                var subrequestStartingCharacterIndex = Math.Min(currentRequestInclusiveStartingCharacterIndex,
+                    chunkInclusiveStartingCharacterIndex);
+
+                var subrequestCharacterCount = Math.Max(currentRequestExclusiveEndingCharacterIndex,
+                    chunkExclusiveEndingCharacterIndex)
+                        - subrequestStartingCharacterIndex;
+
+                var subrequest = new FileCoordinateGridRequest(
+                    subrequestInclusiveStartingRowIndex,
+                    subrequestRowCount,
+                    subrequestStartingCharacterIndex,
+                    subrequestCharacterCount,
+                    currentRequest.CancellationToken);
+
+                var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
+
+                replacementPlainTextEditor = replacementPlainTextEditor with
+                {
+                    CurrentRowIndex = 0,
+                    CurrentTokenIndex = 0,
+                    SequenceKey = SequenceKey.NewSequenceKey()
+                };
+
+                replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
+                    content);
+            }
+            
+            if (currentRequestExclusiveEndingRowIndex > chunkExclusiveEndingRowIndex)
+            {
+                var subrequestInclusiveStartingRowIndex = chunkExclusiveEndingRowIndex;
+
+                var subrequestRowCount = currentRequestExclusiveEndingRowIndex - chunkExclusiveEndingRowIndex;
+
+                var subrequestStartingCharacterIndex = Math.Min(currentRequestInclusiveStartingCharacterIndex,
+                    chunkInclusiveStartingCharacterIndex);
+
+                var subrequestCharacterCount = Math.Max(currentRequestExclusiveEndingCharacterIndex,
+                    chunkExclusiveEndingCharacterIndex)
+                        - subrequestStartingCharacterIndex;
+
+                var subrequest = new FileCoordinateGridRequest(
+                    subrequestInclusiveStartingRowIndex,
+                    subrequestRowCount,
+                    subrequestStartingCharacterIndex,
+                    subrequestCharacterCount,
+                    currentRequest.CancellationToken);
+
+                var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
+
+                replacementPlainTextEditor = replacementPlainTextEditor with
+                {
+                    CurrentRowIndex = 0,
+                    CurrentTokenIndex = 0,
+                    SequenceKey = SequenceKey.NewSequenceKey()
+                };
+
+                replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
+                    content);
+            }
         }
 
         public static PlainTextEditorRecord AlterChunk(PlainTextEditorRecord plainTextEditorRecord,
