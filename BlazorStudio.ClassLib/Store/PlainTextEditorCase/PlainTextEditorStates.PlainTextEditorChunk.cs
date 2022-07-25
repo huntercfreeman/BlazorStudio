@@ -284,7 +284,7 @@ public partial record PlainTextEditorStates
                 {
                     // Chunk cannot match the row so make a new empty row for insertion
                     // Move to 'CurrentRowIndex = 0' and 'CurrentTokenIndex = 0'
-                    StateMachine.HandleHome(plainTextEditorRecord,
+                    plainTextEditorRecord = StateMachine.HandleHome(plainTextEditorRecord,
                         new KeyDownEventRecord(
                             KeyboardKeyFacts.MovementKeys.HOME_KEY,
                             KeyboardKeyFacts.MovementKeys.HOME_KEY,
@@ -316,7 +316,7 @@ public partial record PlainTextEditorStates
                 {
                     // Chunk cannot match the row so make a new empty row for insertion
                     // Move to the end of the chunk
-                    StateMachine.HandleEnd(plainTextEditorRecord,
+                    plainTextEditorRecord = StateMachine.HandleEnd(plainTextEditorRecord,
                         new KeyDownEventRecord(
                             KeyboardKeyFacts.MovementKeys.END_KEY,
                             KeyboardKeyFacts.MovementKeys.END_KEY,
@@ -344,17 +344,33 @@ public partial record PlainTextEditorStates
                     // Chunk CAN match the row
                     // Move to the position
 
-                    int targetCharacterIndex;
-
-                    if (subrequest.StartingCharacterIndex < )
-                    {
-
-                    }
-
                     plainTextEditorRecord = plainTextEditorRecord with
                     {
-                        CurrentRowIndex = correspondingChunkRowIndex,
+                        CurrentRowIndex = correspondingChunkRowIndex
                     };
+
+                    if (subrequest.StartingCharacterIndex < chunkRequest.StartingCharacterIndex)
+                    {
+                        // First character in corresponding row
+                        plainTextEditorRecord = StateMachine.HandleHome(plainTextEditorRecord,
+                            new KeyDownEventRecord(
+                                KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                                KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                                false,
+                                false,
+                                false));
+                    }
+                    else
+                    {
+                        // Last character in corresponding row
+                        plainTextEditorRecord = StateMachine.HandleEnd(plainTextEditorRecord,
+                            new KeyDownEventRecord(
+                                KeyboardKeyFacts.MovementKeys.END_KEY,
+                                KeyboardKeyFacts.MovementKeys.END_KEY,
+                                false,
+                                false,
+                                false));
+                    }
                 }
 
                 foreach (var character in content[i])
@@ -367,7 +383,8 @@ public partial record PlainTextEditorStates
 
                     if (character == '\n')
                     {
-                        // TODO: I think I need to ignore this in the future for the final answer
+                        // TODO: I think ignoring this is correct but unsure
+                        continue;
                     }
 
                     currentRowCharacterLength++;
