@@ -103,23 +103,39 @@ public partial record PlainTextEditorStates
             {
                 lapKinds.Add(LapKind.North);
             }
-            
+            else if ((int)lapMaker.YMin == (int)lappedItem.YMin)
+            {
+                lapKinds.Add(LapKind.North);
+            }
+
             if (lapMaker.XMin < lappedItem.XMin &&
                 lapMaker.XMax > lappedItem.XMin)
             {
                 lapKinds.Add(LapKind.West);
             }
-            
+            else if ((int)lapMaker.XMin == (int)lappedItem.XMin)
+            {
+                lapKinds.Add(LapKind.West);
+            }
+
             if (lapMaker.XMax > lappedItem.XMax &&
                 lapMaker.XMin < lappedItem.XMax)
             {
                 lapKinds.Add(LapKind.East);
             }
-            
+            else if ((int)lapMaker.XMax == (int)lappedItem.XMax)
+            {
+                lapKinds.Add(LapKind.East);
+            }
+
             if (lapMaker.YMax > lappedItem.YMax &&
                 lapMaker.YMin < lappedItem.YMax)
             {
-                lapKinds.Add(LapKind.East);
+                lapKinds.Add(LapKind.South);
+            }
+            else if ((int)lapMaker.YMax == (int)lappedItem.YMax)
+            {
+                lapKinds.Add(LapKind.South);
             }
 
             return lapKinds;
