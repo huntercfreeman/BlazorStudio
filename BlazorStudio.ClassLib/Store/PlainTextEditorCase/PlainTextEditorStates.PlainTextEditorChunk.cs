@@ -112,48 +112,50 @@ public partial record PlainTextEditorStates
         /// (The active request)
         /// </param>
         /// <returns></returns>
-        private static List<LapKind> GetLapKindTuples(RectangleCoordinates lappedItem, RectangleCoordinates lapMaker)
+        private static List<(LapKind lapKind, LapKindModifier lapKindModifier)> GetLapKindTuples(RectangleCoordinates lappedItem, RectangleCoordinates lapMaker)
         {
-            List<LapKind> lapKinds = new();
+            // Code is ordered N-E-S-W (a compass)
+
+            List<(LapKind lapKind, LapKindModifier lapKindModifier)> lapKinds = new();
 
             if (lapMaker.YMin < lappedItem.YMin &&
                 lapMaker.YMax > lappedItem.YMin)
             {
-                lapKinds.Add(LapKind.North);
+                lapKinds.Add((LapKind.North, LapKindModifier.Extends));
             }
             else if ((int)lapMaker.YMin == (int)lappedItem.YMin)
             {
-                lapKinds.Add(LapKind.North);
-            }
-
-            if (lapMaker.XMin < lappedItem.XMin &&
-                lapMaker.XMax > lappedItem.XMin)
-            {
-                lapKinds.Add(LapKind.West);
-            }
-            else if ((int)lapMaker.XMin == (int)lappedItem.XMin)
-            {
-                lapKinds.Add(LapKind.West);
+                lapKinds.Add((LapKind.North, LapKindModifier.Equal));
             }
 
             if (lapMaker.XMax > lappedItem.XMax &&
                 lapMaker.XMin < lappedItem.XMax)
             {
-                lapKinds.Add(LapKind.East);
+                lapKinds.Add((LapKind.East, LapKindModifier.Extends));
             }
             else if ((int)lapMaker.XMax == (int)lappedItem.XMax)
             {
-                lapKinds.Add(LapKind.East);
+                lapKinds.Add((LapKind.East, LapKindModifier.Equal));
             }
 
             if (lapMaker.YMax > lappedItem.YMax &&
                 lapMaker.YMin < lappedItem.YMax)
             {
-                lapKinds.Add(LapKind.South);
+                lapKinds.Add((LapKind.South, LapKindModifier.Extends));
             }
             else if ((int)lapMaker.YMax == (int)lappedItem.YMax)
             {
-                lapKinds.Add(LapKind.South);
+                lapKinds.Add((LapKind.South, LapKindModifier.Equal));
+            }
+
+            if (lapMaker.XMin < lappedItem.XMin &&
+                lapMaker.XMax > lappedItem.XMin)
+            {
+                lapKinds.Add((LapKind.West, LapKindModifier.Extends));
+            }
+            else if ((int)lapMaker.XMin == (int)lappedItem.XMin)
+            {
+                lapKinds.Add((LapKind.West, LapKindModifier.Equal));
             }
 
             return lapKinds;
