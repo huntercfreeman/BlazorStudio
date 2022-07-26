@@ -215,8 +215,8 @@ public static class FileCoordinateGridFactory
                     int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
 
                     using var stream = _memoryMappedFile
-                        .CreateViewStream(PreambleBytesLength + inclusiveStartingCharacterIndex, 
-                            1,
+                        .CreateViewStream(PreambleBytesLength + inclusiveStartingCharacterIndex,
+                            intCharacterLengthOfRequest,
                             MemoryMappedFileAccess.Read);
 
                     using var reader = new StreamReader(stream, Encoding);

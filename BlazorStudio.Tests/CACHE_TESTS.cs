@@ -68,14 +68,24 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         var plainTextEditor = State.Value.Map[plainTextEditorKey];
 
         DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
-            250,
-            500,
+            0,
+            Math.Ceiling(HeightOfEachRowInPixels) * (13),
             0,
             0,
-            500,
-            500);
+            Math.Ceiling(WidthOfEachCharacterInPixels) * (25),
+            Math.Ceiling(HeightOfEachRowInPixels) * (25));
 
         var resultOne = plainTextEditor.GetPlainText();
+
+        DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
+            0,
+            0,
+            0,
+            0,
+            Math.Ceiling(WidthOfEachCharacterInPixels) * (25),
+            Math.Ceiling(HeightOfEachRowInPixels) * (17));
+
+        var resultTwo = plainTextEditor.GetPlainText();
 
         Assert.Equal("a\n", resultOne);
 
