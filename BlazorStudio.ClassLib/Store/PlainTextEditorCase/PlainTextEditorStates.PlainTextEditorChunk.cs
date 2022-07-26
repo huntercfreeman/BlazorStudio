@@ -12,203 +12,104 @@ public partial record PlainTextEditorStates
         List<string> Content,
         PlainTextEditorRecord PlainTextEditorRecord)
     {
-        public bool OverlapsRequest(FileCoordinateGridRequest currentRequest,
+        public static bool OverlapsRequest(FileCoordinateGridRequest activeRequest,
+            FileCoordinateGridRequest chunkRequest,
+            List<string> chunkContent,
+            PlainTextEditorRecord chunkEditor,
             out PlainTextEditorChunk outPlainTextEditorChunk)
         {
-            // Chunk coordinate variables
-            var chunkInclusiveStartingRowIndex = FileCoordinateGridRequest.StartingRowIndex;
-            var chunkInclusiveStartingCharacterIndex = FileCoordinateGridRequest.StartingCharacterIndex;
-
-            var chunkExclusiveEndingRowIndex = FileCoordinateGridRequest.StartingRowIndex +
-                                               FileCoordinateGridRequest.RowCount;
-            var chunkExclusiveEndingCharacterIndex = FileCoordinateGridRequest.StartingCharacterIndex +
-                                                     FileCoordinateGridRequest.CharacterCount;
-
-            // Current Request coordinate variables
-            var currentRequestInclusiveStartingRowIndex = currentRequest.StartingRowIndex;
-            var currentRequestInclusiveStartingCharacterIndex = currentRequest.StartingCharacterIndex;
-
-            var currentRequestExclusiveEndingRowIndex = currentRequest.StartingRowIndex +
-                                               currentRequest.RowCount;
-            var currentRequestExclusiveEndingCharacterIndex = currentRequest.StartingCharacterIndex +
-                                                     currentRequest.CharacterCount;
-
-            bool hasOverlappingContent = false;
-
-            if (chunkInclusiveStartingRowIndex < currentRequestInclusiveStartingRowIndex ||
-                    (chunkInclusiveStartingRowIndex == currentRequestInclusiveStartingRowIndex
-                        && chunkInclusiveStartingCharacterIndex < currentRequestInclusiveStartingCharacterIndex))
+            var chunkCoordinates = new RectangleCoordinates
             {
-                // If the chunk has content that comes BEFORE the currentRequest
-                if (chunkExclusiveEndingRowIndex <= currentRequestExclusiveEndingRowIndex &&
-                    currentRequestExclusiveEndingRowIndex > chunkExclusiveEndingRowIndex)
-                {
-                    // If the chunk has content that OVERLAPS the currentRequest
-                    hasOverlappingContent = true;
-                }
-                else
-                {
-                    // chunkExclusiveEndingRowIndex ENCOMPASSES the smaller request
-                    outPlainTextEditorChunk = this;
-                    return true;
-                }
-            }
-            else if (chunkExclusiveEndingRowIndex > currentRequestExclusiveEndingRowIndex ||
-                     (chunkExclusiveEndingRowIndex == currentRequestExclusiveEndingRowIndex
-                      && chunkExclusiveEndingCharacterIndex <= currentRequestExclusiveEndingCharacterIndex))
+                YMin = chunkRequest.StartingRowIndex,
+                YMax = chunkRequest.StartingRowIndex + chunkRequest.RowCount - 1,
+                XMin = chunkRequest.StartingCharacterIndex,
+                XMax = chunkRequest.StartingCharacterIndex + chunkRequest.CharacterCount - 1
+            };
+            
+            var activeRequestCoordinates = new RectangleCoordinates
             {
-                // If the chunk has content that comes AFTER the currentRequest
-                if (chunkExclusiveEndingRowIndex > currentRequestExclusiveEndingRowIndex &&
-                    chunkInclusiveStartingRowIndex >= currentRequestInclusiveStartingRowIndex)
-                {
-                    // If the chunk has content that OVERLAPS the currentRequest
+                YMin = activeRequest.StartingRowIndex,
+                YMax = activeRequest.StartingRowIndex + activeRequest.RowCount - 1,
+                XMin = activeRequest.StartingCharacterIndex,
+                XMax = activeRequest.StartingCharacterIndex + activeRequest.CharacterCount - 1
+            };
 
-                    hasOverlappingContent = true;
-                }
-                else
-                {
-                    // chunkExclusiveEndingRowIndex ENCOMPASSES the smaller request
-                    outPlainTextEditorChunk = this;
-                    return true;
-                }
-            }
+            var lapKinds = GetLapKinds(chunkCoordinates, activeRequestCoordinates);
 
-            if (!hasOverlappingContent)
+            if (!lapKinds.Any())
             {
-                outPlainTextEditorChunk = this;
+                outPlainTextEditorChunk = null;
                 return false;
             }
 
-            // Has overlapping content so square off the overlap and return it as a new chunk
 
-            PlainTextEditorRecord replacementPlainTextEditor = PlainTextEditorRecord with
+        }
+
+        private class RectangleCoordinates
+        {
+            public double XMin { get; set; }
+            public double XMax { get; set; }
+            public double YMin { get; set; }
+            public double YMax { get; set; }
+        }
+
+        /// <summary>
+        /// From the lappedItem's perspective
+        /// where is it being overlapped?
+        /// </summary>
+        private enum LapKind
+        {
+            North,
+            West,
+            East,
+            South
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lappedItem">
+        /// In BlazorStudio.Tests\TestData\CacheTests\PartiallyOverlappedChunks\PartiallyOverlappedChunks.png
+        /// this is the black square
+        ///
+        /// (The existing cached chunk)
+        /// </param>
+        /// <param name="lapMaker">
+        /// In BlazorStudio.Tests\TestData\CacheTests\PartiallyOverlappedChunks\PartiallyOverlappedChunks.png
+        /// this is the blue square
+        ///
+        /// (The active request)
+        /// </param>
+        /// <returns></returns>
+        private static List<LapKind> GetLapKinds(RectangleCoordinates lappedItem, RectangleCoordinates lapMaker)
+        {
+            List<LapKind> lapKinds = new();
+
+            if (lapMaker.YMin < lappedItem.YMin &&
+                lapMaker.YMax > lappedItem.YMin)
             {
-                CurrentRowIndex = 0,
-                CurrentTokenIndex = 0,
-                SequenceKey = SequenceKey.NewSequenceKey()
-            };
-
-            FileCoordinateGridRequest subrequest;
-
-            // Square off north end
-            if (currentRequestInclusiveStartingRowIndex < chunkInclusiveStartingRowIndex)
-            {
-                var subrequestInclusiveStartingRowIndex = currentRequestInclusiveStartingRowIndex;
-
-                var subrequestRowCount = chunkInclusiveStartingRowIndex - currentRequestInclusiveStartingRowIndex;
-
-                var subrequestStartingCharacterIndex = Math.Min(currentRequestInclusiveStartingCharacterIndex,
-                    chunkInclusiveStartingCharacterIndex);
-
-                var subrequestCharacterCount = Math.Max(currentRequestExclusiveEndingCharacterIndex,
-                    chunkExclusiveEndingCharacterIndex)
-                        - subrequestStartingCharacterIndex;
-
-                subrequest = new FileCoordinateGridRequest(
-                    subrequestInclusiveStartingRowIndex,
-                    subrequestRowCount,
-                    subrequestStartingCharacterIndex,
-                    subrequestCharacterCount,
-                    currentRequest.CancellationToken);
-
-                var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
-
-                replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
-                    content,
-                    subrequest,
-                    FileCoordinateGridRequest);
+                lapKinds.Add(LapKind.North);
             }
-            else if (chunkInclusiveStartingRowIndex < currentRequestInclusiveStartingRowIndex)
+            
+            if (lapMaker.XMin < lappedItem.XMin &&
+                lapMaker.XMax > lappedItem.XMin)
             {
-                var subrequestInclusiveStartingRowIndex = chunkInclusiveStartingRowIndex;
-
-                var subrequestRowCount = currentRequestInclusiveStartingRowIndex - chunkInclusiveStartingRowIndex ;
-
-                var subrequestStartingCharacterIndex = Math.Min(currentRequestInclusiveStartingCharacterIndex,
-                    chunkInclusiveStartingCharacterIndex);
-
-                var subrequestCharacterCount = Math.Max(currentRequestExclusiveEndingCharacterIndex,
-                                                   chunkExclusiveEndingCharacterIndex)
-                                               - subrequestStartingCharacterIndex;
-
-                subrequest = new FileCoordinateGridRequest(
-                    subrequestInclusiveStartingRowIndex,
-                    subrequestRowCount,
-                    subrequestStartingCharacterIndex,
-                    subrequestCharacterCount,
-                    currentRequest.CancellationToken);
-
-                var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
-
-                replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
-                    content,
-                    subrequest,
-                    FileCoordinateGridRequest);
+                lapKinds.Add(LapKind.West);
             }
-
-            // Square off south end
-            if (currentRequestExclusiveEndingRowIndex > chunkExclusiveEndingRowIndex)
+            
+            if (lapMaker.XMax > lappedItem.XMax &&
+                lapMaker.XMin < lappedItem.XMax)
             {
-                var subrequestInclusiveStartingRowIndex = chunkExclusiveEndingRowIndex;
-
-                var subrequestRowCount = currentRequestExclusiveEndingRowIndex - chunkExclusiveEndingRowIndex;
-
-                var subrequestStartingCharacterIndex = Math.Min(currentRequestInclusiveStartingCharacterIndex,
-                    chunkInclusiveStartingCharacterIndex);
-
-                var subrequestCharacterCount = Math.Max(currentRequestExclusiveEndingCharacterIndex,
-                    chunkExclusiveEndingCharacterIndex)
-                        - subrequestStartingCharacterIndex;
-
-                subrequest = new FileCoordinateGridRequest(
-                    subrequestInclusiveStartingRowIndex,
-                    subrequestRowCount,
-                    subrequestStartingCharacterIndex,
-                    subrequestCharacterCount,
-                    currentRequest.CancellationToken);
-
-                var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
-
-                replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
-                    content,
-                    subrequest,
-                    FileCoordinateGridRequest);
+                lapKinds.Add(LapKind.East);
+            }
+            
+            if (lapMaker.YMax > lappedItem.YMax &&
+                lapMaker.YMin < lappedItem.YMax)
+            {
+                lapKinds.Add(LapKind.East);
             }
 
-            // Square off center
-            {
-                int subrequestInclusiveStartingRowIndex = chunkInclusiveStartingRowIndex;
-                int subrequestRowCount = chunkExclusiveEndingRowIndex - chunkInclusiveStartingRowIndex;
-
-                int subrequestStartingCharacterIndex = currentRequestInclusiveStartingCharacterIndex;
-                int subrequestCharacterCount = currentRequestExclusiveEndingCharacterIndex -
-                                                   Math.Min(currentRequestInclusiveStartingCharacterIndex,
-                                                       chunkInclusiveStartingCharacterIndex);
-
-                subrequest = new FileCoordinateGridRequest(
-                    subrequestInclusiveStartingRowIndex,
-                    subrequestRowCount,
-                    subrequestStartingCharacterIndex,
-                    subrequestCharacterCount,
-                    currentRequest.CancellationToken);
-
-                var content = PlainTextEditorRecord.FileCoordinateGrid.Request(subrequest);
-
-                replacementPlainTextEditor = AlterChunk(replacementPlainTextEditor,
-                    content,
-                    subrequest,
-                    FileCoordinateGridRequest);
-            }
-
-            outPlainTextEditorChunk = new PlainTextEditorChunk(
-                subrequest,
-
-                // TODO: Track Content
-                new(),
-
-                replacementPlainTextEditor);
-
-            return true;
+            return lapKinds;
         }
 
         public static PlainTextEditorRecord AlterChunk(PlainTextEditorRecord plainTextEditorRecord,
