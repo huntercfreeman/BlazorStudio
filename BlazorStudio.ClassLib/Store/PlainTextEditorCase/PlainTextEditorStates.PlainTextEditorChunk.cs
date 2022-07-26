@@ -16,6 +16,7 @@ public partial record PlainTextEditorStates
             FileCoordinateGridRequest chunkRequest,
             List<string> chunkContent,
             PlainTextEditorRecord chunkEditor,
+            PlainTextEditorChunk chunk,
             out PlainTextEditorChunk outPlainTextEditorChunk)
         {
             var chunkCoordinates = new RectangleCoordinates
@@ -34,15 +35,27 @@ public partial record PlainTextEditorStates
                 XMax = activeRequest.StartingCharacterIndex + activeRequest.CharacterCount - 1
             };
 
-            var lapKinds = GetLapKinds(chunkCoordinates, activeRequestCoordinates);
+            // The general case
+            var activeRequestLapMaker = GetLapKinds(chunkCoordinates, activeRequestCoordinates);
 
-            if (!lapKinds.Any())
+            // Edge case: check if chunk contains the request
+            var chunkLapMaker = GetLapKinds(activeRequestCoordinates, chunkCoordinates);
+
+            if (chunkLapMaker.Count == 4)
+            {
+                outPlainTextEditorChunk = chunk;
+                return true;
+            }
+
+            if (!activeRequestLapMaker.Any())
             {
                 outPlainTextEditorChunk = null;
                 return false;
             }
 
-
+            // TODO: Calculations
+            outPlainTextEditorChunk = null;
+            return false;
         }
 
         private class RectangleCoordinates

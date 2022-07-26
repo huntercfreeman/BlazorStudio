@@ -128,6 +128,7 @@ public partial record PlainTextEditorStates
                         cachedChunk.FileCoordinateGridRequest,
                         cachedChunk.Content,
                         cachedChunk.PlainTextEditorRecord,
+                        cachedChunk,
                         out var chunk))
                 {
                     Cache[index] = chunk;
