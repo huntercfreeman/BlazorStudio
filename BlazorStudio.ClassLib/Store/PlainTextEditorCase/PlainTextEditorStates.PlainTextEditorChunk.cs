@@ -36,10 +36,12 @@ public partial record PlainTextEditorStates
             };
 
             // The general case
-            var activeRequestLapMaker = GetLapKinds(chunkCoordinates, activeRequestCoordinates);
+            var activeRequestLapMaker = GetLapKinds(chunkCoordinates, 
+                activeRequestCoordinates);
 
             // Edge case: check if chunk contains the request
-            var chunkLapMaker = GetLapKinds(activeRequestCoordinates, chunkCoordinates);
+            var chunkLapMaker = GetLapKinds(activeRequestCoordinates, 
+                chunkCoordinates);
 
             if (chunkLapMaker.Count == 4)
             {

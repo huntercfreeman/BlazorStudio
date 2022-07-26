@@ -53,6 +53,49 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         Assert.Equal("a\n", resultTwo);
     }
+    
+    [Fact]
+    public void CACHE_NORTH_OVERLAP_TXT()
+    {
+        var absoluteFilePath = new AbsoluteFilePath("C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\CacheTests\\PartiallyOverlappedChunks\\THE TELL-TALE HEART.txt",
+            false);
+
+        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+        Dispatcher.Dispatch(new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
+            absoluteFilePath));
+
+        var plainTextEditor = State.Value.Map[plainTextEditorKey];
+
+        DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
+            250,
+            500,
+            0,
+            0,
+            500,
+            500);
+
+        var resultOne = plainTextEditor.GetPlainText();
+
+        Assert.Equal("a\n", resultOne);
+
+        //for (int i = 0; i < 10; i++)
+        //{
+        //    DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
+        //        0,
+        //        0,
+        //        0,
+        //        0,
+        //        Math.Ceiling(WidthOfEachCharacterInPixels) * (i),
+        //        Math.Ceiling(HeightOfEachRowInPixels) * (i));
+        //}
+
+        //var resultTwo = plainTextEditor.GetPlainText();
+
+        //Assert.Equal(1, plainTextEditor.CacheCount);
+
+        //Assert.Equal("a\n", resultTwo);
+    }
 
     public void DispatchMemoryMappedFileReadRequestAction(PlainTextEditorKey plainTextEditorKey,
         double scrollLeft,
