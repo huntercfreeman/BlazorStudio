@@ -35,22 +35,21 @@ public partial record PlainTextEditorStates
                 XMax = activeRequest.StartingCharacterIndex + activeRequest.CharacterCount - 1
             };
 
-            // The general case
-            var activeRequestLapMaker = GetLapKinds(chunkCoordinates, 
-                activeRequestCoordinates);
-
-            // Edge case: check if chunk contains the request
-            var chunkLapMaker = GetLapKinds(activeRequestCoordinates, 
-                chunkCoordinates);
-
-            if (chunkLapMaker.Count == 4)
+            // Edge case: check if chunk encompasses the request
+            if (GetLapKindTuples(activeRequestCoordinates, chunkCoordinates)
+                    .Count == 4)
             {
                 outPlainTextEditorChunk = chunk;
                 return true;
             }
 
+            // The general case
+            var activeRequestLapMaker = GetLapKindTuples(chunkCoordinates, 
+                activeRequestCoordinates);
+
             if (!activeRequestLapMaker.Any())
             {
+                // No overlapping
                 outPlainTextEditorChunk = null;
                 return false;
             }
@@ -81,6 +80,23 @@ public partial record PlainTextEditorStates
         }
 
         /// <summary>
+        /// If lappedItem has MinY == 50 and lapMaker has MinY == 50
+        /// then <see cref="LapKind.North"/> will be returned and the modifier
+        /// will be <see cref="LapKindModifier.Equal"/> as this will result
+        /// in the cache area being unchanged.
+        ///
+        /// If lappedItem has MinY == 50 and lapMaker has MinY == 25
+        /// then <see cref="LapKind.North"/> will be returned and the modifier
+        /// will be <see cref="LapKindModifier.Extends"/> as this will result
+        /// in the cache area being extended 25 units north.
+        /// </summary>
+        private enum LapKindModifier
+        {
+            Extends,
+            Equal,
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="lappedItem">
@@ -96,7 +112,7 @@ public partial record PlainTextEditorStates
         /// (The active request)
         /// </param>
         /// <returns></returns>
-        private static List<LapKind> GetLapKinds(RectangleCoordinates lappedItem, RectangleCoordinates lapMaker)
+        private static List<LapKind> GetLapKindTuples(RectangleCoordinates lappedItem, RectangleCoordinates lapMaker)
         {
             List<LapKind> lapKinds = new();
 
