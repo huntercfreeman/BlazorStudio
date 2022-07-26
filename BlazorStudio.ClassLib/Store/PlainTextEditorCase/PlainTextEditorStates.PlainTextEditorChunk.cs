@@ -243,8 +243,15 @@ public partial record PlainTextEditorStates
                     : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
             }
 
+            int availableRowCount = subrequest.RowCount;
+
+            if (content.Count < subrequest.RowCount)
+            {
+                availableRowCount = content.Count;
+            }
+
             for (int i = subrequest.StartingRowIndex;
-                 i < subrequest.RowCount;
+                 i < availableRowCount;
                  i++)
             {
                 var rowIndex = i + subrequest.StartingRowIndex;

@@ -158,7 +158,7 @@ public static class FileCoordinateGridFactory
 
         public List<string> Request(FileCoordinateGridRequest fileCoordinateGridRequest)
         {
-            var rowBuilders = new List<StringBuilder>();
+            var rows = new List<string>();
 
             if (_memoryMappedFile is not null)
             {
@@ -177,13 +177,8 @@ public static class FileCoordinateGridFactory
                 {
                     if (fileCoordinateGridRequest.CancellationToken.IsCancellationRequested)
                     {
-                        return rowBuilders
-                            .Select(x => x.ToString())
-                            .ToList();
+                        return rows;
                     }
-
-                    var builder = new StringBuilder();
-                    rowBuilders.Add(builder);
 
                     long inclusiveStartingCharacterIndex = CharacterIndexMarkerForStartOfARow[rowIndex] +
                                                            fileCoordinateGridRequest.StartingCharacterIndex;
@@ -219,28 +214,18 @@ public static class FileCoordinateGridFactory
 
                     int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
 
-                    var buffer = new byte[intCharacterLengthOfRequest];
+                    using var stream = _memoryMappedFile
+                        .CreateViewStream(PreambleBytesLength + inclusiveStartingCharacterIndex, 
+                            1,
+                            MemoryMappedFileAccess.Read);
 
-                    using (MemoryMappedViewAccessor accessor = _memoryMappedFile.CreateViewAccessor(
-                               inclusiveStartingCharacterIndex,
-                               intCharacterLengthOfRequest))
-                    {
-                        accessor.ReadArray(0, buffer, 0, intCharacterLengthOfRequest);
-                    }
+                    using var reader = new StreamReader(stream, Encoding);
 
-                    using (StreamReader streamReader = new StreamReader(new MemoryStream(buffer), Encoding))
-                    {
-                        while (streamReader.Peek() != -1)
-                        {
-                            builder.Append((char)streamReader.Read());
-                        }
-                    }
+                    rows.Add(reader.ReadToEnd());
                 }
             }
 
-            return rowBuilders
-                .Select(x => x.ToString())
-                .ToList();
+            return rows;
         }
 
         public void Dispose()

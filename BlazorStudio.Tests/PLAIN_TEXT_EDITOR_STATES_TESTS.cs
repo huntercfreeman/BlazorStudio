@@ -18,7 +18,7 @@ public class PLAIN_TEXT_EDITOR_STATES_TESTS
 
     // TODO: The font-size style attribute does not equal the size of the div that encapsulates the singular character. Figure out EXACTLY these values based off the font-size instead of hard coding what developer tools says
     protected double HeightOfEachRowInPixels = 27;
-    protected double HidthOfEachCharacterInPixels = 9.91;
+    protected double WidthOfEachCharacterInPixels = 9.91;
 
     public PLAIN_TEXT_EDITOR_STATES_TESTS()
     {

@@ -25,4 +25,31 @@
     <ProjectReference Include="..\BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestData\CacheTests\ManyCharacterSingleRow.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\CacheTests\ManyRowsSingleCharacter.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\CacheTests\PlusSign.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\CacheTests\SingleCharacter.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\CacheTests\Square_100x100.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\CacheTests\Square_100x100_WithTextInside.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\helloWorld_CARRIAGE-RETURN-NEW-LINE.c">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\helloWorld_NEW-LINE.c">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

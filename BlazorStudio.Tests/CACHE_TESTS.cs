@@ -12,9 +12,9 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     private double _paddingInPixels = 250;
 
     [Fact]
-    public void MEMORY_MAPPED_FILE_IS_EQUAL_TO_STREAM_READER()
+    public void CACHE_SINGLE_CHARACTER_TXT()
     {
-        var absoluteFilePath = new AbsoluteFilePath("C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\Hamlet_ Entire Play.html",
+        var absoluteFilePath = new AbsoluteFilePath("C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\CacheTests\\SingleCharacter.txt",
             false);
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
@@ -32,13 +32,26 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             500,
             500);
 
-        DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
-            1000,
-            1000,
-            0,
-            0,
-            1500,
-            1500);
+        var resultOne = plainTextEditor.GetPlainText();
+
+        Assert.Equal("a\n", resultOne);
+
+        for (int i = 0; i < 10; i++)
+        {
+            DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
+                0,
+                0,
+                0,
+                0,
+                Math.Ceiling(WidthOfEachCharacterInPixels) * (i),
+                Math.Ceiling(HeightOfEachRowInPixels) * (i));
+        }
+
+        var resultTwo = plainTextEditor.GetPlainText();
+
+        Assert.Equal(1, plainTextEditor.CacheCount);
+
+        Assert.Equal("a\n", resultTwo);
     }
 
     public void DispatchMemoryMappedFileReadRequestAction(PlainTextEditorKey plainTextEditorKey,

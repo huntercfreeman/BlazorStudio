@@ -42,6 +42,7 @@ public partial record PlainTextEditorStates
         public int CharacterIndexOffsetRelativeToRow { get; init; }
         public List<PlainTextEditorChunk> Cache { get; init; } = new();
         public int CachedChunkIndex { get; private set; }
+        public int CacheCount => Cache.Count;
 
         public T GetCurrentTextTokenAs<T>()
             where T : class
@@ -72,13 +73,16 @@ public partial record PlainTextEditorStates
 
         public string GetPlainText()
         {
+            var cache = Cache[CachedChunkIndex];
+            var cacheRowList = cache.PlainTextEditorRecord.List;
+
             var builder = new StringBuilder();
 
-            foreach (var row in List)
+            foreach (var row in cacheRowList)
             {
                 foreach (var token in row.List)
                 {
-                    if (token.Key == List[0].List[0].Key)
+                    if (token.Key == cacheRowList[0].List[0].Key)
                     {
                         // Is first start of row so skip
                         // as it would insert a enter key stroke at start
