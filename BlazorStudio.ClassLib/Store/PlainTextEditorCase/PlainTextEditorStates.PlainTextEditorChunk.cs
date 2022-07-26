@@ -316,7 +316,8 @@ public partial record PlainTextEditorStates
 
                     plainTextEditorRecord = plainTextEditorRecord with
                     {
-                        CurrentRowIndex = correspondingChunkRowIndex
+                        CurrentRowIndex = correspondingChunkRowIndex,
+                        CurrentTokenIndex = 0
                     };
 
                     if (subrequest.StartingCharacterIndex < chunkRequest.StartingCharacterIndex)
@@ -378,7 +379,7 @@ public partial record PlainTextEditorStates
                     );
 
                     plainTextEditorRecord = PlainTextEditorStates.StateMachine
-                            .HandleKeyDownEvent(plainTextEditorRecord, keyDown.KeyDownEventRecord) with
+                        .HandleKeyDownEvent(plainTextEditorRecord, keyDown.KeyDownEventRecord) with
                         {
                             SequenceKey = SequenceKey.NewSequenceKey()
                         };
