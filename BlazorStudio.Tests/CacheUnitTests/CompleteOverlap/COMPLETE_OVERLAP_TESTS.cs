@@ -28,10 +28,10 @@ public class COMPLETE_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\CompleteOverlap\\ChunkEncompassesRequest\\resultOne_CompleteOverlapChunkEncompassesRequest.txt");
 
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\CompleteOverlap\\ChunkEncompassesRequest\\resultTwo_CompleteOverlapChunkEncompassesRequest.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
@@ -81,10 +81,10 @@ public class COMPLETE_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
         
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\CompleteOverlap\\RequestEncompassesChunk\\resultOne_CompleteOverlapChunkEncompassesRequest.txt");
         
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\CompleteOverlap\\RequestEncompassesChunk\\resultTwo_CompleteOverlapChunkEncompassesRequest.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
