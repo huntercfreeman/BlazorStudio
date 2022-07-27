@@ -530,6 +530,14 @@ public partial record PlainTextEditorStates
                 // Chunk CAN match the row
                 // Move to the position
                 
+                plainTextEditorRecord = StateMachine.HandleHome(plainTextEditorRecord,
+                    new KeyDownEventRecord(
+                        KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                        KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                        true,
+                        false,
+                        false));
+
                 for (int moveRow = plainTextEditorRecord.CurrentRowIndex; moveRow < correspondingChunkRowIndex; moveRow++)
                 {
                     plainTextEditorRecord = StateMachine.HandleArrowDown(plainTextEditorRecord,
