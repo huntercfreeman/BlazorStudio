@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestData\CacheTests\singleCharacter.txt">
+    <None Update="TestData\CacheTestsData\singleCharacter.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="TestData\helloWorld_CARRIAGE-RETURN-NEW-LINE.c">
