@@ -7,13 +7,13 @@ namespace BlazorStudio.Tests.CacheUnitTests.CompleteOverlap;
 public class COMPLETE_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 {
     [Fact]
-    public void CHUNK_ENCOMPASSES_REQUEST()
+    public void CHUNK_ENCOMPASSES_REQUEST_TEST()
     {
         throw new NotImplementedException();
     }
     
     [Fact]
-    public void REQUEST_ENCOMPASSES_CHUNK()
+    public void REQUEST_ENCOMPASSES_CHUNK_TEST()
     {
         throw new NotImplementedException();
     }
