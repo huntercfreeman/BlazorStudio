@@ -56,12 +56,6 @@ public partial record PlainTextEditorStates
                 return false;
             }
 
-            // The order of activeRequestLapMakerTuples.Contains(...)
-            // and the respective ExtendChunk...() calls
-            // are in a specific order for a reason.
-            //
-            // North and South extensions will simultaneously extend East, and West if necessary
-            // This improves performance otherwise you have to sort of 'for loop' and repeat extensions over and over.
             if (activeRequestLapMakerTuples.Contains((LapKind.North, LapKindModifier.Extends)))
             {
                 chunk = ExtendChunkNorth(activeRequest,
@@ -114,8 +108,6 @@ public partial record PlainTextEditorStates
                 xMin = activeRequest.StartingCharacterIndex;
 
                 xExtensionAmount += chunk.FileCoordinateGridRequest.StartingCharacterIndex - activeRequest.StartingCharacterIndex;
-
-                lapKindTuples.Remove(westExtension);
             }
             
             var eastExtension = (LapKind.East, LapKindModifier.Extends);
@@ -125,8 +117,6 @@ public partial record PlainTextEditorStates
 
                 xExtensionAmount += (chunk.FileCoordinateGridRequest.StartingCharacterIndex + chunk.FileCoordinateGridRequest.CharacterCount) 
                                     - (activeRequest.StartingCharacterIndex + activeRequest.CharacterCount);
-
-                lapKindTuples.Remove(eastExtension);
             }
 
             var northRequest = new FileCoordinateGridRequest(
@@ -233,8 +223,6 @@ public partial record PlainTextEditorStates
                 xMin = activeRequest.StartingCharacterIndex;
 
                 xExtensionAmount += chunk.FileCoordinateGridRequest.StartingCharacterIndex - activeRequest.StartingCharacterIndex;
-
-                lapKindTuples.Remove(westExtension);
             }
 
             var eastExtension = (LapKind.East, LapKindModifier.Extends);
@@ -244,8 +232,6 @@ public partial record PlainTextEditorStates
 
                 xExtensionAmount += (chunk.FileCoordinateGridRequest.StartingCharacterIndex + chunk.FileCoordinateGridRequest.CharacterCount)
                                     - (activeRequest.StartingCharacterIndex + activeRequest.CharacterCount);
-
-                lapKindTuples.Remove(eastExtension);
             }
 
             var southRequest = new FileCoordinateGridRequest(
@@ -543,12 +529,17 @@ public partial record PlainTextEditorStates
             {
                 // Chunk CAN match the row
                 // Move to the position
-
-                plainTextEditorRecord = plainTextEditorRecord with
+                
+                for (int moveRow = plainTextEditorRecord.CurrentRowIndex; moveRow < correspondingChunkRowIndex; moveRow++)
                 {
-                    CurrentRowIndex = correspondingChunkRowIndex,
-                    CurrentTokenIndex = 0
-                };
+                    plainTextEditorRecord = StateMachine.HandleArrowDown(plainTextEditorRecord,
+                        new KeyDownEventRecord(
+                            KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
+                            KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
+                            false,
+                            false,
+                            false));
+                }
 
                 if (extensionRequest.StartingCharacterIndex < originalChunkRequest.StartingCharacterIndex)
                 {
@@ -706,11 +697,13 @@ public partial record PlainTextEditorStates
                     // Chunk CAN match the row
                     // Move to the position
 
-                    plainTextEditorRecord = plainTextEditorRecord with
-                    {
-                        CurrentRowIndex = correspondingChunkRowIndex,
-                        CurrentTokenIndex = 0
-                    };
+                    plainTextEditorRecord = StateMachine.HandleArrowDown(plainTextEditorRecord,
+                        new KeyDownEventRecord(
+                            KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
+                            KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
+                            false,
+                            false,
+                            false));
 
                     if (extensionRequest.StartingCharacterIndex < originalChunkRequest.StartingCharacterIndex)
                     {
