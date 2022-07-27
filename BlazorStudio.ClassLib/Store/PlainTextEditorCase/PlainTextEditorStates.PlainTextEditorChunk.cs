@@ -169,7 +169,48 @@ public partial record PlainTextEditorStates
             PlainTextEditorChunk chunk,
             List<(LapKind lapKind, LapKindModifier lapKindModifier)> lapKindTuples)
         {
-            throw new NotImplementedException();
+            // Non if statement required setting
+            int xMin = chunk.FileCoordinateGridRequest.StartingCharacterIndex + chunk.FileCoordinateGridRequest.CharacterCount;
+            int xExclusiveMax = activeRequest.StartingCharacterIndex + activeRequest.CharacterCount;
+            int xExtensionAmount = xExclusiveMax - xMin;
+
+            int yMin = chunk.FileCoordinateGridRequest.StartingRowIndex;
+            int yExclusiveMax = chunk.FileCoordinateGridRequest.StartingRowIndex + chunk.FileCoordinateGridRequest.RowCount;
+
+            var eastRequest = new FileCoordinateGridRequest(
+                yMin,
+                yExclusiveMax - yMin,
+                xMin,
+                xExclusiveMax - xMin,
+                activeRequest.CancellationToken);
+
+            var content = chunk.PlainTextEditorRecord.FileCoordinateGrid
+                .Request(eastRequest);
+
+            var nextEditor = AlterChunk(chunk.PlainTextEditorRecord,
+                content,
+                eastRequest,
+                chunk.FileCoordinateGridRequest);
+
+            var combinedRequest = new FileCoordinateGridRequest(
+                yMin,
+                chunk.FileCoordinateGridRequest.RowCount,
+                xMin,
+                xExtensionAmount + chunk.FileCoordinateGridRequest.CharacterCount,
+                activeRequest.CancellationToken);
+
+            nextEditor = nextEditor with
+            {
+                RowIndexOffset = combinedRequest.StartingRowIndex
+            };
+
+            lapKindTuples.Remove((LapKind.East, LapKindModifier.Extends));
+
+            return chunk with
+            {
+                PlainTextEditorRecord = nextEditor,
+                FileCoordinateGridRequest = combinedRequest
+            };
         }
 
         private static PlainTextEditorChunk ExtendChunkSouth(FileCoordinateGridRequest activeRequest,
@@ -183,7 +224,48 @@ public partial record PlainTextEditorStates
             PlainTextEditorChunk chunk,
             List<(LapKind lapKind, LapKindModifier lapKindModifier)> lapKindTuples)
         {
-            throw new NotImplementedException();
+            // Non if statement required setting
+            int xMin = activeRequest.StartingCharacterIndex;
+            int xExclusiveMax = chunk.FileCoordinateGridRequest.StartingCharacterIndex;
+            int xExtensionAmount = xExclusiveMax - xMin;
+
+            int yMin = chunk.FileCoordinateGridRequest.StartingRowIndex;
+            int yExclusiveMax = chunk.FileCoordinateGridRequest.StartingRowIndex + chunk.FileCoordinateGridRequest.RowCount;
+
+            var westRequest = new FileCoordinateGridRequest(
+                yMin,
+                yExclusiveMax - yMin,
+                xMin,
+                xExclusiveMax - xMin,
+                activeRequest.CancellationToken);
+
+            var content = chunk.PlainTextEditorRecord.FileCoordinateGrid
+                .Request(westRequest);
+
+            var nextEditor = AlterChunk(chunk.PlainTextEditorRecord,
+                content,
+                westRequest,
+                chunk.FileCoordinateGridRequest);
+
+            var combinedRequest = new FileCoordinateGridRequest(
+                yMin,
+                chunk.FileCoordinateGridRequest.RowCount,
+                xMin,
+                xExtensionAmount + chunk.FileCoordinateGridRequest.CharacterCount,
+                activeRequest.CancellationToken);
+
+            nextEditor = nextEditor with
+            {
+                RowIndexOffset = combinedRequest.StartingRowIndex
+            };
+
+            lapKindTuples.Remove((LapKind.West, LapKindModifier.Extends));
+
+            return chunk with
+            {
+                PlainTextEditorRecord = nextEditor,
+                FileCoordinateGridRequest = combinedRequest
+            };
         }
 
         private class RectangleCoordinates
