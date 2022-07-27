@@ -34,7 +34,7 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var resultOne = plainTextEditor.GetPlainText();
 
-        Assert.Equal("a\n", resultOne);
+        Assert.Equal("a\r\n", resultOne);
 
         // Ensure the cache is reused
         for (int i = 0; i < 10; i++)
@@ -52,7 +52,7 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         Assert.Equal(1, plainTextEditor.CacheCount);
 
-        Assert.Equal("a\n", resultTwo);
+        Assert.Equal("a\r\n", resultTwo);
     }
     
     [Fact]

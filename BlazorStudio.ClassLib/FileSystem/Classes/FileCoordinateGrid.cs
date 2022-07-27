@@ -54,7 +54,7 @@ public static class FileCoordinateGridFactory
         public long CharacterLengthOfLongestRow { get; private set; }
         public int RowCount => _characterIndexMarkerForStartOfARow.Count;
         public int ExclusiveEndOfFileCharacterIndex => _exclusiveEndOfFileCharacterIndex;
-        public int PreambleBytesLength { get; private set; }
+        public int PreambleLength { get; private set; }
 
         public void Initialize()
         {
@@ -62,7 +62,8 @@ public static class FileCoordinateGridFactory
                 throw new ApplicationException($"{nameof(FileCoordinateGrid)} does not support directories.");
 
             if (AbsoluteFilePath.Directories is null || !AbsoluteFilePath.Directories.Any())
-                throw new ApplicationException($"{nameof(AbsoluteFilePath)}.{nameof(AbsoluteFilePath.Directories)} was null or empty");
+                throw new ApplicationException(
+                    $"{nameof(AbsoluteFilePath)}.{nameof(AbsoluteFilePath.Directories)} was null or empty");
 
             var parentDirectory = AbsoluteFilePath.Directories.Last();
 
@@ -81,10 +82,6 @@ public static class FileCoordinateGridFactory
                 // Must do a 'read' to get current encoding
                 _ = streamReader.Peek();
                 Encoding = streamReader.CurrentEncoding;
-
-                var previousCharacter = '\0';
-
-                PreambleBytesLength = streamReader.CurrentEncoding.Preamble.Length;
 
                 while (streamReader.Peek() != -1)
                 {
@@ -116,14 +113,22 @@ public static class FileCoordinateGridFactory
 
                         rowCharacterCount = 0;
                     }
-                    else if (previousCharacter == '\r')
-                    {
-                        // Count '\r\n' as 1 character
-                        // characterCounter--;
-                        // rowCharacterCount--;
-                    }
+                }
+            }
 
-                    previousCharacter = currentCharacter;
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                byte[] bits = new byte[3];
+                var readAmount = fs.Read(bits, 0, 3);
+
+                if (readAmount == 3)
+                {
+                    // UTF8 byte order mark is: 0xEF,0xBB,0xBF
+                    if (bits[0] == Encoding.Preamble[0] && bits[1] == Encoding.Preamble[1] &&
+                        bits[2] == Encoding.Preamble[2])
+                    {
+                        PreambleLength = 3;
+                    }
                 }
             }
 
@@ -201,7 +206,7 @@ public static class FileCoordinateGridFactory
                             : exclusiveEndingCharacterIndex;
                     }
 
-                    exclusiveEndingCharacterIndex = Math.Min(ExclusiveEndOfFileCharacterIndex - 1, exclusiveEndingCharacterIndex);
+                    exclusiveEndingCharacterIndex = Math.Min(ExclusiveEndOfFileCharacterIndex, exclusiveEndingCharacterIndex);
 
                     long longCharacterLengthOfRequest = exclusiveEndingCharacterIndex - inclusiveStartingCharacterIndex;
 
@@ -215,9 +220,9 @@ public static class FileCoordinateGridFactory
                     }
 
                     int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
-
+                    
                     using var stream = _memoryMappedFile
-                        .CreateViewStream(PreambleBytesLength + inclusiveStartingCharacterIndex,
+                        .CreateViewStream(PreambleLength + inclusiveStartingCharacterIndex,
                             intCharacterLengthOfRequest,
                             MemoryMappedFileAccess.Read);
 
