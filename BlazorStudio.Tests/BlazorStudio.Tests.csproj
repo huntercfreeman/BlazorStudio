@@ -26,22 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestData\CacheTests\ManyCharacterSingleRow.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\CacheTests\ManyRowsSingleCharacter.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\CacheTests\PlusSign.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\CacheTests\SingleCharacter.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\CacheTests\Square_100x100.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\CacheTests\Square_100x100_WithTextInside.txt">
+    <None Update="TestData\CacheTests\singleCharacter.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="TestData\helloWorld_CARRIAGE-RETURN-NEW-LINE.c">

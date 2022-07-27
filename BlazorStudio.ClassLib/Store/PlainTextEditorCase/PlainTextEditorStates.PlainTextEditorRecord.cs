@@ -226,6 +226,12 @@ public partial record PlainTextEditorStates
                         _ => character.ToString()
                     };
 
+                    if (character == '\n')
+                    {
+                        // TODO: I think ignoring this is correct but unsure
+                        continue;
+                    }
+
                     var keyDown = new KeyDownEventAction(plainTextEditorRecord.PlainTextEditorKey,
                         new KeyDownEventRecord(
                             character.ToString(),
@@ -247,9 +253,11 @@ public partial record PlainTextEditorStates
 
                 if (row.LastOrDefault() != '\n')
                 {
+                    var newLineCode = MutateIfPreviousCharacterWasCarriageReturn();
+
                     var forceNewLine = new KeyDownEventRecord(
-                        KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
-                        KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
+                        newLineCode,
+                        newLineCode,
                         false,
                         false,
                         false);

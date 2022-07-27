@@ -587,12 +587,6 @@ public partial record PlainTextEditorStates
                         continue;
                     }
 
-                    if (character == '\n')
-                    {
-                        // TODO: I think ignoring this is correct but unsure
-                        continue;
-                    }
-
                     currentRowCharacterLength++;
 
                     var code = character switch
@@ -602,6 +596,12 @@ public partial record PlainTextEditorStates
                         '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
                         _ => character.ToString()
                     };
+
+                    if (character == '\n')
+                    {
+                        // TODO: I think ignoring this is correct but unsure
+                        continue;
+                    }
 
                     var keyDown = new KeyDownEventAction(plainTextEditorRecord.PlainTextEditorKey,
                         new KeyDownEventRecord(
