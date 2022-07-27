@@ -44,19 +44,85 @@ public partial record PlainTextEditorStates
             }
 
             // The general case
-            var activeRequestLapMaker = GetLapKindTuples(chunkCoordinates, 
+            var activeRequestLapMakerTuples = GetLapKindTuples(chunkCoordinates, 
                 activeRequestCoordinates);
 
-            if (!activeRequestLapMaker.Any())
+            if (!activeRequestLapMakerTuples.Any())
             {
                 // No overlapping
                 outPlainTextEditorChunk = null;
                 return false;
             }
 
+            if (activeRequestLapMakerTuples.Contains((LapKind.North, LapKindModifier.Extends)))
+            {
+                outPlainTextEditorChunk = ExtendChunkNorth(activeRequest,
+                    chunkRequest,
+                    chunkContent,
+                    chunkEditor,
+                    chunk,
+                    activeRequestLapMakerTuples);
+            }
+
             // TODO: Calculations
             outPlainTextEditorChunk = null;
             return false;
+        }
+
+        private static PlainTextEditorChunk ExtendChunkNorth(FileCoordinateGridRequest activeRequest,
+            FileCoordinateGridRequest chunkRequest,
+            List<string> chunkContent,
+            PlainTextEditorRecord chunkEditor,
+            PlainTextEditorChunk chunk,
+            List<(LapKind lapKind, LapKindModifier lapKindModifier)> lapKindTuples)
+        {
+            // Non if statement required setting
+            int yMin = activeRequest.StartingRowIndex;
+            int yExclusiveMax = chunkRequest.StartingRowIndex;
+            int yExtensionAmount = yExclusiveMax - yMin;
+
+            // Require if statement
+            int xMin = chunkRequest.StartingCharacterIndex;
+            int xExclusiveMax = chunkRequest.StartingCharacterIndex + chunkRequest.CharacterCount;
+            int xExtensionAmount = 0;
+
+            if (lapKindTuples.Contains((LapKind.West, LapKindModifier.Extends)))
+            {
+                xMin = activeRequest.StartingCharacterIndex;
+
+                xExtensionAmount += chunkRequest.StartingCharacterIndex - activeRequest.StartingCharacterIndex;
+            }
+            
+            if (lapKindTuples.Contains((LapKind.East, LapKindModifier.Extends)))
+            {
+                xExclusiveMax = activeRequest.StartingCharacterIndex + activeRequest.CharacterCount;
+
+                xExtensionAmount += (chunkRequest.StartingCharacterIndex + chunkRequest.CharacterCount) 
+                                    - (activeRequest.StartingCharacterIndex + activeRequest.CharacterCount);
+            }
+
+            var northRequest = new FileCoordinateGridRequest(
+                yMin,
+                yExclusiveMax - yMin,
+                xMin,
+                xExclusiveMax - xMin,
+                activeRequest.CancellationToken);
+
+            var nextEditor = AlterChunk(chunkEditor,
+                chunkContent,
+                northRequest,
+                chunk.FileCoordinateGridRequest);
+
+            return chunk with
+            {
+                PlainTextEditorRecord = nextEditor,
+                FileCoordinateGridRequest = new FileCoordinateGridRequest(
+                    yMin,
+                    yExtensionAmount + chunkRequest.RowCount,
+                    xMin,
+                    xExtensionAmount + chunkRequest.CharacterCount,
+                    activeRequest.CancellationToken)
+            };
         }
 
         private class RectangleCoordinates
@@ -163,8 +229,8 @@ public partial record PlainTextEditorStates
 
         public static PlainTextEditorRecord AlterChunk(PlainTextEditorRecord plainTextEditorRecord,
             List<string> content,
-            FileCoordinateGridRequest subrequest, 
-            FileCoordinateGridRequest chunkRequest)
+            FileCoordinateGridRequest extensionRequest, 
+            FileCoordinateGridRequest originalChunkRequest)
         {
             var allEnterKeysAreCarriageReturnNewLine = true;
             var seenEnterKey = false;
@@ -193,18 +259,18 @@ public partial record PlainTextEditorStates
                     : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
             }
 
-            int availableRowCount = subrequest.RowCount;
+            int availableRowCount = extensionRequest.RowCount;
 
-            if (content.Count < subrequest.RowCount)
+            if (content.Count < extensionRequest.RowCount)
             {
                 availableRowCount = content.Count;
             }
 
-            for (int i = subrequest.StartingRowIndex;
+            for (int i = extensionRequest.StartingRowIndex;
                  i < availableRowCount;
                  i++)
             {
-                var rowIndex = i + subrequest.StartingRowIndex;
+                var rowIndex = i + extensionRequest.StartingRowIndex;
                 var correspondingChunkRowIndex = rowIndex - plainTextEditorRecord.RowIndexOffset;
 
                 if (correspondingChunkRowIndex < 0)
@@ -277,7 +343,7 @@ public partial record PlainTextEditorStates
                         CurrentTokenIndex = 0
                     };
 
-                    if (subrequest.StartingCharacterIndex < chunkRequest.StartingCharacterIndex)
+                    if (extensionRequest.StartingCharacterIndex < originalChunkRequest.StartingCharacterIndex)
                     {
                         // First character in corresponding row
                         plainTextEditorRecord = StateMachine.HandleHome(plainTextEditorRecord,
