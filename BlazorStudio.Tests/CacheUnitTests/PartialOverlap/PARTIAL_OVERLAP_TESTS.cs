@@ -9,7 +9,7 @@ public class PARTIAL_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     public void EAST_TEST()
     {
         var inputAbsoluteFilePath = new AbsoluteFilePath(AbsoluteFilePathToThisCSharpProject +
-            "CacheTests\\THE TELL-TALE HEART.txt",
+            "TestData\\CacheTestsData\\THE TELL-TALE HEART.txt",
             false);
 
         var requestOne = new FileCoordinateGridRequest(
@@ -27,10 +27,10 @@ public class PARTIAL_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTestsData\\PartialOverlap\\East\\resultOne_PartialOverlap_East.txt");
+                                                 "TestData\\CacheTestsData\\PartialOverlap\\East\\resultOne_PartialOverlap_East.txt");
 
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTestsData\\PartialOverlap\\East\\resultTwo_PartialOverlap_East.txt");
+                                                 "TestData\\CacheTestsData\\PartialOverlap\\East\\resultTwo_PartialOverlap_East.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
