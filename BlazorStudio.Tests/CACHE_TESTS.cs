@@ -62,37 +62,51 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     [Fact]
     public void CACHE_NORTH_OVERLAP_TXT()
     {
-        var absoluteFilePath = new AbsoluteFilePath("C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\CacheTests\\PartiallyOverlappedChunks\\THE TELL-TALE HEART.txt",
+        var inputAbsoluteFilePath = new AbsoluteFilePath("C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\CacheTests\\THE TELL-TALE HEART.txt",
             false);
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
         Dispatcher.Dispatch(new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
-            absoluteFilePath));
+            inputAbsoluteFilePath));
 
         var plainTextEditor = State.Value.Map[plainTextEditorKey];
 
-        DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
+        var requestOne = new FileCoordinateGridRequest(
+            5,
+            15,
             0,
-            Math.Ceiling(HeightOfEachRowInPixels) * (13),
-            0,
-            0,
-            Math.Ceiling(WidthOfEachCharacterInPixels) * (25),
-            Math.Ceiling(HeightOfEachRowInPixels) * (25));
+            25,
+            CancellationToken.None);
 
-        var resultOne = plainTextEditor.GetPlainText();
+        var actionOne = new MemoryMappedFileExactReadRequestAction(plainTextEditorKey,
+            requestOne);
 
-        DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
-            0,
-            0,
-            0,
-            0,
-            Math.Ceiling(WidthOfEachCharacterInPixels) * (25),
-            Math.Ceiling(HeightOfEachRowInPixels) * (17));
+        Dispatcher.Dispatch(actionOne);
+    
+        var actualResultOne = plainTextEditor.GetPlainText();
+        
+        var expectedResultOne = File.ReadAllText("C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
 
-        var resultTwo = plainTextEditor.GetPlainText();
+        Assert.Equal(expectedResultOne, actualResultOne);
 
-        Assert.Equal("a\n", resultOne);
+        var requestTwo = new FileCoordinateGridRequest(
+            0,
+            15,
+            0,
+            25,
+            CancellationToken.None);
+
+        var actionTwo = new MemoryMappedFileExactReadRequestAction(plainTextEditorKey,
+            requestTwo);
+
+        Dispatcher.Dispatch(actionTwo);
+
+        var actualResultTwo = plainTextEditor.GetPlainText();
+
+        var expectedResultTwo = File.ReadAllText("C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+
+        Assert.Equal(expectedResultTwo, actualResultTwo);
     }
     
     [Fact]
@@ -229,7 +243,7 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         var virtualizeCoordinateSystemMessage = new VirtualizeCoordinateSystemMessage(
             virtualizeCoordinateSystemRequest, null);
 
-        Dispatcher.Dispatch(new MemoryMappedFileReadRequestAction(plainTextEditorKey,
+        Dispatcher.Dispatch(new MemoryMappedFilePixelReadRequestAction(plainTextEditorKey,
             virtualizeCoordinateSystemMessage));
     }
 

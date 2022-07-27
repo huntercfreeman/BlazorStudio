@@ -61,10 +61,10 @@ public partial record PlainTextEditorStates
         }
 
         [ReducerMethod]
-        public PlainTextEditorStates ReduceMemoryMappedFileReadRequestAction(PlainTextEditorStates previousPlainTextEditorStates,
-            MemoryMappedFileReadRequestAction memoryMappedFileReadRequestAction)
+        public PlainTextEditorStates ReduceMemoryMappedFilePixelReadRequestAction(PlainTextEditorStates previousPlainTextEditorStates,
+            MemoryMappedFilePixelReadRequestAction memoryMappedFilePixelReadRequestAction)
         {
-            var actionRequest = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemMessage
+            var actionRequest = memoryMappedFilePixelReadRequestAction.VirtualizeCoordinateSystemMessage
                 .VirtualizeCoordinateSystemRequest;
 
             if (actionRequest is null ||
@@ -77,7 +77,7 @@ public partial record PlainTextEditorStates
             var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
             var plainTextEditor = previousPlainTextEditorStates
-                    .Map[memoryMappedFileReadRequestAction.PlainTextEditorKey]
+                    .Map[memoryMappedFilePixelReadRequestAction.PlainTextEditorKey]
                 as PlainTextEditorRecord;
 
             if (plainTextEditor?.FileCoordinateGrid is null)
@@ -126,7 +126,7 @@ public partial record PlainTextEditorStates
                 totalWidth,
                 totalHeight);
 
-            var message = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemMessage with
+            var message = memoryMappedFilePixelReadRequestAction.VirtualizeCoordinateSystemMessage with
             {
                 VirtualizeCoordinateSystemResult = result
             };
@@ -138,12 +138,44 @@ public partial record PlainTextEditorStates
                 VirtualizeCoordinateSystemMessage = message
             };
 
-            nextPlainTextEditorMap[memoryMappedFileReadRequestAction.PlainTextEditorKey] = resultingPlainTextEditor;
+            nextPlainTextEditorMap[memoryMappedFilePixelReadRequestAction.PlainTextEditorKey] = resultingPlainTextEditor;
 
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
             var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
 
             if (actionRequest.CancellationToken.IsCancellationRequested)
+                return previousPlainTextEditorStates;
+
+            return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
+        }
+        
+        [ReducerMethod]
+        public PlainTextEditorStates ReduceMemoryMappedFileExactReadRequestAction(PlainTextEditorStates previousPlainTextEditorStates,
+            MemoryMappedFileExactReadRequestAction memoryMappedFileExactReadRequestAction)
+        {
+            var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
+            var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
+
+            var plainTextEditor = previousPlainTextEditorStates
+                    .Map[memoryMappedFileExactReadRequestAction.PlainTextEditorKey]
+                as PlainTextEditorRecord;
+
+            if (plainTextEditor?.FileCoordinateGrid is null)
+                return previousPlainTextEditorStates;
+
+            var chunk = plainTextEditor.UpdateCache(memoryMappedFileExactReadRequestAction.FileCoordinateGridRequest);
+
+            var resultingPlainTextEditor = chunk.PlainTextEditorRecord with
+            {
+                LongestRowCharacterLength = (int) chunk.PlainTextEditorRecord.FileCoordinateGrid.CharacterLengthOfLongestRow,
+            };
+
+            nextPlainTextEditorMap[memoryMappedFileExactReadRequestAction.PlainTextEditorKey] = resultingPlainTextEditor;
+
+            var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
+            var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
+
+            if (memoryMappedFileExactReadRequestAction.FileCoordinateGridRequest.CancellationToken.IsCancellationRequested)
                 return previousPlainTextEditorStates;
 
             return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);

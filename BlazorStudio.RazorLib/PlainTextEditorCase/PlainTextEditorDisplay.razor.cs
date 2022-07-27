@@ -202,7 +202,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private void OnRequestCallbackAction(VirtualizeCoordinateSystemMessage virtualizeCoordinateSystemMessage)
     {
-        Dispatcher.Dispatch(new MemoryMappedFileReadRequestAction(PlainTextEditorKey,
+        Dispatcher.Dispatch(new MemoryMappedFilePixelReadRequestAction(PlainTextEditorKey,
             virtualizeCoordinateSystemMessage));
     }
 
