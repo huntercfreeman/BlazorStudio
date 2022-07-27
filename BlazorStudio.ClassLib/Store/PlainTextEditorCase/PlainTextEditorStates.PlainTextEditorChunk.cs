@@ -217,7 +217,71 @@ public partial record PlainTextEditorStates
             PlainTextEditorChunk chunk,
             List<(LapKind lapKind, LapKindModifier lapKindModifier)> lapKindTuples)
         {
-            throw new NotImplementedException();
+            // Non if statement required setting
+            int yMin = chunk.FileCoordinateGridRequest.StartingRowIndex + chunk.FileCoordinateGridRequest.RowCount;
+            int yExclusiveMax = activeRequest.StartingRowIndex + activeRequest.RowCount;
+            int yExtensionAmount = yExclusiveMax - yMin;
+
+            // Require if statement
+            int xMin = chunk.FileCoordinateGridRequest.StartingCharacterIndex;
+            int xExclusiveMax = chunk.FileCoordinateGridRequest.StartingCharacterIndex + chunk.FileCoordinateGridRequest.CharacterCount;
+            int xExtensionAmount = 0;
+
+            var westExtension = (LapKind.West, LapKindModifier.Extends);
+            if (lapKindTuples.Contains(westExtension))
+            {
+                xMin = activeRequest.StartingCharacterIndex;
+
+                xExtensionAmount += chunk.FileCoordinateGridRequest.StartingCharacterIndex - activeRequest.StartingCharacterIndex;
+
+                lapKindTuples.Remove(westExtension);
+            }
+
+            var eastExtension = (LapKind.East, LapKindModifier.Extends);
+            if (lapKindTuples.Contains(eastExtension))
+            {
+                xExclusiveMax = activeRequest.StartingCharacterIndex + activeRequest.CharacterCount;
+
+                xExtensionAmount += (chunk.FileCoordinateGridRequest.StartingCharacterIndex + chunk.FileCoordinateGridRequest.CharacterCount)
+                                    - (activeRequest.StartingCharacterIndex + activeRequest.CharacterCount);
+
+                lapKindTuples.Remove(eastExtension);
+            }
+
+            var southRequest = new FileCoordinateGridRequest(
+                yMin,
+                yExclusiveMax - yMin,
+                xMin,
+                xExclusiveMax - xMin,
+                activeRequest.CancellationToken);
+
+            var content = chunk.PlainTextEditorRecord.FileCoordinateGrid
+                .Request(southRequest);
+
+            var nextEditor = AlterChunk(chunk.PlainTextEditorRecord,
+                content,
+                southRequest,
+                chunk.FileCoordinateGridRequest);
+
+            var combinedRequest = new FileCoordinateGridRequest(
+                yMin,
+                yExtensionAmount + chunk.FileCoordinateGridRequest.RowCount,
+                xMin,
+                xExtensionAmount + chunk.FileCoordinateGridRequest.CharacterCount,
+                activeRequest.CancellationToken);
+
+            nextEditor = nextEditor with
+            {
+                RowIndexOffset = combinedRequest.StartingRowIndex
+            };
+
+            lapKindTuples.Remove((LapKind.South, LapKindModifier.Extends));
+
+            return chunk with
+            {
+                PlainTextEditorRecord = nextEditor,
+                FileCoordinateGridRequest = combinedRequest
+            };
         }
 
         private static PlainTextEditorChunk ExtendChunkWest(FileCoordinateGridRequest activeRequest,
