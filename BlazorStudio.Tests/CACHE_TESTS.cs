@@ -36,6 +36,7 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         Assert.Equal("a\n", resultOne);
 
+        // Ensure the cache is reused
         for (int i = 0; i < 10; i++)
         {
             DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
@@ -88,23 +89,6 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         var resultTwo = plainTextEditor.GetPlainText();
 
         Assert.Equal("a\n", resultOne);
-
-        //for (int i = 0; i < 10; i++)
-        //{
-        //    DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
-        //        0,
-        //        0,
-        //        0,
-        //        0,
-        //        Math.Ceiling(WidthOfEachCharacterInPixels) * (i),
-        //        Math.Ceiling(HeightOfEachRowInPixels) * (i));
-        //}
-
-        //var resultTwo = plainTextEditor.GetPlainText();
-
-        //Assert.Equal(1, plainTextEditor.CacheCount);
-
-        //Assert.Equal("a\n", resultTwo);
     }
     
     [Fact]
@@ -141,23 +125,18 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         var resultTwo = plainTextEditor.GetPlainText();
 
         Assert.Equal("a\n", resultOne);
+    }
 
-        //for (int i = 0; i < 10; i++)
-        //{
-        //    DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
-        //        0,
-        //        0,
-        //        0,
-        //        0,
-        //        Math.Ceiling(WidthOfEachCharacterInPixels) * (i),
-        //        Math.Ceiling(HeightOfEachRowInPixels) * (i));
-        //}
+    [Fact]
+    public void CACHE_SOUTH_OVERLAP_TXT()
+    {
+        throw new NotImplementedException();
+    }
 
-        //var resultTwo = plainTextEditor.GetPlainText();
-
-        //Assert.Equal(1, plainTextEditor.CacheCount);
-
-        //Assert.Equal("a\n", resultTwo);
+    [Fact]
+    public void CACHE_WEST_OVERLAP_TXT()
+    {
+        throw new NotImplementedException();
     }
 
     public void DispatchMemoryMappedFileReadRequestAction(PlainTextEditorKey plainTextEditorKey,
