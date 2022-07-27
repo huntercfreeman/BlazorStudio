@@ -4,7 +4,7 @@ using BlazorStudio.ClassLib.Virtualize;
 
 namespace BlazorStudio.Tests.CacheUnitTests.CompleteOverlap;
 
-public class CACHE_COMPLETE_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
+public class COMPLETE_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 {
     [Fact]
     public void CHUNK_ENCOMPASSES_REQUEST()

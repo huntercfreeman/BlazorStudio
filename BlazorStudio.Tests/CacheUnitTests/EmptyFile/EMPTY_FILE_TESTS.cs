@@ -1,10 +1,6 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
-using BlazorStudio.ClassLib.Virtualize;
+﻿namespace BlazorStudio.Tests.CacheUnitTests.EmptyFile;
 
-namespace BlazorStudio.Tests.CacheUnitTests.CompleteOverlap;
-
-public class CACHE_NO_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
+public class EMPTY_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 {
     [Fact]
     public void EAST()
