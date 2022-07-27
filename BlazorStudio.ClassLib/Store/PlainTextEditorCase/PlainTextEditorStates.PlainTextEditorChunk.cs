@@ -54,6 +54,8 @@ public partial record PlainTextEditorStates
                 return false;
             }
 
+            outPlainTextEditorChunk = chunk;
+
             if (activeRequestLapMakerTuples.Contains((LapKind.North, LapKindModifier.Extends)))
             {
                 outPlainTextEditorChunk = ExtendChunkNorth(activeRequest,
@@ -64,9 +66,7 @@ public partial record PlainTextEditorStates
                     activeRequestLapMakerTuples);
             }
 
-            // TODO: Calculations
-            outPlainTextEditorChunk = null;
-            return false;
+            return true;
         }
 
         private static PlainTextEditorChunk ExtendChunkNorth(FileCoordinateGridRequest activeRequest,
@@ -108,20 +108,30 @@ public partial record PlainTextEditorStates
                 xExclusiveMax - xMin,
                 activeRequest.CancellationToken);
 
+            var content = chunk.PlainTextEditorRecord.FileCoordinateGrid
+                .Request(northRequest);
+
             var nextEditor = AlterChunk(chunkEditor,
-                chunkContent,
+                content,
                 northRequest,
                 chunk.FileCoordinateGridRequest);
+
+            var combinedRequest = new FileCoordinateGridRequest(
+                yMin,
+                yExtensionAmount + chunkRequest.RowCount,
+                xMin,
+                xExtensionAmount + chunkRequest.CharacterCount,
+                activeRequest.CancellationToken);
+
+            nextEditor = nextEditor with
+            {
+                RowIndexOffset = combinedRequest.StartingRowIndex
+            };
 
             return chunk with
             {
                 PlainTextEditorRecord = nextEditor,
-                FileCoordinateGridRequest = new FileCoordinateGridRequest(
-                    yMin,
-                    yExtensionAmount + chunkRequest.RowCount,
-                    xMin,
-                    xExtensionAmount + chunkRequest.CharacterCount,
-                    activeRequest.CancellationToken)
+                FileCoordinateGridRequest = combinedRequest
             };
         }
 
@@ -266,27 +276,175 @@ public partial record PlainTextEditorStates
                 availableRowCount = content.Count;
             }
 
-            for (int i = extensionRequest.StartingRowIndex;
-                 i < availableRowCount;
-                 i++)
-            {
-                var rowIndex = i + extensionRequest.StartingRowIndex;
-                var correspondingChunkRowIndex = rowIndex - plainTextEditorRecord.RowIndexOffset;
+            int i = extensionRequest.StartingRowIndex;
 
-                if (correspondingChunkRowIndex < 0)
+            var rowIndex = i + extensionRequest.StartingRowIndex;
+            var correspondingChunkRowIndex = rowIndex - plainTextEditorRecord.RowIndexOffset;
+
+            if (correspondingChunkRowIndex < 0)
+            {
+                // Chunk cannot match the row so make a new empty row for insertion
+                // Move to 'CurrentRowIndex = 0' and 'CurrentTokenIndex = 0'
+                plainTextEditorRecord = StateMachine.HandleHome(plainTextEditorRecord,
+                    new KeyDownEventRecord(
+                        KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                        KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                        true,
+                        false,
+                        false));
+
+                string characterCode = plainTextEditorRecord.UseCarriageReturnNewLine 
+                    ? KeyboardKeyFacts.NewLineCodes.CARRIAGE_RETURN_NEW_LINE_CODE 
+                    : KeyboardKeyFacts.NewLineCodes.ENTER_CODE;
+
+                // Insert a row above the first row
+                plainTextEditorRecord = StateMachine.HandleKeyDownEvent(plainTextEditorRecord,
+                    new KeyDownEventRecord(
+                        characterCode,
+                        characterCode,
+                        false,
+                        false,
+                        false));
+
+                // Move to 'CurrentRowIndex = 0' and 'CurrentTokenIndex = 0'
+                plainTextEditorRecord = StateMachine.HandleHome(plainTextEditorRecord,
+                    new KeyDownEventRecord(
+                        KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                        KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                        true,
+                        false,
+                        false));
+            }
+            else if (correspondingChunkRowIndex > plainTextEditorRecord.List.Count)
+            {
+                // Chunk cannot match the row so make a new empty row for insertion
+                // Move to the end of the chunk
+                plainTextEditorRecord = StateMachine.HandleEnd(plainTextEditorRecord,
+                    new KeyDownEventRecord(
+                        KeyboardKeyFacts.MovementKeys.END_KEY,
+                        KeyboardKeyFacts.MovementKeys.END_KEY,
+                        true,
+                        false,
+                        false));
+
+                string characterCode = plainTextEditorRecord.UseCarriageReturnNewLine 
+                    ? KeyboardKeyFacts.NewLineCodes.CARRIAGE_RETURN_NEW_LINE_CODE 
+                    : KeyboardKeyFacts.NewLineCodes.ENTER_CODE;
+
+                // Insert a row above the first row
+                plainTextEditorRecord = StateMachine.HandleKeyDownEvent(plainTextEditorRecord,
+                    new KeyDownEventRecord(
+                        characterCode,
+                        characterCode,
+                        false,
+                        false,
+                        false));
+
+                // Position is on the previously inserted row at token index 0
+            }
+            else
+            {
+                // Chunk CAN match the row
+                // Move to the position
+
+                plainTextEditorRecord = plainTextEditorRecord with
                 {
-                    // Chunk cannot match the row so make a new empty row for insertion
-                    // Move to 'CurrentRowIndex = 0' and 'CurrentTokenIndex = 0'
+                    CurrentRowIndex = correspondingChunkRowIndex,
+                    CurrentTokenIndex = 0
+                };
+
+                if (extensionRequest.StartingCharacterIndex < originalChunkRequest.StartingCharacterIndex)
+                {
+                    // First character in corresponding row
                     plainTextEditorRecord = StateMachine.HandleHome(plainTextEditorRecord,
                         new KeyDownEventRecord(
                             KeyboardKeyFacts.MovementKeys.HOME_KEY,
                             KeyboardKeyFacts.MovementKeys.HOME_KEY,
-                            true,
+                            false,
+                            false,
+                            false));
+                }
+                else
+                {
+                    // Last character in corresponding row
+                    plainTextEditorRecord = StateMachine.HandleEnd(plainTextEditorRecord,
+                        new KeyDownEventRecord(
+                            KeyboardKeyFacts.MovementKeys.END_KEY,
+                            KeyboardKeyFacts.MovementKeys.END_KEY,
+                            false,
+                            false,
+                            false));
+                }
+            }
+
+            foreach (var line in content)
+            {
+                foreach (var character in line)
+                {
+                    if (character == '\r')
+                    {
+                        previousCharacterWasCarriageReturn = true;
+                        continue;
+                    }
+
+                    if (character == '\n')
+                    {
+                        // TODO: I think ignoring this is correct but unsure
+                        continue;
+                    }
+
+                    currentRowCharacterLength++;
+
+                    var code = character switch
+                    {
+                        '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
+                        ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
+                        '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
+                        _ => character.ToString()
+                    };
+
+                    var keyDown = new KeyDownEventAction(plainTextEditorRecord.PlainTextEditorKey,
+                        new KeyDownEventRecord(
+                            character.ToString(),
+                            code,
+                            false,
+                            false,
+                            false
+                        )
+                    );
+
+                    plainTextEditorRecord = PlainTextEditorStates.StateMachine
+                            .HandleKeyDownEvent(plainTextEditorRecord, keyDown.KeyDownEventRecord) with
+                        {
+                            SequenceKey = SequenceKey.NewSequenceKey()
+                        };
+
+                    previousCharacterWasCarriageReturn = false;
+                }
+
+                if (correspondingChunkRowIndex < 0)
+                {
+                    // Move down one row and insert newline
+                    // afterwards write text on the newly inserted empty line
+
+                    plainTextEditorRecord = StateMachine.HandleArrowDown(plainTextEditorRecord,
+                        new KeyDownEventRecord(
+                            KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
+                            KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
+                            false,
                             false,
                             false));
 
-                    string characterCode = plainTextEditorRecord.UseCarriageReturnNewLine 
-                        ? KeyboardKeyFacts.NewLineCodes.CARRIAGE_RETURN_NEW_LINE_CODE 
+                    plainTextEditorRecord = StateMachine.HandleHome(plainTextEditorRecord,
+                        new KeyDownEventRecord(
+                            KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                            KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                            false,
+                            false,
+                            false));
+
+                    string characterCode = plainTextEditorRecord.UseCarriageReturnNewLine
+                        ? KeyboardKeyFacts.NewLineCodes.CARRIAGE_RETURN_NEW_LINE_CODE
                         : KeyboardKeyFacts.NewLineCodes.ENTER_CODE;
 
                     // Insert a row above the first row
@@ -298,12 +456,21 @@ public partial record PlainTextEditorStates
                             false,
                             false));
 
-                    // Set position on the previously inserted row at token index 0
-                    plainTextEditorRecord = plainTextEditorRecord with
-                    {
-                        CurrentRowIndex = plainTextEditorRecord.CurrentRowIndex - 1,
-                        CurrentTokenIndex = 0
-                    };
+                    plainTextEditorRecord = StateMachine.HandleArrowUp(plainTextEditorRecord,
+                        new KeyDownEventRecord(
+                            KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY,
+                            KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY,
+                            false,
+                            false,
+                            false));
+
+                    plainTextEditorRecord = StateMachine.HandleHome(plainTextEditorRecord,
+                        new KeyDownEventRecord(
+                            KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                            KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                            false,
+                            false,
+                            false));
                 }
                 else if (correspondingChunkRowIndex > plainTextEditorRecord.List.Count)
                 {
@@ -317,8 +484,8 @@ public partial record PlainTextEditorStates
                             false,
                             false));
 
-                    string characterCode = plainTextEditorRecord.UseCarriageReturnNewLine 
-                        ? KeyboardKeyFacts.NewLineCodes.CARRIAGE_RETURN_NEW_LINE_CODE 
+                    string characterCode = plainTextEditorRecord.UseCarriageReturnNewLine
+                        ? KeyboardKeyFacts.NewLineCodes.CARRIAGE_RETURN_NEW_LINE_CODE
                         : KeyboardKeyFacts.NewLineCodes.ENTER_CODE;
 
                     // Insert a row above the first row
@@ -365,49 +532,6 @@ public partial record PlainTextEditorStates
                                 false,
                                 false));
                     }
-                }
-
-                foreach (var character in content[i])
-                {
-                    if (character == '\r')
-                    {
-                        previousCharacterWasCarriageReturn = true;
-                        continue;
-                    }
-
-                    if (character == '\n')
-                    {
-                        // TODO: I think ignoring this is correct but unsure
-                        continue;
-                    }
-
-                    currentRowCharacterLength++;
-
-                    var code = character switch
-                    {
-                        '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
-                        ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
-                        '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
-                        _ => character.ToString()
-                    };
-
-                    var keyDown = new KeyDownEventAction(plainTextEditorRecord.PlainTextEditorKey,
-                        new KeyDownEventRecord(
-                            character.ToString(),
-                            code,
-                            false,
-                            false,
-                            false
-                        )
-                    );
-
-                    plainTextEditorRecord = PlainTextEditorStates.StateMachine
-                        .HandleKeyDownEvent(plainTextEditorRecord, keyDown.KeyDownEventRecord) with
-                        {
-                            SequenceKey = SequenceKey.NewSequenceKey()
-                        };
-
-                    previousCharacterWasCarriageReturn = false;
                 }
             }
 

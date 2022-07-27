@@ -162,7 +162,7 @@ public partial record PlainTextEditorStates
                     CurrentTokenIndex = 0,
                     SequenceKey = SequenceKey.NewSequenceKey(),
                     List = ImmutableList<IPlainTextEditorRow>.Empty
-                        .Add(GetEmptyPlainTextEditorRow()),
+                        .Add(GetEmptyPlainTextEditorRow())
                 };
 
                 resultingChunk = ConstructChunk(constructedPlainTextEditor,
@@ -264,6 +264,11 @@ public partial record PlainTextEditorStates
                     };
                 }
             }
+
+            plainTextEditorRecord = plainTextEditorRecord with
+                {
+                    RowIndexOffset = fileCoordinateGridRequest.StartingRowIndex
+                };
 
             return new PlainTextEditorChunk(
                 fileCoordinateGridRequest,
