@@ -130,13 +130,73 @@ public class CACHE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     [Fact]
     public void CACHE_SOUTH_OVERLAP_TXT()
     {
-        throw new NotImplementedException();
+        var absoluteFilePath = new AbsoluteFilePath("C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\CacheTests\\PartiallyOverlappedChunks\\THE TELL-TALE HEART.txt",
+            false);
+
+        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+        Dispatcher.Dispatch(new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
+            absoluteFilePath));
+
+        var plainTextEditor = State.Value.Map[plainTextEditorKey];
+
+        DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
+            0,
+            Math.Ceiling(HeightOfEachRowInPixels) * (13),
+            0,
+            0,
+            Math.Ceiling(WidthOfEachCharacterInPixels) * (20),
+            Math.Ceiling(HeightOfEachRowInPixels) * (25));
+
+        var resultOne = plainTextEditor.GetPlainText();
+
+        DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
+            0,
+            Math.Ceiling(HeightOfEachRowInPixels) * (20),
+            0,
+            0,
+            Math.Ceiling(WidthOfEachCharacterInPixels) * (20),
+            Math.Ceiling(HeightOfEachRowInPixels) * (25));
+
+        var resultTwo = plainTextEditor.GetPlainText();
+
+        Assert.Equal("a\n", resultOne);
     }
 
     [Fact]
     public void CACHE_WEST_OVERLAP_TXT()
     {
-        throw new NotImplementedException();
+        var absoluteFilePath = new AbsoluteFilePath("C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\CacheTests\\PartiallyOverlappedChunks\\THE TELL-TALE HEART.txt",
+            false);
+
+        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+        Dispatcher.Dispatch(new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
+            absoluteFilePath));
+
+        var plainTextEditor = State.Value.Map[plainTextEditorKey];
+
+        DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
+            Math.Ceiling(WidthOfEachCharacterInPixels) * (15) + _paddingInPixels,
+            Math.Ceiling(HeightOfEachRowInPixels) * (13),
+            0,
+            0,
+            Math.Ceiling(WidthOfEachCharacterInPixels) * (20),
+            Math.Ceiling(HeightOfEachRowInPixels) * (25));
+
+        var resultOne = plainTextEditor.GetPlainText();
+
+        DispatchMemoryMappedFileReadRequestAction(plainTextEditorKey,
+            0,
+            Math.Ceiling(HeightOfEachRowInPixels) * (13),
+            0,
+            0,
+            Math.Ceiling(WidthOfEachCharacterInPixels) * (20),
+            Math.Ceiling(HeightOfEachRowInPixels) * (25));
+
+        var resultTwo = plainTextEditor.GetPlainText();
+
+        Assert.Equal("a\n", resultOne);
     }
 
     public void DispatchMemoryMappedFileReadRequestAction(PlainTextEditorKey plainTextEditorKey,
