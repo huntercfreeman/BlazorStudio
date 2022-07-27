@@ -30,10 +30,10 @@ public class NO_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\East\\resultOne_NoOverlap_East.txt");
 
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\East\\resultTwo_NoOverlap_East.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
@@ -88,10 +88,10 @@ public class NO_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\North\\resultOne_NoOverlap_North.txt");
 
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\North\\resultTwo_NoOverlap_North.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
@@ -141,10 +141,10 @@ public class NO_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\NorthEast\\resultOne_NoOverlap_NorthEast.txt");
 
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\NorthEast\\resultTwo_NoOverlap_NorthEast.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
@@ -199,10 +199,10 @@ public class NO_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\NorthWest\\resultOne_NoOverlap_NorthWest.txt");
 
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\NorthWest\\resultTwo_NoOverlap_NorthWest.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
@@ -252,10 +252,10 @@ public class NO_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\South\\resultOne_NoOverlap_South.txt");
 
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\South\\resultTwo_NoOverlap_South.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
@@ -305,10 +305,10 @@ public class NO_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\SouthEast\\resultOne_NoOverlap_SouthEast.txt");
 
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\SouthEast\\resultTwo_NoOverlap_SouthEast.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
@@ -358,10 +358,10 @@ public class NO_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\SouthWest\\resultOne_NoOverlap_SouthWest.txt");
 
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\SouthWest\\resultTwo_NoOverlap_SouthWest.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
@@ -411,10 +411,10 @@ public class NO_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\West\\resultOne_NoOverlap_West.txt");
 
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\NoOverlap\\West\\resultTwo_NoOverlap_West.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
