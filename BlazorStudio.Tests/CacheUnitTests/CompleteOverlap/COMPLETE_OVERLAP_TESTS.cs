@@ -81,10 +81,10 @@ public class COMPLETE_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
         
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTestsData\\CompleteOverlap\\RequestEncompassesChunk\\resultOne_CompleteOverlapChunkEncompassesRequest.txt");
+                                                 "CacheTestsData\\CompleteOverlap\\RequestEncompassesChunk\\resultOne_CompleteOverlapRequestEncompassesChunk.txt");
         
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTestsData\\CompleteOverlap\\RequestEncompassesChunk\\resultTwo_CompleteOverlapChunkEncompassesRequest.txt");
+                                                 "CacheTestsData\\CompleteOverlap\\RequestEncompassesChunk\\resultTwo_CompleteOverlapRequestEncompassesChunk.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 

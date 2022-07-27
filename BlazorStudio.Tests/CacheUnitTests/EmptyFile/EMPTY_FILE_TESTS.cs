@@ -27,10 +27,10 @@ public class EMPTY_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\EmptyFile\\resultOne_EmptyFile.txt");
 
         var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+                                                 "CacheTestsData\\EmptyFile\\resultTwo_EmptyFile.txt");
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
