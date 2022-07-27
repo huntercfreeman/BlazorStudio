@@ -201,6 +201,8 @@ public static class FileCoordinateGridFactory
                             : exclusiveEndingCharacterIndex;
                     }
 
+                    exclusiveEndingCharacterIndex = Math.Min(ExclusiveEndOfFileCharacterIndex - 1, exclusiveEndingCharacterIndex);
+
                     long longCharacterLengthOfRequest = exclusiveEndingCharacterIndex - inclusiveStartingCharacterIndex;
 
                     if (longCharacterLengthOfRequest <= 0)
