@@ -64,11 +64,11 @@ public partial record PlainTextEditorStates
         public PlainTextEditorStates ReduceMemoryMappedFileReadRequestAction(PlainTextEditorStates previousPlainTextEditorStates,
             MemoryMappedFileReadRequestAction memoryMappedFileReadRequestAction)
         {
-            var request = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemMessage
+            var actionRequest = memoryMappedFileReadRequestAction.VirtualizeCoordinateSystemMessage
                 .VirtualizeCoordinateSystemRequest;
 
-            if (request is null ||
-                request.CancellationToken.IsCancellationRequested)
+            if (actionRequest is null ||
+                actionRequest.CancellationToken.IsCancellationRequested)
             {
                 return previousPlainTextEditorStates;
             }
@@ -88,19 +88,19 @@ public partial record PlainTextEditorStates
             var widthOfEachCharacterInPixels = 9.91;
 
             var startingRowIndex =
-                (int)(request.ScrollTopInPixels / heightOfEachRowInPixels);
+                (int)(actionRequest.ScrollTopInPixels / heightOfEachRowInPixels);
 
-            var requestRowCount = (int)(request.ViewportHeightInPixels / heightOfEachRowInPixels);
+            var requestRowCount = (int)(actionRequest.ViewportHeightInPixels / heightOfEachRowInPixels);
 
-            var startingCharacterIndex = (int)(request.ScrollLeftInPixels / widthOfEachCharacterInPixels);
+            var startingCharacterIndex = (int)(actionRequest.ScrollLeftInPixels / widthOfEachCharacterInPixels);
 
-            var requestCharacterCount = (int)(request.ViewportWidthInPixels / widthOfEachCharacterInPixels);
+            var requestCharacterCount = (int)(actionRequest.ViewportWidthInPixels / widthOfEachCharacterInPixels);
 
             var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex,
                 requestRowCount,
                 startingCharacterIndex,
                 requestCharacterCount,
-                request.CancellationToken);
+                actionRequest.CancellationToken);
 
             var chunk = plainTextEditor.UpdateCache(fileCoordinateGridRequest);
 
@@ -143,7 +143,7 @@ public partial record PlainTextEditorStates
             var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
             var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
 
-            if (request.CancellationToken.IsCancellationRequested)
+            if (actionRequest.CancellationToken.IsCancellationRequested)
                 return previousPlainTextEditorStates;
 
             return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);

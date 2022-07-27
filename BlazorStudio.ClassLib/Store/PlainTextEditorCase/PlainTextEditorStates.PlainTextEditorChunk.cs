@@ -538,7 +538,9 @@ public partial record PlainTextEditorStates
                         false,
                         false));
 
-                for (int moveRow = plainTextEditorRecord.CurrentRowIndex; moveRow < correspondingChunkRowIndex; moveRow++)
+                for (int moveRow = plainTextEditorRecord.CurrentRowIndex + plainTextEditorRecord.RowIndexOffset;
+                     moveRow < correspondingChunkRowIndex;
+                     moveRow++)
                 {
                     plainTextEditorRecord = StateMachine.HandleArrowDown(plainTextEditorRecord,
                         new KeyDownEventRecord(

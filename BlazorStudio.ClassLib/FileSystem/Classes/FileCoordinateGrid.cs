@@ -171,13 +171,13 @@ public static class FileCoordinateGridFactory
                     CharacterIndexMarkerForStartOfARow.Length - fileCoordinateGridRequest.StartingRowIndex,
                     0);
 
-                availableRowCount = Math.Min(fileCoordinateGridRequest.RowCount, availableRowCount);
+                var actualRowCount = Math.Min(fileCoordinateGridRequest.RowCount, availableRowCount);
 
                 int rowIndex = fileCoordinateGridRequest.StartingRowIndex;
                 int rowCount = 0;
 
                 for (;
-                     rowCount < availableRowCount && rowIndex < CharacterIndexMarkerForStartOfARow.Length;
+                     rowCount < actualRowCount;
                      rowCount++, rowIndex++)
                 {
                     if (fileCoordinateGridRequest.CancellationToken.IsCancellationRequested)
@@ -211,7 +211,10 @@ public static class FileCoordinateGridFactory
                     long longCharacterLengthOfRequest = exclusiveEndingCharacterIndex - inclusiveStartingCharacterIndex;
 
                     if (longCharacterLengthOfRequest <= 0)
+                    {
+                        rows.Add(string.Empty);
                         continue;
+                    }
 
                     if (longCharacterLengthOfRequest > Int32.MaxValue)
                     {
