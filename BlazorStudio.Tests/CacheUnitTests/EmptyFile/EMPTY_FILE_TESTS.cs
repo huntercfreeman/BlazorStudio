@@ -12,13 +12,6 @@ public class EMPTY_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
                                                          "CacheTests\\THE TELL-TALE HEART.txt",
             false);
 
-        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-
-        Dispatcher.Dispatch(new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
-            inputAbsoluteFilePath));
-
-        var plainTextEditor = State.Value.Map[plainTextEditorKey];
-
         var requestOne = new FileCoordinateGridRequest(
             10,
             10,
@@ -33,15 +26,25 @@ public class EMPTY_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             50,
             CancellationToken.None);
 
+        var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
+                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+
+        var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
+                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+
+        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+        Dispatcher.Dispatch(new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
+            inputAbsoluteFilePath));
+
+        var plainTextEditor = State.Value.Map[plainTextEditorKey];
+
         var actionOne = new MemoryMappedFileExactReadRequestAction(plainTextEditorKey,
             requestOne);
 
         Dispatcher.Dispatch(actionOne);
 
         var actualResultOne = plainTextEditor.GetPlainText();
-
-        var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject + 
-                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
 
         Assert.Equal(expectedResultOne, actualResultOne);
 
@@ -51,9 +54,7 @@ public class EMPTY_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         Dispatcher.Dispatch(actionTwo);
 
         var actualResultTwo = plainTextEditor.GetPlainText();
-
-        var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject + "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
-
+        
         Assert.Equal(expectedResultTwo, actualResultTwo);
     }
 }

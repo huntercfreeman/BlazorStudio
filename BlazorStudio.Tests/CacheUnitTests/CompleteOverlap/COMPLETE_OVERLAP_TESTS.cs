@@ -100,7 +100,6 @@ public class COMPLETE_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var actualResultOne = plainTextEditor.GetPlainText();
 
-
         Assert.Equal(expectedResultOne, actualResultOne);
 
         var actionTwo = new MemoryMappedFileExactReadRequestAction(plainTextEditorKey,
@@ -109,7 +108,6 @@ public class COMPLETE_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         Dispatcher.Dispatch(actionTwo);
 
         var actualResultTwo = plainTextEditor.GetPlainText();
-
 
         Assert.Equal(expectedResultTwo, actualResultTwo);
     }
