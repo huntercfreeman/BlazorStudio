@@ -338,7 +338,7 @@ public class PARTIAL_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var requestTwo = new FileCoordinateGridRequest(
-            10,
+            20,
             60,
             25,
             10,
@@ -391,7 +391,7 @@ public class PARTIAL_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var requestTwo = new FileCoordinateGridRequest(
-            10,
+            20,
             60,
             25,
             30,
@@ -444,7 +444,7 @@ public class PARTIAL_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var requestTwo = new FileCoordinateGridRequest(
-            10,
+            20,
             60,
             0,
             30,
@@ -497,7 +497,7 @@ public class PARTIAL_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             CancellationToken.None);
 
         var requestTwo = new FileCoordinateGridRequest(
-            10,
+            20,
             1,
             0,
             30,
