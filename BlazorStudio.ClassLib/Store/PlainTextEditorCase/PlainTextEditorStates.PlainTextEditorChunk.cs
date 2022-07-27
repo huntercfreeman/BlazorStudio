@@ -36,11 +36,16 @@ public partial record PlainTextEditorStates
             };
 
             // Edge case: check if chunk encompasses the request
-            if (GetLapKindTuples(activeRequestCoordinates, chunkCoordinates)
-                    .Count == 4)
             {
-                outPlainTextEditorChunk = chunk;
-                return true;
+                var refToLapKindTuplesForDebugging =
+                    GetLapKindTuples(activeRequestCoordinates, chunkCoordinates);
+
+                if (refToLapKindTuplesForDebugging
+                        .Count == 4)
+                {
+                    outPlainTextEditorChunk = chunk;
+                    return true;
+                }
             }
 
             // The general case
