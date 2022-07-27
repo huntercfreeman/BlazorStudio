@@ -125,9 +125,6 @@ public partial record PlainTextEditorStates
                 // Search chunk for any overlapping characters.
                 // Overlapping characters will EXTEND that overlapping chunk
                 if (PlainTextEditorChunk.OverlapsRequest(fileCoordinateGridRequest,
-                        cachedChunk.FileCoordinateGridRequest,
-                        cachedChunk.Content,
-                        cachedChunk.PlainTextEditorRecord,
                         cachedChunk,
                         out var chunk))
                 {

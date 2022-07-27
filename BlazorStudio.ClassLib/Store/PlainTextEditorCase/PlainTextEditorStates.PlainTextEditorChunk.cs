@@ -13,18 +13,15 @@ public partial record PlainTextEditorStates
         PlainTextEditorRecord PlainTextEditorRecord)
     {
         public static bool OverlapsRequest(FileCoordinateGridRequest activeRequest,
-            FileCoordinateGridRequest chunkRequest,
-            List<string> chunkContent,
-            PlainTextEditorRecord chunkEditor,
             PlainTextEditorChunk chunk,
             out PlainTextEditorChunk outPlainTextEditorChunk)
         {
             var chunkCoordinates = new RectangleCoordinates
             {
-                YMin = chunkRequest.StartingRowIndex,
-                YMax = chunkRequest.StartingRowIndex + chunkRequest.RowCount - 1,
-                XMin = chunkRequest.StartingCharacterIndex,
-                XMax = chunkRequest.StartingCharacterIndex + chunkRequest.CharacterCount - 1
+                YMin = chunk.FileCoordinateGridRequest.StartingRowIndex,
+                YMax = chunk.FileCoordinateGridRequest.StartingRowIndex + chunk.FileCoordinateGridRequest.RowCount - 1,
+                XMin = chunk.FileCoordinateGridRequest.StartingCharacterIndex,
+                XMax = chunk.FileCoordinateGridRequest.StartingCharacterIndex + chunk.FileCoordinateGridRequest.CharacterCount - 1
             };
             
             var activeRequestCoordinates = new RectangleCoordinates
@@ -59,51 +56,77 @@ public partial record PlainTextEditorStates
                 return false;
             }
 
-            outPlainTextEditorChunk = chunk;
-
+            // The order of activeRequestLapMakerTuples.Contains(...)
+            // and the respective ExtendChunk...() calls
+            // are in a specific order for a reason.
+            //
+            // North and South extensions will simultaneously extend East, and West if necessary
+            // This improves performance otherwise you have to sort of 'for loop' and repeat extensions over and over.
             if (activeRequestLapMakerTuples.Contains((LapKind.North, LapKindModifier.Extends)))
             {
-                outPlainTextEditorChunk = ExtendChunkNorth(activeRequest,
-                    chunkRequest,
-                    chunkContent,
-                    chunkEditor,
+                chunk = ExtendChunkNorth(activeRequest,
+                    chunk,
+                    activeRequestLapMakerTuples);
+            }
+            
+            if (activeRequestLapMakerTuples.Contains((LapKind.South, LapKindModifier.Extends)))
+            {
+                chunk = ExtendChunkSouth(activeRequest,
+                    chunk,
+                    activeRequestLapMakerTuples);
+            }
+            
+            if (activeRequestLapMakerTuples.Contains((LapKind.East, LapKindModifier.Extends)))
+            {
+                chunk = ExtendChunkEast(activeRequest,
                     chunk,
                     activeRequestLapMakerTuples);
             }
 
+            if (activeRequestLapMakerTuples.Contains((LapKind.West, LapKindModifier.Extends)))
+            {
+                chunk = ExtendChunkWest(activeRequest,
+                    chunk,
+                    activeRequestLapMakerTuples);
+            }
+
+            outPlainTextEditorChunk = chunk;
             return true;
         }
 
         private static PlainTextEditorChunk ExtendChunkNorth(FileCoordinateGridRequest activeRequest,
-            FileCoordinateGridRequest chunkRequest,
-            List<string> chunkContent,
-            PlainTextEditorRecord chunkEditor,
             PlainTextEditorChunk chunk,
             List<(LapKind lapKind, LapKindModifier lapKindModifier)> lapKindTuples)
         {
             // Non if statement required setting
             int yMin = activeRequest.StartingRowIndex;
-            int yExclusiveMax = chunkRequest.StartingRowIndex;
+            int yExclusiveMax = chunk.FileCoordinateGridRequest.StartingRowIndex;
             int yExtensionAmount = yExclusiveMax - yMin;
 
             // Require if statement
-            int xMin = chunkRequest.StartingCharacterIndex;
-            int xExclusiveMax = chunkRequest.StartingCharacterIndex + chunkRequest.CharacterCount;
+            int xMin = chunk.FileCoordinateGridRequest.StartingCharacterIndex;
+            int xExclusiveMax = chunk.FileCoordinateGridRequest.StartingCharacterIndex + chunk.FileCoordinateGridRequest.CharacterCount;
             int xExtensionAmount = 0;
 
-            if (lapKindTuples.Contains((LapKind.West, LapKindModifier.Extends)))
+            var westExtension = (LapKind.West, LapKindModifier.Extends);
+            if (lapKindTuples.Contains(westExtension))
             {
                 xMin = activeRequest.StartingCharacterIndex;
 
-                xExtensionAmount += chunkRequest.StartingCharacterIndex - activeRequest.StartingCharacterIndex;
+                xExtensionAmount += chunk.FileCoordinateGridRequest.StartingCharacterIndex - activeRequest.StartingCharacterIndex;
+
+                lapKindTuples.Remove(westExtension);
             }
             
-            if (lapKindTuples.Contains((LapKind.East, LapKindModifier.Extends)))
+            var eastExtension = (LapKind.East, LapKindModifier.Extends);
+            if (lapKindTuples.Contains(eastExtension))
             {
                 xExclusiveMax = activeRequest.StartingCharacterIndex + activeRequest.CharacterCount;
 
-                xExtensionAmount += (chunkRequest.StartingCharacterIndex + chunkRequest.CharacterCount) 
+                xExtensionAmount += (chunk.FileCoordinateGridRequest.StartingCharacterIndex + chunk.FileCoordinateGridRequest.CharacterCount) 
                                     - (activeRequest.StartingCharacterIndex + activeRequest.CharacterCount);
+
+                lapKindTuples.Remove(eastExtension);
             }
 
             var northRequest = new FileCoordinateGridRequest(
@@ -116,16 +139,16 @@ public partial record PlainTextEditorStates
             var content = chunk.PlainTextEditorRecord.FileCoordinateGrid
                 .Request(northRequest);
 
-            var nextEditor = AlterChunk(chunkEditor,
+            var nextEditor = AlterChunk(chunk.PlainTextEditorRecord,
                 content,
                 northRequest,
                 chunk.FileCoordinateGridRequest);
 
             var combinedRequest = new FileCoordinateGridRequest(
                 yMin,
-                yExtensionAmount + chunkRequest.RowCount,
+                yExtensionAmount + chunk.FileCoordinateGridRequest.RowCount,
                 xMin,
-                xExtensionAmount + chunkRequest.CharacterCount,
+                xExtensionAmount + chunk.FileCoordinateGridRequest.CharacterCount,
                 activeRequest.CancellationToken);
 
             nextEditor = nextEditor with
@@ -133,11 +156,34 @@ public partial record PlainTextEditorStates
                 RowIndexOffset = combinedRequest.StartingRowIndex
             };
 
+            lapKindTuples.Remove((LapKind.North, LapKindModifier.Extends));
+
             return chunk with
             {
                 PlainTextEditorRecord = nextEditor,
                 FileCoordinateGridRequest = combinedRequest
             };
+        }
+
+        private static PlainTextEditorChunk ExtendChunkEast(FileCoordinateGridRequest activeRequest,
+            PlainTextEditorChunk chunk,
+            List<(LapKind lapKind, LapKindModifier lapKindModifier)> lapKindTuples)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static PlainTextEditorChunk ExtendChunkSouth(FileCoordinateGridRequest activeRequest,
+            PlainTextEditorChunk chunk,
+            List<(LapKind lapKind, LapKindModifier lapKindModifier)> lapKindTuples)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static PlainTextEditorChunk ExtendChunkWest(FileCoordinateGridRequest activeRequest,
+            PlainTextEditorChunk chunk,
+            List<(LapKind lapKind, LapKindModifier lapKindModifier)> lapKindTuples)
+        {
+            throw new NotImplementedException();
         }
 
         private class RectangleCoordinates
