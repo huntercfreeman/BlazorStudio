@@ -432,12 +432,106 @@ public class PARTIAL_OVERLAP_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     [Fact]
     public void SOUTH_WEST_TEST()
     {
-        throw new NotImplementedException();
+        var inputAbsoluteFilePath = new AbsoluteFilePath(AbsoluteFilePathToThisCSharpProject +
+                                                         "CacheTests\\THE TELL-TALE HEART.txt",
+            false);
+
+        var requestOne = new FileCoordinateGridRequest(
+            15,
+            30,
+            20,
+            25,
+            CancellationToken.None);
+
+        var requestTwo = new FileCoordinateGridRequest(
+            10,
+            60,
+            0,
+            30,
+            CancellationToken.None);
+
+        var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
+                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+
+        var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
+                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+
+        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+        Dispatcher.Dispatch(new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
+            inputAbsoluteFilePath));
+
+        var plainTextEditor = State.Value.Map[plainTextEditorKey];
+
+        var actionOne = new MemoryMappedFileExactReadRequestAction(plainTextEditorKey,
+            requestOne);
+
+        Dispatcher.Dispatch(actionOne);
+
+        var actualResultOne = plainTextEditor.GetPlainText();
+
+        Assert.Equal(expectedResultOne, actualResultOne);
+
+        var actionTwo = new MemoryMappedFileExactReadRequestAction(plainTextEditorKey,
+            requestTwo);
+
+        Dispatcher.Dispatch(actionTwo);
+
+        var actualResultTwo = plainTextEditor.GetPlainText();
+
+        Assert.Equal(expectedResultTwo, actualResultTwo);
     }
 
     [Fact]
     public void WEST_TEST()
     {
-        throw new NotImplementedException();
+        var inputAbsoluteFilePath = new AbsoluteFilePath(AbsoluteFilePathToThisCSharpProject +
+                                                         "CacheTests\\THE TELL-TALE HEART.txt",
+            false);
+
+        var requestOne = new FileCoordinateGridRequest(
+            15,
+            30,
+            20,
+            25,
+            CancellationToken.None);
+
+        var requestTwo = new FileCoordinateGridRequest(
+            10,
+            1,
+            0,
+            30,
+            CancellationToken.None);
+
+        var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
+                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+
+        var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject +
+                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+
+        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+        Dispatcher.Dispatch(new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
+            inputAbsoluteFilePath));
+
+        var plainTextEditor = State.Value.Map[plainTextEditorKey];
+
+        var actionOne = new MemoryMappedFileExactReadRequestAction(plainTextEditorKey,
+            requestOne);
+
+        Dispatcher.Dispatch(actionOne);
+
+        var actualResultOne = plainTextEditor.GetPlainText();
+
+        Assert.Equal(expectedResultOne, actualResultOne);
+
+        var actionTwo = new MemoryMappedFileExactReadRequestAction(plainTextEditorKey,
+            requestTwo);
+
+        Dispatcher.Dispatch(actionTwo);
+
+        var actualResultTwo = plainTextEditor.GetPlainText();
+
+        Assert.Equal(expectedResultTwo, actualResultTwo);
     }
 }
