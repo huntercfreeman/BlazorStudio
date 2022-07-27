@@ -377,8 +377,10 @@ public partial record PlainTextEditorStates
                 }
             }
 
-            foreach (var line in content)
+            for (var index = 0; index < content.Count; index++)
             {
+                var line = content[index];
+
                 foreach (var character in line)
                 {
                     if (character == '\r')
@@ -421,6 +423,9 @@ public partial record PlainTextEditorStates
 
                     previousCharacterWasCarriageReturn = false;
                 }
+
+                if (index == content.Count - 1)
+                    continue;
 
                 if (correspondingChunkRowIndex < 0)
                 {
