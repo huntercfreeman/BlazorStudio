@@ -13,13 +13,19 @@ public class PLAIN_TEXT_EDITOR_STATES_TESTS
     protected readonly IDispatcher Dispatcher;
     protected readonly IStore Store;
     protected readonly IState<PlainTextEditorStates> State;
-    protected readonly IAbsoluteFilePath CurrentDirectoryAbsoluteFilePath =
-        new AbsoluteFilePath(Directory.GetCurrentDirectory(), true);
+    /// <summary>
+    /// For me this is:
+    /// "C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\"
+    /// </summary>
+    protected readonly string AbsoluteFilePathToThisCSharpProject = "C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\";
 
     protected CancellationTokenSource CancellationTokenSource = new();
 
     public PLAIN_TEXT_EDITOR_STATES_TESTS()
     {
+        Assert.True(Directory.Exists(AbsoluteFilePathToThisCSharpProject),
+            $"Set the protected field, '{nameof(PLAIN_TEXT_EDITOR_STATES_TESTS)}.{nameof(AbsoluteFilePathToThisCSharpProject)}'");
+
         var services = new ServiceCollection();
 
         services.AddPlainTextEditorClassLibServices();

@@ -8,8 +8,8 @@ public class EMPTY_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     [Fact]
     public void EMPTY_FILE_TEST()
     {
-        var inputAbsoluteFilePath = new AbsoluteFilePath(
-            "C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\CacheTests\\THE TELL-TALE HEART.txt",
+        var inputAbsoluteFilePath = new AbsoluteFilePath(AbsoluteFilePathToThisCSharpProject + 
+                                                         "CacheTests\\THE TELL-TALE HEART.txt",
             false);
 
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
@@ -26,6 +26,12 @@ public class EMPTY_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
             20,
             CancellationToken.None);
 
+        var requestTwo = new FileCoordinateGridRequest(
+            0,
+            30,
+            0,
+            50,
+            CancellationToken.None);
 
         var actionOne = new MemoryMappedFileExactReadRequestAction(plainTextEditorKey,
             requestOne);
@@ -34,16 +40,10 @@ public class EMPTY_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var actualResultOne = plainTextEditor.GetPlainText();
 
-        var expectedResultOne = File.ReadAllText("C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
+        var expectedResultOne = File.ReadAllText(AbsoluteFilePathToThisCSharpProject + 
+                                                 "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultOne_CACHE_NORTH_OVERLAP_TXT.txt");
 
         Assert.Equal(expectedResultOne, actualResultOne);
-
-        var requestTwo = new FileCoordinateGridRequest(
-            0,
-            30,
-            0,
-            50,
-            CancellationToken.None);
 
         var actionTwo = new MemoryMappedFileExactReadRequestAction(plainTextEditorKey,
             requestTwo);
@@ -52,7 +52,7 @@ public class EMPTY_FILE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var actualResultTwo = plainTextEditor.GetPlainText();
 
-        var expectedResultTwo = File.ReadAllText("C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\TestData\\CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
+        var expectedResultTwo = File.ReadAllText(AbsoluteFilePathToThisCSharpProject + "CacheTests\\CACHE_NORTH_OVERLAP_TXT\\resultTwo_CACHE_NORTH_OVERLAP_TXT.txt");
 
         Assert.Equal(expectedResultTwo, actualResultTwo);
     }
