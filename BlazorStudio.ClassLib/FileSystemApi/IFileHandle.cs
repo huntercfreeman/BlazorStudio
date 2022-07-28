@@ -7,7 +7,7 @@ namespace BlazorStudio.ClassLib.FileSystemApi;
 public class EditBuilder
 {
     private readonly SemaphoreSlim _editsSemaphoreSlim = new(1, 1);
-    private readonly List<Action> _edits = new();
+    private readonly List<EditWrapper> _edits = new();
     
     private EditBuilder()
     {
@@ -21,10 +21,13 @@ public class EditBuilder
 
     public EditBuilder Insert(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
     {
-        LockEdit(() =>
-        {
-            
-        });
+        LockEdit(
+            new EditWrapper(() =>
+                {
+                
+                }, 
+                0, 
+                0));
 
         return this;
     }
@@ -32,20 +35,27 @@ public class EditBuilder
     public async Task<EditBuilder> InsertAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
         CancellationToken cancellationToken)
     {
-        await LockEditAsync(() =>
-        {
-            
-        }, cancellationToken);
+        await LockEditAsync(
+            new EditWrapper(() =>
+                {
+                
+                }, 
+                0, 
+                0),
+            cancellationToken);
 
         return this;
     }
     
     public EditBuilder Remove(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
     {
-        LockEdit(() =>
-        {
-            
-        });
+        LockEdit(
+            new EditWrapper(() =>
+                {
+                
+                }, 
+                0, 
+                0));
 
         return this;
     }
@@ -53,20 +63,27 @@ public class EditBuilder
     public async Task<EditBuilder> RemoveAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
         CancellationToken cancellationToken)
     {
-        await LockEditAsync(() =>
-        {
-            
-        }, cancellationToken);
+        await LockEditAsync(
+            new EditWrapper(() =>
+                {
+                
+                }, 
+                0, 
+                0),
+            cancellationToken);
 
         return this;
     }
     
     public EditBuilder Undo(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
     {
-        LockEdit(() =>
-        {
-            
-        });
+        LockEdit(
+            new EditWrapper(() =>
+                {
+                
+                }, 
+                0, 
+                0));
 
         return this;
     }
@@ -74,20 +91,27 @@ public class EditBuilder
     public async Task<EditBuilder> UndoAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
         CancellationToken cancellationToken)
     {
-        await LockEditAsync(() =>
-        {
-            
-        }, cancellationToken);
+        await LockEditAsync(
+            new EditWrapper(() =>
+                {
+                
+                }, 
+                0, 
+                0),
+            cancellationToken);
 
         return this;
     }
     
     public EditBuilder Redo(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
     {
-        LockEdit(() =>
-        {
-            
-        });
+        LockEdit(
+            new EditWrapper(() =>
+                {
+                
+                }, 
+                0, 
+                0));
 
         return this;
     }
@@ -95,21 +119,25 @@ public class EditBuilder
     public async Task<EditBuilder> RedoAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
         CancellationToken cancellationToken)
     {
-        await LockEditAsync(() =>
-        {
-            
-        }, cancellationToken);
+        await LockEditAsync(
+            new EditWrapper(() =>
+            {
+                
+            }, 
+                0, 
+                0),
+            cancellationToken);
 
         return this;
     }
     
-    public void LockEdit(Action edit)
+    private void LockEdit(EditWrapper editWrapper)
     {
         try
         {
             _editsSemaphoreSlim.Wait();
 
-            _edits.Add(edit);
+            _edits.Add(editWrapper);
         }
         finally
         {
@@ -117,18 +145,32 @@ public class EditBuilder
         }
     }
     
-    public Task LockEditAsync(Action edit, CancellationToken cancellationToken)
+    private async Task LockEditAsync(EditWrapper editWrapper, CancellationToken cancellationToken)
     {
         try
         {
-            _editsSemaphoreSlim.WaitAsync(cancellationToken);
+            await _editsSemaphoreSlim.WaitAsync(cancellationToken);
 
-            _edits.Add(edit);
+            _edits.Add(editWrapper);
         }
         finally
         {
             _editsSemaphoreSlim.Release();
         }
+    }
+
+    private class EditWrapper
+    {
+        public EditWrapper(Action edit, int rowDisplacement, int characterDisplacement)
+        {
+            Edit = edit;
+            RowDisplacement = rowDisplacement;
+            CharacterDisplacement = characterDisplacement;
+        }
+
+        public Action Edit { get; set; }
+        public int RowDisplacement { get; set; }
+        public int CharacterDisplacement { get; set; }
     }
 }
 
