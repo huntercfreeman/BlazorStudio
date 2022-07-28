@@ -146,18 +146,97 @@ public partial class FileSystemProvider : IFileSystemProvider
             throw new NotImplementedException();
         }
         
-        public string Read(long rowOffset, long characterOffset)
+        public List<string> Read(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
+            CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var rows = new List<string>();
+
+            if (_memoryMappedFile is not null)
+            {
+                var availableRowCount = Math.Max(
+                    CharacterIndexMarkerForStartOfARow.Length - rowIndexOffset,
+                    0);
+
+                var toReadRowCount = Math.Min(rowCount, availableRowCount);
+
+                var rowIndex = rowIndexOffset;
+
+                var rowsRead = 0;
+                
+                for (;
+                     rowsRead < toReadRowCount;
+                     rowsRead++, rowIndex++)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                        return rows;
+
+                    long inclusiveStartingCharacterIndex = CharacterIndexMarkerForStartOfARow[rowIndex] +
+                                                           characterIndexOffset;
+
+                    var exclusiveEndingCharacterIndex =
+                        inclusiveStartingCharacterIndex + characterCount;
+
+                    // Ensure within bounds of file
+                    exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > ExclusiveEndOfFileCharacterIndex
+                        ? ExclusiveEndOfFileCharacterIndex
+                        : exclusiveEndingCharacterIndex;
+
+                    // Ensure within bounds of row
+                    if (rowIndex < CharacterIndexMarkerForStartOfARow.Length - 1)
+                    {
+                        long startOfNextRowCharacterIndex = CharacterIndexMarkerForStartOfARow[rowIndex + 1];
+
+                        exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > startOfNextRowCharacterIndex
+                            ? startOfNextRowCharacterIndex
+                            : exclusiveEndingCharacterIndex;
+                    }
+
+                    exclusiveEndingCharacterIndex = Math.Min(ExclusiveEndOfFileCharacterIndex, exclusiveEndingCharacterIndex);
+
+                    long longCharacterLengthOfRequest = exclusiveEndingCharacterIndex - inclusiveStartingCharacterIndex;
+
+                    if (longCharacterLengthOfRequest <= 0)
+                    {
+                        rows.Add(string.Empty);
+                        continue;
+                    }
+
+                    if (longCharacterLengthOfRequest > Int32.MaxValue)
+                    {
+                        throw new ApplicationException($"Requested: byte[{longCharacterLengthOfRequest}]," +
+                                                       $" but the length cannot exceed: byte[{Int32.MaxValue}]");
+                    }
+
+                    int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
+                    
+                    using var stream = _memoryMappedFile
+                        .CreateViewStream(PreambleLength + inclusiveStartingCharacterIndex,
+                            intCharacterLengthOfRequest,
+                            MemoryMappedFileAccess.Read);
+
+                    using var reader = new StreamReader(stream, Encoding);
+
+                    rows.Add(reader.ReadToEnd());
+                }
+            }
+
+            return rows;
         }
         
-        public Task<string> ReadAsync(long rowOffset, long characterOffset, CancellationToken cancellationToken)
+        public Task<List<string>> ReadAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
+            CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(Read(rowIndexOffset, characterIndexOffset, rowCount, characterCount, 
+                cancellationToken));
         }
         
         public void Dispose()
         {
+            if (_memoryMappedFile is not null)
+            {
+                _memoryMappedFile.Dispose();
+            }
+            
             _onDisposeAction.Invoke(this);
         }
     }
