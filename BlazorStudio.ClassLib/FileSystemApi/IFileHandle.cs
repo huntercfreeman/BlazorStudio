@@ -4,6 +4,11 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
 namespace BlazorStudio.ClassLib.FileSystemApi;
 
+public class EditBuilder
+{
+    
+}
+
 public interface IFileHandle : IDisposable
 {
     /// <summary>
@@ -30,7 +35,7 @@ public interface IFileHandle : IDisposable
     /// <summary>
     /// Random access to the file to avoid reading the entire file into memory.
     /// 
-    /// When <see cref="rowOffset"/> is 0, and <see cref="characterOffset"/> is 0 that is
+    /// When <see cref="rowIndexOffset"/> is 0, and <see cref="characterIndexOffset"/> is 0 that is
     /// the start of the file regardless of whether the file has a BOM preamble
     /// </summary>
     /// <param name="rowIndexOffset">The row index (zero based and inclusive) to start reading from</param>
@@ -44,7 +49,7 @@ public interface IFileHandle : IDisposable
     /// <summary>
     /// Random access to the file to avoid reading the entire file into memory.
     ///
-    /// When <see cref="rowOffset"/> is 0, and <see cref="characterOffset"/> is 0 that is
+    /// When <see cref="rowIndexOffset"/> is 0, and <see cref="characterIndexOffset"/> is 0 that is
     /// the start of the file regardless of whether the file has a BOM preamble
     /// </summary>
     /// <param name="rowIndexOffset">The row index (zero based) to start reading from</param>
@@ -71,14 +76,15 @@ public interface IFileHandle : IDisposable
     /// Make an edit that will be seen when reading from the same FileHandle. However,
     /// this will not edit the file on disk. One must <see cref="Save"/> after editing to persist changes.
     /// </summary>
-    public void Edit();
+    /// <returns>An EditBuilder to fluently chain multiple edits together.</returns>
+    public EditBuilder Edit();
     /// <summary>
     /// Make an edit that will be seen when reading from the same FileHandle. However,
     /// this will not edit the file on disk. One must <see cref="Save"/> after editing to persist changes.
     /// </summary>
     /// <param name="cancellationToken">Relays the cancellation of the asynchronous call</param>
-    /// <returns>A Task indicating status of editing the FileHandle</returns>
-    public Task EditAsync(CancellationToken cancellationToken);
+    /// <returns>A Task that wraps an EditBuilder to fluently chain multiple edits together.</returns>
+    public Task<EditBuilder> EditAsync(CancellationToken cancellationToken);
     
     /// <summary>
     /// Disposes of any unmanaged resources.
