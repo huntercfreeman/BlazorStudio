@@ -1,4 +1,6 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using System.Collections.Immutable;
+using System.Text;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
 namespace BlazorStudio.ClassLib.FileSystemApi;
 
@@ -14,18 +16,17 @@ public interface IFileHandle : IDisposable
     /// paths are unambiguous  so this is typed accordingly.
     /// </summary>
     public IAbsoluteFilePath AbsoluteFilePath { get; }
+    public Encoding Encoding { get; }
+    public long CharacterLengthOfLongestRow { get; }
+    public int RowCount { get; }
+    public int ExclusiveEndOfFileCharacterIndex { get; }
+    public int PreambleLength { get; }
+    /// <summary>
+    /// TODO: Calculate this instead of assuming each character is 1 byte 
+    /// </summary>
+    public int BytesPerEncodedCharacter { get; }
+    public ImmutableArray<long> CharacterIndexMarkerForStartOfARow { get; }
     
-    /// <summary>
-    /// Write out any changes pending in memory to the FileSystem
-    /// </summary>
-    public void Save();
-    /// <summary>
-    /// Write out any changes pending in memory to the FileSystem
-    /// </summary>
-    /// <param name="cancellationToken">Relays the cancellation of the asynchronous call</param>
-    /// <returns>A Task indicating status of saving the file</returns>
-    public Task SaveAsync(CancellationToken cancellationToken);
-
     /// <summary>
     /// Random access to the file to avoid reading the entire file into memory.
     /// 
@@ -54,6 +55,31 @@ public interface IFileHandle : IDisposable
     /// <returns>The content read from the file</returns>
     public Task<List<string>> ReadAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
         CancellationToken cancellationToken);
+    
+    /// <summary>
+    /// Write out any changes pending in memory to the FileSystem
+    /// </summary>
+    public void Save();
+    /// <summary>
+    /// Write out any changes pending in memory to the FileSystem
+    /// </summary>
+    /// <param name="cancellationToken">Relays the cancellation of the asynchronous call</param>
+    /// <returns>A Task indicating status of saving the file</returns>
+    public Task SaveAsync(CancellationToken cancellationToken);
+    
+    /// <summary>
+    /// Make an edit that will be seen when reading from the same FileHandle. However,
+    /// this will not edit the file on disk. One must <see cref="Save"/> after editing to persist changes.
+    /// </summary>
+    public void Edit();
+    /// <summary>
+    /// Make an edit that will be seen when reading from the same FileHandle. However,
+    /// this will not edit the file on disk. One must <see cref="Save"/> after editing to persist changes.
+    /// </summary>
+    /// <param name="cancellationToken">Relays the cancellation of the asynchronous call</param>
+    /// <returns>A Task indicating status of editing the FileHandle</returns>
+    public Task EditAsync(CancellationToken cancellationToken);
+    
     /// <summary>
     /// Disposes of any unmanaged resources.
     /// </summary>

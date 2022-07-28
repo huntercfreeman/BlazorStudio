@@ -19,12 +19,9 @@ public partial class FileSystemProvider : IFileSystemProvider
             0 // Start of document
         };
         
-        public ImmutableArray<long> CharacterIndexMarkerForStartOfARow => 
-            _characterIndexMarkerForStartOfARow.ToImmutableArray();
-
         private int _exclusiveEndOfFileCharacterIndex;
         private MemoryMappedFile? _memoryMappedFile;
-
+        
         // Replace first 2 characters with '~$' to ensure the maximum file path
         // length file system constraint is not hit
         private string MapFileIdentifier =>
@@ -41,6 +38,8 @@ public partial class FileSystemProvider : IFileSystemProvider
         /// TODO: Calculate this instead of assuming each character is 1 byte 
         /// </summary>
         public int BytesPerEncodedCharacter { get; private set; } = 1;
+        public ImmutableArray<long> CharacterIndexMarkerForStartOfARow => 
+            _characterIndexMarkerForStartOfARow.ToImmutableArray();
 
         public FileHandle(IAbsoluteFilePath absoluteFilePath, Action<FileHandle> onDisposeAction)
         {
