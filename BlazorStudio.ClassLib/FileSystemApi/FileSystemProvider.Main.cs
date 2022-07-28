@@ -10,11 +10,19 @@ public partial class FileSystemProvider : IFileSystemProvider, IDisposable
 
     public IFileHandle Open(IAbsoluteFilePath absoluteFilePath)
     {
+        var absoluteFilePathStringValue = new AbsoluteFilePathStringValue(absoluteFilePath);
+
         try
         {
             _fileHandlesSemaphoreSlim.Wait();
 
-            return UnsafePerformOpen(absoluteFilePath);
+            var fileHandle = UnsafePerformOpen(absoluteFilePath, absoluteFilePathStringValue);
+            
+            fileHandle.Initialize();
+            
+            _fileHandles.Add(absoluteFilePathStringValue, fileHandle);
+
+            return fileHandle;
         }
         finally
         {
@@ -24,11 +32,19 @@ public partial class FileSystemProvider : IFileSystemProvider, IDisposable
 
     public async Task<IFileHandle> OpenAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken)
     {
+        var absoluteFilePathStringValue = new AbsoluteFilePathStringValue(absoluteFilePath);
+
         try
         {
             await _fileHandlesSemaphoreSlim.WaitAsync(cancellationToken);
 
-            return UnsafePerformOpen(absoluteFilePath);
+            var fileHandle = UnsafePerformOpen(absoluteFilePath, absoluteFilePathStringValue);
+            
+            await fileHandle.InitializeAsync(cancellationToken);
+            
+            _fileHandles.Add(absoluteFilePathStringValue, fileHandle);
+
+            return fileHandle;
         }
         finally
         {
@@ -36,18 +52,17 @@ public partial class FileSystemProvider : IFileSystemProvider, IDisposable
         }
     }
 
-    private IFileHandle UnsafePerformOpen(IAbsoluteFilePath absoluteFilePath)
+    private FileHandle UnsafePerformOpen(IAbsoluteFilePath absoluteFilePath,
+        AbsoluteFilePathStringValue filePathStringValue)
     {
         var absoluteFilePathStringValue = new AbsoluteFilePathStringValue(absoluteFilePath);
         
         if (_fileHandles.TryGetValue(absoluteFilePathStringValue, out var value))
         {
-            return value;
+            return (FileHandle) value;
         }
         
         var fileHandle = new FileHandle(absoluteFilePath, Close);
-        
-        _fileHandles.Add(absoluteFilePathStringValue, fileHandle);
 
         return fileHandle;
     }

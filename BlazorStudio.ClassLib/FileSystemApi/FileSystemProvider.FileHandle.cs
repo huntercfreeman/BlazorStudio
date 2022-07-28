@@ -83,7 +83,7 @@ public partial class FileSystemProvider : IFileSystemProvider
             }
         }
         
-        public async Task InitializeAsync()
+        public async Task InitializeAsync(CancellationToken cancellationToken)
         {
             using (StreamReader streamReader = new StreamReader(path, true))
             {
