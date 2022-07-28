@@ -14,14 +14,14 @@ public partial class EditBuilder
         /// of the text that occurred.
         /// </summary>
         /// <param name="editAsync"></param>
-        public EditWrapper(Func<List<string>, CancellationToken, (int rowDisplacement, int characterDisplacement)> edit,
-            Func<List<string>, CancellationToken, Task<(int rowDisplacement, int characterDisplacement)>> editAsync)
+        public EditWrapper(Action<List<string>, EditResult, CancellationToken> edit,
+            Func<List<string>, EditResult, CancellationToken, Task> editAsync)
         {
             Edit = edit;
             EditAsync = editAsync;
         }
 
-        public Func<List<string>, CancellationToken, (int rowDisplacement, int characterDisplacement)> Edit { get; }
-        public Func<List<string>, CancellationToken, Task<(int rowDisplacement, int characterDisplacement)>> EditAsync { get; }
+        public Action<List<string>, EditResult, CancellationToken> Edit { get; }
+        public Func<List<string>, EditResult, CancellationToken, Task> EditAsync { get; }
     }
 }

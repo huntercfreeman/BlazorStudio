@@ -151,11 +151,11 @@ public partial class EditBuilder
     public EditBuilder Redo()
     {
         LockEdit(
-            new EditWrapper((contentRows, cancellationToken) =>
+            new EditWrapper((contentRows,  editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 },
-                async (contentRows, cancellationToken) =>
+                async (contentRows, editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }));
@@ -166,11 +166,11 @@ public partial class EditBuilder
     public async Task<EditBuilder> RedoAsync(CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper((contentRows, cancellationToken) =>
+            new EditWrapper((contentRows, editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 },
-                async (contentRows, cancellationToken) =>
+                async (contentRows, editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }),
@@ -213,11 +213,13 @@ public partial class EditBuilder
         {
             _editsSemaphoreSlim.Wait();
 
-            (int rowIndexOffset, int characterIndexOffset) offset = (0, 0);
+            var editResult = new EditResult(rows, 
+                new(), 
+                new());
             
             foreach (var edit in _edits)
             {
-                 = edit.Edit(rowIndexOffset, characterIndexOffset, rows, default);
+                edit.Edit(rows, editResult, default);
             }
         }
         finally

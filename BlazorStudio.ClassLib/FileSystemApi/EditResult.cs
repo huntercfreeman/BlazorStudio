@@ -18,9 +18,11 @@
 /// </summary>
 public class EditResult
 {
-    public EditResult(List<string> content)
+    public EditResult(List<string> content, List<(int rowIndex, int characterIndexOfInsertion, int amountOfCharactersInserted)> characterDisplacementByRow, List<(int insertionPoint, int amountOfRowsInserted)> rowDisplacement)
     {
         Content = content;
+        CharacterDisplacementByRow = characterDisplacementByRow;
+        RowDisplacement = rowDisplacement;
     }
     
     /// <summary>
@@ -31,10 +33,10 @@ public class EditResult
     /// <see cref="CharacterDisplacementByRow"/> allows for tracking of how much the difference between
     /// the virtual file contents and the physical file contents when it relates to characters on a row.
     /// </summary>
-    public List<(int rowIndex, int characterIndexOfInsertion, int amountOfCharactersInserted)> CharacterDisplacementByRow { get; set; }
+    public List<(int rowIndex, int characterIndexOfInsertion, int amountOfCharactersInserted)> CharacterDisplacementByRow { get; }
     /// <summary>
     /// <see cref="CharacterDisplacementByRow"/> allows for tracking of how much the difference between
     /// the virtual file contents and the physical file contents when it relates to characters on a row.
     /// </summary>
-    public List<(int insertionPoint, int amountOfRowsInserted)> RowDisplacement { get; set; }
+    public List<(int insertionPoint, int amountOfRowsInserted)> RowDisplacement { get; }
 }
