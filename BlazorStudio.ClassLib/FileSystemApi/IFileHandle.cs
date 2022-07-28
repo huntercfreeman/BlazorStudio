@@ -6,7 +6,135 @@ namespace BlazorStudio.ClassLib.FileSystemApi;
 
 public class EditBuilder
 {
+    private SemaphoreSlim _editsSemaphoreSlim = new(1, 1);
+    private List<EditRecord> _edits = new();
     
+    private EditBuilder()
+    {
+        
+    }
+
+    public static EditBuilder Build()
+    {
+        return new EditBuilder();
+    }
+
+    public EditBuilder Insert(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
+    {
+        LockEdit(() =>
+        {
+            
+        });
+
+        return this;
+    }
+    
+    public async Task<EditBuilder> InsertAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
+        CancellationToken cancellationToken)
+    {
+        await LockEditAsync(() =>
+        {
+            
+        }, cancellationToken);
+
+        return this;
+    }
+    
+    public EditBuilder Remove(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
+    {
+        LockEdit(() =>
+        {
+            
+        });
+
+        return this;
+    }
+    
+    public async Task<EditBuilder> RemoveAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
+        CancellationToken cancellationToken)
+    {
+        await LockEditAsync(() =>
+        {
+            
+        }, cancellationToken);
+
+        return this;
+    }
+    
+    public EditBuilder Undo(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
+    {
+        LockEdit(() =>
+        {
+            
+        });
+
+        return this;
+    }
+    
+    public async Task<EditBuilder> UndoAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
+        CancellationToken cancellationToken)
+    {
+        await LockEditAsync(() =>
+        {
+            
+        }, cancellationToken);
+
+        return this;
+    }
+    
+    public EditBuilder Redo(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
+    {
+        LockEdit(() =>
+        {
+            
+        });
+
+        return this;
+    }
+    
+    public async Task<EditBuilder> RedoAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
+        CancellationToken cancellationToken)
+    {
+        await LockEditAsync(() =>
+        {
+            
+        }, cancellationToken);
+
+        return this;
+    }
+    
+    public void LockEdit(Action edit)
+    {
+        try
+        {
+            _editsSemaphoreSlim.Wait();
+
+            edit();
+        }
+        finally
+        {
+            _editsSemaphoreSlim.Release();
+        }
+    }
+    
+    public Task LockEditAsync(Action edit, CancellationToken cancellationToken)
+    {
+        try
+        {
+            _editsSemaphoreSlim.WaitAsync(cancellationToken);
+
+            edit();
+        }
+        finally
+        {
+            _editsSemaphoreSlim.Release();
+        }
+    }
+
+    private record EditRecord
+    {
+        
+    }
 }
 
 public interface IFileHandle : IDisposable
