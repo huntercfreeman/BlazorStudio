@@ -27,14 +27,12 @@ public partial class EditBuilder
     public EditBuilder Insert(int rowIndexOffset, int characterIndexOffset, string content)
     {
         LockEdit(
-            new EditWrapper((contentRows, cancellationToken) =>
+            new EditWrapper((editResult, cancellationToken) =>
                 {
-                    contentRows[rowIndexOffset] = contentRows[rowIndexOffset]
+                    editResult.ContentRows[rowIndexOffset] = editResult.ContentRows[rowIndexOffset]
                         .Insert(characterIndexOffset, content);
-
-                    return (0, content.Length);
                 },
-                async (contentRows, cancellationToken) =>
+                async (editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }));
@@ -46,14 +44,12 @@ public partial class EditBuilder
         CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper((contentRows, cancellationToken) =>
+            new EditWrapper((editResult, cancellationToken) =>
                 {
-                    contentRows[rowIndexOffset] = contentRows[rowIndexOffset]
+                    editResult.ContentRows[rowIndexOffset] = editResult.ContentRows[rowIndexOffset]
                         .Insert(characterIndexOffset, content);
-
-                    return default;
                 },
-                async (contentRows, cancellationToken) =>
+                async (editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }),
@@ -65,33 +61,31 @@ public partial class EditBuilder
     public EditBuilder Remove(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
     {
         LockEdit(
-            new EditWrapper((contentRows, cancellationToken) =>
+            new EditWrapper((editResult, cancellationToken) =>
                 {
                     var lastIndex = rowIndexOffset + rowCount - 1;
 
-                    lastIndex = lastIndex > contentRows.Count
-                        ? contentRows.Count
+                    lastIndex = lastIndex > editResult.ContentRows.Count
+                        ? editResult.ContentRows.Count
                         : lastIndex;
                     
                     for (int i = lastIndex; i >= rowIndexOffset; i--)
                     {
-                        var row = contentRows[i];
+                        var row = editResult.ContentRows[i];
 
                         if (characterIndexOffset == 0 && characterCount >= row.Length)
                         {
-                            contentRows.RemoveAt(i);
+                            editResult.ContentRows.RemoveAt(i);
                         }
                         else if (characterIndexOffset <= row.Length)
                         {
                             var removeCount = row.Length - characterIndexOffset;
 
-                            contentRows[i] = row.Remove(characterIndexOffset, removeCount);
+                            editResult.ContentRows[i] = row.Remove(characterIndexOffset, removeCount);
                         }
                     }
-
-                    return default;
                 },
-                async (contentRows, cancellationToken) =>
+                async (editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }));
@@ -104,11 +98,11 @@ public partial class EditBuilder
         CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper((contentRows, cancellationToken) =>
+            new EditWrapper((editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 },
-                async (contentRows, cancellationToken) =>
+                async (editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }),
@@ -120,11 +114,11 @@ public partial class EditBuilder
     public EditBuilder Undo()
     {
         LockEdit(
-            new EditWrapper((contentRows, cancellationToken) =>
+            new EditWrapper((editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 },
-                async (contentRows, cancellationToken) =>
+                async (editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }));
@@ -135,11 +129,11 @@ public partial class EditBuilder
     public async Task<EditBuilder> UndoAsync(CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper((contentRows, cancellationToken) =>
+            new EditWrapper((editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 },
-                async (contentRows, cancellationToken) =>
+                async (editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }),
@@ -151,11 +145,11 @@ public partial class EditBuilder
     public EditBuilder Redo()
     {
         LockEdit(
-            new EditWrapper((contentRows,  editResult, cancellationToken) =>
+            new EditWrapper((editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 },
-                async (contentRows, editResult, cancellationToken) =>
+                async (editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }));
@@ -166,11 +160,11 @@ public partial class EditBuilder
     public async Task<EditBuilder> RedoAsync(CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper((contentRows, editResult, cancellationToken) =>
+            new EditWrapper((editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 },
-                async (contentRows, editResult, cancellationToken) =>
+                async (editResult, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }),
@@ -219,7 +213,7 @@ public partial class EditBuilder
             
             foreach (var edit in _edits)
             {
-                edit.Edit(rows, editResult, default);
+                edit.Edit(editResult, default);
             }
         }
         finally
