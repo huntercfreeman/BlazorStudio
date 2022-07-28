@@ -16,7 +16,7 @@ public class FILE_HANDLE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var fileHandle = fileSystemProvider.Open(inputAbsoluteFilePath);
 
-        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.CharacterLengthOfLongestRow);
+        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
         var rowContent = fileHandle.Read(0, 0, 5, characterLengthOfLongestRow, 
             CancellationToken.None);
@@ -42,7 +42,7 @@ content);
 
         var fileHandle = fileSystemProvider.Open(inputAbsoluteFilePath);
 
-        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.CharacterLengthOfLongestRow);
+        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
         var firstRowContent = fileHandle.Read(0, 0, 5, characterLengthOfLongestRow, 
             CancellationToken.None);
@@ -70,7 +70,7 @@ content);
 
         var fileHandle = fileSystemProvider.Open(inputAbsoluteFilePath);
 
-        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.CharacterLengthOfLongestRow);
+        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
         var firstRowContent = fileHandle.Read(0, 0, 5, characterLengthOfLongestRow, 
             CancellationToken.None);
@@ -98,7 +98,7 @@ content);
 
         var fileHandle = fileSystemProvider.Open(inputAbsoluteFilePath);
 
-        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.CharacterLengthOfLongestRow);
+        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
         var firstRowContent = fileHandle.Read(0, 0, 5, characterLengthOfLongestRow, 
             CancellationToken.None);
@@ -133,7 +133,7 @@ content);
 
         var fileHandle = fileSystemProvider.Open(inputAbsoluteFilePath);
 
-        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.CharacterLengthOfLongestRow);
+        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
         var firstRowContent = fileHandle.Read(0, 0, 5, characterLengthOfLongestRow, 
             CancellationToken.None);
@@ -172,10 +172,10 @@ content);
 
         var fileHandle = fileSystemProvider.Open(inputAbsoluteFilePath);
 
-        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.CharacterLengthOfLongestRow);
+        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
         // starting
-        var startingEntireFileRowContent = fileHandle.Read(0, 0, fileHandle.RowCount, characterLengthOfLongestRow, 
+        var startingEntireFileRowContent = fileHandle.Read(0, 0, fileHandle.PhysicalRowCount, characterLengthOfLongestRow, 
             CancellationToken.None);
         
         var startingEntireFileContent = string.Join(string.Empty, startingEntireFileRowContent);
@@ -195,7 +195,7 @@ content);
         var secondContent = string.Join(string.Empty, secondRowContent);
  
         // ending
-        var endingEntireFileRowContent = fileHandle.Read(0, 0, fileHandle.RowCount, characterLengthOfLongestRow, 
+        var endingEntireFileRowContent = fileHandle.Read(0, 0, fileHandle.PhysicalRowCount, characterLengthOfLongestRow, 
             CancellationToken.None);
         
         var endingEntireFileContent = string.Join(string.Empty, endingEntireFileRowContent);

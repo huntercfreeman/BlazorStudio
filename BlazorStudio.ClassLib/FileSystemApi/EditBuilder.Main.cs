@@ -55,7 +55,16 @@ public partial class EditBuilder
                             builder.Insert(characterIndexForInsertion++, character);
                             
                             editResult.ContentRows.Insert(rowIndexForInsertion++, builder.ToString());
-                        
+
+                            for (var index = 0;
+                                 index < editResult.VirtualCharacterIndexMarkerForStartOfARow.Count;
+                                 index++)
+                            {
+                                var rowStartMarker = editResult.VirtualCharacterIndexMarkerForStartOfARow[index];
+                                
+                                editResult.VirtualCharacterIndexMarkerForStartOfARow[index] = rowStartMarker + 1;
+                            }
+
                             builder.Clear();
                             characterIndexForInsertion = 0;
                         }
@@ -247,7 +256,10 @@ public partial class EditBuilder
         }
     }
 
-    public List<string> ApplyEdits(int rowIndexOffset, int characterIndexOffset, List<string> rows)
+    public List<string> ApplyEdits(int rowIndexOffset, 
+        int characterIndexOffset, 
+        List<string> rows,
+        List<long> virtualCharacterIndexMarkerForStartOfARow)
     {
         try
         {
@@ -255,7 +267,8 @@ public partial class EditBuilder
 
             var editResult = new EditResult(rows, 
                 new(), 
-                new());
+                new(),
+                virtualCharacterIndexMarkerForStartOfARow);
             
             foreach (var edit in _edits)
             {

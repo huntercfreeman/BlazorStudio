@@ -14,12 +14,19 @@ public partial class FileSystemProvider : IFileSystemProvider
         /// Index using the Row index and this returns the
         /// starting position of that row within the text file.
         /// </summary>
-        private readonly List<long> _characterIndexMarkerForStartOfARow = new()
+        private readonly List<long> _physicalCharacterIndexMarkerForStartOfARow = new()
+        {
+            0 // Start of document
+        };
+        /// <summary>
+        /// Index using the Row index and this returns the
+        /// starting position of that row within the text file.
+        /// </summary>
+        private readonly List<long> _virtualCharacterIndexMarkerForStartOfARow = new()
         {
             0 // Start of document
         };
         
-        private int _exclusiveEndOfFileCharacterIndex;
         private MemoryMappedFile? _memoryMappedFile;
 
         public EditBuilder Edit { get; } = EditBuilder.Build();
@@ -32,16 +39,24 @@ public partial class FileSystemProvider : IFileSystemProvider
                 .ToArray());
         
         public Encoding Encoding { get; private set; }
-        public long CharacterLengthOfLongestRow { get; private set; }
-        public int RowCount => _characterIndexMarkerForStartOfARow.Count;
-        public int ExclusiveEndOfFileCharacterIndex => _exclusiveEndOfFileCharacterIndex;
+        
+        public long PhysicalCharacterLengthOfLongestRow { get; private set; }
+        public int PhysicalExclusiveEndOfFileCharacterIndex { get; private set; }
+        public int PhysicalRowCount => _physicalCharacterIndexMarkerForStartOfARow.Count;
+        public ImmutableArray<long> PhysicalCharacterIndexMarkerForStartOfARow => 
+            _physicalCharacterIndexMarkerForStartOfARow.ToImmutableArray();
+        
+        public long VirtualCharacterLengthOfLongestRow { get; private set; }
+        public int VirtualExclusiveEndOfFileCharacterIndex { get; private set; }
+        public int VirtualRowCount => _virtualCharacterIndexMarkerForStartOfARow.Count;
+        public ImmutableArray<long> VirtualCharacterIndexMarkerForStartOfARow => 
+            _virtualCharacterIndexMarkerForStartOfARow.ToImmutableArray();
+        
         public int PreambleLength { get; private set; }
         /// <summary>
         /// TODO: Calculate this instead of assuming each character is 1 byte 
         /// </summary>
         public int BytesPerEncodedCharacter { get; private set; } = 1;
-        public ImmutableArray<long> CharacterIndexMarkerForStartOfARow => 
-            _characterIndexMarkerForStartOfARow.ToImmutableArray();
 
         public FileHandle(IAbsoluteFilePath absoluteFilePath, Action<FileHandle> onDisposeAction)
         {
@@ -74,11 +89,12 @@ public partial class FileSystemProvider : IFileSystemProvider
 
                     if (currentCharacter == '\n')
                     {
-                        _characterIndexMarkerForStartOfARow.Add(characterCounter);
+                        _physicalCharacterIndexMarkerForStartOfARow.Add(characterCounter);
+                        _virtualCharacterIndexMarkerForStartOfARow.Add(characterCounter);
 
-                        if (rowCharacterCount > CharacterLengthOfLongestRow)
+                        if (rowCharacterCount > PhysicalCharacterLengthOfLongestRow)
                         {
-                            CharacterLengthOfLongestRow = rowCharacterCount;
+                            PhysicalCharacterLengthOfLongestRow = rowCharacterCount;
                         }
 
                         rowCharacterCount = 0;
@@ -102,7 +118,7 @@ public partial class FileSystemProvider : IFileSystemProvider
                 }
             }
 
-            _exclusiveEndOfFileCharacterIndex = characterCounter;
+            PhysicalExclusiveEndOfFileCharacterIndex = characterCounter;
 
             var mapFilename = MapFileIdentifier;
             
@@ -155,7 +171,7 @@ public partial class FileSystemProvider : IFileSystemProvider
             if (_memoryMappedFile is not null)
             {
                 var availableRowCount = Math.Max(
-                    CharacterIndexMarkerForStartOfARow.Length - rowIndexOffset,
+                    _physicalCharacterIndexMarkerForStartOfARow.Count - rowIndexOffset,
                     0);
 
                 var toReadRowCount = Math.Min(rowCount, availableRowCount);
@@ -171,28 +187,28 @@ public partial class FileSystemProvider : IFileSystemProvider
                     if (cancellationToken.IsCancellationRequested)
                         return rows;
 
-                    long inclusiveStartingCharacterIndex = CharacterIndexMarkerForStartOfARow[rowIndex] +
+                    long inclusiveStartingCharacterIndex = _physicalCharacterIndexMarkerForStartOfARow[rowIndex] +
                                                            characterIndexOffset;
 
                     var exclusiveEndingCharacterIndex =
                         inclusiveStartingCharacterIndex + characterCount;
 
                     // Ensure within bounds of file
-                    exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > ExclusiveEndOfFileCharacterIndex
-                        ? ExclusiveEndOfFileCharacterIndex
+                    exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > PhysicalExclusiveEndOfFileCharacterIndex
+                        ? PhysicalExclusiveEndOfFileCharacterIndex
                         : exclusiveEndingCharacterIndex;
 
                     // Ensure within bounds of row
-                    if (rowIndex < CharacterIndexMarkerForStartOfARow.Length - 1)
+                    if (rowIndex < _physicalCharacterIndexMarkerForStartOfARow.Count - 1)
                     {
-                        long startOfNextRowCharacterIndex = CharacterIndexMarkerForStartOfARow[rowIndex + 1];
+                        long startOfNextRowCharacterIndex = _physicalCharacterIndexMarkerForStartOfARow[rowIndex + 1];
 
                         exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > startOfNextRowCharacterIndex
                             ? startOfNextRowCharacterIndex
                             : exclusiveEndingCharacterIndex;
                     }
 
-                    exclusiveEndingCharacterIndex = Math.Min(ExclusiveEndOfFileCharacterIndex, exclusiveEndingCharacterIndex);
+                    exclusiveEndingCharacterIndex = Math.Min(PhysicalExclusiveEndOfFileCharacterIndex, exclusiveEndingCharacterIndex);
 
                     long longCharacterLengthOfRequest = exclusiveEndingCharacterIndex - inclusiveStartingCharacterIndex;
 
@@ -221,7 +237,11 @@ public partial class FileSystemProvider : IFileSystemProvider
                 }
             }
             
-            return Edit.ApplyEdits(rowIndexOffset, characterIndexOffset, rows);
+            var contentRows = Edit.ApplyEdits(rowIndexOffset, characterIndexOffset, rows, _virtualCharacterIndexMarkerForStartOfARow);
+
+            return contentRows
+                .Take(rowCount)
+                .ToList();
         }
         
         public Task<List<string>> ReadAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 

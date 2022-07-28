@@ -18,11 +18,15 @@
 /// </summary>
 public class EditResult
 {
-    public EditResult(List<string> contentRows, List<(int rowIndex, int characterIndexOfInsertion, int amountOfCharactersInserted)> characterDisplacementByRow, List<(int insertionPoint, int amountOfRowsInserted)> rowDisplacement)
+    public EditResult(List<string> contentRows,
+        List<(int rowIndex, int characterIndexOfInsertion, int amountOfCharactersInserted)> characterDisplacementByRow,
+        List<(int insertionPoint, int amountOfRowsInserted)> rowDisplacement,
+        List<long> virtualCharacterIndexMarkerForStartOfARow)
     {
         ContentRows = contentRows;
         CharacterDisplacementByRow = characterDisplacementByRow;
         RowDisplacement = rowDisplacement;
+        VirtualCharacterIndexMarkerForStartOfARow = virtualCharacterIndexMarkerForStartOfARow;
     }
     
     /// <summary>
@@ -39,4 +43,5 @@ public class EditResult
     /// the virtual file contents and the physical file contents when it relates to characters on a row.
     /// </summary>
     public List<(int insertionPoint, int amountOfRowsInserted)> RowDisplacement { get; }
+    public List<long> VirtualCharacterIndexMarkerForStartOfARow { get; }
 }

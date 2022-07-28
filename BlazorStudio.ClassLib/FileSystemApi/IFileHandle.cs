@@ -13,7 +13,7 @@ public interface IFileHandle : IDisposable
     /// <summary>
     /// Mostly this is a string that is an absolute path to a file.
     /// However, it is important that Absolute vs Relative
-    /// paths are unambiguous  so this is typed accordingly.
+    /// paths are unambiguous so this is typed accordingly.
     /// </summary>
     public IAbsoluteFilePath AbsoluteFilePath { get; }
     /// <summary>
@@ -22,15 +22,19 @@ public interface IFileHandle : IDisposable
     /// </summary>
     public EditBuilder Edit { get; }
     public Encoding Encoding { get; }
-    public long CharacterLengthOfLongestRow { get; }
-    public int RowCount { get; }
-    public int ExclusiveEndOfFileCharacterIndex { get; }
+    public long PhysicalCharacterLengthOfLongestRow { get; }
+    public int PhysicalRowCount { get; }
+    public int PhysicalExclusiveEndOfFileCharacterIndex { get; }
+    public ImmutableArray<long> PhysicalCharacterIndexMarkerForStartOfARow { get; }
+    public long VirtualCharacterLengthOfLongestRow { get; }
+    public int VirtualRowCount { get; }
+    public int VirtualExclusiveEndOfFileCharacterIndex { get; }
+    public ImmutableArray<long> VirtualCharacterIndexMarkerForStartOfARow { get; }
     public int PreambleLength { get; }
     /// <summary>
     /// TODO: Calculate this instead of assuming each character is 1 byte 
     /// </summary>
     public int BytesPerEncodedCharacter { get; }
-    public ImmutableArray<long> CharacterIndexMarkerForStartOfARow { get; }
     
     /// <summary>
     /// Random access to the file to avoid reading the entire file into memory.
