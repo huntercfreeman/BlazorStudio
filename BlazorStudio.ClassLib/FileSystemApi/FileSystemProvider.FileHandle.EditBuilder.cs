@@ -7,7 +7,7 @@ namespace BlazorStudio.ClassLib.FileSystemApi;
 
 public partial class FileSystemProvider : IFileSystemProvider
 {
-    private class FileHandle : IFileHandle
+    private partial class FileHandle : IFileHandle
     {
         private readonly Action<FileHandle> _onDisposeAction;
         /// <summary>
@@ -21,6 +21,8 @@ public partial class FileSystemProvider : IFileSystemProvider
         
         private int _exclusiveEndOfFileCharacterIndex;
         private MemoryMappedFile? _memoryMappedFile;
+
+        public EditBuilder Edit { get; } = EditBuilder.Build();
         
         // Replace first 2 characters with '~$' to ensure the maximum file path
         // length file system constraint is not hit

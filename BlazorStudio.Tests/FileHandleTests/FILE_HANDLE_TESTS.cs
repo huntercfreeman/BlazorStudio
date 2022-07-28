@@ -32,7 +32,7 @@ content);
     }
     
     [Fact]
-    public void READ_FILE_HANDLE_TEST()
+    public void EDIT_FILE_HANDLE_TEST()
     {
         var inputAbsoluteFilePath = new AbsoluteFilePath(
             "C:\\Users\\hunte\\source\\repos\\dot-net-ide\\src\\extension.ts",
