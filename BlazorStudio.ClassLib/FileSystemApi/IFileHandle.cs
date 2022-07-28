@@ -5,6 +5,10 @@ namespace BlazorStudio.ClassLib.FileSystemApi;
 public interface IFileHandle : IDisposable
 {
     /// <summary>
+    /// A unique identifier for the file handle
+    /// </summary>
+    public FileHandleKey FileHandleKey { get; }
+    /// <summary>
     /// Mostly this is a string that is an absolute path to a file.
     /// However, it is important that Absolute vs Relative
     /// paths are unambiguous  so this is typed accordingly.

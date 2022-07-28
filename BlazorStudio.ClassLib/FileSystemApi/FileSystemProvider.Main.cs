@@ -1,12 +1,17 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using System.Collections.Concurrent;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
 namespace BlazorStudio.ClassLib.FileSystemApi;
 
-public partial class FileSystemProvider : IFileSystemProvider
+public partial class FileSystemProvider : IFileSystemProvider, IDisposable
 {
+    private readonly Dictionary<AbsoluteFilePathStringValue, IFileHandle> _fileHandles = new();
+
     public IFileHandle Open(IAbsoluteFilePath absoluteFilePath)
     {
-        throw new NotImplementedException();
+        var fileHandle = new FileHandle(absoluteFilePath);
+        
+        _fileHandles.Add(fileHandle);
     }
 
     public Task<IFileHandle> OpenAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken)
@@ -14,13 +19,18 @@ public partial class FileSystemProvider : IFileSystemProvider
         throw new NotImplementedException();
     }
 
-    public void Close(IFileHandle fileHandle)
+    private void Close(IFileHandle fileHandle)
     {
-        throw new NotImplementedException();
+        _fileHandles.
     }
 
-    public Task CloseAsync(IFileHandle fileHandle, CancellationToken cancellationToken)
+    public void Dispose()
     {
-        throw new NotImplementedException();
+        var localFileHandles = _fileHandles.ToArray();
+        
+        foreach (var fileHandle in localFileHandles)
+        {
+            fileHandle.Dispose();
+        }
     }
 }
