@@ -6,8 +6,8 @@ namespace BlazorStudio.ClassLib.FileSystemApi;
 
 public class EditBuilder
 {
-    private SemaphoreSlim _editsSemaphoreSlim = new(1, 1);
-    private List<EditRecord> _edits = new();
+    private readonly SemaphoreSlim _editsSemaphoreSlim = new(1, 1);
+    private readonly List<Action> _edits = new();
     
     private EditBuilder()
     {
@@ -109,7 +109,7 @@ public class EditBuilder
         {
             _editsSemaphoreSlim.Wait();
 
-            edit();
+            _edits.Add(edit);
         }
         finally
         {
@@ -123,17 +123,12 @@ public class EditBuilder
         {
             _editsSemaphoreSlim.WaitAsync(cancellationToken);
 
-            edit();
+            _edits.Add(edit);
         }
         finally
         {
             _editsSemaphoreSlim.Release();
         }
-    }
-
-    private record EditRecord
-    {
-        
     }
 }
 
