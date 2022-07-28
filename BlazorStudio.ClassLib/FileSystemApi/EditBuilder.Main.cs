@@ -32,7 +32,7 @@ public partial class EditBuilder
                     contentRows[rowIndexOffset] = contentRows[rowIndexOffset]
                         .Insert(characterIndexOffset, content);
 
-                    return default;
+                    return (0, content.Length);
                 },
                 async (contentRows, cancellationToken) =>
                 {
@@ -48,7 +48,10 @@ public partial class EditBuilder
         await LockEditAsync(
             new EditWrapper((contentRows, cancellationToken) =>
                 {
-                    throw new NotImplementedException();
+                    contentRows[rowIndexOffset] = contentRows[rowIndexOffset]
+                        .Insert(characterIndexOffset, content);
+
+                    return default;
                 },
                 async (contentRows, cancellationToken) =>
                 {
@@ -64,7 +67,29 @@ public partial class EditBuilder
         LockEdit(
             new EditWrapper((contentRows, cancellationToken) =>
                 {
-                    throw new NotImplementedException();
+                    var lastIndex = rowIndexOffset + rowCount - 1;
+
+                    lastIndex = lastIndex > contentRows.Count
+                        ? contentRows.Count
+                        : lastIndex;
+                    
+                    for (int i = lastIndex; i >= rowIndexOffset; i--)
+                    {
+                        var row = contentRows[i];
+
+                        if (characterIndexOffset == 0 && characterCount >= row.Length)
+                        {
+                            contentRows.RemoveAt(i);
+                        }
+                        else if (characterIndexOffset <= row.Length)
+                        {
+                            var removeCount = row.Length - characterIndexOffset;
+
+                            contentRows[i] = row.Remove(characterIndexOffset, removeCount);
+                        }
+                    }
+
+                    return default;
                 },
                 async (contentRows, cancellationToken) =>
                 {
@@ -182,15 +207,17 @@ public partial class EditBuilder
         }
     }
 
-    public List<string> ApplyEdits(List<string> rows)
+    public List<string> ApplyEdits(int rowIndexOffset, int characterIndexOffset, List<string> rows)
     {
         try
         {
             _editsSemaphoreSlim.Wait();
 
+            (int rowIndexOffset, int characterIndexOffset) offset = (0, 0);
+            
             foreach (var edit in _edits)
             {
-                var displacement = edit.Edit(rows, default);
+                 = edit.Edit(rowIndexOffset, characterIndexOffset, rows, default);
             }
         }
         finally

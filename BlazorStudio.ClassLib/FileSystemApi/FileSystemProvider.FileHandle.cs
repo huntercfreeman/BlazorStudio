@@ -220,8 +220,8 @@ public partial class FileSystemProvider : IFileSystemProvider
                     rows.Add(reader.ReadToEnd());
                 }
             }
-
-            return Edit.ApplyEdits(rows);
+            
+            return Edit.ApplyEdits(rowIndexOffset, characterIndexOffset, rows);
         }
         
         public Task<List<string>> ReadAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
