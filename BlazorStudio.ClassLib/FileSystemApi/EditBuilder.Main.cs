@@ -24,13 +24,55 @@ public partial class EditBuilder
         return new EditBuilder();
     }
 
-    public EditBuilder Insert(int rowIndexOffset, int characterIndexOffset, string content)
+    public EditBuilder Insert(int rowIndexOffset, int characterIndexOffset, string contentToInsert)
     {
         LockEdit(
             new EditWrapper((editResult, cancellationToken) =>
                 {
-                    editResult.ContentRows[rowIndexOffset] = editResult.ContentRows[rowIndexOffset]
-                        .Insert(characterIndexOffset, content);
+                    var builder = new StringBuilder();
+                    var characterIndexForInsertion = characterIndexOffset;
+                    var rowIndexForInsertion = rowIndexOffset;
+                    
+                    var previousCharacterWasCarriageReturn = false;
+                    
+                    for (int i = 0; i < contentToInsert.Length; i++)
+                    {
+                        var character = contentToInsert[i];
+                        
+                        if (character == '\r')
+                        {
+                            previousCharacterWasCarriageReturn = true;
+                            continue;
+                        }
+                        
+                        if (character == '\n')
+                        {
+                            if (previousCharacterWasCarriageReturn)
+                            {
+                                builder.Insert(characterIndexForInsertion++, '\r');
+                            }
+                            
+                            builder.Insert(characterIndexForInsertion++, character);
+                            
+                            editResult.ContentRows.Insert(rowIndexForInsertion++, builder.ToString());
+                        
+                            builder.Clear();
+                            characterIndexForInsertion = 0;
+                        }
+                        else
+                        {
+                            builder.Insert(characterIndexForInsertion++, character);
+                        }
+
+                        previousCharacterWasCarriageReturn = false;
+                    }
+
+                    if (builder.Length > 0)
+                    {
+                        editResult.ContentRows[rowIndexForInsertion] = editResult.ContentRows[rowIndexForInsertion]
+                            .Insert(characterIndexForInsertion, 
+                                builder.ToString());
+                    }
                 },
                 async (editResult, cancellationToken) =>
                 {
@@ -40,14 +82,13 @@ public partial class EditBuilder
         return this;
     }
 
-    public async Task<EditBuilder> InsertAsync(int rowIndexOffset, int characterIndexOffset, string content,
+    public async Task<EditBuilder> InsertAsync(int rowIndexOffset, int characterIndexOffset, string contentToInsert,
         CancellationToken cancellationToken)
     {
         await LockEditAsync(
             new EditWrapper((editResult, cancellationToken) =>
                 {
-                    editResult.ContentRows[rowIndexOffset] = editResult.ContentRows[rowIndexOffset]
-                        .Insert(characterIndexOffset, content);
+                    Insert(rowIndexOffset, characterIndexOffset, contentToInsert);
                 },
                 async (editResult, cancellationToken) =>
                 {
@@ -79,7 +120,12 @@ public partial class EditBuilder
                         }
                         else if (characterIndexOffset <= row.Length)
                         {
-                            var removeCount = row.Length - characterIndexOffset;
+                            var removeCount = characterCount;
+                            var availableRemoveCount = row.Length - characterIndexOffset;
+                            
+                            removeCount = removeCount > availableRemoveCount
+                                ? availableRemoveCount
+                                : removeCount;
 
                             editResult.ContentRows[i] = row.Remove(characterIndexOffset, removeCount);
                         }
