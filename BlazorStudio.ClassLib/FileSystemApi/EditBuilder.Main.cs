@@ -27,7 +27,14 @@ public partial class EditBuilder
     public EditBuilder Insert(int rowIndexOffset, int characterIndexOffset, string content)
     {
         LockEdit(
-            new EditWrapper(async (contentRows, cancellationToken) =>
+            new EditWrapper((contentRows, cancellationToken) =>
+                {
+                    contentRows[rowIndexOffset] = contentRows[rowIndexOffset]
+                        .Insert(characterIndexOffset, content);
+
+                    return default;
+                },
+                async (contentRows, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }));
@@ -39,7 +46,11 @@ public partial class EditBuilder
         CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper(async (contentRows, cancellationToken) =>
+            new EditWrapper((contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                },
+                async (contentRows, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }),
@@ -51,7 +62,11 @@ public partial class EditBuilder
     public EditBuilder Remove(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
     {
         LockEdit(
-            new EditWrapper(async (contentRows, cancellationToken) =>
+            new EditWrapper((contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                },
+                async (contentRows, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }));
@@ -64,7 +79,11 @@ public partial class EditBuilder
         CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper(async (contentRows, cancellationToken) =>
+            new EditWrapper((contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                },
+                async (contentRows, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }),
@@ -76,7 +95,11 @@ public partial class EditBuilder
     public EditBuilder Undo()
     {
         LockEdit(
-            new EditWrapper(async (contentRows, cancellationToken) =>
+            new EditWrapper((contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                },
+                async (contentRows, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }));
@@ -87,7 +110,11 @@ public partial class EditBuilder
     public async Task<EditBuilder> UndoAsync(CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper(async (contentRows, cancellationToken) =>
+            new EditWrapper((contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                },
+                async (contentRows, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }),
@@ -99,7 +126,11 @@ public partial class EditBuilder
     public EditBuilder Redo()
     {
         LockEdit(
-            new EditWrapper(async (contentRows, cancellationToken) =>
+            new EditWrapper((contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                },
+                async (contentRows, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }));
@@ -110,41 +141,17 @@ public partial class EditBuilder
     public async Task<EditBuilder> RedoAsync(CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper(async (contentRows, cancellationToken) =>
+            new EditWrapper((contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                },
+                async (contentRows, cancellationToken) =>
                 {
                     throw new NotImplementedException();
                 }),
             cancellationToken);
 
         return this;
-    }
-
-    private void LockEdit(EditWrapper editWrapper)
-    {
-        try
-        {
-            _editsSemaphoreSlim.Wait();
-
-            _edits.Add(editWrapper);
-        }
-        finally
-        {
-            _editsSemaphoreSlim.Release();
-        }
-    }
-
-    private async Task LockEditAsync(EditWrapper editWrapper, CancellationToken cancellationToken)
-    {
-        try
-        {
-            await _editsSemaphoreSlim.WaitAsync(cancellationToken);
-
-            _edits.Add(editWrapper);
-        }
-        finally
-        {
-            _editsSemaphoreSlim.Release();
-        }
     }
 
     public void Clear()
@@ -168,6 +175,67 @@ public partial class EditBuilder
             await _editsSemaphoreSlim.WaitAsync(cancellationToken);
 
             _edits.Clear();
+        }
+        finally
+        {
+            _editsSemaphoreSlim.Release();
+        }
+    }
+
+    public List<string> ApplyEdits(List<string> rows)
+    {
+        try
+        {
+            _editsSemaphoreSlim.Wait();
+
+            foreach (var edit in _edits)
+            {
+                var displacement = edit.Edit(rows, default);
+            }
+        }
+        finally
+        {
+            _editsSemaphoreSlim.Release();
+        }
+
+        return rows;
+    }
+    
+    public async Task<List<string>> ApplyEditsAsync(List<string> rows, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await _editsSemaphoreSlim.WaitAsync(cancellationToken);
+        }
+        finally
+        {
+            _editsSemaphoreSlim.Release();
+        }
+        
+        return rows;
+    }
+    
+    private void LockEdit(EditWrapper editWrapper)
+    {
+        try
+        {
+            _editsSemaphoreSlim.Wait();
+
+            _edits.Add(editWrapper);
+        }
+        finally
+        {
+            _editsSemaphoreSlim.Release();
+        }
+    }
+
+    private async Task LockEditAsync(EditWrapper editWrapper, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _editsSemaphoreSlim.WaitAsync(cancellationToken);
+
+            _edits.Add(editWrapper);
         }
         finally
         {

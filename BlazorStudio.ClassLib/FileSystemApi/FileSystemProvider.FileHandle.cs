@@ -221,7 +221,7 @@ public partial class FileSystemProvider : IFileSystemProvider
                 }
             }
 
-            return rows;
+            return Edit.ApplyEdits(rows);
         }
         
         public Task<List<string>> ReadAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
