@@ -16,6 +16,11 @@ public interface IFileHandle : IDisposable
     /// paths are unambiguous  so this is typed accordingly.
     /// </summary>
     public IAbsoluteFilePath AbsoluteFilePath { get; }
+    /// <summary>
+    /// Make an edit that will be seen when reading from the same FileHandle. However,
+    /// this will not edit the file on disk. One must <see cref="Save"/> after editing to persist changes.
+    /// </summary>
+    public EditBuilder Edit { get; }
     public Encoding Encoding { get; }
     public long CharacterLengthOfLongestRow { get; }
     public int RowCount { get; }

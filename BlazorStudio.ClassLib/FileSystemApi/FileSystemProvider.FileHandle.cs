@@ -7,7 +7,7 @@ namespace BlazorStudio.ClassLib.FileSystemApi;
 
 public partial class FileSystemProvider : IFileSystemProvider
 {
-    private partial class FileHandle : IFileHandle
+    private class FileHandle : IFileHandle
     {
         private readonly Action<FileHandle> _onDisposeAction;
         /// <summary>

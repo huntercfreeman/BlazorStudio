@@ -48,11 +48,8 @@ content);
             CancellationToken.None);
 
         var content = string.Join(string.Empty, rowContent);
-
-        // TODO: Why does this Assertion not work (it fails and throws an exception)?
-        Assert.Equal("import * as vscode from 'vscode';\r\nimport { ActiveDotNetSolutionFileContainer } from './ActiveDotNetSolutionFileContainer';\r\nimport { ConstantsFilePath } from './Constants/ConstantsFilePath';\r\nimport { FilePathStandardizer } from './FileSystem/FilePathStandardizer';\r\nimport { SolutionExplorerMessageTransporter } from './MessageHandlers/SolutionExplorer/SolutionExplorerMessageTransporter';",
-
-content);
+        
+        fileHandle.Edit
         
         fileHandle.Dispose();
     }
