@@ -44,12 +44,17 @@ content);
 
         var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.CharacterLengthOfLongestRow);
         
-        var rowContent = fileHandle.Read(0, 0, 5, characterLengthOfLongestRow, 
+        var firstRowContent = fileHandle.Read(0, 0, 5, characterLengthOfLongestRow, 
             CancellationToken.None);
 
-        var content = string.Join(string.Empty, rowContent);
+        var firstContent = string.Join(string.Empty, firstRowContent);
+
+        fileHandle.Edit.Insert(0, 0, "'Hello World!' - FileHandle");
         
-        fileHandle.Edit
+        var secondRowContent = fileHandle.Read(0, 0, 5, characterLengthOfLongestRow, 
+            CancellationToken.None);
+
+        var secondContent = string.Join(string.Empty, secondRowContent);
         
         fileHandle.Dispose();
     }

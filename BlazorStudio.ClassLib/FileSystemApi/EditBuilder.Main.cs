@@ -5,7 +5,7 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
 namespace BlazorStudio.ClassLib.FileSystemApi;
 
-public class EditBuilder
+public partial class EditBuilder
 {
     private readonly SemaphoreSlim _editsSemaphoreSlim = new(1, 1);
     private readonly List<EditWrapper> _edits = new();
@@ -24,24 +24,25 @@ public class EditBuilder
         return new EditBuilder();
     }
 
-    public EditBuilder Insert(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
+    public EditBuilder Insert(int rowIndexOffset, int characterIndexOffset, string content)
     {
         LockEdit(
-            new EditWrapper(() => { },
-                0,
-                0));
+            new EditWrapper(async (contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                }));
 
         return this;
     }
 
-    public async Task<EditBuilder> InsertAsync(int rowIndexOffset, int characterIndexOffset, int rowCount,
-        int characterCount,
+    public async Task<EditBuilder> InsertAsync(int rowIndexOffset, int characterIndexOffset, string content,
         CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper(() => { },
-                0,
-                0),
+            new EditWrapper(async (contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                }),
             cancellationToken);
 
         return this;
@@ -50,9 +51,10 @@ public class EditBuilder
     public EditBuilder Remove(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
     {
         LockEdit(
-            new EditWrapper(() => { },
-                0,
-                0));
+            new EditWrapper(async (contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                }));
 
         return this;
     }
@@ -62,55 +64,56 @@ public class EditBuilder
         CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper(() => { },
-                0,
-                0),
+            new EditWrapper(async (contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                }),
             cancellationToken);
 
         return this;
     }
 
-    public EditBuilder Undo(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
+    public EditBuilder Undo()
     {
         LockEdit(
-            new EditWrapper(() => { },
-                0,
-                0));
+            new EditWrapper(async (contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                }));
 
         return this;
     }
 
-    public async Task<EditBuilder> UndoAsync(int rowIndexOffset, int characterIndexOffset, int rowCount,
-        int characterCount,
-        CancellationToken cancellationToken)
+    public async Task<EditBuilder> UndoAsync(CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper(() => { },
-                0,
-                0),
+            new EditWrapper(async (contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                }),
             cancellationToken);
 
         return this;
     }
 
-    public EditBuilder Redo(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
+    public EditBuilder Redo()
     {
         LockEdit(
-            new EditWrapper(() => { },
-                0,
-                0));
+            new EditWrapper(async (contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                }));
 
         return this;
     }
 
-    public async Task<EditBuilder> RedoAsync(int rowIndexOffset, int characterIndexOffset, int rowCount,
-        int characterCount,
-        CancellationToken cancellationToken)
+    public async Task<EditBuilder> RedoAsync(CancellationToken cancellationToken)
     {
         await LockEditAsync(
-            new EditWrapper(() => { },
-                0,
-                0),
+            new EditWrapper(async (contentRows, cancellationToken) =>
+                {
+                    throw new NotImplementedException();
+                }),
             cancellationToken);
 
         return this;
@@ -170,19 +173,5 @@ public class EditBuilder
         {
             _editsSemaphoreSlim.Release();
         }
-    }
-
-    private class EditWrapper
-    {
-        public EditWrapper(Action edit, int rowDisplacement, int characterDisplacement)
-        {
-            Edit = edit;
-            RowDisplacement = rowDisplacement;
-            CharacterDisplacement = characterDisplacement;
-        }
-
-        public Action Edit { get; set; }
-        public int RowDisplacement { get; set; }
-        public int CharacterDisplacement { get; set; }
     }
 }
