@@ -1,8 +1,8 @@
 ﻿<div class="bstudio_editor-tab-display @IsActiveCssClass"
      @onclick="FireSetActiveTabIndexOnClick">
-    @if (PlainTextEditor.FileCoordinateGrid?.AbsoluteFilePath is not null)
+    @if (PlainTextEditor.FileHandle?.AbsoluteFilePath is not null)
     {
-        <text>@PlainTextEditor.FileCoordinateGrid.AbsoluteFilePath.FilenameWithExtension</text>
+        <text>@PlainTextEditor.FileHandle.AbsoluteFilePath.FilenameWithExtension</text>
     }
     else
     {

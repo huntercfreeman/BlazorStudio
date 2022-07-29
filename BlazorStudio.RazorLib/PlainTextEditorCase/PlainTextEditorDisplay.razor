@@ -115,7 +115,7 @@ else
              tabindex="-1">
 
             @{
-                var mostDigitsInARowNumber = currentPlainTextEditor.FileCoordinateGrid.RowCount.ToString().Length;
+                var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
 
                                 <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
                                     <CascadingValue Value="_isFocused">

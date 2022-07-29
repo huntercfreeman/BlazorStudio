@@ -2,6 +2,7 @@
 using BlazorStudio.ClassLib.Errors;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
@@ -23,6 +24,8 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
 {
     [Inject]
     private IState<WorkspaceState> WorkspaceStateWrap { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -146,7 +149,8 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
 
             Dispatcher.Dispatch(
                 new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
-                    absoluteFilePath)
+                    absoluteFilePath,
+                    FileSystemProvider)
             );
         }
     }
