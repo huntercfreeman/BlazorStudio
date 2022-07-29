@@ -124,10 +124,14 @@ public partial class FileSystemProvider : IFileSystemProvider
             
             try
             {
-                _memoryMappedFile = MemoryMappedFile
-                    .CreateFromFile(AbsoluteFilePath.GetAbsoluteFilePathString(),
-                        FileMode.Open,
-                        mapFilename);
+                if (PhysicalCharacterLengthOfLongestRow != 0)
+                {
+                    _memoryMappedFile = MemoryMappedFile
+                        .CreateFromFile(AbsoluteFilePath.GetAbsoluteFilePathString(),
+                            FileMode.Open,
+                            mapFilename);
+
+                }
             }
             catch (IOException e)
             {
@@ -235,6 +239,10 @@ public partial class FileSystemProvider : IFileSystemProvider
 
                     rows.Add(reader.ReadToEnd());
                 }
+            }
+            else
+            {
+                rows.Add(string.Empty);
             }
             
             var contentRows = Edit.ApplyEdits(rowIndexOffset, characterIndexOffset, rows, _virtualCharacterIndexMarkerForStartOfARow);

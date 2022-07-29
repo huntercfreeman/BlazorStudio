@@ -16,6 +16,14 @@ public partial record PlainTextEditorStates
                 var content = previousDefaultToken.Content
                     .Insert(previousDefaultToken.IndexInPlainText!.Value + 1, keyDownEventRecord.Key);
 
+                var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                    + previousDefaultToken.IndexInPlainText.Value;
+
+                focusedPlainTextEditorRecord.FileHandle.Edit
+                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex, 
+                        characterIndex,
+                        keyDownEventRecord.Key);
+
                 var nextDefaultToken = previousDefaultToken with
                 {
                     Content = content,
