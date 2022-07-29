@@ -108,28 +108,34 @@ public partial class EditBuilder
         return this;
     }
 
-    public EditBuilder Remove(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount)
+    public EditBuilder Remove(int rowIndexOffset, int characterIndexOffset, int? rowCount = null,
+        int? characterCount = null)
     {
         LockEdit(
             new EditWrapper((editResult, cancellationToken) =>
                 {
-                    var lastIndex = rowIndexOffset + rowCount - 1;
+                    var lastIndex = editResult.ContentRows.Count - 1;
 
-                    lastIndex = lastIndex > editResult.ContentRows.Count
-                        ? editResult.ContentRows.Count
-                        : lastIndex;
+                    if (rowCount is not null)
+                    {
+                        lastIndex = rowIndexOffset + rowCount.Value - 1;  
+                        
+                        lastIndex = lastIndex > editResult.ContentRows.Count - 1
+                            ? editResult.ContentRows.Count - 1
+                            : lastIndex;
+                    }
                     
                     for (int i = lastIndex; i >= rowIndexOffset; i--)
                     {
                         var row = editResult.ContentRows[i];
 
-                        if (characterIndexOffset == 0 && characterCount >= row.Length)
+                        if (characterIndexOffset == 0 && (characterCount is null || characterCount >= row.Length))
                         {
                             editResult.ContentRows.RemoveAt(i);
                         }
                         else if (characterIndexOffset <= row.Length)
                         {
-                            var removeCount = characterCount;
+                            var removeCount = characterCount ?? row.Length - characterIndexOffset;
                             var availableRemoveCount = row.Length - characterIndexOffset;
                             
                             removeCount = removeCount > availableRemoveCount
@@ -148,9 +154,8 @@ public partial class EditBuilder
         return this;
     }
 
-    public async Task<EditBuilder> RemoveAsync(int rowIndexOffset, int characterIndexOffset, int rowCount,
-        int characterCount,
-        CancellationToken cancellationToken)
+    public async Task<EditBuilder> RemoveAsync(int rowIndexOffset, int characterIndexOffset, int? rowCount = null,
+        int? characterCount = null, CancellationToken cancellationToken = default)
     {
         await LockEditAsync(
             new EditWrapper((editResult, cancellationToken) =>

@@ -202,4 +202,50 @@ content);
         
         fileHandle.Dispose();
     }
+    
+    /// <summary>
+    /// Read in a specific line, remove a line prior to the previously read line.
+    /// Now read the same line number and ensure it changed.
+    /// </summary>
+    [Fact]
+    public void READ_REMOVE_READ_CHECK_CHANGED()
+    {
+        var inputAbsoluteFilePath = new AbsoluteFilePath(
+            "C:\\Users\\hunte\\source\\repos\\dot-net-ide\\src\\extension.ts",
+            false);
+
+        var fileSystemProvider = new FileSystemProvider();
+
+        var fileHandle = fileSystemProvider.Open(inputAbsoluteFilePath);
+
+        var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
+        
+        // starting
+        var startingEntireFileRowContent = fileHandle.Read(0, 0, fileHandle.PhysicalRowCount, characterLengthOfLongestRow, 
+            CancellationToken.None);
+        
+        var startingEntireFileContent = string.Join(string.Empty, startingEntireFileRowContent);
+        
+        // first
+        var firstRowContent = fileHandle.Read(1, 0, 1, characterLengthOfLongestRow, 
+            CancellationToken.None);
+
+        var firstContent = string.Join(string.Empty, firstRowContent);
+
+        fileHandle.Edit.Remove(0, 0, rowCount: 1);
+        
+        // second
+        var secondRowContent = fileHandle.Read(1, 0, 1, characterLengthOfLongestRow, 
+            CancellationToken.None); 
+        
+        var secondContent = string.Join(string.Empty, secondRowContent);
+ 
+        // ending
+        var endingEntireFileRowContent = fileHandle.Read(0, 0, fileHandle.PhysicalRowCount, characterLengthOfLongestRow, 
+            CancellationToken.None);
+        
+        var endingEntireFileContent = string.Join(string.Empty, endingEntireFileRowContent);
+        
+        fileHandle.Dispose();
+    }
 }
