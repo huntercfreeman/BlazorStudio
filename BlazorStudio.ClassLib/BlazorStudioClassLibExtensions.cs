@@ -1,4 +1,5 @@
-﻿using Fluxor;
+﻿using BlazorStudio.ClassLib.FileSystemApi;
+using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BlazorStudio.ClassLib;
@@ -13,6 +14,7 @@ public static class BlazorStudioClassLibExtensions
                     typeof(BlazorStudioClassLibExtensions).Assembly, 
                     typeof(PlainTextEditorClassLibExtensionMethods).Assembly
                 ))
-            .AddPlainTextEditorService();
+            .AddPlainTextEditorService()
+            .AddScoped<IFileSystemProvider, FileSystemProvider>();
     }
 }

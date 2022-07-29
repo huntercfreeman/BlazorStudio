@@ -21,13 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="General\SelectDisplay.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="Editor\EditorDisplay.razor" />
     <_ContentIncludedByDefault Remove="Forms\CreateNewFileForm.razor" />
-    <_ContentIncludedByDefault Remove="General\SelectDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuOptionDisplay.razor" />
     <_ContentIncludedByDefault Remove="OutOfBoundsClick\OutOfBoundsClickDisplay.razor" />
@@ -44,7 +39,6 @@
   <ItemGroup>
     <Folder Include="Drag\" />
     <Folder Include="Dropdown\" />
-    <Folder Include="DimensionsDisplays\" />
     <Folder Include="Theme\" />
     <Folder Include="Workspace\" />
   </ItemGroup>
@@ -63,7 +57,6 @@
 
   <ItemGroup>
     <None Include="Errors\RichErrorDisplay.razor" />
-    <None Include="Errors\RichErrorListDisplay.razor" />
     <None Include="TaskModelManager\Helpers\TaskModelManagerDialogEntryPointTaskModelListPreviewDisplay.razor" />
     <None Include="TaskModelManager\TaskModelManagerDialogEntryPointDisplay.razor" />
   </ItemGroup>
