@@ -115,7 +115,9 @@ public partial record PlainTextEditorStates
                 List = new IPlainTextEditorRow[]
                 {
                     plainTextEditor.GetEmptyPlainTextEditorRow()
-                }.ToImmutableList()
+                }.ToImmutableList(),
+                CurrentRowIndex = 0,
+                CurrentTokenIndex = 0
             };
 
             var allEnterKeysAreCarriageReturnNewLine = true;
