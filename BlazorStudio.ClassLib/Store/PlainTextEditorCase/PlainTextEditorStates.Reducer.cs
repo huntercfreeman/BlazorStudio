@@ -145,8 +145,10 @@ public partial record PlainTextEditorStates
                     : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
             }
 
-            foreach (var row in contentRows)
+            for (var index = 0; index < contentRows.Count; index++)
             {
+                var row = contentRows[index];
+
                 foreach (var character in row)
                 {
                     if (character == '\r')
@@ -183,14 +185,14 @@ public partial record PlainTextEditorStates
 
                     replacementPlainTextEditor = PlainTextEditorStates.StateMachine
                             .HandleKeyDownEvent(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
-                    {
-                        SequenceKey = SequenceKey.NewSequenceKey()
-                    };
+                        {
+                            SequenceKey = SequenceKey.NewSequenceKey()
+                        };
 
                     previousCharacterWasCarriageReturn = false;
                 }
 
-                if (row.LastOrDefault() != '\n')
+                if ((index != contentRows.Count - 1) || (row.LastOrDefault() == '\n'))
                 {
                     var newLineCode = MutateIfPreviousCharacterWasCarriageReturn();
 
@@ -202,10 +204,10 @@ public partial record PlainTextEditorStates
                         false);
 
                     replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                        .HandleKeyDownEvent(replacementPlainTextEditor, forceNewLine) with
-                    {
-                        SequenceKey = SequenceKey.NewSequenceKey(),
-                    };
+                            .HandleKeyDownEvent(replacementPlainTextEditor, forceNewLine) with
+                        {
+                            SequenceKey = SequenceKey.NewSequenceKey(),
+                        };
                 }
             }
 
