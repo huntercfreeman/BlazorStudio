@@ -161,7 +161,7 @@ public partial class FileSystemProvider : IFileSystemProvider
         {
             throw new NotImplementedException();
         }
-        
+
         public Task SaveAsync(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();

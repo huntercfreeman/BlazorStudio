@@ -219,6 +219,16 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         Dispatcher.Dispatch(new SetIsReadonlyAction(plainTextEditorKey, (bool) (e.Value ?? true)));
     }
+    
+    private void SaveChangesOnClick()
+    {
+        var currentPlainTextEditor = PlainTextEditorSelector.Value;
+
+        currentPlainTextEditor.FileHandle.Save();
+
+        Dispatcher.Dispatch(new MemoryMappedFilePixelReadRequestAction(PlainTextEditorKey,
+            currentPlainTextEditor.VirtualizeCoordinateSystemMessage));
+    }
 
     protected override void Dispose(bool disposing)
     {
