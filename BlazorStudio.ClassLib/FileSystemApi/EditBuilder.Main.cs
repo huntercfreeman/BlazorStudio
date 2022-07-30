@@ -54,7 +54,8 @@ public partial class EditBuilder
                             
                             builder.Insert(characterIndexForInsertion++, character);
 
-                            editResult.RowDisplacement.FirstOrDefault(d => d.insertionPoint == rowIndexForInsertion);
+                            editResult.DisplacementTimeline.Add(new RowDisplacementValue(rowIndexForInsertion, 1));
+                            editResult.AccumulatedRowDisplacement += 1;
 
                             editResult.ContentRows.Insert(rowIndexForInsertion++, builder.ToString());
 
@@ -134,6 +135,9 @@ public partial class EditBuilder
 
                         if (characterIndexOffset == 0 && (characterCount is null || characterCount >= row.Length))
                         {
+                            editResult.DisplacementTimeline.Add(new RowDisplacementValue(i, -1));
+                            editResult.AccumulatedRowDisplacement -= 1;
+
                             editResult.ContentRows.RemoveAt(i);
                         }
                         else if (characterIndexOffset <= row.Length)

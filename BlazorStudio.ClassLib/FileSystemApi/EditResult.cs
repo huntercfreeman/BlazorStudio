@@ -44,6 +44,6 @@ public class EditResult
     ///
     /// Then the character displacement can be used to get 'where()' actual row
     /// </summary>
-    public int AccumulatedRowDisplacement { get; }
+    public int AccumulatedRowDisplacement { get; set;  }
     public List<long> VirtualCharacterIndexMarkerForStartOfARow { get; }
 }
