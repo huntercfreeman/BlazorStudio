@@ -14,14 +14,14 @@ public partial class EditBuilder
         /// of the text that occurred.
         /// </summary>
         /// <param name="editAsync"></param>
-        public EditWrapper(Action<EditResult, CancellationToken> edit,
+        public EditWrapper(Action<FileHandleReadRequest, EditResult, CancellationToken> edit,
             Func<EditResult, CancellationToken, Task> editAsync)
         {
             Edit = edit;
             EditAsync = editAsync;
         }
 
-        public Action<EditResult, CancellationToken> Edit { get; }
+        public Action<FileHandleReadRequest, EditResult, CancellationToken> Edit { get; }
         public Func<EditResult, CancellationToken, Task> EditAsync { get; }
     }
 }
