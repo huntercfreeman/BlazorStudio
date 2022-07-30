@@ -38,8 +38,21 @@ public partial record PlainTextEditorStates
                         keyDownEventRecord);
                 }
 
+                var whitespaceToken = new WhitespaceTextToken(keyDownEventRecord);
+
+                if (!keyDownEventRecord.IsForced)
+                {
+                    var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                                         + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+
+                    focusedPlainTextEditorRecord.FileHandle.Edit
+                        .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                            characterIndex,
+                            whitespaceToken.CopyText);
+                }
+
                 return InsertNewCurrentTokenAfterCurrentPosition(focusedPlainTextEditorRecord,
-                    new WhitespaceTextToken(keyDownEventRecord));
+                    whitespaceToken);
             }
         }
     }

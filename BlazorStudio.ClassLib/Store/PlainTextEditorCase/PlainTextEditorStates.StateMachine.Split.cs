@@ -39,9 +39,14 @@ public partial record PlainTextEditorStates
             var secondSplitContent = rememberCurrentToken.Content
                     .Substring(rememberCurrentToken.IndexInPlainText!.Value + 1);
 
+            int? tokenFirstIndexInContent = tokenToInsertBetweenSplit is null
+                ? firstSplitContent.Length - 1
+                : null;
+
             var tokenFirst = new DefaultTextToken()
             {
                 Content = firstSplitContent,
+                IndexInPlainText = tokenFirstIndexInContent
             };
             
             var tokenSecond = new DefaultTextToken()

@@ -180,6 +180,19 @@ public partial record PlainTextEditorStates
         private static PlainTextEditorRecord InsertNewLine(PlainTextEditorRecord focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord)
         {
+            if (!keyDownEventRecord.IsForced)
+            {
+                var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                                     + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+
+                focusedPlainTextEditorRecord.FileHandle.Edit
+                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                        characterIndex,
+                        focusedPlainTextEditorRecord.UseCarriageReturnNewLine
+                            ? "\r\n"
+                            : "\n");
+            }
+
             var replacementCurrentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>() with
                 {
