@@ -61,7 +61,7 @@ public partial record PlainTextEditorStates
 
             if (!isForced && tokenToInsertBetweenSplit is not null)
             {
-                var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                 focusedPlainTextEditorRecord.FileHandle.Edit
@@ -140,15 +140,22 @@ public partial record PlainTextEditorStates
             var toBeRemovedTokenIndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText;
             var toBeChangedRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
 
-            if (!isForced && tokenToInsertBetweenSplit is not null)
+            if (!isForced)
             {
                 // Tab key so don't '+ focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value'
-                int characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord);
+                int characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord);
+
+                var spaceCount = tokenToInsertBetweenSplit is null
+                    ? 4  // newline key
+                    : 5; // space key
 
                 focusedPlainTextEditorRecord.FileHandle.Edit
                     .Remove(focusedPlainTextEditorRecord.CurrentRowIndex,
-                        characterIndex,
-                        characterCount: 1);
+                        characterIndex - 1,
+                        characterCount: 1)
+                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                        characterIndex - 1,
+                        new string(' ', spaceCount));
             }
 
             focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
@@ -183,9 +190,19 @@ public partial record PlainTextEditorStates
 
             for (int i = 0; i < 4; i++)
             {
+                int? indexInPlainText = null;
+
+                // if newline
+                if (tokenToInsertBetweenSplit is null)
+                {
+                    indexInPlainText = i == toBeRemovedTokenIndexInPlainText
+                        ? 0
+                        : null;
+                }
+
                 var spaceWhiteSpaceToken = new WhitespaceTextToken(spaceKeyDownEventRecord)
                 {
-                    IndexInPlainText = null
+                    IndexInPlainText = indexInPlainText
                 };
 
                 nextRow = nextRow with

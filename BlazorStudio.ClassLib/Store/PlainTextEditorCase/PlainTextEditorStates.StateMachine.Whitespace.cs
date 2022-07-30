@@ -44,7 +44,7 @@ public partial record PlainTextEditorStates
 
                 if (!keyDownEventRecord.IsForced)
                 {
-                    var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                    var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
                                          + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                     focusedPlainTextEditorRecord.FileHandle.Edit

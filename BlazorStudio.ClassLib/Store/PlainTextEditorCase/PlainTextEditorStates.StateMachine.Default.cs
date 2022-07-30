@@ -20,7 +20,7 @@ public partial record PlainTextEditorStates
 
                 if (!keyDownEventRecord.IsForced)
                 {
-                    var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                    var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
                                          + previousDefaultToken.IndexInPlainText.Value;
 
                     focusedPlainTextEditorRecord.FileHandle.Edit
@@ -48,7 +48,7 @@ public partial record PlainTextEditorStates
 
                     if (!keyDownEventRecord.IsForced)
                     {
-                        var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord);
+                        var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord);
 
                         if (focusedPlainTextEditorRecord.CurrentTextToken is not WhitespaceTextToken whitespace ||
                             whitespace.WhitespaceKind != WhitespaceKind.Tab)
@@ -102,7 +102,7 @@ public partial record PlainTextEditorStates
 
                         if (!keyDownEventRecord.IsForced)
                         {
-                            var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                            var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
                                                  + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                             focusedPlainTextEditorRecord.FileHandle.Edit

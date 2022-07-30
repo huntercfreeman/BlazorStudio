@@ -161,12 +161,20 @@ public partial class EditBuilder
                         editIsPartOfRequest = true;
                     }
 
-                    var lastIndex = editResult.ContentRows.Count - 1;
+                    int lastIndex;
 
                     if (rowCount is not null)
                     {
                         lastIndex = rowIndexOffset + rowCount.Value - 1;  
                         
+                        lastIndex = lastIndex > editResult.ContentRows.Count - 1
+                            ? editResult.ContentRows.Count - 1
+                            : lastIndex;
+                    }
+                    else
+                    {
+                        lastIndex = rowIndexOffset;
+
                         lastIndex = lastIndex > editResult.ContentRows.Count - 1
                             ? editResult.ContentRows.Count - 1
                             : lastIndex;

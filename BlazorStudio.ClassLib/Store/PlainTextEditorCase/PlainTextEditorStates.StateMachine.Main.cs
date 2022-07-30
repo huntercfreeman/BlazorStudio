@@ -182,7 +182,7 @@ public partial record PlainTextEditorStates
         {
             if (!keyDownEventRecord.IsForced)
             {
-                var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                 focusedPlainTextEditorRecord.FileHandle.Edit
@@ -530,7 +530,7 @@ public partial record PlainTextEditorStates
 		/// </summary>
 		/// <param name="nextPlainTextEditorState"></param>
 		/// <returns></returns>
-		private static int CalculateCurrentTokenColumnIndexRespectiveToRow(
+		private static int CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(
 			PlainTextEditorRecord focusedPlainTextEditorRecord)
 		{
 			var rollingCount = 0;

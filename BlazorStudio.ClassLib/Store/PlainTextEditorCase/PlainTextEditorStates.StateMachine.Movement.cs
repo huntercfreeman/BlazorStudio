@@ -87,7 +87,7 @@ public partial record PlainTextEditorStates
             }
 
             var inclusiveStartingColumnIndexOfCurrentToken =
-                CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord);
+                CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord);
 
             var currentColumnIndexWithIndexInPlainTextAccountedFor = inclusiveStartingColumnIndexOfCurrentToken +
                                                                      focusedPlainTextEditorRecord.CurrentTextToken
@@ -159,7 +159,7 @@ public partial record PlainTextEditorStates
                 return focusedPlainTextEditorRecord;
 
             var inclusiveStartingColumnIndexOfCurrentToken =
-                CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord);
+                CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord);
 
             var currentColumnIndexWithIndexInPlainTextAccountedFor = inclusiveStartingColumnIndexOfCurrentToken +
                                                                      focusedPlainTextEditorRecord.CurrentTextToken
