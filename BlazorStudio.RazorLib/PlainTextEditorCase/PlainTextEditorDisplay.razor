@@ -24,7 +24,7 @@ else
             Use the <em>F1</em> key to scroll the caret row into view if it is offscreen.
         </div>
         
-        <div>
+        @*<div>
             Toggle Readonly:&nbsp;
             <input type="checkbox" @onchange="IsReadonlyCheckboxOnChange" checked="@currentPlainTextEditor.IsReadonly" />
             &nbsp;->&nbsp;
@@ -36,6 +36,10 @@ else
             {
                 <text>Currently <em>Editable</em></text>
             }
+        </div>*@
+        
+        <div>
+            <DiffDialogEntryPoint />
         </div>
         
         <div class="bstudio_debug-info">
