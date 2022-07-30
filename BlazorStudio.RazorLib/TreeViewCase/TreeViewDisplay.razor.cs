@@ -297,11 +297,11 @@ public partial class TreeViewDisplay<T>
                 }
             }
         }
-        else if (keyboardEventArgs.Key == KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE)
+        else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE)
         {
             OnEnterKeyDown(TreeView.Item, ToggleIsExpandedOnClick);
         }
-        else if (keyboardEventArgs.Key == KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE)
+        else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE)
         {
             OnSpaceKeyDown(TreeView.Item, ToggleIsExpandedOnClick);
         }
