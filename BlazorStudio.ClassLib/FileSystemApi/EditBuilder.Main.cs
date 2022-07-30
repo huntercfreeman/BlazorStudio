@@ -202,6 +202,17 @@ public partial class EditBuilder
                                 : removeCount;
 
                             editResult.ContentRows[i] = row.Remove(characterIndexOffset, removeCount);
+
+                            if (!editResult.ContentRows[i].EndsWith('\n') && (i < editResult.ContentRows.Count - 1))
+                            {
+                                editResult.ContentRows[i] += editResult.ContentRows[i + 1];
+
+                                editResult.DisplacementTimeline.Add(new RowDisplacementValue(i, -1));
+                                editResult.AccumulatedRowDisplacement -= 1;
+
+                                if (editIsPartOfRequest)
+                                    editResult.ContentRows.RemoveAt(i + 1);
+                            }
                         }
                     }
                 },

@@ -138,6 +138,17 @@ public partial record PlainTextEditorStates
         {
             var previousDefaultTextToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<DefaultTextToken>();
 
+            if (!keyDownEventRecord.IsForced)
+            {
+                var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                                     + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+
+                focusedPlainTextEditorRecord.FileHandle.Edit
+                    .Remove(focusedPlainTextEditorRecord.CurrentRowIndex,
+                        characterIndex - 1,
+                        characterCount: 1);
+            }
+
             var firstSplitContent = previousDefaultTextToken.Content
                 .Substring(0, previousDefaultTextToken.IndexInPlainText!.Value);
 
