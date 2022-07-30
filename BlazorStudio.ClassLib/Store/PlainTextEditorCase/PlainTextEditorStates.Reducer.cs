@@ -183,7 +183,8 @@ public partial record PlainTextEditorStates
                             code,
                             false,
                             false,
-                            false
+                            false,
+                            IsForced: true
                         )
                     );
 
@@ -205,7 +206,8 @@ public partial record PlainTextEditorStates
                         newLineCode,
                         false,
                         false,
-                        false);
+                        false,
+                        IsForced: true);
 
                     replacementPlainTextEditor = PlainTextEditorStates.StateMachine
                             .HandleKeyDownEvent(replacementPlainTextEditor, forceNewLine) with

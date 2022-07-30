@@ -11,18 +11,23 @@ public partial record PlainTextEditorStates
         {
             if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Default)
             {
+                // if (active token is a word)
+
                 var previousDefaultToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<DefaultTextToken>();
 
                 var content = previousDefaultToken.Content
                     .Insert(previousDefaultToken.IndexInPlainText!.Value + 1, keyDownEventRecord.Key);
 
-                var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
-                    + previousDefaultToken.IndexInPlainText.Value;
+                if (!keyDownEventRecord.IsForced)
+                {
+                    var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                                         + previousDefaultToken.IndexInPlainText.Value;
 
-                focusedPlainTextEditorRecord.FileHandle.Edit
-                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex, 
-                        characterIndex,
-                        keyDownEventRecord.Key);
+                    focusedPlainTextEditorRecord.FileHandle.Edit
+                        .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                            characterIndex,
+                            keyDownEventRecord.Key);
+                }
 
                 var nextDefaultToken = previousDefaultToken with
                 {
@@ -39,12 +44,25 @@ public partial record PlainTextEditorStates
                 if (nextTokenTuple.rowIndex == focusedPlainTextEditorRecord.CurrentRowIndex &&
                     nextTokenTuple.token.Kind == TextTokenKind.Default)
                 {
+                    // if (active token is not a word, and the next token is a word however then prepend text to that next token)
+
                     focusedPlainTextEditorRecord = SetNextTokenAsCurrent(focusedPlainTextEditorRecord);
                     
                     var previousDefaultToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<DefaultTextToken>();
 
                     var content = previousDefaultToken.Content
                         .Insert(0, keyDownEventRecord.Key);
+
+                    if (!keyDownEventRecord.IsForced)
+                    {
+                        var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                                             + previousDefaultToken.IndexInPlainText.Value;
+
+                        focusedPlainTextEditorRecord.FileHandle.Edit
+                            .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                                characterIndex,
+                                keyDownEventRecord.Key);
+                    }
 
                     var nextDefaultToken = previousDefaultToken with
                     {
@@ -61,6 +79,8 @@ public partial record PlainTextEditorStates
 
                     if (rememberToken.IndexInPlainText!.Value != rememberToken.PlainText.Length - 1)
                     {
+                        // if (active token is not a word, but the cursor is NOT at the end of that token the token is split)
+                        
                         return SplitCurrentToken(
                             focusedPlainTextEditorRecord, 
                             new DefaultTextToken
@@ -72,6 +92,19 @@ public partial record PlainTextEditorStates
                     }
                     else
                     {
+                        // if (active token is not a word, and the cursor is at the end of that token then insert a new 'word token' after the active one)
+
+                        if (!keyDownEventRecord.IsForced)
+                        {
+                            var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                                                 + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+
+                            focusedPlainTextEditorRecord.FileHandle.Edit
+                                .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                                    characterIndex,
+                                    keyDownEventRecord.Key);
+                        }
+
                         var replacementCurrentToken = focusedPlainTextEditorRecord
                             .GetCurrentTextTokenAs<TextTokenBase>() with
                             {
@@ -85,7 +118,7 @@ public partial record PlainTextEditorStates
                             Content = keyDownEventRecord.Key,
                             IndexInPlainText = 0
                         };
-                        
+
                         return InsertNewCurrentTokenAfterCurrentPosition(focusedPlainTextEditorRecord,
                             defaultTextToken);
                     }

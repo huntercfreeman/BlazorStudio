@@ -39,8 +39,8 @@ public partial class EditBuilder
                     }
 
                     var builder = new StringBuilder();
-                    var characterIndexForInsertion = characterIndexOffset;
-                    var rowIndexForInsertion = rowIndexOffset;
+                    var characterIndexForInsertion = characterIndexOffset - readRequest.CharacterIndexOffset;
+                    var rowIndexForInsertion = rowIndexOffset - readRequest.RowIndexOffset;
                     
                     var previousCharacterWasCarriageReturn = false;
                     
@@ -96,7 +96,7 @@ public partial class EditBuilder
                         if (editIsPartOfRequest)
                         {
                             // Immutable string replacement
-                            editResult.ContentRows[rowIndexForInsertion - 1] = editResult.ContentRows[rowIndexForInsertion - 1]
+                            editResult.ContentRows[rowIndexForInsertion] = editResult.ContentRows[rowIndexForInsertion]
                                 .Insert(characterIndexForInsertion,
                                     builder.ToString());
                         }
