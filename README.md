@@ -7,13 +7,13 @@ I make videos going through the source code on my [youtube channel](https://www.
   <summary>Expansion: Cloning and locally running the repo</summary>
 
 
-> ### Clone the repo.
+Clone the repo.
 ![I showcase cloning the repo](Images\RootREADME\CloneTheRepo.gif)
 
-> ### Open the repo in Visual Studio, or any editor of choice.
+Open the repo in Visual Studio, or any editor of choice.
 ![I showcase opening the repo](Images\RootREADME\OpenTheRepo.gif)
 
-> ### Run the .NET Maui host.
+Run the .NET Maui host.
 ![I showcase opening the repo](Images\RootREADME\RunTheRepo.gif)
 
 </details>
