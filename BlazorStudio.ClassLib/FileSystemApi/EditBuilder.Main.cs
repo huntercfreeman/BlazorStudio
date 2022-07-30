@@ -14,6 +14,9 @@ public partial class EditBuilder
     {
     }
 
+    public int Count => _edits.Count;
+    public bool Any => _edits.Any();
+
     /// <summary>
     /// Make an edit that will be seen when reading from the same FileHandle. However,
     /// this will not edit the file on disk. One must <see cref="Save"/> after editing to persist changes.

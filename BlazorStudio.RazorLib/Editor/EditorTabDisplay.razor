@@ -3,6 +3,11 @@
     @if (PlainTextEditor.FileHandle?.AbsoluteFilePath is not null)
     {
         <text>@PlainTextEditor.FileHandle.AbsoluteFilePath.FilenameWithExtension</text>
+
+        if (PlainTextEditor.FileHandle.Edit.Any)
+        {
+            <span style="margin-left: 7px;">*</span>
+        }
     }
     else
     {
