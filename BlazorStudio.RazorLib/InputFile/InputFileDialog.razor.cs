@@ -11,6 +11,7 @@ using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DropdownCase;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
@@ -83,6 +84,11 @@ public partial class InputFileDialog : ComponentBase
 
     private void InputFileTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath)
     {
+    }
+    
+    private void InputFileTreeViewOnDoubleClick(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
+    {
+        toggleIsExpanded.Invoke();
     }
 
     private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)

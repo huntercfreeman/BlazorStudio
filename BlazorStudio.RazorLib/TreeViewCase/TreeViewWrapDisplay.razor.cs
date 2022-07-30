@@ -30,6 +30,8 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     [Parameter, EditorRequired]
     public Action<T> OnSpaceKeyDown { get; set; } = null!;
     [Parameter, EditorRequired]
+    public Action<T, Action, MouseEventArgs>? OnDoubleClick { get; set; } = null!;
+    [Parameter, EditorRequired]
     public Func<T, bool> IsExpandable { get; set; } = null!;
     /// <summary>
     /// If <see cref="OnContextMenu"/> is provided then:

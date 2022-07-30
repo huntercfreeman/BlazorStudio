@@ -35,6 +35,8 @@ public partial class TreeViewDisplay<T>
     public Action<T> OnEnterKeyDown { get; set; } = null!;
     [CascadingParameter(Name= "OnSpaceKeyDown")]
     public Action<T> OnSpaceKeyDown { get; set; } = null!;
+    [CascadingParameter(Name= "OnDoubleClick")]
+    public Action<T, Action, MouseEventArgs>? OnDoubleClick { get; set; } = null!;
     /// <summary>
     /// If <see cref="OnContextMenu"/> is provided then:
     /// upon ContextMenuEvent event the Action will be invoked.
@@ -350,6 +352,14 @@ public partial class TreeViewDisplay<T>
         else
         {
             Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, treeView));
+        }
+    }
+    
+    private void HandleOnDoubleClick(MouseEventArgs mouseEventArgs)
+    {
+        if (OnDoubleClick is not null)
+        {
+            OnDoubleClick.Invoke(TreeView.Item, ToggleIsExpandedOnClick, mouseEventArgs);
         }
     }
 

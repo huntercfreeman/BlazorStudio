@@ -8,7 +8,10 @@
           class="bstudio_tree-view-display-title @IsActiveStyling"
           style="padding-left: calc(@(GetScaledByDepthPixelsOffset(Depth)) + 5px);"
           tabindex='@(IsActive ? "0" : "-1")'
+          @onclick:stopPropagation="true"
           @onclick="SetIsActiveOnClick"
+          @ondblclick:stopPropagation="true"
+          @ondblclick="HandleOnDoubleClick"
           @onkeydown:preventDefault="true"
           @onkeydown="HandleOnKeyDown"
           @oncontextmenu="HandleOnContextMenu">
@@ -16,7 +19,8 @@
         @if (IsExpandable(TreeView.Item))
         {
             <span @onclick="ToggleIsExpandedOnClick"
-                  @onclick:stopPropagation="true">
+                  @onclick:stopPropagation="true"
+                  @ondblclick:stopPropagation="true">
                 @if (TreeView.IsExpanded)
                 {
                     <IconChevronDown />
