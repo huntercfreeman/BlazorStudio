@@ -167,20 +167,19 @@ public partial class FileSystemProvider : IFileSystemProvider
             throw new NotImplementedException();
         }
         
-        public List<string> Read(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
-            CancellationToken cancellationToken)
+        public List<string> Read(FileHandleReadRequest readRequest)
         {
             var rows = new List<string>();
 
             if (_memoryMappedFile is not null)
             {
                 var availableRowCount = Math.Max(
-                    _physicalCharacterIndexMarkerForStartOfARow.Count - rowIndexOffset,
+                    _physicalCharacterIndexMarkerForStartOfARow.Count - readRequest.RowIndexOffset,
                     0);
 
-                var toReadRowCount = Math.Min(rowCount, availableRowCount);
+                var toReadRowCount = Math.Min(readRequest.RowCount, availableRowCount);
 
-                var rowIndex = rowIndexOffset;
+                var rowIndex = readRequest.RowIndexOffset;
 
                 var rowsRead = 0;
                 
@@ -188,14 +187,14 @@ public partial class FileSystemProvider : IFileSystemProvider
                      rowsRead < toReadRowCount;
                      rowsRead++, rowIndex++)
                 {
-                    if (cancellationToken.IsCancellationRequested)
+                    if (readRequest.CancellationToken.IsCancellationRequested)
                         return rows;
 
                     long inclusiveStartingCharacterIndex = _physicalCharacterIndexMarkerForStartOfARow[rowIndex] +
-                                                           characterIndexOffset;
+                                                           readRequest.CharacterIndexOffset;
 
                     var exclusiveEndingCharacterIndex =
-                        inclusiveStartingCharacterIndex + characterCount;
+                        inclusiveStartingCharacterIndex + readRequest.CharacterCount;
 
                     // Ensure within bounds of file
                     exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > PhysicalExclusiveEndOfFileCharacterIndex
@@ -244,12 +243,8 @@ public partial class FileSystemProvider : IFileSystemProvider
             {
                 rows.Add(string.Empty);
             }
-            
-            var contentRows = Edit.ApplyEdits(rowIndexOffset, characterIndexOffset, rows, _virtualCharacterIndexMarkerForStartOfARow);
 
-            return contentRows
-                .Take(rowCount)
-                .ToList();
+            return Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
         }
         
         public Task<List<string>> ReadAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 

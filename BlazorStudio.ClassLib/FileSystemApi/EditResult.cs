@@ -19,13 +19,11 @@
 public class EditResult
 {
     public EditResult(List<string> contentRows,
-        List<(int rowIndex, int characterIndexOfInsertion, int amountOfCharactersInserted)> characterDisplacementByRow,
-        List<(int insertionPoint, int amountOfRowsInserted)> rowDisplacement,
-        List<long> virtualCharacterIndexMarkerForStartOfARow)
+        List<long> virtualCharacterIndexMarkerForStartOfARow, List<DisplacementValue> displacementTimeline, int accumulatedRowDisplacement)
     {
         ContentRows = contentRows;
-        CharacterDisplacementByRow = characterDisplacementByRow;
-        RowDisplacement = rowDisplacement;
+        DisplacementTimeline = displacementTimeline;
+        AccumulatedRowDisplacement = accumulatedRowDisplacement;
         VirtualCharacterIndexMarkerForStartOfARow = virtualCharacterIndexMarkerForStartOfARow;
     }
     
@@ -35,13 +33,17 @@ public class EditResult
     public List<string> ContentRows { get; }
     /// <summary>
     /// <see cref="CharacterDisplacementByRow"/> allows for tracking of how much the difference between
-    /// the virtual file contents and the physical file contents when it relates to characters on a row.
+    /// the virtual file contents and the physical file contents.
+    /// <br/><br/>
+    /// Index 0 is the first displacement that occurred to the document
     /// </summary>
-    public List<(int rowIndex, int characterIndexOfInsertion, int amountOfCharactersInserted)> CharacterDisplacementByRow { get; }
+    public List<DisplacementValue> DisplacementTimeline { get; }
     /// <summary>
-    /// <see cref="CharacterDisplacementByRow"/> allows for tracking of how much the difference between
-    /// the virtual file contents and the physical file contents when it relates to characters on a row.
+    /// As edits are applied to a document this variable will keep a running total of row displacements
+    /// to avoid recalculating row displacement every individual edit.
+    ///
+    /// Then the character displacement can be used to get 'where()' actual row
     /// </summary>
-    public List<(int insertionPoint, int amountOfRowsInserted)> RowDisplacement { get; }
+    public int AccumulatedRowDisplacement { get; }
     public List<long> VirtualCharacterIndexMarkerForStartOfARow { get; }
 }

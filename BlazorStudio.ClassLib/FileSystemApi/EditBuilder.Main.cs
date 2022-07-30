@@ -53,7 +53,9 @@ public partial class EditBuilder
                             }
                             
                             builder.Insert(characterIndexForInsertion++, character);
-                            
+
+                            editResult.RowDisplacement.FirstOrDefault(d => d.insertionPoint == rowIndexForInsertion);
+
                             editResult.ContentRows.Insert(rowIndexForInsertion++, builder.ToString());
 
                             for (var index = 0;
@@ -70,7 +72,7 @@ public partial class EditBuilder
                         }
                         else
                         {
-                            builder.Insert(characterIndexForInsertion++, character);
+                            builder.Append(character);
                         }
 
                         previousCharacterWasCarriageReturn = false;
@@ -78,7 +80,8 @@ public partial class EditBuilder
 
                     if (builder.Length > 0)
                     {
-                        editResult.ContentRows[rowIndexForInsertion] = editResult.ContentRows[rowIndexForInsertion]
+                        // Immutable string assignment
+                        editResult.ContentRows[rowIndexForInsertion - 1] = editResult.ContentRows[rowIndexForInsertion - 1]
                             .Insert(characterIndexForInsertion, 
                                 builder.ToString());
                     }
@@ -261,19 +264,18 @@ public partial class EditBuilder
         }
     }
 
-    public List<string> ApplyEdits(int rowIndexOffset, 
-        int characterIndexOffset, 
-        List<string> rows,
+    public List<string> ApplyEdits(FileHandleReadRequest readRequest, 
+        List<string> rows, 
         List<long> virtualCharacterIndexMarkerForStartOfARow)
     {
         try
         {
             _editsSemaphoreSlim.Wait();
 
-            var editResult = new EditResult(rows, 
-                new(), 
+            var editResult = new EditResult(rows,
+                virtualCharacterIndexMarkerForStartOfARow, 
                 new(),
-                virtualCharacterIndexMarkerForStartOfARow);
+                0);
             
             foreach (var edit in _edits)
             {
