@@ -46,23 +46,28 @@ public partial record PlainTextEditorStates
                 {
                     // if (active token is not a word, and the next token is a word however then prepend text to that next token)
 
-                    focusedPlainTextEditorRecord = SetNextTokenAsCurrent(focusedPlainTextEditorRecord);
-                    
-                    var previousDefaultToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<DefaultTextToken>();
-
-                    var content = previousDefaultToken.Content
-                        .Insert(0, keyDownEventRecord.Key);
-
                     if (!keyDownEventRecord.IsForced)
                     {
-                        var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
-                                             + previousDefaultToken.IndexInPlainText.Value;
+                        var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord);
+
+                        if (focusedPlainTextEditorRecord.CurrentTextToken is not WhitespaceTextToken whitespace ||
+                            whitespace.WhitespaceKind != WhitespaceKind.Tab)
+                        {
+                            characterIndex += focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+                        }
 
                         focusedPlainTextEditorRecord.FileHandle.Edit
                             .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
                                 characterIndex,
                                 keyDownEventRecord.Key);
                     }
+
+                    focusedPlainTextEditorRecord = SetNextTokenAsCurrent(focusedPlainTextEditorRecord);
+                    
+                    var previousDefaultToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<DefaultTextToken>();
+
+                    var content = previousDefaultToken.Content
+                        .Insert(0, keyDownEventRecord.Key);
 
                     var nextDefaultToken = previousDefaultToken with
                     {

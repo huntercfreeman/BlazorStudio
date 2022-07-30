@@ -140,6 +140,17 @@ public partial record PlainTextEditorStates
             var toBeRemovedTokenIndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText;
             var toBeChangedRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
 
+            if (!isForced && tokenToInsertBetweenSplit is not null)
+            {
+                // Tab key so don't '+ focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value'
+                int characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord);
+
+                focusedPlainTextEditorRecord.FileHandle.Edit
+                    .Remove(focusedPlainTextEditorRecord.CurrentRowIndex,
+                        characterIndex,
+                        characterCount: 1);
+            }
+
             focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
             
             var replacementCurrentToken = focusedPlainTextEditorRecord

@@ -58,10 +58,10 @@ public partial class EditBuilder
                         {
                             if (previousCharacterWasCarriageReturn)
                             {
-                                builder.Insert(characterIndexForInsertion++, '\r');
+                                builder.Append('\r');
                             }
                             
-                            builder.Insert(characterIndexForInsertion++, character);
+                            builder.Append(character);
 
                             editResult.DisplacementTimeline.Add(new RowDisplacementValue(rowIndexForInsertion, 1));
                             editResult.AccumulatedRowDisplacement += 1;
