@@ -16,12 +16,22 @@ public partial class DiffDialogEntryPoint : ComponentBase
     [Parameter, EditorRequired]
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
 
-    private readonly DialogRecord _diffDialog = new DialogRecord(
-        DialogKey.NewDialogKey(),
-        "Diff",
-        typeof(DiffDialog),
-        null
-    );
+    private DialogRecord _diffDialog = null!;
+
+    protected override void OnInitialized()
+    {
+        _diffDialog = new DialogRecord(
+            DialogKey.NewDialogKey(),
+            "Diff",
+            typeof(DiffDialog),
+            new Dictionary<string, object?>
+            {
+                { nameof(DiffDialog.PlainTextEditorKey), PlainTextEditorKey }
+            }
+        );
+
+        base.OnInitialized();
+    }
 
     private void OpenDiffDialogOnClick()
     {

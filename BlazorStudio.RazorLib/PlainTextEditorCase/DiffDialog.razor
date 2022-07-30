@@ -1,5 +1,9 @@
-﻿<h3>DifDialog</h3>
+﻿@using BlazorStudio.ClassLib.Store.PlainTextEditorCase
+@using BlazorStudio.ClassLib.UserInterface
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@code {
-    
-}
+<div class="bstudio_diff-dialog">
+    <BlazorStudio.RazorLib.PlainTextEditorCase.PlainTextEditorDisplay PlainTextEditorKey="PlainTextEditorKey"
+                                                                      AutomateDispose="false"
+                                                                      AllowOpenDiff="false" />
+</div>

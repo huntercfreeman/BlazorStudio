@@ -38,9 +38,12 @@ else
             }
         </div>*@
         
-        <div>
-            <DiffDialogEntryPoint />
-        </div>
+        @*@if (AllowOpenDiff)
+        {
+            <div>
+                <DiffDialogEntryPoint PlainTextEditorKey="PlainTextEditorKey" />
+            </div>
+        }*@
         
         <div class="bstudio_debug-info">
             @if (localMostRecentMessage is not null)

@@ -28,6 +28,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
     [Parameter, EditorRequired]
     public bool AutomateDispose { get; set; } = true;
+    [Parameter, EditorRequired]
+    public bool AllowOpenDiff { get; set; } = true;
 
     private bool _isFocused;
     private ElementReference _plainTextEditor;
