@@ -48,8 +48,7 @@ public interface IFileHandle : IDisposable
     /// <param name="characterCount">The amount of characters to read</param>
     /// <param name="cancellationToken">Relays the cancellation of the asynchronous call</param>
     /// <returns>The content read from the file as a List where each entry is a separate row</returns>
-    public List<string> Read(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
-        CancellationToken cancellationToken);
+    public List<string> Read(FileHandleReadRequest readRequest);
     /// <summary>
     /// Random access to the file to avoid reading the entire file into memory.
     ///
@@ -62,8 +61,7 @@ public interface IFileHandle : IDisposable
     /// <param name="characterCount">The amount of characters to read</param>
     /// <param name="cancellationToken">Relays the cancellation of the asynchronous call</param>
     /// <returns>The content read from the file</returns>
-    public Task<List<string>> ReadAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
-        CancellationToken cancellationToken);
+    public Task<List<string>> ReadAsync(FileHandleReadRequest readRequest);
     
     /// <summary>
     /// Write out any changes pending in memory to the FileSystem

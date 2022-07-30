@@ -247,11 +247,9 @@ public partial class FileSystemProvider : IFileSystemProvider
             return Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
         }
         
-        public Task<List<string>> ReadAsync(int rowIndexOffset, int characterIndexOffset, int rowCount, int characterCount, 
-            CancellationToken cancellationToken)
+        public Task<List<string>> ReadAsync(FileHandleReadRequest readRequest)
         {
-            return Task.FromResult(Read(rowIndexOffset, characterIndexOffset, rowCount, characterCount, 
-                cancellationToken));
+            return Task.FromResult(Read(readRequest));
         }
         
         public void Dispose()

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.KeyDownEventCase;
@@ -102,12 +103,13 @@ public partial record PlainTextEditorStates
                 requestCharacterCount,
                 actionRequest.CancellationToken);
 
-            var contentRows = plainTextEditor.FileHandle.Read(
-                fileCoordinateGridRequest.StartingRowIndex,
-                fileCoordinateGridRequest.StartingCharacterIndex,
-                fileCoordinateGridRequest.RowCount,
-                fileCoordinateGridRequest.CharacterCount,
-                CancellationToken.None);
+            var contentRows = plainTextEditor.FileHandle
+                .Read(new FileHandleReadRequest(
+                    fileCoordinateGridRequest.StartingRowIndex,
+                    fileCoordinateGridRequest.StartingCharacterIndex,
+                    fileCoordinateGridRequest.RowCount,
+                    fileCoordinateGridRequest.CharacterCount,
+                    CancellationToken.None));
 
             var replacementPlainTextEditor = plainTextEditor with
             {
