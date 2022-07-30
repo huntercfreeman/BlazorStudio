@@ -17,6 +17,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Workspace;
 
@@ -141,7 +142,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
             .Union(childFileAbsolutePaths);
     }
 
-    private void WorkspaceExplorerTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath)
+    private void WorkspaceExplorerTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)
     {
         if (!absoluteFilePath.IsDirectory)
         {
@@ -153,10 +154,33 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
                     FileSystemProvider)
             );
         }
+        else
+        {
+            toggleIsExpanded.Invoke();
+        }
     }
 
-    private void WorkspaceExplorerTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath)
+    private void WorkspaceExplorerTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)
     {
+        toggleIsExpanded.Invoke();
+    }
+
+    private void WorkspaceExplorerTreeViewOnDoubleClick(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
+    {
+        if (!absoluteFilePath.IsDirectory)
+        {
+            var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+            Dispatcher.Dispatch(
+                new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
+                    absoluteFilePath,
+                    FileSystemProvider)
+            );
+        }
+        else
+        {
+            toggleIsExpanded.Invoke();
+        }
     }
 
     private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)

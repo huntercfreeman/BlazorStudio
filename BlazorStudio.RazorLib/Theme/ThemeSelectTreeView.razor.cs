@@ -2,6 +2,7 @@
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Theme;
 
@@ -23,12 +24,17 @@ public partial class ThemeSelectTreeView : ComponentBase
         return Task.FromResult(Array.Empty<ThemeKey>().AsEnumerable());
     }
 
-    private void ThemeTreeViewOnEnterKeyDown(ThemeKey themeKey)
+    private void ThemeTreeViewOnEnterKeyDown(ThemeKey themeKey, Action toggleIsExpanded)
     {
         Dispatcher.Dispatch(new SetThemeStateAction(themeKey));
     }
 
-    private void ThemeTreeViewOnSpaceKeyDown(ThemeKey themeKey)
+    private void ThemeTreeViewOnSpaceKeyDown(ThemeKey themeKey, Action toggleIsExpanded)
     {
+    }
+
+    private void ThemeTreeViewOnDoubleClick(ThemeKey themeKey, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
+    {
+        Dispatcher.Dispatch(new SetThemeStateAction(themeKey));
     }
 }

@@ -31,10 +31,19 @@ public partial class TreeViewDisplay<T>
     public int Depth { get; set; }
     [CascadingParameter]
     public TreeViewWrapKey TreeViewWrapKey { get; set; } = null!;
+    /// <summary>
+    /// Action parameters: Action(T item, Action toggleIsExpanded)
+    /// </summary>
     [CascadingParameter(Name="OnEnterKeyDown")]
-    public Action<T> OnEnterKeyDown { get; set; } = null!;
+    public Action<T, Action> OnEnterKeyDown { get; set; } = null!;
+    /// <summary>
+    /// Action parameters: Action(T item, Action toggleIsExpanded)
+    /// </summary>
     [CascadingParameter(Name= "OnSpaceKeyDown")]
-    public Action<T> OnSpaceKeyDown { get; set; } = null!;
+    public Action<T, Action> OnSpaceKeyDown { get; set; } = null!;
+    /// <summary>
+    /// Action parameters: Action(T item, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
+    /// </summary>
     [CascadingParameter(Name= "OnDoubleClick")]
     public Action<T, Action, MouseEventArgs>? OnDoubleClick { get; set; } = null!;
     /// <summary>
@@ -290,11 +299,11 @@ public partial class TreeViewDisplay<T>
         }
         else if (keyboardEventArgs.Key == KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE)
         {
-            OnEnterKeyDown(TreeView.Item);
+            OnEnterKeyDown(TreeView.Item, ToggleIsExpandedOnClick);
         }
         else if (keyboardEventArgs.Key == KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE)
         {
-            OnSpaceKeyDown(TreeView.Item);
+            OnSpaceKeyDown(TreeView.Item, ToggleIsExpandedOnClick);
         }
         else if (KeyboardKeyFacts.CheckIsAlternateContextMenuEvent(keyboardEventArgs.Key, keyboardEventArgs.ShiftKey))
         {

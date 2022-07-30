@@ -73,7 +73,7 @@ public partial class InputFileDialog : ComponentBase
             .Union(childFileAbsolutePaths);
     }
 
-    private void InputFileTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath)
+    private void InputFileTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)
     {
         if (absoluteFilePath.IsDirectory)
         {
@@ -82,8 +82,12 @@ public partial class InputFileDialog : ComponentBase
         }
     }
 
-    private void InputFileTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath)
+    private void InputFileTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)
     {
+        if (absoluteFilePath.IsDirectory)
+        {
+            toggleIsExpanded.Invoke();
+        }
     }
     
     private void InputFileTreeViewOnDoubleClick(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)

@@ -25,10 +25,19 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     public Func<T, Task<IEnumerable<T>>> GetChildrenFunc { get; set; } = null!;
     [Parameter, EditorRequired]
     public RenderFragment<T> ItemRenderFragment { get; set; } = null!;
+    /// <summary>
+    /// Action parameters: Action(T item, Action toggleIsExpanded)
+    /// </summary>
     [Parameter, EditorRequired]
-    public Action<T> OnEnterKeyDown { get; set; } = null!;
+    public Action<T, Action> OnEnterKeyDown { get; set; } = null!;
+    /// <summary>
+    /// Action parameters: Action(T item, Action toggleIsExpanded)
+    /// </summary>
     [Parameter, EditorRequired]
-    public Action<T> OnSpaceKeyDown { get; set; } = null!;
+    public Action<T, Action> OnSpaceKeyDown { get; set; } = null!;
+    /// <summary>
+    /// Action parameters: Action(T item, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
+    /// </summary>
     [Parameter, EditorRequired]
     public Action<T, Action, MouseEventArgs>? OnDoubleClick { get; set; } = null!;
     [Parameter, EditorRequired]
