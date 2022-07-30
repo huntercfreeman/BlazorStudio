@@ -68,7 +68,26 @@ public partial class EditBuilder
 
                             if (editIsPartOfRequest)
                             {
-                                editResult.ContentRows.Insert(rowIndexForInsertion++, builder.ToString());
+                                var builtString = builder.ToString();
+
+                                if (characterIndexForInsertion == 0)
+                                {
+                                    editResult.ContentRows.Insert(rowIndexForInsertion++, builtString);
+                                }
+                                else
+                                {
+                                    // Substring the row text at character index for insertion
+
+                                    var rowText = editResult.ContentRows[rowIndexForInsertion];
+
+                                    var splitFirst = rowText.Substring(0, characterIndexForInsertion) 
+                                                     + builder.ToString();
+
+                                    var splitSecond = rowText.Substring(characterIndexForInsertion);
+
+                                    editResult.ContentRows[rowIndexForInsertion] = splitFirst;
+                                    editResult.ContentRows.Insert(rowIndexForInsertion + 1, splitSecond);
+                                }
                             }
 
                             for (var index = 0;
