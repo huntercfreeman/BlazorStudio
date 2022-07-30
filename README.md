@@ -8,13 +8,13 @@ I make videos going through the source code on my [youtube channel](https://www.
 
 
 Clone the repo.
-![I showcase cloning the repo](Images\RootREADME\CloneTheRepo.gif)
+![I showcase cloning the repo](/Images/RootREADME/CloneTheRepo.gif)
 
 Open the repo in Visual Studio, or any editor of choice.
-![I showcase opening the repo](Images\RootREADME\OpenTheRepo.gif)
+![I showcase opening the repo](/Images/RootREADME/OpenTheRepo.gif)
 
 Run the .NET Maui host.
-![I showcase opening the repo](Images\RootREADME\RunTheRepo.gif)
+![I showcase opening the repo](/Images/RootREADME/RunTheRepo.gif)
 
 </details>
 
