@@ -9,7 +9,8 @@ public partial record PlainTextEditorStates
     {
         // Used when cursor is within text and the 'Enter' key is pressed as an example. That token would get split into two separate tokens.
         public static PlainTextEditorRecord SplitCurrentToken(PlainTextEditorRecord focusedPlainTextEditorRecord,
-            TextTokenBase? tokenToInsertBetweenSplit)
+            TextTokenBase? tokenToInsertBetweenSplit,
+            bool isForced)
         {
             var currentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>();
@@ -17,17 +18,18 @@ public partial record PlainTextEditorStates
             switch (currentToken.Kind)
             {
                 case TextTokenKind.Default:
-                    return SplitDefaultToken(focusedPlainTextEditorRecord, tokenToInsertBetweenSplit);
+                    return SplitDefaultToken(focusedPlainTextEditorRecord, tokenToInsertBetweenSplit, isForced);
                 case TextTokenKind.Whitespace:
-                    return SplitWhitespaceToken(focusedPlainTextEditorRecord, tokenToInsertBetweenSplit);
+                    return SplitWhitespaceToken(focusedPlainTextEditorRecord, tokenToInsertBetweenSplit, isForced);
                 default:
                     return focusedPlainTextEditorRecord;
             }
         }
         
         public static PlainTextEditorRecord SplitDefaultToken(PlainTextEditorRecord focusedPlainTextEditorRecord,
-            TextTokenBase? tokenToInsertBetweenSplit)
-        {            
+            TextTokenBase? tokenToInsertBetweenSplit,
+            bool isForced)
+        {
             var rememberCurrentToken = focusedPlainTextEditorRecord
                     .GetCurrentTextTokenAs<DefaultTextToken>();
 
@@ -56,6 +58,17 @@ public partial record PlainTextEditorStates
 
             var toBeRemovedTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex;
             var toBeChangedRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
+
+            if (!isForced && tokenToInsertBetweenSplit is not null)
+            {
+                var characterIndex = CalculateCurrentTokenColumnIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                                     + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+
+                focusedPlainTextEditorRecord.FileHandle.Edit
+                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                        characterIndex,
+                        tokenToInsertBetweenSplit.CopyText);
+            }
 
             focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
             
@@ -114,7 +127,8 @@ public partial record PlainTextEditorStates
         }
 
         public static PlainTextEditorRecord SplitWhitespaceToken(PlainTextEditorRecord focusedPlainTextEditorRecord,
-            TextTokenBase? tokenToInsertBetweenSplit)
+            TextTokenBase? tokenToInsertBetweenSplit,
+            bool isForced)
         {
             var rememberCurrentToken = focusedPlainTextEditorRecord
                     .GetCurrentTextTokenAs<WhitespaceTextToken>();

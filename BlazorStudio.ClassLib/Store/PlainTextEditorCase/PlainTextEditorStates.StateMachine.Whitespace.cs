@@ -18,7 +18,8 @@ public partial record PlainTextEditorStates
                 {
                     focusedPlainTextEditorRecord = SplitCurrentToken(
                         focusedPlainTextEditorRecord,
-                        null
+                        null,
+                        keyDownEventRecord.IsForced
                     );
 
                     return InsertNewLine(focusedPlainTextEditorRecord,
@@ -27,7 +28,8 @@ public partial record PlainTextEditorStates
 
                 return SplitCurrentToken(
                     focusedPlainTextEditorRecord,
-                        new WhitespaceTextToken(keyDownEventRecord)
+                        new WhitespaceTextToken(keyDownEventRecord),
+                    keyDownEventRecord.IsForced
                 );
             }
             else

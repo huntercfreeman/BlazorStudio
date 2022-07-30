@@ -87,7 +87,8 @@ public partial record PlainTextEditorStates
                             {
                                 Content = keyDownEventRecord.Key,
                                 IndexInPlainText = 0
-                            }
+                            },
+                            keyDownEventRecord.IsForced
                         );
                     }
                     else
