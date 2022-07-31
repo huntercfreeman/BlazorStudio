@@ -97,23 +97,20 @@ public partial record PlainTextEditorStates
 
             var requestCharacterCount = (int)(actionRequest.ViewportWidthInPixels / widthOfEachCharacterInPixels);
 
-            var fileCoordinateGridRequest = new FileCoordinateGridRequest(startingRowIndex,
-                requestRowCount,
+            var readRequest = new FileHandleReadRequest(
+                startingRowIndex,
                 startingCharacterIndex,
+                requestRowCount,
                 requestCharacterCount,
                 actionRequest.CancellationToken);
 
             var contentRows = plainTextEditor.FileHandle
-                .Read(new FileHandleReadRequest(
-                    fileCoordinateGridRequest.StartingRowIndex,
-                    fileCoordinateGridRequest.StartingCharacterIndex,
-                    fileCoordinateGridRequest.RowCount,
-                    fileCoordinateGridRequest.CharacterCount,
-                    CancellationToken.None));
+                .Read(readRequest);
 
             var replacementPlainTextEditor = plainTextEditor with
             {
                 SequenceKey = SequenceKey.NewSequenceKey(),
+                FileHandleReadRequest = readRequest,
                 List = new IPlainTextEditorRow[]
                 {
                     plainTextEditor.GetEmptyPlainTextEditorRow()
@@ -219,7 +216,7 @@ public partial record PlainTextEditorStates
 
             replacementPlainTextEditor = replacementPlainTextEditor with
             {
-                RowIndexOffset = fileCoordinateGridRequest.StartingRowIndex
+                RowIndexOffset = readRequest.RowIndexOffset
             };
 
             var actualWidthOfResult = widthOfEachCharacterInPixels * requestCharacterCount;

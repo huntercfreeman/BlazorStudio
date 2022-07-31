@@ -39,6 +39,7 @@ public partial record PlainTextEditorStates
         public ITextToken CurrentTextToken => CurrentPlainTextEditorRow.List[CurrentTokenIndex];
         public int LongestRowCharacterLength { get; init; }
         public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get; init; }
+        public FileHandleReadRequest FileHandleReadRequest { get; init; }
         public int RowIndexOffset { get; init; }
         public int CharacterIndexOffsetRelativeToRow { get; init; }
 
