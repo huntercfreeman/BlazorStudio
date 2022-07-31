@@ -10,6 +10,9 @@ public partial class FileSystemProvider : IFileSystemProvider
     private class FileHandle : IFileHandle
     {
         private readonly Action<FileHandle> _onDisposeAction;
+
+        private readonly SemaphoreSlim _readSemaphoreSlim = new(1, 1);
+
         /// <summary>
         /// Index using the Row index and this returns the
         /// starting position of that row within the text file.
@@ -250,9 +253,23 @@ public partial class FileSystemProvider : IFileSystemProvider
             return Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
         }
         
-        public Task<List<string>> ReadAsync(FileHandleReadRequest readRequest)
+        public async Task<List<string>?> ReadAsync(FileHandleReadRequest readRequest)
         {
-            return Task.FromResult(Read(readRequest));
+            try
+            {
+                await _readSemaphoreSlim.WaitAsync();
+
+                if (readRequest.CancellationToken.IsCancellationRequested)
+                {
+                    return null;
+                }
+
+                return Read(readRequest);
+            }
+            finally
+            {
+                _readSemaphoreSlim.Release();
+            }
         }
         
         public void Dispose()
