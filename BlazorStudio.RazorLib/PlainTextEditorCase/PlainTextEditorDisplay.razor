@@ -18,12 +18,12 @@ else
     var localMostRecentMessage = currentPlainTextEditor.VirtualizeCoordinateSystemMessage;
 
     <div class="pte_plain-text-editor-wrapping">
-        <div>
+        @*<div>
             Font Size: @(PlainTextEditorSelector.Value.RichTextEditorOptions.FontSizeInPixels)px
         </div>
         <div>
             Use the <em>F1</em> key to scroll the caret row into view if it is offscreen.
-        </div>
+        </div>*@
         
         @*<div>
             Toggle Readonly:&nbsp;
@@ -51,7 +51,7 @@ else
             Save Changes
         </button>*@
         
-        @*<div>
+        <div>
             @if (currentPlainTextEditor.FileHandleReadRequest is not null)
             {
                 <div>
@@ -70,7 +70,7 @@ else
                     FileHandleReadRequest is null
                 </div>
             }
-        </div>*@
+        </div>
 
         <div class="bstudio_debug-info">
             @if (localMostRecentMessage is not null)
