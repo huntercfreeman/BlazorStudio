@@ -19,7 +19,7 @@ public partial record PlainTextEditorStates
         private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
         private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
 
-        private PlainTextEditorStatesEffect(IState<PlainTextEditorStates> plainTextEditorStatesWrap)
+        public PlainTextEditorStatesEffect(IState<PlainTextEditorStates> plainTextEditorStatesWrap)
         {
             _plainTextEditorStatesWrap = plainTextEditorStatesWrap;
         }
