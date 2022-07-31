@@ -15,127 +15,9 @@ else
     // by making a local reference to it.
     var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
-    var localMostRecentMessage = currentPlainTextEditor.VirtualizeCoordinateSystemMessage;
-
     <div class="pte_plain-text-editor-wrapping">
-        @*<div>
-            Font Size: @(PlainTextEditorSelector.Value.RichTextEditorOptions.FontSizeInPixels)px
-        </div>
-        <div>
-            Use the <em>F1</em> key to scroll the caret row into view if it is offscreen.
-        </div>*@
         
-        @*<div>
-            Toggle Readonly:&nbsp;
-            <input type="checkbox" @onchange="IsReadonlyCheckboxOnChange" checked="@currentPlainTextEditor.IsReadonly" />
-            &nbsp;->&nbsp;
-            @if (currentPlainTextEditor.IsReadonly)
-            {
-                <text>Currently <em>ReadOnly</em></text>
-            }
-            else
-            {
-                <text>Currently <em>Editable</em></text>
-            }
-        </div>*@
-        
-        @*@if (AllowOpenDiff)
-        {
-            <div>
-                <DiffDialogEntryPoint PlainTextEditorKey="PlainTextEditorKey" />
-            </div>
-        }*@
-        
-        @*<button class="btn btn-primary"
-                @onclick="SaveChangesOnClick">
-            Save Changes
-        </button>*@
-        
-        <div>
-            @if (currentPlainTextEditor.FileHandleReadRequest is not null)
-            {
-                <div>
-                    RowIndexOffset:&nbsp;@currentPlainTextEditor.FileHandleReadRequest.RowIndexOffset <em>\\//</em> CharacterIndexOffset:&nbsp;@currentPlainTextEditor.FileHandleReadRequest.CharacterIndexOffset
-                </div>
-                <div>
-                    RowCount:&nbsp;@currentPlainTextEditor.FileHandleReadRequest.RowCount <em>\\//</em> CharacterCount:&nbsp;@currentPlainTextEditor.FileHandleReadRequest.CharacterCount
-                </div>
-                <div>
-                    PhysicalCharacterLengthOfLongestRow:&nbsp;@currentPlainTextEditor.FileHandle.PhysicalCharacterLengthOfLongestRow
-                </div>
-            }
-            else
-            {
-                <div>
-                    FileHandleReadRequest is null
-                </div>
-            }
-        </div>
-
-        <div class="bstudio_debug-info">
-            @if (localMostRecentMessage is not null)
-            {
-                var request = localMostRecentMessage.VirtualizeCoordinateSystemRequest;
-                var result = localMostRecentMessage.VirtualizeCoordinateSystemResult;
-
-                var itemsEnumerated = result?.ItemsUntyped.ToArray();
-                
-                @*<div>
-                    @NullSafeToMarkupString(nameof(currentPlainTextEditor.FileCoordinateGrid.RowCount), string.Empty)
-                    
-                    @if (currentPlainTextEditor.FileCoordinateGrid?.RowCount is null)
-                    {
-                        <text>null</text>
-                    }
-                    else
-                    {
-                        <text>@currentPlainTextEditor.FileCoordinateGrid?.RowCount.ToString("N0")</text>
-                    }
-                </div>
-                <div>
-                    @NullSafeToMarkupString(nameof(currentPlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow), currentPlainTextEditor.FileCoordinateGrid?.CharacterLengthOfLongestRow)
-                </div>
-                <div>
-                    Virtual&nbsp;Enumerable&nbsp;@NullSafeToMarkupString(nameof(itemsEnumerated.Length), itemsEnumerated?.Length)
-                </div>
-                
-                <div>
-                    @NullSafeToMarkupString(nameof(request.ScrollLeftInPixels), request?.ScrollLeftInPixels)
-                </div>
-                <div>
-                    @NullSafeToMarkupString(nameof(request.ScrollTopInPixels), request?.ScrollTopInPixels)
-                </div>
-                <div>
-                    @NullSafeToMarkupString(nameof(request.ScrollWidthInPixels), request?.ScrollWidthInPixels)
-                </div>
-                <div>
-                    @NullSafeToMarkupString(nameof(request.ScrollHeightInPixels), request?.ScrollHeightInPixels)
-                </div>
-                
-                <div>
-                    @NullSafeToMarkupString(nameof(request.ViewportWidthInPixels), request?.ViewportWidthInPixels)
-                </div>
-                <div>
-                    @NullSafeToMarkupString(nameof(request.ViewportHeightInPixels), request?.ViewportHeightInPixels)
-                </div>
-                <div>
-                    @NullSafeToMarkupString(nameof(result.WidthOfResultInPixels), result?.WidthOfResultInPixels)
-                </div>
-                <div>
-                    @NullSafeToMarkupString(nameof(result.HeightOfResultInPixels), result?.HeightOfResultInPixels)
-                </div>
-                <div>
-                    @NullSafeToMarkupString(nameof(result.TotalWidthInPixels), result?.TotalWidthInPixels)
-                </div>
-                <div>
-                    @NullSafeToMarkupString(nameof(result.TotalHeightInPixels), result?.TotalHeightInPixels)
-                </div>*@
-            }
-            else
-            {
-                <div>virtualization message was null</div>
-            }
-        </div>
+        <PlainTextEditorHeader PlainTextEditor="currentPlainTextEditor" />
 
         <div id="@PlainTextEditorDisplayId"
              class="pte_plain-text-editor-display @IsFocusedCssClass"
@@ -151,39 +33,41 @@ else
             @{
                 var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
 
-                                        <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
-                                            <CascadingValue Value="_isFocused">
-                                                <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
-                                                    <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
-                                                        <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
-                                                            <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
-                                                                                                                       T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
-                                                                                                                       VirtualizeCoordinateSystemMessage="currentPlainTextEditor.VirtualizeCoordinateSystemMessage"
-                                                                                                                       DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
-                                                                                                                       RequestCallbackAction="OnRequestCallbackAction"
-                                                                                                                       PaddingInPixels="250"
-                                                                                                                       OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
-                                                                <ItemRenderFragment Context="rowTuple">
-                                                                    <CascadingValue Name="RowIndex" Value="rowTuple.Index">
-                                                                        <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
+                <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
+                    <CascadingValue Value="_isFocused">
+                        <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
+                            <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
+                                <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
+                                    <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
+                                                                                                           T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
+                                                                                                           VirtualizeCoordinateSystemMessage="currentPlainTextEditor.VirtualizeCoordinateSystemMessage"
+                                                                                                           DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
+                                                                                                           RequestCallbackAction="OnRequestCallbackAction"
+                                                                                                           PaddingInPixels="250"
+                                                                                                           OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
+                                        <ItemRenderFragment Context="rowTuple">
+                                            <CascadingValue Name="RowIndex" Value="rowTuple.Index">
+                                                <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
                                                                            PlainTextEditorRow="rowTuple.PlainTextEditorRow"
                                                                            MostDigitsInARowNumber="mostDigitsInARowNumber"/>
-                                                                    </CascadingValue>
-                                                                </ItemRenderFragment>
-
-                                                                <MarkerRenderFragment>
-                                                                    <span id="@ActiveRowPositionMarkerId"
-                                                                          class="pte_visually-hidden pte_unselectable pte_active-row-position-marker"
-                                                                          style="position: absolute; @InputFocusTrapTopStyleCss">
-                                                                    </span>
-                                                                </MarkerRenderFragment>
-                                                            </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
-                                                        </CascadingValue>
-                                                    </CascadingValue>
-                                                </CascadingValue>
                                             </CascadingValue>
-                                        </CascadingValue>
+                                        </ItemRenderFragment>
+
+                                        <MarkerRenderFragment>
+                                            <span id="@ActiveRowPositionMarkerId"
+                                                  class="pte_visually-hidden pte_unselectable pte_active-row-position-marker"
+                                                  style="position: absolute; @InputFocusTrapTopStyleCss">
+                                            </span>
+                                        </MarkerRenderFragment>
+                                    </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
+                                </CascadingValue>
+                            </CascadingValue>
+                        </CascadingValue>
+                    </CascadingValue>
+                </CascadingValue>
             }
+
+            <PlainTextEditorFooter PlainTextEditor="currentPlainTextEditor"/>
         </div>
     </div>
 }

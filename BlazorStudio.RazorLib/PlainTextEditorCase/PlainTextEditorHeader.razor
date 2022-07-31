@@ -1,0 +1,34 @@
+﻿@*<div>
+            Font Size: @(PlainTextEditorSelector.Value.RichTextEditorOptions.FontSizeInPixels)px
+        </div>
+        <div>
+            Use the <em>F1</em> key to scroll the caret row into view if it is offscreen.
+        </div>*@
+        
+@*<div>
+            Toggle Readonly:&nbsp;
+            <input type="checkbox" @onchange="IsReadonlyCheckboxOnChange" checked="@currentPlainTextEditor.IsReadonly" />
+            &nbsp;->&nbsp;
+            @if (currentPlainTextEditor.IsReadonly)
+            {
+                <text>Currently <em>ReadOnly</em></text>
+            }
+            else
+            {
+                <text>Currently <em>Editable</em></text>
+            }
+        </div>*@
+        
+@*@if (AllowOpenDiff)
+        {
+            <div>
+                <DiffDialogEntryPoint PlainTextEditorKey="PlainTextEditorKey" />
+            </div>
+        }*@
+        
+@*<button class="btn btn-primary"
+                @onclick="SaveChangesOnClick">
+            Save Changes
+        </button>*@
+        
+<PlainTextEditorDebuggingInformation PlainTextEditor="PlainTextEditor" />
