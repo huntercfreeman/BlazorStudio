@@ -68,6 +68,11 @@ public partial record PlainTextEditorStates
                         .Map[memoryMappedFilePixelReadRequestAction.PlainTextEditorKey]
                     as PlainTextEditorRecord;
 
+#if RELEASE
+                if (plainTextEditor?.VirtualizeCoordinateSystemMessage is not null)
+                    return;
+#endif
+
                 if (plainTextEditor?.FileHandle is null)
                     return;
 
@@ -262,6 +267,11 @@ public partial record PlainTextEditorStates
         {
             await QueueHandleEffectAsync(async () =>
             {
+#if RELEASE
+                // Blazor WebAssembly is currently single threaded
+                await Task.Delay(1);
+#endif
+
                 var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
 
                 var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);

@@ -69,6 +69,10 @@ public partial class FileSystemProvider : IFileSystemProvider
 
         public void Initialize()
         {
+#if RELEASE
+            return;
+#endif
+
             if (AbsoluteFilePath.IsDirectory)
                 throw new ApplicationException($"{nameof(FileHandle)} does not support directories.");
             
@@ -173,6 +177,10 @@ public partial class FileSystemProvider : IFileSystemProvider
         public List<string> Read(FileHandleReadRequest readRequest)
         {
             var rows = new List<string>();
+
+#if RELEASE
+            return Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
+#endif
 
             if (_memoryMappedFile is not null)
             {

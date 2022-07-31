@@ -14,7 +14,8 @@
           @ondblclick="HandleOnDoubleClick"
           @onkeydown:preventDefault="true"
           @onkeydown="HandleOnKeyDown"
-          @oncontextmenu="HandleOnContextMenu">
+          @oncontextmenu="HandleOnContextMenu"
+          @oncontextmenu:preventDefault="true">
         
         @if (IsExpandable(TreeView.Item))
         {
