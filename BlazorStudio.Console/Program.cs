@@ -13,7 +13,7 @@ var spacer = ' ';
 
 for (int i = 0; i < rows; i++)
 {
-    var rowMarker = $"// {i}";
+    var rowMarker = $"// {i + 1}";
 
     builder.Append(rowMarker);
 
@@ -21,7 +21,7 @@ for (int i = 0; i < rows; i++)
     {
         if (j % columnMarkerSpacing == 0)
         {
-            var columnMarker = $"col: {j}";
+            var columnMarker = $"col: {j + 1}";
             builder.Append(columnMarker);
 
             j += columnMarker.Length;

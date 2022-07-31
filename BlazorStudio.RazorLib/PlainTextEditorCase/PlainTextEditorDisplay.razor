@@ -60,6 +60,9 @@ else
                 <div>
                     RowCount:&nbsp;@currentPlainTextEditor.FileHandleReadRequest.RowCount <em>\\//</em> CharacterCount:&nbsp;@currentPlainTextEditor.FileHandleReadRequest.CharacterCount
                 </div>
+                <div>
+                    PhysicalCharacterLengthOfLongestRow:&nbsp;@currentPlainTextEditor.FileHandle.PhysicalCharacterLengthOfLongestRow
+                </div>
             }
             else
             {
@@ -148,38 +151,38 @@ else
             @{
                 var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
 
-                                    <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
-                                        <CascadingValue Value="_isFocused">
-                                            <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
-                                                <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
-                                                    <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
-                                                        <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
+                                        <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
+                                            <CascadingValue Value="_isFocused">
+                                                <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
+                                                    <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
+                                                        <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
+                                                            <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
                                                                                                                        T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
                                                                                                                        VirtualizeCoordinateSystemMessage="currentPlainTextEditor.VirtualizeCoordinateSystemMessage"
                                                                                                                        DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
                                                                                                                        RequestCallbackAction="OnRequestCallbackAction"
                                                                                                                        PaddingInPixels="250"
                                                                                                                        OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
-                                                            <ItemRenderFragment Context="rowTuple">
-                                                                <CascadingValue Name="RowIndex" Value="rowTuple.Index">
-                                                                    <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
+                                                                <ItemRenderFragment Context="rowTuple">
+                                                                    <CascadingValue Name="RowIndex" Value="rowTuple.Index">
+                                                                        <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
                                                                            PlainTextEditorRow="rowTuple.PlainTextEditorRow"
                                                                            MostDigitsInARowNumber="mostDigitsInARowNumber"/>
-                                                                </CascadingValue>
-                                                            </ItemRenderFragment>
+                                                                    </CascadingValue>
+                                                                </ItemRenderFragment>
 
-                                                            <MarkerRenderFragment>
-                                                                <span id="@ActiveRowPositionMarkerId"
-                                                                      class="pte_visually-hidden pte_unselectable pte_active-row-position-marker"
-                                                                      style="position: absolute; @InputFocusTrapTopStyleCss">
-                                                                </span>
-                                                            </MarkerRenderFragment>
-                                                        </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
+                                                                <MarkerRenderFragment>
+                                                                    <span id="@ActiveRowPositionMarkerId"
+                                                                          class="pte_visually-hidden pte_unselectable pte_active-row-position-marker"
+                                                                          style="position: absolute; @InputFocusTrapTopStyleCss">
+                                                                    </span>
+                                                                </MarkerRenderFragment>
+                                                            </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
+                                                        </CascadingValue>
                                                     </CascadingValue>
                                                 </CascadingValue>
                                             </CascadingValue>
                                         </CascadingValue>
-                                    </CascadingValue>
             }
         </div>
     </div>

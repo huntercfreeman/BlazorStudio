@@ -244,6 +244,9 @@ public partial class FileSystemProvider : IFileSystemProvider
                 rows.Add(string.Empty);
             }
 
+            // TODO: Add the displacement to the Virtual values
+            VirtualCharacterLengthOfLongestRow = PhysicalCharacterLengthOfLongestRow;
+
             return Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
         }
         
