@@ -1,5 +1,14 @@
-﻿<h3>PlainTextEditorInformationBar</h3>
-
-@code {
-    
-}
+﻿<div class="pte_plain-text-editor-footer">
+    <div class="pte_plain-text-editor-footer-entry">.@PlainTextEditor.FileHandle.AbsoluteFilePath.ExtensionNoPeriod</div>
+    <div class="pte_plain-text-editor-footer-entry">Length:&nbsp;@PlainTextEditor.FileHandle.VirtualExclusiveEndOfFileCharacterIndex</div>
+    <div class="pte_plain-text-editor-footer-entry">Lines:&nbsp;@PlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow.Length</div>
+    <div class="pte_plain-text-editor-footer-entry">
+        Ln:&nbsp;@(PlainTextEditor.CurrentRowIndex + PlainTextEditor.RowIndexOffset + 1)
+        &nbsp;
+        Col:&nbsp;TODO
+        &nbsp;
+        Pos:&nbsp;TODO
+    </div>
+    <div class="pte_plain-text-editor-footer-entry">(@GetIsCarriageReturnNewLine)</div>
+    <div class="pte_plain-text-editor-footer-entry">@PlainTextEditor.FileHandle.Encoding.EncodingName</div>
+</div>

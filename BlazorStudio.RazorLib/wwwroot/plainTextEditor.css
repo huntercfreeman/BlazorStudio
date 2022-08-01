@@ -114,3 +114,27 @@
 .pte_focused .pte_plain-text-editor-row-display.pte_active .pte_plain-text-editor-line-number-display {
     color: var(--pte_active-line-number-font-color);
 }
+
+.pte_plain-text-editor-footer {
+    display: flex;
+    height: 2em;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 2px;
+    border-top: 1.5px solid var(--bstudio_primary-border-color);
+    font-size: 16px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.pte_plain-text-editor-footer-entry {
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    min-width: 3ch;
+}
+
+    .pte_plain-text-editor-footer-entry:not(:last-child) {
+        border-right: 1.5px solid var(--bstudio_primary-border-color);
+        padding-right: 2px;
+    }

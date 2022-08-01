@@ -60,7 +60,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.CharacterHeight,
-                Value = -2.5
+                Value = -2
             },
         }
     };

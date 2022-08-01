@@ -21,6 +21,7 @@ public interface IPlainTextEditor
     public int RowIndexOffset { get; }
     public int CharacterIndexOffsetRelativeToRow { get; }
     public bool IsReadonly { get; }
+    public bool UseCarriageReturnNewLine { get; }
 
     public string GetPlainText();
 }
