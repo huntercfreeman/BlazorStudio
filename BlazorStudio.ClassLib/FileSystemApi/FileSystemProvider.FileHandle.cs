@@ -10,6 +10,9 @@ public partial class FileSystemProvider : IFileSystemProvider
     private class FileHandle : IFileHandle
     {
         private readonly Action<FileHandle> _onDisposeAction;
+
+        private readonly SemaphoreSlim _readSemaphoreSlim = new(1, 1);
+
         /// <summary>
         /// Index using the Row index and this returns the
         /// starting position of that row within the text file.
@@ -66,6 +69,10 @@ public partial class FileSystemProvider : IFileSystemProvider
 
         public void Initialize()
         {
+#if RELEASE
+            return;
+#endif
+
             if (AbsoluteFilePath.IsDirectory)
                 throw new ApplicationException($"{nameof(FileHandle)} does not support directories.");
             
@@ -171,6 +178,10 @@ public partial class FileSystemProvider : IFileSystemProvider
         {
             var rows = new List<string>();
 
+#if RELEASE
+            return Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
+#endif
+
             if (_memoryMappedFile is not null)
             {
                 var availableRowCount = Math.Max(
@@ -244,12 +255,29 @@ public partial class FileSystemProvider : IFileSystemProvider
                 rows.Add(string.Empty);
             }
 
+            // TODO: Add the displacement to the Virtual values
+            VirtualCharacterLengthOfLongestRow = PhysicalCharacterLengthOfLongestRow;
+
             return Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
         }
         
-        public Task<List<string>> ReadAsync(FileHandleReadRequest readRequest)
+        public async Task<List<string>?> ReadAsync(FileHandleReadRequest readRequest)
         {
-            return Task.FromResult(Read(readRequest));
+            try
+            {
+                await _readSemaphoreSlim.WaitAsync();
+
+                if (readRequest.CancellationToken.IsCancellationRequested)
+                {
+                    return null;
+                }
+
+                return Read(readRequest);
+            }
+            finally
+            {
+                _readSemaphoreSlim.Release();
+            }
         }
         
         public void Dispose()

@@ -33,7 +33,8 @@ public partial record PlainTextEditorStates
             {
                 // Remove newline character
 
-                if (!keyDownEventRecord.IsForced)
+                // TODO: 'focusedPlainTextEditorRecord.CurrentRowIndex != 0' seems incorrect but I am uncertain. It was added due to indexing into an array at -1
+                if (!keyDownEventRecord.IsForced && focusedPlainTextEditorRecord.CurrentRowIndex != 0)
                 {
                     var previousRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex - 1;
                     var previousRow = focusedPlainTextEditorRecord.List[previousRowIndex];
@@ -57,7 +58,8 @@ public partial record PlainTextEditorStates
             {
                 // Remove non word token (perhaps whitespace)
 
-                if (!keyDownEventRecord.IsForced)
+                // TODO: 'focusedPlainTextEditorRecord.CurrentRowIndex != 0' seems incorrect but I am uncertain. It was added due to indexing into an array at -1
+                if (!keyDownEventRecord.IsForced && focusedPlainTextEditorRecord.CurrentRowIndex != 0)
                 {
                     if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.StartOfRow)
                     {

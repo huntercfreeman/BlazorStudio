@@ -60,8 +60,8 @@ public interface IFileHandle : IDisposable
     /// <param name="rowCount">The amount of rows to read.</param>
     /// <param name="characterCount">The amount of characters to read</param>
     /// <param name="cancellationToken">Relays the cancellation of the asynchronous call</param>
-    /// <returns>The content read from the file</returns>
-    public Task<List<string>> ReadAsync(FileHandleReadRequest readRequest);
+    /// <returns>The content read from the file or null if the request was cancelled</returns>
+    public Task<List<string>?> ReadAsync(FileHandleReadRequest readRequest);
     
     /// <summary>
     /// Write out any changes pending in memory to the FileSystem

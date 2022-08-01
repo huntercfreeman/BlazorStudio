@@ -211,8 +211,13 @@ public partial class TreeViewDisplay<T>
     /// If the active tree view entry goes out of viewport then scroll manually
     /// </summary>
     /// <param name="keyboardEventArgs"></param>
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
+#if RELEASE
+        // Blazor WebAssembly is single threaded currently
+        await Task.Delay(1);
+#endif
+
         if (_previousFocusState == false)
             return;
 

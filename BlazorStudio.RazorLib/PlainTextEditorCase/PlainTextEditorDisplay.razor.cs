@@ -56,7 +56,12 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
                 Value = 100
-            }
+            },
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.CharacterHeight,
+                Value = -2
+            },
         }
     };
 
