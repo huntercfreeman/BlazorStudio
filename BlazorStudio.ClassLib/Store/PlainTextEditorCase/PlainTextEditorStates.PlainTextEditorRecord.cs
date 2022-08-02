@@ -16,6 +16,7 @@ public partial record PlainTextEditorStates
             ImmutableList<IPlainTextEditorRow> List,
             int CurrentRowIndex,
             int CurrentTokenIndex,
+            int CurrentColumnIndex,
             IFileHandle? FileHandle,
             RichTextEditorOptions RichTextEditorOptions,
             bool IsReadonly = true,
@@ -27,6 +28,7 @@ public partial record PlainTextEditorStates
             ImmutableList<IPlainTextEditorRow>.Empty,
             CurrentRowIndex: 0,
             CurrentTokenIndex: 0,
+            CurrentColumnIndex: 0,
             null,
             new RichTextEditorOptions())
         {
