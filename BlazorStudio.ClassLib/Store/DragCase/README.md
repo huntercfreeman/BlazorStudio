@@ -1,2 +1,2 @@
-﻿# BlazorStudio.ClassLib/Store/DropdownCase
-This directory contains all non UI C# classes necessary for the [DropdownDisplay.razor](/BlazorStudio.RazorLib/Dropdown/DropdownDisplay.razor) component.
+﻿# BlazorStudio.ClassLib/Store/DragCase
+This directory contains all non UI C# classes necessary for the [DragDisplay.razor](/BlazorStudio.RazorLib/Drag/DragDisplay.razor) component.
