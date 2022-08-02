@@ -4,8 +4,8 @@
 
         <div>
             Font Size: @(localPlainTextEditor.RichTextEditorOptions.FontSizeInPixels)px
-        
-            <input type="number" @onchange="FontSizeOnChanged" value="@localPlainTextEditor.RichTextEditorOptions.FontSizeInPixels" />
+
+            <input type="number" @bind="FontSize" @bind:event="oninput" />
         </div>
         <div>
             Use the <em>F1</em> key to scroll the caret row into view if it is offscreen.

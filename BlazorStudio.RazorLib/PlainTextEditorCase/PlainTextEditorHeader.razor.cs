@@ -11,11 +11,23 @@ public partial class PlainTextEditorHeader : ComponentBase
 
     [Parameter]
     public IPlainTextEditor PlainTextEditor { get; set; } = null!;
+    
+    private int _fontSize;
 
-    private void FontSizeOnChanged(ChangeEventArgs changeEventArgs)
+    private int FontSize
     {
-        int fontSize = int.Parse(changeEventArgs.Value?.ToString() ?? string.Empty);
+        get => _fontSize;
+        set
+        {
+            _fontSize = value;
+            Dispatcher.Dispatch(new PlainTextEditorSetFontSizeAction(PlainTextEditor.PlainTextEditorKey, _fontSize));
+        }
+    }
 
-        Dispatcher.Dispatch(new PlainTextEditorSetFontSizeAction(PlainTextEditor.PlainTextEditorKey, fontSize));
+    protected override void OnParametersSet()
+    {
+        _fontSize = PlainTextEditor.RichTextEditorOptions.FontSizeInPixels;
+
+        base.OnParametersSet();
     }
 }
