@@ -1,0 +1,2 @@
+﻿# BlazorStudio.RazorLib/PlainTextEditorCase
+This folder contains Blazor components that relate to [PlainTextEditorStates.Main.cs](/BlazorStudio.ClassLib/Store/PlainTextEditorCase/PlainTextEditorStates.Main.cs).
