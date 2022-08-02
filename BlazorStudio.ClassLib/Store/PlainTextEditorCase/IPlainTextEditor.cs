@@ -151,6 +151,11 @@ public interface IPlainTextEditor
     /// In the previous example the <see cref="RowIndexOffset"/> would be 99
     /// </summary>
     public int CharacterColumnIndexOffset { get; }
+    /// <summary>
+    /// The selected text perhaps the user hit the keys { 'Shift' + 'ArrowRight' }
+    /// and selected some text.
+    /// </summary>
+    public SelectionSpan? SelectionSpan { get; set; }
 
     /// <summary>
     /// The PlainTextEditor is a semantic representation of the file that was read in.
