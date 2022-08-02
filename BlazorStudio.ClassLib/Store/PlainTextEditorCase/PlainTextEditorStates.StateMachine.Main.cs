@@ -227,7 +227,9 @@ public partial record PlainTextEditorStates
                             : "\n",
                         cancellationToken);
 
-                focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow.Add(-1);
+                focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
+                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex + 1,
+                        focusedPlainTextEditorRecord.CurrentCharacterColumnIndex);
             }
 
             var replacementCurrentToken = focusedPlainTextEditorRecord
@@ -271,10 +273,6 @@ public partial record PlainTextEditorStates
                         replacementRow,
                         constructedRow
                     });
-
-            focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
-                .Insert(focusedPlainTextEditorRecord.CurrentRowIndex + 1, 
-                    focusedPlainTextEditorRecord.CurrentCharacterColumnIndex);
 
             return focusedPlainTextEditorRecord with
             {
