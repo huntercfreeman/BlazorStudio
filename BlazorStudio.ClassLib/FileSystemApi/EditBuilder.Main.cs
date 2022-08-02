@@ -8,14 +8,14 @@ namespace BlazorStudio.ClassLib.FileSystemApi;
 public partial class EditBuilder
 {
     private readonly SemaphoreSlim _editsSemaphoreSlim = new(1, 1);
-    private readonly List<EditWrapper> _edits = new();
+    private readonly List<EditWrapper> _editWrappers = new();
 
     private EditBuilder()
     {
     }
 
-    public int Count => _edits.Count;
-    public bool Any => _edits.Any();
+    public int Count => _editWrappers.Count;
+    public bool Any => _editWrappers.Any();
 
     /// <summary>
     /// Make an edit that will be seen when reading from the same FileHandle. However,
@@ -30,102 +30,106 @@ public partial class EditBuilder
     public async Task<EditBuilder> InsertAsync(int rowIndexOffset, int characterIndexOffset, string contentToInsert,
         CancellationToken cancellationToken)
     {
-        await LockEditAsync(
-            new EditWrapper((readRequest, editResult, cancellationToken) =>
-                {
-                    var editIsPartOfRequest = false;
+        var edits = new List<Func<FileHandleReadRequest, EditResult, CancellationToken, Task>>();
 
-                    // This edit was done in the boundary of the request
-                    if (rowIndexOffset >= readRequest.RowIndexOffset &&
-                        rowIndexOffset < readRequest.RowIndexOffset + readRequest.RowCount)
+        edits.Add(async (readRequest, editResult, cancellationToken) =>
+        {
+            var editIsPartOfRequest = false;
+
+            // This edit was done in the boundary of the request
+            if (rowIndexOffset >= readRequest.RowIndexOffset &&
+                rowIndexOffset < readRequest.RowIndexOffset + readRequest.RowCount)
+            {
+                editIsPartOfRequest = true;
+            }
+
+            var builder = new StringBuilder();
+            var characterIndexForInsertion = characterIndexOffset - readRequest.CharacterIndexOffset;
+            var rowIndexForInsertion = rowIndexOffset - readRequest.RowIndexOffset;
+
+            var previousCharacterWasCarriageReturn = false;
+
+            for (int i = 0; i < contentToInsert.Length; i++)
+            {
+                var character = contentToInsert[i];
+
+                if (character == '\r')
+                {
+                    previousCharacterWasCarriageReturn = true;
+                    continue;
+                }
+
+                if (character == '\n')
+                {
+                    if (previousCharacterWasCarriageReturn)
                     {
-                        editIsPartOfRequest = true;
+                        builder.Append('\r');
                     }
 
-                    var builder = new StringBuilder();
-                    var characterIndexForInsertion = characterIndexOffset - readRequest.CharacterIndexOffset;
-                    var rowIndexForInsertion = rowIndexOffset - readRequest.RowIndexOffset;
+                    builder.Append(character);
 
-                    var previousCharacterWasCarriageReturn = false;
+                    editResult.DisplacementTimeline.Add(new RowDisplacementValue(rowIndexForInsertion, 1));
+                    editResult.AccumulatedRowDisplacement += 1;
 
-                    for (int i = 0; i < contentToInsert.Length; i++)
+                    if (editIsPartOfRequest)
                     {
-                        var character = contentToInsert[i];
+                        var builtString = builder.ToString();
 
-                        if (character == '\r')
+                        if (characterIndexForInsertion == 0)
                         {
-                            previousCharacterWasCarriageReturn = true;
-                            continue;
-                        }
-
-                        if (character == '\n')
-                        {
-                            if (previousCharacterWasCarriageReturn)
-                            {
-                                builder.Append('\r');
-                            }
-
-                            builder.Append(character);
-
-                            editResult.DisplacementTimeline.Add(new RowDisplacementValue(rowIndexForInsertion, 1));
-                            editResult.AccumulatedRowDisplacement += 1;
-
-                            if (editIsPartOfRequest)
-                            {
-                                var builtString = builder.ToString();
-
-                                if (characterIndexForInsertion == 0)
-                                {
-                                    editResult.ContentRows.Insert(rowIndexForInsertion++, builtString);
-                                }
-                                else
-                                {
-                                    // Substring the row text at character index for insertion
-
-                                    var rowText = editResult.ContentRows[rowIndexForInsertion];
-
-                                    var splitFirst = rowText.Substring(0, characterIndexForInsertion)
-                                                     + builder.ToString();
-
-                                    var splitSecond = rowText.Substring(characterIndexForInsertion);
-
-                                    editResult.ContentRows[rowIndexForInsertion] = splitFirst;
-                                    editResult.ContentRows.Insert(rowIndexForInsertion + 1, splitSecond);
-                                }
-                            }
-
-                            for (var index = 0;
-                                 index < editResult.VirtualCharacterIndexMarkerForStartOfARow.Count;
-                                 index++)
-                            {
-                                var rowStartMarker = editResult.VirtualCharacterIndexMarkerForStartOfARow[index];
-
-                                editResult.VirtualCharacterIndexMarkerForStartOfARow[index] = rowStartMarker + 1;
-                            }
-
-                            builder.Clear();
-                            characterIndexForInsertion = 0;
+                            editResult.ContentRows.Insert(rowIndexForInsertion++, builtString);
                         }
                         else
                         {
-                            builder.Append(character);
-                        }
+                            // Substring the row text at character index for insertion
 
-                        previousCharacterWasCarriageReturn = false;
+                            var rowText = editResult.ContentRows[rowIndexForInsertion];
+
+                            var splitFirst = rowText.Substring(0, characterIndexForInsertion)
+                                             + builder.ToString();
+
+                            var splitSecond = rowText.Substring(characterIndexForInsertion);
+
+                            editResult.ContentRows[rowIndexForInsertion] = splitFirst;
+                            editResult.ContentRows.Insert(rowIndexForInsertion + 1, splitSecond);
+                        }
                     }
 
-                    if (builder.Length > 0)
+                    for (var index = 0;
+                         index < editResult.VirtualCharacterIndexMarkerForStartOfARow.Count;
+                         index++)
                     {
-                        if (editIsPartOfRequest)
-                        {
-                            // Immutable string replacement
-                            editResult.ContentRows[rowIndexForInsertion] = editResult.ContentRows[rowIndexForInsertion]
-                                .Insert(characterIndexForInsertion,
-                                    builder.ToString());
-                        }
+                        var rowStartMarker = editResult.VirtualCharacterIndexMarkerForStartOfARow[index];
+
+                        editResult.VirtualCharacterIndexMarkerForStartOfARow[index] = rowStartMarker + 1;
                     }
-                }),
-            cancellationToken);
+
+                    builder.Clear();
+                    characterIndexForInsertion = 0;
+                }
+                else
+                {
+                    builder.Append(character);
+                }
+
+                previousCharacterWasCarriageReturn = false;
+            }
+
+            if (builder.Length > 0)
+            {
+                if (editIsPartOfRequest)
+                {
+                    // Immutable string replacement
+                    editResult.ContentRows[rowIndexForInsertion] = editResult.ContentRows[rowIndexForInsertion]
+                        .Insert(characterIndexForInsertion,
+                            builder.ToString());
+                }
+            }
+        });
+
+        var editWrapper = new EditWrapper(edits);
+
+        await LockEditAsync(editWrapper, cancellationToken);
 
         return this;
     }
@@ -133,110 +137,110 @@ public partial class EditBuilder
     public async Task<EditBuilder> RemoveAsync(int rowIndexOffset, int characterIndexOffset, int? rowCount = null,
         int? characterCount = null, CancellationToken cancellationToken = default)
     {
-        await LockEditAsync(
-            new EditWrapper((readRequest, editResult, cancellationToken) =>
+        var edits = new List<Func<FileHandleReadRequest, EditResult, CancellationToken, Task>>();
+
+        edits.Add(async (readRequest, editResult, cancellationToken) =>
+        {
+            var editIsPartOfRequest = false;
+
+            // This edit was done in the boundary of the request
+            if (rowIndexOffset >= readRequest.RowIndexOffset &&
+                rowIndexOffset < readRequest.RowIndexOffset + readRequest.RowCount)
+            {
+                editIsPartOfRequest = true;
+            }
+
+            int lastIndex;
+
+            if (rowCount is not null)
+            {
+                lastIndex = rowIndexOffset + rowCount.Value - 1;
+
+                lastIndex = lastIndex > editResult.ContentRows.Count - 1
+                    ? editResult.ContentRows.Count - 1
+                    : lastIndex;
+            }
+            else
+            {
+                lastIndex = rowIndexOffset;
+
+                lastIndex = lastIndex > editResult.ContentRows.Count - 1
+                    ? editResult.ContentRows.Count - 1
+                    : lastIndex;
+            }
+
+            for (int i = lastIndex; i >= rowIndexOffset; i--)
+            {
+                var row = editResult.ContentRows[i];
+
+                if (characterIndexOffset == 0 && (characterCount is null || characterCount >= row.Length))
                 {
-                    var editIsPartOfRequest = false;
+                    editResult.DisplacementTimeline.Add(new RowDisplacementValue(i, -1));
+                    editResult.AccumulatedRowDisplacement -= 1;
 
-                    // This edit was done in the boundary of the request
-                    if (rowIndexOffset >= readRequest.RowIndexOffset &&
-                        rowIndexOffset < readRequest.RowIndexOffset + readRequest.RowCount)
-                    {
-                        editIsPartOfRequest = true;
-                    }
-
-                    int lastIndex;
-
-                    if (rowCount is not null)
-                    {
-                        lastIndex = rowIndexOffset + rowCount.Value - 1;
-
-                        lastIndex = lastIndex > editResult.ContentRows.Count - 1
-                            ? editResult.ContentRows.Count - 1
-                            : lastIndex;
-                    }
-                    else
-                    {
-                        lastIndex = rowIndexOffset;
-
-                        lastIndex = lastIndex > editResult.ContentRows.Count - 1
-                            ? editResult.ContentRows.Count - 1
-                            : lastIndex;
-                    }
-
-                    for (int i = lastIndex; i >= rowIndexOffset; i--)
-                    {
-                        var row = editResult.ContentRows[i];
-
-                        if (characterIndexOffset == 0 && (characterCount is null || characterCount >= row.Length))
-                        {
-                            editResult.DisplacementTimeline.Add(new RowDisplacementValue(i, -1));
-                            editResult.AccumulatedRowDisplacement -= 1;
-
-                            if (editIsPartOfRequest)
-                                editResult.ContentRows.RemoveAt(i);
-                        }
-                        else if (characterIndexOffset <= row.Length)
-                        {
-                            var removeCount = characterCount ?? row.Length - characterIndexOffset;
-                            var availableRemoveCount = row.Length - characterIndexOffset;
-
-                            removeCount = removeCount > availableRemoveCount
-                                ? availableRemoveCount
-                                : removeCount;
-
-                            editResult.ContentRows[i] = row.Remove(characterIndexOffset, removeCount);
-
-                            if (!editResult.ContentRows[i].EndsWith('\n') && (i < editResult.ContentRows.Count - 1))
-                            {
-                                editResult.ContentRows[i] += editResult.ContentRows[i + 1];
-
-                                editResult.DisplacementTimeline.Add(new RowDisplacementValue(i, -1));
-                                editResult.AccumulatedRowDisplacement -= 1;
-
-                                if (editIsPartOfRequest)
-                                    editResult.ContentRows.RemoveAt(i + 1);
-                            }
-                        }
-                    }
-                },
-                async (editResult, cancellationToken) =>
+                    if (editIsPartOfRequest)
+                        editResult.ContentRows.RemoveAt(i);
+                }
+                else if (characterIndexOffset <= row.Length)
                 {
-                    throw new NotImplementedException();
-                }),
-            cancellationToken);
+                    var removeCount = characterCount ?? row.Length - characterIndexOffset;
+                    var availableRemoveCount = row.Length - characterIndexOffset;
+
+                    removeCount = removeCount > availableRemoveCount
+                        ? availableRemoveCount
+                        : removeCount;
+
+                    editResult.ContentRows[i] = row.Remove(characterIndexOffset, removeCount);
+
+                    if (!editResult.ContentRows[i].EndsWith('\n') && (i < editResult.ContentRows.Count - 1))
+                    {
+                        editResult.ContentRows[i] += editResult.ContentRows[i + 1];
+
+                        editResult.DisplacementTimeline.Add(new RowDisplacementValue(i, -1));
+                        editResult.AccumulatedRowDisplacement -= 1;
+
+                        if (editIsPartOfRequest)
+                            editResult.ContentRows.RemoveAt(i + 1);
+                    }
+                }
+            }
+        });
+
+        var editWrapper = new EditWrapper(edits);
+
+        await LockEditAsync(editWrapper, cancellationToken);
 
         return this;
     }
 
     public async Task<EditBuilder> UndoAsync(CancellationToken cancellationToken)
     {
-        await LockEditAsync(
-            new EditWrapper((readRequest, editResult, cancellationToken) =>
-                {
-                    throw new NotImplementedException();
-                },
-                async (editResult, cancellationToken) =>
-                {
-                    throw new NotImplementedException();
-                }),
-            cancellationToken);
+        var edits = new List<Func<FileHandleReadRequest, EditResult, CancellationToken, Task>>();
+
+        edits.Add(async (readRequest, editResult, cancellationToken) =>
+        {
+            throw new NotImplementedException();
+        });
+
+        var editWrapper = new EditWrapper(edits);
+
+        await LockEditAsync(editWrapper, cancellationToken);
 
         return this;
     }
 
     public async Task<EditBuilder> RedoAsync(CancellationToken cancellationToken)
     {
-        await LockEditAsync(
-            new EditWrapper((readRequest, editResult, cancellationToken) =>
-                {
-                    throw new NotImplementedException();
-                },
-                async (editResult, cancellationToken) =>
-                {
-                    throw new NotImplementedException();
-                }),
-            cancellationToken);
+        var edits = new List<Func<FileHandleReadRequest, EditResult, CancellationToken, Task>>();
+
+        edits.Add(async (readRequest, editResult, cancellationToken) =>
+        {
+            throw new NotImplementedException();
+        });
+
+        var editWrapper = new EditWrapper(edits);
+
+        await LockEditAsync(editWrapper, cancellationToken);
 
         return this;
     }
@@ -247,7 +251,7 @@ public partial class EditBuilder
         {
             await _editsSemaphoreSlim.WaitAsync(cancellationToken);
 
-            _edits.Clear();
+            _editWrappers.Clear();
         }
         finally
         {
@@ -255,7 +259,7 @@ public partial class EditBuilder
         }
     }
     
-    public async Task<List<string>> ApplyEditsAsync(FileHandleReadRequest readRequest,
+    public async Task<EditResult> ApplyEditsAsync(FileHandleReadRequest readRequest,
         List<string> rows,
         List<long> virtualCharacterIndexMarkerForStartOfARow, CancellationToken cancellationToken = default)
     {
@@ -270,9 +274,12 @@ public partial class EditBuilder
                 new(),
                 0);
 
-            foreach (var edit in _edits)
+            foreach (var editWrapper in _editWrappers)
             {
-                edit.Edits(readRequest, editResult, default);
+                foreach (var editAction in editWrapper.EditsAsync)
+                {
+                    await editAction(readRequest, editResult, default);
+                }
             }
         }
         finally
@@ -289,7 +296,7 @@ public partial class EditBuilder
         {
             await _editsSemaphoreSlim.WaitAsync(cancellationToken);
 
-            _edits.Add(editWrapper);
+            _editWrappers.Add(editWrapper);
         }
         finally
         {
