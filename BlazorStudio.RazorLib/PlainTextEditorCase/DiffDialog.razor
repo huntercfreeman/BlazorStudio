@@ -3,18 +3,16 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_diff-dialog">
-    <div>Currently not implemented and temporarily using this component for debugging dump</div>
-    
-    <hr />
+    <div>Currently DiffDialog.razor not implemented. Using this for debugging dump temporarily</div>
     
     @{
         var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
+
         if (currentPlainTextEditor is not null)
         {
-            <PlainTextEditorDebuggingInformation PlainTextEditor="currentPlainTextEditor" />
-
             <PlainTextEditorFooter PlainTextEditor="currentPlainTextEditor" />
+            <PlainTextEditorDebuggingInformation PlainTextEditor="currentPlainTextEditor" />
         }
     }
 </div>
