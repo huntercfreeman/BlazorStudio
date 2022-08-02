@@ -13,7 +13,7 @@ public partial record PlainTextEditorStates
 {
     private record PlainTextEditorRecord(PlainTextEditorKey PlainTextEditorKey,
             SequenceKey SequenceKey,
-            ImmutableList<IPlainTextEditorRow> List,
+            ImmutableList<IPlainTextEditorRow> Rows,
             int CurrentRowIndex,
             int CurrentTokenIndex,
             int CurrentColumnIndex,
@@ -32,18 +32,22 @@ public partial record PlainTextEditorStates
             null,
             new RichTextEditorOptions())
         {
-            List = List.Add(GetEmptyPlainTextEditorRow());
+            Rows = Rows.Add(GetEmptyPlainTextEditorRow());
         }
 
-        public IPlainTextEditorRow CurrentPlainTextEditorRow => List[CurrentRowIndex];
+        public IPlainTextEditorRow CurrentPlainTextEditorRow => Rows[CurrentRowIndex];
 
-        public TextTokenKey CurrentTextTokenKey => CurrentPlainTextEditorRow.List[CurrentTokenIndex].Key;
-        public ITextToken CurrentTextToken => CurrentPlainTextEditorRow.List[CurrentTokenIndex];
+        public TextTokenKey CurrentTextTokenKey => CurrentPlainTextEditorRow.Tokens[CurrentTokenIndex].Key;
+        public ITextToken CurrentTextToken => CurrentPlainTextEditorRow.Tokens[CurrentTokenIndex];
         public int LongestRowCharacterLength { get; init; }
         public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get; init; }
         public FileHandleReadRequest FileHandleReadRequest { get; init; }
         public int RowIndexOffset { get; init; }
         public int CharacterIndexOffsetRelativeToRow { get; init; }
+        public int CurrentCharacterColumnIndex { get; init; }
+        public int CurrentPositionIndex { get; init; }
+        public int PreviouslySetCharacterColumnIndex { get; init; }
+        public int CharacterColumnIndexOffset { get; init; }
 
         public T GetCurrentTextTokenAs<T>()
             where T : class
@@ -76,11 +80,11 @@ public partial record PlainTextEditorStates
         {
             var builder = new StringBuilder();
 
-            foreach (var row in List)
+            foreach (var row in Rows)
             {
-                foreach (var token in row.List)
+                foreach (var token in row.Tokens)
                 {
-                    if (token.Key == List[0].List[0].Key)
+                    if (token.Key == Rows[0].Tokens[0].Key)
                     {
                         // Is first start of row so skip
                         // as it would insert a enter key stroke at start

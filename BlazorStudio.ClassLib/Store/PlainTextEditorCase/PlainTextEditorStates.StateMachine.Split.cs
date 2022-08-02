@@ -82,9 +82,9 @@ public partial record PlainTextEditorStates
 
             var toBeChangedRow = focusedPlainTextEditorRecord
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
-                    focusedPlainTextEditorRecord.List[toBeChangedRowIndex]);
+                    focusedPlainTextEditorRecord.Rows[toBeChangedRowIndex]);
 
-            var toBeRemovedToken = toBeChangedRow.List[toBeRemovedTokenIndex];
+            var toBeRemovedToken = toBeChangedRow.Tokens[toBeRemovedTokenIndex];
 
             var nextRow = toBeChangedRow;
 
@@ -92,7 +92,7 @@ public partial record PlainTextEditorStates
 
             nextRow = nextRow with
             {
-                List = nextRow.List
+                Tokens = nextRow.Tokens
                     .Remove(toBeRemovedToken)
                     .Insert(rememberTokenIndex + insertionOffset++, tokenFirst),
                 SequenceKey = SequenceKey.NewSequenceKey()
@@ -102,7 +102,7 @@ public partial record PlainTextEditorStates
             {
                 nextRow = nextRow with
                 {
-                    List = nextRow.List
+                    Tokens = nextRow.Tokens
                         .Insert(rememberTokenIndex + insertionOffset++, tokenToInsertBetweenSplit),
                     SequenceKey = SequenceKey.NewSequenceKey()
                 };
@@ -110,17 +110,17 @@ public partial record PlainTextEditorStates
 
             nextRow = nextRow with
             {
-                List = nextRow.List
+                Tokens = nextRow.Tokens
                     .Insert(rememberTokenIndex + insertionOffset++, tokenSecond),
                 SequenceKey = SequenceKey.NewSequenceKey()
             };
 
-            var nextRowList = focusedPlainTextEditorRecord.List.Replace(toBeChangedRow,
+            var nextRowList = focusedPlainTextEditorRecord.Rows.Replace(toBeChangedRow,
                 nextRow);
 
             return focusedPlainTextEditorRecord with
             {
-                List = nextRowList,
+                Rows = nextRowList,
                 CurrentTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex +
                     (tokenToInsertBetweenSplit is not null ? 2 : 1)
             };
@@ -170,13 +170,13 @@ public partial record PlainTextEditorStates
 
             var toBeChangedRow = focusedPlainTextEditorRecord
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
-                    focusedPlainTextEditorRecord.List[toBeChangedRowIndex]);
+                    focusedPlainTextEditorRecord.Rows[toBeChangedRowIndex]);
             
-            var toBeRemovedToken = toBeChangedRow.List[toBeRemovedTokenIndex];
+            var toBeRemovedToken = toBeChangedRow.Tokens[toBeRemovedTokenIndex];
 
             var nextRow = toBeChangedRow with
             {
-                List = toBeChangedRow.List.Remove(toBeRemovedToken),
+                Tokens = toBeChangedRow.Tokens.Remove(toBeRemovedToken),
                 SequenceKey = SequenceKey.NewSequenceKey()
             };
 
@@ -207,7 +207,7 @@ public partial record PlainTextEditorStates
 
                 nextRow = nextRow with
                 {
-                    List = nextRow.List.Insert(toBeRemovedTokenIndex + i, spaceWhiteSpaceToken),
+                    Tokens = nextRow.Tokens.Insert(toBeRemovedTokenIndex + i, spaceWhiteSpaceToken),
                     SequenceKey = SequenceKey.NewSequenceKey()
                 };
             }
@@ -216,19 +216,19 @@ public partial record PlainTextEditorStates
             {
                 nextRow = nextRow with
                 {
-                    List = nextRow.List
+                    Tokens = nextRow.Tokens
                         .Insert(toBeRemovedTokenIndex + toBeRemovedTokenIndexInPlainText!.Value + 1,
                             tokenToInsertBetweenSplit),
                     SequenceKey = SequenceKey.NewSequenceKey()
                 };
             }
 
-            var nextRowList = focusedPlainTextEditorRecord.List
+            var nextRowList = focusedPlainTextEditorRecord.Rows
                 .Replace(toBeChangedRow, nextRow);
 
             return focusedPlainTextEditorRecord with
             {
-                List = nextRowList,
+                Rows = nextRowList,
                 CurrentTokenIndex = toBeRemovedTokenIndex + toBeRemovedTokenIndexInPlainText!.Value + 
                                     (tokenToInsertBetweenSplit is not null ? 1 : 0)
             };

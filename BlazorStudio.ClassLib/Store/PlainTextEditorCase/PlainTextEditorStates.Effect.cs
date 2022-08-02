@@ -106,7 +106,7 @@ public partial record PlainTextEditorStates
                 {
                     SequenceKey = SequenceKey.NewSequenceKey(),
                     FileHandleReadRequest = readRequest,
-                    List = new IPlainTextEditorRow[]
+                    Rows = new IPlainTextEditorRow[]
                     {
                         plainTextEditor.GetEmptyPlainTextEditorRow()
                     }.ToImmutableList(),
@@ -224,7 +224,7 @@ public partial record PlainTextEditorStates
                 var totalHeight = heightOfEachRowInPixels *
                                   replacementPlainTextEditor.FileHandle.VirtualRowCount;
 
-                var items = replacementPlainTextEditor.List
+                var items = replacementPlainTextEditor.Rows
                     .Select((row, index) => (index, row));
 
                 var result = new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
@@ -309,7 +309,7 @@ public partial record PlainTextEditorStates
                 var previousResult = (VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>)
                     replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult;
 
-                var items = replacementPlainTextEditor.List
+                var items = replacementPlainTextEditor.Rows
                     .Select((row, index) => (index, row))
                     .ToList();
 
@@ -369,7 +369,7 @@ public partial record PlainTextEditorStates
                 var previousResult = (VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>)
                     replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult;
 
-                var items = replacementPlainTextEditor.List
+                var items = replacementPlainTextEditor.Rows
                     .Select((row, index) => (index, row))
                     .ToList();
 

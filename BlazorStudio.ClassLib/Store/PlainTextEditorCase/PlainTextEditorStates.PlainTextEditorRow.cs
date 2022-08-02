@@ -8,7 +8,7 @@ public partial record PlainTextEditorStates
 {
     private record PlainTextEditorRow(PlainTextEditorRowKey Key, 
         SequenceKey SequenceKey,
-        ImmutableList<ITextToken> List)
+        ImmutableList<ITextToken> Tokens)
             : IPlainTextEditorRow
     {
         public PlainTextEditorRow(KeyDownEventRecord? keyDownEventRecord) : this(PlainTextEditorRowKey.NewPlainTextEditorRowKey(), 
@@ -20,7 +20,7 @@ public partial record PlainTextEditorStates
                 IndexInPlainText = 0
             };
 
-            List = List.Add(startOfRowToken);
+            Tokens = Tokens.Add(startOfRowToken);
         }
     }
 }
