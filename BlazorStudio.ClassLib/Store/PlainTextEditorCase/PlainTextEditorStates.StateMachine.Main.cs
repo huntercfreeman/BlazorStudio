@@ -56,6 +56,14 @@ public partial record PlainTextEditorStates
                         currentToken.PlainText.Length - 1
                 };
 
+            var startingCharacterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord);
+
+            focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+            {
+                CurrentCharacterColumnIndex = startingCharacterIndex
+                    + replacementCurrentToken.IndexInPlainText.Value
+            };
+
             return ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);
         }
 
