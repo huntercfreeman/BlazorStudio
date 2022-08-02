@@ -37,19 +37,6 @@ public interface IFileHandle : IDisposable
     public int BytesPerEncodedCharacter { get; }
     public FileHandleReadRequest MostRecentReadRequest { get; }
 
-        /// <summary>
-    /// Random access to the file to avoid reading the entire file into memory.
-    /// 
-    /// When <see cref="rowIndexOffset"/> is 0, and <see cref="characterIndexOffset"/> is 0 that is
-    /// the start of the file regardless of whether the file has a BOM preamble
-    /// </summary>
-    /// <param name="rowIndexOffset">The row index (zero based and inclusive) to start reading from</param>
-    /// <param name="characterIndexOffset">The character index (zero based and inclusive) to start reading from</param>
-    /// <param name="rowCount">The amount of rows to read.</param>
-    /// <param name="characterCount">The amount of characters to read</param>
-    /// <param name="cancellationToken">Relays the cancellation of the asynchronous call</param>
-    /// <returns>The content read from the file as a List where each entry is a separate row</returns>
-    public List<string> Read(FileHandleReadRequest readRequest);
     /// <summary>
     /// Random access to the file to avoid reading the entire file into memory.
     ///
@@ -67,16 +54,7 @@ public interface IFileHandle : IDisposable
     /// <summary>
     /// Write out any changes pending in memory to the FileSystem
     /// </summary>
-    public void Save();
-    /// <summary>
-    /// Write out any changes pending in memory to the FileSystem
-    /// </summary>
     /// <param name="cancellationToken">Relays the cancellation of the asynchronous call</param>
     /// <returns>A Task indicating status of saving the file</returns>
     public Task SaveAsync(CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Disposes of any unmanaged resources.
-    /// </summary>
-    public void Dispose();
 }

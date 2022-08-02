@@ -68,8 +68,8 @@ public partial class FileSystemProvider : IFileSystemProvider
             _onDisposeAction = onDisposeAction;
             AbsoluteFilePath = absoluteFilePath;
         }
-
-        public void Initialize()
+        
+        public async Task InitializeAsync(CancellationToken cancellationToken)
         {
 #if RELEASE
             return;
@@ -77,7 +77,7 @@ public partial class FileSystemProvider : IFileSystemProvider
 
             if (AbsoluteFilePath.IsDirectory)
                 throw new ApplicationException($"{nameof(FileHandle)} does not support directories.");
-            
+
             var path = AbsoluteFilePath.GetAbsoluteFilePathString();
 
             var characterCounter = 0;
@@ -130,7 +130,7 @@ public partial class FileSystemProvider : IFileSystemProvider
             PhysicalExclusiveEndOfFileCharacterIndex = characterCounter;
 
             var mapFilename = MapFileIdentifier;
-            
+
             try
             {
                 if (PhysicalCharacterLengthOfLongestRow != 0)
@@ -156,113 +156,13 @@ public partial class FileSystemProvider : IFileSystemProvider
                 // The file exists but is empty.
             }
         }
-        
-        public async Task InitializeAsync(CancellationToken cancellationToken)
-        {
-            // TODO: If it would be useful make an Async version but it might be fine to not have an async initializer?
-            Initialize();
-        }
 
         public FileHandleKey FileHandleKey { get; } = FileHandleKey.NewFileHandleKey();
         public IAbsoluteFilePath AbsoluteFilePath { get; }
-    
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
 
         public Task SaveAsync(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
-        }
-        
-        public List<string> Read(FileHandleReadRequest readRequest)
-        {
-            var rows = new List<string>();
-
-#if RELEASE
-            return Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
-#endif
-
-            if (_memoryMappedFile is not null)
-            {
-                var availableRowCount = Math.Max(
-                    _physicalCharacterIndexMarkerForStartOfARow.Count - readRequest.RowIndexOffset,
-                    0);
-
-                var toReadRowCount = Math.Min(readRequest.RowCount, availableRowCount);
-
-                var rowIndex = readRequest.RowIndexOffset;
-
-                var rowsRead = 0;
-                
-                for (;
-                     rowsRead < toReadRowCount;
-                     rowsRead++, rowIndex++)
-                {
-                    if (readRequest.CancellationToken.IsCancellationRequested)
-                        return rows;
-
-                    long inclusiveStartingCharacterIndex = _physicalCharacterIndexMarkerForStartOfARow[rowIndex] +
-                                                           readRequest.CharacterIndexOffset;
-
-                    var exclusiveEndingCharacterIndex =
-                        inclusiveStartingCharacterIndex + readRequest.CharacterCount;
-
-                    // Ensure within bounds of file
-                    exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > PhysicalExclusiveEndOfFileCharacterIndex
-                        ? PhysicalExclusiveEndOfFileCharacterIndex
-                        : exclusiveEndingCharacterIndex;
-
-                    // Ensure within bounds of row
-                    if (rowIndex < _physicalCharacterIndexMarkerForStartOfARow.Count - 1)
-                    {
-                        long startOfNextRowCharacterIndex = _physicalCharacterIndexMarkerForStartOfARow[rowIndex + 1];
-
-                        exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > startOfNextRowCharacterIndex
-                            ? startOfNextRowCharacterIndex
-                            : exclusiveEndingCharacterIndex;
-                    }
-
-                    exclusiveEndingCharacterIndex = Math.Min(PhysicalExclusiveEndOfFileCharacterIndex, exclusiveEndingCharacterIndex);
-
-                    long longCharacterLengthOfRequest = exclusiveEndingCharacterIndex - inclusiveStartingCharacterIndex;
-
-                    if (longCharacterLengthOfRequest <= 0)
-                    {
-                        rows.Add(string.Empty);
-                        continue;
-                    }
-
-                    if (longCharacterLengthOfRequest > Int32.MaxValue)
-                    {
-                        throw new ApplicationException($"Requested: byte[{longCharacterLengthOfRequest}]," +
-                                                       $" but the length cannot exceed: byte[{Int32.MaxValue}]");
-                    }
-
-                    int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
-                    
-                    using var stream = _memoryMappedFile
-                        .CreateViewStream(PreambleLength + inclusiveStartingCharacterIndex,
-                            intCharacterLengthOfRequest,
-                            MemoryMappedFileAccess.Read);
-
-                    using var reader = new StreamReader(stream, Encoding);
-
-                    rows.Add(reader.ReadToEnd());
-                }
-            }
-            else
-            {
-                rows.Add(string.Empty);
-            }
-
-            // TODO: Add the displacement to the Virtual values
-            VirtualCharacterLengthOfLongestRow = PhysicalCharacterLengthOfLongestRow;
-
-            var editedResult = Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
-
-            return editedResult.ContentRows;
         }
         
         public async Task<List<string>?> ReadAsync(FileHandleReadRequest readRequest)
@@ -278,7 +178,93 @@ public partial class FileSystemProvider : IFileSystemProvider
 
                 MostRecentReadRequest = readRequest;
 
-                return Read(readRequest);
+                var rows = new List<string>();
+
+#if RELEASE
+            return Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
+#endif
+
+                if (_memoryMappedFile is not null)
+                {
+                    var availableRowCount = Math.Max(
+                        _physicalCharacterIndexMarkerForStartOfARow.Count - readRequest.RowIndexOffset,
+                        0);
+
+                    var toReadRowCount = Math.Min(readRequest.RowCount, availableRowCount);
+
+                    var rowIndex = readRequest.RowIndexOffset;
+
+                    var rowsRead = 0;
+
+                    for (;
+                         rowsRead < toReadRowCount;
+                         rowsRead++, rowIndex++)
+                    {
+                        if (readRequest.CancellationToken.IsCancellationRequested)
+                            return rows;
+
+                        long inclusiveStartingCharacterIndex = _physicalCharacterIndexMarkerForStartOfARow[rowIndex] +
+                                                               readRequest.CharacterIndexOffset;
+
+                        var exclusiveEndingCharacterIndex =
+                            inclusiveStartingCharacterIndex + readRequest.CharacterCount;
+
+                        // Ensure within bounds of file
+                        exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > PhysicalExclusiveEndOfFileCharacterIndex
+                            ? PhysicalExclusiveEndOfFileCharacterIndex
+                            : exclusiveEndingCharacterIndex;
+
+                        // Ensure within bounds of row
+                        if (rowIndex < _physicalCharacterIndexMarkerForStartOfARow.Count - 1)
+                        {
+                            long startOfNextRowCharacterIndex = _physicalCharacterIndexMarkerForStartOfARow[rowIndex + 1];
+
+                            exclusiveEndingCharacterIndex = exclusiveEndingCharacterIndex > startOfNextRowCharacterIndex
+                                ? startOfNextRowCharacterIndex
+                                : exclusiveEndingCharacterIndex;
+                        }
+
+                        exclusiveEndingCharacterIndex = Math.Min(PhysicalExclusiveEndOfFileCharacterIndex, exclusiveEndingCharacterIndex);
+
+                        long longCharacterLengthOfRequest = exclusiveEndingCharacterIndex - inclusiveStartingCharacterIndex;
+
+                        if (longCharacterLengthOfRequest <= 0)
+                        {
+                            rows.Add(string.Empty);
+                            continue;
+                        }
+
+                        if (longCharacterLengthOfRequest > Int32.MaxValue)
+                        {
+                            throw new ApplicationException($"Requested: byte[{longCharacterLengthOfRequest}]," +
+                                                           $" but the length cannot exceed: byte[{Int32.MaxValue}]");
+                        }
+
+                        int intCharacterLengthOfRequest = (int)longCharacterLengthOfRequest;
+
+                        using var stream = _memoryMappedFile
+                            .CreateViewStream(PreambleLength + inclusiveStartingCharacterIndex,
+                                intCharacterLengthOfRequest,
+                                MemoryMappedFileAccess.Read);
+
+                        using var reader = new StreamReader(stream, Encoding);
+
+                        rows.Add(reader.ReadToEnd());
+                    }
+                }
+                else
+                {
+                    rows.Add(string.Empty);
+                }
+
+                // TODO: Add the displacement to the Virtual values
+                VirtualCharacterLengthOfLongestRow = PhysicalCharacterLengthOfLongestRow;
+
+                var editedResult = await Edit.ApplyEditsAsync(readRequest, 
+                    rows, 
+                    _virtualCharacterIndexMarkerForStartOfARow);
+
+                return editedResult.ContentRows;
             }
             finally
             {

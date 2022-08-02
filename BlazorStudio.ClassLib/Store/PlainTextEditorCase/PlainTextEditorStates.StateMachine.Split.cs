@@ -65,7 +65,7 @@ public partial record PlainTextEditorStates
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                 focusedPlainTextEditorRecord.FileHandle.Edit
-                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                    .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                         characterIndex,
                         tokenToInsertBetweenSplit.CopyText);
             }

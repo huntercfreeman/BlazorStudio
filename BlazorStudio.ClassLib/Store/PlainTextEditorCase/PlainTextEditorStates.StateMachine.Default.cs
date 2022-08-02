@@ -24,7 +24,7 @@ public partial record PlainTextEditorStates
                                          + previousDefaultToken.IndexInPlainText.Value;
 
                     focusedPlainTextEditorRecord.FileHandle.Edit
-                        .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                        .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                             characterIndex,
                             keyDownEventRecord.Key);
                 }
@@ -62,7 +62,7 @@ public partial record PlainTextEditorStates
                         }
 
                         focusedPlainTextEditorRecord.FileHandle.Edit
-                            .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                            .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                                 characterIndex,
                                 keyDownEventRecord.Key);
                     }
@@ -116,7 +116,7 @@ public partial record PlainTextEditorStates
                                                  + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                             focusedPlainTextEditorRecord.FileHandle.Edit
-                                .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                                .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                                     characterIndex,
                                     keyDownEventRecord.Key);
                         }

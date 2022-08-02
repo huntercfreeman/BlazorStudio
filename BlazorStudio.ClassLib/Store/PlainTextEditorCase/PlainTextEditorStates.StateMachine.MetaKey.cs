@@ -47,7 +47,7 @@ public partial record PlainTextEditorStates
                     }
 
                     focusedPlainTextEditorRecord.FileHandle.Edit
-                        .Remove(previousRowIndex,
+                        .RemoveAsync(previousRowIndex,
                             characterIndexTotal - 1,
                             characterCount: 1);
                 }
@@ -74,7 +74,7 @@ public partial record PlainTextEditorStates
                         }
 
                         focusedPlainTextEditorRecord.FileHandle.Edit
-                            .Remove(previousRowIndex,
+                            .RemoveAsync(previousRowIndex,
                                 characterIndexTotal - 1,
                                 characterCount: 1);
                     }
@@ -84,7 +84,7 @@ public partial record PlainTextEditorStates
                                              + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                         focusedPlainTextEditorRecord.FileHandle.Edit
-                            .Remove(focusedPlainTextEditorRecord.CurrentRowIndex,
+                            .RemoveAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                                 characterIndex - 1,
                                 characterCount: 1);
                     }

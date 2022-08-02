@@ -8,28 +8,6 @@ public partial class FileSystemProvider : IFileSystemProvider, IDisposable
     private readonly Dictionary<AbsoluteFilePathStringValue, IFileHandle> _fileHandles = new();
     private readonly SemaphoreSlim _fileHandlesSemaphoreSlim = new(1, 1);
 
-    public IFileHandle Open(IAbsoluteFilePath absoluteFilePath)
-    {
-        var absoluteFilePathStringValue = new AbsoluteFilePathStringValue(absoluteFilePath);
-
-        try
-        {
-            _fileHandlesSemaphoreSlim.Wait();
-
-            var fileHandle = UnsafePerformOpen(absoluteFilePath, absoluteFilePathStringValue);
-            
-            fileHandle.Initialize();
-            
-            _fileHandles.Add(absoluteFilePathStringValue, fileHandle);
-
-            return fileHandle;
-        }
-        finally
-        {
-            _fileHandlesSemaphoreSlim.Release();
-        }
-    }
-
     public async Task<IFileHandle> OpenAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken)
     {
         var absoluteFilePathStringValue = new AbsoluteFilePathStringValue(absoluteFilePath);

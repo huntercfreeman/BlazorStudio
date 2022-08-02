@@ -127,9 +127,18 @@ public partial class EditBuilder
             }
         });
 
-        var editWrapper = new EditWrapper(edits);
+        var lastEditWrapper = _editWrappers.LastOrDefault();
 
-        await LockEditAsync(editWrapper, cancellationToken);
+        if (lastEditWrapper is not null && lastEditWrapper.EditWrapperKind == EditWrapperKind.Insert)
+        {
+            await LockUpdateEditWrapperAsync(lastEditWrapper, edits, cancellationToken);
+        }
+        else
+        {
+            var editWrapper = new EditWrapper(edits, EditWrapperKind.Insert);
+
+            await LockAddEditWrapperAsync(editWrapper, cancellationToken);
+        }
 
         return this;
     }
@@ -206,43 +215,30 @@ public partial class EditBuilder
             }
         });
 
-        var editWrapper = new EditWrapper(edits);
+        var lastEditWrapper = _editWrappers.LastOrDefault();
 
-        await LockEditAsync(editWrapper, cancellationToken);
+        if (lastEditWrapper is not null && lastEditWrapper.EditWrapperKind == EditWrapperKind.Remove)
+        {
+            await LockUpdateEditWrapperAsync(lastEditWrapper, edits, cancellationToken);
+        }
+        else
+        {
+            var editWrapper = new EditWrapper(edits, EditWrapperKind.Insert);
+
+            await LockAddEditWrapperAsync(editWrapper, cancellationToken);
+        }
 
         return this;
     }
 
     public async Task<EditBuilder> UndoAsync(CancellationToken cancellationToken)
     {
-        var edits = new List<Func<FileHandleReadRequest, EditResult, CancellationToken, Task>>();
-
-        edits.Add(async (readRequest, editResult, cancellationToken) =>
-        {
-            throw new NotImplementedException();
-        });
-
-        var editWrapper = new EditWrapper(edits);
-
-        await LockEditAsync(editWrapper, cancellationToken);
-
-        return this;
+        throw new NotImplementedException();
     }
 
     public async Task<EditBuilder> RedoAsync(CancellationToken cancellationToken)
     {
-        var edits = new List<Func<FileHandleReadRequest, EditResult, CancellationToken, Task>>();
-
-        edits.Add(async (readRequest, editResult, cancellationToken) =>
-        {
-            throw new NotImplementedException();
-        });
-
-        var editWrapper = new EditWrapper(edits);
-
-        await LockEditAsync(editWrapper, cancellationToken);
-
-        return this;
+        throw new NotImplementedException();
     }
 
     public async Task ClearAsync(CancellationToken cancellationToken)
@@ -290,13 +286,29 @@ public partial class EditBuilder
         return editResult;
     }
 
-    private async Task LockEditAsync(EditWrapper editWrapper, CancellationToken cancellationToken)
+    private async Task LockAddEditWrapperAsync(EditWrapper editWrapper, CancellationToken cancellationToken)
     {
         try
         {
             await _editsSemaphoreSlim.WaitAsync(cancellationToken);
 
             _editWrappers.Add(editWrapper);
+        }
+        finally
+        {
+            _editsSemaphoreSlim.Release();
+        }
+    }
+    
+    private async Task LockUpdateEditWrapperAsync(EditWrapper editWrapper, 
+        List<Func<FileHandleReadRequest, EditResult, CancellationToken, Task>> edits, 
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _editsSemaphoreSlim.WaitAsync(cancellationToken);
+
+            editWrapper.EditsAsync.AddRange(edits);
         }
         finally
         {
