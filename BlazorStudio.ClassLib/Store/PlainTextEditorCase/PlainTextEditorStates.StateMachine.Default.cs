@@ -6,8 +6,9 @@ public partial record PlainTextEditorStates
 {
     private partial class StateMachine
     {
-        public static PlainTextEditorRecord HandleDefaultInsert(PlainTextEditorRecord focusedPlainTextEditorRecord, 
-            KeyDownEventRecord keyDownEventRecord)
+        public static async Task<PlainTextEditorRecord> HandleDefaultInsertAsync(PlainTextEditorRecord focusedPlainTextEditorRecord, 
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
         {
             if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Default)
             {
@@ -20,13 +21,15 @@ public partial record PlainTextEditorStates
 
                 if (!keyDownEventRecord.IsForced)
                 {
-                    var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                    var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                             cancellationToken)
                                          + previousDefaultToken.IndexInPlainText.Value;
 
-                    focusedPlainTextEditorRecord.FileHandle.Edit
-                        .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                    await focusedPlainTextEditorRecord.FileHandle.Edit
+                        .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                             characterIndex,
-                            keyDownEventRecord.Key);
+                            keyDownEventRecord.Key,
+                            cancellationToken);
                 }
 
                 var nextDefaultToken = previousDefaultToken with
@@ -34,12 +37,20 @@ public partial record PlainTextEditorStates
                     Content = content,
                     IndexInPlainText = previousDefaultToken.IndexInPlainText + 1
                 };
-                
-                return ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, nextDefaultToken);
+
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
+                };
+
+                return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                    nextDefaultToken,
+                    cancellationToken);
             }
             else
             {
-                var nextTokenTuple = GetNextTokenTuple(focusedPlainTextEditorRecord);
+                var nextTokenTuple = await GetNextTokenTupleAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
 
                 if (nextTokenTuple.rowIndex == focusedPlainTextEditorRecord.CurrentRowIndex &&
                     nextTokenTuple.token.Kind == TextTokenKind.Default)
@@ -48,7 +59,8 @@ public partial record PlainTextEditorStates
 
                     if (!keyDownEventRecord.IsForced)
                     {
-                        var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord);
+                        var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                            cancellationToken);
 
                         if (focusedPlainTextEditorRecord.CurrentTextToken is not WhitespaceTextToken whitespace ||
                             whitespace.WhitespaceKind != WhitespaceKind.Tab)
@@ -56,13 +68,15 @@ public partial record PlainTextEditorStates
                             characterIndex += focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
                         }
 
-                        focusedPlainTextEditorRecord.FileHandle.Edit
-                            .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                        await focusedPlainTextEditorRecord.FileHandle.Edit
+                            .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                                 characterIndex,
-                                keyDownEventRecord.Key);
+                                keyDownEventRecord.Key,
+                                cancellationToken);
                     }
 
-                    focusedPlainTextEditorRecord = SetNextTokenAsCurrent(focusedPlainTextEditorRecord);
+                    focusedPlainTextEditorRecord = await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                        cancellationToken);
                     
                     var previousDefaultToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<DefaultTextToken>();
 
@@ -74,8 +88,15 @@ public partial record PlainTextEditorStates
                         Content = content,
                         IndexInPlainText = previousDefaultToken.IndexInPlainText
                     };
-                    
-                    return ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, nextDefaultToken);
+
+                    focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                    {
+                        CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
+                    };
+
+                    return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                        nextDefaultToken,
+                        cancellationToken);
                 }
                 else
                 {
@@ -86,14 +107,15 @@ public partial record PlainTextEditorStates
                     {
                         // if (active token is not a word, but the cursor is NOT at the end of that token the token is split)
                         
-                        return SplitCurrentToken(
+                        return await SplitCurrentTokenAsync(
                             focusedPlainTextEditorRecord, 
                             new DefaultTextToken
                             {
                                 Content = keyDownEventRecord.Key,
                                 IndexInPlainText = 0
                             },
-                            keyDownEventRecord.IsForced
+                            keyDownEventRecord.IsForced,
+                            cancellationToken
                         );
                     }
                     else
@@ -102,13 +124,15 @@ public partial record PlainTextEditorStates
 
                         if (!keyDownEventRecord.IsForced)
                         {
-                            var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                            var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                                     cancellationToken)
                                                  + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
-                            focusedPlainTextEditorRecord.FileHandle.Edit
-                                .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                            await focusedPlainTextEditorRecord.FileHandle.Edit
+                                .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                                     characterIndex,
-                                    keyDownEventRecord.Key);
+                                    keyDownEventRecord.Key,
+                                    cancellationToken);
                         }
 
                         var replacementCurrentToken = focusedPlainTextEditorRecord
@@ -117,7 +141,9 @@ public partial record PlainTextEditorStates
                                 IndexInPlainText = null
                             };
 
-                        focusedPlainTextEditorRecord = ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);
+                        focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                            replacementCurrentToken,
+                            cancellationToken);
 
                         var defaultTextToken = new DefaultTextToken
                         {
@@ -125,28 +151,37 @@ public partial record PlainTextEditorStates
                             IndexInPlainText = 0
                         };
 
-                        return InsertNewCurrentTokenAfterCurrentPosition(focusedPlainTextEditorRecord,
-                            defaultTextToken);
+                        focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                        {
+                            CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
+                        };
+
+                        return await InsertNewCurrentTokenAfterCurrentPositionAsync(focusedPlainTextEditorRecord,
+                            defaultTextToken,
+                            cancellationToken);
                     }
                 }
                 
             }
         }
-        
-        public static PlainTextEditorRecord HandleDefaultBackspace(PlainTextEditorRecord focusedPlainTextEditorRecord, 
-            KeyDownEventRecord keyDownEventRecord)
+
+        public static async Task<PlainTextEditorRecord> HandleDefaultBackspaceAsync(PlainTextEditorRecord focusedPlainTextEditorRecord, 
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
         {
             var previousDefaultTextToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<DefaultTextToken>();
 
             if (!keyDownEventRecord.IsForced)
             {
-                var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                         cancellationToken)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
-                focusedPlainTextEditorRecord.FileHandle.Edit
-                    .Remove(focusedPlainTextEditorRecord.CurrentRowIndex,
+                await focusedPlainTextEditorRecord.FileHandle.Edit
+                    .RemoveAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                         characterIndex - 1,
-                        characterCount: 1);
+                        characterCount: 1,
+                        cancellationToken: cancellationToken);
             }
 
             var firstSplitContent = previousDefaultTextToken.Content
@@ -167,12 +202,16 @@ public partial record PlainTextEditorStates
                 };
 
             if (nextDefaultToken.Content.Length == 0)
-                return RemoveCurrentToken(focusedPlainTextEditorRecord);
+                return await RemoveCurrentTokenAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
 
-            focusedPlainTextEditorRecord = ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, nextDefaultToken);
+            focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                nextDefaultToken,
+                cancellationToken);
 
             if (nextDefaultToken.IndexInPlainText == -1)
-                return SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
+                return await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
 
             return focusedPlainTextEditorRecord;
         }

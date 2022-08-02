@@ -169,19 +169,22 @@ public partial record PlainTextEditorStates
                             continue;
                         }
 
-                        var keyDown = new KeyDownEventAction(replacementPlainTextEditor.PlainTextEditorKey,
-                            new KeyDownEventRecord(
+                        var keyDownRecord = new KeyDownEventRecord(
                                 character.ToString(),
                                 code,
                                 false,
                                 false,
                                 false,
                                 IsForced: true
-                            )
-                        );
+                            );
 
-                        replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                                .HandleKeyDownEvent(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
+                        var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                            .HandleKeyDownEventAsync(replacementPlainTextEditor,
+                                keyDownRecord,
+                                memoryMappedFilePixelReadRequestAction.VirtualizeCoordinateSystemMessage
+                                    .VirtualizeCoordinateSystemRequest.CancellationToken);
+
+                        replacementPlainTextEditor = resultPlainTextEditorRecord with
                             {
                                 SequenceKey = SequenceKey.NewSequenceKey()
                             };
@@ -201,11 +204,16 @@ public partial record PlainTextEditorStates
                             false,
                             IsForced: true);
 
-                        replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                                .HandleKeyDownEvent(replacementPlainTextEditor, forceNewLine) with
-                            {
-                                SequenceKey = SequenceKey.NewSequenceKey(),
-                            };
+                        var newLinedPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                            .HandleKeyDownEventAsync(replacementPlainTextEditor,
+                                forceNewLine,
+                                memoryMappedFilePixelReadRequestAction.VirtualizeCoordinateSystemMessage
+                                    .VirtualizeCoordinateSystemRequest.CancellationToken);
+
+                        replacementPlainTextEditor = newLinedPlainTextEditorRecord with
+                        {
+                            SequenceKey = SequenceKey.NewSequenceKey()
+                        };
                     }
                 }
 
@@ -242,9 +250,9 @@ public partial record PlainTextEditorStates
 
                 var resultingPlainTextEditor = replacementPlainTextEditor with
                 {
-                    LongestRowCharacterLength =
-                    (int)replacementPlainTextEditor.FileHandle.VirtualCharacterLengthOfLongestRow,
+                    LongestRowCharacterLength = (int)replacementPlainTextEditor.FileHandle.VirtualCharacterLengthOfLongestRow,
                     RowIndexOffset = startingRowIndex,
+                    CharacterColumnIndexOffset = startingCharacterIndex,
                     VirtualizeCoordinateSystemMessage = message
                 };
 
@@ -294,8 +302,12 @@ public partial record PlainTextEditorStates
                     };
                 }
 
-                var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                    .HandleKeyDownEvent(plainTextEditor, overrideKeyDownEventRecord) with
+                var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                    .HandleKeyDownEventAsync(plainTextEditor, 
+                        overrideKeyDownEventRecord,
+                        keyDownEventAction.CancellationToken);
+
+                var replacementPlainTextEditor = resultPlainTextEditorRecord with
                 {
                     SequenceKey = SequenceKey.NewSequenceKey()
                 };
@@ -354,8 +366,12 @@ public partial record PlainTextEditorStates
                 if (plainTextEditor is null)
                     return;
 
-                var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                    .HandleOnClickEvent(plainTextEditor, plainTextEditorOnClickAction) with
+                var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                    .HandleOnClickEventAsync(plainTextEditor,
+                        plainTextEditorOnClickAction,
+                        plainTextEditorOnClickAction.CancellationToken);
+
+                var replacementPlainTextEditor = resultPlainTextEditorRecord with
                 {
                     SequenceKey = SequenceKey.NewSequenceKey()
                 };
@@ -447,8 +463,9 @@ public partial record PlainTextEditorStates
                 var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
                 var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
-                var fileHandle = constructMemoryMappedFilePlainTextEditorRecordAction.FileSystemProvider
-                    .Open(constructMemoryMappedFilePlainTextEditorRecordAction.AbsoluteFilePath);
+                var fileHandle = await constructMemoryMappedFilePlainTextEditorRecordAction.FileSystemProvider
+                    .OpenAsync(constructMemoryMappedFilePlainTextEditorRecordAction.AbsoluteFilePath,
+                        constructMemoryMappedFilePlainTextEditorRecordAction.CancellationToken);
 
                 var plainTextEditor = new
                     PlainTextEditorRecord(constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey)

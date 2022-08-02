@@ -176,7 +176,8 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
             Dispatcher.Dispatch(
                 new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
                     absoluteFilePath,
-                    FileSystemProvider)
+                    FileSystemProvider,
+                    CancellationToken.None)
             );
         }
         else
@@ -199,7 +200,8 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
             Dispatcher.Dispatch(
                 new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
                     absoluteFilePath,
-                    FileSystemProvider)
+                    FileSystemProvider,
+                    CancellationToken.None)
             );
         }
         else

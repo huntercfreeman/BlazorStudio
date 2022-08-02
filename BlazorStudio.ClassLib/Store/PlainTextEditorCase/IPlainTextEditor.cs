@@ -108,7 +108,7 @@ public interface IPlainTextEditor
     /// This is the index of the primary cursor relative to the flat entirety of
     /// the file itself (no rows involved).
     /// </summary>
-    public int CurrentPositionIndex { get; }
+    public long CurrentPositionIndex { get; }
     /// <summary>
     /// Similar to the <see cref="CurrentCharacterColumnIndex"/> this is
     /// the index of the primary cursor relative to the current row.
@@ -151,6 +151,11 @@ public interface IPlainTextEditor
     /// In the previous example the <see cref="RowIndexOffset"/> would be 99
     /// </summary>
     public int CharacterColumnIndexOffset { get; }
+    /// <summary>
+    /// The selected text perhaps the user hit the keys { 'Shift' + 'ArrowRight' }
+    /// and selected some text.
+    /// </summary>
+    public SelectionSpanRecord? SelectionSpan { get; }
 
     /// <summary>
     /// The PlainTextEditor is a semantic representation of the file that was read in.

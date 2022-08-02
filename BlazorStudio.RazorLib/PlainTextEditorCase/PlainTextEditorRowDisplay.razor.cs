@@ -65,7 +65,8 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
                     PlainTextEditorKey,
                     RowIndex,
                     PlainTextEditorRow.Tokens.Count - 1,
-                    null
+                    null,
+                    CancellationToken.None
                 )
             );
         }

@@ -43,11 +43,14 @@ public partial record PlainTextEditorStates
         public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get; init; }
         public FileHandleReadRequest FileHandleReadRequest { get; init; }
         public int RowIndexOffset { get; init; }
-        public int CharacterIndexOffsetRelativeToRow { get; init; }
         public int CurrentCharacterColumnIndex { get; init; }
-        public int CurrentPositionIndex { get; init; }
         public int PreviouslySetCharacterColumnIndex { get; init; }
         public int CharacterColumnIndexOffset { get; init; }
+        public SelectionSpanRecord? SelectionSpan { get; init; }
+
+        public long CurrentPositionIndex =>
+            FileHandle.VirtualCharacterIndexMarkerForStartOfARow[RowIndexOffset + CurrentRowIndex]
+                + CharacterColumnIndexOffset + CurrentCharacterColumnIndex;
 
         public T GetCurrentTextTokenAs<T>()
             where T : class

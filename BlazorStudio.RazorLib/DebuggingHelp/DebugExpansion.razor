@@ -1,0 +1,21 @@
+﻿<div>
+    <div @onclick="() => _isExpanded = !_isExpanded">
+        @if (_isExpanded)
+        {
+            <IconChevronDown />
+        }
+        else
+        {
+            <IconChevronRight />
+        }
+        &nbsp;
+        <em>@Title</em>
+    </div>
+
+    @if (_isExpanded)
+    {
+        <div style="margin-left: 15px; border-left: 1.5px solid var(--bstudio_primary-border-color); padding-left: 5px;">
+            @ChildContent
+        </div>
+    }
+</div>

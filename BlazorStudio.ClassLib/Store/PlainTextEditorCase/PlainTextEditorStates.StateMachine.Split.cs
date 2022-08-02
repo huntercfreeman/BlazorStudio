@@ -8,9 +8,10 @@ public partial record PlainTextEditorStates
     private partial class StateMachine
     {
         // Used when cursor is within text and the 'Enter' key is pressed as an example. That token would get split into two separate tokens.
-        public static PlainTextEditorRecord SplitCurrentToken(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecord> SplitCurrentTokenAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
             TextTokenBase? tokenToInsertBetweenSplit,
-            bool isForced)
+            bool isForced,
+            CancellationToken cancellationToken)
         {
             var currentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>();
@@ -18,17 +19,24 @@ public partial record PlainTextEditorStates
             switch (currentToken.Kind)
             {
                 case TextTokenKind.Default:
-                    return SplitDefaultToken(focusedPlainTextEditorRecord, tokenToInsertBetweenSplit, isForced);
+                    return await SplitDefaultTokenAsync(focusedPlainTextEditorRecord, 
+                        tokenToInsertBetweenSplit, 
+                        isForced,
+                        cancellationToken);
                 case TextTokenKind.Whitespace:
-                    return SplitWhitespaceToken(focusedPlainTextEditorRecord, tokenToInsertBetweenSplit, isForced);
+                    return await SplitWhitespaceTokenAsync(focusedPlainTextEditorRecord, 
+                        tokenToInsertBetweenSplit, 
+                        isForced,
+                        cancellationToken);
                 default:
                     return focusedPlainTextEditorRecord;
             }
         }
         
-        public static PlainTextEditorRecord SplitDefaultToken(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecord> SplitDefaultTokenAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
             TextTokenBase? tokenToInsertBetweenSplit,
-            bool isForced)
+            bool isForced,
+            CancellationToken cancellationToken)
         {
             var rememberCurrentToken = focusedPlainTextEditorRecord
                     .GetCurrentTextTokenAs<DefaultTextToken>();
@@ -61,16 +69,19 @@ public partial record PlainTextEditorStates
 
             if (!isForced && tokenToInsertBetweenSplit is not null)
             {
-                var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                         cancellationToken)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
-                focusedPlainTextEditorRecord.FileHandle.Edit
-                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                await focusedPlainTextEditorRecord.FileHandle.Edit
+                    .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                         characterIndex,
-                        tokenToInsertBetweenSplit.CopyText);
+                        tokenToInsertBetweenSplit.CopyText,
+                        cancellationToken);
             }
 
-            focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
+            focusedPlainTextEditorRecord = await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                cancellationToken);
             
             var replacementCurrentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>() with
@@ -78,7 +89,9 @@ public partial record PlainTextEditorStates
                     IndexInPlainText = null
                 };
 
-            focusedPlainTextEditorRecord = ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);
+            focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                replacementCurrentToken,
+                cancellationToken);
 
             var toBeChangedRow = focusedPlainTextEditorRecord
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
@@ -126,9 +139,10 @@ public partial record PlainTextEditorStates
             };
         }
 
-        public static PlainTextEditorRecord SplitWhitespaceToken(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecord> SplitWhitespaceTokenAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
             TextTokenBase? tokenToInsertBetweenSplit,
-            bool isForced)
+            bool isForced,
+            CancellationToken cancellationToken)
         {
             var rememberCurrentToken = focusedPlainTextEditorRecord
                     .GetCurrentTextTokenAs<WhitespaceTextToken>();
@@ -143,22 +157,28 @@ public partial record PlainTextEditorStates
             if (!isForced)
             {
                 // Tab key so don't '+ focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value'
-                int characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord);
+                int characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
 
                 var spaceCount = tokenToInsertBetweenSplit is null
                     ? 4  // newline key
                     : 5; // space key
 
-                focusedPlainTextEditorRecord.FileHandle.Edit
-                    .Remove(focusedPlainTextEditorRecord.CurrentRowIndex,
+                await focusedPlainTextEditorRecord.FileHandle.Edit
+                    .RemoveAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                         characterIndex - 1,
-                        characterCount: 1)
-                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                        cancellationToken,
+                        characterCount: 1);
+
+                await focusedPlainTextEditorRecord.FileHandle.Edit
+                    .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                         characterIndex - 1,
-                        new string(' ', spaceCount));
+                        new string(' ', spaceCount),
+                        cancellationToken);
             }
 
-            focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
+            focusedPlainTextEditorRecord = await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                cancellationToken);
             
             var replacementCurrentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>() with
@@ -166,7 +186,9 @@ public partial record PlainTextEditorStates
                     IndexInPlainText = null
                 };
 
-            focusedPlainTextEditorRecord = ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);
+            focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                replacementCurrentToken,
+                cancellationToken);
 
             var toBeChangedRow = focusedPlainTextEditorRecord
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(

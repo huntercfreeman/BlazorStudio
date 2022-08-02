@@ -5,4 +5,5 @@ namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
 public record ConstructMemoryMappedFilePlainTextEditorRecordAction(PlainTextEditorKey PlainTextEditorKey,
     IAbsoluteFilePath AbsoluteFilePath,
-    IFileSystemProvider FileSystemProvider);
+    IFileSystemProvider FileSystemProvider,
+    CancellationToken CancellationToken);

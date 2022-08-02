@@ -60,7 +60,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.CharacterHeight,
-                Value = -2
+                Value = -1.5
             },
         }
     };
@@ -179,7 +179,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
                     e.CtrlKey,
                     e.ShiftKey,
                     e.AltKey
-                )
+                ),
+                CancellationToken.None
             )
         );
     }
@@ -225,11 +226,11 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         Dispatcher.Dispatch(new SetIsReadonlyAction(plainTextEditorKey, (bool) (e.Value ?? true)));
     }
     
-    private void SaveChangesOnClick()
+    private async Task SaveChangesOnClick()
     {
         var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
-        currentPlainTextEditor.FileHandle.Save();
+        await currentPlainTextEditor.FileHandle.SaveAsync(CancellationToken.None);
 
         Dispatcher.Dispatch(new MemoryMappedFilePixelReadRequestAction(PlainTextEditorKey,
             currentPlainTextEditor.VirtualizeCoordinateSystemMessage));

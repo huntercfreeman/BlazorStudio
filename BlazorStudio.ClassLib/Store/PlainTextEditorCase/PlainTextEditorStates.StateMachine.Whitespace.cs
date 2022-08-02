@@ -6,8 +6,9 @@ public partial record PlainTextEditorStates
 {
     private partial class StateMachine
     {
-        public static PlainTextEditorRecord HandleWhitespace(PlainTextEditorRecord focusedPlainTextEditorRecord,
-            KeyDownEventRecord keyDownEventRecord)
+        public static async Task<PlainTextEditorRecord> HandleWhitespaceAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
         {
             var rememberToken = focusedPlainTextEditorRecord
                     .GetCurrentTextTokenAs<TextTokenBase>();
@@ -16,45 +17,52 @@ public partial record PlainTextEditorStates
             {
                 if (KeyboardKeyFacts.NewLineCodes.ALL_NEW_LINE_CODES.Contains(keyDownEventRecord.Code))
                 {
-                    focusedPlainTextEditorRecord = SplitCurrentToken(
+                    focusedPlainTextEditorRecord = await SplitCurrentTokenAsync(
                         focusedPlainTextEditorRecord,
                         null,
-                        keyDownEventRecord.IsForced
+                        keyDownEventRecord.IsForced,
+                        cancellationToken
                     );
 
-                    return InsertNewLine(focusedPlainTextEditorRecord,
-                        keyDownEventRecord);
+                    return await InsertNewLineAsync(focusedPlainTextEditorRecord,
+                        keyDownEventRecord,
+                        cancellationToken);
                 }
 
-                return SplitCurrentToken(
+                return await SplitCurrentTokenAsync(
                     focusedPlainTextEditorRecord,
                         new WhitespaceTextToken(keyDownEventRecord),
-                    keyDownEventRecord.IsForced
+                    keyDownEventRecord.IsForced,
+                    cancellationToken
                 );
             }
             else
             {
                 if (KeyboardKeyFacts.NewLineCodes.ALL_NEW_LINE_CODES.Contains(keyDownEventRecord.Code))
                 {
-                    return InsertNewLine(focusedPlainTextEditorRecord,
-                        keyDownEventRecord);
+                    return await InsertNewLineAsync(focusedPlainTextEditorRecord,
+                        keyDownEventRecord,
+                        cancellationToken);
                 }
 
                 var whitespaceToken = new WhitespaceTextToken(keyDownEventRecord);
 
                 if (!keyDownEventRecord.IsForced)
                 {
-                    var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                    var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                             cancellationToken)
                                          + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
-                    focusedPlainTextEditorRecord.FileHandle.Edit
-                        .Insert(focusedPlainTextEditorRecord.CurrentRowIndex,
+                    await focusedPlainTextEditorRecord.FileHandle.Edit
+                        .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                             characterIndex,
-                            whitespaceToken.CopyText);
+                            whitespaceToken.CopyText,
+                            cancellationToken);
                 }
 
-                return InsertNewCurrentTokenAfterCurrentPosition(focusedPlainTextEditorRecord,
-                    whitespaceToken);
+                return await InsertNewCurrentTokenAfterCurrentPositionAsync(focusedPlainTextEditorRecord,
+                    whitespaceToken,
+                    cancellationToken);
             }
         }
     }
