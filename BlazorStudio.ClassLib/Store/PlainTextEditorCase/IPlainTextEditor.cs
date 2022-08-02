@@ -20,8 +20,34 @@ public interface IPlainTextEditor
     public IFileHandle? FileHandle { get; }
     public RichTextEditorOptions RichTextEditorOptions { get; }
     public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get; }
+    /// <summary>
+    /// There is a discrepancy between what the <see cref="VirtualizeCoordinateSystemRequest"/>
+    /// asks for and what the <see cref="FileHandleReadRequest"/> will ultimately ask for.
+    /// <br/>br/>
+    /// Example: the user interface might say, "give me rows 1 to 100 and columns 1 to 50 because
+    /// that's what the user can see currently (including some padding)." But, for efficiency purposes the
+    /// <see cref="FileHandleReadRequest"/> might scale the request to read in more than requested to avoid
+    /// frequent filesystem operations.
+    /// </summary>
     public FileHandleReadRequest FileHandleReadRequest { get; init; }
+    /// <summary>
+    /// When this is true the PlainTextEditor will ignore any action the User
+    /// takes that would result in a file modification.
+    /// <br/><br/>
+    /// Example, the keyboard event of hitting the 'ArrowDown' key will function as expected.
+    /// However, the keyboard event of hitting the 'a' key will be ignored.
+    /// </summary>
     public bool IsReadonly { get; }
+    /// <summary>
+    /// The PlainTextEditor parses the entirety of the physical file that is targeted
+    /// for any "\r\n" strings. If it finds one this is set to True.
+    /// <br/><br/>
+    /// When this is set to True, any keyboard events of from hitting the 'Enter' key
+    /// will result in "\r\n" instead of "\n" in order to maintain the line endings in a consistent manner.
+    /// <br/><br/>
+    /// When this is set to False any keyboard events of from hitting the 'Enter' key
+    /// will result in "\n" 
+    /// </summary>
     public bool UseCarriageReturnNewLine { get; }
     /// <summary>
     /// This is the row index relative to the small section of a larger file
