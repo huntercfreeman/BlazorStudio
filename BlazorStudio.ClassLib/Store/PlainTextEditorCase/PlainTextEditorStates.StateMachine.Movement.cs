@@ -164,7 +164,9 @@ public partial record PlainTextEditorStates
             {
                 Rows = nextRowList,
                 CurrentTokenIndex = tokenInRowBelowTuple.tokenIndex,
-                CurrentRowIndex = targetRowIndex
+                CurrentRowIndex = targetRowIndex,
+                CharacterColumnIndexOffset = tokenInRowBelowTuple.inclusiveStartingColumnIndex 
+                                             + indexInPlainText.Value
             };
         }
 
@@ -187,7 +189,7 @@ public partial record PlainTextEditorStates
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
                     focusedPlainTextEditorRecord.Rows[targetRowIndex]);
 
-            var tokenInRowAboveMetaData = CalculateTokenAtColumnIndexRespectiveToRow(
+            var tokenInRowAboveTuple = CalculateTokenAtColumnIndexRespectiveToRow(
                 focusedPlainTextEditorRecord,
                 aboveRow
                     as PlainTextEditorRow
@@ -209,19 +211,19 @@ public partial record PlainTextEditorStates
             int? indexInPlainText;
 
             if (currentColumnIndexWithIndexInPlainTextAccountedFor <
-                tokenInRowAboveMetaData.exclusiveEndingColumnIndex)
+                tokenInRowAboveTuple.exclusiveEndingColumnIndex)
             {
                 indexInPlainText = currentColumnIndexWithIndexInPlainTextAccountedFor -
-                                   tokenInRowAboveMetaData.inclusiveStartingColumnIndex;
+                                   tokenInRowAboveTuple.inclusiveStartingColumnIndex;
             }
             else
             {
-                indexInPlainText = tokenInRowAboveMetaData.token.PlainText.Length - 1;
+                indexInPlainText = tokenInRowAboveTuple.token.PlainText.Length - 1;
             }
 
             var aboveRowReplacement = aboveRow with
             {
-                Tokens = aboveRow.Tokens.Replace(tokenInRowAboveMetaData.token, tokenInRowAboveMetaData.token with
+                Tokens = aboveRow.Tokens.Replace(tokenInRowAboveTuple.token, tokenInRowAboveTuple.token with
                 {
                     IndexInPlainText = indexInPlainText
                 }),
@@ -235,8 +237,10 @@ public partial record PlainTextEditorStates
             return focusedPlainTextEditorRecord with
             {
                 Rows = nextRowList,
-                CurrentTokenIndex = tokenInRowAboveMetaData.tokenIndex,
-                CurrentRowIndex = targetRowIndex
+                CurrentTokenIndex = tokenInRowAboveTuple.tokenIndex,
+                CurrentRowIndex = targetRowIndex,
+                CharacterColumnIndexOffset = tokenInRowAboveTuple.inclusiveStartingColumnIndex
+                                             + indexInPlainText.Value
             };
         }
 

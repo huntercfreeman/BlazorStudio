@@ -244,7 +244,7 @@ public partial record PlainTextEditorStates
                 {
                     LongestRowCharacterLength = (int)replacementPlainTextEditor.FileHandle.VirtualCharacterLengthOfLongestRow,
                     RowIndexOffset = startingRowIndex,
-                    CharacterIndexOffsetRelativeToRow = startingCharacterIndex,
+                    CharacterColumnIndexOffset = startingCharacterIndex,
                     VirtualizeCoordinateSystemMessage = message
                 };
 
