@@ -1,85 +1,113 @@
-﻿<div>
-    @if (PlainTextEditor.FileHandleReadRequest is not null)
-    {
-        <div>
-            RowIndexOffset:&nbsp;@PlainTextEditor.FileHandleReadRequest.RowIndexOffset <em>\\//</em> CharacterIndexOffset:&nbsp;@PlainTextEditor.FileHandleReadRequest.CharacterIndexOffset
-        </div>
-        <div>
-            RowCount:&nbsp;@PlainTextEditor.FileHandleReadRequest.RowCount <em>\\//</em> CharacterCount:&nbsp;@PlainTextEditor.FileHandleReadRequest.CharacterCount
-        </div>
-        <div>
-            PhysicalCharacterLengthOfLongestRow:&nbsp;@PlainTextEditor.FileHandle.PhysicalCharacterLengthOfLongestRow
-        </div>
-    }
-    else
-    {
-        <div>
-            FileHandleReadRequest is null
-        </div>
-    }
-</div>
+﻿@using BlazorStudio.RazorLib.DebuggingHelp
 
 <div class="bstudio_debug-info">
-    @if (PlainTextEditor.VirtualizeCoordinateSystemMessage is not null)
-    {
-        var request = PlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemRequest;
-        var result = PlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult;
+    <DebugExpansion Title="FileHandle">
+        @if (PlainTextEditor.FileHandle is not null)
+        {
+            <div>
+                @NullSafeToMarkupString(nameof(PlainTextEditor.FileHandle.PhysicalCharacterLengthOfLongestRow), PlainTextEditor.FileHandle.PhysicalCharacterLengthOfLongestRow)
+            </div>
+            <div>
+                @NullSafeToMarkupString(nameof(PlainTextEditor.FileHandle.Edit) + ".Count", PlainTextEditor.FileHandle.Edit.Count)
+            </div>
 
-        @*var itemsEnumerated = result?.ItemsUntyped.ToArray();*@
+            <DebugExpansion Title="@nameof(PlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow)">
+                <div style="max-height: 250px; overflow-y: auto;">
+                    @for (var index = 0; index < PlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow.Count; index++)
+                    {
+                        var indexMarker = PlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow[index];
 
-        @*<div>
-    @NullSafeToMarkupString(nameof(PlainTextEditor.FileCoordinateGrid.RowCount), string.Empty)
+                        <div>
+                            index: @index, value: @indexMarker
+                        </div>
+                    }
+                </div>
+            </DebugExpansion>
 
-    @if (PlainTextEditor.FileCoordinateGrid?.RowCount is null)
-    {
-    <text>null</text>
-    }
-    else
-    {
-    <text>@PlainTextEditor.FileCoordinateGrid?.RowCount.ToString("N0")</text>
-    }
-    </div>
-    <div>
-    @NullSafeToMarkupString(nameof(PlainTextEditor.FileCoordinateGrid.CharacterLengthOfLongestRow), PlainTextEditor.FileCoordinateGrid?.CharacterLengthOfLongestRow)
-    </div>
-    <div>
-    Virtual&nbsp;Enumerable&nbsp;@NullSafeToMarkupString(nameof(itemsEnumerated.Length), itemsEnumerated?.Length)
-    </div>
 
-    <div>
-    @NullSafeToMarkupString(nameof(request.ScrollLeftInPixels), request?.ScrollLeftInPixels)
-    </div>
-    <div>
-    @NullSafeToMarkupString(nameof(request.ScrollTopInPixels), request?.ScrollTopInPixels)
-    </div>
-    <div>
-    @NullSafeToMarkupString(nameof(request.ScrollWidthInPixels), request?.ScrollWidthInPixels)
-    </div>
-    <div>
-    @NullSafeToMarkupString(nameof(request.ScrollHeightInPixels), request?.ScrollHeightInPixels)
-    </div>
+            <div>
+                PhysicalCharacterLengthOfLongestRow:&nbsp;@PlainTextEditor.FileHandle.PhysicalCharacterLengthOfLongestRow
+            </div>
+        }
+        else
+        {
+            <div>
+                FileHandle is null
+            </div>
+        }
+    </DebugExpansion>
+    
+    <DebugExpansion Title="FileHandleReadRequest">
+        @if (PlainTextEditor.FileHandleReadRequest is not null)
+        {
+            <div>
+                RowIndexOffset:&nbsp;@PlainTextEditor.FileHandleReadRequest.RowIndexOffset
+            </div>
+            <div>
+                CharacterIndexOffset:&nbsp;@PlainTextEditor.FileHandleReadRequest.CharacterIndexOffset
+            </div>
+            <div>
+                RowCount:&nbsp;@PlainTextEditor.FileHandleReadRequest.RowCount
+            </div>
+            <div>
+                CharacterCount:&nbsp;@PlainTextEditor.FileHandleReadRequest.CharacterCount
+            </div>
+        }
+        else
+        {
+            <div>
+                FileHandleReadRequest is null
+            </div>
+        }
+    </DebugExpansion>
+    
+    <DebugExpansion Title="VirtualizeCoordinateSystemMessage">
+        @if (PlainTextEditor.VirtualizeCoordinateSystemMessage is not null)
+        {
+            var request = PlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemRequest;
+            var result = PlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult;
 
-    <div>
-    @NullSafeToMarkupString(nameof(request.ViewportWidthInPixels), request?.ViewportWidthInPixels)
-    </div>
-    <div>
-    @NullSafeToMarkupString(nameof(request.ViewportHeightInPixels), request?.ViewportHeightInPixels)
-    </div>
-    <div>
-    @NullSafeToMarkupString(nameof(result.WidthOfResultInPixels), result?.WidthOfResultInPixels)
-    </div>
-    <div>
-    @NullSafeToMarkupString(nameof(result.HeightOfResultInPixels), result?.HeightOfResultInPixels)
-    </div>
-    <div>
-    @NullSafeToMarkupString(nameof(result.TotalWidthInPixels), result?.TotalWidthInPixels)
-    </div>
-    <div>
-    @NullSafeToMarkupString(nameof(result.TotalHeightInPixels), result?.TotalHeightInPixels)
-    </div>*@
-    }
-    else
-    {
-        <div>virtualization message was null</div>
-    }
+            var itemsEnumerated = result?.ItemsUntyped.ToArray();
+
+            <div>
+                Virtual&nbsp;Enumerable&nbsp;@NullSafeToMarkupString(nameof(itemsEnumerated.Length), itemsEnumerated?.Length)
+            </div>
+
+            <div>
+                @NullSafeToMarkupString(nameof(request.ScrollLeftInPixels), request?.ScrollLeftInPixels)
+            </div>
+            <div>
+                @NullSafeToMarkupString(nameof(request.ScrollTopInPixels), request?.ScrollTopInPixels)
+            </div>
+            <div>
+                @NullSafeToMarkupString(nameof(request.ScrollWidthInPixels), request?.ScrollWidthInPixels)
+            </div>
+            <div>
+                @NullSafeToMarkupString(nameof(request.ScrollHeightInPixels), request?.ScrollHeightInPixels)
+            </div>
+
+            <div>
+                @NullSafeToMarkupString(nameof(request.ViewportWidthInPixels), request?.ViewportWidthInPixels)
+            </div>
+            <div>
+                @NullSafeToMarkupString(nameof(request.ViewportHeightInPixels), request?.ViewportHeightInPixels)
+            </div>
+            <div>
+                @NullSafeToMarkupString(nameof(result.WidthOfResultInPixels), result?.WidthOfResultInPixels)
+            </div>
+            <div>
+                @NullSafeToMarkupString(nameof(result.HeightOfResultInPixels), result?.HeightOfResultInPixels)
+            </div>
+            <div>
+                @NullSafeToMarkupString(nameof(result.TotalWidthInPixels), result?.TotalWidthInPixels)
+            </div>
+            <div>
+                @NullSafeToMarkupString(nameof(result.TotalHeightInPixels), result?.TotalHeightInPixels)
+            </div>
+        }
+        else
+        {
+            <div>virtualization message was null</div>
+        }
+    </DebugExpansion>
 </div>

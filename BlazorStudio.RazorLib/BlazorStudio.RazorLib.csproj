@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="DebuggingHelp\DebugExpansion.razor" />
     <_ContentIncludedByDefault Remove="Editor\EditorDisplay.razor" />
     <_ContentIncludedByDefault Remove="Forms\CreateNewFileForm.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuDisplay.razor" />
@@ -79,6 +80,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Forms\CreateNewFileForm.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="DebuggingHelp\DebugExpansion.razor" />
   </ItemGroup>
 
 </Project>
