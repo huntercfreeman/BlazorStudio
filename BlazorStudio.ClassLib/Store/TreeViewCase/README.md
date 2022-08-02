@@ -1,4 +1,3 @@
-﻿# BlazorStudio.ClassLib/Store/WorkspaceCase
-This directory contains all non UI C# classes necessary for the [WorkspaceExplorer.razor](/BlazorStudio.RazorLib/Workspace/WorkspaceExplorer.razor) component.
-
+﻿# BlazorStudio.ClassLib/Store/TreeViewCase
+This directory contains all non UI C# classes necessary for the [TreeViewDisplay.razor](/BlazorStudio.RazorLib/TreeViewCase/TreeViewDisplay.razor) component.
 
