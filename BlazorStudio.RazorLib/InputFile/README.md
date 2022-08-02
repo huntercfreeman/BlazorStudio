@@ -1,0 +1,2 @@
+﻿# BlazorStudio.RazorLib/Menu
+This folder contains Blazor components that allow a user to select a file from their operating system file system. This component purposefully has NO DESTRUCTIVE OPERATIONS ALLOWED. (cannot delete a file for example in this component)
