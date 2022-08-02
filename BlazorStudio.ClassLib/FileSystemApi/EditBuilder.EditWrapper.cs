@@ -13,15 +13,17 @@ public partial class EditBuilder
         /// Takes row content and a cancellation token. Then modifies row content and returns the displacement
         /// of the text that occurred.
         /// </summary>
-        /// <param name="editAsync"></param>
-        public EditWrapper(Action<FileHandleReadRequest, EditResult, CancellationToken> edit,
-            Func<EditResult, CancellationToken, Task> editAsync)
+        public EditWrapper(List<Func<EditResult, CancellationToken, Task>> editsAsync)
         {
-            Edit = edit;
-            EditAsync = editAsync;
+            EditsAsync = editsAsync;
         }
 
-        public Action<FileHandleReadRequest, EditResult, CancellationToken> Edit { get; }
-        public Func<EditResult, CancellationToken, Task> EditAsync { get; }
+        /// <summary>
+        /// This is a list because consecutive Edits of the same kind under certain conditions will combine into 1 so to speak.
+        /// <br/><br/>
+        /// Example: typing characters consecutively will all merge into one <see cref="EditWrapper"/> where <see cref="EditsAsync"/>
+        /// contains many Actions.
+        /// </summary>
+        public List<Func<EditResult, CancellationToken, Task>> EditsAsync { get; }
     }
 }
