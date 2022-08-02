@@ -61,7 +61,7 @@ public partial record PlainTextEditorStates
 
             if (!isForced && tokenToInsertBetweenSplit is not null)
             {
-                var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                 focusedPlainTextEditorRecord.FileHandle.Edit
@@ -70,7 +70,7 @@ public partial record PlainTextEditorStates
                         tokenToInsertBetweenSplit.CopyText);
             }
 
-            focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
+            focusedPlainTextEditorRecord = SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord);
             
             var replacementCurrentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>() with
@@ -78,7 +78,7 @@ public partial record PlainTextEditorStates
                     IndexInPlainText = null
                 };
 
-            focusedPlainTextEditorRecord = ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);
+            focusedPlainTextEditorRecord = ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, replacementCurrentToken);
 
             var toBeChangedRow = focusedPlainTextEditorRecord
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
@@ -143,7 +143,7 @@ public partial record PlainTextEditorStates
             if (!isForced)
             {
                 // Tab key so don't '+ focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value'
-                int characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord);
+                int characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord);
 
                 var spaceCount = tokenToInsertBetweenSplit is null
                     ? 4  // newline key
@@ -158,7 +158,7 @@ public partial record PlainTextEditorStates
                         new string(' ', spaceCount));
             }
 
-            focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
+            focusedPlainTextEditorRecord = SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord);
             
             var replacementCurrentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>() with
@@ -166,7 +166,7 @@ public partial record PlainTextEditorStates
                     IndexInPlainText = null
                 };
 
-            focusedPlainTextEditorRecord = ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);
+            focusedPlainTextEditorRecord = ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, replacementCurrentToken);
 
             var toBeChangedRow = focusedPlainTextEditorRecord
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(

@@ -22,7 +22,7 @@ public partial record PlainTextEditorStates
                         keyDownEventRecord.IsForced
                     );
 
-                    return InsertNewLine(focusedPlainTextEditorRecord,
+                    return InsertNewLineAsync(focusedPlainTextEditorRecord,
                         keyDownEventRecord);
                 }
 
@@ -36,7 +36,7 @@ public partial record PlainTextEditorStates
             {
                 if (KeyboardKeyFacts.NewLineCodes.ALL_NEW_LINE_CODES.Contains(keyDownEventRecord.Code))
                 {
-                    return InsertNewLine(focusedPlainTextEditorRecord,
+                    return InsertNewLineAsync(focusedPlainTextEditorRecord,
                         keyDownEventRecord);
                 }
 
@@ -44,7 +44,7 @@ public partial record PlainTextEditorStates
 
                 if (!keyDownEventRecord.IsForced)
                 {
-                    var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                    var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord)
                                          + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                     focusedPlainTextEditorRecord.FileHandle.Edit
@@ -53,7 +53,7 @@ public partial record PlainTextEditorStates
                             whitespaceToken.CopyText);
                 }
 
-                return InsertNewCurrentTokenAfterCurrentPosition(focusedPlainTextEditorRecord,
+                return InsertNewCurrentTokenAfterCurrentPositionAsync(focusedPlainTextEditorRecord,
                     whitespaceToken);
             }
         }

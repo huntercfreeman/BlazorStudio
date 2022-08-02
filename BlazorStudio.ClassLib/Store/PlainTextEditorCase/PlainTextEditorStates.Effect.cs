@@ -181,7 +181,7 @@ public partial record PlainTextEditorStates
                         );
 
                         replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                                .HandleKeyDownEvent(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
+                                .HandleKeyDownEventAsync(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
                             {
                                 SequenceKey = SequenceKey.NewSequenceKey()
                             };
@@ -202,7 +202,7 @@ public partial record PlainTextEditorStates
                             IsForced: true);
 
                         replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                                .HandleKeyDownEvent(replacementPlainTextEditor, forceNewLine) with
+                                .HandleKeyDownEventAsync(replacementPlainTextEditor, forceNewLine) with
                             {
                                 SequenceKey = SequenceKey.NewSequenceKey(),
                             };
@@ -295,7 +295,7 @@ public partial record PlainTextEditorStates
                 }
 
                 var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                    .HandleKeyDownEvent(plainTextEditor, overrideKeyDownEventRecord) with
+                    .HandleKeyDownEventAsync(plainTextEditor, overrideKeyDownEventRecord) with
                 {
                     SequenceKey = SequenceKey.NewSequenceKey()
                 };
@@ -355,7 +355,7 @@ public partial record PlainTextEditorStates
                     return;
 
                 var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                    .HandleOnClickEvent(plainTextEditor, plainTextEditorOnClickAction) with
+                    .HandleOnClickEventAsync(plainTextEditor, plainTextEditorOnClickAction) with
                 {
                     SequenceKey = SequenceKey.NewSequenceKey()
                 };

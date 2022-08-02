@@ -19,7 +19,7 @@ public partial record PlainTextEditorStates
             if (focusedPlainTextEditorRecord.CurrentTextToken.Kind != TextTokenKind.Default)
                 return focusedPlainTextEditorRecord;
             
-            var nextTokenTuple = GetNextTokenTuple(focusedPlainTextEditorRecord);
+            var nextTokenTuple = GetNextTokenTupleAsync(focusedPlainTextEditorRecord);
 
             if (nextTokenTuple.token.Kind != TextTokenKind.Default ||
                 nextTokenTuple.token.Key == focusedPlainTextEditorRecord.CurrentTextTokenKey)

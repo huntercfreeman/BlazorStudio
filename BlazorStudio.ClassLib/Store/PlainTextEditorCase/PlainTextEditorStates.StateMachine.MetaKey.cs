@@ -25,7 +25,7 @@ public partial record PlainTextEditorStates
             {
                 // Remove character from word
 
-                return HandleDefaultBackspace(focusedPlainTextEditorRecord, keyDownEventRecord);
+                return HandleDefaultBackspaceAsync(focusedPlainTextEditorRecord, keyDownEventRecord);
             }
 
             if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.StartOfRow &&
@@ -52,7 +52,7 @@ public partial record PlainTextEditorStates
                             characterCount: 1);
                 }
 
-                focusedPlainTextEditorRecord = MoveCurrentRowToEndOfPreviousRow(focusedPlainTextEditorRecord);
+                focusedPlainTextEditorRecord = MoveCurrentRowToEndOfPreviousRowAsync(focusedPlainTextEditorRecord);
             }
             else
             {
@@ -80,7 +80,7 @@ public partial record PlainTextEditorStates
                     }
                     else
                     {
-                        var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRow(focusedPlainTextEditorRecord)
+                        var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord)
                                              + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                         focusedPlainTextEditorRecord.FileHandle.Edit
@@ -90,7 +90,7 @@ public partial record PlainTextEditorStates
                     }
                 }
 
-                focusedPlainTextEditorRecord = RemoveCurrentToken(focusedPlainTextEditorRecord);
+                focusedPlainTextEditorRecord = RemoveCurrentTokenAsync(focusedPlainTextEditorRecord);
             }
 
             focusedPlainTextEditorRecord = MergeTokensIfApplicable(focusedPlainTextEditorRecord);
