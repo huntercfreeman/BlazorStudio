@@ -242,9 +242,9 @@ public partial record PlainTextEditorStates
 
                 var resultingPlainTextEditor = replacementPlainTextEditor with
                 {
-                    LongestRowCharacterLength =
-                    (int)replacementPlainTextEditor.FileHandle.VirtualCharacterLengthOfLongestRow,
+                    LongestRowCharacterLength = (int)replacementPlainTextEditor.FileHandle.VirtualCharacterLengthOfLongestRow,
                     RowIndexOffset = startingRowIndex,
+                    CharacterIndexOffsetRelativeToRow = startingCharacterIndex,
                     VirtualizeCoordinateSystemMessage = message
                 };
 

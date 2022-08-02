@@ -42,6 +42,12 @@ public partial record PlainTextEditorStates
                 var rememberTokenWasWhitespace =
                     focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace;
 
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
+                        - focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value
+                };
+
                 focusedPlainTextEditorRecord = SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
 
                 var currentTokenIsWhitespace =
@@ -61,6 +67,11 @@ public partial record PlainTextEditorStates
 
             if (currentToken.IndexInPlainText == 0)
             {
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex - 1
+                };
+
                 return SetPreviousTokenAsCurrent(focusedPlainTextEditorRecord);
             }
             else
@@ -68,6 +79,11 @@ public partial record PlainTextEditorStates
                 var replacementCurrentToken = currentToken with
                 {
                     IndexInPlainText = currentToken.IndexInPlainText - 1
+                };
+
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex - 1
                 };
 
                 focusedPlainTextEditorRecord =
@@ -233,6 +249,13 @@ public partial record PlainTextEditorStates
                 var rememberTokenWasWhitespace =
                     focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace;
 
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex 
+                                                  + (focusedPlainTextEditorRecord.CurrentTextToken.PlainText.Length
+                                                     - focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value)
+                };
+
                 focusedPlainTextEditorRecord = SetNextTokenAsCurrent(focusedPlainTextEditorRecord);
 
                 var currentTokenIsWhitespace =
@@ -264,6 +287,11 @@ public partial record PlainTextEditorStates
 
             if (currentToken.IndexInPlainText == currentToken.PlainText.Length - 1)
             {
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
+                };
+
                 return SetNextTokenAsCurrent(focusedPlainTextEditorRecord);
             }
             else
@@ -272,6 +300,23 @@ public partial record PlainTextEditorStates
                 {
                     IndexInPlainText = currentToken.IndexInPlainText + 1
                 };
+
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
+                };
+
+                //if (focusedPlainTextEditorRecord.SelectionSpan is null)
+                //{
+                //    focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                //    {
+                //        SelectionSpan = new()
+                //        {
+                //            InclusiveStartingDocumentTextIndex = 0,
+                //            ExclusiveEndingDocumentTextIndex = 0
+                //        }
+                //    };
+                //}
 
                 focusedPlainTextEditorRecord =
                     ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);

@@ -5,9 +5,9 @@
     <div class="pte_plain-text-editor-footer-entry">
         Ln:&nbsp;@(PlainTextEditor.CurrentRowIndex + PlainTextEditor.RowIndexOffset + 1)
         &nbsp;
-        Col:&nbsp;@(PlainTextEditor.CharacterColumnIndexOffset + PlainTextEditor.CurrentCharacterColumnIndex + 1)
+        Col:&nbsp;@(PlainTextEditor.CurrentCharacterColumnIndex + PlainTextEditor.CharacterColumnIndexOffset + 1)
         &nbsp;
-        Pos:&nbsp;@(PlainTextEditor.CurrentPositionIndex + 1)
+        Pos:&nbsp;@(PlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow[PlainTextEditor.CurrentRowIndex])
     </div>
     <div class="pte_plain-text-editor-footer-entry">(@GetIsCarriageReturnNewLine)</div>
     <div class="pte_plain-text-editor-footer-entry">@PlainTextEditor.FileHandle.Encoding.EncodingName</div>

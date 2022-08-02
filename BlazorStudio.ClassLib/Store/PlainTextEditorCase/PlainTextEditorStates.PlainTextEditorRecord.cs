@@ -48,6 +48,7 @@ public partial record PlainTextEditorStates
         public int CurrentPositionIndex { get; init; }
         public int PreviouslySetCharacterColumnIndex { get; init; }
         public int CharacterColumnIndexOffset { get; init; }
+        public SelectionSpanRecord? SelectionSpan { get; init; }
 
         public T GetCurrentTextTokenAs<T>()
             where T : class

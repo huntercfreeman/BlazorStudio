@@ -155,7 +155,7 @@ public interface IPlainTextEditor
     /// The selected text perhaps the user hit the keys { 'Shift' + 'ArrowRight' }
     /// and selected some text.
     /// </summary>
-    public SelectionSpan? SelectionSpan { get; set; }
+    public SelectionSpanRecord? SelectionSpan { get; }
 
     /// <summary>
     /// The PlainTextEditor is a semantic representation of the file that was read in.
