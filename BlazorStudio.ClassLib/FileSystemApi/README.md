@@ -1,5 +1,5 @@
-﻿# BlazorStudio.ClassLib/Store/PlainTextEditorCase
-This directory contains all non UI C# classes necessary for the [PlainTextEditorDisplay.razor](/BlazorStudio.RazorLib/PlainTextEditorCase/PlainTextEditorDisplay.razor) component.
+﻿# BlazorStudio.ClassLib/FileSystemApi
+This directory is related to the PlainTextEditor. Below I copy and pasted the [README.md for the PlainTextEditor](/BlazorStudio.ClassLib/Store/PlainTextEditorCase/README.md).
 
 The PlainTextEditor is asynchronous, and immutable.
 
