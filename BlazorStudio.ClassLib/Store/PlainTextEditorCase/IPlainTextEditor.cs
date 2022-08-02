@@ -14,13 +14,17 @@ public interface IPlainTextEditor
     /// </summary>
     public PlainTextEditorKey PlainTextEditorKey { get; } 
     /// <summary>
-    /// 
+    /// This is used to indicate that the PlainTextEditor should re-render
+    /// in regards to the UI whenever this changes value.
     /// </summary>
     public SequenceKey SequenceKey { get; } 
     /// <summary>
-    /// 
+    /// This is a list of the currently loaded rows from the targeted physical file.
+    /// It is important to note that the content of the rows in this list
+    /// are not necessarily completely the same in terms of content as the physical file.
+    /// Example, maybe only character columns 50 to 99 were loaded for the rows.
     /// </summary>
-    public ImmutableList<IPlainTextEditorRow> List { get; }
+    public ImmutableList<IPlainTextEditorRow> Rows { get; }
     /// <summary>
     /// The PlainTextEditor needs an abstraction of a modifiable <see cref="MemoryMappedFile"/>
     /// <br/><br/>
@@ -85,14 +89,14 @@ public interface IPlainTextEditor
     /// <summary>
     /// This is the row index relative to the small section of a larger file
     /// that was read into a PlainTextEditor.
-    ///
+    /// <br/><br/>
     /// To get the row index relative to the actual file one must
     /// add the <see cref="RowIndexOffset"/>
     /// </summary>
     public int CurrentRowIndex { get; }
     /// <summary>
     /// This is the index of the active token relative to the current row.
-    ///
+    /// <br/><br/>
     /// Not to be confused with <see cref="CurrentCharacterColumnIndex"/>
     /// </summary>
     public int CurrentTokenIndex { get; }
