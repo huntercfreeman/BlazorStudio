@@ -7,34 +7,48 @@ public partial record PlainTextEditorStates
 {
     private partial class StateMachine
     {
-        public static PlainTextEditorRecord HandleMovement(PlainTextEditorRecord focusedPlainTextEditorRecord,
-            KeyDownEventRecord keyDownEventRecord)
+        public static async Task<PlainTextEditorRecord> HandleMovementAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
         {
             switch (keyDownEventRecord.Key)
             {
                 case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT_KEY:
-                    return HandleArrowLeft(focusedPlainTextEditorRecord, keyDownEventRecord);
+                    return await HandleArrowLeftAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
                 case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN_KEY:
-                    return HandleArrowDown(focusedPlainTextEditorRecord, keyDownEventRecord);
+                    return await HandleArrowDownAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
                 case KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY:
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP_KEY:
-                    return HandleArrowUp(focusedPlainTextEditorRecord, keyDownEventRecord);
+                    return await HandleArrowUpAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
                 case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
-                    return HandleArrowRight(focusedPlainTextEditorRecord, keyDownEventRecord);
+                    return await HandleArrowRightAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
                 case KeyboardKeyFacts.MovementKeys.HOME_KEY:
-                    return HandleHome(focusedPlainTextEditorRecord, keyDownEventRecord);
+                    return await HandleHomeAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
                 case KeyboardKeyFacts.MovementKeys.END_KEY:
-                    return HandleEnd(focusedPlainTextEditorRecord, keyDownEventRecord);
+                    return await HandleEndAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
             }
 
             return focusedPlainTextEditorRecord;
         }
 
-        public static PlainTextEditorRecord HandleArrowLeft(PlainTextEditorRecord focusedPlainTextEditorRecord,
-            KeyDownEventRecord keyDownEventRecord)
+        public static async Task<PlainTextEditorRecord> HandleArrowLeftAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
         {
             if (keyDownEventRecord.CtrlWasPressed)
             {
@@ -48,7 +62,8 @@ public partial record PlainTextEditorStates
                         - focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value
                 };
 
-                focusedPlainTextEditorRecord = SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord);
+                focusedPlainTextEditorRecord = await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord, 
+                    cancellationToken);
 
                 var currentTokenIsWhitespace =
                     focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace;
@@ -56,7 +71,9 @@ public partial record PlainTextEditorStates
                 if ((rememberTokenWasWhitespace && currentTokenIsWhitespace) &&
                     (rememberTokenKey != focusedPlainTextEditorRecord.CurrentTextTokenKey))
                 {
-                    return HandleMovement(focusedPlainTextEditorRecord, keyDownEventRecord);
+                    return await HandleMovementAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
                 }
 
                 return focusedPlainTextEditorRecord;
@@ -72,7 +89,8 @@ public partial record PlainTextEditorStates
                     CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex - 1
                 };
 
-                return SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord);
+                return await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
             }
             else
             {
@@ -86,15 +104,17 @@ public partial record PlainTextEditorStates
                     CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex - 1
                 };
 
-                focusedPlainTextEditorRecord =
-                    ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, replacementCurrentToken);
+                focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                        replacementCurrentToken,
+                        cancellationToken);
             }
 
             return focusedPlainTextEditorRecord;
         }
 
-        public static PlainTextEditorRecord HandleArrowDown(PlainTextEditorRecord focusedPlainTextEditorRecord,
-            KeyDownEventRecord keyDownEventRecord)
+        public static async Task<PlainTextEditorRecord> HandleArrowDownAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
         {
             if (focusedPlainTextEditorRecord.CurrentRowIndex >=
                 focusedPlainTextEditorRecord.Rows.Count - 1)
@@ -102,8 +122,9 @@ public partial record PlainTextEditorStates
                 return focusedPlainTextEditorRecord;
             }
 
-            var inclusiveStartingColumnIndexOfCurrentToken =
-                CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord);
+            var inclusiveStartingColumnIndexOfCurrentToken = await
+                CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
 
             var currentColumnIndexWithIndexInPlainTextAccountedFor = inclusiveStartingColumnIndexOfCurrentToken +
                                                                      focusedPlainTextEditorRecord.CurrentTextToken
@@ -115,12 +136,13 @@ public partial record PlainTextEditorStates
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
                     focusedPlainTextEditorRecord.Rows[targetRowIndex]);
 
-            var tokenInRowBelowTuple = CalculateTokenAtColumnIndexRespectiveToRowAsync(
+            var tokenInRowBelowTuple = await CalculateTokenAtColumnIndexRespectiveToRowAsync(
                 focusedPlainTextEditorRecord,
                 belowRow
                     as PlainTextEditorRow
                 ?? throw new ApplicationException($"Expected type {nameof(PlainTextEditorRow)}"),
-                currentColumnIndexWithIndexInPlainTextAccountedFor);
+                currentColumnIndexWithIndexInPlainTextAccountedFor,
+                cancellationToken);
 
             var currentRow = focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>();
             var currentToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<TextTokenBase>();
@@ -170,14 +192,16 @@ public partial record PlainTextEditorStates
             };
         }
 
-        public static PlainTextEditorRecord HandleArrowUp(PlainTextEditorRecord focusedPlainTextEditorRecord,
-            KeyDownEventRecord keyDownEventRecord)
+        public static async Task<PlainTextEditorRecord> HandleArrowUpAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
         {
             if (focusedPlainTextEditorRecord.CurrentRowIndex <= 0)
                 return focusedPlainTextEditorRecord;
 
             var inclusiveStartingColumnIndexOfCurrentToken =
-                CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord);
+                await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
 
             var currentColumnIndexWithIndexInPlainTextAccountedFor = inclusiveStartingColumnIndexOfCurrentToken +
                                                                      focusedPlainTextEditorRecord.CurrentTextToken
@@ -189,12 +213,13 @@ public partial record PlainTextEditorStates
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
                     focusedPlainTextEditorRecord.Rows[targetRowIndex]);
 
-            var tokenInRowAboveTuple = CalculateTokenAtColumnIndexRespectiveToRowAsync(
+            var tokenInRowAboveTuple = await CalculateTokenAtColumnIndexRespectiveToRowAsync(
                 focusedPlainTextEditorRecord,
                 aboveRow
                     as PlainTextEditorRow
                 ?? throw new ApplicationException($"Expected type {nameof(PlainTextEditorRow)}"),
-                currentColumnIndexWithIndexInPlainTextAccountedFor);
+                currentColumnIndexWithIndexInPlainTextAccountedFor,
+                cancellationToken);
 
             var currentRow = focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>();
             var currentToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<TextTokenBase>();
@@ -244,8 +269,9 @@ public partial record PlainTextEditorStates
             };
         }
 
-        public static PlainTextEditorRecord HandleArrowRight(PlainTextEditorRecord focusedPlainTextEditorRecord,
-            KeyDownEventRecord keyDownEventRecord)
+        public static async Task<PlainTextEditorRecord> HandleArrowRightAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
         {
             if (keyDownEventRecord.CtrlWasPressed)
             {
@@ -260,7 +286,8 @@ public partial record PlainTextEditorStates
                                                      - focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value)
                 };
 
-                focusedPlainTextEditorRecord = SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord);
+                focusedPlainTextEditorRecord = await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
 
                 var currentTokenIsWhitespace =
                     focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace;
@@ -268,7 +295,9 @@ public partial record PlainTextEditorStates
                 if ((rememberTokenWasWhitespace && currentTokenIsWhitespace) &&
                     (rememberTokenKey != focusedPlainTextEditorRecord.CurrentTextTokenKey))
                 {
-                    return HandleMovement(focusedPlainTextEditorRecord, keyDownEventRecord);
+                    return await HandleMovementAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
                 }
 
                 if (focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText !=
@@ -279,8 +308,9 @@ public partial record PlainTextEditorStates
                         IndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.PlainText.Length - 1
                     };
 
-                    focusedPlainTextEditorRecord = ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord,
-                        replacementToken);
+                    focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord,
+                        replacementToken,
+                        cancellationToken);
                 }
 
                 return focusedPlainTextEditorRecord;
@@ -296,7 +326,8 @@ public partial record PlainTextEditorStates
                     CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
                 };
 
-                return SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord);
+                return await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
             }
             else
             {
@@ -323,14 +354,17 @@ public partial record PlainTextEditorStates
                 //}
 
                 focusedPlainTextEditorRecord =
-                    ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, replacementCurrentToken);
+                    await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                        replacementCurrentToken,
+                        cancellationToken);
             }
 
             return focusedPlainTextEditorRecord;
         }
 
-        public static PlainTextEditorRecord HandleHome(PlainTextEditorRecord focusedPlainTextEditorRecord,
-            KeyDownEventRecord keyDownEventRecord)
+        public static async Task<PlainTextEditorRecord> HandleHomeAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
         {
             int targetRowIndex = keyDownEventRecord.CtrlWasPressed
                 ? 0
@@ -345,7 +379,9 @@ public partial record PlainTextEditorStates
             };
 
             focusedPlainTextEditorRecord =
-                ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, replacementCurrentToken);
+                await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                    replacementCurrentToken,
+                    cancellationToken);
 
             focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
             {
@@ -361,11 +397,14 @@ public partial record PlainTextEditorStates
                 IndexInPlainText = currentToken.PlainText.Length - 1
             };
 
-            return ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, replacementCurrentToken);
+            return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                replacementCurrentToken,
+                cancellationToken);
         }
 
-        public static PlainTextEditorRecord HandleEnd(PlainTextEditorRecord focusedPlainTextEditorRecord,
-            KeyDownEventRecord keyDownEventRecord)
+        public static async Task<PlainTextEditorRecord> HandleEndAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
         {
             int targetRowIndex = keyDownEventRecord.CtrlWasPressed
                 ? focusedPlainTextEditorRecord.Rows.Count - 1
@@ -380,7 +419,9 @@ public partial record PlainTextEditorStates
             };
 
             focusedPlainTextEditorRecord =
-                ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, replacementCurrentToken);
+                await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                    replacementCurrentToken,
+                    cancellationToken);
 
             var row = focusedPlainTextEditorRecord.Rows[targetRowIndex];
 
@@ -398,7 +439,9 @@ public partial record PlainTextEditorStates
                 IndexInPlainText = currentToken.PlainText.Length - 1
             };
 
-            return ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, replacementCurrentToken);
+            return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                replacementCurrentToken,
+                cancellationToken);
         }
     }
 }

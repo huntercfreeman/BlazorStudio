@@ -19,7 +19,9 @@ public partial record PlainTextEditorStates
             }
             else if (KeyboardKeyFacts.IsMovementKey(keyDownEventRecord))
             {
-                return HandleMovement(focusedPlainTextEditorRecord, keyDownEventRecord);
+                return await HandleMovementAsync(focusedPlainTextEditorRecord, 
+                    keyDownEventRecord,
+                    cancellationToken);
             }
             else if (KeyboardKeyFacts.IsMetaKey(keyDownEventRecord)) 
             {

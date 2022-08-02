@@ -367,17 +367,11 @@ public partial record PlainTextEditorStates
                     return;
 
                 var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
-                    .HandleKeyDownEventAsync(plainTextEditor,
-                        overrideKeyDownEventRecord,
-                        keyDownEventAction.CancellationToken);
+                    .HandleOnClickEventAsync(plainTextEditor,
+                        plainTextEditorOnClickAction,
+                        plainTextEditorOnClickAction.CancellationToken);
 
                 var replacementPlainTextEditor = resultPlainTextEditorRecord with
-                {
-                    SequenceKey = SequenceKey.NewSequenceKey()
-                };
-
-                var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                    .HandleOnClickEventAsync(plainTextEditor, plainTextEditorOnClickAction) with
                 {
                     SequenceKey = SequenceKey.NewSequenceKey()
                 };
@@ -469,8 +463,9 @@ public partial record PlainTextEditorStates
                 var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
                 var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
-                var fileHandle = constructMemoryMappedFilePlainTextEditorRecordAction.FileSystemProvider
-                    .Open(constructMemoryMappedFilePlainTextEditorRecordAction.AbsoluteFilePath);
+                var fileHandle = await constructMemoryMappedFilePlainTextEditorRecordAction.FileSystemProvider
+                    .OpenAsync(constructMemoryMappedFilePlainTextEditorRecordAction.AbsoluteFilePath,
+                        constructMemoryMappedFilePlainTextEditorRecordAction.CancellationToken);
 
                 var plainTextEditor = new
                     PlainTextEditorRecord(constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey)
