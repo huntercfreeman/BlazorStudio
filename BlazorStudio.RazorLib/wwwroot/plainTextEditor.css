@@ -117,12 +117,12 @@
 
 .pte_plain-text-editor-footer {
     display: flex;
-    height: 2em;
+    height: 1.5em;
     align-items: center;
     justify-content: space-between;
     margin-left: 2px;
     border-top: 1.5px solid var(--bstudio_primary-border-color);
-    font-size: 16px;
+    font-size: 14px;
     padding-left: 4px;
     padding-right: 4px;
 }
