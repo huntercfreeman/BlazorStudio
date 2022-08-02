@@ -17,6 +17,9 @@ public interface IPlainTextEditor
     /// 
     /// </summary>
     public SequenceKey SequenceKey { get; } 
+    /// <summary>
+    /// 
+    /// </summary>
     public ImmutableList<IPlainTextEditorRow> List { get; }
     /// <summary>
     /// The PlainTextEditor needs an abstraction of a modifiable <see cref="MemoryMappedFile"/>
@@ -33,6 +36,11 @@ public interface IPlainTextEditor
     /// the file clear the list of edits.
     /// </summary>
     public IFileHandle? FileHandle { get; }
+    /// <summary>
+    /// This is used to set various settings for a unique <see cref="IPlainTextEditor"/>.
+    /// For example, perhaps one renders two <see cref="IPlainTextEditor"/>s on the UI.
+    /// The <see cref="RichTextEditorOptions.FontSizeInPixels"/> can be different for the two.
+    /// </summary>
     public RichTextEditorOptions RichTextEditorOptions { get; }
     /// <summary>
     /// When the PlainTextEditor is rendered to a user interface it is done so
@@ -140,5 +148,12 @@ public interface IPlainTextEditor
     /// </summary>
     public int CharacterColumnIndexOffset { get; }
 
+    /// <summary>
+    /// The PlainTextEditor is a semantic representation of the file that was read in.
+    /// So, a space character would be a <see cref="PlainTextEditorStates.WhitespaceTextToken"/>.
+    /// <br/><br/>
+    /// <see cref="GetPlainText"/> converts the semantic representation to the actual plain text
+    /// it represents.
+    /// </summary>
     public string GetPlainText();
 }
