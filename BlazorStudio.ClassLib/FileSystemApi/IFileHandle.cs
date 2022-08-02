@@ -35,8 +35,9 @@ public interface IFileHandle : IDisposable
     /// TODO: Calculate this instead of assuming each character is 1 byte 
     /// </summary>
     public int BytesPerEncodedCharacter { get; }
-    
-    /// <summary>
+    public FileHandleReadRequest MostRecentReadRequest { get; }
+
+        /// <summary>
     /// Random access to the file to avoid reading the entire file into memory.
     /// 
     /// When <see cref="rowIndexOffset"/> is 0, and <see cref="characterIndexOffset"/> is 0 that is

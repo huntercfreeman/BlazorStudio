@@ -61,6 +61,8 @@ public partial class FileSystemProvider : IFileSystemProvider
         /// </summary>
         public int BytesPerEncodedCharacter { get; private set; } = 1;
 
+        public FileHandleReadRequest MostRecentReadRequest { get; private set; }
+
         public FileHandle(IAbsoluteFilePath absoluteFilePath, Action<FileHandle> onDisposeAction)
         {
             _onDisposeAction = onDisposeAction;
@@ -274,6 +276,8 @@ public partial class FileSystemProvider : IFileSystemProvider
                     return null;
                 }
 
+                MostRecentReadRequest = readRequest;
+
                 return Read(readRequest);
             }
             finally
@@ -281,7 +285,7 @@ public partial class FileSystemProvider : IFileSystemProvider
                 _readSemaphoreSlim.Release();
             }
         }
-        
+
         public void Dispose()
         {
             if (_memoryMappedFile is not null)
