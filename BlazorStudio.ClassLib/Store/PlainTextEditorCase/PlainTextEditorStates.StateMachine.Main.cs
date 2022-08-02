@@ -70,7 +70,7 @@ public partial record PlainTextEditorStates
 
             focusedPlainTextEditorRecord = ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);
 
-            var nextTokenList = focusedPlainTextEditorRecord.CurrentPlainTextEditorRow.List
+            var nextTokenList = focusedPlainTextEditorRecord.CurrentPlainTextEditorRow.Tokens
                 .Insert(focusedPlainTextEditorRecord.CurrentTokenIndex + 1, textToken);
 
             var nextRowInstance = focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>() with
@@ -128,7 +128,7 @@ public partial record PlainTextEditorStates
                 return focusedPlainTextEditorRecord;
             }
             
-            if (focusedPlainTextEditorRecord.CurrentPlainTextEditorRow.List.Count == 1)
+            if (focusedPlainTextEditorRecord.CurrentPlainTextEditorRow.Tokens.Count == 1)
             {
                 return RemoveCurrentRow(focusedPlainTextEditorRecord);
             }
@@ -251,9 +251,9 @@ public partial record PlainTextEditorStates
 
                     var row = focusedPlainTextEditorRecord.Rows[rowIndex];
 
-                    var tokenIndex = row.List.Count - 1;
+                    var tokenIndex = row.Tokens.Count - 1;
 
-                    var token = row.List[tokenIndex];
+                    var token = row.Tokens[tokenIndex];
 
                     return (
                         rowIndex, 
@@ -302,7 +302,7 @@ public partial record PlainTextEditorStates
 
                     var tokenIndex = 0;
 
-                    var token = row.List[tokenIndex];
+                    var token = row.Tokens[tokenIndex];
 
                     return (
                         rowIndex, 

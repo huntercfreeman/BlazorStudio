@@ -41,7 +41,7 @@ public partial record PlainTextEditorStates
 
                     var characterIndexTotal = 0;
 
-                    foreach (var token in previousRow.List)
+                    foreach (var token in previousRow.Tokens)
                     {
                         characterIndexTotal += token.CopyText.Length;
                     }
@@ -68,7 +68,7 @@ public partial record PlainTextEditorStates
 
                         var characterIndexTotal = 0;
 
-                        foreach (var token in previousRow.List)
+                        foreach (var token in previousRow.Tokens)
                         {
                             characterIndexTotal += token.CopyText.Length;
                         }

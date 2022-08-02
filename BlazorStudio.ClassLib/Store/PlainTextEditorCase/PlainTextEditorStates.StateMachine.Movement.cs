@@ -337,7 +337,7 @@ public partial record PlainTextEditorStates
 
             focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
             {
-                CurrentTokenIndex = row.List.Count - 1,
+                CurrentTokenIndex = row.Tokens.Count - 1,
                 CurrentRowIndex = targetRowIndex
             };
 

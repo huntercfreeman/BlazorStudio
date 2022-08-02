@@ -15,11 +15,11 @@
                 // by making a local reference to it.
                 var currentPlainTextEditorRow = PlainTextEditorRow;
 
-                for (int i = 0; i < currentPlainTextEditorRow.List.Count; i++)
+                for (int i = 0; i < currentPlainTextEditorRow.Tokens.Count; i++)
                 {
                     var tokenIndex = i;
 
-                    var token = currentPlainTextEditorRow.List[tokenIndex];
+                    var token = currentPlainTextEditorRow.Tokens[tokenIndex];
                     <CascadingValue Name="TokenIndex" Value="tokenIndex">
                         <TextTokenDisplay @key="token.Key"
                                           TextToken="token" />
