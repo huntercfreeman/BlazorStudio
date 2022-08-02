@@ -191,6 +191,8 @@ public partial record PlainTextEditorStates
                         focusedPlainTextEditorRecord.UseCarriageReturnNewLine
                             ? "\r\n"
                             : "\n");
+
+                focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow.Add(-1);
             }
 
             var replacementCurrentToken = focusedPlainTextEditorRecord

@@ -334,15 +334,17 @@ public partial class EditBuilder
         }
     }
 
-    public List<string> ApplyEdits(FileHandleReadRequest readRequest, 
+    public EditResult ApplyEdits(FileHandleReadRequest readRequest, 
         List<string> rows, 
         List<long> virtualCharacterIndexMarkerForStartOfARow)
     {
+        EditResult? editResult = null;
+
         try
         {
             _editsSemaphoreSlim.Wait();
 
-            var editResult = new EditResult(rows,
+            editResult = new EditResult(rows,
                 virtualCharacterIndexMarkerForStartOfARow, 
                 new(),
                 0);
@@ -357,7 +359,7 @@ public partial class EditBuilder
             _editsSemaphoreSlim.Release();
         }
 
-        return rows;
+        return editResult;
     }
     
     public async Task<List<string>> ApplyEditsAsync(List<string> rows, CancellationToken cancellationToken = default)

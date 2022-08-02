@@ -52,8 +52,8 @@ public partial class FileSystemProvider : IFileSystemProvider
         public long VirtualCharacterLengthOfLongestRow { get; private set; }
         public int VirtualExclusiveEndOfFileCharacterIndex { get; private set; }
         public int VirtualRowCount => _virtualCharacterIndexMarkerForStartOfARow.Count;
-        public ImmutableArray<long> VirtualCharacterIndexMarkerForStartOfARow => 
-            _virtualCharacterIndexMarkerForStartOfARow.ToImmutableArray();
+        public List<long> VirtualCharacterIndexMarkerForStartOfARow => 
+            _virtualCharacterIndexMarkerForStartOfARow;
         
         public int PreambleLength { get; private set; }
         /// <summary>
@@ -258,7 +258,9 @@ public partial class FileSystemProvider : IFileSystemProvider
             // TODO: Add the displacement to the Virtual values
             VirtualCharacterLengthOfLongestRow = PhysicalCharacterLengthOfLongestRow;
 
-            return Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
+            var editedResult = Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
+
+            return editedResult.ContentRows;
         }
         
         public async Task<List<string>?> ReadAsync(FileHandleReadRequest readRequest)

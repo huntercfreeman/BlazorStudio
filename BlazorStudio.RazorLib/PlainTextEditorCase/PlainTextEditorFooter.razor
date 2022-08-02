@@ -1,13 +1,13 @@
 ﻿<div class="pte_plain-text-editor-footer">
     <div class="pte_plain-text-editor-footer-entry">.@PlainTextEditor.FileHandle.AbsoluteFilePath.ExtensionNoPeriod</div>
     <div class="pte_plain-text-editor-footer-entry">Length:&nbsp;@PlainTextEditor.FileHandle.VirtualExclusiveEndOfFileCharacterIndex</div>
-    <div class="pte_plain-text-editor-footer-entry">Lines:&nbsp;@PlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow.Length</div>
+    <div class="pte_plain-text-editor-footer-entry">Lines:&nbsp;@PlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow.Count</div>
     <div class="pte_plain-text-editor-footer-entry">
         Ln:&nbsp;@(PlainTextEditor.CurrentRowIndex + PlainTextEditor.RowIndexOffset + 1)
         &nbsp;
         Col:&nbsp;@(PlainTextEditor.CharacterColumnIndexOffset + PlainTextEditor.CurrentCharacterColumnIndex + 1)
         &nbsp;
-        Pos:&nbsp;TODO
+        Pos:&nbsp;@(PlainTextEditor.CurrentPositionIndex + 1)
     </div>
     <div class="pte_plain-text-editor-footer-entry">(@GetIsCarriageReturnNewLine)</div>
     <div class="pte_plain-text-editor-footer-entry">@PlainTextEditor.FileHandle.Encoding.EncodingName</div>

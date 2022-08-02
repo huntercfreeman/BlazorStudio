@@ -29,7 +29,7 @@ public interface IFileHandle : IDisposable
     public long VirtualCharacterLengthOfLongestRow { get; }
     public int VirtualRowCount { get; }
     public int VirtualExclusiveEndOfFileCharacterIndex { get; }
-    public ImmutableArray<long> VirtualCharacterIndexMarkerForStartOfARow { get; }
+    public List<long> VirtualCharacterIndexMarkerForStartOfARow { get; }
     public int PreambleLength { get; }
     /// <summary>
     /// TODO: Calculate this instead of assuming each character is 1 byte 
