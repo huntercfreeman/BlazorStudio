@@ -46,7 +46,6 @@
     <Folder Include="Drag\" />
     <Folder Include="Dropdown\" />
     <Folder Include="Theme\" />
-    <Folder Include="Workspace\" />
   </ItemGroup>
 
   <ItemGroup>
