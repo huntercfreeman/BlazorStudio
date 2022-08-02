@@ -6,6 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="wwwroot\README.md" />
+    <Content Remove="wwwroot\Themes\README.md" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
@@ -60,6 +65,8 @@
     <None Include="Errors\RichErrorDisplay.razor" />
     <None Include="TaskModelManager\Helpers\TaskModelManagerDialogEntryPointTaskModelListPreviewDisplay.razor" />
     <None Include="TaskModelManager\TaskModelManagerDialogEntryPointDisplay.razor" />
+    <None Include="wwwroot\README.md" />
+    <None Include="wwwroot\Themes\README.md" />
   </ItemGroup>
 
   <ItemGroup>
