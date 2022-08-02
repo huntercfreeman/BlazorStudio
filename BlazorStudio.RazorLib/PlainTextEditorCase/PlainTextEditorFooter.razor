@@ -7,7 +7,7 @@
         &nbsp;
         Col:&nbsp;@(PlainTextEditor.CurrentCharacterColumnIndex + PlainTextEditor.CharacterColumnIndexOffset + 1)
         &nbsp;
-        Pos:&nbsp;@(PlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow[PlainTextEditor.CurrentRowIndex])
+        Pos:&nbsp;@(PlainTextEditor.CurrentPositionIndex)
     </div>
     <div class="pte_plain-text-editor-footer-entry">(@GetIsCarriageReturnNewLine)</div>
     <div class="pte_plain-text-editor-footer-entry">@PlainTextEditor.FileHandle.Encoding.EncodingName</div>

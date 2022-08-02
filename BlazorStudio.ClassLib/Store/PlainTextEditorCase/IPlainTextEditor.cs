@@ -108,7 +108,7 @@ public interface IPlainTextEditor
     /// This is the index of the primary cursor relative to the flat entirety of
     /// the file itself (no rows involved).
     /// </summary>
-    public int CurrentPositionIndex { get; }
+    public long CurrentPositionIndex { get; }
     /// <summary>
     /// Similar to the <see cref="CurrentCharacterColumnIndex"/> this is
     /// the index of the primary cursor relative to the current row.
