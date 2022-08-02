@@ -224,7 +224,7 @@ public partial class EditBuilder
         }
         else
         {
-            var editWrapper = new EditWrapper(edits, EditWrapperKind.Insert);
+            var editWrapper = new EditWrapper(edits, EditWrapperKind.Remove);
 
             await LockAddEditWrapperAsync(editWrapper, cancellationToken);
         }
