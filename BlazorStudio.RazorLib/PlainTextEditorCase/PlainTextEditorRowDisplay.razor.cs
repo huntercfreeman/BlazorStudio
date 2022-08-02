@@ -64,7 +64,7 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
                 new PlainTextEditorOnClickAction(
                     PlainTextEditorKey,
                     RowIndex,
-                    PlainTextEditorRow.List.Count - 1,
+                    PlainTextEditorRow.Tokens.Count - 1,
                     null
                 )
             );

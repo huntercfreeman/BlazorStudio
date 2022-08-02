@@ -81,7 +81,7 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord)
         {
             if (focusedPlainTextEditorRecord.CurrentRowIndex >=
-                focusedPlainTextEditorRecord.List.Count - 1)
+                focusedPlainTextEditorRecord.Rows.Count - 1)
             {
                 return focusedPlainTextEditorRecord;
             }
@@ -97,7 +97,7 @@ public partial record PlainTextEditorStates
 
             var belowRow = focusedPlainTextEditorRecord
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
-                    focusedPlainTextEditorRecord.List[targetRowIndex]);
+                    focusedPlainTextEditorRecord.Rows[targetRowIndex]);
 
             var tokenInRowBelowTuple = CalculateTokenAtColumnIndexRespectiveToRow(
                 focusedPlainTextEditorRecord,
@@ -111,7 +111,7 @@ public partial record PlainTextEditorStates
 
             var currentRowReplacement = currentRow with
             {
-                List = currentRow.List.Replace(currentToken, currentToken with
+                Tokens = currentRow.Tokens.Replace(currentToken, currentToken with
                 {
                     IndexInPlainText = null
                 }),
@@ -133,20 +133,20 @@ public partial record PlainTextEditorStates
 
             var belowRowReplacement = belowRow with
             {
-                List = belowRow.List.Replace(tokenInRowBelowTuple.token, tokenInRowBelowTuple.token with
+                Tokens = belowRow.Tokens.Replace(tokenInRowBelowTuple.token, tokenInRowBelowTuple.token with
                 {
                     IndexInPlainText = indexInPlainText
                 }),
                 SequenceKey = SequenceKey.NewSequenceKey()
             };
 
-            var nextRowList = focusedPlainTextEditorRecord.List
+            var nextRowList = focusedPlainTextEditorRecord.Rows
                 .Replace(currentRow, currentRowReplacement)
                 .Replace(belowRow, belowRowReplacement);
 
             return focusedPlainTextEditorRecord with
             {
-                List = nextRowList,
+                Rows = nextRowList,
                 CurrentTokenIndex = tokenInRowBelowTuple.tokenIndex,
                 CurrentRowIndex = targetRowIndex,
             };
@@ -169,7 +169,7 @@ public partial record PlainTextEditorStates
 
             var aboveRow = focusedPlainTextEditorRecord
                 .ConvertIPlainTextEditorRowAs<PlainTextEditorRow>(
-                    focusedPlainTextEditorRecord.List[targetRowIndex]);
+                    focusedPlainTextEditorRecord.Rows[targetRowIndex]);
 
             var tokenInRowAboveMetaData = CalculateTokenAtColumnIndexRespectiveToRow(
                 focusedPlainTextEditorRecord,
@@ -183,7 +183,7 @@ public partial record PlainTextEditorStates
 
             var currentRowReplacement = currentRow with
             {
-                List = currentRow.List.Replace(currentToken, currentToken with
+                Tokens = currentRow.Tokens.Replace(currentToken, currentToken with
                 {
                     IndexInPlainText = null
                 }),
@@ -205,20 +205,20 @@ public partial record PlainTextEditorStates
 
             var aboveRowReplacement = aboveRow with
             {
-                List = aboveRow.List.Replace(tokenInRowAboveMetaData.token, tokenInRowAboveMetaData.token with
+                Tokens = aboveRow.Tokens.Replace(tokenInRowAboveMetaData.token, tokenInRowAboveMetaData.token with
                 {
                     IndexInPlainText = indexInPlainText
                 }),
                 SequenceKey = SequenceKey.NewSequenceKey()
             };
 
-            var nextRowList = focusedPlainTextEditorRecord.List
+            var nextRowList = focusedPlainTextEditorRecord.Rows
                 .Replace(currentRow, currentRowReplacement)
                 .Replace(aboveRow, aboveRowReplacement);
 
             return focusedPlainTextEditorRecord with
             {
-                List = nextRowList,
+                Rows = nextRowList,
                 CurrentTokenIndex = tokenInRowAboveMetaData.tokenIndex,
                 CurrentRowIndex = targetRowIndex
             };
@@ -319,7 +319,7 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord)
         {
             int targetRowIndex = keyDownEventRecord.CtrlWasPressed
-                ? focusedPlainTextEditorRecord.List.Count - 1
+                ? focusedPlainTextEditorRecord.Rows.Count - 1
                 : focusedPlainTextEditorRecord.CurrentRowIndex;
 
             var currentToken = focusedPlainTextEditorRecord
@@ -333,11 +333,11 @@ public partial record PlainTextEditorStates
             focusedPlainTextEditorRecord =
                 ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, replacementCurrentToken);
 
-            var row = focusedPlainTextEditorRecord.List[targetRowIndex];
+            var row = focusedPlainTextEditorRecord.Rows[targetRowIndex];
 
             focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
             {
-                CurrentTokenIndex = row.List.Count - 1,
+                CurrentTokenIndex = row.Tokens.Count - 1,
                 CurrentRowIndex = targetRowIndex
             };
 

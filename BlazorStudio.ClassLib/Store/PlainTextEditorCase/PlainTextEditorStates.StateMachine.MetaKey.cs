@@ -29,7 +29,7 @@ public partial record PlainTextEditorStates
             }
 
             if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.StartOfRow &&
-                focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>().List.Count > 1)
+                focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>().Tokens.Count > 1)
             {
                 // Remove newline character
 
@@ -37,11 +37,11 @@ public partial record PlainTextEditorStates
                 if (!keyDownEventRecord.IsForced && focusedPlainTextEditorRecord.CurrentRowIndex != 0)
                 {
                     var previousRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex - 1;
-                    var previousRow = focusedPlainTextEditorRecord.List[previousRowIndex];
+                    var previousRow = focusedPlainTextEditorRecord.Rows[previousRowIndex];
 
                     var characterIndexTotal = 0;
 
-                    foreach (var token in previousRow.List)
+                    foreach (var token in previousRow.Tokens)
                     {
                         characterIndexTotal += token.CopyText.Length;
                     }
@@ -64,11 +64,11 @@ public partial record PlainTextEditorStates
                     if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.StartOfRow)
                     {
                         var previousRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex - 1;
-                        var previousRow = focusedPlainTextEditorRecord.List[previousRowIndex];
+                        var previousRow = focusedPlainTextEditorRecord.Rows[previousRowIndex];
 
                         var characterIndexTotal = 0;
 
-                        foreach (var token in previousRow.List)
+                        foreach (var token in previousRow.Tokens)
                         {
                             characterIndexTotal += token.CopyText.Length;
                         }

@@ -39,19 +39,19 @@ public partial record PlainTextEditorStates
 
             var replacementRow = currentRow with
             {
-                List = currentRow.List
+                Tokens = currentRow.Tokens
                     .Remove(nextTokenTuple.token)
                     .Remove(focusedPlainTextEditorRecord.CurrentTextToken)
                     .Insert(focusedPlainTextEditorRecord.CurrentTokenIndex, replacementToken),
                 SequenceKey = SequenceKey.NewSequenceKey()
             };
 
-            var nextRowList = focusedPlainTextEditorRecord.List.Replace(currentRow,
+            var nextRowList = focusedPlainTextEditorRecord.Rows.Replace(currentRow,
                 replacementRow);
 
             return focusedPlainTextEditorRecord with
             {
-                List = nextRowList
+                Rows = nextRowList
             };
         }
     }
