@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <Folder Include="Mouse\" />
-    <Folder Include="Sequence\" />
   </ItemGroup>
 
 </Project>

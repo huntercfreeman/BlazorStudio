@@ -1,0 +1,2 @@
+﻿# BlazorStudio.ClassLib/Services
+When I originally made the PlainTextEditor I wanted to use it in an application host (i.e. BlazorServerSide for example) but I wanted to avoid the Fluxor nuget package. I don't like the files in this directory and I probably will delete them when I get the chance.
