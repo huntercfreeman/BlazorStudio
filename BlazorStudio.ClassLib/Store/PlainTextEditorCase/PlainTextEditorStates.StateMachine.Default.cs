@@ -34,7 +34,12 @@ public partial record PlainTextEditorStates
                     Content = content,
                     IndexInPlainText = previousDefaultToken.IndexInPlainText + 1
                 };
-                
+
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
+                };
+
                 return ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, nextDefaultToken);
             }
             else
@@ -74,7 +79,12 @@ public partial record PlainTextEditorStates
                         Content = content,
                         IndexInPlainText = previousDefaultToken.IndexInPlainText
                     };
-                    
+
+                    focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                    {
+                        CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
+                    };
+
                     return ReplaceCurrentTokenWith(focusedPlainTextEditorRecord, nextDefaultToken);
                 }
                 else
@@ -123,6 +133,11 @@ public partial record PlainTextEditorStates
                         {
                             Content = keyDownEventRecord.Key,
                             IndexInPlainText = 0
+                        };
+
+                        focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                        {
+                            CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
                         };
 
                         return InsertNewCurrentTokenAfterCurrentPosition(focusedPlainTextEditorRecord,
