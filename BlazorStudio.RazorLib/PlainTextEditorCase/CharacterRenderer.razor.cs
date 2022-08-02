@@ -38,7 +38,8 @@ public partial class CharacterRenderer : ComponentBase
                 PlainTextEditorKey,
                 RowIndex,
                 TokenIndex,
-                CharacterIndex
+                CharacterIndex,
+                CancellationToken.None
             )
         );
     }

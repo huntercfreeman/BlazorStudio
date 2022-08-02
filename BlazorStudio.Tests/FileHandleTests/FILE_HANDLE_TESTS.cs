@@ -6,7 +6,7 @@ namespace BlazorStudio.Tests.FileHandleTests;
 public class FILE_HANDLE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 {
     [Fact]
-    public void READ_FROM_START()
+    public async Task READ_FROM_START()
     {
         var inputAbsoluteFilePath = new AbsoluteFilePath(
             "C:\\BlazorStudioTestGround\\TestFiles\\helloWorld-Normal.c",
@@ -14,11 +14,11 @@ public class FILE_HANDLE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var fileSystemProvider = new FileSystemProvider();
 
-        var fileHandle = fileSystemProvider.Open(inputAbsoluteFilePath);
+        var fileHandle = await fileSystemProvider.OpenAsync(inputAbsoluteFilePath, CancellationToken.None);
 
         var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
-        var rowContent = fileHandle.Read(new FileHandleReadRequest(
+        var rowContent = await fileHandle.ReadAsync(new FileHandleReadRequest(
             0, 0, 5, characterLengthOfLongestRow,
             CancellationToken.None));
 
@@ -30,7 +30,7 @@ public class FILE_HANDLE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     }
     
     [Fact]
-    public void READ_FROM_RANDOM()
+    public async Task READ_FROM_RANDOM()
     {
         var inputAbsoluteFilePath = new AbsoluteFilePath(
             "C:\\BlazorStudioTestGround\\TestFiles\\helloWorld-Normal.c",
@@ -38,11 +38,11 @@ public class FILE_HANDLE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var fileSystemProvider = new FileSystemProvider();
 
-        var fileHandle = fileSystemProvider.Open(inputAbsoluteFilePath);
+        var fileHandle = await fileSystemProvider.OpenAsync(inputAbsoluteFilePath, CancellationToken.None);
 
         var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
-        var rowContent = fileHandle.Read(new FileHandleReadRequest(
+        var rowContent = await fileHandle.ReadAsync(new FileHandleReadRequest(
             1, 2, 1000, characterLengthOfLongestRow,
             CancellationToken.None));
 
@@ -54,7 +54,7 @@ public class FILE_HANDLE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     }
     
     [Fact]
-    public void READ_THEN_INSERT_LINE_BEFORE_READ_AGAIN()
+    public async Task READ_THEN_INSERT_LINE_BEFORE_READ_AGAIN()
     {
         var inputAbsoluteFilePath = new AbsoluteFilePath(
             "C:\\BlazorStudioTestGround\\TestFiles\\helloWorld-Normal.c",
@@ -62,18 +62,21 @@ public class FILE_HANDLE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var fileSystemProvider = new FileSystemProvider();
 
-        var fileHandle = fileSystemProvider.Open(inputAbsoluteFilePath);
+        var fileHandle = await fileSystemProvider.OpenAsync(inputAbsoluteFilePath, CancellationToken.None);
 
         var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
-        var firstReadRows = fileHandle.Read(new FileHandleReadRequest(1, 0, 2, characterLengthOfLongestRow, 
+        var firstReadRows = await fileHandle.ReadAsync(new FileHandleReadRequest(1, 0, 2, characterLengthOfLongestRow, 
             CancellationToken.None));
 
         var firstReadContent = string.Join(string.Empty, firstReadRows);
         
-        fileHandle.Edit.Insert(1, 0, "READ_THEN_INSERT_LINE_BEFORE_READ_AGAIN()");
+        await fileHandle.Edit.InsertAsync(1, 
+            0, 
+            "READ_THEN_INSERT_LINE_BEFORE_READ_AGAIN()",
+            CancellationToken.None);
 
-        var secondReadRows = fileHandle.Read(new FileHandleReadRequest(1, 0, 2, characterLengthOfLongestRow,
+        var secondReadRows = await fileHandle.ReadAsync(new FileHandleReadRequest(1, 0, 2, characterLengthOfLongestRow,
             CancellationToken.None));
 
         var secondReadContent = string.Join(string.Empty, secondReadRows);
