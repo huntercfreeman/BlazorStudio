@@ -243,11 +243,16 @@ public partial record PlainTextEditorStates
                         constructedRow
                     });
 
+            focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
+                .Insert(focusedPlainTextEditorRecord.CurrentRowIndex + 1, 
+                    focusedPlainTextEditorRecord.CurrentCharacterColumnIndex);
+
             return focusedPlainTextEditorRecord with
             {
                 Rows = nextRowList,
                 CurrentTokenIndex = 0,
-                CurrentRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex + 1
+                CurrentRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex + 1,
+                CurrentCharacterColumnIndex = 0
             };
         }
         
