@@ -164,8 +164,7 @@ public partial record PlainTextEditorStates
             {
                 Rows = nextRowList,
                 CurrentTokenIndex = tokenInRowBelowTuple.tokenIndex,
-                CurrentRowIndex = targetRowIndex,
-                CurrentPositionIndex = focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow[targetRowIndex]
+                CurrentRowIndex = targetRowIndex
             };
         }
 

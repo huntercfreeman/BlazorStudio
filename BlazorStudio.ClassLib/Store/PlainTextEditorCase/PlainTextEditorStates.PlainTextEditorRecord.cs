@@ -45,10 +45,13 @@ public partial record PlainTextEditorStates
         public int RowIndexOffset { get; init; }
         public int CharacterIndexOffsetRelativeToRow { get; init; }
         public int CurrentCharacterColumnIndex { get; init; }
-        public long CurrentPositionIndex { get; init; }
         public int PreviouslySetCharacterColumnIndex { get; init; }
         public int CharacterColumnIndexOffset { get; init; }
         public SelectionSpanRecord? SelectionSpan { get; init; }
+
+        public long CurrentPositionIndex =>
+            FileHandle.VirtualCharacterIndexMarkerForStartOfARow[RowIndexOffset + CurrentRowIndex]
+                + CharacterIndexOffsetRelativeToRow + CurrentCharacterColumnIndex;
 
         public T GetCurrentTextTokenAs<T>()
             where T : class
