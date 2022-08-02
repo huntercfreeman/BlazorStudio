@@ -143,8 +143,9 @@ public partial class EditBuilder
         return this;
     }
 
-    public async Task<EditBuilder> RemoveAsync(int rowIndexOffset, int characterIndexOffset, int? rowCount = null,
-        int? characterCount = null, CancellationToken cancellationToken = default)
+    public async Task<EditBuilder> RemoveAsync(int rowIndexOffset, int characterIndexOffset, CancellationToken cancellationToken,
+        int? rowCount = null,
+        int? characterCount = null)
     {
         var edits = new List<Func<FileHandleReadRequest, EditResult, CancellationToken, Task>>();
 

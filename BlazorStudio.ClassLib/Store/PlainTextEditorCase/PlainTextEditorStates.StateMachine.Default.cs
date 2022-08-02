@@ -21,7 +21,8 @@ public partial record PlainTextEditorStates
 
                 if (!keyDownEventRecord.IsForced)
                 {
-                    var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord)
+                    var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                             cancellationToken)
                                          + previousDefaultToken.IndexInPlainText.Value;
 
                     await focusedPlainTextEditorRecord.FileHandle.Edit
@@ -42,11 +43,14 @@ public partial record PlainTextEditorStates
                     CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
                 };
 
-                return ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, nextDefaultToken);
+                return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                    nextDefaultToken,
+                    cancellationToken);
             }
             else
             {
-                var nextTokenTuple = GetNextTokenTupleAsync(focusedPlainTextEditorRecord);
+                var nextTokenTuple = await GetNextTokenTupleAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
 
                 if (nextTokenTuple.rowIndex == focusedPlainTextEditorRecord.CurrentRowIndex &&
                     nextTokenTuple.token.Kind == TextTokenKind.Default)
@@ -55,7 +59,8 @@ public partial record PlainTextEditorStates
 
                     if (!keyDownEventRecord.IsForced)
                     {
-                        var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord);
+                        var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                            cancellationToken);
 
                         if (focusedPlainTextEditorRecord.CurrentTextToken is not WhitespaceTextToken whitespace ||
                             whitespace.WhitespaceKind != WhitespaceKind.Tab)
@@ -70,7 +75,8 @@ public partial record PlainTextEditorStates
                                 cancellationToken);
                     }
 
-                    focusedPlainTextEditorRecord = SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord);
+                    focusedPlainTextEditorRecord = await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                        cancellationToken);
                     
                     var previousDefaultToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<DefaultTextToken>();
 
@@ -88,7 +94,9 @@ public partial record PlainTextEditorStates
                         CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
                     };
 
-                    return ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, nextDefaultToken);
+                    return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                        nextDefaultToken,
+                        cancellationToken);
                 }
                 else
                 {
@@ -99,14 +107,15 @@ public partial record PlainTextEditorStates
                     {
                         // if (active token is not a word, but the cursor is NOT at the end of that token the token is split)
                         
-                        return SplitCurrentToken(
+                        return await SplitCurrentTokenAsync(
                             focusedPlainTextEditorRecord, 
                             new DefaultTextToken
                             {
                                 Content = keyDownEventRecord.Key,
                                 IndexInPlainText = 0
                             },
-                            keyDownEventRecord.IsForced
+                            keyDownEventRecord.IsForced,
+                            cancellationToken
                         );
                     }
                     else
@@ -115,7 +124,8 @@ public partial record PlainTextEditorStates
 
                         if (!keyDownEventRecord.IsForced)
                         {
-                            var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord)
+                            var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                                     cancellationToken)
                                                  + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                             await focusedPlainTextEditorRecord.FileHandle.Edit
@@ -131,7 +141,9 @@ public partial record PlainTextEditorStates
                                 IndexInPlainText = null
                             };
 
-                        focusedPlainTextEditorRecord = ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, replacementCurrentToken);
+                        focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                            replacementCurrentToken,
+                            cancellationToken);
 
                         var defaultTextToken = new DefaultTextToken
                         {
@@ -144,8 +156,9 @@ public partial record PlainTextEditorStates
                             CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
                         };
 
-                        return InsertNewCurrentTokenAfterCurrentPositionAsync(focusedPlainTextEditorRecord,
-                            defaultTextToken);
+                        return await InsertNewCurrentTokenAfterCurrentPositionAsync(focusedPlainTextEditorRecord,
+                            defaultTextToken,
+                            cancellationToken);
                     }
                 }
                 
@@ -160,7 +173,8 @@ public partial record PlainTextEditorStates
 
             if (!keyDownEventRecord.IsForced)
             {
-                var characterIndex = CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord)
+                var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                         cancellationToken)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
                 await focusedPlainTextEditorRecord.FileHandle.Edit
@@ -188,12 +202,16 @@ public partial record PlainTextEditorStates
                 };
 
             if (nextDefaultToken.Content.Length == 0)
-                return RemoveCurrentTokenAsync(focusedPlainTextEditorRecord);
+                return await RemoveCurrentTokenAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
 
-            focusedPlainTextEditorRecord = ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, nextDefaultToken);
+            focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                nextDefaultToken,
+                cancellationToken);
 
             if (nextDefaultToken.IndexInPlainText == -1)
-                return SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord);
+                return await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                    cancellationToken);
 
             return focusedPlainTextEditorRecord;
         }

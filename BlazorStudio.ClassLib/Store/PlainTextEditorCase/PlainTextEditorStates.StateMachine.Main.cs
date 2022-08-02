@@ -13,7 +13,9 @@ public partial record PlainTextEditorStates
         {
             if (KeyboardKeyFacts.IsWhitespaceKey(keyDownEventRecord))
             {
-                return HandleWhitespace(focusedPlainTextEditorRecord, keyDownEventRecord);
+                return await HandleWhitespaceAsync(focusedPlainTextEditorRecord, 
+                    keyDownEventRecord,
+                    cancellationToken);
             }
             else if (KeyboardKeyFacts.IsMovementKey(keyDownEventRecord))
             {
@@ -21,7 +23,9 @@ public partial record PlainTextEditorStates
             }
             else if (KeyboardKeyFacts.IsMetaKey(keyDownEventRecord)) 
             {
-                return HandleMetaKey(focusedPlainTextEditorRecord, keyDownEventRecord);
+                return await HandleMetaKeyAsync(focusedPlainTextEditorRecord, 
+                    keyDownEventRecord,
+                    cancellationToken);
             }
             else
             {

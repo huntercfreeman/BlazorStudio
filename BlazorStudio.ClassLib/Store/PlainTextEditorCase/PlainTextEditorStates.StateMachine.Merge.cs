@@ -14,12 +14,14 @@ public partial record PlainTextEditorStates
         //
         // tokens: 'z' and 'Bill' must be
         // merged to make the token: 'zBill'
-        public static PlainTextEditorRecord MergeTokensIfApplicable(PlainTextEditorRecord focusedPlainTextEditorRecord)
+        public static async Task<PlainTextEditorRecord> MergeTokensIfApplicableAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+            CancellationToken cancellationToken)
         {
             if (focusedPlainTextEditorRecord.CurrentTextToken.Kind != TextTokenKind.Default)
                 return focusedPlainTextEditorRecord;
             
-            var nextTokenTuple = GetNextTokenTupleAsync(focusedPlainTextEditorRecord);
+            var nextTokenTuple = await GetNextTokenTupleAsync(focusedPlainTextEditorRecord,
+                cancellationToken);
 
             if (nextTokenTuple.token.Kind != TextTokenKind.Default ||
                 nextTokenTuple.token.Key == focusedPlainTextEditorRecord.CurrentTextTokenKey)

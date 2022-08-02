@@ -169,19 +169,22 @@ public partial record PlainTextEditorStates
                             continue;
                         }
 
-                        var keyDown = new KeyDownEventAction(replacementPlainTextEditor.PlainTextEditorKey,
-                            new KeyDownEventRecord(
+                        var keyDownRecord = new KeyDownEventRecord(
                                 character.ToString(),
                                 code,
                                 false,
                                 false,
                                 false,
                                 IsForced: true
-                            )
-                        );
+                            );
 
-                        replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                                .HandleKeyDownEventAsync(replacementPlainTextEditor, keyDown.KeyDownEventRecord) with
+                        var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                            .HandleKeyDownEventAsync(replacementPlainTextEditor,
+                                keyDownRecord,
+                                memoryMappedFilePixelReadRequestAction.VirtualizeCoordinateSystemMessage
+                                    .VirtualizeCoordinateSystemRequest.CancellationToken);
+
+                        replacementPlainTextEditor = resultPlainTextEditorRecord with
                             {
                                 SequenceKey = SequenceKey.NewSequenceKey()
                             };
@@ -201,11 +204,16 @@ public partial record PlainTextEditorStates
                             false,
                             IsForced: true);
 
-                        replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                                .HandleKeyDownEventAsync(replacementPlainTextEditor, forceNewLine) with
-                            {
-                                SequenceKey = SequenceKey.NewSequenceKey(),
-                            };
+                        var newLinedPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                            .HandleKeyDownEventAsync(replacementPlainTextEditor,
+                                forceNewLine,
+                                memoryMappedFilePixelReadRequestAction.VirtualizeCoordinateSystemMessage
+                                    .VirtualizeCoordinateSystemRequest.CancellationToken);
+
+                        replacementPlainTextEditor = newLinedPlainTextEditorRecord with
+                        {
+                            SequenceKey = SequenceKey.NewSequenceKey()
+                        };
                     }
                 }
 
@@ -294,8 +302,12 @@ public partial record PlainTextEditorStates
                     };
                 }
 
-                var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
-                    .HandleKeyDownEventAsync(plainTextEditor, overrideKeyDownEventRecord) with
+                var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                    .HandleKeyDownEventAsync(plainTextEditor, 
+                        overrideKeyDownEventRecord,
+                        keyDownEventAction.CancellationToken);
+
+                var replacementPlainTextEditor = resultPlainTextEditorRecord with
                 {
                     SequenceKey = SequenceKey.NewSequenceKey()
                 };
@@ -353,6 +365,16 @@ public partial record PlainTextEditorStates
 
                 if (plainTextEditor is null)
                     return;
+
+                var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                    .HandleKeyDownEventAsync(plainTextEditor,
+                        overrideKeyDownEventRecord,
+                        keyDownEventAction.CancellationToken);
+
+                var replacementPlainTextEditor = resultPlainTextEditorRecord with
+                {
+                    SequenceKey = SequenceKey.NewSequenceKey()
+                };
 
                 var replacementPlainTextEditor = PlainTextEditorStates.StateMachine
                     .HandleOnClickEventAsync(plainTextEditor, plainTextEditorOnClickAction) with
