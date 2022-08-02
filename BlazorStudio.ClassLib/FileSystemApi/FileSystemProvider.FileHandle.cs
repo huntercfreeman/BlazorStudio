@@ -181,7 +181,8 @@ public partial class FileSystemProvider : IFileSystemProvider
                 var rows = new List<string>();
 
 #if RELEASE
-            return Edit.ApplyEdits(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow);
+            return (await Edit.ApplyEditsAsync(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow, CancellationToken.None))
+                .ContentRows;
 #endif
 
                 if (_memoryMappedFile is not null)

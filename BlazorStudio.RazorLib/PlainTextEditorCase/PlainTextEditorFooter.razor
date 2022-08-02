@@ -10,5 +10,5 @@
         Pos:&nbsp;@(PlainTextEditor.CurrentPositionIndex)
     </div>
     <div class="pte_plain-text-editor-footer-entry">(@GetIsCarriageReturnNewLine)</div>
-    <div class="pte_plain-text-editor-footer-entry">@PlainTextEditor.FileHandle.Encoding.EncodingName</div>
+    <div class="pte_plain-text-editor-footer-entry">@(PlainTextEditor.FileHandle.Encoding?.EncodingName ?? "WASM demo")</div>
 </div>
