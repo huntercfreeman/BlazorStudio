@@ -9,7 +9,7 @@ public static partial class ThemeFacts
         public static class Dark
         {
             public static ThemeKey BstudioHighContrastDarkTheme =
-                ThemeKey.NewThemeKey("bstudio_high-contrast-default-dark-theme");
+                ThemeKey.NewThemeKey("TODO: bstudio_high-contrast-default-dark-theme");
 
             public static ImmutableArray<ThemeKey> AllHighContrastDarkThemeKeys = new ThemeKey[]
             {
