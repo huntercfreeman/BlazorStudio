@@ -1,10 +1,22 @@
-﻿# BlazorStudio.ClassLib/Virtualize
-This directory contains all non UI C# classes necessary for the [VirtualizeCoordinateSystem.razor](/BlazorStudio.RazorLib/VirtualizeComponents/VirtualizeCoordinateSystem.razor) component.
+﻿# BlazorStudio.ClassLib/UserInterface
+This directory contains all non UI C# classes necessary for the [TransformableDisplay.razor](/BlazorStudio.RazorLib/Transformable/TransformableDisplay.razor) component and its kin.
 
-Microsoft provides a Blazor component for vertical virtualization (see: https://docs.microsoft.com/en-us/aspnet/core/blazor/components/virtualization).
+The idea of [TransformableDisplay.razor](/BlazorStudio.RazorLib/Transformable/TransformableDisplay.razor) is to define in terms of C# all the css regarding dimensions, and positioning of HTML elements. This allows one to dynamically resize this and reposition them.
 
-I needed to have horizontal virtualization as well.
+Why is:
+```csharp
+public List<DimensionUnit> WidthCalc { get; set; } = new();
+```
+a List? This is because one must maintain a base width, perhaps this is "60vw" meaning 60% of the viewport width. However, the user can click and drag to resize the width.
 
-This meant I had to write the [VirtualizeCoordinateSystem.razor](/BlazorStudio.RazorLib/VirtualizeComponents/VirtualizeCoordinateSystem.razor) component.
+A mouse event is in terms of pixels. One can likely convert from pixels to the "vw" unit of measurement but this is unnecessary complexity and I feel a bad idea.
 
-In short, the component has (x, y) coordinates made up of (scrollLeft, scrollTop). Using these values one can calculate the content to show.
+Instead of doing a conversion between the units I use a List to define a css "calc()" function. I use string interpolation and a StringBuilder instance to create the "calc()" function when rendering and inline it within "style='{...}'". See:
+
+```html
+<div class="bstudio_dialog-display"
+     style="@DialogRecord.Dimensions.DimensionsCssString">
+    
+    <!-- ... removed to shorten snippet ... -->
+</div>
+```
