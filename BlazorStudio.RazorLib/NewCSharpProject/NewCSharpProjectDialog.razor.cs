@@ -1,99 +1,193 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.ThemeCase;
+using BlazorStudio.ClassLib.Store.TreeViewCase;
+using BlazorStudio.ClassLib.Store.WorkspaceCase;
+using Fluxor;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using System;
 using System.Diagnostics;
-using System.Xml.Linq;
 
 namespace BlazorStudio.RazorLib.NewCSharpProject;
 
 public partial class NewCSharpProjectDialog : ComponentBase
 {
-    private string _output = string.Empty;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+
+    [CascadingParameter]
+    public DialogRecord DialogRecord { get; set; } = null!;
 
     private List<CSharpTemplate>? _templates;
+    private string getCSharpProjectTemplatesCommand = "dotnet new list";
+    private string _templateArguments = string.Empty;
+    private SelectCSharpProjectTemplate? _selectCSharpProjectTemplate;
+    private bool _disableExecuteButton;
+    private bool _finishedCreatingProject;
+    private string _executionOfNewCSharpProjectOutput = string.Empty;
+    private IAbsoluteFilePath? InputFileDialogSelection;
+
+    private string InterpolatedCommand => $"dotnet new" +
+                                          $" {_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "{select a template}"}" +
+                                          $" {(string.IsNullOrWhiteSpace(_projectName) ? string.Empty : $"-o {_projectName}")}" +
+                                          $" {_templateArguments}";
+
+    private string _projectName = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender)
+        {
+            await Task.Run(async () =>
+            {
+                _templates = new();
+
+                // Start the child process.
+                var p = new Process();
+                p.StartInfo.FileName = "cmd.exe";
+                // 2>&1 combines stdout and stderr
+                p.StartInfo.Arguments = $"/c {getCSharpProjectTemplatesCommand} 2>&1";
+                // Redirect the output stream of the child process.
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.CreateNoWindow = true;
+                p.Start();
+                // Do not wait for the child process to exit before
+                // reading to the end of its redirected stream.
+                // p.WaitForExit();
+                // Read the output stream first and then wait.
+                var output = p.StandardOutput.ReadToEnd();
+
+                var indexOfFirstDash = output.IndexOf('-');
+
+                output = output.Substring(indexOfFirstDash);
+
+                var lengthsOfSections = new int[4];
+
+                int position = 0;
+                int lengthCounter = 0;
+                int currentSection = 0;
+
+                while (position < output.Length - 1 && currentSection != 4)
+                {
+                    var currentCharacter = output[position++];
+
+                    if (currentCharacter != '-')
+                    {
+                        // There are two space characters separating each
+                        // section so skip the second one as well with this
+                        position++;
+
+                        lengthsOfSections[currentSection++] = lengthCounter;
+                        lengthCounter = 0;
+                    }
+
+                    lengthCounter++;
+                }
+
+                var actualValues = output.Substring(position);
+
+                StringReader stringReader = new StringReader(actualValues);
+
+                var line = string.Empty;
+
+                while ((line = stringReader.ReadLine()) is not null && line.Length > lengthsOfSections.Sum(x => x))
+                {
+                    var templateName = line.Substring(0, lengthsOfSections[0]);
+                    var shortName = line.Substring(lengthsOfSections[0] + 2, lengthsOfSections[1]);
+                    var language = line.Substring(lengthsOfSections[0] + lengthsOfSections[1] + 2, lengthsOfSections[2]);
+                    var tags = line.Substring(lengthsOfSections[0] + lengthsOfSections[1] + lengthsOfSections[2] + 2);
+
+                    _templates.Add(new CSharpTemplate
+                    {
+                        TemplateName = templateName,
+                        ShortName = shortName,
+                        Language = language,
+                        Tags = tags
+                    });
+                }
+
+                await p.WaitForExitAsync();
+
+                await InvokeAsync(StateHasChanged);
+            });
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task ExecuteNewCSharpProject()
+    {
+        if (_disableExecuteButton || _finishedCreatingProject || _selectCSharpProjectTemplate is null || InputFileDialogSelection is null)
+            return;
+
+        _disableExecuteButton = true;
+
         await Task.Run(async () =>
         {
-            _templates = new();
-
             // Start the child process.
             var p = new Process();
             p.StartInfo.FileName = "cmd.exe";
             // 2>&1 combines stdout and stderr
-            p.StartInfo.Arguments = "/c dotnet new list 2>&1";
+            p.StartInfo.Arguments = $"/c {InterpolatedCommand} 2>&1";
             // Redirect the output stream of the child process.
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.WorkingDirectory = InputFileDialogSelection.GetAbsoluteFilePathString();
             p.StartInfo.CreateNoWindow = true;
             p.Start();
             // Do not wait for the child process to exit before
             // reading to the end of its redirected stream.
             // p.WaitForExit();
             // Read the output stream first and then wait.
-            _output = p.StandardOutput.ReadToEnd();
-
-            var indexOfFirstDash = _output.IndexOf('-');
-
-            _output = _output.Substring(indexOfFirstDash);
-
-            var lengthsOfSections = new int[4];
-
-            int position = 0;
-            int lengthCounter = 0;
-            int currentSection = 0;
-
-            while (position < _output.Length - 1 && currentSection != 4)
-            {
-                var currentCharacter = _output[position++];
-
-                if (currentCharacter != '-')
-                {
-                    // There are two space characters separating each
-                    // section so skip the second one as well with this
-                    position++;
-
-                    lengthsOfSections[currentSection++] = lengthCounter;
-                    lengthCounter = 0;
-                }
-
-                lengthCounter++;
-            }
-
-            var actualValues = _output.Substring(position);
-
-            StringReader stringReader = new StringReader(actualValues);
-
-            var line = string.Empty;
-
-            while ((line = stringReader.ReadLine()) is not null && line.Length > lengthsOfSections.Sum(x => x))
-            {
-                var templateName = line.Substring(0, lengthsOfSections[0]);
-                var shortName = line.Substring(lengthsOfSections[0] + 2, lengthsOfSections[1]);
-                var language = line.Substring(lengthsOfSections[0] + lengthsOfSections[1] + 2, lengthsOfSections[2]);
-                var tags = line.Substring(lengthsOfSections[0] + lengthsOfSections[1] + lengthsOfSections[2] + 2);
-
-                _templates.Add(new CSharpTemplate
-                {
-                    TemplateName = templateName,
-                    ShortName = shortName,
-                    Language = language,
-                    Tags = tags
-                });
-            }
+            _executionOfNewCSharpProjectOutput = p.StandardOutput.ReadToEnd();
 
             await p.WaitForExitAsync();
 
+            _disableExecuteButton = false;
+
+            _finishedCreatingProject = true;
+
             await InvokeAsync(StateHasChanged);
+
+            if (InputFileDialogSelection.IsDirectory)
+            {
+                var createdProject = new AbsoluteFilePath(InputFileDialogSelection.GetAbsoluteFilePathString() + _projectName, true);
+
+                Dispatcher.Dispatch(new SetWorkspaceAction(createdProject));
+                Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
+            }
         });
-        
-        await base.OnAfterRenderAsync(firstRender);
     }
 
-    private class CSharpTemplate
+    private void InputFileDialogOnEnterKeyDownOverride((IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
+    {
+        if (_disableExecuteButton || _finishedCreatingProject)
+            return;
+
+        if (tupleArgument.absoluteFilePath.IsDirectory)
+        {
+            InputFileDialogSelection = tupleArgument.absoluteFilePath;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public class CSharpTemplate
     {
         public string TemplateName { get; set; }
         public string ShortName { get; set; }
         public string Language { get; set; }
         public string Tags { get; set; }
+    }
+    
+    public class RenderCSharpTemplate
+    {
+        public CSharpTemplate CSharpTemplate { get; set; }
+        public Func<string> TitleFunc { get; set; }
+        public string StringIdentifier { get; set; }
+        public bool IsExpandable { get; set; } = false;
+        public Action? OnClick { get; set; }
     }
 }

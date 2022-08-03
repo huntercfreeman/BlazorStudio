@@ -180,6 +180,8 @@ public partial class TreeViewDisplay<T>
         }
 
         TreeView.IsExpanded = !TreeView.IsExpanded;
+
+        InvokeAsync(StateHasChanged);
     }
     
     private RichErrorModel HandleExceptionForToggleIsExpandedOnClick(Exception exception)

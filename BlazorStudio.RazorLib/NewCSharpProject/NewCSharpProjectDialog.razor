@@ -1,32 +1,67 @@
-﻿@if (_templates is null)
-{
-    <div>Executing "dotnet new list"</div>
-}
-else
-{
-    if (_templates.Any())
+﻿@using BlazorStudio.ClassLib.FileSystem.Interfaces
+
+<div class="bstudio_new-c-sharp-project-dialog">
+    @if (_templates is null)
     {
-        <table style="margin: 10px;">
-            <thead>
-            <tr>
-                <th class="bstudio_table-bordered-item">TemplateName</th>
-                <th class="bstudio_table-bordered-item">ShortName</th>
-                <th class="bstudio_table-bordered-item">Language</th>
-                <th class="bstudio_table-bordered-item">Tags</th>
-            </tr>
-            </thead>
-        
-            <tbody>
-            @foreach (var template in _templates)
-            {
-                <tr>
-                    <td class="bstudio_table-bordered-item">@template.TemplateName</td>
-                    <td class="bstudio_table-bordered-item">@template.ShortName</td>
-                    <td class="bstudio_table-bordered-item">@template.Language</td>
-                    <td class="bstudio_table-bordered-item">@template.Tags</td>
-                </tr>
-            }
-            </tbody>
-        </table>
+        <div>Executing "dotnet new list"</div>
     }
-}
+    else if (!_templates.Any())
+    {
+        <div>No C# Project Templates found. attempted: "@getCSharpProjectTemplatesCommand"</div>
+    }
+    else
+    {
+        <SelectCSharpProjectTemplate @ref="_selectCSharpProjectTemplate"
+                                     Templates="_templates"
+                                     ReRenderCallbackFunc="async () => await InvokeAsync(StateHasChanged)" />
+        
+        <hr/>
+
+        <div style="height: 35%; margin-left: 10px; margin-right: 30px;">
+            <BlazorStudio.RazorLib.InputFile.InputFileDialog OnEnterKeyDownOverride="InputFileDialogOnEnterKeyDownOverride"
+                                                             ShowFooter="false" />
+        </div>
+
+        <hr />
+
+        <div style="margin-left: 10px; margin-right: 30px;">
+            <div>
+                Selected Absolute Path:
+                <em>
+                    @(InputFileDialogSelection?.GetAbsoluteFilePathString() ?? "{select a path}")
+                </em>
+            </div>
+
+            <div style="border-left: 1.5px solid var(--bstudio_primary-border-color); padding-left: 10px; margin-bottom: 5px;">
+                <div>
+                    dotnet&nbsp;new&nbsp;<em>@(_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "{select a template}")</em>
+                    &nbsp;<input class="bstudio_input-text" style="padding: 2px 3px;" placeholder="project name" @bind="_projectName" @bind:event="oninput" />
+                    &nbsp;<input class="bstudio_input-text" style="padding: 2px 3px;" placeholder="optional args" @bind="_templateArguments" @bind:event="oninput" />
+                </div>
+                <div style="margin-top: 2px;"><em>@InterpolatedCommand</em></div>
+            </div>
+
+            <div>
+                @_executionOfNewCSharpProjectOutput
+            </div>
+
+            @if (_disableExecuteButton)
+            {
+                <div>Executing...: "<em>@InterpolatedCommand</em>"</div>
+            }
+
+            @if (_finishedCreatingProject)
+            {
+                <div>Finished: "<em>@InterpolatedCommand</em>"</div>
+                <div>Opening Directory...: "<em>@InputFileDialogSelection?.GetAbsoluteFilePathString()</em>"</div>
+            }
+
+            <button class="btn btn-primary"
+                    style="margin-bottom: 5px;"
+                    disabled="@_disableExecuteButton"
+                    @onclick="ExecuteNewCSharpProject">
+                Execute
+            </button>
+        </div>
+    }
+</div>

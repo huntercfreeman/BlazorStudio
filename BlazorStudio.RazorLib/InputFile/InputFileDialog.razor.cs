@@ -23,6 +23,15 @@ public partial class InputFileDialog : ComponentBase
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
 
+    [Parameter]
+    public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)>? OnEnterKeyDownOverride { get; set; }
+    [Parameter]
+    public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)>? OnSpaceKeyDownOverride { get; set; }
+    [Parameter]
+    public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)>? OnDoubleClickOverride { get; set; }
+    [Parameter]
+    public bool ShowFooter { get; set; } = true;
+
     private bool _isInitialized;
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
@@ -98,6 +107,12 @@ public partial class InputFileDialog : ComponentBase
 
     private void InputFileTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)
     {
+        if (OnEnterKeyDownOverride is not null)
+        {
+            OnEnterKeyDownOverride.Invoke((absoluteFilePath, toggleIsExpanded));
+            return;
+        }
+
         if (absoluteFilePath.IsDirectory)
         {
             Dispatcher.Dispatch(new SetWorkspaceAction(absoluteFilePath));
@@ -107,6 +122,12 @@ public partial class InputFileDialog : ComponentBase
 
     private void InputFileTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)
     {
+        if (OnSpaceKeyDownOverride is not null)
+        {
+            OnSpaceKeyDownOverride.Invoke((absoluteFilePath, toggleIsExpanded));
+            return;
+        }
+
         if (absoluteFilePath.IsDirectory)
         {
             toggleIsExpanded.Invoke();
@@ -115,6 +136,12 @@ public partial class InputFileDialog : ComponentBase
     
     private void InputFileTreeViewOnDoubleClick(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
     {
+        if (OnDoubleClickOverride is not null)
+        {
+            OnDoubleClickOverride.Invoke((absoluteFilePath, toggleIsExpanded, mouseEventArgs));
+            return;
+        }
+
         toggleIsExpanded.Invoke();
     }
 

@@ -427,3 +427,31 @@ em {
     border: 1px solid var(--bstudio_primary-border-color);
     padding: 3px;
 }
+
+.bstudio_select-c-sharp-project-template {
+    height: 35%;
+}
+
+.bstudio_select-c-sharp-project-template-header {
+    height: 3rem;
+    white-space: nowrap;
+    padding: 0.2rem;
+    overflow-x: auto;
+    font-size: 1rem;
+    background-color: var(--bstudio_primary-background-color);
+    color: var(--bstudio_primary-font-color);
+}
+
+.bstudio_select-c-sharp-project-template-body {
+    height: calc(100% - 3rem);
+    overflow-y: auto;
+}
+
+.bstudio_new-c-sharp-project-dialog {
+    height: 100%;
+    margin-top: 5px;
+}
+
+.bstudio_new-c-sharp-project-dialog .bstudio_input-file-dialog-body {
+    height: calc(100% - 3rem);
+}
