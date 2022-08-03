@@ -11,9 +11,12 @@ namespace BlazorStudio.RazorLib.NewCSharpProject;
 
 public partial class NewCSharpProjectDialog : ComponentBase
 {
-    private string _output = string.Empty;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     private List<CSharpTemplate>? _templates;
+    private CSharpTemplate? _selectedCSharpTemplate;
+    private bool _forceSelectCSharpTemplateTreeViewOpen;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -35,11 +38,11 @@ public partial class NewCSharpProjectDialog : ComponentBase
             // reading to the end of its redirected stream.
             // p.WaitForExit();
             // Read the output stream first and then wait.
-            _output = p.StandardOutput.ReadToEnd();
+            var output = p.StandardOutput.ReadToEnd();
 
-            var indexOfFirstDash = _output.IndexOf('-');
+            var indexOfFirstDash = output.IndexOf('-');
 
-            _output = _output.Substring(indexOfFirstDash);
+            output = output.Substring(indexOfFirstDash);
 
             var lengthsOfSections = new int[4];
 
@@ -47,9 +50,9 @@ public partial class NewCSharpProjectDialog : ComponentBase
             int lengthCounter = 0;
             int currentSection = 0;
 
-            while (position < _output.Length - 1 && currentSection != 4)
+            while (position < output.Length - 1 && currentSection != 4)
             {
-                var currentCharacter = _output[position++];
+                var currentCharacter = output[position++];
 
                 if (currentCharacter != '-')
                 {
@@ -64,7 +67,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
                 lengthCounter++;
             }
 
-            var actualValues = _output.Substring(position);
+            var actualValues = output.Substring(position);
 
             StringReader stringReader = new StringReader(actualValues);
 
@@ -94,9 +97,6 @@ public partial class NewCSharpProjectDialog : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-
     private TreeViewWrapKey _newCSharpProjectTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
 
     private List<RenderCSharpTemplate> GetRootThemes()
@@ -113,6 +113,18 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     private Task<IEnumerable<RenderCSharpTemplate>> GetChildren(RenderCSharpTemplate renderCSharpTemplate)
     {
+        var acceptButton = new RenderCSharpTemplate
+        {
+            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
+            IsExpandable = false,
+            TitleFunc = () => "Confirm",
+            OnClick = () =>
+            {
+                _selectedCSharpTemplate = renderCSharpTemplate.CSharpTemplate;
+                InvokeAsync(StateHasChanged);
+            }
+        };
+
         var renderShortName = new RenderCSharpTemplate
         {
             CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
@@ -139,6 +151,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
         return Task.FromResult(new List<RenderCSharpTemplate>()
         {
+            acceptButton,
             renderShortName,
             renderLanguage,
             renderTags
@@ -147,6 +160,12 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     private void TreeViewOnEnterKeyDown(RenderCSharpTemplate renderCSharpTemplate, Action toggleIsExpanded)
     {
+        _selectedCSharpTemplate = renderCSharpTemplate.CSharpTemplate;
+    }
+    
+    private void TreeViewOnSpaceKeyDown(RenderCSharpTemplate renderCSharpTemplate, Action toggleIsExpanded)
+    {
+        toggleIsExpanded();
     }
 
     private void TreeViewOnDoubleClick(RenderCSharpTemplate renderCSharpTemplate, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
@@ -168,5 +187,6 @@ public partial class NewCSharpProjectDialog : ComponentBase
         public Func<string> TitleFunc { get; set; }
         public string StringIdentifier { get; set; }
         public bool IsExpandable { get; set; } = false;
+        public Action? OnClick { get; set; }
     }
 }
