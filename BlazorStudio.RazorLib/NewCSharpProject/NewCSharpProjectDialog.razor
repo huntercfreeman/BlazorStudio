@@ -1,0 +1,32 @@
+﻿@if (_templates is null)
+{
+    <div>Executing "dotnet new list"</div>
+}
+else
+{
+    if (_templates.Any())
+    {
+        <table style="margin: 10px;">
+            <thead>
+            <tr>
+                <th class="bstudio_table-bordered-item">TemplateName</th>
+                <th class="bstudio_table-bordered-item">ShortName</th>
+                <th class="bstudio_table-bordered-item">Language</th>
+                <th class="bstudio_table-bordered-item">Tags</th>
+            </tr>
+            </thead>
+        
+            <tbody>
+            @foreach (var template in _templates)
+            {
+                <tr>
+                    <td class="bstudio_table-bordered-item">@template.TemplateName</td>
+                    <td class="bstudio_table-bordered-item">@template.ShortName</td>
+                    <td class="bstudio_table-bordered-item">@template.Language</td>
+                    <td class="bstudio_table-bordered-item">@template.Tags</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+}
