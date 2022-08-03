@@ -18,6 +18,8 @@ public partial class NewCSharpProjectDialog : ComponentBase
     private string getCSharpProjectTemplatesCommand = "dotnet new list";
     private string _templateArguments = string.Empty;
     private SelectCSharpProjectTemplate? _selectCSharpProjectTemplate;
+    private bool _disableExecuteButton;
+    private string _executionOfNewCSharpProjectOutput = string.Empty;
 
     private string InterpolatedCommand => $"dotnet new" +
                                           $" {_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "template is null"}" +
@@ -103,6 +105,34 @@ public partial class NewCSharpProjectDialog : ComponentBase
         }
         
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task ExecuteNewCSharpProject()
+    {
+        if (_disableExecuteButton)
+            return;
+
+        _templates = new();
+
+        // Start the child process.
+        var p = new Process();
+        p.StartInfo.FileName = "cmd.exe";
+        // 2>&1 combines stdout and stderr
+        p.StartInfo.Arguments = $"/c {InterpolatedCommand} 2>&1";
+        // Redirect the output stream of the child process.
+        p.StartInfo.UseShellExecute = false;
+        p.StartInfo.RedirectStandardOutput = true;
+        p.StartInfo.CreateNoWindow = true;
+        p.Start();
+        // Do not wait for the child process to exit before
+        // reading to the end of its redirected stream.
+        // p.WaitForExit();
+        // Read the output stream first and then wait.
+        _executionOfNewCSharpProjectOutput = p.StandardOutput.ReadToEnd();
+
+        await p.WaitForExitAsync();
+
+        await InvokeAsync(StateHasChanged);
     }
 
     public class CSharpTemplate

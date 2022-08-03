@@ -24,7 +24,13 @@ else
                 @InterpolatedCommand
             </em>
         </div>
-        
-        <button class="btn btn-primary">Execute</button>
+
+        <button class="btn btn-primary"
+                disabled="@_disableExecuteButton">
+                @*@onclick="ExecuteNewCSharpProject">*@
+            Execute
+        </button>
+
+        @_executionOfNewCSharpProjectOutput
     </div>
 }
