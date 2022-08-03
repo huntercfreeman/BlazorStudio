@@ -422,3 +422,8 @@ em {
     overflow: auto;
     position: relative;
 }
+
+.bstudio_table-bordered-item {
+    border: 1px solid var(--bstudio_primary-border-color);
+    padding: 3px;
+}
