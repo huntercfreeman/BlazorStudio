@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.InputFile;
+using BlazorStudio.RazorLib.NewCSharpProject;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -19,6 +20,13 @@ public partial class ToolbarDisplay : ComponentBase
         DialogKey.NewDialogKey(),
         "Input File",
         typeof(InputFileDialog),
+        null
+    );
+    
+    private readonly DialogRecord _newCSharpProjectDialog = new DialogRecord(
+        DialogKey.NewDialogKey(),
+        "New C# Project",
+        typeof(NewCSharpProjectDialog),
         null
     );
 
@@ -55,12 +63,20 @@ public partial class ToolbarDisplay : ComponentBase
         if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _inputFileDialog.DialogKey))
             Dispatcher.Dispatch(new RegisterDialogAction(_inputFileDialog));
     }
+    
+    private void OpenNewCSharpProjectDialog()
+    {
+        if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _newCSharpProjectDialog.DialogKey))
+            Dispatcher.Dispatch(new RegisterDialogAction(_newCSharpProjectDialog));
+    }
 
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords()
     {
         var openFolder = MenuOptionFacts.File
             .ConstructOpenFolder(OpenInputFileDialog);
 
-        return new[] { openFolder };
+        var newMenu = MenuOptionFacts.NewMenu(OpenNewCSharpProjectDialog);
+
+        return new[] { openFolder, newMenu };
     }
 }
