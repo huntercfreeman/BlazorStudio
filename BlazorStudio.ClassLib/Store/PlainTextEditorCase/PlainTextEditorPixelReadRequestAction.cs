@@ -2,5 +2,5 @@ using BlazorStudio.ClassLib.Virtualize;
 
 namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
-public record MemoryMappedFilePixelReadRequestAction(PlainTextEditorKey PlainTextEditorKey, 
+public record PlainTextEditorPixelReadRequestAction(PlainTextEditorKey PlainTextEditorKey, 
     VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage);

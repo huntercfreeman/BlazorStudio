@@ -45,6 +45,7 @@ public partial record PlainTextEditorStates
         public override IPlainTextEditorRow CurrentPlainTextEditorRow => Rows[CurrentRowIndex];
         public override ITextToken CurrentTextToken => Rows[CurrentRowIndex].Tokens[CurrentTokenIndex];
         public override TextTokenKey CurrentTextTokenKey => CurrentTextToken.Key;
+        public override PlainTextEditorKind PlainTextEditorKind => PlainTextEditorKind.MemoryMappedFile;
 
         public int LongestRowCharacterLength { get; init; }
 

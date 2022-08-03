@@ -161,6 +161,7 @@ public interface IPlainTextEditor
 
     public TextTokenKey CurrentTextTokenKey { get; }
     public ITextToken CurrentTextToken { get; }
+    public PlainTextEditorKind PlainTextEditorKind { get; }
 
     public T GetCurrentTextTokenAs<T>() where T : class;
     public T GetCurrentPlainTextEditorRowAs<T>() where T : class;

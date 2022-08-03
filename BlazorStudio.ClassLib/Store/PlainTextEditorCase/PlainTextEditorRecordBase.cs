@@ -30,6 +30,7 @@ public abstract record PlainTextEditorRecordBase(PlainTextEditorKey PlainTextEdi
     public abstract IPlainTextEditorRow CurrentPlainTextEditorRow { get; }
     public abstract TextTokenKey CurrentTextTokenKey { get; }
     public abstract ITextToken CurrentTextToken { get; }
+    public abstract PlainTextEditorKind PlainTextEditorKind { get; }
 
     public T GetCurrentTextTokenAs<T>()
         where T : class

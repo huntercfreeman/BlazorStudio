@@ -48,14 +48,14 @@ public partial record PlainTextEditorStates
         /// to hold them in memory.
         /// </summary>
         [EffectMethod]
-        public async Task HandleMemoryMappedFilePixelReadRequestAction(MemoryMappedFilePixelReadRequestAction memoryMappedFilePixelReadRequestAction,
+        public async Task HandleMemoryMappedFilePixelReadRequestAction(PlainTextEditorPixelReadRequestAction plainTextEditorPixelReadRequestAction,
             IDispatcher dispatcher)
         {
             await QueueHandleEffectAsync(async () =>
             {
                 var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
 
-                var actionRequest = memoryMappedFilePixelReadRequestAction.VirtualizeCoordinateSystemMessage
+                var actionRequest = plainTextEditorPixelReadRequestAction.VirtualizeCoordinateSystemMessage
                     .VirtualizeCoordinateSystemRequest;
 
                 if (actionRequest is null ||
@@ -68,17 +68,8 @@ public partial record PlainTextEditorStates
                     new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
                 var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
-                var plainTextEditor = previousPlainTextEditorStates
-                        .Map[memoryMappedFilePixelReadRequestAction.PlainTextEditorKey]
-                    as PlainTextEditorRecordMemoryMappedFile;
-
-#if RELEASE
-                if (plainTextEditor?.VirtualizeCoordinateSystemMessage is not null)
-                    return;
-#endif
-
-                if (plainTextEditor?.FileHandle is null)
-                    return;
+                var plainTextEditorUnknown = previousPlainTextEditorStates
+                    .Map[plainTextEditorPixelReadRequestAction.PlainTextEditorKey];
 
                 // TODO: The font-size style attribute does not equal the size of the div that encapsulates the singular character. Figure out EXACTLY these values based off the font-size instead of hard coding what developer tools says
                 var heightOfEachRowInPixels = 27;
@@ -100,80 +91,145 @@ public partial record PlainTextEditorStates
                     requestCharacterCount,
                     actionRequest.CancellationToken);
 
-                var contentRows = await plainTextEditor.FileHandle
-                    .ReadAsync(readRequest);
-
-                if (contentRows is null)
-                    return;
-
-                var replacementPlainTextEditor = plainTextEditor with
+                if (plainTextEditorUnknown.PlainTextEditorKind == PlainTextEditorKind.Tokenized)
                 {
-                    SequenceKey = SequenceKey.NewSequenceKey(),
-                    FileHandleReadRequest = readRequest,
-                    Rows = new IPlainTextEditorRow[]
+                    var tokenizedEditor = plainTextEditorUnknown as PlainTextEditorRecordTokenized;
+
+                    var rowsResult = tokenizedEditor.Rows
+                        .Select((row, index) => (index, row))
+                        .Skip(startingRowIndex)
+                        .Take(requestRowCount);
+
+                    List<(int, IPlainTextEditorRow)> horizontallyVirtualizedResult = new List<(int, IPlainTextEditorRow)>();
+
+                    foreach (var row in rowsResult)
                     {
-                        plainTextEditor.GetEmptyPlainTextEditorRow()
-                    }.ToImmutableList(),
-                    CurrentRowIndex = 0,
-                    CurrentTokenIndex = 0
-                };
+                        var conciseRow = new PlainTextEditorRow(row.row.Key,
+                            SequenceKey.NewSequenceKey(),
+                            row.row.Tokens
+                                .Skip(startingCharacterIndex)
+                                .Take(requestCharacterCount)
+                                .ToImmutableList());
 
-                var allEnterKeysAreCarriageReturnNewLine = true;
-                var seenEnterKey = false;
-                var previousCharacterWasCarriageReturn = false;
-
-                var currentRowCharacterLength = 0;
-                var longestRowCharacterLength = 0;
-
-                string MutateIfPreviousCharacterWasCarriageReturn()
-                {
-                    longestRowCharacterLength = currentRowCharacterLength > longestRowCharacterLength
-                        ? currentRowCharacterLength
-                        : longestRowCharacterLength;
-
-                    currentRowCharacterLength = 0;
-
-                    seenEnterKey = true;
-
-                    if (!previousCharacterWasCarriageReturn)
-                    {
-                        allEnterKeysAreCarriageReturnNewLine = false;
+                        horizontallyVirtualizedResult.Add((row.index, conciseRow));
                     }
 
-                    return previousCharacterWasCarriageReturn
-                        ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
-                        : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
-                }
+                    var result = new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
+                        horizontallyVirtualizedResult,
+                        horizontallyVirtualizedResult.Select(x => (object)x),
+                        horizontallyVirtualizedResult.Max(x => x.Item2.Tokens.Count) * widthOfEachCharacterInPixels,
+                        horizontallyVirtualizedResult.Count * heightOfEachRowInPixels,
+                        tokenizedEditor.Rows.Max(x => x.Tokens.Count) * widthOfEachCharacterInPixels,
+                        tokenizedEditor.Rows.Count * heightOfEachRowInPixels);
 
-                for (var index = 0; index < contentRows.Count; index++)
-                {
-                    var row = contentRows[index];
-
-                    foreach (var character in row)
+                    var message = plainTextEditorPixelReadRequestAction.VirtualizeCoordinateSystemMessage with
                     {
-                        if (character == '\r')
+                        VirtualizeCoordinateSystemResult = result
+                    };
+
+                    var resultingPlainTextEditor = tokenizedEditor with
+                    {
+                        VirtualizeCoordinateSystemMessage = message,
+                    };
+
+                    nextPlainTextEditorMap[plainTextEditorPixelReadRequestAction.PlainTextEditorKey] =
+                        resultingPlainTextEditor;
+
+                    var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
+                    var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
+
+                    if (actionRequest.CancellationToken.IsCancellationRequested)
+                        return;
+
+                    dispatcher.Dispatch(new SetPlainTextEditorStatesAction(new PlainTextEditorStates(nextImmutableMap, nextImmutableArray)));
+                }
+                else
+                {
+                    var plainTextEditor = plainTextEditorUnknown
+                        as PlainTextEditorRecordMemoryMappedFile;
+
+#if RELEASE
+                if (plainTextEditor?.VirtualizeCoordinateSystemMessage is not null)
+                    return;
+#endif
+
+                    if (plainTextEditor?.FileHandle is null)
+                        return;
+
+                    var contentRows = await plainTextEditor.FileHandle
+                        .ReadAsync(readRequest);
+
+                    if (contentRows is null)
+                        return;
+
+                    var replacementPlainTextEditor = plainTextEditor with
+                    {
+                        SequenceKey = SequenceKey.NewSequenceKey(),
+                        FileHandleReadRequest = readRequest,
+                        Rows = new IPlainTextEditorRow[]
                         {
-                            previousCharacterWasCarriageReturn = true;
-                            continue;
+                            plainTextEditor.GetEmptyPlainTextEditorRow()
+                        }.ToImmutableList(),
+                        CurrentRowIndex = 0,
+                        CurrentTokenIndex = 0
+                    };
+
+                    var allEnterKeysAreCarriageReturnNewLine = true;
+                    var seenEnterKey = false;
+                    var previousCharacterWasCarriageReturn = false;
+
+                    var currentRowCharacterLength = 0;
+                    var longestRowCharacterLength = 0;
+
+                    string MutateIfPreviousCharacterWasCarriageReturn()
+                    {
+                        longestRowCharacterLength = currentRowCharacterLength > longestRowCharacterLength
+                            ? currentRowCharacterLength
+                            : longestRowCharacterLength;
+
+                        currentRowCharacterLength = 0;
+
+                        seenEnterKey = true;
+
+                        if (!previousCharacterWasCarriageReturn)
+                        {
+                            allEnterKeysAreCarriageReturnNewLine = false;
                         }
 
-                        currentRowCharacterLength++;
+                        return previousCharacterWasCarriageReturn
+                            ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
+                            : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
+                    }
 
-                        var code = character switch
+                    for (var index = 0; index < contentRows.Count; index++)
+                    {
+                        var row = contentRows[index];
+
+                        foreach (var character in row)
                         {
-                            '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
-                            ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
-                            '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
-                            _ => character.ToString()
-                        };
+                            if (character == '\r')
+                            {
+                                previousCharacterWasCarriageReturn = true;
+                                continue;
+                            }
 
-                        if (character == '\n')
-                        {
-                            // TODO: I think ignoring this is correct but unsure
-                            continue;
-                        }
+                            currentRowCharacterLength++;
 
-                        var keyDownRecord = new KeyDownEventRecord(
+                            var code = character switch
+                            {
+                                '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
+                                ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
+                                '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
+                                _ => character.ToString()
+                            };
+
+                            if (character == '\n')
+                            {
+                                // TODO: I think ignoring this is correct but unsure
+                                continue;
+                            }
+
+                            var keyDownRecord = new KeyDownEventRecord(
                                 character.ToString(),
                                 code,
                                 false,
@@ -182,95 +238,101 @@ public partial record PlainTextEditorStates
                                 IsForced: true
                             );
 
-                        var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
-                            .HandleKeyDownEventAsync(replacementPlainTextEditor,
-                                keyDownRecord,
-                                memoryMappedFilePixelReadRequestAction.VirtualizeCoordinateSystemMessage
-                                    .VirtualizeCoordinateSystemRequest.CancellationToken);
+                            var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                                .HandleKeyDownEventAsync(replacementPlainTextEditor,
+                                    keyDownRecord,
+                                    plainTextEditorPixelReadRequestAction.VirtualizeCoordinateSystemMessage
+                                        .VirtualizeCoordinateSystemRequest.CancellationToken);
 
-                        replacementPlainTextEditor = ((PlainTextEditorRecordMemoryMappedFile) resultPlainTextEditorRecord) with
-                            {
-                                SequenceKey = SequenceKey.NewSequenceKey()
-                            };
+                            replacementPlainTextEditor =
+                                ((PlainTextEditorRecordMemoryMappedFile)resultPlainTextEditorRecord) with
+                                {
+                                    SequenceKey = SequenceKey.NewSequenceKey()
+                                };
 
-                        previousCharacterWasCarriageReturn = false;
-                    }
+                            previousCharacterWasCarriageReturn = false;
+                        }
 
-                    if ((index != contentRows.Count - 1) || (row.LastOrDefault() == '\n'))
-                    {
-                        var newLineCode = MutateIfPreviousCharacterWasCarriageReturn();
-
-                        var forceNewLine = new KeyDownEventRecord(
-                            newLineCode,
-                            newLineCode,
-                            false,
-                            false,
-                            false,
-                            IsForced: true);
-
-                        var newLinedPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
-                            .HandleKeyDownEventAsync(replacementPlainTextEditor,
-                                forceNewLine,
-                                memoryMappedFilePixelReadRequestAction.VirtualizeCoordinateSystemMessage
-                                    .VirtualizeCoordinateSystemRequest.CancellationToken);
-
-                        replacementPlainTextEditor = ((PlainTextEditorRecordMemoryMappedFile) newLinedPlainTextEditorRecord) with
+                        if ((index != contentRows.Count - 1) || (row.LastOrDefault() == '\n'))
                         {
-                            SequenceKey = SequenceKey.NewSequenceKey()
-                        };
+                            var newLineCode = MutateIfPreviousCharacterWasCarriageReturn();
+
+                            var forceNewLine = new KeyDownEventRecord(
+                                newLineCode,
+                                newLineCode,
+                                false,
+                                false,
+                                false,
+                                IsForced: true);
+
+                            var newLinedPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                                .HandleKeyDownEventAsync(replacementPlainTextEditor,
+                                    forceNewLine,
+                                    plainTextEditorPixelReadRequestAction.VirtualizeCoordinateSystemMessage
+                                        .VirtualizeCoordinateSystemRequest.CancellationToken);
+
+                            replacementPlainTextEditor =
+                                ((PlainTextEditorRecordMemoryMappedFile)newLinedPlainTextEditorRecord) with
+                                {
+                                    SequenceKey = SequenceKey.NewSequenceKey()
+                                };
+                        }
                     }
+
+                    replacementPlainTextEditor = replacementPlainTextEditor with
+                    {
+                        RowIndexOffset = readRequest.RowIndexOffset
+                    };
+
+                    var actualWidthOfResult = widthOfEachCharacterInPixels * requestCharacterCount;
+
+                    var actualHeightOfResult = heightOfEachRowInPixels * requestRowCount;
+
+                    var totalWidth = widthOfEachCharacterInPixels *
+                                     replacementPlainTextEditor.FileHandle.VirtualCharacterLengthOfLongestRow;
+
+                    var totalHeight = heightOfEachRowInPixels *
+                                      replacementPlainTextEditor.FileHandle.VirtualRowCount;
+
+                    var items = replacementPlainTextEditor.Rows
+                        .Select((row, index) => (index, row));
+
+                    var result =
+                        new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
+                            items,
+                            items.Select(x => (object)x),
+                            actualWidthOfResult,
+                            actualHeightOfResult,
+                            totalWidth,
+                            totalHeight);
+
+                    var message = plainTextEditorPixelReadRequestAction.VirtualizeCoordinateSystemMessage with
+                    {
+                        VirtualizeCoordinateSystemResult = result
+                    };
+
+                    var resultingPlainTextEditor = replacementPlainTextEditor with
+                    {
+                        RowIndexOffset = startingRowIndex,
+                        CharacterColumnIndexOffset = startingCharacterIndex,
+                        VirtualizeCoordinateSystemMessage = message,
+                        CurrentRowIndex = plainTextEditor.CurrentRowIndex,
+                        CurrentTokenIndex = plainTextEditor.CurrentTokenIndex
+                    };
+
+                    nextPlainTextEditorMap[plainTextEditorPixelReadRequestAction.PlainTextEditorKey] =
+                        resultingPlainTextEditor;
+
+                    var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
+                    var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
+
+                    if (actionRequest.CancellationToken.IsCancellationRequested)
+                        return;
+
+                    dispatcher.Dispatch(
+                        new SetPlainTextEditorStatesAction(new PlainTextEditorStates(nextImmutableMap,
+                            nextImmutableArray)));
                 }
-
-                replacementPlainTextEditor = replacementPlainTextEditor with
-                {
-                    RowIndexOffset = readRequest.RowIndexOffset
-                };
-
-                var actualWidthOfResult = widthOfEachCharacterInPixels * requestCharacterCount;
-
-                var actualHeightOfResult = heightOfEachRowInPixels * requestRowCount;
-
-                var totalWidth = widthOfEachCharacterInPixels *
-                                 replacementPlainTextEditor.FileHandle.VirtualCharacterLengthOfLongestRow;
-
-                var totalHeight = heightOfEachRowInPixels *
-                                  replacementPlainTextEditor.FileHandle.VirtualRowCount;
-
-                var items = replacementPlainTextEditor.Rows
-                    .Select((row, index) => (index, row));
-
-                var result = new VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(
-                    items,
-                    items.Select(x => (object)x),
-                    actualWidthOfResult,
-                    actualHeightOfResult,
-                    totalWidth,
-                    totalHeight);
-
-                var message = memoryMappedFilePixelReadRequestAction.VirtualizeCoordinateSystemMessage with
-                {
-                    VirtualizeCoordinateSystemResult = result
-                };
-
-                var resultingPlainTextEditor = replacementPlainTextEditor with
-                {
-                    RowIndexOffset = startingRowIndex,
-                    CharacterColumnIndexOffset = startingCharacterIndex,
-                    VirtualizeCoordinateSystemMessage = message,
-                    CurrentRowIndex = plainTextEditor.CurrentRowIndex,
-                    CurrentTokenIndex = plainTextEditor.CurrentTokenIndex
-                };
-
-                nextPlainTextEditorMap[memoryMappedFilePixelReadRequestAction.PlainTextEditorKey] =
-                    resultingPlainTextEditor;
-
-                var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
-                var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
-
-                if (actionRequest.CancellationToken.IsCancellationRequested)
-                    return;
-
-                dispatcher.Dispatch(new SetPlainTextEditorStatesAction(new PlainTextEditorStates(nextImmutableMap, nextImmutableArray)));
             });
         }
 
