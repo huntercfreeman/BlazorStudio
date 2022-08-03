@@ -19,6 +19,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
     private string _templateArguments = string.Empty;
     private SelectCSharpProjectTemplate? _selectCSharpProjectTemplate;
     private bool _disableExecuteButton;
+    private bool _finishedCreatingProject;
     private string _executionOfNewCSharpProjectOutput = string.Empty;
     private IAbsoluteFilePath? InputFileDialogSelection;
 
@@ -113,35 +114,45 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     private async Task ExecuteNewCSharpProject()
     {
-        if (_selectCSharpProjectTemplate is null || InputFileDialogSelection is null)
+        if (_disableExecuteButton || _finishedCreatingProject || _selectCSharpProjectTemplate is null || InputFileDialogSelection is null)
             return;
 
-        _templates = new();
+        _disableExecuteButton = true;
 
-        // Start the child process.
-        var p = new Process();
-        p.StartInfo.FileName = "cmd.exe";
-        // 2>&1 combines stdout and stderr
-        p.StartInfo.Arguments = $"/c {InterpolatedCommand} 2>&1";
-        // Redirect the output stream of the child process.
-        p.StartInfo.UseShellExecute = false;
-        p.StartInfo.RedirectStandardOutput = true;
-        p.StartInfo.WorkingDirectory = InputFileDialogSelection.GetAbsoluteFilePathString();
-        p.StartInfo.CreateNoWindow = true;
-        p.Start();
-        // Do not wait for the child process to exit before
-        // reading to the end of its redirected stream.
-        // p.WaitForExit();
-        // Read the output stream first and then wait.
-        _executionOfNewCSharpProjectOutput = p.StandardOutput.ReadToEnd();
+        await Task.Run(async () =>
+        {
+            // Start the child process.
+            var p = new Process();
+            p.StartInfo.FileName = "cmd.exe";
+            // 2>&1 combines stdout and stderr
+            p.StartInfo.Arguments = $"/c {InterpolatedCommand} 2>&1";
+            // Redirect the output stream of the child process.
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.WorkingDirectory = InputFileDialogSelection.GetAbsoluteFilePathString();
+            p.StartInfo.CreateNoWindow = true;
+            p.Start();
+            // Do not wait for the child process to exit before
+            // reading to the end of its redirected stream.
+            // p.WaitForExit();
+            // Read the output stream first and then wait.
+            _executionOfNewCSharpProjectOutput = p.StandardOutput.ReadToEnd();
 
-        await p.WaitForExitAsync();
+            await p.WaitForExitAsync();
 
-        await InvokeAsync(StateHasChanged);
+            _disableExecuteButton = false;
+
+            _finishedCreatingProject = true;
+
+            await InvokeAsync(StateHasChanged);
+        });
     }
 
     private void InputFileDialogOnEnterKeyDownOverride((IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
     {
+        if (_disableExecuteButton || _finishedCreatingProject)
+            return;
+
         if (tupleArgument.absoluteFilePath.IsDirectory)
         {
             InputFileDialogSelection = tupleArgument.absoluteFilePath;

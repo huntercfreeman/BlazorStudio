@@ -41,14 +41,27 @@
                 <div style="margin-top: 2px;"><em>@InterpolatedCommand</em></div>
             </div>
 
+            <div>
+                @_executionOfNewCSharpProjectOutput
+            </div>
+
+            @if (_disableExecuteButton)
+            {
+                <div>Executing...: "<em>@InterpolatedCommand</em>"</div>
+            }
+
+            @if (_finishedCreatingProject)
+            {
+                <div>Finished: "<em>@InterpolatedCommand</em>"</div>
+                <div>Opening Directory...: "<em>@InputFileDialogSelection?.GetAbsoluteFilePathString()</em>"</div>
+            }
+
             <button class="btn btn-primary"
                     style="margin-bottom: 5px;"
                     disabled="@_disableExecuteButton"
                     @onclick="ExecuteNewCSharpProject">
                 Execute
             </button>
-
-            @_executionOfNewCSharpProjectOutput
         </div>
     }
 </div>
