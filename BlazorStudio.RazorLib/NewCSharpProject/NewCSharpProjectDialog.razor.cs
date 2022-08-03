@@ -1,6 +1,9 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
+using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -13,6 +16,9 @@ public partial class NewCSharpProjectDialog : ComponentBase
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+
+    [CascadingParameter]
+    public DialogRecord DialogRecord { get; set; } = null!;
 
     private List<CSharpTemplate>? _templates;
     private string getCSharpProjectTemplatesCommand = "dotnet new list";
@@ -145,6 +151,12 @@ public partial class NewCSharpProjectDialog : ComponentBase
             _finishedCreatingProject = true;
 
             await InvokeAsync(StateHasChanged);
+
+            if (InputFileDialogSelection.IsDirectory)
+            {
+                Dispatcher.Dispatch(new SetWorkspaceAction(InputFileDialogSelection));
+                Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
+            }
         });
     }
 
