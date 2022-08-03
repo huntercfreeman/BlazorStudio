@@ -1,7 +1,10 @@
-﻿using BlazorStudio.ClassLib.Store.DialogCase;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.RazorLib.Settings;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
@@ -12,7 +15,7 @@ public partial class InputFileDialogEntryPoint : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private readonly DialogRecord _inputFileDialog = new DialogRecord(
+    private DialogRecord _inputFileDialog = new DialogRecord(
         DialogKey.NewDialogKey(),
         "Input File",
         typeof(InputFileDialog),

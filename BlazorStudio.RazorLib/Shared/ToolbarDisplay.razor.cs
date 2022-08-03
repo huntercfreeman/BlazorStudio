@@ -1,11 +1,14 @@
-﻿using BlazorStudio.ClassLib.Store.DialogCase;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
+using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.NewCSharpProject;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Shared;
 
@@ -16,7 +19,7 @@ public partial class ToolbarDisplay : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private readonly DialogRecord _inputFileDialog = new DialogRecord(
+    private DialogRecord _inputFileDialog = new DialogRecord(
         DialogKey.NewDialogKey(),
         "Input File",
         typeof(InputFileDialog),
@@ -52,7 +55,7 @@ public partial class ToolbarDisplay : ComponentBase
     };
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
-
+    
     private void DispatchAddActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
     {
         Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
