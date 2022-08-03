@@ -427,3 +427,23 @@ em {
     border: 1px solid var(--bstudio_primary-border-color);
     padding: 3px;
 }
+
+.bstudio_select-c-sharp-project-template {
+    height: 25%;
+}
+
+.bstudio_select-c-sharp-project-template-header {
+    height: 3rem;
+    white-space: nowrap;
+    padding: 0.2rem;
+    margin: 0 15px;
+    overflow-x: auto;
+    font-size: 1rem;
+    background-color: var(--bstudio_primary-background-color);
+    color: var(--bstudio_primary-font-color);
+}
+
+.bstudio_select-c-sharp-project-template-body {
+    height: calc(100% - 5.5rem - 3rem);
+    overflow-y: auto;
+}

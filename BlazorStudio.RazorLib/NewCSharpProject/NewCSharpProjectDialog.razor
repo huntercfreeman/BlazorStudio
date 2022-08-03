@@ -1,4 +1,5 @@
-﻿@if (_templates is null)
+﻿@using BlazorStudio.ClassLib.FileSystem.Interfaces
+@if (_templates is null)
 {
     <div>Executing "dotnet new list"</div>
 }
@@ -11,14 +12,27 @@ else
     <SelectCSharpProjectTemplate @ref="_selectCSharpProjectTemplate"
                                  Templates="_templates"
                                  ReRenderCallbackFunc="async () => await InvokeAsync(StateHasChanged)" />
-
+    
     <hr/>
+
+    <div style="height: 25%; margin: 0 15px;">
+        <BlazorStudio.RazorLib.InputFile.InputFileDialog OnEnterKeyDownOverride="InputFileDialogOnEnterKeyDownOverride"
+                                                         ShowFooter="false" />
+    </div>
+
+    <hr />
 
     <input @bind="_templateArguments" @bind:event="oninput" />
 
-    <div>
+    <div style="height: 20%; overflow-y: auto;">
+        Selected Absolute Path:<br />
+        <div>
+            <em>
+                @(InputFileDialogSelection?.GetAbsoluteFilePathString() ?? "select a path")
+            </em>
+        </div>
+
         Preview Command:<br/>
-        
         <div>
             <em>
                 @InterpolatedCommand
@@ -27,7 +41,7 @@ else
 
         <button class="btn btn-primary"
                 disabled="@_disableExecuteButton">
-                @*@onclick="ExecuteNewCSharpProject">*@
+            @*@onclick="ExecuteNewCSharpProject">*@
             Execute
         </button>
 

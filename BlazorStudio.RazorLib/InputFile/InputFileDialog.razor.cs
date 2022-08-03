@@ -23,12 +23,14 @@ public partial class InputFileDialog : ComponentBase
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
     public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)>? OnEnterKeyDownOverride { get; set; }
-    [Parameter, EditorRequired]
+    [Parameter]
     public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)>? OnSpaceKeyDownOverride { get; set; }
-    [Parameter, EditorRequired]
+    [Parameter]
     public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)>? OnDoubleClickOverride { get; set; }
+    [Parameter]
+    public bool ShowFooter { get; set; } = true;
 
     private bool _isInitialized;
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();

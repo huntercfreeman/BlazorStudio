@@ -1,46 +1,43 @@
-﻿@if (_selectedCSharpTemplate is null || _forceSelectCSharpTemplateTreeViewOpen)
-{
-    if (_forceSelectCSharpTemplateTreeViewOpen)
-    {
-        <div>Selected C# Project Template:&nbsp;@_selectedCSharpTemplate.TemplateName&nbsp;(@_selectedCSharpTemplate.ShortName)</div>
-        <div>
-            Re-open SelectCSharpTemplateTreeView: <input type="checkbox" @bind="_forceSelectCSharpTemplateTreeViewOpen" />
-        </div>
-    }
+﻿
+<div class="bstudio_select-c-sharp-project-template">
+    <div style="height: 100%; margin: 0 15px;">
+        <TreeViewWrapDisplay ShouldDispose="false"
+                             TreeViewWrapKey="_newCSharpProjectTreeViewKey"
+                             RootItems="GetRootThemes()"
+                             GetChildrenFunc="GetChildren"
+                             OnEnterKeyDown="TreeViewOnEnterKeyDown"
+                             OnSpaceKeyDown="TreeViewOnSpaceKeyDown"
+                             OnDoubleClick="TreeViewOnDoubleClick"
+                             IsExpandable="item => item.IsExpandable"
+                             StyleString="height: 100%;"
+                             BodyCssClassAttribute="bstudio_select-c-sharp-project-template-body">
+            
+            <HeaderRenderFragment Context="activeItems">
+                <div class="bstudio_select-c-sharp-project-template-header">
+                    @foreach (var activeItem in activeItems)
+                    {
+                        <text>@activeItem.CSharpTemplate.TemplateName&nbsp;(@activeItem.CSharpTemplate.ShortName)</text>
+                    }
+                </div>
+            </HeaderRenderFragment>
 
-    <div>Pick <em>Template Name</em> TreeView:</div>
-    <TreeViewWrapDisplay ShouldDispose="false"
-                     TreeViewWrapKey="_newCSharpProjectTreeViewKey"
-                     RootItems="GetRootThemes()"
-                     GetChildrenFunc="GetChildren"
-                     OnEnterKeyDown="TreeViewOnEnterKeyDown"
-                     OnSpaceKeyDown="TreeViewOnSpaceKeyDown"
-                     OnDoubleClick="TreeViewOnDoubleClick"
-                     IsExpandable="item => item.IsExpandable">
+            <ItemRenderFragment Context="renderItem">
+                @if (renderItem.StringIdentifier is not null)
+                {
+                    <em>@renderItem.StringIdentifier:&nbsp;</em>
+                }
 
-        <ItemRenderFragment Context="renderItem">
-            @if (renderItem.StringIdentifier is not null)
-            {
-                <em>@renderItem.StringIdentifier:&nbsp;</em>
-            }
-
-            @if (renderItem.OnClick is not null)
-            {
-                <button class="btn btn-primary" @onclick="renderItem.OnClick">
+                @if (renderItem.OnClick is not null)
+                {
+                    <button class="btn btn-primary" @onclick="renderItem.OnClick">
+                        @renderItem.TitleFunc()
+                    </button>
+                }
+                else
+                {
                     @renderItem.TitleFunc()
-                </button>
-            }
-            else
-            {
-                @renderItem.TitleFunc()
-            }
-        </ItemRenderFragment>
-    </TreeViewWrapDisplay>
-}
-else
-{
-    <div>Selected C# Project Template:&nbsp;@_selectedCSharpTemplate.TemplateName&nbsp;(@_selectedCSharpTemplate.ShortName)</div>
-    <div>
-        Re-open SelectCSharpTemplateTreeView: <input type="checkbox" @bind="_forceSelectCSharpTemplateTreeViewOpen" />
+                }
+            </ItemRenderFragment>
+        </TreeViewWrapDisplay>
     </div>
-}
+</div>

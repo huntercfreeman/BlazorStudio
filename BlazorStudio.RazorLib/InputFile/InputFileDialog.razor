@@ -39,32 +39,35 @@
                 </HeaderRenderFragment>
                 
                 <FooterRenderFragment Context="activeItems">
-                    <div class="bstudio_input-file-tree-view-footer">
-                        @foreach (var activeItem in activeItems)
-                        {
-                            <div style="white-space: nowrap; overflow-x: auto;">@activeItem.FilenameWithExtension</div>
-                        }
-                        
-                        <div class="bstudio_input-file-dialog-control-buttons">
-                            @if (activeItems[0].IsDirectory)
+                    @if (ShowFooter)
+                    {
+                        <div class="bstudio_input-file-tree-view-footer">
+                            @foreach (var activeItem in activeItems)
                             {
-                                <button class="btn btn-primary" @onclick="() => ConfirmOnClick(activeItems)">
-                                    Confirm
-                                    <span class="pte_unselectable" style="visibility: hidden;">a Directory</span>
-                                </button>
-                            }
-                            else
-                            {
-                                <button disabled class="btn btn-primary">
-                                    Choose a Directory
-                                </button>
+                                <div style="white-space: nowrap; overflow-x: auto;">@activeItem.FilenameWithExtension</div>
                             }
 
-                            <button class="btn btn-warning" style="margin-left: 6px;" @onclick="CancelOnClick">
-                                Cancel
-                            </button>
+                            <div class="bstudio_input-file-dialog-control-buttons">
+                                @if (activeItems[0].IsDirectory)
+                                {
+                                    <button class="btn btn-primary" @onclick="() => ConfirmOnClick(activeItems)">
+                                        Confirm
+                                        <span class="pte_unselectable" style="visibility: hidden;">a Directory</span>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button disabled class="btn btn-primary">
+                                        Choose a Directory
+                                    </button>
+                                }
+
+                                <button class="btn btn-warning" style="margin-left: 6px;" @onclick="CancelOnClick">
+                                    Cancel
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </FooterRenderFragment>
             </TreeViewWrapDisplay>
         }

@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.Store.ThemeCase;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -20,6 +21,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
     private SelectCSharpProjectTemplate? _selectCSharpProjectTemplate;
     private bool _disableExecuteButton;
     private string _executionOfNewCSharpProjectOutput = string.Empty;
+    private IAbsoluteFilePath? InputFileDialogSelection;
 
     private string InterpolatedCommand => $"dotnet new" +
                                           $" {_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "template is null"}" +
@@ -133,6 +135,12 @@ public partial class NewCSharpProjectDialog : ComponentBase
         await p.WaitForExitAsync();
 
         await InvokeAsync(StateHasChanged);
+    }
+
+    private void InputFileDialogOnEnterKeyDownOverride((IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
+    {
+        InputFileDialogSelection = tupleArgument.absoluteFilePath;
+        InvokeAsync(StateHasChanged);
     }
 
     public class CSharpTemplate
