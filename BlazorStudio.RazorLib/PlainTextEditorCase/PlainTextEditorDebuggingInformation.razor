@@ -1,6 +1,9 @@
 ﻿@using BlazorStudio.RazorLib.DebuggingHelp
 
 <div class="bstudio_debug-info">
+    
+    <div>PlainTextEditorKind: @PlainTextEditor.PlainTextEditorKind</div>
+
     <DebugExpansion Title="FileHandle">
         @if (PlainTextEditor.FileHandle is not null)
         {
@@ -36,7 +39,7 @@
             </div>
         }
     </DebugExpansion>
-    
+
     <DebugExpansion Title="FileHandleReadRequest">
         @if (PlainTextEditor.FileHandleReadRequest is not null)
         {
@@ -60,7 +63,7 @@
             </div>
         }
     </DebugExpansion>
-    
+
     <DebugExpansion Title="VirtualizeCoordinateSystemMessage">
         @if (PlainTextEditor.VirtualizeCoordinateSystemMessage is not null)
         {

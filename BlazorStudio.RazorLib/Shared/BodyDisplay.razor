@@ -1,12 +1,19 @@
 ﻿<div class="bstudio_body-display">
-    <div style="height: 100%; display: flex;">
-        
+    <div style="@_editingSectionDimensions.DimensionsCssString display: flex;">
         <BlazorStudio.RazorLib.Workspace.WorkspaceExplorer Dimensions="_workspaceExplorerDimensions"/>
 
         <BlazorStudio.RazorLib.Transformable.TransformableColumnSeparator LeftDimensions="_workspaceExplorerDimensions"
                                                                           RightDimensions="_editorDisplayDimensions"
-                                                                          ReRenderFunc="ReRender" />
+                                                                          ReRenderFunc="ReRender"/>
 
         <BlazorStudio.RazorLib.Editor.EditorDisplay Dimensions="_editorDisplayDimensions"/>
+    </div>
+    
+    <BlazorStudio.RazorLib.Transformable.TransformableRowSeparator TopDimensions="_editingSectionDimensions"
+                                                                   BottomDimensions="_terminalSectionDimensions"
+                                                                   ReRenderFunc="ReRender" />
+    
+    <div style="@_terminalSectionDimensions.DimensionsCssString display: flex;">
+        I am a terminal
     </div>
 </div>

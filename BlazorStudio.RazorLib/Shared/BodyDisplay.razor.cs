@@ -59,6 +59,48 @@ public partial class BodyDisplay : ComponentBase
             }
         }
     };
+    
+    private Dimensions _editingSectionDimensions = new Dimensions
+    {
+        DimensionsPositionKind = DimensionsPositionKind.Static,
+        WidthCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 100
+            }
+        },
+        HeightCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 75
+            }
+        }
+    };
+    
+    private Dimensions _terminalSectionDimensions = new Dimensions
+    {
+        DimensionsPositionKind = DimensionsPositionKind.Static,
+        WidthCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 100
+            }
+        },
+        HeightCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 25
+            }
+        }
+    };
 
     private async Task ReRender()
     {

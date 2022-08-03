@@ -128,8 +128,6 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
             return Array.Empty<IAbsoluteFilePath>();
         }
 
-
-
 #if DEBUG
         var childDirectoryAbsolutePaths = Directory
             .GetDirectories(absoluteFilePath.GetAbsoluteFilePathString())
@@ -174,7 +172,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
             var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
             Dispatcher.Dispatch(
-                new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
+                new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
                     absoluteFilePath,
                     FileSystemProvider,
                     CancellationToken.None)

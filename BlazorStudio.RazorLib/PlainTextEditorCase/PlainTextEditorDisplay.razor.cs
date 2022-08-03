@@ -210,7 +210,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private void OnRequestCallbackAction(VirtualizeCoordinateSystemMessage virtualizeCoordinateSystemMessage)
     {
-        Dispatcher.Dispatch(new MemoryMappedFilePixelReadRequestAction(PlainTextEditorKey,
+        Dispatcher.Dispatch(new PlainTextEditorPixelReadRequestAction(PlainTextEditorKey,
             virtualizeCoordinateSystemMessage));
     }
 
@@ -232,7 +232,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         await currentPlainTextEditor.FileHandle.SaveAsync(CancellationToken.None);
 
-        Dispatcher.Dispatch(new MemoryMappedFilePixelReadRequestAction(PlainTextEditorKey,
+        Dispatcher.Dispatch(new PlainTextEditorPixelReadRequestAction(PlainTextEditorKey,
             currentPlainTextEditor.VirtualizeCoordinateSystemMessage));
     }
 

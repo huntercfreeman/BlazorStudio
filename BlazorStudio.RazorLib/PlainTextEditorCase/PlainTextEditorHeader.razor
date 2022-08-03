@@ -1,11 +1,21 @@
 ﻿<div class="pte_plain-text-editor-header">
-    @*<div>
-                Font Size: @(PlainTextEditorSelector.Value.RichTextEditorOptions.FontSizeInPixels)px
-            </div>
-            <div>
-                Use the <em>F1</em> key to scroll the caret row into view if it is offscreen.
-            </div>*@
-            
+    @{
+        var localPlainTextEditor = PlainTextEditor;
+
+        <div>
+            Font Size: @(localPlainTextEditor.RichTextEditorOptions.FontSizeInPixels)px
+
+            <input type="number" @bind="FontSize" @bind:event="oninput" />
+        </div>
+        <div>
+            Use the <em>F1</em> key to scroll the caret row into view if it is offscreen.
+        </div>
+    
+        <div>
+            <DiffDialogEntryPoint PlainTextEditorKey="localPlainTextEditor.PlainTextEditorKey" />
+        </div>
+    }
+
     @*<div>
                 Toggle Readonly:&nbsp;
                 <input type="checkbox" @onchange="IsReadonlyCheckboxOnChange" checked="@currentPlainTextEditor.IsReadonly" />
@@ -19,19 +29,16 @@
                     <text>Currently <em>Editable</em></text>
                 }
             </div>*@
-            
+
     @*@if (AllowOpenDiff)
             {
                 <div>
                     <DiffDialogEntryPoint PlainTextEditorKey="PlainTextEditorKey" />
                 </div>
             }*@
-            
+
     @*<button class="btn btn-primary"
                     @onclick="SaveChangesOnClick">
                 Save Changes
             </button>*@
-    <div>
-        <DiffDialogEntryPoint PlainTextEditorKey="PlainTextEditor.PlainTextEditorKey" />
-    </div>
 </div>

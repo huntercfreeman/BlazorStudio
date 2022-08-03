@@ -7,7 +7,7 @@ public partial record PlainTextEditorStates
 {
     private partial class StateMachine
     {
-        public static async Task<PlainTextEditorRecord> HandleKeyDownEventAsync(PlainTextEditorRecord focusedPlainTextEditorRecord, 
+        public static async Task<PlainTextEditorRecordBase> HandleKeyDownEventAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord, 
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
@@ -37,7 +37,7 @@ public partial record PlainTextEditorStates
             }
         }
 
-        public static async Task<PlainTextEditorRecord> HandleOnClickEventAsync(PlainTextEditorRecord focusedPlainTextEditorRecord, 
+        public static async Task<PlainTextEditorRecordBase> HandleOnClickEventAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord, 
             PlainTextEditorOnClickAction plainTextEditorOnClickAction,
             CancellationToken cancellationToken)
         {
@@ -82,7 +82,7 @@ public partial record PlainTextEditorStates
                 cancellationToken);
         }
 
-        private static async Task<PlainTextEditorRecord> InsertNewCurrentTokenAfterCurrentPositionAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        private static async Task<PlainTextEditorRecordBase> InsertNewCurrentTokenAfterCurrentPositionAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             ITextToken textToken,
             CancellationToken cancellationToken)
         {
@@ -115,7 +115,7 @@ public partial record PlainTextEditorStates
             };
         }
 
-        private static async Task<PlainTextEditorRecord> RemoveCurrentTokenAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        private static async Task<PlainTextEditorRecordBase> RemoveCurrentTokenAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
         {
             if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.StartOfRow)
@@ -149,7 +149,7 @@ public partial record PlainTextEditorStates
             };
         }
 
-        private static async Task<PlainTextEditorRecord> RemoveStartOfRowTokenAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        private static async Task<PlainTextEditorRecordBase> RemoveStartOfRowTokenAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
         {
             if (focusedPlainTextEditorRecord.CurrentRowIndex == 0)
@@ -165,7 +165,7 @@ public partial record PlainTextEditorStates
             return focusedPlainTextEditorRecord;
         }
 
-        private static async Task<PlainTextEditorRecord> RemoveCurrentRowAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        private static async Task<PlainTextEditorRecordBase> RemoveCurrentRowAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
         {
             var rememberRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
@@ -187,7 +187,7 @@ public partial record PlainTextEditorStates
             return focusedPlainTextEditorRecord;
         }
 
-        private static async Task<PlainTextEditorRecord> ReplaceCurrentTokenWithAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        private static async Task<PlainTextEditorRecordBase> ReplaceCurrentTokenWithAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             ITextToken textToken,
             CancellationToken cancellationToken)
         {
@@ -209,17 +209,18 @@ public partial record PlainTextEditorStates
             };
         }
 
-        private static async Task<PlainTextEditorRecord> InsertNewLineAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        private static async Task<PlainTextEditorRecordBase> InsertNewLineAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
-            if (!keyDownEventRecord.IsForced)
+            if (!keyDownEventRecord.IsForced &&
+                focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
             {
                 var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                                          cancellationToken)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
-                await focusedPlainTextEditorRecord.FileHandle.Edit
+                await editorMemoryMappedFile.FileHandle.Edit
                     .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                         characterIndex,
                         focusedPlainTextEditorRecord.UseCarriageReturnNewLine
@@ -227,7 +228,9 @@ public partial record PlainTextEditorStates
                             : "\n",
                         cancellationToken);
 
-                focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow.Add(-1);
+                editorMemoryMappedFile.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
+                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex + 1,
+                        focusedPlainTextEditorRecord.CurrentCharacterColumnIndex);
             }
 
             var replacementCurrentToken = focusedPlainTextEditorRecord
@@ -272,10 +275,6 @@ public partial record PlainTextEditorStates
                         constructedRow
                     });
 
-            focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
-                .Insert(focusedPlainTextEditorRecord.CurrentRowIndex + 1, 
-                    focusedPlainTextEditorRecord.CurrentCharacterColumnIndex);
-
             return focusedPlainTextEditorRecord with
             {
                 Rows = nextRowList,
@@ -285,7 +284,7 @@ public partial record PlainTextEditorStates
             };
         }
 
-        private static async Task<(int rowIndex, int tokenIndex, TextTokenBase token)> GetPreviousTokenTupleAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        private static async Task<(int rowIndex, int tokenIndex, TextTokenBase token)> GetPreviousTokenTupleAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
         {
             if (focusedPlainTextEditorRecord.CurrentTokenIndex == 0)
@@ -333,7 +332,7 @@ public partial record PlainTextEditorStates
             }
         }
 
-        private static async Task<(int rowIndex, int tokenIndex, TextTokenBase token)> GetNextTokenTupleAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        private static async Task<(int rowIndex, int tokenIndex, TextTokenBase token)> GetNextTokenTupleAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
         {
             var currentRow = focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>();
@@ -381,7 +380,7 @@ public partial record PlainTextEditorStates
             }
         }
 
-        private static async Task<PlainTextEditorRecord> SetPreviousTokenAsCurrentAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        private static async Task<PlainTextEditorRecordBase> SetPreviousTokenAsCurrentAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
         {
             var replacementCurrentToken = focusedPlainTextEditorRecord
@@ -463,7 +462,7 @@ public partial record PlainTextEditorStates
             }
         }
 
-        private static async Task<PlainTextEditorRecord> SetNextTokenAsCurrentAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        private static async Task<PlainTextEditorRecordBase> SetNextTokenAsCurrentAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
         {
             var replacementCurrentToken = focusedPlainTextEditorRecord
@@ -545,7 +544,7 @@ public partial record PlainTextEditorStates
             }
         }
 
-        private static async Task<PlainTextEditorRecord> MoveCurrentRowToEndOfPreviousRowAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        private static async Task<PlainTextEditorRecordBase> MoveCurrentRowToEndOfPreviousRowAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
         {
             var toBeMovedRow = focusedPlainTextEditorRecord
@@ -591,7 +590,7 @@ public partial record PlainTextEditorStates
 		/// <param name="nextPlainTextEditorState"></param>
 		/// <returns></returns>
 		private static async Task<int> CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
-			PlainTextEditorRecord focusedPlainTextEditorRecord,
+            PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
 		{
 			var rollingCount = 0;
@@ -614,7 +613,7 @@ public partial record PlainTextEditorStates
 		}
 
         private static async Task<(int inclusiveStartingColumnIndex, int exclusiveEndingColumnIndex, int tokenIndex, TextTokenBase token)> CalculateTokenAtColumnIndexRespectiveToRowAsync(
-			PlainTextEditorRecord focusedPlainTextEditorRecord,
+            PlainTextEditorRecordBase focusedPlainTextEditorRecord,
 			PlainTextEditorRow row,
 			int columnIndex,
             CancellationToken cancellationToken)

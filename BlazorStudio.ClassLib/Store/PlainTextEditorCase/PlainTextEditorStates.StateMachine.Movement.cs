@@ -7,7 +7,7 @@ public partial record PlainTextEditorStates
 {
     private partial class StateMachine
     {
-        public static async Task<PlainTextEditorRecord> HandleMovementAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> HandleMovementAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
@@ -46,7 +46,7 @@ public partial record PlainTextEditorStates
             return focusedPlainTextEditorRecord;
         }
 
-        public static async Task<PlainTextEditorRecord> HandleArrowLeftAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> HandleArrowLeftAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
@@ -112,7 +112,7 @@ public partial record PlainTextEditorStates
             return focusedPlainTextEditorRecord;
         }
 
-        public static async Task<PlainTextEditorRecord> HandleArrowDownAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> HandleArrowDownAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
@@ -192,7 +192,7 @@ public partial record PlainTextEditorStates
             };
         }
 
-        public static async Task<PlainTextEditorRecord> HandleArrowUpAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> HandleArrowUpAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
@@ -269,7 +269,7 @@ public partial record PlainTextEditorStates
             };
         }
 
-        public static async Task<PlainTextEditorRecord> HandleArrowRightAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> HandleArrowRightAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
@@ -362,7 +362,7 @@ public partial record PlainTextEditorStates
             return focusedPlainTextEditorRecord;
         }
 
-        public static async Task<PlainTextEditorRecord> HandleHomeAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> HandleHomeAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
@@ -402,7 +402,7 @@ public partial record PlainTextEditorStates
                 cancellationToken);
         }
 
-        public static async Task<PlainTextEditorRecord> HandleEndAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> HandleEndAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
