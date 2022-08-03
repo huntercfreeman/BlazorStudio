@@ -23,13 +23,13 @@ public abstract record PlainTextEditorRecordBase(PlainTextEditorKey PlainTextEdi
     public int RowIndexOffset { get;  init; }
     public int CharacterColumnIndexOffset { get;  init; }
     public SelectionSpanRecord? SelectionSpan { get;  init; }
-    public TextTokenKey CurrentTextTokenKey { get;  init; }
-    public ITextToken CurrentTextToken { get;  init; }
     public IFileHandle FileHandle { get;  init; }
     
     public abstract IAbsoluteFilePath? AbsoluteFilePath { get; }
     public abstract long CurrentPositionIndex { get; }
     public abstract IPlainTextEditorRow CurrentPlainTextEditorRow { get; }
+    public abstract TextTokenKey CurrentTextTokenKey { get; }
+    public abstract ITextToken CurrentTextToken { get; }
 
     public T GetCurrentTextTokenAs<T>()
         where T : class
