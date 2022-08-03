@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BlazorStudio.ClassLib.Store.ThemeCase;
+using BlazorStudio.ClassLib.Store.TreeViewCase;
+using Fluxor;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using System;
 using System.Diagnostics;
 using System.Xml.Linq;
 
@@ -89,11 +94,79 @@ public partial class NewCSharpProjectDialog : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
 
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+
+    private TreeViewWrapKey _newCSharpProjectTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+
+    private List<RenderCSharpTemplate> GetRootThemes()
+    {
+        return _templates
+            .Select(x => new RenderCSharpTemplate
+            {
+                CSharpTemplate = x,
+                IsExpandable = true,
+                TitleFunc = () => x.TemplateName
+            })
+            .ToList();
+    }
+
+    private Task<IEnumerable<RenderCSharpTemplate>> GetChildren(RenderCSharpTemplate renderCSharpTemplate)
+    {
+        var renderShortName = new RenderCSharpTemplate
+        {
+            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
+            IsExpandable = false,
+            TitleFunc = () => renderCSharpTemplate.CSharpTemplate.ShortName,
+            StringIdentifier = "ShortName"
+        };
+
+        var renderLanguage = new RenderCSharpTemplate
+        {
+            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
+            IsExpandable = false,
+            TitleFunc = () => renderCSharpTemplate.CSharpTemplate.Language,
+            StringIdentifier = "Language"
+        };
+
+        var renderTags = new RenderCSharpTemplate
+        {
+            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
+            IsExpandable = false,
+            TitleFunc = () => renderCSharpTemplate.CSharpTemplate.Tags,
+            StringIdentifier = "Tags"
+        };
+
+        return Task.FromResult(new List<RenderCSharpTemplate>()
+        {
+            renderShortName,
+            renderLanguage,
+            renderTags
+        }.AsEnumerable());
+    }
+
+    private void TreeViewOnEnterKeyDown(RenderCSharpTemplate renderCSharpTemplate, Action toggleIsExpanded)
+    {
+    }
+
+    private void TreeViewOnDoubleClick(RenderCSharpTemplate renderCSharpTemplate, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
+    {
+        toggleIsExpanded();
+    }
+
     private class CSharpTemplate
     {
         public string TemplateName { get; set; }
         public string ShortName { get; set; }
         public string Language { get; set; }
         public string Tags { get; set; }
+    }
+    
+    private class RenderCSharpTemplate
+    {
+        public CSharpTemplate CSharpTemplate { get; set; }
+        public Func<string> TitleFunc { get; set; }
+        public string StringIdentifier { get; set; }
+        public bool IsExpandable { get; set; } = false;
     }
 }

@@ -4,29 +4,24 @@
 }
 else
 {
-    if (_templates.Any())
-    {
-        <table style="margin: 10px;">
-            <thead>
-            <tr>
-                <th class="bstudio_table-bordered-item">TemplateName</th>
-                <th class="bstudio_table-bordered-item">ShortName</th>
-                <th class="bstudio_table-bordered-item">Language</th>
-                <th class="bstudio_table-bordered-item">Tags</th>
-            </tr>
-            </thead>
-        
-            <tbody>
-            @foreach (var template in _templates)
+    <div>TemplateName TreeView:</div>
+    <TreeViewWrapDisplay ShouldDispose="true"
+                         TreeViewWrapKey="_newCSharpProjectTreeViewKey"
+                         RootItems="GetRootThemes()"
+                         GetChildrenFunc="GetChildren"
+                         OnEnterKeyDown="TreeViewOnEnterKeyDown"
+                         OnSpaceKeyDown="TreeViewOnEnterKeyDown"
+                         OnDoubleClick="TreeViewOnDoubleClick"
+                         IsExpandable="item => item.IsExpandable">
+    
+        <ItemRenderFragment Context="renderItem">
+
+            @if (renderItem.StringIdentifier is not null)
             {
-                <tr>
-                    <td class="bstudio_table-bordered-item">@template.TemplateName</td>
-                    <td class="bstudio_table-bordered-item">@template.ShortName</td>
-                    <td class="bstudio_table-bordered-item">@template.Language</td>
-                    <td class="bstudio_table-bordered-item">@template.Tags</td>
-                </tr>
+                <em>@renderItem.StringIdentifier:&nbsp;</em>
             }
-            </tbody>
-        </table>
-    }
+
+            @renderItem.TitleFunc()
+        </ItemRenderFragment>
+    </TreeViewWrapDisplay>
 }
