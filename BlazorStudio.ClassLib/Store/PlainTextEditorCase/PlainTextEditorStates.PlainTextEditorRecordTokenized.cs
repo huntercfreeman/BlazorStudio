@@ -18,7 +18,7 @@ public partial record PlainTextEditorStates
             int CurrentRowIndex,
             int CurrentTokenIndex,
             int CurrentColumnIndex,
-            IAbsoluteFilePath? AbsoluteFilePath,
+            IAbsoluteFilePath? BackingAbsoluteFilePath,
             RichTextEditorOptions RichTextEditorOptions,
             bool IsReadonly = true,
             bool UseCarriageReturnNewLine = false)
@@ -48,9 +48,9 @@ public partial record PlainTextEditorStates
 
         public int LongestRowCharacterLength { get; init; }
 
-        public override long CurrentPositionIndex =>
-            FileHandle.VirtualCharacterIndexMarkerForStartOfARow[RowIndexOffset + CurrentRowIndex]
-                + CharacterColumnIndexOffset + CurrentCharacterColumnIndex;
+        public override long CurrentPositionIndex => -1;
+
+        public override IAbsoluteFilePath? AbsoluteFilePath => BackingAbsoluteFilePath;
 
         public override string GetPlainText()
         {

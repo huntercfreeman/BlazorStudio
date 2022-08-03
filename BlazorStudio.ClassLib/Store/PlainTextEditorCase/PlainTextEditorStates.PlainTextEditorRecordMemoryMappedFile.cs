@@ -18,7 +18,6 @@ public partial record PlainTextEditorStates
             int CurrentRowIndex,
             int CurrentTokenIndex,
             int CurrentColumnIndex,
-            IFileHandle? FileHandle,
             RichTextEditorOptions RichTextEditorOptions,
             bool IsReadonly = true,
             bool UseCarriageReturnNewLine = false)
@@ -38,7 +37,6 @@ public partial record PlainTextEditorStates
             CurrentRowIndex: 0,
             CurrentTokenIndex: 0,
             CurrentColumnIndex: 0,
-            null,
             new RichTextEditorOptions())
         {
             Rows = Rows.Add(GetEmptyPlainTextEditorRow());
@@ -47,7 +45,9 @@ public partial record PlainTextEditorStates
         public override IPlainTextEditorRow CurrentPlainTextEditorRow => Rows[CurrentRowIndex];
 
         public int LongestRowCharacterLength { get; init; }
-        
+
+        public override IAbsoluteFilePath? AbsoluteFilePath => FileHandle.AbsoluteFilePath;
+
         public override long CurrentPositionIndex =>
             FileHandle.VirtualCharacterIndexMarkerForStartOfARow[RowIndexOffset + CurrentRowIndex]
                 + CharacterColumnIndexOffset + CurrentCharacterColumnIndex;

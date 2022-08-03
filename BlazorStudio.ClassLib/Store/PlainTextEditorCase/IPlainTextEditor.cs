@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.IO.MemoryMappedFiles;
 using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Virtualize;
@@ -26,21 +27,6 @@ public interface IPlainTextEditor
     /// Example, maybe only character columns 50 to 99 were loaded for the rows.
     /// </summary>
     public ImmutableList<IPlainTextEditorRow> Rows { get; }
-    /// <summary>
-    /// The PlainTextEditor needs an abstraction of a modifiable <see cref="MemoryMappedFile"/>
-    /// <br/><br/>
-    /// Idea 1: use <see cref="MemoryMappedFile"/> to not read the entirety of a large file into memory.
-    /// <br/><br/>
-    /// Idea 2.a: if one does not read a file into memory, how does one edit the document? When the user
-    /// makes an edit to line 1 of the file, then proceeds to scroll to line 1,000,000 the cache
-    /// would no longer have line 1 in memory. So, use <see cref="IFileHandle"/> to maintain a list of edits to a physical file.
-    /// <br/><br/>
-    /// Idea 2.b: So, use <see cref="IFileHandle"/> to maintain a list of edits to a physical file. Then when reading
-    /// the physical file iterate over the list of edits to effectively maintain a 'virtual file'. This results in
-    /// one maintaining edits a user makes instead of the entirety of a large file's contents. When the user saves
-    /// the file clear the list of edits.
-    /// </summary>
-    public IFileHandle? FileHandle { get; }
     /// <summary>
     /// This is used to set various settings for a unique <see cref="IPlainTextEditor"/>.
     /// For example, perhaps one renders two <see cref="IPlainTextEditor"/>s on the UI.
@@ -157,7 +143,22 @@ public interface IPlainTextEditor
     /// and selected some text.
     /// </summary>
     public SelectionSpanRecord? SelectionSpan { get; }
-    
+    /// <summary>
+    /// The PlainTextEditor needs an abstraction of a modifiable <see cref="MemoryMappedFile"/>
+    /// <br/><br/>
+    /// Idea 1: use <see cref="MemoryMappedFile"/> to not read the entirety of a large file into memory.
+    /// <br/><br/>
+    /// Idea 2.a: if one does not read a file into memory, how does one edit the document? When the user
+    /// makes an edit to line 1 of the file, then proceeds to scroll to line 1,000,000 the cache
+    /// would no longer have line 1 in memory. So, use <see cref="IFileHandle"/> to maintain a list of edits to a physical file.
+    /// <br/><br/>
+    /// Idea 2.b: So, use <see cref="IFileHandle"/> to maintain a list of edits to a physical file. Then when reading
+    /// the physical file iterate over the list of edits to effectively maintain a 'virtual file'. This results in
+    /// one maintaining edits a user makes instead of the entirety of a large file's contents. When the user saves
+    /// the file clear the list of edits.
+    /// </summary>
+    public IFileHandle? FileHandle { get; init; }
+
     public TextTokenKey CurrentTextTokenKey { get; }
     public ITextToken CurrentTextToken { get; }
 

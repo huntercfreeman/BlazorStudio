@@ -213,13 +213,14 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
-            if (!keyDownEventRecord.IsForced)
+            if (!keyDownEventRecord.IsForced &&
+                focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
             {
                 var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                                          cancellationToken)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
-                await focusedPlainTextEditorRecord.FileHandle.Edit
+                await editorMemoryMappedFile.FileHandle.Edit
                     .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                         characterIndex,
                         focusedPlainTextEditorRecord.UseCarriageReturnNewLine
@@ -227,7 +228,7 @@ public partial record PlainTextEditorStates
                             : "\n",
                         cancellationToken);
 
-                focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
+                editorMemoryMappedFile.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
                     .Insert(focusedPlainTextEditorRecord.CurrentRowIndex + 1,
                         focusedPlainTextEditorRecord.CurrentCharacterColumnIndex);
             }

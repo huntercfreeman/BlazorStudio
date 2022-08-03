@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Virtualize;
@@ -15,17 +16,8 @@ public abstract record PlainTextEditorRecordBase(PlainTextEditorKey PlainTextEdi
     bool IsReadonly = true,
     bool UseCarriageReturnNewLine = false) : IPlainTextEditor
 {
-    public PlainTextEditorKey PlainTextEditorKey { get; init; } 
-    public SequenceKey SequenceKey { get; init; } 
-    public ImmutableList<IPlainTextEditorRow> Rows { get;  init; }
-    public IFileHandle? FileHandle { get;  init; }
-    public RichTextEditorOptions RichTextEditorOptions { get;  init; }
     public VirtualizeCoordinateSystemMessage VirtualizeCoordinateSystemMessage { get;  init; }
     public FileHandleReadRequest FileHandleReadRequest { get; init; }
-    public bool IsReadonly { get; init; }
-    public bool UseCarriageReturnNewLine { get;  init; }
-    public int CurrentRowIndex { get;  init; }
-    public int CurrentTokenIndex { get;  init; }
     public int CurrentCharacterColumnIndex { get;  init; }
     public int PreviouslySetCharacterColumnIndex { get;  init; }
     public int RowIndexOffset { get;  init; }
@@ -33,7 +25,9 @@ public abstract record PlainTextEditorRecordBase(PlainTextEditorKey PlainTextEdi
     public SelectionSpanRecord? SelectionSpan { get;  init; }
     public TextTokenKey CurrentTextTokenKey { get;  init; }
     public ITextToken CurrentTextToken { get;  init; }
-
+    public IFileHandle FileHandle { get;  init; }
+    
+    public abstract IAbsoluteFilePath? AbsoluteFilePath { get; }
     public abstract long CurrentPositionIndex { get; }
     public abstract IPlainTextEditorRow CurrentPlainTextEditorRow { get; }
 

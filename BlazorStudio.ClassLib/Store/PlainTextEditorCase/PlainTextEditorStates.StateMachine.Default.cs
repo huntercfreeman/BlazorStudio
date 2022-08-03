@@ -19,13 +19,14 @@ public partial record PlainTextEditorStates
                 var content = previousDefaultToken.Content
                     .Insert(previousDefaultToken.IndexInPlainText!.Value + 1, keyDownEventRecord.Key);
 
-                if (!keyDownEventRecord.IsForced)
+                if (!keyDownEventRecord.IsForced && 
+                    focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
                 {
                     var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                                              cancellationToken)
                                          + previousDefaultToken.IndexInPlainText.Value;
 
-                    await focusedPlainTextEditorRecord.FileHandle.Edit
+                    await editorMemoryMappedFile.FileHandle.Edit
                         .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                             characterIndex,
                             keyDownEventRecord.Key,
@@ -57,7 +58,8 @@ public partial record PlainTextEditorStates
                 {
                     // if (active token is not a word, and the next token is a word however then prepend text to that next token)
 
-                    if (!keyDownEventRecord.IsForced)
+                    if (!keyDownEventRecord.IsForced &&
+                        focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
                     {
                         var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                             cancellationToken);
@@ -68,7 +70,7 @@ public partial record PlainTextEditorStates
                             characterIndex += focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
                         }
 
-                        await focusedPlainTextEditorRecord.FileHandle.Edit
+                        await editorMemoryMappedFile.FileHandle.Edit
                             .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                                 characterIndex,
                                 keyDownEventRecord.Key,
@@ -122,13 +124,14 @@ public partial record PlainTextEditorStates
                     {
                         // if (active token is not a word, and the cursor is at the end of that token then insert a new 'word token' after the active one)
 
-                        if (!keyDownEventRecord.IsForced)
+                        if (!keyDownEventRecord.IsForced &&
+                            focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
                         {
                             var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                                                      cancellationToken)
                                                  + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
-                            await focusedPlainTextEditorRecord.FileHandle.Edit
+                            await editorMemoryMappedFile.FileHandle.Edit
                                 .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                                     characterIndex,
                                     keyDownEventRecord.Key,
@@ -171,13 +174,14 @@ public partial record PlainTextEditorStates
         {
             var previousDefaultTextToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<DefaultTextToken>();
 
-            if (!keyDownEventRecord.IsForced)
+            if (!keyDownEventRecord.IsForced &&
+                focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
             {
                 var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                                          cancellationToken)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
-                await focusedPlainTextEditorRecord.FileHandle.Edit
+                await editorMemoryMappedFile.FileHandle.Edit
                     .RemoveAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                         characterIndex - 1,
                         characterCount: 1,
