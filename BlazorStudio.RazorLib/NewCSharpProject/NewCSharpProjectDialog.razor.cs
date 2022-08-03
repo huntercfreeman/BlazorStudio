@@ -154,7 +154,9 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
             if (InputFileDialogSelection.IsDirectory)
             {
-                Dispatcher.Dispatch(new SetWorkspaceAction(InputFileDialogSelection));
+                var createdProject = new AbsoluteFilePath(InputFileDialogSelection.GetAbsoluteFilePathString() + _projectName, true);
+
+                Dispatcher.Dispatch(new SetWorkspaceAction(createdProject));
                 Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
             }
         });
