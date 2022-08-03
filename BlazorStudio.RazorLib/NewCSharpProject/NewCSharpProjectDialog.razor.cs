@@ -25,7 +25,10 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     private string InterpolatedCommand => $"dotnet new" +
                                           $" {_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "{select a template}"}" +
+                                          $" {(string.IsNullOrWhiteSpace(_projectName) ? string.Empty : $"-o {_projectName}")}" +
                                           $" {_templateArguments}";
+
+    private string _projectName = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -111,7 +114,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     private async Task ExecuteNewCSharpProject()
     {
-        if (_disableExecuteButton)
+        if (true || _disableExecuteButton || InputFileDialogSelection is null)
             return;
 
         _templates = new();
@@ -124,6 +127,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
         // Redirect the output stream of the child process.
         p.StartInfo.UseShellExecute = false;
         p.StartInfo.RedirectStandardOutput = true;
+        p.StartInfo.WorkingDirectory = InputFileDialogSelection.GetAbsoluteFilePathString();
         p.StartInfo.CreateNoWindow = true;
         p.Start();
         // Do not wait for the child process to exit before
