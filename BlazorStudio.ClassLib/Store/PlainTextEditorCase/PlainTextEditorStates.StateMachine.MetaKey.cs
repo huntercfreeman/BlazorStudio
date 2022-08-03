@@ -6,7 +6,7 @@ public partial record PlainTextEditorStates
 {
     private partial class StateMachine
     {
-        public static async Task<PlainTextEditorRecord> HandleMetaKeyAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> HandleMetaKeyAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
@@ -21,7 +21,7 @@ public partial record PlainTextEditorStates
             }
         }
 
-        public static async Task<PlainTextEditorRecord> HandleBackspaceKeyAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> HandleBackspaceKeyAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {

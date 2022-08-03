@@ -70,7 +70,7 @@ public partial record PlainTextEditorStates
 
                 var plainTextEditor = previousPlainTextEditorStates
                         .Map[memoryMappedFilePixelReadRequestAction.PlainTextEditorKey]
-                    as PlainTextEditorRecord;
+                    as PlainTextEditorRecordBase;
 
 #if RELEASE
                 if (plainTextEditor?.VirtualizeCoordinateSystemMessage is not null)
@@ -254,7 +254,6 @@ public partial record PlainTextEditorStates
 
                 var resultingPlainTextEditor = replacementPlainTextEditor with
                 {
-                    LongestRowCharacterLength = (int)replacementPlainTextEditor.FileHandle.VirtualCharacterLengthOfLongestRow,
                     RowIndexOffset = startingRowIndex,
                     CharacterColumnIndexOffset = startingCharacterIndex,
                     VirtualizeCoordinateSystemMessage = message,
@@ -292,7 +291,7 @@ public partial record PlainTextEditorStates
                 var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
                 var plainTextEditor = previousPlainTextEditorStates.Map[keyDownEventAction.PlainTextEditorKey]
-                    as PlainTextEditorRecord;
+                    as PlainTextEditorRecordBase;
 
                 if (plainTextEditor is null)
                     return;
@@ -356,7 +355,7 @@ public partial record PlainTextEditorStates
         }
         
         [EffectMethod]
-        public async Task HandleMemoryMappedFilePixelReadRequestAction(MemoryMappedFilePixelReadRequestAction memoryMappedFilePixelReadRequestAction,
+        public async Task HandleTokenizedPlainTextEditorPixelReadRequestAction(MemoryMappedFilePixelReadRequestAction memoryMappedFilePixelReadRequestAction,
             IDispatcher dispatcher)
         {
             await QueueHandleEffectAsync(async () =>
@@ -378,7 +377,7 @@ public partial record PlainTextEditorStates
 
                 var plainTextEditor = previousPlainTextEditorStates
                         .Map[memoryMappedFilePixelReadRequestAction.PlainTextEditorKey]
-                    as PlainTextEditorRecord;
+                    as PlainTextEditorRecordBase;
 
 #if RELEASE
                 if (plainTextEditor?.VirtualizeCoordinateSystemMessage is not null)
@@ -562,7 +561,6 @@ public partial record PlainTextEditorStates
 
                 var resultingPlainTextEditor = replacementPlainTextEditor with
                 {
-                    LongestRowCharacterLength = (int)replacementPlainTextEditor.FileHandle.VirtualCharacterLengthOfLongestRow,
                     RowIndexOffset = startingRowIndex,
                     CharacterColumnIndexOffset = startingCharacterIndex,
                     VirtualizeCoordinateSystemMessage = message,
@@ -584,86 +582,6 @@ public partial record PlainTextEditorStates
         }
 
         [EffectMethod]
-        public async Task HandleKeyDownEventAction(KeyDownEventAction keyDownEventAction,
-            IDispatcher dispatcher)
-        {
-            await QueueHandleEffectAsync(async () =>
-            {
-#if RELEASE
-                // Blazor WebAssembly is currently single threaded
-                await Task.Delay(1);
-#endif
-
-                var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
-
-                var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
-                var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
-
-                var plainTextEditor = previousPlainTextEditorStates.Map[keyDownEventAction.PlainTextEditorKey]
-                    as PlainTextEditorRecord;
-
-                if (plainTextEditor is null)
-                    return;
-
-                var overrideKeyDownEventRecord = keyDownEventAction.KeyDownEventRecord;
-
-                if (keyDownEventAction.KeyDownEventRecord.Code == KeyboardKeyFacts.NewLineCodes.ENTER_CODE &&
-                    plainTextEditor.UseCarriageReturnNewLine)
-                {
-                    overrideKeyDownEventRecord = keyDownEventAction.KeyDownEventRecord with
-                    {
-                        Code = KeyboardKeyFacts.NewLineCodes.CARRIAGE_RETURN_NEW_LINE_CODE
-                    };
-                }
-
-                var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
-                    .HandleKeyDownEventAsync(plainTextEditor, 
-                        overrideKeyDownEventRecord,
-                        keyDownEventAction.CancellationToken);
-
-                var replacementPlainTextEditor = resultPlainTextEditorRecord with
-                {
-                    SequenceKey = SequenceKey.NewSequenceKey()
-                };
-
-                if (replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult is null)
-                {
-                    throw new ApplicationException(
-                        $"{nameof(replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult)} was null.");
-                }
-
-                var previousResult = (VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>)
-                    replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult;
-
-                var items = replacementPlainTextEditor.Rows
-                    .Select((row, index) => (index, row))
-                    .ToList();
-
-                var virtualizeCoordinateSystemResult = previousResult with
-                {
-                    ItemsWithType = items,
-                    ItemsUntyped = items.Select(x => (object)x)
-                };
-
-                replacementPlainTextEditor = replacementPlainTextEditor with
-                {
-                    SequenceKey = SequenceKey.NewSequenceKey(),
-                    VirtualizeCoordinateSystemMessage = replacementPlainTextEditor.VirtualizeCoordinateSystemMessage with
-                    {
-                        VirtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult
-                    }
-                };
-
-                nextPlainTextEditorMap[keyDownEventAction.PlainTextEditorKey] = replacementPlainTextEditor;
-
-                var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
-                var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
-
-                dispatcher.Dispatch(new SetPlainTextEditorStatesAction(new PlainTextEditorStates(nextImmutableMap, nextImmutableArray)));
-            });
-        }
-
-        [EffectMethod]
         public async Task HandlePlainTextEditorOnClickAction(PlainTextEditorOnClickAction plainTextEditorOnClickAction,
             IDispatcher dispatcher)
         {
@@ -675,7 +593,7 @@ public partial record PlainTextEditorStates
                 var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
                 var plainTextEditor = previousPlainTextEditorStates.Map[plainTextEditorOnClickAction.PlainTextEditorKey]
-                    as PlainTextEditorRecord;
+                    as PlainTextEditorRecordBase;
 
                 if (plainTextEditor is null)
                     return;
@@ -739,7 +657,7 @@ public partial record PlainTextEditorStates
                 var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
 
                 var plainTextEditor = previousPlainTextEditorStates.Map[setIsReadonlyAction.PlainTextEditorKey]
-                    as PlainTextEditorRecord;
+                    as PlainTextEditorRecordBase;
 
                 if (plainTextEditor is null)
                     return;
@@ -782,7 +700,7 @@ public partial record PlainTextEditorStates
                         constructMemoryMappedFilePlainTextEditorRecordAction.CancellationToken);
 
                 var plainTextEditor = new
-                    PlainTextEditorRecord(constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey)
+                    PlainTextEditorRecordMemoryMapped(constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey)
                     {
                         FileHandle = fileHandle
                     };
@@ -810,7 +728,7 @@ public partial record PlainTextEditorStates
 
                 var plainTextEditor = previousPlainTextEditorStates
                         .Map[deconstructPlainTextEditorRecordAction.PlainTextEditorKey]
-                    as PlainTextEditorRecord;
+                    as PlainTextEditorRecordBase;
 
                 nextPlainTextEditorMap.Remove(deconstructPlainTextEditorRecordAction.PlainTextEditorKey);
                 nextPlainTextEditorList.Remove(deconstructPlainTextEditorRecordAction.PlainTextEditorKey);

@@ -6,7 +6,7 @@ public partial record PlainTextEditorStates
 {
     private partial class StateMachine
     {
-        public static async Task<PlainTextEditorRecord> HandleWhitespaceAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> HandleWhitespaceAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {

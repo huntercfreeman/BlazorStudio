@@ -32,7 +32,7 @@ public partial record PlainTextEditorStates
 
             var plainTextEditor = previousPlainTextEditorStates
                     .Map[plainTextEditorSetFontSizeAction.PlainTextEditorKey]
-                as PlainTextEditorRecord;
+                as PlainTextEditorRecordBase;
 
             if (plainTextEditor is null)
                 return previousPlainTextEditorStates;

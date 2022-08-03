@@ -14,7 +14,7 @@ public partial record PlainTextEditorStates
         //
         // tokens: 'z' and 'Bill' must be
         // merged to make the token: 'zBill'
-        public static async Task<PlainTextEditorRecord> MergeTokensIfApplicableAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> MergeTokensIfApplicableAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
         {
             if (focusedPlainTextEditorRecord.CurrentTextToken.Kind != TextTokenKind.Default)

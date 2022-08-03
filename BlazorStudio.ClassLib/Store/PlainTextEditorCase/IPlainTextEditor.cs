@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.IO.MemoryMappedFiles;
+using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Sequence;
@@ -156,6 +157,13 @@ public interface IPlainTextEditor
     /// and selected some text.
     /// </summary>
     public SelectionSpanRecord? SelectionSpan { get; }
+    
+    public TextTokenKey CurrentTextTokenKey { get; }
+    public ITextToken CurrentTextToken { get; }
+
+    public T GetCurrentTextTokenAs<T>() where T : class;
+    public T GetCurrentPlainTextEditorRowAs<T>() where T : class;
+    public IPlainTextEditorRow GetEmptyPlainTextEditorRow();
 
     /// <summary>
     /// The PlainTextEditor is a semantic representation of the file that was read in.

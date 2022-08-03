@@ -8,7 +8,7 @@ public partial record PlainTextEditorStates
     private partial class StateMachine
     {
         // Used when cursor is within text and the 'Enter' key is pressed as an example. That token would get split into two separate tokens.
-        public static async Task<PlainTextEditorRecord> SplitCurrentTokenAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> SplitCurrentTokenAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             TextTokenBase? tokenToInsertBetweenSplit,
             bool isForced,
             CancellationToken cancellationToken)
@@ -33,7 +33,7 @@ public partial record PlainTextEditorStates
             }
         }
         
-        public static async Task<PlainTextEditorRecord> SplitDefaultTokenAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> SplitDefaultTokenAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             TextTokenBase? tokenToInsertBetweenSplit,
             bool isForced,
             CancellationToken cancellationToken)
@@ -139,7 +139,7 @@ public partial record PlainTextEditorStates
             };
         }
 
-        public static async Task<PlainTextEditorRecord> SplitWhitespaceTokenAsync(PlainTextEditorRecord focusedPlainTextEditorRecord,
+        public static async Task<PlainTextEditorRecordBase> SplitWhitespaceTokenAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             TextTokenBase? tokenToInsertBetweenSplit,
             bool isForced,
             CancellationToken cancellationToken)
