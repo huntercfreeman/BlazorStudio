@@ -429,14 +429,13 @@ em {
 }
 
 .bstudio_select-c-sharp-project-template {
-    height: 25%;
+    height: 35%;
 }
 
 .bstudio_select-c-sharp-project-template-header {
     height: 3rem;
     white-space: nowrap;
     padding: 0.2rem;
-    margin: 0 15px;
     overflow-x: auto;
     font-size: 1rem;
     background-color: var(--bstudio_primary-background-color);
@@ -444,6 +443,15 @@ em {
 }
 
 .bstudio_select-c-sharp-project-template-body {
-    height: calc(100% - 5.5rem - 3rem);
+    height: calc(100% - 3rem);
     overflow-y: auto;
+}
+
+.bstudio_new-c-sharp-project-dialog {
+    height: 100%;
+    margin-top: 5px;
+}
+
+.bstudio_new-c-sharp-project-dialog .bstudio_input-file-dialog-body {
+    height: calc(100% - 3rem);
 }

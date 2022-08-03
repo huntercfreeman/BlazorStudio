@@ -24,7 +24,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
     private IAbsoluteFilePath? InputFileDialogSelection;
 
     private string InterpolatedCommand => $"dotnet new" +
-                                          $" {_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "template is null"}" +
+                                          $" {_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "{select a template}"}" +
                                           $" {_templateArguments}";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -139,8 +139,11 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     private void InputFileDialogOnEnterKeyDownOverride((IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
     {
-        InputFileDialogSelection = tupleArgument.absoluteFilePath;
-        InvokeAsync(StateHasChanged);
+        if (tupleArgument.absoluteFilePath.IsDirectory)
+        {
+            InputFileDialogSelection = tupleArgument.absoluteFilePath;
+            InvokeAsync(StateHasChanged);
+        }
     }
 
     public class CSharpTemplate

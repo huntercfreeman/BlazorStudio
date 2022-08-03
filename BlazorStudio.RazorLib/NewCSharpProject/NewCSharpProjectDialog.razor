@@ -1,50 +1,53 @@
 ﻿@using BlazorStudio.ClassLib.FileSystem.Interfaces
-@if (_templates is null)
-{
-    <div>Executing "dotnet new list"</div>
-}
-else if (!_templates.Any())
-{
-    <div>No C# Project Templates found. attempted: "@getCSharpProjectTemplatesCommand"</div>
-}
-else
-{
-    <SelectCSharpProjectTemplate @ref="_selectCSharpProjectTemplate"
-                                 Templates="_templates"
-                                 ReRenderCallbackFunc="async () => await InvokeAsync(StateHasChanged)" />
-    
-    <hr/>
 
-    <div style="height: 25%; margin: 0 15px;">
-        <BlazorStudio.RazorLib.InputFile.InputFileDialog OnEnterKeyDownOverride="InputFileDialogOnEnterKeyDownOverride"
-                                                         ShowFooter="false" />
-    </div>
+<div class="bstudio_new-c-sharp-project-dialog">
+    @if (_templates is null)
+    {
+        <div>Executing "dotnet new list"</div>
+    }
+    else if (!_templates.Any())
+    {
+        <div>No C# Project Templates found. attempted: "@getCSharpProjectTemplatesCommand"</div>
+    }
+    else
+    {
+        <SelectCSharpProjectTemplate @ref="_selectCSharpProjectTemplate"
+                                     Templates="_templates"
+                                     ReRenderCallbackFunc="async () => await InvokeAsync(StateHasChanged)" />
+        
+        <hr/>
 
-    <hr />
-
-    <input @bind="_templateArguments" @bind:event="oninput" />
-
-    <div style="height: 20%; overflow-y: auto;">
-        Selected Absolute Path:<br />
-        <div>
-            <em>
-                @(InputFileDialogSelection?.GetAbsoluteFilePathString() ?? "select a path")
-            </em>
+        <div style="height: 35%; margin-left: 10px; margin-right: 30px;">
+            <BlazorStudio.RazorLib.InputFile.InputFileDialog OnEnterKeyDownOverride="InputFileDialogOnEnterKeyDownOverride"
+                                                             ShowFooter="false" />
         </div>
 
-        Preview Command:<br/>
-        <div>
-            <em>
-                @InterpolatedCommand
-            </em>
+        <hr />
+
+        <div style="margin-left: 10px; margin-right: 30px;">
+            <div>
+                Selected Absolute Path:
+                <em>
+                    @(InputFileDialogSelection?.GetAbsoluteFilePathString() ?? "{select a path}")
+                </em>
+            </div>
+
+            <div style="border-left: 1.5px solid var(--bstudio_primary-border-color); padding-left: 10px; margin-bottom: 5px;">
+                <div>
+                    command&nbsp;=&nbsp;"dotnet&nbsp;new&nbsp;<em>@(_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "{select a template}")</em>&nbsp;"
+                    +&nbsp;"&nbsp;<input class="bstudio_input-text" style="padding: 2px 3px;" placeholder="optional args" @bind="_templateArguments" @bind:event="oninput" />&nbsp;"
+                </div>
+                <div style="margin-top: 2px;"><em>@InterpolatedCommand</em></div>
+            </div>
+
+            <button class="btn btn-primary"
+                    style="margin-bottom: 5px;"
+                    disabled="@_disableExecuteButton">
+                @*@onclick="ExecuteNewCSharpProject">*@
+                Execute
+            </button>
+
+            @_executionOfNewCSharpProjectOutput
         </div>
-
-        <button class="btn btn-primary"
-                disabled="@_disableExecuteButton">
-            @*@onclick="ExecuteNewCSharpProject">*@
-            Execute
-        </button>
-
-        @_executionOfNewCSharpProjectOutput
-    </div>
-}
+    }
+</div>
