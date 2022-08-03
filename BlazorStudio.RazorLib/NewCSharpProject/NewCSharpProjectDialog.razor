@@ -2,41 +2,29 @@
 {
     <div>Executing "dotnet new list"</div>
 }
+else if (!_templates.Any())
+{
+    <div>No C# Project Templates found. attempted: "@getCSharpProjectTemplatesCommand"</div>
+}
 else
 {
-    @if (_selectedCSharpTemplate is null || _forceSelectCSharpTemplateTreeViewOpen)
-    {
-        <div>Pick <em>Template Name</em> TreeView:</div>
-        <TreeViewWrapDisplay ShouldDispose="true"
-                             TreeViewWrapKey="_newCSharpProjectTreeViewKey"
-                             RootItems="GetRootThemes()"
-                             GetChildrenFunc="GetChildren"
-                             OnEnterKeyDown="TreeViewOnEnterKeyDown"
-                             OnSpaceKeyDown="TreeViewOnSpaceKeyDown"
-                             OnDoubleClick="TreeViewOnDoubleClick"
-                             IsExpandable="item => item.IsExpandable">
-    
-            <ItemRenderFragment Context="renderItem">
-                @if (renderItem.StringIdentifier is not null)
-                {
-                    <em>@renderItem.StringIdentifier:&nbsp;</em>
-                }
-            
-                @if (renderItem.OnClick is not null)
-                {
-                    <button class="btn btn-primary" @onclick="renderItem.OnClick">
-                        @renderItem.TitleFunc()
-                    </button>
-                }
-                else
-                {
-                    @renderItem.TitleFunc()
-                }
-            </ItemRenderFragment>
-        </TreeViewWrapDisplay>
-    }
-    else
-    {
-        <div>Selected C# Project Template:&nbsp;@_selectedCSharpTemplate.TemplateName&nbsp;(@_selectedCSharpTemplate.ShortName)</div>
-    }
+    <SelectCSharpProjectTemplate @ref="_selectCSharpProjectTemplate"
+                                 Templates="_templates"
+                                 ReRenderCallbackFunc="async () => await InvokeAsync(StateHasChanged)" />
+
+    <hr/>
+
+    <input @bind="_templateArguments" @bind:event="oninput" />
+
+    <div>
+        Preview Command:<br/>
+        
+        <div>
+            <em>
+                @InterpolatedCommand
+            </em>
+        </div>
+        
+        <button class="btn btn-primary">Execute</button>
+    </div>
 }

@@ -29,7 +29,7 @@ public class TreeViewWrapStatesReducer
     public static TreeViewWrapStates ReduceSetActiveTreeViewAction(TreeViewWrapStates previousTreeViewWrapStates,
         SetActiveTreeViewAction setActiveTreeViewAction)
     {
-        // The user of the TreeView component might have 'Enter' close the TreeView causing a not found exception
+        // The user of the TreeView component might have 'OnClick' close the TreeView causing a not found exception
         if (previousTreeViewWrapStates.Map.TryGetValue(setActiveTreeViewAction.TreeViewWrapKey, out var treeViewWrap))
         {
             // TODO: Allow for more than one active ITreeView
