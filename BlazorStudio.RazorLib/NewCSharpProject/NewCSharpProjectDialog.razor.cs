@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Diagnostics;
-using System.Xml.Linq;
 
 namespace BlazorStudio.RazorLib.NewCSharpProject;
 
@@ -114,7 +113,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     private async Task ExecuteNewCSharpProject()
     {
-        if (true || _disableExecuteButton || InputFileDialogSelection is null)
+        if (_selectCSharpProjectTemplate is null || InputFileDialogSelection is null)
             return;
 
         _templates = new();
