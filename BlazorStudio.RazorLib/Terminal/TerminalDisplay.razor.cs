@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.Html;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
@@ -31,6 +32,10 @@ public partial class TerminalDisplay : FluxorComponent, IDisposable
     private StringBuilder _processOnOutputDataReceived = new();
     private bool _isExecuting;
     private Process _process;
+    private int _port;
+    private string _getProcessIdRunningOnPortOutput;
+    private int _killedProcessesCounter;
+    private int _processId;
 
     protected override void OnInitialized()
     {
@@ -54,7 +59,50 @@ public partial class TerminalDisplay : FluxorComponent, IDisposable
 
     private async void ProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e)
     {
-        _processOnOutputDataReceived.AppendLine(e.Data ?? string.Empty);
+        if (e.Data is null)
+            return;
+
+        var indexOfHttp = e.Data.IndexOf("http");
+
+        if (indexOfHttp > 0)
+        {
+            var firstSubstring = e.Data.Substring(0, indexOfHttp);
+            
+            var httpBuilder = new StringBuilder();
+
+            var position = indexOfHttp;
+
+            while (position < e.Data.Length)
+            {
+                var currentCharacter = e.Data[position++];
+
+                if (currentCharacter == ' ')
+                {
+                    break;
+                }
+                else
+                {
+                    httpBuilder.Append(currentCharacter);
+                }
+            }
+
+            var aTag = $"<a href=\"{httpBuilder}\">{httpBuilder}</a>";
+
+            var result = firstSubstring.EscapeHtml()
+                         + aTag.ToString();
+
+            if (position != e.Data.Length - 1)
+            {
+                result += e.Data.Substring(position);
+            }
+
+            _processOnOutputDataReceived.Append(result + "<br />");
+        }
+        else
+        {
+            _processOnOutputDataReceived.Append(e.Data.EscapeHtml() + "<br />");
+        }
+
 
         await InvokeAsync(StateHasChanged);
     }
@@ -80,12 +128,7 @@ public partial class TerminalDisplay : FluxorComponent, IDisposable
                     await InvokeAsync(StateHasChanged);
 
                     _process.Start();
-
-                    // Do not wait for the child process to exit before
-                    // reading to the end of its redirected stream.
-                    // p.WaitForExit();
-                    // Read the output stream first and then wait.
-
+                    
                     _process.BeginOutputReadLine();
 
                     await _process.WaitForExitAsync();
@@ -98,6 +141,82 @@ public partial class TerminalDisplay : FluxorComponent, IDisposable
                 }
             });
         }
+    }
+
+    private async Task GetProcessIdRunningOnPort(int port)
+    {
+        var command = $"netstat -ano | findStr \"{port}\"";
+        var z = "tasklist /fi \"pid eq 2216\"";
+
+        await Task.Run(async () =>
+        {
+            var p = new Process();
+            // Start the child process.
+            p.StartInfo.FileName = "cmd.exe";
+            // 2>&1 combines stdout and stderr
+            p.StartInfo.Arguments = $"/c {command} 2>&1";
+            // Redirect the output stream of the child process.
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.CreateNoWindow = true;
+
+            try
+            {
+                await InvokeAsync(StateHasChanged);
+
+                p.Start();
+
+                // Do not wait for the child process to exit before
+                // reading to the end of its redirected stream.
+                // p.WaitForExit();
+                // Read the output stream first and then wait.
+                _getProcessIdRunningOnPortOutput = p.StandardOutput.ReadToEnd();
+
+                await p.WaitForExitAsync();
+            }
+            finally
+            {
+                await InvokeAsync(StateHasChanged);
+            }
+        });
+    }
+    
+    private async Task KillProcessWithProcessId(int processId)
+    {
+        if (processId == 0)
+        {
+            return;
+        }
+
+        var command = $"taskkill /PID {processId} /F";
+
+        await Task.Run(async () =>
+        {
+            var p = new Process();
+            // Start the child process.
+            p.StartInfo.FileName = "cmd.exe";
+            // 2>&1 combines stdout and stderr
+            p.StartInfo.Arguments = $"/c {command} 2>&1";
+            // Redirect the output stream of the child process.
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.CreateNoWindow = true;
+
+            try
+            {
+                await InvokeAsync(StateHasChanged);
+
+                p.Start();
+                
+                await p.WaitForExitAsync();
+            }
+            finally
+            {
+                _killedProcessesCounter++;
+                await InvokeAsync(StateHasChanged);
+            }
+        });
+
     }
 
     protected override void Dispose(bool disposing)

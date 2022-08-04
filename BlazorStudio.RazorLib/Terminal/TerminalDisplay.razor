@@ -24,15 +24,20 @@
         else
         {
             <div>
+                <input type="number" @bind="_port" />
                 <button class="btn btn-warning"
-                        @onclick="() => _process.Close()">
-                    Close Terminal
+                        @onclick="() => GetProcessIdRunningOnPort(_port)">
+                    Get Process ID running on port: @_port
                 </button>
-
-                <button class="btn btn-danger"
-                        @onclick="() => _process.Kill()">
-                    Kill Terminal
+                <div>result (number after LISTENING is PID): <em>@_getProcessIdRunningOnPortOutput</em></div>
+            </div>
+            <div>
+                <input type="number" @bind="_processId" />
+                <button class="btn btn-warning"
+                        @onclick="() => KillProcessWithProcessId(_processId)">
+                    Kill Process with ID: @_processId
                 </button>
+                <div>KillProcessWithProcessId() Method call counter: @_killedProcessesCounter</div>
             </div>
 
             <div><em>@(_process.StartInfo.WorkingDirectory)</em></div>
@@ -49,7 +54,7 @@
 
                 </div>
                 <div>
-                    @((MarkupString) _processOnOutputDataReceived.EscapeHtml())
+                    @((MarkupString)_processOnOutputDataReceived.ToString())
         </div>
                 
                 <hr/>
