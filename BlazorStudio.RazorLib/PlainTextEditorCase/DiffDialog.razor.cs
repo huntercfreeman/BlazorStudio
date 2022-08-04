@@ -14,6 +14,8 @@ public partial class DiffDialog : FluxorComponent
     [Parameter, EditorRequired]
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
 
+    private string _plainText = string.Empty;
+
     protected override void OnInitialized()
     {
         PlainTextEditorSelector.Select(x =>
@@ -23,5 +25,15 @@ public partial class DiffDialog : FluxorComponent
         });
 
         base.OnInitialized();
+    }
+
+    private void GetPlainText(IPlainTextEditor currentPlainTextEditor)
+    {
+        _plainText = currentPlainTextEditor.GetPlainText();
+    }
+
+    private void SaveChanges()
+    {
+
     }
 }
