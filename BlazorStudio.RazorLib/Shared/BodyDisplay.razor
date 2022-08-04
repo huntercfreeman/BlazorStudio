@@ -13,7 +13,5 @@
                                                                    BottomDimensions="_terminalSectionDimensions"
                                                                    ReRenderFunc="ReRender" />
     
-    <div style="@_terminalSectionDimensions.DimensionsCssString display: flex;">
-        I am a terminal
-    </div>
+    <BlazorStudio.RazorLib.Terminal.TerminalDisplay Dimensions="_terminalSectionDimensions" />
 </div>

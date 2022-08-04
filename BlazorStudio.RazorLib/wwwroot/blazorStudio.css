@@ -455,3 +455,7 @@ em {
 .bstudio_new-c-sharp-project-dialog .bstudio_input-file-dialog-body {
     height: calc(100% - 3rem);
 }
+
+.bstudio_terminal-display {
+    padding-left: 5px;
+}
