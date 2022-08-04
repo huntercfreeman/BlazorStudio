@@ -1,0 +1,64 @@
+﻿@using BlazorStudio.ClassLib.Html
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_terminal-display"
+     style="@Dimensions.DimensionsCssString">
+
+    <div>
+        Terminal
+    </div>
+
+    @{
+        var workspaceState = WorkspaceStateWrap.Value;
+
+        if (workspaceState.WorkspaceAbsoluteFilePath is null)
+        {
+            <div>
+                WorkspaceAbsoluteFilePath is null, use the InputFile dialog to select a Workspace
+                directory.
+            </div>
+            <div>
+                <BlazorStudio.RazorLib.InputFile.InputFileDialogEntryPoint />
+            </div>
+        }
+        else
+        {
+            <div>
+                <button class="btn btn-warning"
+                        @onclick="() => _process.Close()">
+                    Close Terminal
+                </button>
+
+                <button class="btn btn-danger"
+                        @onclick="() => _process.Kill()">
+                    Kill Terminal
+                </button>
+            </div>
+
+            <div><em>@(_process.StartInfo.WorkingDirectory)</em></div>
+            <div>
+                $&nbsp;
+                <input @onkeydown="OnKeyDown" class="bstudio_input-text" style="padding: 2px 3px;" placeholder="optional args" @bind="_commandLineInput" @bind:event="oninput" />
+                <br /><em>$&nbsp;@_commandLineInput</em>
+                <hr />
+                <div>
+                    @if (_isExecuting)
+                    {
+                        <text>Executing...:&nbsp;<em>@_commandLineInput</em></text>
+                    }
+
+                </div>
+                <div>
+                    @((MarkupString) _processOnOutputDataReceived.EscapeHtml())
+        </div>
+                
+                <hr/>
+
+                <div>
+                    @_commandLineOutput.EscapeHtml()
+                </div>
+                    
+            </div>
+        }
+    }
+</div>

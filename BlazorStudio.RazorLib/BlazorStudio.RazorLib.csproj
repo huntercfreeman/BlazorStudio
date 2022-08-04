@@ -34,6 +34,7 @@
     <_ContentIncludedByDefault Remove="OutOfBoundsClick\OutOfBoundsClickDisplay.razor" />
     <_ContentIncludedByDefault Remove="Settings\SettingsDialog.razor" />
     <_ContentIncludedByDefault Remove="Shared\BodyDisplay.razor" />
+    <_ContentIncludedByDefault Remove="Terminal\TerminalDisplay.razor" />
     <_ContentIncludedByDefault Remove="Transformable\TransformableDisplay.razor" />
     <_ContentIncludedByDefault Remove="TreeViewCase\TreeViewWrapDisplay.razor" />
   </ItemGroup>
@@ -89,6 +90,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="DebuggingHelp\DebugExpansion.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Terminal\TerminalDisplay.razor" />
   </ItemGroup>
 
 </Project>
