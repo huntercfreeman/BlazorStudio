@@ -34,6 +34,7 @@ public partial class TerminalDisplay : FluxorComponent, IDisposable
     private Process _process;
     private int _port;
     private string _getProcessIdRunningOnPortOutput;
+    private string _getProcessNameOutput;
     private int _killedProcessesCounter;
     private int _processId;
 
@@ -146,7 +147,6 @@ public partial class TerminalDisplay : FluxorComponent, IDisposable
     private async Task GetProcessIdRunningOnPort(int port)
     {
         var command = $"netstat -ano | findStr \"{port}\"";
-        var z = "tasklist /fi \"pid eq 2216\"";
 
         await Task.Run(async () =>
         {
@@ -171,6 +171,43 @@ public partial class TerminalDisplay : FluxorComponent, IDisposable
                 // p.WaitForExit();
                 // Read the output stream first and then wait.
                 _getProcessIdRunningOnPortOutput = p.StandardOutput.ReadToEnd();
+
+                await p.WaitForExitAsync();
+            }
+            finally
+            {
+                await InvokeAsync(StateHasChanged);
+            }
+        });
+    }
+    
+    private async Task CheckNameByProcessId(int processId)
+    {
+        var command = $"tasklist /fi \"pid eq {processId}\"";
+
+        await Task.Run(async () =>
+        {
+            var p = new Process();
+            // Start the child process.
+            p.StartInfo.FileName = "cmd.exe";
+            // 2>&1 combines stdout and stderr
+            p.StartInfo.Arguments = $"/c {command} 2>&1";
+            // Redirect the output stream of the child process.
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.CreateNoWindow = true;
+
+            try
+            {
+                await InvokeAsync(StateHasChanged);
+
+                p.Start();
+
+                // Do not wait for the child process to exit before
+                // reading to the end of its redirected stream.
+                // p.WaitForExit();
+                // Read the output stream first and then wait.
+                _getProcessNameOutput = p.StandardOutput.ReadToEnd();
 
                 await p.WaitForExitAsync();
             }

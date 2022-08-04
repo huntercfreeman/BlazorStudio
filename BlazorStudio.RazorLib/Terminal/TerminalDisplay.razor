@@ -31,6 +31,16 @@
                 </button>
                 <div>result (number after LISTENING is PID): <em>@_getProcessIdRunningOnPortOutput</em></div>
             </div>
+            
+            <div>
+                <input type="number" @bind="_processId" />
+                <button class="btn btn-warning"
+                        @onclick="() => CheckNameByProcessId(_processId)">
+                    Get name of Process from Id: @_processId
+                </button>
+                <div>result: <em>@_getProcessNameOutput</em></div>
+            </div>
+
             <div>
                 <input type="number" @bind="_processId" />
                 <button class="btn btn-warning"
