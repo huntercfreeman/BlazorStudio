@@ -28,8 +28,10 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
     [Parameter, EditorRequired]
     public bool AutomateDispose { get; set; } = true;
-    [Parameter, EditorRequired]
+    [Parameter]
     public bool AllowOpenDiff { get; set; } = true;
+    [Parameter]
+    public bool AllowDispatchEvent { get; set; } = true;
 
     private bool _isFocused;
     private ElementReference _plainTextEditor;
@@ -210,8 +212,11 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private void OnRequestCallbackAction(VirtualizeCoordinateSystemMessage virtualizeCoordinateSystemMessage)
     {
-        Dispatcher.Dispatch(new PlainTextEditorPixelReadRequestAction(PlainTextEditorKey,
-            virtualizeCoordinateSystemMessage));
+        if (AllowDispatchEvent)
+        {
+            Dispatcher.Dispatch(new PlainTextEditorPixelReadRequestAction(PlainTextEditorKey,
+                virtualizeCoordinateSystemMessage));
+        }
     }
 
     private MarkupString NullSafeToMarkupString(string name, object? obj)
@@ -230,7 +235,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     {
         var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
-        await currentPlainTextEditor.FileHandle.SaveAsync(CancellationToken.None);
+        await currentPlainTextEditor.FileHandle.SaveAsync("", CancellationToken.None);
 
         Dispatcher.Dispatch(new PlainTextEditorPixelReadRequestAction(PlainTextEditorKey,
             currentPlainTextEditor.VirtualizeCoordinateSystemMessage));

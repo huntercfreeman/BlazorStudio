@@ -458,4 +458,5 @@ em {
 
 .bstudio_terminal-display {
     padding-left: 5px;
+    overflow-y: auto;
 }
