@@ -34,7 +34,7 @@ public partial class BodyDisplay : ComponentBase
         }
     };
 
-    private Dimensions _workspaceExplorerDimensions = new Dimensions
+    private Dimensions _explorersDimensions = new Dimensions
     {
         DimensionsPositionKind = DimensionsPositionKind.Static,
         WidthCalc = new List<DimensionUnit>

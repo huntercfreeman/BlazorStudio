@@ -39,6 +39,11 @@ public static class MenuOptionFacts
             "C# Project",
             ImmutableList<MenuOptionRecord>.Empty,
             onClickAction);
+        
+        public static MenuOptionRecord SetActiveSolution(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
+            "Set Active Solution",
+            ImmutableList<MenuOptionRecord>.Empty,
+            onClickAction);
     }
 
     public static MenuOptionRecord NewMenu(Action onNewCSharpProject) => new(MenuOptionKey.NewMenuOptionKey(),
