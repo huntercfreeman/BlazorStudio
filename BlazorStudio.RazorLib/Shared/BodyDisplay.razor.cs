@@ -77,7 +77,12 @@ public partial class BodyDisplay : ComponentBase
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
                 Value = 75
-            }
+            },
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -4
+            },
         }
     };
     
