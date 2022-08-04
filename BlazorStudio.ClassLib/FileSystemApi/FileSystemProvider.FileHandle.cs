@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -31,6 +32,7 @@ public partial class FileSystemProvider : IFileSystemProvider
         };
         
         private MemoryMappedFile? _memoryMappedFile;
+        private FileStream? _fileStream;
 
         public EditBuilder Edit { get; } = EditBuilder.Build();
         
@@ -139,7 +141,6 @@ public partial class FileSystemProvider : IFileSystemProvider
                         .CreateFromFile(AbsoluteFilePath.GetAbsoluteFilePathString(),
                             FileMode.Open,
                             mapFilename);
-
                 }
             }
             catch (IOException e)
@@ -160,9 +161,21 @@ public partial class FileSystemProvider : IFileSystemProvider
         public FileHandleKey FileHandleKey { get; } = FileHandleKey.NewFileHandleKey();
         public IAbsoluteFilePath AbsoluteFilePath { get; }
 
-        public Task SaveAsync(CancellationToken cancellationToken)
+        public Task SaveAsync(string content, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (_memoryMappedFile is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            Dispose();
+
+            File.WriteAllText(AbsoluteFilePath.GetAbsoluteFilePathString(), content);
+
+            //var viewStream = _memoryMappedFile.CreateViewStream();
+            //viewStream..Write(data, 0, data.Length); // write hello world
+
+            return Task.CompletedTask;
         }
         
         public async Task<List<string>?> ReadAsync(FileHandleReadRequest readRequest)
@@ -279,7 +292,12 @@ public partial class FileSystemProvider : IFileSystemProvider
             {
                 _memoryMappedFile.Dispose();
             }
-            
+
+            if (_fileStream is not null)
+            {
+                _fileStream.Dispose();
+            }
+
             _onDisposeAction.Invoke(this);
         }
     }

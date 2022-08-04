@@ -235,7 +235,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     {
         var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
-        await currentPlainTextEditor.FileHandle.SaveAsync(CancellationToken.None);
+        await currentPlainTextEditor.FileHandle.SaveAsync("", CancellationToken.None);
 
         Dispatcher.Dispatch(new PlainTextEditorPixelReadRequestAction(PlainTextEditorKey,
             currentPlainTextEditor.VirtualizeCoordinateSystemMessage));

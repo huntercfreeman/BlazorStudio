@@ -32,8 +32,15 @@ public partial class DiffDialog : FluxorComponent
         _plainText = currentPlainTextEditor.GetPlainText();
     }
 
-    private void SaveChanges()
+    private async Task SaveChanges(IPlainTextEditor currentPlainTextEditor)
     {
+        if (_plainText is null)
+        {
+            return;
+        }
 
+        await currentPlainTextEditor.FileHandle.SaveAsync(_plainText, CancellationToken.None);
+
+        _plainText = "saved text";
     }
 }

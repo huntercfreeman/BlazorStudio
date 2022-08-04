@@ -56,5 +56,5 @@ public interface IFileHandle : IDisposable
     /// </summary>
     /// <param name="cancellationToken">Relays the cancellation of the asynchronous call</param>
     /// <returns>A Task indicating status of saving the file</returns>
-    public Task SaveAsync(CancellationToken cancellationToken);
+    public Task SaveAsync(string content, CancellationToken cancellationToken);
 }
