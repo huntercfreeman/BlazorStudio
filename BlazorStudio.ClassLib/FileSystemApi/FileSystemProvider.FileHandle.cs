@@ -163,11 +163,6 @@ public partial class FileSystemProvider : IFileSystemProvider
 
         public Task SaveAsync(string content, CancellationToken cancellationToken)
         {
-            if (_memoryMappedFile is null)
-            {
-                return Task.CompletedTask;
-            }
-
             Dispose();
 
             File.WriteAllText(AbsoluteFilePath.GetAbsoluteFilePathString(), content);
