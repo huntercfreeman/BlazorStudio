@@ -195,13 +195,23 @@ public partial class FileSystemProvider : IFileSystemProvider
 
                 if (_memoryMappedFile is not null)
                 {
-                    var availableRowCount = Math.Max(
-                        _physicalCharacterIndexMarkerForStartOfARow.Count - readRequest.RowIndexOffset,
-                        0);
+                    int availableRowCount;
+
+                    if (readRequest.RowIndexOffset > _physicalCharacterIndexMarkerForStartOfARow.Count - 1)
+                    {
+                        availableRowCount = 0;
+                    }
+                    else
+                    {
+                        availableRowCount = _physicalCharacterIndexMarkerForStartOfARow.Count
+                                            - readRequest.RowIndexOffset;
+                    }
 
                     var toReadRowCount = Math.Min(readRequest.RowCount, availableRowCount);
 
-                    var rowIndex = readRequest.RowIndexOffset;
+                    var rowIndex = Math.Min(
+                        _physicalCharacterIndexMarkerForStartOfARow.Count - 1,
+                        readRequest.RowIndexOffset);
 
                     var rowsRead = 0;
 
