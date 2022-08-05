@@ -1,8 +1,9 @@
 ﻿<div class="bstudio_body-display">
     <div style="@_editingSectionDimensions.DimensionsCssString display: flex;">
-        <BlazorStudio.RazorLib.Workspace.WorkspaceExplorer Dimensions="_workspaceExplorerDimensions"/>
+        
+        <ExplorersDisplay ExplorersDimensions="_explorersDimensions" />
 
-        <BlazorStudio.RazorLib.Transformable.TransformableColumnSeparator LeftDimensions="_workspaceExplorerDimensions"
+        <BlazorStudio.RazorLib.Transformable.TransformableColumnSeparator LeftDimensions="_explorersDimensions"
                                                                           RightDimensions="_editorDisplayDimensions"
                                                                           ReRenderFunc="ReRender"/>
 

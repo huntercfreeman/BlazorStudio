@@ -1,31 +1,34 @@
-﻿using System.Collections.Immutable;
-using BlazorStudio.ClassLib.Errors;
+﻿using BlazorStudio.ClassLib.Errors;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Store.DropdownCase;
-using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
-using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.TreeViewCase;
-using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
+using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
+using BlazorStudio.ClassLib.Store.DialogCase;
+using Microsoft.Build.Locator;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.MSBuild;
 
-namespace BlazorStudio.RazorLib.Workspace;
+namespace BlazorStudio.RazorLib.SolutionExplorer;
 
-public partial class WorkspaceExplorer : FluxorComponent, IDisposable
+public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 {
     [Inject]
-    private IState<WorkspaceState> WorkspaceStateWrap { get; set; } = null!;
+    private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -42,10 +45,10 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
     private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
-    private RichErrorModel? _workspaceStateWrapStateChangedRichErrorModel;
+    private RichErrorModel? _solutionExplorerStateWrapStateChangedRichErrorModel;
     private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
     private Func<Task> _mostRecentRefreshContextMenuTarget;
-    
+
     private Dimensions _fileDropdownDimensions = new()
     {
         DimensionsPositionKind = DimensionsPositionKind.Absolute,
@@ -68,22 +71,24 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
     };
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
+    private Solution? _sln;
+    private bool _loadingSln;
 
     protected override void OnInitialized()
     {
-        WorkspaceStateWrap.StateChanged += WorkspaceStateWrap_StateChanged;
+        SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrap_StateChanged;
 
         base.OnInitialized();
     }
 
-    private async void WorkspaceStateWrap_StateChanged(object? sender, EventArgs e)
+    private async void SolutionExplorerStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        var workspaceState = WorkspaceStateWrap.Value;
+        var workspaceState = SolutionExplorerStateWrap.Value;
 
-        if (workspaceState.WorkspaceAbsoluteFilePath is not null)
+        if (workspaceState.SolutionAbsoluteFilePath is not null)
         {
             _isInitialized = false;
-            _workspaceStateWrapStateChangedRichErrorModel = null;
+            _solutionExplorerStateWrapStateChangedRichErrorModel = null;
             _rootAbsoluteFilePaths = null;
 
             await InvokeAsync(StateHasChanged);
@@ -92,38 +97,93 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
                 TreeViewWrapKey.NewTreeViewWrapKey());
 
             _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+            {
+                _rootAbsoluteFilePaths = (await LoadAbsoluteFilePathChildrenAsync(workspaceState.SolutionAbsoluteFilePath))
+                    .ToList();
+
+                _isInitialized = true;
+
+                await InvokeAsync(StateHasChanged);
+
+                if (_treeViewWrapDisplay is not null)
                 {
-                    _rootAbsoluteFilePaths = (await LoadAbsoluteFilePathChildrenAsync(workspaceState.WorkspaceAbsoluteFilePath))
-                        .ToList();
-
-                    _isInitialized = true;
-
-                    await InvokeAsync(StateHasChanged);
-
-                    if (_treeViewWrapDisplay is not null)
-                    {
-                        _treeViewWrapDisplay.Reload();
-                    }
-                },
-                $"{nameof(WorkspaceStateWrap_StateChanged)}",
+                    _treeViewWrapDisplay.Reload();
+                }
+            },
+                $"{nameof(SolutionExplorerStateWrap_StateChanged)}",
                 false,
                 TimeSpan.FromSeconds(10),
                 exception =>
                 {
                     _isInitialized = true;
-                    _workspaceStateWrapStateChangedRichErrorModel = new RichErrorModel(
-                        $"{nameof(WorkspaceStateWrap_StateChanged)}: {exception.Message}",
+                    _solutionExplorerStateWrapStateChangedRichErrorModel = new RichErrorModel(
+                        $"{nameof(SolutionExplorerStateWrap_StateChanged)}: {exception.Message}",
                         $"TODO: Add a hint");
 
                     InvokeAsync(StateHasChanged);
 
-                    return _workspaceStateWrapStateChangedRichErrorModel;
+                    return _solutionExplorerStateWrapStateChangedRichErrorModel;
                 });
         }
     }
 
     private async Task<IEnumerable<IAbsoluteFilePath>> LoadAbsoluteFilePathChildrenAsync(IAbsoluteFilePath absoluteFilePath)
     {
+        if (absoluteFilePath.ExtensionNoPeriod == "sln")
+        {
+            try
+            {
+                _loadingSln = true;
+
+                await InvokeAsync(StateHasChanged);
+
+                var targetPath = absoluteFilePath.GetAbsoluteFilePathString();
+
+                MSBuildLocator.RegisterDefaults();
+
+                var workspace = MSBuildWorkspace.Create();
+
+                _sln = await workspace.OpenSolutionAsync(targetPath);
+
+                var projects = new List<AbsoluteFilePath>();
+
+                foreach (var project in _sln.Projects)
+                {
+                    projects.Add(new AbsoluteFilePath(project.FilePath ?? "{null file path}", false));
+                }
+
+
+                return projects.ToArray();
+            }
+            finally
+            {
+                _loadingSln = false;
+            }
+        }
+        
+        if (absoluteFilePath.ExtensionNoPeriod == "csproj")
+        {
+            var containingDirectory = absoluteFilePath.Directories.Last();
+
+            if (containingDirectory is AbsoluteFilePath containingDirectoryAbsoluteFilePath)
+            {
+                var projectChildDirectoryAbsolutePaths = Directory
+                    .GetDirectories(containingDirectoryAbsoluteFilePath.GetAbsoluteFilePathString())
+                    .Where(x => !x.EndsWith("bin") && !x.EndsWith("obj"))
+                    .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, true))
+                    .ToList();
+
+                var projectChildFileAbsolutePaths = Directory
+                    .GetFiles(containingDirectoryAbsoluteFilePath.GetAbsoluteFilePathString())
+                    .Where(x => !x.EndsWith("csproj"))
+                    .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, false))
+                    .ToList();
+
+                return projectChildDirectoryAbsolutePaths
+                    .Union(projectChildFileAbsolutePaths);
+            }
+        }
+
         if (!absoluteFilePath.IsDirectory)
         {
             return Array.Empty<IAbsoluteFilePath>();
@@ -211,9 +271,11 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
 
     private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)
     {
-        return absoluteFilePath.IsDirectory;
+        return absoluteFilePath.IsDirectory ||
+               absoluteFilePath.ExtensionNoPeriod == "sln" ||
+               absoluteFilePath.ExtensionNoPeriod == "csproj";
     }
-    
+
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
         TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
@@ -244,9 +306,6 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
                         new Action<string, string>(CreateNewDirectoryFormOnAfterSubmitForm)
                     },
                 });
-        
-        var setActiveSolution = MenuOptionFacts.CSharp
-            .SetActiveSolution(() => Dispatcher.Dispatch(new SetSolutionExplorerAction(contextMenuEventDto.Item)));
 
         _mostRecentRefreshContextMenuTarget = contextMenuEventDto.RefreshContextMenuTarget;
 
@@ -256,11 +315,6 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
         {
             menuOptionRecords.Add(createNewFile);
             menuOptionRecords.Add(createNewDirectory);
-        }
-
-        if (contextMenuEventDto.Item.ExtensionNoPeriod == "sln")
-        {
-            menuOptionRecords.Add(setActiveSolution);
         }
 
         return menuOptionRecords.Any()
@@ -321,9 +375,17 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
         Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
     }
 
+    private void InputFileDialogOnEnterKeyDownOverride((IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
+    {
+        if (tupleArgument.absoluteFilePath.ExtensionNoPeriod == "sln")
+        {
+            Dispatcher.Dispatch(new SetWorkspaceAction(tupleArgument.absoluteFilePath));
+        }
+    }
+
     protected override void Dispose(bool disposing)
     {
-        WorkspaceStateWrap.StateChanged -= WorkspaceStateWrap_StateChanged;
+        SolutionExplorerStateWrap.StateChanged -= SolutionExplorerStateWrap_StateChanged;
 
 
         base.Dispose(disposing);

@@ -9,10 +9,14 @@
   <ItemGroup>
     <PackageReference Include="Fluxor" Version="5.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.7" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.4.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.2.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Store\SolutionExplorerCase\" />
     <Folder Include="Store\TerminalCase\" />
   </ItemGroup>
 
