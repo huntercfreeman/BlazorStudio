@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Errors;
+using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
@@ -258,7 +259,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
             menuOptionRecords.Add(createNewDirectory);
         }
 
-        if (contextMenuEventDto.Item.ExtensionNoPeriod == "sln")
+        if (contextMenuEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
         {
             menuOptionRecords.Add(setActiveSolution);
         }

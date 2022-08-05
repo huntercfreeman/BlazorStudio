@@ -25,6 +25,16 @@
     --bstudio_task-model-display-cancel-button-background-color: #af4343;
     --bstudio_primary-overlay-box-shadow: 0px 0px 2px #000000;
     --bstudio_primary-emphasis-font-color: #1c66da;
+    --bstudio_icon-solution-font-color: #9533e5;
+    --bstudio_icon-project-font-color: #0cc602;
+    --bstudio_icon-razor-font-color: #c62bba;
+    --bstudio_icon-folder-font-color: #b37415;
+    --bstudio_icon-json-font-color: #e4ee16;
+    --bstudio_icon-c-sharp-class-font-color: #2285b1;
+    --bstudio_icon-cshtml-font-color: #c62bba;
+    --bstudio_icon-css-font-color: #e36a6e;
+    --bstudio_icon-js-font-color: #519aba;
+    --bstudio_icon-ts-font-color: #37b38b;
     --pte_primary-cursor-color: #000000;
     --pte_secondary-cursor-color: transparent;
     --pte_active-row: #ff00eb;
