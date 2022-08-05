@@ -32,6 +32,9 @@
     --bstudio_icon-json-font-color: #e4ee16;
     --bstudio_icon-c-sharp-class-font-color: #2285b1;
     --bstudio_icon-cshtml-font-color: #c62bba;
+    --bstudio_icon-css-font-color: #e36a6e;
+    --bstudio_icon-js-font-color: #519aba;
+    --bstudio_icon-ts-font-color: #37b38b;
     --pte_primary-cursor-color: #000000;
     --pte_secondary-cursor-color: transparent;
     --pte_active-row: #ff00eb;
