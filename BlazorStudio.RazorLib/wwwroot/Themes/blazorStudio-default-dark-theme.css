@@ -29,6 +29,9 @@
     --bstudio_icon-project-font-color: #88d184;
     --bstudio_icon-razor-font-color: #c586c0;
     --bstudio_icon-folder-font-color: #d7ab69;
+    --bstudio_icon-json-font-color: #cbc638;
+    --bstudio_icon-c-sharp-class-font-color: #519aba;
+    --bstudio_icon-cshtml-font-color: #c586c0;
     --pte_primary-cursor-color: #ffffff;
     --pte_secondary-cursor-color: transparent;
     --pte_active-row: rgb(228, 137, 16);
