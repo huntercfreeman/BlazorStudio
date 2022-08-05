@@ -14,17 +14,17 @@
 
         if (_loadingSln)
         {
-            <div>Loading @SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath?.FilenameWithExtension</div>
+                        <div>Loading @SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath?.FilenameWithExtension</div>
         }
         else if (solutionExplorerState.SolutionAbsoluteFilePath is null)
         {
-                <div>
-                    SolutionAbsoluteFilePath is null, use the InputFile dialog to select a SolutionAbsoluteFilePath
-                    directory.
-                </div>
-                <div>
-                    <BlazorStudio.RazorLib.InputFile.InputFileDialogEntryPoint />
-                </div>
+                            <div>
+                                SolutionAbsoluteFilePath is null, use the InputFile dialog to select a SolutionAbsoluteFilePath
+                                directory.
+                            </div>
+                            <div>
+                                <BlazorStudio.RazorLib.InputFile.InputFileDialogEntryPoint />
+                            </div>
         }
         else
         {
@@ -32,16 +32,17 @@
             {
                 if (_solutionExplorerStateWrapStateChangedRichErrorModel is not null)
                 {
-                        <RichErrorDisplay RichErrorModel="_solutionExplorerStateWrapStateChangedRichErrorModel" />
+                                    <RichErrorDisplay RichErrorModel="_solutionExplorerStateWrapStateChangedRichErrorModel" />
                 }
                 else
                 {
-                    <div class="bstudio_workspace-explorer">                        
-                        
-                        <DropdownDisplay Dimensions="_fileDropdownDimensions"
+                                <div class="bstudio_solution-explorer"
+                                     style="width: 100%;">                        
+                                    
+                                    <DropdownDisplay Dimensions="_fileDropdownDimensions"
                                          DropdownKey="_fileDropdownKey">
-                         
-                            @{
+                                     
+                                        @{
                                 var contextMenuEventDto = new TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath>
                                 {
                                     Item = solutionExplorerState.SolutionAbsoluteFilePath,
@@ -49,14 +50,14 @@
                                     RefreshContextMenuTarget = async () => SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty)
                                 }; 
                 
-                                <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
+                                                        <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
 
-                                <MenuDisplay MenuOptionRecords="GetMenuOptionRecords(contextMenuEventDto)" />
-                            }
+                                                        <MenuDisplay MenuOptionRecords="GetMenuOptionRecords(contextMenuEventDto)" />
+                                        }
 
-                        </DropdownDisplay>
+                                    </DropdownDisplay>
 
-                        <TreeViewWrapDisplay @ref="_treeViewWrapDisplay"
+                                    <TreeViewWrapDisplay @ref="_treeViewWrapDisplay"
                              ShouldDispose="false"
                              TreeViewWrapKey="_inputFileTreeViewKey"
                              T="IAbsoluteFilePath"
@@ -70,36 +71,63 @@
                              StyleString="height: 100%;"
                              BodyCssClassAttribute="bstudio_workspace-explorer-tree-view-body">
 
-                                <ItemRenderFragment>
-                                    <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
-                                        @absoluteFilePath.FilenameWithExtension
-                                    </span>
-                                </ItemRenderFragment>
+                                            <ItemRenderFragment>
+                                                <span title="icon">
+                                                    @if (absoluteFilePath.ExtensionNoPeriod == "sln")
+                                            {
+                                                        <IconSolution />
+                                            }
+                                            else if (absoluteFilePath.ExtensionNoPeriod == "csproj")
+                                            {
+                                                        <IconSolution />
+                                            }
+                                                </span>
 
-                                <OnContextMenuRenderFragment Context="contextMenuEventDto">
+                                                <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
+                                                    @absoluteFilePath.FilenameWithExtension
+                                                </span>
+                                            </ItemRenderFragment>
 
-                                    <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
+                                            <OnContextMenuRenderFragment Context="contextMenuEventDto">
 
-                                    <MenuDisplay MenuOptionRecords="GetMenuOptionRecords(contextMenuEventDto)" />
+                                                <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
 
-                                </OnContextMenuRenderFragment>
+                                                <MenuDisplay MenuOptionRecords="GetMenuOptionRecords(contextMenuEventDto)" />
 
-                                <HeaderRenderFragment Context="activeItems">
-                                    <div class="bstudio_workspace-explorer-tree-view-header">
-                                        <button class="btn btn-primary"
-                                                @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)">
-                                            <IconAdd/> New File
-                                        </button>
-                                        &nbsp;
-                                        to
-                                        &nbsp;
-                                        <span title="@solutionExplorerState.SolutionAbsoluteFilePath.GetAbsoluteFilePathString()">
-                                            @solutionExplorerState.SolutionAbsoluteFilePath.FilenameWithExtension
-                                        </span>
+                                            </OnContextMenuRenderFragment>
+
+                                            <HeaderRenderFragment Context="activeItems">
+                                                <div class="bstudio_workspace-explorer-tree-view-header">
+                                                    <button class="btn btn-primary"
+                                                            @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)">
+                                                        <IconAdd/> New File
+                                                    </button>
+                                                    
+                                                    <div style="display: inline-flex; align-items: center;">
+                                                        &nbsp;
+                                                        to
+                                                        &nbsp;
+                                                        <span title="icon"
+                                                              style="display: inline-flex; align-items: center; margin-right: 4px;">
+                                                            @if (solutionExplorerState.SolutionAbsoluteFilePath.ExtensionNoPeriod == "sln")
+                                                            {
+                                                                <IconSolution />
+                                                            }
+                                                            else
+                                                            {
+                                                                <IconDiff />
+                                                            }
+                                                        </span>
+                                                        <span title="@solutionExplorerState.SolutionAbsoluteFilePath.GetAbsoluteFilePathString()"
+                                                              style="display: inline-flex; align-items: center;">
+                                                            
+                                                            @solutionExplorerState.SolutionAbsoluteFilePath.FilenameWithExtension
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </HeaderRenderFragment>
+                                        </TreeViewWrapDisplay>
                                     </div>
-                                </HeaderRenderFragment>
-                            </TreeViewWrapDisplay>
-                        </div>
                 }
             }
         }

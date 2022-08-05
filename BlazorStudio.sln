@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStudio.Tests", "Blazo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStudio.Console", "BlazorStudio.Console\BlazorStudio.Console.csproj", "{909A6247-351E-47A1-928A-B46D0AB01B14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorStudio.WebAssembly", "BlazorStudio.WebAssembly\BlazorStudio.WebAssembly.csproj", "{3F915C2F-8B4D-4C25-B29D-E608BEC3DE8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStudio.WebAssembly", "BlazorStudio.WebAssembly\BlazorStudio.WebAssembly.csproj", "{3F915C2F-8B4D-4C25-B29D-E608BEC3DE8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

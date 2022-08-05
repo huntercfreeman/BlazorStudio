@@ -25,7 +25,12 @@ public partial class ExplorersDisplay : ComponentBase
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
                 Value = 50
-            }
+            },
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -4
+            },
         }
     };
 

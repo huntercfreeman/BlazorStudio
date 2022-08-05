@@ -351,6 +351,13 @@
     flex-direction: column;
 }
 
+.bstudio_solution-explorer {
+    height: calc(100% - 3rem);
+    padding: 5px;
+    display: inline-flex;
+    flex-direction: column;
+}
+
 .bstudio_workspace-explorer-new-file {
     
 }
