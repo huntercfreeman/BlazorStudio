@@ -12,7 +12,11 @@
     @{
         var solutionExplorerState = SolutionExplorerStateWrap.Value;
 
-        if (solutionExplorerState.SolutionAbsoluteFilePath is null)
+        if (_loadingSln)
+        {
+            <div>Loading @SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath?.FilenameWithExtension</div>
+        }
+        else if (solutionExplorerState.SolutionAbsoluteFilePath is null)
         {
                 <div>
                     SolutionAbsoluteFilePath is null, use the InputFile dialog to select a SolutionAbsoluteFilePath
@@ -42,7 +46,7 @@
                                 {
                                     Item = solutionExplorerState.SolutionAbsoluteFilePath,
                                     MouseEventArgs = null,
-                                    RefreshContextMenuTarget = async () => WorkspaceStateWrap_StateChanged(null, EventArgs.Empty)
+                                    RefreshContextMenuTarget = async () => SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty)
                                 }; 
                 
                                 <em>@contextMenuEventDto.Item.FilenameWithExtension</em>

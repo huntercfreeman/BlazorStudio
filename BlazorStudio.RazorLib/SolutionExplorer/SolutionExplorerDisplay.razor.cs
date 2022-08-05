@@ -19,6 +19,9 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.Store.DialogCase;
+using Microsoft.Build.Locator;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.MSBuild;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
@@ -68,15 +71,17 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     };
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
+    private Solution? _sln;
+    private bool _loadingSln;
 
     protected override void OnInitialized()
     {
-        SolutionExplorerStateWrap.StateChanged += WorkspaceStateWrap_StateChanged;
+        SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrap_StateChanged;
 
         base.OnInitialized();
     }
 
-    private async void WorkspaceStateWrap_StateChanged(object? sender, EventArgs e)
+    private async void SolutionExplorerStateWrap_StateChanged(object? sender, EventArgs e)
     {
         var workspaceState = SolutionExplorerStateWrap.Value;
 
@@ -105,14 +110,14 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                     _treeViewWrapDisplay.Reload();
                 }
             },
-                $"{nameof(WorkspaceStateWrap_StateChanged)}",
+                $"{nameof(SolutionExplorerStateWrap_StateChanged)}",
                 false,
                 TimeSpan.FromSeconds(10),
                 exception =>
                 {
                     _isInitialized = true;
                     _solutionExplorerStateWrapStateChangedRichErrorModel = new RichErrorModel(
-                        $"{nameof(WorkspaceStateWrap_StateChanged)}: {exception.Message}",
+                        $"{nameof(SolutionExplorerStateWrap_StateChanged)}: {exception.Message}",
                         $"TODO: Add a hint");
 
                     InvokeAsync(StateHasChanged);
@@ -124,6 +129,61 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
     private async Task<IEnumerable<IAbsoluteFilePath>> LoadAbsoluteFilePathChildrenAsync(IAbsoluteFilePath absoluteFilePath)
     {
+        if (absoluteFilePath.ExtensionNoPeriod == "sln")
+        {
+            try
+            {
+                _loadingSln = true;
+
+                await InvokeAsync(StateHasChanged);
+
+                var targetPath = absoluteFilePath.GetAbsoluteFilePathString();
+
+                MSBuildLocator.RegisterDefaults();
+
+                var workspace = MSBuildWorkspace.Create();
+
+                _sln = await workspace.OpenSolutionAsync(targetPath);
+
+                var projects = new List<AbsoluteFilePath>();
+
+                foreach (var project in _sln.Projects)
+                {
+                    projects.Add(new AbsoluteFilePath(project.FilePath ?? "{null file path}", false));
+                }
+
+
+                return projects.ToArray();
+            }
+            finally
+            {
+                _loadingSln = false;
+            }
+        }
+        
+        if (absoluteFilePath.ExtensionNoPeriod == "csproj")
+        {
+            var containingDirectory = absoluteFilePath.Directories.Last();
+
+            if (containingDirectory is AbsoluteFilePath containingDirectoryAbsoluteFilePath)
+            {
+                var projectChildDirectoryAbsolutePaths = Directory
+                    .GetDirectories(containingDirectoryAbsoluteFilePath.GetAbsoluteFilePathString())
+                    .Where(x => !x.EndsWith("bin") && !x.EndsWith("obj"))
+                    .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, true))
+                    .ToList();
+
+                var projectChildFileAbsolutePaths = Directory
+                    .GetFiles(containingDirectoryAbsoluteFilePath.GetAbsoluteFilePathString())
+                    .Where(x => !x.EndsWith("csproj"))
+                    .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, false))
+                    .ToList();
+
+                return projectChildDirectoryAbsolutePaths
+                    .Union(projectChildFileAbsolutePaths);
+            }
+        }
+
         if (!absoluteFilePath.IsDirectory)
         {
             return Array.Empty<IAbsoluteFilePath>();
@@ -211,7 +271,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
     private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)
     {
-        return absoluteFilePath.IsDirectory;
+        return absoluteFilePath.IsDirectory ||
+               absoluteFilePath.ExtensionNoPeriod == "sln" ||
+               absoluteFilePath.ExtensionNoPeriod == "csproj";
     }
 
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
@@ -323,7 +385,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
     protected override void Dispose(bool disposing)
     {
-        SolutionExplorerStateWrap.StateChanged -= WorkspaceStateWrap_StateChanged;
+        SolutionExplorerStateWrap.StateChanged -= SolutionExplorerStateWrap_StateChanged;
 
 
         base.Dispose(disposing);
