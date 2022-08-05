@@ -198,7 +198,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
             var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
             Dispatcher.Dispatch(
-                new ConstructMemoryMappedFilePlainTextEditorRecordAction(plainTextEditorKey,
+                new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
                     absoluteFilePath,
                     FileSystemProvider,
                     CancellationToken.None)

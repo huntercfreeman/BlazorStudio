@@ -582,8 +582,8 @@ public partial record PlainTextEditorStates
                 nextPlainTextEditorList.Add(constructTokenizedPlainTextEditorRecordAction.PlainTextEditorKey);
 
                 var readRequest = new FileHandleReadRequest(
-                    Int32.MaxValue,
-                    Int32.MaxValue,
+                    0,
+                    0,
                     Int32.MaxValue,
                     Int32.MaxValue,
                     constructTokenizedPlainTextEditorRecordAction.CancellationToken);
@@ -728,6 +728,16 @@ public partial record PlainTextEditorStates
                 var totalHeight = heightOfEachRowInPixels *
                                   replacementPlainTextEditor.FileHandle.VirtualRowCount;
 
+                var forceCtrlHomeKeyDown = new KeyDownEventRecord(KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                    KeyboardKeyFacts.MovementKeys.HOME_KEY,
+                    true,
+                    false,
+                    false,
+                    true);
+
+                var resultingPlainTextEditor = (PlainTextEditorRecordTokenized)(await StateMachine
+                    .HandleKeyDownEventAsync(replacementPlainTextEditor, forceCtrlHomeKeyDown, CancellationToken.None));
+
                 var items = replacementPlainTextEditor.Rows
                     .Select((row, index) => (index, row));
 
@@ -739,12 +749,11 @@ public partial record PlainTextEditorStates
                     totalWidth,
                     totalHeight);
 
-                var resultingPlainTextEditor = replacementPlainTextEditor with
+                resultingPlainTextEditor = resultingPlainTextEditor with
                 {
-                    RowIndexOffset = 0,
-                    CharacterColumnIndexOffset = 0,
-                    CurrentRowIndex = plainTextEditor.CurrentRowIndex,
-                    CurrentTokenIndex = plainTextEditor.CurrentTokenIndex
+                    VirtualizeCoordinateSystemMessage = new(
+                        new(0, 0, 0, 0, 100, 100, CancellationToken.None),
+                        result)
                 };
 
                 nextPlainTextEditorMap[constructTokenizedPlainTextEditorRecordAction.PlainTextEditorKey] =
