@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
+using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using Microsoft.Build.Locator;
@@ -129,7 +130,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
     private async Task<IEnumerable<IAbsoluteFilePath>> LoadAbsoluteFilePathChildrenAsync(IAbsoluteFilePath absoluteFilePath)
     {
-        if (absoluteFilePath.ExtensionNoPeriod == "sln")
+        if (absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
         {
             try
             {
@@ -161,21 +162,24 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             }
         }
         
-        if (absoluteFilePath.ExtensionNoPeriod == "csproj")
+        if (absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
         {
             var containingDirectory = absoluteFilePath.Directories.Last();
 
             if (containingDirectory is AbsoluteFilePath containingDirectoryAbsoluteFilePath)
             {
+                var hiddenFiles = HiddenFileFacts
+                    .GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
+
                 var projectChildDirectoryAbsolutePaths = Directory
                     .GetDirectories(containingDirectoryAbsoluteFilePath.GetAbsoluteFilePathString())
-                    .Where(x => !x.EndsWith("bin") && !x.EndsWith("obj"))
+                    .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
                     .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, true))
                     .ToList();
 
                 var projectChildFileAbsolutePaths = Directory
                     .GetFiles(containingDirectoryAbsoluteFilePath.GetAbsoluteFilePathString())
-                    .Where(x => !x.EndsWith("csproj"))
+                    .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                     .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, false))
                     .ToList();
 
@@ -272,8 +276,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)
     {
         return absoluteFilePath.IsDirectory ||
-               absoluteFilePath.ExtensionNoPeriod == "sln" ||
-               absoluteFilePath.ExtensionNoPeriod == "csproj";
+               absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION ||
+               absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT;
     }
 
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
@@ -377,7 +381,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
     private void InputFileDialogOnEnterKeyDownOverride((IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
     {
-        if (tupleArgument.absoluteFilePath.ExtensionNoPeriod == "sln")
+        if (tupleArgument.absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
         {
             Dispatcher.Dispatch(new SetWorkspaceAction(tupleArgument.absoluteFilePath));
         }

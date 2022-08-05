@@ -1,6 +1,7 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using BlazorStudio.ClassLib.FileSystem.Interfaces
+@using BlazorStudio.ClassLib.FileConstants
 
 <div class="bstudio_solution-explorer"
      style="@Dimensions.DimensionsCssString">
@@ -73,13 +74,17 @@
 
                                             <ItemRenderFragment>
                                                 <span title="icon">
-                                                    @if (absoluteFilePath.ExtensionNoPeriod == "sln")
+                                                    @if (absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
                                             {
                                                         <IconSolution />
                                             }
-                                            else if (absoluteFilePath.ExtensionNoPeriod == "csproj")
+                                            else if (absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
                                             {
-                                                        <IconSolution />
+                                                        <IconProject />
+                                            }
+                                            else
+                                            {
+                                                <IconBlank />
                                             }
                                                 </span>
 
@@ -109,7 +114,7 @@
                                                         &nbsp;
                                                         <span title="icon"
                                                               style="display: inline-flex; align-items: center; margin-right: 4px;">
-                                                            @if (solutionExplorerState.SolutionAbsoluteFilePath.ExtensionNoPeriod == "sln")
+                                                            @if (solutionExplorerState.SolutionAbsoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
                                                             {
                                                                 <IconSolution />
                                                             }
