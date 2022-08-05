@@ -5,7 +5,18 @@
 
     @if (AbsoluteFilePath.IsDirectory)
     {
-        <IconFolder />
+        if (AbsoluteFilePath.FileNameNoExtension == UniqueFileFacts.Properties)
+        {
+            <IconProperties />
+        }
+        else if (AbsoluteFilePath.FileNameNoExtension == UniqueFileFacts.WwwRoot)
+        {
+            <IconWwwRoot />
+        }
+        else
+        {
+            <IconFolder />
+        }
     }
     else
     {

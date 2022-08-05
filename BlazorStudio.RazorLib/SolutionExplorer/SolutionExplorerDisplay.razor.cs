@@ -177,6 +177,36 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                     .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, true))
                     .ToList();
 
+                var uniqueDirectories =
+                    UniqueFileFacts.GetUniqueFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
+
+                var foundUniqueDirectories = new List<IAbsoluteFilePath>();
+                var foundDefaultDirectories = new List<IAbsoluteFilePath>();
+
+                foreach (var directory in projectChildDirectoryAbsolutePaths)
+                {
+                    if (uniqueDirectories.Any(unique => directory.FileNameNoExtension == unique))
+                    {
+                        foundUniqueDirectories.Add(directory);
+                    }
+                    else
+                    {
+                        foundDefaultDirectories.Add(directory);
+                    }
+                }
+
+                foundUniqueDirectories = foundUniqueDirectories
+                    .OrderBy(x => x.FileNameNoExtension)
+                    .ToList();
+
+                foundDefaultDirectories = foundDefaultDirectories
+                    .OrderBy(x => x.FileNameNoExtension)
+                    .ToList();
+
+                projectChildDirectoryAbsolutePaths = foundUniqueDirectories
+                    .Union(foundDefaultDirectories)
+                    .ToList();
+
                 var projectChildFileAbsolutePaths = Directory
                     .GetFiles(containingDirectoryAbsoluteFilePath.GetAbsoluteFilePathString())
                     .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
