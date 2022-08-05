@@ -140,11 +140,32 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
                 var targetPath = absoluteFilePath.GetAbsoluteFilePathString();
 
-                MSBuildLocator.RegisterDefaults();
+                ////////
+                
+                //
+
+                MSBuildLocator.RegisterMSBuildPath("C:\\Program Files\\dotnet\\sdk\\7.0.100-preview.6.22352.1\\");
+
+                //var instance = MSBuildLocator.RegisterDefaults();
+
+                //AssemblyLoadContext.Default.Resolving += (assemblyLoadContext, assemblyName) =>
+                //{
+                //    var path = Path.Combine(instance.MSBuildPath, assemblyName.Name + ".dll");
+                //    if (File.Exists(path))
+                //    {
+                //        return assemblyLoadContext.LoadFromAssemblyPath(path);
+                //    }
+
+                //    return null;
+                //};
+
+                ////////
 
                 var workspace = MSBuildWorkspace.Create();
 
                 _sln = await workspace.OpenSolutionAsync(targetPath);
+
+                //workspace.CloseSolution();
 
                 var projects = new List<AbsoluteFilePath>();
 
@@ -153,12 +174,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                     projects.Add(new AbsoluteFilePath(project.FilePath ?? "{null file path}", false));
                 }
 
-
                 return projects.ToArray();
             }
             finally
             {
                 _loadingSln = false;
+                //MSBuildLocator.Unregister();
             }
         }
         
