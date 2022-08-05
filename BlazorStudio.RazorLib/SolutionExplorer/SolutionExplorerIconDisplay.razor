@@ -2,21 +2,27 @@
 
 <span title="icon"
       class="bstudio_solution-explorer-icon-display">
-      
-    
-    @switch (AbsoluteFilePath.ExtensionNoPeriod)
+
+    @if (AbsoluteFilePath.IsDirectory)
     {
-        case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
-            <IconSolution/>
-            break;
-        case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-            <IconProject />
-            break;
-        case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-            <IconRazor />
-            break;
-        default:
-            <IconFile />
-            break;
+        <IconFolder />
+    }
+    else
+    {
+        switch (AbsoluteFilePath.ExtensionNoPeriod)
+        {
+            case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
+                <IconSolution/>
+                break;
+            case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
+                <IconProject />
+                break;
+            case ExtensionNoPeriodFacts.RAZOR_MARKUP:
+                <IconRazor />
+                break;
+            default:
+                <IconFile />
+                break;
+        }
     }
 </span>
