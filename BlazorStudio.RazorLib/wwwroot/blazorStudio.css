@@ -410,6 +410,17 @@
     color: var(--bstudio_primary-font-color);
 }
 
+.bstudio_solution-explorer-tree-view-header {
+    height: 2.1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--bstudio_primary-border-color);
+    padding: 0.1rem;
+    overflow-x: auto;
+    font-size: 1rem;
+    background-color: var(--bstudio_primary-background-color);
+    color: var(--bstudio_primary-font-color);
+}
+
 em {
     color: var(--bstudio_primary-emphasis-font-color);
     font-style: normal;

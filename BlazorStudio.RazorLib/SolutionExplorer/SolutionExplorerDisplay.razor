@@ -73,20 +73,7 @@
                              BodyCssClassAttribute="bstudio_workspace-explorer-tree-view-body">
 
                                             <ItemRenderFragment>
-                                                <span title="icon">
-                                                    @if (absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-                                            {
-                                                        <IconSolution />
-                                            }
-                                            else if (absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
-                                            {
-                                                        <IconProject />
-                                            }
-                                            else
-                                            {
-                                                <IconBlank />
-                                            }
-                                                </span>
+                                                <SolutionExplorerIconDisplay AbsoluteFilePath="absoluteFilePath" />
 
                                                 <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
                                                     @absoluteFilePath.FilenameWithExtension
@@ -102,16 +89,8 @@
                                             </OnContextMenuRenderFragment>
 
                                             <HeaderRenderFragment Context="activeItems">
-                                                <div class="bstudio_workspace-explorer-tree-view-header">
-                                                    <button class="btn btn-primary"
-                                                            @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)">
-                                                        <IconAdd/> New File
-                                                    </button>
-                                                    
+                                                <div class="bstudio_solution-explorer-tree-view-header">
                                                     <div style="display: inline-flex; align-items: center;">
-                                                        &nbsp;
-                                                        to
-                                                        &nbsp;
                                                         <span title="icon"
                                                               style="display: inline-flex; align-items: center; margin-right: 4px;">
                                                             @if (solutionExplorerState.SolutionAbsoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)

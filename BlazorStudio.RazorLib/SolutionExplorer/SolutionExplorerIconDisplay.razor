@@ -1,0 +1,18 @@
+﻿@using BlazorStudio.ClassLib.FileConstants
+
+<span title="icon"
+      class="bstudio_solution-explorer-icon-display">
+
+    @if (AbsoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+    {
+        <IconSolution/>
+    }
+    else if (AbsoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
+    {
+        <IconProject/>
+    }
+    else
+    {
+        <IconFile />
+    }
+</span>
