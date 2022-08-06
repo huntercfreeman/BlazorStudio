@@ -43,6 +43,12 @@ public class TerminalEntryEffects
         {
             var process = new Process();
 
+            if (enqueueProcessOnTerminalEntryAction.WorkingDirectoryAbsoluteFilePath is not null)
+            {
+                process.StartInfo.WorkingDirectory = enqueueProcessOnTerminalEntryAction.WorkingDirectoryAbsoluteFilePath
+                    .GetAbsoluteFilePathString();
+            }
+
             // Start the child process.
             process.StartInfo.FileName = "cmd.exe";
             // 2>&1 combines stdout and stderr

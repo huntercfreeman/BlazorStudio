@@ -115,6 +115,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
                 .Dispatch(new EnqueueProcessOnTerminalEntryAction(
                     TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
                     getCSharpProjectTemplatesCommand,
+                    null,
                     OnStart,
                     OnEnd,
                     null,
@@ -161,6 +162,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
             .Dispatch(new EnqueueProcessOnTerminalEntryAction(
                 TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
                 InterpolatedCommand,
+                InputFileDialogSelection,
                 OnStart,
                 OnEnd,
                 null,
