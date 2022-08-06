@@ -39,19 +39,27 @@ public static class MenuOptionFacts
             "C# Project",
             ImmutableList<MenuOptionRecord>.Empty,
             onClickAction);
-        
+    }
+    
+    public static class DotNet
+    {
         public static MenuOptionRecord SetActiveSolution(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
             "Set Active Solution",
             ImmutableList<MenuOptionRecord>.Empty,
             onClickAction);
+
+        public static MenuOptionRecord ConstructCreateNewDotNetSolution(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
+            "Solution",
+            ImmutableList<MenuOptionRecord>.Empty,
+            onClickAction);
     }
 
-    public static MenuOptionRecord NewMenu(Action onNewCSharpProject) => new(MenuOptionKey.NewMenuOptionKey(),
+    public static MenuOptionRecord NewMenu(Action onNewCSharpProject, Action onNewDotNetSolution) => new(MenuOptionKey.NewMenuOptionKey(),
         "New",
         new MenuOptionRecord[]
         {
             CSharp.ConstructCreateNewCSharpProject(onNewCSharpProject),
-            File.ConstructCreateNewFile(null, null)
+            DotNet.ConstructCreateNewDotNetSolution(onNewDotNetSolution)
         }.ToImmutableList(),
         null);
 }
