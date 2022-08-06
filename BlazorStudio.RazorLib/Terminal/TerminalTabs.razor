@@ -1,0 +1,13 @@
+﻿<div class="bstudio_terminal-tabs">
+    @{
+        var localTerminalEntries = TerminalEntries;
+
+        for (var index = 0; index < localTerminalEntries.Count; index++)
+        {
+            var terminalEntry = localTerminalEntries[index];
+
+            <TerminalTabDisplay TerminalEntry="terminalEntry"
+                                Index="index" />
+        }
+    }
+</div>

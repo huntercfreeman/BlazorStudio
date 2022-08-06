@@ -1,6 +1,14 @@
-﻿using Fluxor;
+﻿using System.Collections.Immutable;
+using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 [FeatureState]
-public record TerminalState();
+public record TerminalState(int ActiveIndex, ImmutableList<TerminalEntry> TerminalEntries)
+{
+    public TerminalState() : this(0, ImmutableList<TerminalEntry>.Empty)
+    {
+        TerminalEntries = TerminalEntries.Add(TerminalStateFacts.ProgramTerminalEntry);
+        TerminalEntries = TerminalEntries.Add(TerminalStateFacts.GeneralTerminalEntry);
+    }
+}

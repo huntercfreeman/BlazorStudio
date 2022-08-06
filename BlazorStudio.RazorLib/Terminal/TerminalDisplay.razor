@@ -5,75 +5,16 @@
      style="@Dimensions.DimensionsCssString">
 
     <div>
-        Terminal
+        Terminals
     </div>
-
+    
     @{
-        var workspaceState = WorkspaceStateWrap.Value;
+        var localTerminalState = TerminalStatesWrap.Value;
 
-        if (workspaceState.WorkspaceAbsoluteFilePath is null)
-        {
-            <div>
-                WorkspaceAbsoluteFilePath is null, use the InputFile dialog to select a Workspace
-                directory.
-            </div>
-            <div>
-                <BlazorStudio.RazorLib.InputFile.InputFileDialogEntryPoint />
-            </div>
-        }
-        else
-        {
-            <div>
-                <input type="number" @bind="_port" />
-                <button class="btn btn-warning"
-                        @onclick="() => GetProcessIdRunningOnPort(_port)">
-                    Get Process ID running on port: @_port
-                </button>
-                <div>result (number after LISTENING is PID): <em>@_getProcessIdRunningOnPortOutput</em></div>
-            </div>
-            
-            <div>
-                <input type="number" @bind="_processId" />
-                <button class="btn btn-warning"
-                        @onclick="() => CheckNameByProcessId(_processId)">
-                    Get name of Process from Id: @_processId
-                </button>
-                <div>result: <em>@_getProcessNameOutput</em></div>
-            </div>
+        <TerminalTabs TerminalEntries="localTerminalState.TerminalEntries" />
 
-            <div>
-                <input type="number" @bind="_processId" />
-                <button class="btn btn-warning"
-                        @onclick="() => KillProcessWithProcessId(_processId)">
-                    Kill Process with ID: @_processId
-                </button>
-                <div>KillProcessWithProcessId() Method call counter: @_killedProcessesCounter</div>
-            </div>
+        var activeTerminalEntry = localTerminalState.TerminalEntries[localTerminalState.ActiveIndex];
 
-            <div><em>@(_process.StartInfo.WorkingDirectory)</em></div>
-            <div>
-                $&nbsp;
-                <input @onkeydown="OnKeyDown" class="bstudio_input-text" style="padding: 2px 3px;" placeholder="optional args" @bind="_commandLineInput" @bind:event="oninput" />
-                <br /><em>$&nbsp;@_commandLineInput</em>
-                <hr />
-                <div>
-                    @if (_isExecuting)
-                    {
-                        <text>Executing...:&nbsp;<em>@_commandLineInput</em></text>
-                    }
-
-                </div>
-                <div>
-                    @((MarkupString)_processOnOutputDataReceived.ToString())
-        </div>
-                
-                <hr/>
-
-                <div>
-                    @_commandLineOutput.EscapeHtml()
-                </div>
-                    
-            </div>
-        }
+        <TerminalEntryDisplay TerminalEntry="activeTerminalEntry" />
     }
 </div>

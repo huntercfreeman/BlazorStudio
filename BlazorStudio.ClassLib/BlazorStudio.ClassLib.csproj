@@ -18,7 +18,6 @@
   <ItemGroup>
     <Folder Include="FileConstants\" />
     <Folder Include="Store\SolutionExplorerCase\" />
-    <Folder Include="Store\TerminalCase\" />
   </ItemGroup>
 
 </Project>
