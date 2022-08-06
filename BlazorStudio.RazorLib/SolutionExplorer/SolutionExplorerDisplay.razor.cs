@@ -79,8 +79,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     private DialogRecord _newCSharpProjectDialog;
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
-    private Solution? _sln;
+    private Solution? _solution;
     private bool _loadingSln;
+    private MSBuildWorkspace _workspace;
 
     protected override void OnInitialized()
     {
@@ -104,9 +105,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
     private async void SolutionExplorerStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        var workspaceState = SolutionExplorerStateWrap.Value;
+        var solutionExplorerState = SolutionExplorerStateWrap.Value;
 
-        if (workspaceState.SolutionAbsoluteFilePath is not null)
+        if (solutionExplorerState.SolutionAbsoluteFilePath is not null)
         {
             _isInitialized = false;
             _solutionExplorerStateWrapStateChangedRichErrorModel = null;
@@ -119,7 +120,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
             _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
             {
-                _rootAbsoluteFilePaths = (await LoadAbsoluteFilePathChildrenAsync(workspaceState.SolutionAbsoluteFilePath))
+                _rootAbsoluteFilePaths = (await LoadAbsoluteFilePathChildrenAsync(solutionExplorerState.SolutionAbsoluteFilePath))
                     .ToList();
 
                 _isInitialized = true;
@@ -164,7 +165,10 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 
                 //
 
-                MSBuildLocator.RegisterMSBuildPath("C:\\Program Files\\dotnet\\sdk\\7.0.100-preview.6.22352.1\\");
+                if (!MSBuildLocator.IsRegistered)
+                {
+                    MSBuildLocator.RegisterMSBuildPath("C:\\Program Files\\dotnet\\sdk\\7.0.100-preview.6.22352.1\\");
+                }
 
                 //var instance = MSBuildLocator.RegisterDefaults();
 
@@ -181,15 +185,16 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
                 ////////
 
-                var workspace = MSBuildWorkspace.Create();
+                if (_workspace is null)
+                {
+                    _workspace = MSBuildWorkspace.Create();
+                }
 
-                _sln = await workspace.OpenSolutionAsync(targetPath);
-
-                //workspace.CloseSolution();
+                _solution = await _workspace.OpenSolutionAsync(targetPath);
 
                 var projects = new List<AbsoluteFilePath>();
 
-                foreach (var project in _sln.Projects)
+                foreach (var project in _solution.Projects)
                 {
                     projects.Add(new AbsoluteFilePath(project.FilePath ?? "{null file path}", false));
                 }
@@ -475,7 +480,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
         void OnEnd(Process finishedProcess)
         {
-            
+            var z = 2;
+            var b = this;
+
+            _workspace.CloseSolution();
+
+            SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty);
         }
 
         var command = $"dotnet sln {localSolutionExplorerState.SolutionAbsoluteFilePath.GetAbsoluteFilePathString()} " +
