@@ -5,10 +5,12 @@
      style="@Dimensions.DimensionsCssString">
 
     <div>
-        Terminal
+        Terminals
     </div>
+    
+    <TerminalTabs />
 
-    @{
+    @*@{
         var workspaceState = WorkspaceStateWrap.Value;
 
         if (workspaceState.WorkspaceAbsoluteFilePath is null)
@@ -75,5 +77,5 @@
                     
             </div>
         }
-    }
+    }*@
 </div>
