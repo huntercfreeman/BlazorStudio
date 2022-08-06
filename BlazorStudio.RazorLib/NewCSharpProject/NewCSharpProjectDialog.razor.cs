@@ -45,15 +45,19 @@ public partial class NewCSharpProjectDialog : ComponentBase
             {
                 _startingRetrievingProjectTemplates = true;
             }
+
+            // Perhaps a bit peculiar to do this closure behavior...
+            var output = string.Empty;
             
             void OnEnd(Process finishedProcess)
             {
+                if (output is null)
+                    return;
+
                 _startingRetrievingProjectTemplates = false;
                 _attemptedToRetrieveProjectTemplates = true;
 
                 _templates = new();
-
-                var output = finishedProcess.StandardOutput.ReadToEnd();
 
                 var indexOfFirstDash = output.IndexOf('-');
 
@@ -114,6 +118,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
                     OnStart,
                     OnEnd,
                     null,
+                    (data) => output = data,
                     CancellationToken.None));
         }
         
@@ -158,6 +163,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
                 InterpolatedCommand,
                 OnStart,
                 OnEnd,
+                null,
                 null,
                 CancellationToken.None));
     }

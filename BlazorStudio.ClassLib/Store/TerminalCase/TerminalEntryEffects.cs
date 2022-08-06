@@ -54,28 +54,41 @@ public class TerminalEntryEffects
 
             void OutputDataReceived(object sender, DataReceivedEventArgs e)
             {
-                if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceived is not null)
-                {
-                    enqueueProcessOnTerminalEntryAction.OnAnyDataReceived(sender, e);
-                }
+                if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync != null)
+                    enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync(sender, e);
             }
 
-            process.OutputDataReceived += OutputDataReceived;
+            if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync is not null)
+            {
+                process.OutputDataReceived += OutputDataReceived;
+            }
 
             try
             {
                 enqueueProcessOnTerminalEntryAction.OnStart.Invoke();
                 process.Start();
 
-                process.BeginOutputReadLine();
+                if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync is not null)
+                {
+                    process.BeginOutputReadLine();
+                }
+                else if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceived is not null)
+                {
+                    enqueueProcessOnTerminalEntryAction.OnAnyDataReceived
+                        .Invoke(await process.StandardOutput.ReadToEndAsync());
+                }
 
                 await process.WaitForExitAsync();
             }
             finally
             {
-                process.CancelOutputRead();
-                process.OutputDataReceived -= OutputDataReceived;
-                enqueueProcessOnTerminalEntryAction.OnEnd.Invoke();
+                if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync is not null)
+                {
+                    process.CancelOutputRead();
+                    process.OutputDataReceived -= OutputDataReceived;
+                }
+
+                enqueueProcessOnTerminalEntryAction.OnEnd.Invoke(process);
             }
         });
     }
