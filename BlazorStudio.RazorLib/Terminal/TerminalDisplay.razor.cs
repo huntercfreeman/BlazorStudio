@@ -27,37 +27,6 @@ public partial class TerminalDisplay : FluxorComponent, IDisposable
     [Parameter, EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
 
-    private string _commandLineInput = string.Empty;
-    private string _commandLineOutput = string.Empty;
-    private StringBuilder _processOnOutputDataReceived = new();
-    private bool _isExecuting;
-    private Process _process;
-    private int _port;
-    private string _getProcessIdRunningOnPortOutput;
-    private string _getProcessNameOutput;
-    private int _killedProcessesCounter;
-    private int _processId;
-
-    protected override void OnInitialized()
-    {
-        WorkspaceStateWrap.StateChanged += WorkspaceStateWrapOnStateChanged;
-        
-        _process = new();
-
-        _process.OutputDataReceived += ProcessOnOutputDataReceived;
-        _process.ErrorDataReceived += ProcessOnOutputDataReceived;
-
-        base.OnInitialized();
-    }
-
-    private async void WorkspaceStateWrapOnStateChanged(object? sender, EventArgs e)
-    {
-        _process.StartInfo.WorkingDirectory =
-            WorkspaceStateWrap.Value.WorkspaceAbsoluteFilePath?.GetAbsoluteFilePathString();
-
-        await InvokeAsync(StateHasChanged);
-    }
-
     private async void ProcessOnOutputDataReceived(object sender, DataReceivedEventArgs e)
     {
         if (e.Data is null)
@@ -103,7 +72,6 @@ public partial class TerminalDisplay : FluxorComponent, IDisposable
         {
             _processOnOutputDataReceived.Append(e.Data.EscapeHtml() + "<br />");
         }
-
 
         await InvokeAsync(StateHasChanged);
     }
