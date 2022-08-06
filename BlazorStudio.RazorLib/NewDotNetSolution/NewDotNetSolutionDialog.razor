@@ -26,6 +26,11 @@
             <div><em>@InterpolatedCommand</em></div>
         </div>
         
+        @if (_startingCreatingSolution)
+        {
+            <div>_startingCreatingSolution</div>
+        }
+        
         <button class="btn btn-primary"
                 style="margin-top: 10px;"
                 @onclick="DispatchTerminalNewSolutionOnClick">

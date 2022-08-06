@@ -66,6 +66,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
         void OnStart()
         {
             _startingCreatingSolution = true;
+            InvokeAsync(StateHasChanged);
         }
 
         // Perhaps a bit peculiar to do this closure behavior...
@@ -76,18 +77,20 @@ public partial class NewDotNetSolutionDialog : ComponentBase
             if (output is null)
                 return;
 
+            _startingCreatingSolution = false;
+
             InvokeAsync(StateHasChanged);
         }
 
-        //Dispatcher
-        //    .Dispatch(new EnqueueProcessOnTerminalEntryAction(
-        //        TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
-        //        InterpolatedCommand,
-        //        InputFileDialogSelection,
-        //        OnStart,
-        //        OnEnd,
-        //        null,
-        //        (data) => output = data,
-        //        CancellationToken.None));
+        Dispatcher
+            .Dispatch(new EnqueueProcessOnTerminalEntryAction(
+                TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
+                InterpolatedCommand,
+                InputFileDialogSelection,
+                OnStart,
+                OnEnd,
+                null,
+                (data) => output = data,
+                CancellationToken.None));
     }
 }
