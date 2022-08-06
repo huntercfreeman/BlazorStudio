@@ -36,6 +36,7 @@
     <_ContentIncludedByDefault Remove="Settings\SettingsDialog.razor" />
     <_ContentIncludedByDefault Remove="Shared\BodyDisplay.razor" />
     <_ContentIncludedByDefault Remove="SolutionExplorer\SolutionExplorerDisplay.razor" />
+    <_ContentIncludedByDefault Remove="SyntaxRootRender\SyntaxRootDisplay.razor" />
     <_ContentIncludedByDefault Remove="Terminal\TerminalDisplay.razor" />
     <_ContentIncludedByDefault Remove="Terminal\TerminalEntryDisplay.razor" />
     <_ContentIncludedByDefault Remove="Transformable\TransformableDisplay.razor" />
@@ -110,6 +111,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Expansion\ExpansionDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="SyntaxRootRender\SyntaxRootDisplay.razor" />
   </ItemGroup>
 
 </Project>

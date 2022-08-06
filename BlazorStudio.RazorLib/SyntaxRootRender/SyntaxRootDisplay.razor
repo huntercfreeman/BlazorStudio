@@ -1,0 +1,39 @@
+﻿@using Microsoft.CodeAnalysis
+@using Microsoft.CodeAnalysis.CSharp
+<h3>SyntaxRootDisplay</h3>
+
+@if (SyntaxNode is null)
+{
+    <div>SyntaxNode is null</div>
+}
+else
+{
+    <TreeViewWrapDisplay ShouldDispose="false"
+                         TreeViewWrapKey="_syntaxRootTreeViewKey"
+                         RootItems="TreeViewRoot"
+                         GetChildrenFunc="LoadChildren"
+                         OnEnterKeyDown="TreeViewOnEnterKeyDown"
+                         OnSpaceKeyDown="TreeViewOnEnterKeyDown"
+                         OnDoubleClick="TreeViewOnDoubleClick"
+                         IsExpandable="_ => true">
+    
+        <ItemRenderFragment Context="generalSyntax">
+            @if (generalSyntax.GeneralSyntaxKind == GeneralSyntaxKind.Node)
+            {
+                var syntaxNode = (SyntaxNode) generalSyntax.Item;
+
+                <em>@syntaxNode.Kind()</em>
+
+                <text>: @syntaxNode.GetText()</text>
+            }
+            else if (generalSyntax.GeneralSyntaxKind == GeneralSyntaxKind.Token)
+            {
+                var syntaxToken = (SyntaxToken)generalSyntax.Item;
+
+                <em>@syntaxToken.Kind()</em>
+
+                <text>:&nbsp;@syntaxToken.Text</text>
+            }
+        </ItemRenderFragment>
+    </TreeViewWrapDisplay>
+}
