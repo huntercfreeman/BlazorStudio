@@ -161,34 +161,52 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
                 var targetPath = absoluteFilePath.GetAbsoluteFilePathString();
 
-                ////////
-                
-                //
+                // Attempt to set the version of MSBuild.
+                VisualStudioInstance[] visualStudioInstances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
+
+                // TODO: Allow user to select the MSBuild
+                VisualStudioInstance instance = visualStudioInstances[0];
 
                 if (!MSBuildLocator.IsRegistered)
                 {
-                    MSBuildLocator.RegisterMSBuildPath("C:\\Program Files\\dotnet\\sdk\\7.0.100-preview.6.22352.1\\");
+                    MSBuildLocator.RegisterInstance(instance);
                 }
-
-                //var instance = MSBuildLocator.RegisterDefaults();
-
-                //AssemblyLoadContext.Default.Resolving += (assemblyLoadContext, assemblyName) =>
-                //{
-                //    var path = Path.Combine(instance.MSBuildPath, assemblyName.Name + ".dll");
-                //    if (File.Exists(path))
-                //    {
-                //        return assemblyLoadContext.LoadFromAssemblyPath(path);
-                //    }
-
-                //    return null;
-                //};
-
-                ////////
 
                 if (_workspace is null)
                 {
                     _workspace = MSBuildWorkspace.Create();
                 }
+
+                // Print message for WorkspaceFailed event to help diagnosing project load failures.
+
+                string solutionPath = targetPath;
+
+                _solution = await _workspace.OpenSolutionAsync(solutionPath);
+
+                // TODO: Do analysis on the projects in the loaded solution
+                //foreach (Project project in solution.Projects)
+                //{
+                //    var z = 2;
+                //    foreach (Document document in project.Documents)
+                //    {
+                //        var syntax = await document.GetSyntaxTreeAsync();
+
+                //        var root = await syntax.GetRootAsync();
+
+                //        var childTokens = root.ChildTokens().ToList();
+                //        var childNodes = root.ChildNodes().ToList();
+
+                //        var inTokens = childNodes[0].ChildTokens();
+                //        var inNodes = childNodes[0].ChildNodes();
+
+
+                //        var c = 3;
+                //    }
+                //}
+
+                ////////////////////----------------------------------------------------------------------------------------
+
+                
 
                 _solution = await _workspace.OpenSolutionAsync(targetPath);
 
@@ -480,9 +498,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
         void OnEnd(Process finishedProcess)
         {
-            var z = 2;
-            var b = this;
-
             _workspace.CloseSolution();
 
             SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty);
