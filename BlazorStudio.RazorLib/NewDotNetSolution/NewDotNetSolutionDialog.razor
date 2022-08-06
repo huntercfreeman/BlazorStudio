@@ -6,9 +6,19 @@
                @bind="_solutionName" 
                @bind:event="oninput" />
         
-        <div style="height: calc(100% - 5em); min-height: 15rem; margin-top: 10px;">
+        <div style="height: calc(100% - 10em); min-height: 15rem; margin-top: 10px;">
             <BlazorStudio.RazorLib.InputFile.InputFileDialog OnEnterKeyDownOverride="InputFileDialogOnEnterKeyDownOverride"
                                                              ShowFooter="false" />
+        </div>
+        
+        <div>
+            Solution&nbsp;Name:
+            <div><em>@SolutionName</em>.sln</div>
+        </div>
+        
+        <div>
+            Absolute&nbsp;File&nbsp;Path:
+            <div><em>@AbsoluteFilePathString</em>.sln</div>
         </div>
     </div>
 </div>
