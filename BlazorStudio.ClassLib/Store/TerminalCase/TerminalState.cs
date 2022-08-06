@@ -8,7 +8,7 @@ public record TerminalState(int ActiveIndex, ImmutableList<TerminalEntry> Termin
 {
     public TerminalState() : this(0, ImmutableList<TerminalEntry>.Empty)
     {
-        TerminalEntries = TerminalEntries.Add(TerminalStateFacts.ExecutionTerminalEntry);
+        TerminalEntries = TerminalEntries.Add(TerminalStateFacts.ProgramTerminalEntry);
         TerminalEntries = TerminalEntries.Add(TerminalStateFacts.GeneralTerminalEntry);
     }
 }
