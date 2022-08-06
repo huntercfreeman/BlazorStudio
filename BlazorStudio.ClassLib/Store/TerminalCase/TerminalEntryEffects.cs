@@ -70,6 +70,8 @@ public class TerminalEntryEffects
 
             void OutputDataReceived(object sender, DataReceivedEventArgs e)
             {
+                dispatcher.Dispatch(new SetTerminalEntryOutputAction(_terminalEntry.TerminalEntryKey, e.Data));
+
                 if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync != null)
                     enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync(sender, e);
             }
@@ -93,8 +95,20 @@ public class TerminalEntryEffects
                 }
                 else if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceived is not null)
                 {
+                    var output = await process.StandardOutput.ReadToEndAsync();
+
+                    dispatcher.Dispatch(
+                        new SetTerminalEntryOutputAction(_terminalEntry.TerminalEntryKey, output));
+
                     enqueueProcessOnTerminalEntryAction.OnAnyDataReceived
-                        .Invoke(await process.StandardOutput.ReadToEndAsync());
+                        .Invoke(output);
+                }
+                else
+                {
+                    var output = await process.StandardOutput.ReadToEndAsync();
+
+                    dispatcher.Dispatch(
+                        new SetTerminalEntryOutputAction(_terminalEntry.TerminalEntryKey, output));
                 }
 
                 await process.WaitForExitAsync();

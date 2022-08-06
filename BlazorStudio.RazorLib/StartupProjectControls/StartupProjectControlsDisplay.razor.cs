@@ -52,7 +52,7 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
 
             Dispatcher
                 .Dispatch(new EnqueueProcessOnTerminalEntryAction(
-                    TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
+                    TerminalStateFacts.ProgramTerminalEntry.TerminalEntryKey,
                     $"dotnet run --project {StartupProjectStateWrap.Value.ProjectAbsoluteFilePath.GetAbsoluteFilePathString()}",
                     null,
                     OnStart,
