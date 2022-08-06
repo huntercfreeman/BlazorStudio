@@ -246,7 +246,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
                     },
                 });
         
-        var setActiveSolution = MenuOptionFacts.CSharp
+        var setActiveSolution = MenuOptionFacts.DotNet
             .SetActiveSolution(() => Dispatcher.Dispatch(new SetSolutionExplorerAction(contextMenuEventDto.Item)));
 
         _mostRecentRefreshContextMenuTarget = contextMenuEventDto.RefreshContextMenuTarget;

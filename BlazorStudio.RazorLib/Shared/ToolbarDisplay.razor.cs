@@ -6,6 +6,7 @@ using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.NewCSharpProject;
+using BlazorStudio.RazorLib.NewDotNetSolution;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -30,6 +31,13 @@ public partial class ToolbarDisplay : ComponentBase
         DialogKey.NewDialogKey(),
         "New C# Project",
         typeof(NewCSharpProjectDialog),
+        null
+    );
+    
+    private readonly DialogRecord _newDotNetSolutionDialog = new DialogRecord(
+        DialogKey.NewDialogKey(),
+        "New .NET Solution",
+        typeof(NewDotNetSolutionDialog),
         null
     );
 
@@ -73,12 +81,18 @@ public partial class ToolbarDisplay : ComponentBase
             Dispatcher.Dispatch(new RegisterDialogAction(_newCSharpProjectDialog));
     }
 
+    private void OpenNewSlnDialog()
+    {
+        if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _newDotNetSolutionDialog.DialogKey))
+            Dispatcher.Dispatch(new RegisterDialogAction(_newDotNetSolutionDialog));
+    }
+
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords()
     {
         var openFolder = MenuOptionFacts.File
             .ConstructOpenFolder(OpenInputFileDialog);
 
-        var newMenu = MenuOptionFacts.NewMenu(OpenNewCSharpProjectDialog);
+        var newMenu = MenuOptionFacts.NewMenu(OpenNewCSharpProjectDialog, OpenNewSlnDialog);
 
         return new[] { openFolder, newMenu };
     }

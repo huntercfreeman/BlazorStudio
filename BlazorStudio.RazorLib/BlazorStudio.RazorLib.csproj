@@ -48,6 +48,7 @@
   <ItemGroup>
     <Folder Include="Drag\" />
     <Folder Include="Dropdown\" />
+    <Folder Include="NewDotNetSolution\" />
   </ItemGroup>
 
   <ItemGroup>
