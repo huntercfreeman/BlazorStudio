@@ -58,7 +58,7 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
                     OnStart,
                     OnEnd,
                     null,
-                    null,
+                    (_, _) => { },
                     null,
                     CancelTokenSourceAndGetNewToken()));
         }
