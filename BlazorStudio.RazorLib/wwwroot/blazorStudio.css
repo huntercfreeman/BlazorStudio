@@ -542,3 +542,19 @@ em {
         transform: rotate(360deg);
     }
 }
+
+.bstudio_new-dot-net-solution-dialog {
+    height: 100%;
+}
+
+.bstudio_new-dot-net-solution-dialog-add-project-title {
+    margin-left: 10px;
+    margin-right: 30px;
+}
+
+.bstudio_new-dot-net-solution-dialog-body {
+    margin-left: 10px;
+    margin-right: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

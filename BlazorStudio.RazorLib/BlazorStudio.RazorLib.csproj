@@ -28,6 +28,7 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="DebuggingHelp\DebugExpansion.razor" />
     <_ContentIncludedByDefault Remove="Editor\EditorDisplay.razor" />
+    <_ContentIncludedByDefault Remove="Expansion\ExpansionDisplay.razor" />
     <_ContentIncludedByDefault Remove="Forms\CreateNewFileForm.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuOptionDisplay.razor" />
@@ -105,6 +106,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Terminal\TerminalEntryDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Expansion\ExpansionDisplay.razor" />
   </ItemGroup>
 
 </Project>

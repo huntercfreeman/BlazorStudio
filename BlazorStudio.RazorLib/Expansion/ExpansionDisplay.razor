@@ -1,0 +1,21 @@
+﻿<div class="bstudio_expansion-display"
+     style="@StyleCssString">
+    
+    @if (OnClickShouldToggleIsExpanded)
+    {
+        <span @onclick="ToggleIsExpanded">
+            @TitleRenderFragment
+        </span>
+    }
+    else
+    {
+        <span>
+            @TitleRenderFragment
+        </span>
+    }
+
+    @if (IsExpanded)
+    {
+        @BodyRenderFragment
+    }
+</div>
