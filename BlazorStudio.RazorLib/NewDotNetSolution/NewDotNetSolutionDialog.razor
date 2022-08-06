@@ -1,21 +1,14 @@
 ﻿<div class="bstudio_new-dot-net-solution-dialog">
-    @*<ExpansionDisplay>
-    <TitleRenderFragment>
-    <div class="bstudio_new-dot-net-solution-dialog-add-project-title">
-    <IconAdd /> Project
-    </div>
-    </TitleRenderFragment>
-
-    <BodyRenderFragment>
-    <BlazorStudio.RazorLib.NewCSharpProject.NewCSharpProjectDialog/>
-    </BodyRenderFragment>
-    </ExpansionDisplay>*@
-
     <div class="bstudio_new-dot-net-solution-dialog-body">
         <input class="bstudio_input-text"
-               style="padding: 2px 3px;"
+               style="padding: 2px 3px; height: 2em;"
                placeholder="Solution name"
                @bind="_solutionName" 
                @bind:event="oninput" />
+        
+        <div style="height: calc(100% - 5em); min-height: 15rem; margin-top: 10px;">
+            <BlazorStudio.RazorLib.InputFile.InputFileDialog OnEnterKeyDownOverride="InputFileDialogOnEnterKeyDownOverride"
+                                                             ShowFooter="false" />
+        </div>
     </div>
 </div>

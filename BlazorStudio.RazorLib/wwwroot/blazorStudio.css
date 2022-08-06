@@ -553,8 +553,9 @@ em {
 }
 
 .bstudio_new-dot-net-solution-dialog-body {
-    margin-left: 10px;
-    margin-right: 30px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    height: 100%;
+    padding-left: 10px;
+    padding-right: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
