@@ -1,8 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using static BlazorStudio.RazorLib.NewCSharpProject.NewCSharpProjectDialog;
@@ -80,6 +83,17 @@ public partial class NewDotNetSolutionDialog : ComponentBase
             _startingCreatingSolution = false;
 
             InvokeAsync(StateHasChanged);
+
+            var createdSolutionContainingDirectory = new AbsoluteFilePath(
+                InputFileDialogSelection.GetAbsoluteFilePathString() + _solutionName, true);
+            
+            var createdSolutionFile = new AbsoluteFilePath(
+                createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + ".sln", false);
+
+            Dispatcher.Dispatch(new SetWorkspaceAction(createdSolutionContainingDirectory));
+            Dispatcher.Dispatch(new SetSolutionExplorerAction(createdSolutionFile));
+
+            Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
         }
 
         Dispatcher
