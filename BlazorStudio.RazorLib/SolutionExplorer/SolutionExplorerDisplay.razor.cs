@@ -26,6 +26,8 @@ using Microsoft.CodeAnalysis.MSBuild;
 using BlazorStudio.RazorLib.NewCSharpProject;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using System.Diagnostics;
+using BlazorStudio.ClassLib.Store.SolutionCase;
+using BlazorStudio.ClassLib.Store.StartupProject;
 using BlazorStudio.RazorLib.SyntaxRootRender;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
@@ -36,6 +38,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<BlazorStudio.ClassLib.Store.SolutionCase.SolutionState> SolutionStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -178,6 +182,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 if (_workspace is null)
                 {
                     _workspace = MSBuildWorkspace.Create();
+
+                    Dispatcher.Dispatch(new SetSolutionAction(_workspace));
                 }
 
                 // Print message for WorkspaceFailed event to help diagnosing project load failures.
@@ -397,6 +403,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
             menuOptionRecords.Add(renderSyntaxRoot);
         }
+        
+        if (contextMenuEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
+        {
+            var setAsStartupProject = MenuOptionFacts.CSharp
+                .SetAsStartupProject(() => 
+                    Dispatcher.Dispatch(new SetStartupProjectAction(contextMenuEventDto.Item)));
+
+            menuOptionRecords.Add(setAsStartupProject);
+        }
 
         return menuOptionRecords.Any()
             ? menuOptionRecords
@@ -535,6 +550,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 null,
                 OnStart,
                 OnEnd,
+                null,
                 null,
                 null,
                 CancellationToken.None));

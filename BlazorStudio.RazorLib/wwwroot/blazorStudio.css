@@ -559,3 +559,17 @@ em {
     padding-top: 10px;
     padding-bottom: 10px;
 }
+
+.bstudio_startup-project-controls-display {
+    background-color: var(--bstudio_header-footer-background-color);
+    height: 3.5rem;
+    padding: .35rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.bstudio_startup-project-controls-display-button:hover {
+    background-color: var(--bstudio_secondary-hover-background-color);
+    color: var(--bstudio_secondary-hover-font-color);
+}

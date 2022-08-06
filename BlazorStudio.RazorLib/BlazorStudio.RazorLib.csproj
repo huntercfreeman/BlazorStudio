@@ -36,6 +36,7 @@
     <_ContentIncludedByDefault Remove="Settings\SettingsDialog.razor" />
     <_ContentIncludedByDefault Remove="Shared\BodyDisplay.razor" />
     <_ContentIncludedByDefault Remove="SolutionExplorer\SolutionExplorerDisplay.razor" />
+    <_ContentIncludedByDefault Remove="StartupProjectControls\StartupProjectControlsDisplay.razor" />
     <_ContentIncludedByDefault Remove="SyntaxRootRender\SyntaxRootDisplay.razor" />
     <_ContentIncludedByDefault Remove="Terminal\TerminalDisplay.razor" />
     <_ContentIncludedByDefault Remove="Terminal\TerminalEntryDisplay.razor" />
@@ -115,6 +116,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="SyntaxRootRender\SyntaxRootDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="StartupProjectControls\StartupProjectControlsDisplay.razor" />
   </ItemGroup>
 
 </Project>

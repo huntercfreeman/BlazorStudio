@@ -11,6 +11,7 @@ public record EnqueueProcessOnTerminalEntryAction(TerminalEntryKey TerminalEntry
     IAbsoluteFilePath? WorkingDirectoryAbsoluteFilePath,
     Action OnStart,
     Action<Process> OnEnd,
+    Action? OnCancelled,
     Action<object, DataReceivedEventArgs>? OnAnyDataReceivedAsync,
     Action<string>? OnAnyDataReceived,
     CancellationToken CancellationToken);

@@ -41,6 +41,16 @@ public class TerminalEntryEffects
     {
         await QueueHandleEffectAsync(async () =>
         {
+            if (enqueueProcessOnTerminalEntryAction.CancellationToken.IsCancellationRequested)
+            {
+                if (enqueueProcessOnTerminalEntryAction.OnCancelled is not null)
+                {
+                    enqueueProcessOnTerminalEntryAction.OnCancelled.Invoke();
+                }
+
+                return;
+            }
+
             var process = new Process();
 
             if (enqueueProcessOnTerminalEntryAction.WorkingDirectoryAbsoluteFilePath is not null)

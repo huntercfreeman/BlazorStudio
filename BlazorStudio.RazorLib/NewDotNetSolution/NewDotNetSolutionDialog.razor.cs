@@ -105,6 +105,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
                 OnStart,
                 OnEnd,
                 null,
+                null,
                 (data) => output = data,
                 CancellationToken.None));
     }

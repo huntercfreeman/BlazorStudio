@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="FileConstants\" />
+    <Folder Include="Store\StartupProject\" />
     <Folder Include="Store\SolutionExplorerCase\" />
   </ItemGroup>
 
