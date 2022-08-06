@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="FileConstants\" />
+    <Folder Include="Store\StartupProject\" />
     <Folder Include="Store\SolutionExplorerCase\" />
   </ItemGroup>
 

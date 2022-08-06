@@ -26,6 +26,10 @@ using Microsoft.CodeAnalysis.MSBuild;
 using BlazorStudio.RazorLib.NewCSharpProject;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.Loader;
+using BlazorStudio.ClassLib.Store.SolutionCase;
+using BlazorStudio.ClassLib.Store.StartupProject;
 using BlazorStudio.RazorLib.SyntaxRootRender;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
@@ -36,6 +40,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<BlazorStudio.ClassLib.Store.SolutionCase.SolutionState> SolutionStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -85,6 +91,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     private Solution? _solution;
     private bool _loadingSln;
     private MSBuildWorkspace _workspace;
+    private VisualStudioInstance _visualStudioInstance;
 
     protected override void OnInitialized()
     {
@@ -168,23 +175,42 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 VisualStudioInstance[] visualStudioInstances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
 
                 // TODO: Allow user to select the MSBuild
-                VisualStudioInstance instance = visualStudioInstances[0];
+                _visualStudioInstance = visualStudioInstances[0];
 
                 if (!MSBuildLocator.IsRegistered)
                 {
-                    MSBuildLocator.RegisterInstance(instance);
+                    var previewPath = "C:\\Program Files\\dotnet\\sdk\\7.0.100-preview.6.22352.1\\";
+
+                    if (Directory.Exists(previewPath))
+                    {
+                        MSBuildLocator.RegisterMSBuildPath(previewPath);
+                    }
+                    else
+                    {
+                        MSBuildLocator.RegisterInstance(_visualStudioInstance);
+                    }
+
+                    //var instance = Microsoft.Build.Locator.MSBuildLocator.RegisterDefaults();
+                    //AssemblyLoadContext.Default.Resolving += (assemblyLoadContext, assemblyName) =>
+                    //{
+                    //    var path = Path.Combine(instance.MSBuildPath, assemblyName.Name + ".dll");
+                    //    if (File.Exists(path))
+                    //    {
+                    //        return assemblyLoadContext.LoadFromAssemblyPath(path);
+                    //    }
+
+                    //    return null;
+                    //};
                 }
 
                 if (_workspace is null)
                 {
                     _workspace = MSBuildWorkspace.Create();
+
+                    Dispatcher.Dispatch(new SetSolutionAction(_workspace));
                 }
 
                 // Print message for WorkspaceFailed event to help diagnosing project load failures.
-
-                string solutionPath = targetPath;
-
-                _solution = await _workspace.OpenSolutionAsync(solutionPath);
 
                 _solution = await _workspace.OpenSolutionAsync(targetPath);
 
@@ -200,7 +226,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             finally
             {
                 _loadingSln = false;
-                //MSBuildLocator.Unregister();
             }
         }
         
@@ -401,6 +426,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
             menuOptionRecords.Add(renderSyntaxRoot);
         }
+        
+        if (contextMenuEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
+        {
+            var setAsStartupProject = MenuOptionFacts.CSharp
+                .SetAsStartupProject(() => 
+                    Dispatcher.Dispatch(new SetStartupProjectAction(contextMenuEventDto.Item)));
+
+            menuOptionRecords.Add(setAsStartupProject);
+        }
 
         return menuOptionRecords.Any()
             ? menuOptionRecords
@@ -541,13 +575,14 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 OnEnd,
                 null,
                 null,
+                null,
                 CancellationToken.None));
     }
 
     protected override void Dispose(bool disposing)
     {
         SolutionExplorerStateWrap.StateChanged -= SolutionExplorerStateWrap_StateChanged;
-        
+
         base.Dispose(disposing);
     }
 }

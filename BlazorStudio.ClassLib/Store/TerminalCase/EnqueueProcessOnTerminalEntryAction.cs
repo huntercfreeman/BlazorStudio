@@ -11,6 +11,15 @@ public record EnqueueProcessOnTerminalEntryAction(TerminalEntryKey TerminalEntry
     IAbsoluteFilePath? WorkingDirectoryAbsoluteFilePath,
     Action OnStart,
     Action<Process> OnEnd,
+    Action? OnCancelled,
     Action<object, DataReceivedEventArgs>? OnAnyDataReceivedAsync,
     Action<string>? OnAnyDataReceived,
-    CancellationToken CancellationToken);
+    CancellationToken CancellationToken)
+{
+    public event EventHandler KillRequestedEventHandler;
+
+    public void InvokeKillRequestedEventHandler()
+    {
+        KillRequestedEventHandler?.Invoke(this, EventArgs.Empty);
+    }
+}

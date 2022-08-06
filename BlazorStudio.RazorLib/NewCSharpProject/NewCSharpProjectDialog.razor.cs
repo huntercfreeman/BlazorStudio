@@ -122,6 +122,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
                     null,
                     OnStart,
                     OnEnd,
+                null,
                     null,
                     (data) => output = data,
                     CancellationToken.None));
@@ -180,6 +181,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
                 InputFileDialogSelection,
                 OnStart,
                 OnEnd,
+                null,
                 null,
                 null,
                 CancellationToken.None));

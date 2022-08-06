@@ -1,3 +1,9 @@
-﻿<div class="bstudio_terminal-entry-display">
-    active is: @TerminalEntry.Title
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_terminal-entry-display">
+
+<pre style="white-space: break-spaces;">
+@(TerminalEntryOutputStatesSelection.Value ?? "null")
+</pre>
+    
 </div>

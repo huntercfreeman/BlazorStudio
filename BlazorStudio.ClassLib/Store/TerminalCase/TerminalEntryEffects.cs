@@ -41,7 +41,25 @@ public class TerminalEntryEffects
     {
         await QueueHandleEffectAsync(async () =>
         {
+            if (enqueueProcessOnTerminalEntryAction.CancellationToken.IsCancellationRequested)
+            {
+                if (enqueueProcessOnTerminalEntryAction.OnCancelled is not null)
+                {
+                    enqueueProcessOnTerminalEntryAction.OnCancelled.Invoke();
+                }
+
+                return;
+            }
+
+            dispatcher.Dispatch(new ClearTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey));
+
             var process = new Process();
+
+            void EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler(object? sender, EventArgs e)
+            {
+                process.Kill(true);
+                dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey, "\n--------------\nkilled process\n--------------\n"));
+            }
 
             if (enqueueProcessOnTerminalEntryAction.WorkingDirectoryAbsoluteFilePath is not null)
             {
@@ -60,6 +78,8 @@ public class TerminalEntryEffects
 
             void OutputDataReceived(object sender, DataReceivedEventArgs e)
             {
+                dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey, e.Data));
+
                 if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync != null)
                     enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync(sender, e);
             }
@@ -71,6 +91,8 @@ public class TerminalEntryEffects
 
             try
             {
+                enqueueProcessOnTerminalEntryAction.KillRequestedEventHandler += EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler;
+
                 dispatcher.Dispatch(new SetTerminalEntryIsExecutingAction(_terminalEntry.TerminalEntryKey,
                     true));
 
@@ -83,8 +105,18 @@ public class TerminalEntryEffects
                 }
                 else if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceived is not null)
                 {
+                    var output = await process.StandardOutput.ReadToEndAsync();
+
+                    dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey, output));
+
                     enqueueProcessOnTerminalEntryAction.OnAnyDataReceived
-                        .Invoke(await process.StandardOutput.ReadToEndAsync());
+                        .Invoke(output);
+                }
+                else
+                {
+                    var output = await process.StandardOutput.ReadToEndAsync();
+
+                    dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey, output));
                 }
 
                 await process.WaitForExitAsync();
@@ -98,6 +130,8 @@ public class TerminalEntryEffects
                 }
 
                 enqueueProcessOnTerminalEntryAction.OnEnd.Invoke(process);
+
+                enqueueProcessOnTerminalEntryAction.KillRequestedEventHandler -= EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler;
 
                 dispatcher.Dispatch(new SetTerminalEntryIsExecutingAction(_terminalEntry.TerminalEntryKey,
                     false));

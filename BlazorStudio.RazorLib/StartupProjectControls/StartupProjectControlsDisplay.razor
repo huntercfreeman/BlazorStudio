@@ -1,0 +1,46 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_startup-project-controls-display">
+    @{
+        var localStartupProjectState = StartupProjectStateWrap.Value;
+
+        if (localStartupProjectState.ProjectAbsoluteFilePath is not null)
+        {
+            <div>@localStartupProjectState.ProjectAbsoluteFilePath.FileNameNoExtension</div>
+
+            <div class="bstudio_startup-project-controls-display-button"
+                 style="margin-left: 20px;">
+                 
+                @if (_isEnqueuedToRun)
+                {
+                    <div @onclick="() => CancelTokenSourceAndGetNewToken()">
+                        <IconLoader />
+                    </div>
+                }
+                else if (_isRunning)
+                {
+                    <div @onclick="_enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler">
+                        <IconStopCircle />
+                    </div>
+                }
+                else
+                {
+                    <div @onclick="DispatchEnqueueProcessOnTerminalEntryAction">
+                        <IconStartWithoutDebugging />
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            if (SolutionStateWrap.Value.SolutionWorkspace is null)
+            {
+                <div>{Set an active Solution}</div>
+            }
+            else
+            {
+                <div>{Startup Project is null}</div>
+            }
+        }
+    }
+</div>

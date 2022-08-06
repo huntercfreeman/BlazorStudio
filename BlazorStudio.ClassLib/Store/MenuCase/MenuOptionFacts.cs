@@ -44,6 +44,11 @@ public static class MenuOptionFacts
             "Render SyntaxRoot",
             ImmutableList<MenuOptionRecord>.Empty,
             onClickAction);
+
+        public static MenuOptionRecord SetAsStartupProject(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
+            "Set as Startup Project",
+            ImmutableList<MenuOptionRecord>.Empty,
+            onClickAction);
     }
     
     public static class DotNet
