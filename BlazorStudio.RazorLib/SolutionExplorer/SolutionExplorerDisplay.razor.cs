@@ -182,10 +182,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
                 // Print message for WorkspaceFailed event to help diagnosing project load failures.
 
-                string solutionPath = targetPath;
-
-                _solution = await _workspace.OpenSolutionAsync(solutionPath);
-
                 _solution = await _workspace.OpenSolutionAsync(targetPath);
 
                 var projects = new List<AbsoluteFilePath>();
