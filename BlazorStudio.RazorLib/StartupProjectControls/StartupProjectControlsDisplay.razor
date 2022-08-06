@@ -9,20 +9,25 @@
             <div>@localStartupProjectState.ProjectAbsoluteFilePath.FileNameNoExtension</div>
 
             <div class="bstudio_startup-project-controls-display-button"
-                 style="margin-left: 20px;"
-                 @onclick="DispatchEnqueueProcessOnTerminalEntryAction">
+                 style="margin-left: 20px;">
                  
                 @if (_isEnqueuedToRun)
                 {
-                    <IconLoader />
+                    <div @onclick="() => CancelTokenSourceAndGetNewToken()">
+                        <IconLoader />
+                    </div>
                 }
                 else if (_isRunning)
                 {
-                    <IconStopCircle />
+                    <div @onclick="_enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler">
+                        <IconStopCircle />
+                    </div>
                 }
                 else
                 {
-                    <IconStartWithoutDebugging/>
+                    <div @onclick="DispatchEnqueueProcessOnTerminalEntryAction">
+                        <IconStartWithoutDebugging />
+                    </div>
                 }
             </div>
         }

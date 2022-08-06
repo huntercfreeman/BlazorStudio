@@ -14,4 +14,12 @@ public record EnqueueProcessOnTerminalEntryAction(TerminalEntryKey TerminalEntry
     Action? OnCancelled,
     Action<object, DataReceivedEventArgs>? OnAnyDataReceivedAsync,
     Action<string>? OnAnyDataReceived,
-    CancellationToken CancellationToken);
+    CancellationToken CancellationToken)
+{
+    public event EventHandler KillRequestedEventHandler;
+
+    public void InvokeKillRequestedEventHandler()
+    {
+        KillRequestedEventHandler?.Invoke(this, EventArgs.Empty);
+    }
+}

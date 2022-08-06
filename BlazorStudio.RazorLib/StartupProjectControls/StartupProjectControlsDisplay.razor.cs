@@ -24,6 +24,7 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
     private CancellationTokenSource _cancellationTokenSource = new();
     private bool _isEnqueuedToRun;
     private bool _isRunning;
+    private EnqueueProcessOnTerminalEntryAction _enqueueProcessOnTerminalEntryAction;
 
     private void DispatchEnqueueProcessOnTerminalEntryAction()
     {
@@ -50,17 +51,18 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
                 InvokeAsync(StateHasChanged);
             }
 
-            Dispatcher
-                .Dispatch(new EnqueueProcessOnTerminalEntryAction(
-                    TerminalStateFacts.ProgramTerminalEntry.TerminalEntryKey,
-                    $"dotnet run --project {StartupProjectStateWrap.Value.ProjectAbsoluteFilePath.GetAbsoluteFilePathString()}",
-                    null,
-                    OnStart,
-                    OnEnd,
-                    null,
-                    (_, _) => { },
-                    null,
-                    CancelTokenSourceAndGetNewToken()));
+            _enqueueProcessOnTerminalEntryAction = new EnqueueProcessOnTerminalEntryAction(
+                TerminalStateFacts.ProgramTerminalEntry.TerminalEntryKey,
+                $"dotnet run --project {StartupProjectStateWrap.Value.ProjectAbsoluteFilePath.GetAbsoluteFilePathString()}",
+                null,
+                OnStart,
+                OnEnd,
+                null,
+                (_, _) => { },
+                null,
+                CancelTokenSourceAndGetNewToken());
+
+            Dispatcher.Dispatch(_enqueueProcessOnTerminalEntryAction);
         }
         finally
         {

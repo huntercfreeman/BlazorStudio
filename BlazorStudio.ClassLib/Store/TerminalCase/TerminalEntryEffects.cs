@@ -55,6 +55,12 @@ public class TerminalEntryEffects
 
             var process = new Process();
 
+            void EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler(object? sender, EventArgs e)
+            {
+                process.Kill(true);
+                dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey, "\n--------------\nkilled process\n--------------\n"));
+            }
+
             if (enqueueProcessOnTerminalEntryAction.WorkingDirectoryAbsoluteFilePath is not null)
             {
                 process.StartInfo.WorkingDirectory = enqueueProcessOnTerminalEntryAction.WorkingDirectoryAbsoluteFilePath
@@ -85,6 +91,8 @@ public class TerminalEntryEffects
 
             try
             {
+                enqueueProcessOnTerminalEntryAction.KillRequestedEventHandler += EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler;
+
                 dispatcher.Dispatch(new SetTerminalEntryIsExecutingAction(_terminalEntry.TerminalEntryKey,
                     true));
 
@@ -122,6 +130,8 @@ public class TerminalEntryEffects
                 }
 
                 enqueueProcessOnTerminalEntryAction.OnEnd.Invoke(process);
+
+                enqueueProcessOnTerminalEntryAction.KillRequestedEventHandler -= EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler;
 
                 dispatcher.Dispatch(new SetTerminalEntryIsExecutingAction(_terminalEntry.TerminalEntryKey,
                     false));
