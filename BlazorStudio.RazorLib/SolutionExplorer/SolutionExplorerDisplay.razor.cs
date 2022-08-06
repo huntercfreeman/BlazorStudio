@@ -23,11 +23,14 @@ using BlazorStudio.ClassLib.Store.DialogCase;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
+using BlazorStudio.RazorLib.NewCSharpProject;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
 public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 {
+    [Inject]
+    private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
@@ -70,6 +73,13 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             }
         },
     };
+
+    private readonly DialogRecord _newCSharpProjectDialog = new DialogRecord(
+        DialogKey.NewDialogKey(),
+        "New C# Project",
+        typeof(NewCSharpProjectDialog),
+        null
+    );
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
     private Solution? _sln;
@@ -438,11 +448,16 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
         }
     }
 
+    private void OpenNewCSharpProjectDialog()
+    {
+        if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _newCSharpProjectDialog.DialogKey))
+            Dispatcher.Dispatch(new RegisterDialogAction(_newCSharpProjectDialog));
+    }
+
     protected override void Dispose(bool disposing)
     {
         SolutionExplorerStateWrap.StateChanged -= SolutionExplorerStateWrap_StateChanged;
-
-
+        
         base.Dispose(disposing);
     }
 }
