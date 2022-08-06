@@ -24,6 +24,8 @@ using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 using BlazorStudio.RazorLib.NewCSharpProject;
+using BlazorStudio.ClassLib.Store.TerminalCase;
+using System.Diagnostics;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
@@ -74,12 +76,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
         },
     };
 
-    private readonly DialogRecord _newCSharpProjectDialog = new DialogRecord(
-        DialogKey.NewDialogKey(),
-        "New C# Project",
-        typeof(NewCSharpProjectDialog),
-        null
-    );
+    private DialogRecord _newCSharpProjectDialog;
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
     private Solution? _sln;
@@ -88,6 +85,19 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     protected override void OnInitialized()
     {
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrap_StateChanged;
+
+        _newCSharpProjectDialog = new DialogRecord(
+            DialogKey.NewDialogKey(),
+            "New C# Project",
+            typeof(NewCSharpProjectDialog),
+            new Dictionary<string, object?>()
+            {
+                {
+                    nameof(NewCSharpProjectDialog.OnProjectCreatedCallback), 
+                    new Action<IAbsoluteFilePath>(OnProjectCreatedCallback)
+                }
+            }
+        );
 
         base.OnInitialized();
     }
@@ -452,6 +462,35 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     {
         if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _newCSharpProjectDialog.DialogKey))
             Dispatcher.Dispatch(new RegisterDialogAction(_newCSharpProjectDialog));
+    }
+    
+    private void OnProjectCreatedCallback(IAbsoluteFilePath absoluteFilePath)
+    {
+        var localSolutionExplorerState = SolutionExplorerStateWrap.Value;
+
+        void OnStart()
+        {
+            
+        }
+
+        void OnEnd(Process finishedProcess)
+        {
+            
+        }
+
+        var command = $"dotnet sln {localSolutionExplorerState.SolutionAbsoluteFilePath.GetAbsoluteFilePathString()} " +
+                      $"add {absoluteFilePath.GetAbsoluteFilePathString()}";
+
+        Dispatcher
+            .Dispatch(new EnqueueProcessOnTerminalEntryAction(
+                TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
+                command,
+                null,
+                OnStart,
+                OnEnd,
+                null,
+                null,
+                CancellationToken.None));
     }
 
     protected override void Dispose(bool disposing)

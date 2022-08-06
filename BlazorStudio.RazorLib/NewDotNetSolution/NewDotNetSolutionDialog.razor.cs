@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
@@ -88,7 +89,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
                 InputFileDialogSelection.GetAbsoluteFilePathString() + _solutionName, true);
             
             var createdSolutionFile = new AbsoluteFilePath(
-                createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + ".sln", false);
+                createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + '.' + ExtensionNoPeriodFacts.DOT_NET_SOLUTION, false);
 
             Dispatcher.Dispatch(new SetWorkspaceAction(createdSolutionContainingDirectory));
             Dispatcher.Dispatch(new SetSolutionExplorerAction(createdSolutionFile));
