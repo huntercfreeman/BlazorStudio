@@ -6,7 +6,7 @@
                @bind="_solutionName" 
                @bind:event="oninput" />
         
-        <div style="height: calc(100% - 10em); min-height: 15rem; margin-top: 10px;">
+        <div style="height: calc(100% - 15em); min-height: 15rem; margin-top: 10px;">
             <BlazorStudio.RazorLib.InputFile.InputFileDialog OnEnterKeyDownOverride="InputFileDialogOnEnterKeyDownOverride"
                                                              ShowFooter="false" />
         </div>
@@ -17,8 +17,19 @@
         </div>
         
         <div>
-            Absolute&nbsp;File&nbsp;Path:
-            <div><em>@AbsoluteFilePathString</em>.sln</div>
+            Directory&nbsp;Absolute&nbsp;File&nbsp;Path:
+            <div><em>@AbsoluteFilePathString</em></div>
         </div>
+        
+        <div>
+            Command:
+            <div><em>@InterpolatedCommand</em></div>
+        </div>
+        
+        <button class="btn btn-primary"
+                style="margin-top: 10px;"
+                @onclick="DispatchTerminalNewSolutionOnClick">
+            Accept
+        </button>
     </div>
 </div>

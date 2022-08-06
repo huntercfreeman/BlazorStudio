@@ -1,15 +1,28 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.TerminalCase;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
+using static BlazorStudio.RazorLib.NewCSharpProject.NewCSharpProjectDialog;
 
 namespace BlazorStudio.RazorLib.NewDotNetSolution;
 
 public partial class NewDotNetSolutionDialog : ComponentBase
 {
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+
+    [CascadingParameter]
+    public DialogRecord DialogRecord { get; set; } = null!;
+
     private string _solutionName = string.Empty;
     private bool _disableExecuteButton;
-    private bool _finishedCreatingProject;
+    private bool _finishedCreatingSolution;
+    private bool _startingCreatingSolution;
     private IAbsoluteFilePath? InputFileDialogSelection;
+    private string dotnetNewSlnCommand = "dotnet new sln";
 
     private string SolutionName => string.IsNullOrWhiteSpace(_solutionName)
         ? "{enter solution name}"
@@ -17,9 +30,11 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
     private string AbsoluteFilePathString => GetAbsoluteFilePathString();
 
+    private string InterpolatedCommand => $"{dotnetNewSlnCommand} -o {_solutionName}";
+
     private void InputFileDialogOnEnterKeyDownOverride((IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
     {
-        if (_disableExecuteButton || _finishedCreatingProject)
+        if (_disableExecuteButton || _finishedCreatingSolution)
             return;
 
         if (tupleArgument.absoluteFilePath.IsDirectory)
@@ -43,8 +58,36 @@ public partial class NewDotNetSolutionDialog : ComponentBase
             builder.Append(InputFileDialogSelection.GetAbsoluteFilePathString());
         }
 
-        builder.Append(SolutionName);
-
         return builder.ToString();
+    }
+    
+    private void DispatchTerminalNewSolutionOnClick()
+    {
+        void OnStart()
+        {
+            _startingCreatingSolution = true;
+        }
+
+        // Perhaps a bit peculiar to do this closure behavior...
+        var output = string.Empty;
+
+        void OnEnd(Process finishedProcess)
+        {
+            if (output is null)
+                return;
+
+            InvokeAsync(StateHasChanged);
+        }
+
+        //Dispatcher
+        //    .Dispatch(new EnqueueProcessOnTerminalEntryAction(
+        //        TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
+        //        InterpolatedCommand,
+        //        InputFileDialogSelection,
+        //        OnStart,
+        //        OnEnd,
+        //        null,
+        //        (data) => output = data,
+        //        CancellationToken.None));
     }
 }
