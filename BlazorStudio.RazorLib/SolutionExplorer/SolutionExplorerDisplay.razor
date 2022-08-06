@@ -91,20 +91,27 @@
                                             <HeaderRenderFragment Context="activeItems">
                                                 <div class="bstudio_solution-explorer-tree-view-header">
                                                     <div style="display: inline-flex; align-items: center;">
+                                                        <button class="btn btn-primary"
+                                                                @onclick="OpenNewCSharpProjectDialog">
+                                                            <IconAdd/> New C# Project
+                                                        </button>
+                                                        &nbsp;
+                                                        to
+                                                        &nbsp;
                                                         <span title="icon"
                                                               style="display: inline-flex; align-items: center; margin-right: 4px;">
                                                             @if (solutionExplorerState.SolutionAbsoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
                                                             {
-                                                                <IconSolution />
+                                                                <IconSolution/>
                                                             }
                                                             else
                                                             {
-                                                                <IconDiff />
+                                                                <IconDiff/>
                                                             }
                                                         </span>
                                                         <span title="@solutionExplorerState.SolutionAbsoluteFilePath.GetAbsoluteFilePathString()"
                                                               style="display: inline-flex; align-items: center;">
-                                                            
+
                                                             @solutionExplorerState.SolutionAbsoluteFilePath.FilenameWithExtension
                                                         </span>
                                                     </div>

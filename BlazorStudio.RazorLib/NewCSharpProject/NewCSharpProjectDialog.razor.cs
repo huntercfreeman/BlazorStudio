@@ -6,6 +6,7 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Diagnostics;
+using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 
 namespace BlazorStudio.RazorLib.NewCSharpProject;
@@ -17,6 +18,9 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
+
+    [Parameter]
+    public Action<IAbsoluteFilePath>? OnProjectCreatedCallback { get; set; }
 
     private List<CSharpTemplate>? _templates;
     private string getCSharpProjectTemplatesCommand = "dotnet new list";
@@ -151,9 +155,20 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
             if (InputFileDialogSelection.IsDirectory)
             {
-                var createdProject = new AbsoluteFilePath(InputFileDialogSelection.GetAbsoluteFilePathString() + _projectName, true);
+                var createdProjectContainingDirectory = new AbsoluteFilePath(InputFileDialogSelection.GetAbsoluteFilePathString() + _projectName, 
+                    true);
 
-                Dispatcher.Dispatch(new SetWorkspaceAction(createdProject));
+                Dispatcher.Dispatch(new SetWorkspaceAction(createdProjectContainingDirectory));
+
+                if (OnProjectCreatedCallback is not null)
+                {
+                    var createdProject = new AbsoluteFilePath(
+                        createdProjectContainingDirectory.GetAbsoluteFilePathString() + _projectName + '.' + ExtensionNoPeriodFacts.C_SHARP_PROJECT, 
+                        false);
+
+                    OnProjectCreatedCallback.Invoke(createdProject);
+                }
+
                 Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
             }
         }
