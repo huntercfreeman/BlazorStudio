@@ -1,4 +1,12 @@
 ﻿<div class="bstudio_terminal-tab-display @IsActiveCssClass"
      @onclick="DispatchSetActiveTerminalEntryAction">
+    
     @TerminalEntry.Title
+    
+    &nbsp;
+    
+    @if (TerminalEntry.IsExecuting)
+    {
+        <BlazorStudio.RazorLib.Icons.PureCssLoader />
+    }
 </div>

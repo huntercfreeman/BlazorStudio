@@ -12,3 +12,6 @@ public record EnqueueProcessOnTerminalEntryAction(TerminalEntryKey TerminalEntry
     Action<object, DataReceivedEventArgs>? OnAnyDataReceivedAsync,
     Action<string>? OnAnyDataReceived,
     CancellationToken CancellationToken);
+
+public record SetTerminalEntryIsExecutingAction(TerminalEntryKey TerminalEntryKey,
+    bool IsExecuting);

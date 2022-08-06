@@ -65,6 +65,9 @@ public class TerminalEntryEffects
 
             try
             {
+                dispatcher.Dispatch(new SetTerminalEntryIsExecutingAction(_terminalEntry.TerminalEntryKey,
+                    true));
+
                 enqueueProcessOnTerminalEntryAction.OnStart.Invoke();
                 process.Start();
 
@@ -89,6 +92,9 @@ public class TerminalEntryEffects
                 }
 
                 enqueueProcessOnTerminalEntryAction.OnEnd.Invoke(process);
+
+                dispatcher.Dispatch(new SetTerminalEntryIsExecutingAction(_terminalEntry.TerminalEntryKey,
+                    false));
             }
         });
     }

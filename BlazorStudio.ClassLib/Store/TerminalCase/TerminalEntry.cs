@@ -2,4 +2,4 @@
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
-public record TerminalEntry(TerminalEntryKey TerminalEntryKey, string Title);
+public record TerminalEntry(TerminalEntryKey TerminalEntryKey, string Title, bool IsExecuting);
