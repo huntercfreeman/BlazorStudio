@@ -26,6 +26,7 @@ using Microsoft.CodeAnalysis.MSBuild;
 using BlazorStudio.RazorLib.NewCSharpProject;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using System.Diagnostics;
+using BlazorStudio.RazorLib.SyntaxRootRender;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
@@ -77,6 +78,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     };
 
     private DialogRecord _newCSharpProjectDialog;
+
+    private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
     private Solution? _solution;
@@ -182,31 +185,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 string solutionPath = targetPath;
 
                 _solution = await _workspace.OpenSolutionAsync(solutionPath);
-
-                // TODO: Do analysis on the projects in the loaded solution
-                //foreach (Project project in solution.Projects)
-                //{
-                //    var z = 2;
-                //    foreach (Document document in project.Documents)
-                //    {
-                //        var syntax = await document.GetSyntaxTreeAsync();
-
-                //        var root = await syntax.GetRootAsync();
-
-                //        var childTokens = root.ChildTokens().ToList();
-                //        var childNodes = root.ChildNodes().ToList();
-
-                //        var inTokens = childNodes[0].ChildTokens();
-                //        var inNodes = childNodes[0].ChildNodes();
-
-
-                //        var c = 3;
-                //    }
-                //}
-
-                ////////////////////----------------------------------------------------------------------------------------
-
-                
 
                 _solution = await _workspace.OpenSolutionAsync(targetPath);
 
@@ -414,6 +392,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             menuOptionRecords.Add(createNewFile);
             menuOptionRecords.Add(createNewDirectory);
         }
+        
+        if (contextMenuEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_CLASS)
+        {
+            var renderSyntaxRoot = MenuOptionFacts.CSharp
+                .RenderSyntaxRoot(() => 
+                    OpenSyntaxRootDisplayDialog(contextMenuEventDto.Item));
+
+            menuOptionRecords.Add(renderSyntaxRoot);
+        }
 
         return menuOptionRecords.Any()
             ? menuOptionRecords
@@ -485,6 +472,45 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     {
         if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _newCSharpProjectDialog.DialogKey))
             Dispatcher.Dispatch(new RegisterDialogAction(_newCSharpProjectDialog));
+    }
+    
+    private void OpenSyntaxRootDisplayDialog(IAbsoluteFilePath absoluteFilePath)
+    {
+        Task.Run(async () =>
+        {
+            SyntaxNode? targetSyntaxNode = null;
+
+            foreach (Project project in _solution.Projects)
+            {
+                foreach (Document document in project.Documents)
+                {
+                    if (document.FilePath?.Contains(absoluteFilePath.FilenameWithExtension) ?? false)
+                    {
+                        var syntax = await document.GetSyntaxTreeAsync();
+
+                        targetSyntaxNode = await syntax.GetRootAsync();
+                    }
+                }
+            }
+
+            if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _syntaxRootDisplayDialogKey))
+            {
+                var dialogRecord = new DialogRecord(
+                    _syntaxRootDisplayDialogKey,
+                    "Syntax Root Render",
+                    typeof(SyntaxRootDisplay),
+                    new Dictionary<string, object?>()
+                    {
+                        {
+                            nameof(SyntaxRootDisplay.SyntaxNode),
+                            targetSyntaxNode
+                        }
+                    }
+                );
+
+                Dispatcher.Dispatch(new RegisterDialogAction(dialogRecord));
+            }
+        });
     }
     
     private void OnProjectCreatedCallback(IAbsoluteFilePath absoluteFilePath)
