@@ -1,14 +1,12 @@
 ﻿using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
-using BlazorStudio.ClassLib.Store.ThemeCase;
-using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Diagnostics;
+using BlazorStudio.ClassLib.Store.TerminalCase;
 
 namespace BlazorStudio.RazorLib.NewCSharpProject;
 
@@ -36,29 +34,26 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     private string _projectName = string.Empty;
 
+    private bool _startingRetrievingProjectTemplates;
+    private bool _attemptedToRetrieveProjectTemplates;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await Task.Run(async () =>
+            void OnStart()
             {
+                _startingRetrievingProjectTemplates = true;
+            }
+            
+            void OnEnd(Process finishedProcess)
+            {
+                _startingRetrievingProjectTemplates = false;
+                _attemptedToRetrieveProjectTemplates = true;
+
                 _templates = new();
 
-                // Start the child process.
-                var p = new Process();
-                p.StartInfo.FileName = "cmd.exe";
-                // 2>&1 combines stdout and stderr
-                p.StartInfo.Arguments = $"/c {getCSharpProjectTemplatesCommand} 2>&1";
-                // Redirect the output stream of the child process.
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-                p.StartInfo.CreateNoWindow = true;
-                p.Start();
-                // Do not wait for the child process to exit before
-                // reading to the end of its redirected stream.
-                // p.WaitForExit();
-                // Read the output stream first and then wait.
-                var output = p.StandardOutput.ReadToEnd();
+                var output = finishedProcess.StandardOutput.ReadToEnd();
 
                 var indexOfFirstDash = output.IndexOf('-');
 
@@ -109,48 +104,44 @@ public partial class NewCSharpProjectDialog : ComponentBase
                     });
                 }
 
-                await p.WaitForExitAsync();
+                InvokeAsync(StateHasChanged);
+            }
 
-                await InvokeAsync(StateHasChanged);
-            });
+            Dispatcher
+                .Dispatch(new EnqueueProcessOnTerminalEntryAction(
+                    TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
+                    getCSharpProjectTemplatesCommand,
+                    OnStart,
+                    OnEnd,
+                    null,
+                    CancellationToken.None));
         }
         
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task ExecuteNewCSharpProject()
+    private void ExecuteNewCSharpProject()
     {
-        if (_disableExecuteButton || _finishedCreatingProject || _selectCSharpProjectTemplate is null || InputFileDialogSelection is null)
+        if (_disableExecuteButton || 
+            _finishedCreatingProject || 
+            _selectCSharpProjectTemplate is null || 
+            InputFileDialogSelection is null ||
+            !InputFileDialogSelection.IsDirectory)
             return;
 
         _disableExecuteButton = true;
 
-        await Task.Run(async () =>
+        void OnStart()
         {
-            // Start the child process.
-            var p = new Process();
-            p.StartInfo.FileName = "cmd.exe";
-            // 2>&1 combines stdout and stderr
-            p.StartInfo.Arguments = $"/c {InterpolatedCommand} 2>&1";
-            // Redirect the output stream of the child process.
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.WorkingDirectory = InputFileDialogSelection.GetAbsoluteFilePathString();
-            p.StartInfo.CreateNoWindow = true;
-            p.Start();
-            // Do not wait for the child process to exit before
-            // reading to the end of its redirected stream.
-            // p.WaitForExit();
-            // Read the output stream first and then wait.
-            _executionOfNewCSharpProjectOutput = p.StandardOutput.ReadToEnd();
+            _startingRetrievingProjectTemplates = true;
+        }
 
-            await p.WaitForExitAsync();
-
+        void OnEnd(Process finishedProcess)
+        {
             _disableExecuteButton = false;
-
             _finishedCreatingProject = true;
 
-            await InvokeAsync(StateHasChanged);
+            InvokeAsync(StateHasChanged);
 
             if (InputFileDialogSelection.IsDirectory)
             {
@@ -159,7 +150,16 @@ public partial class NewCSharpProjectDialog : ComponentBase
                 Dispatcher.Dispatch(new SetWorkspaceAction(createdProject));
                 Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
             }
-        });
+        }
+
+        Dispatcher
+            .Dispatch(new EnqueueProcessOnTerminalEntryAction(
+                TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
+                InterpolatedCommand,
+                OnStart,
+                OnEnd,
+                null,
+                CancellationToken.None));
     }
 
     private void InputFileDialogOnEnterKeyDownOverride((IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
