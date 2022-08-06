@@ -165,7 +165,10 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 
                 //
 
-                MSBuildLocator.RegisterMSBuildPath("C:\\Program Files\\dotnet\\sdk\\7.0.100-preview.6.22352.1\\");
+                if (!MSBuildLocator.IsRegistered)
+                {
+                    MSBuildLocator.RegisterMSBuildPath("C:\\Program Files\\dotnet\\sdk\\7.0.100-preview.6.22352.1\\");
+                }
 
                 //var instance = MSBuildLocator.RegisterDefaults();
 
