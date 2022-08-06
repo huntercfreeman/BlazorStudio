@@ -20,4 +20,15 @@ public class TerminalEntryOutputReducer
 
         return new(nextOutputMap);
     }
+    
+    [ReducerMethod]
+    public static TerminalEntryOutputStates ReduceClearTerminalEntryOutputStatesAction(TerminalEntryOutputStates previousTerminalEntryOutputStates,
+        ClearTerminalEntryOutputStatesAction clearTerminalEntryOutputStatesAction)
+    {
+        var nextOutputMap = previousTerminalEntryOutputStates.OutputMap
+            .SetItem(clearTerminalEntryOutputStatesAction.TerminalEntryKey,
+                string.Empty);
+
+        return new(nextOutputMap);
+    }
 }

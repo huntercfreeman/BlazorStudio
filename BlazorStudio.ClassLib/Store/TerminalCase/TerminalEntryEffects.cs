@@ -51,6 +51,8 @@ public class TerminalEntryEffects
                 return;
             }
 
+            dispatcher.Dispatch(new ClearTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey));
+
             var process = new Process();
 
             if (enqueueProcessOnTerminalEntryAction.WorkingDirectoryAbsoluteFilePath is not null)
