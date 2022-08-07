@@ -74,7 +74,11 @@ public partial record PlainTextEditorStates
             focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
             {
                 CurrentCharacterColumnIndex = startingCharacterIndex
-                    + replacementCurrentToken.IndexInPlainText.Value
+                    + replacementCurrentToken.IndexInPlainText.Value,
+                CurrentPositionIndex = focusedPlainTextEditorRecord
+                                           .FileHandle.VirtualCharacterIndexMarkerForStartOfARow[focusedPlainTextEditorRecord.CurrentRowIndex]
+                                       + startingCharacterIndex
+                                       + replacementCurrentToken.IndexInPlainText.Value
             };
 
             return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
