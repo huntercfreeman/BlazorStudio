@@ -35,7 +35,9 @@ public partial class InputFileDialog : ComponentBase
     public Func<ImmutableArray<IAbsoluteFilePath>, bool>? IsValidSelectionOverrideFunc { get; set; }
     [Parameter]
     public string? InvalidSelectionTextOverride { get; set; }
-
+    [Parameter]
+    public Action<ImmutableArray<IAbsoluteFilePath>>? ConfirmOnClickOverrideAction { get; set; }
+    
     private bool _isInitialized;
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
@@ -156,7 +158,11 @@ public partial class InputFileDialog : ComponentBase
     
     private void ConfirmOnClick(ImmutableArray<IAbsoluteFilePath> absoluteFilePaths)
     {
-        if (absoluteFilePaths.Any())
+        if (ConfirmOnClickOverrideAction is not null)
+        {
+            ConfirmOnClickOverrideAction.Invoke(absoluteFilePaths);
+        }
+        else if (absoluteFilePaths.Any())
         {
             Dispatcher.Dispatch(new SetWorkspaceAction(absoluteFilePaths[0]));
             Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
