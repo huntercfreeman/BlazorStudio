@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
 using BlazorStudio.ClassLib.FileConstants;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Sequence;
@@ -185,6 +186,53 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         Dispatcher.Dispatch(new RegisterDialogAction(addProjectReferenceDialog));
                 });
 
+            var containingDirectory = contextMenuEventDto.Item.Directories.Last();
+
+            createNewEmptyFile = MenuOptionFacts.File
+                .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
+                    new Dictionary<string, object?>()
+                    {
+                        {
+                            nameof(CreateNewFileForm.ParentDirectory),
+                            containingDirectory
+                        },
+                        {
+                            nameof(CreateNewFileForm.OnAfterSubmitForm),
+                            new Action<string, string>(CreateNewEmptyFileFormOnAfterSubmitForm)
+                        },
+                    });
+
+            createNewTemplatedFile = MenuOptionFacts.File
+                .ConstructCreateNewTemplatedFile(typeof(CreateNewFileForm),
+                    new Dictionary<string, object?>()
+                    {
+                        {
+                            nameof(CreateNewFileForm.ParentDirectory),
+                            containingDirectory
+                        },
+                        {
+                            nameof(CreateNewFileForm.OnAfterSubmitForm),
+                            new Action<string, string>(CreateNewTemplatedFileFormOnAfterSubmitForm)
+                        },
+                    });
+
+            createNewDirectory = MenuOptionFacts.File
+                .ConstructCreateNewDirectory(typeof(CreateNewDirectoryForm),
+                    new Dictionary<string, object?>()
+                    {
+                        {
+                            nameof(CreateNewFileForm.ParentDirectory),
+                            containingDirectory
+                        },
+                        {
+                            nameof(CreateNewFileForm.OnAfterSubmitForm),
+                            new Action<string, string>(CreateNewDirectoryFormOnAfterSubmitForm)
+                        },
+                    });
+
+            menuOptionRecords.Add(createNewEmptyFile);
+            menuOptionRecords.Add(createNewTemplatedFile);
+            menuOptionRecords.Add(createNewDirectory);
             menuOptionRecords.Add(setAsStartupProject);
             menuOptionRecords.Add(addProjectReference);
         }
