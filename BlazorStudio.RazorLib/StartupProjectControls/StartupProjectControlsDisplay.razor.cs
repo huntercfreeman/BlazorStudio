@@ -82,6 +82,11 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
     {
         _cancellationTokenSource?.Cancel();
 
+        if (_enqueueProcessOnTerminalEntryAction is not null)
+        {
+            _enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler();
+        }
+
         base.Dispose(disposing);
     }
 }
