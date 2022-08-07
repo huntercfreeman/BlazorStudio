@@ -382,21 +382,12 @@ public partial record PlainTextEditorStates
                 IndexInPlainText = 0
             };
 
-            if (targetRowIndex == 0)
+            focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
             {
-                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
-                {
-                    CurrentPositionIndex = 0
-                };
-            }
-            else
-            {
-                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
-                {
-                    CurrentPositionIndex = focusedPlainTextEditorRecord
-                        .FileHandle.VirtualCharacterIndexMarkerForStartOfARow[focusedPlainTextEditorRecord.CurrentRowIndex]
-                };
-            }
+                CurrentCharacterColumnIndex = 0,
+                CurrentPositionIndex = focusedPlainTextEditorRecord
+                    .FileHandle.VirtualCharacterIndexMarkerForStartOfARow[targetRowIndex]
+            };
 
             return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
                 replacementCurrentToken,
@@ -440,9 +431,20 @@ public partial record PlainTextEditorStates
                 IndexInPlainText = currentToken.PlainText.Length - 1
             };
 
-            return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+            focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord,
                 replacementCurrentToken,
                 cancellationToken);
+
+            var startingCharacterIndexRespectiveToRow = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                cancellationToken);
+
+            return focusedPlainTextEditorRecord with
+            {
+                CurrentCharacterColumnIndex = startingCharacterIndexRespectiveToRow + replacementCurrentToken.IndexInPlainText.Value,
+                CurrentPositionIndex = focusedPlainTextEditorRecord
+                    .FileHandle.VirtualCharacterIndexMarkerForStartOfARow[targetRowIndex]
+                    + startingCharacterIndexRespectiveToRow + replacementCurrentToken.IndexInPlainText.Value
+            };
         }
     }
 }
