@@ -217,6 +217,8 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
+            var rememberPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex;
+
             if (!keyDownEventRecord.IsForced &&
                 focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
             {
@@ -232,18 +234,6 @@ public partial record PlainTextEditorStates
                             ? "\r\n"
                             : "\n",
                         cancellationToken);
-            }
-            
-            if (!keyDownEventRecord.IsForced)
-            {
-                focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
-                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex + 1,
-                        focusedPlainTextEditorRecord.CurrentPositionIndex + 1);
-
-                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
-                {
-                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex + 1
-                };
             }
 
             var replacementCurrentToken = focusedPlainTextEditorRecord
@@ -288,12 +278,26 @@ public partial record PlainTextEditorStates
                         constructedRow
                     });
 
+            if (!keyDownEventRecord.IsForced)
+            {
+                focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
+                    .Insert(focusedPlainTextEditorRecord.CurrentRowIndex + 1,
+                        rememberPositionIndex + 1);
+
+                for (int i = focusedPlainTextEditorRecord.CurrentRowIndex + 2; i < focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow.Count; i++)
+                {
+                    focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow[i] += 1;
+                }
+            }
+
             return focusedPlainTextEditorRecord with
             {
                 Rows = nextRowList,
                 CurrentTokenIndex = 0,
                 CurrentRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex + 1,
-                CurrentCharacterColumnIndex = 0
+                CurrentCharacterColumnIndex = 0,
+                CurrentPositionIndex = focusedPlainTextEditorRecord
+                    .FileHandle.VirtualCharacterIndexMarkerForStartOfARow[focusedPlainTextEditorRecord.CurrentRowIndex + 1]
             };
         }
 
