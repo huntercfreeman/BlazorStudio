@@ -44,16 +44,16 @@
                                          DropdownKey="_fileDropdownKey">
                                      
                                         @{
-                                var contextMenuEventDto = new TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath>
-                                {
-                                    Item = solutionExplorerState.SolutionAbsoluteFilePath,
-                                    MouseEventArgs = null,
-                                    RefreshContextMenuTarget = async () => SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty)
-                                }; 
+                                            var contextMenuEventDto = new TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath>
+                                            {
+                                                Item = solutionExplorerState.SolutionAbsoluteFilePath,
+                                                MouseEventArgs = null,
+                                                RefreshContextMenuTarget = async () => SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty)
+                                            }; 
                 
-                                                        <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
+                                            <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
 
-                                                        <MenuDisplay MenuOptionRecords="GetMenuOptionRecords(contextMenuEventDto)" />
+                                            <BlazorStudio.RazorLib.SolutionExplorerMenuWrapper.SolutionExplorerMenuWrapperDisplay ContextMenuEventDto="contextMenuEventDto" />
                                         }
 
                                     </DropdownDisplay>
@@ -83,9 +83,9 @@
                                             <OnContextMenuRenderFragment Context="contextMenuEventDto">
 
                                                 <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
-
-                                                <MenuDisplay MenuOptionRecords="GetMenuOptionRecords(contextMenuEventDto)" />
-
+                                                
+                                                <BlazorStudio.RazorLib.SolutionExplorerMenuWrapper.SolutionExplorerMenuWrapperDisplay ContextMenuEventDto="contextMenuEventDto" />
+                                                
                                             </OnContextMenuRenderFragment>
 
                                             <HeaderRenderFragment Context="activeItems">

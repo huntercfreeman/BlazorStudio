@@ -4,6 +4,7 @@ using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
@@ -247,7 +248,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
                 });
         
         var setActiveSolution = MenuOptionFacts.DotNet
-            .SetActiveSolution(() => Dispatcher.Dispatch(new SetSolutionExplorerAction(contextMenuEventDto.Item)));
+            .SetActiveSolution(() => Dispatcher.Dispatch(new SetSolutionExplorerAction(contextMenuEventDto.Item, SequenceKey.NewSequenceKey())));
 
         _mostRecentRefreshContextMenuTarget = contextMenuEventDto.RefreshContextMenuTarget;
 
