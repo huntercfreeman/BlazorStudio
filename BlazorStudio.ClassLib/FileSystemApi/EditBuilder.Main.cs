@@ -95,14 +95,14 @@ public partial class EditBuilder
                         }
                     }
 
-                    for (var index = 0;
-                         index < editResult.VirtualCharacterIndexMarkerForStartOfARow.Count;
-                         index++)
-                    {
-                        var rowStartMarker = editResult.VirtualCharacterIndexMarkerForStartOfARow[index];
+                    //for (var index = 0;
+                    //     index < editResult.VirtualCharacterIndexMarkerForStartOfARow.Count;
+                    //     index++)
+                    //{
+                    //    var rowStartMarker = editResult.VirtualCharacterIndexMarkerForStartOfARow[index];
 
-                        editResult.VirtualCharacterIndexMarkerForStartOfARow[index] = rowStartMarker + 1;
-                    }
+                    //    editResult.VirtualCharacterIndexMarkerForStartOfARow[index] = rowStartMarker + 1;
+                    //}
 
                     builder.Clear();
                     characterIndexForInsertion = 0;
@@ -258,7 +258,8 @@ public partial class EditBuilder
     
     public async Task<EditResult> ApplyEditsAsync(FileHandleReadRequest readRequest,
         List<string> rows,
-        List<long> virtualCharacterIndexMarkerForStartOfARow, CancellationToken cancellationToken = default)
+        List<long> virtualCharacterIndexMarkerForStartOfARow, 
+        CancellationToken cancellationToken = default)
     {
         EditResult? editResult = null;
 

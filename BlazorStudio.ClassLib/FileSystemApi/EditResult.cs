@@ -19,7 +19,9 @@
 public class EditResult
 {
     public EditResult(List<string> contentRows,
-        List<long> virtualCharacterIndexMarkerForStartOfARow, List<DisplacementValue> displacementTimeline, int accumulatedRowDisplacement)
+        List<long> virtualCharacterIndexMarkerForStartOfARow, 
+        List<DisplacementValue> displacementTimeline, 
+        int accumulatedRowDisplacement)
     {
         ContentRows = contentRows;
         DisplacementTimeline = displacementTimeline;
