@@ -43,8 +43,22 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
         TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
-        var createNewFile = MenuOptionFacts.File
-            .ConstructCreateNewFile(typeof(CreateNewFileForm),
+        var createNewEmptyFile = MenuOptionFacts.File
+            .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
+                new Dictionary<string, object?>()
+                {
+                    {
+                        nameof(CreateNewFileForm.ParentDirectory),
+                        contextMenuEventDto.Item
+                    },
+                    {
+                        nameof(CreateNewFileForm.OnAfterSubmitForm),
+                        new Action<string, string>(CreateNewFileFormOnAfterSubmitForm)
+                    },
+                });
+        
+        var createNewTemplatedFile = MenuOptionFacts.File
+            .ConstructCreateNewTemplatedFile(typeof(CreateNewFileForm),
                 new Dictionary<string, object?>()
                 {
                     {
@@ -75,7 +89,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
         if (contextMenuEventDto.Item.IsDirectory)
         {
-            menuOptionRecords.Add(createNewFile);
+            menuOptionRecords.Add(createNewTemplatedFile);
+            menuOptionRecords.Add(createNewEmptyFile);
             menuOptionRecords.Add(createNewDirectory);
         }
 

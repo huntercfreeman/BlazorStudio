@@ -16,9 +16,17 @@ public static class MenuOptionFacts
             ImmutableList<MenuOptionRecord>.Empty,
             onClickAction);
         
-        public static MenuOptionRecord ConstructCreateNewFile(Type widgetType, Dictionary<string, object?>? widgetParameters) => 
+        public static MenuOptionRecord ConstructCreateNewEmptyFile(Type widgetType, Dictionary<string, object?>? widgetParameters) => 
             new(MenuOptionKey.NewMenuOptionKey(),
-                "File",
+                "New Empty File",
+                ImmutableList<MenuOptionRecord>.Empty,
+                null,
+                WidgetType: widgetType,
+                WidgetParameters: widgetParameters);
+        
+        public static MenuOptionRecord ConstructCreateNewTemplatedFile(Type widgetType, Dictionary<string, object?>? widgetParameters) => 
+            new(MenuOptionKey.NewMenuOptionKey(),
+                "New Templated File",
                 ImmutableList<MenuOptionRecord>.Empty,
                 null,
                 WidgetType: widgetType,

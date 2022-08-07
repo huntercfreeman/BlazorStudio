@@ -219,8 +219,8 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
         TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
-        var createNewFile = MenuOptionFacts.File
-            .ConstructCreateNewFile(typeof(CreateNewFileForm),
+        var createNewEmptyFile = MenuOptionFacts.File
+            .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
                 new Dictionary<string, object?>()
                 {
                     {
@@ -256,7 +256,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
 
         if (contextMenuEventDto.Item.IsDirectory)
         {
-            menuOptionRecords.Add(createNewFile);
+            menuOptionRecords.Add(createNewEmptyFile);
             menuOptionRecords.Add(createNewDirectory);
         }
 
