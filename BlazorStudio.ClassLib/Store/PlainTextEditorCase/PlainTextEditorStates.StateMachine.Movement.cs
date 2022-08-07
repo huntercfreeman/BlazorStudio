@@ -177,8 +177,12 @@ public partial record PlainTextEditorStates
                 Rows = nextRowList,
                 CurrentTokenIndex = tokenInRowBelowTuple.tokenIndex,
                 CurrentRowIndex = targetRowIndex,
-                CharacterColumnIndexOffset = tokenInRowBelowTuple.inclusiveStartingColumnIndex 
-                                             + indexInPlainText.Value
+                CurrentCharacterColumnIndex = tokenInRowBelowTuple.inclusiveStartingColumnIndex 
+                                             + indexInPlainText.Value,
+                CurrentPositionIndex = focusedPlainTextEditorRecord
+                                           .FileHandle.VirtualCharacterIndexMarkerForStartOfARow[targetRowIndex]
+                                       + tokenInRowBelowTuple.inclusiveStartingColumnIndex
+                                       + indexInPlainText.Value
             };
         }
 
@@ -254,8 +258,12 @@ public partial record PlainTextEditorStates
                 Rows = nextRowList,
                 CurrentTokenIndex = tokenInRowAboveTuple.tokenIndex,
                 CurrentRowIndex = targetRowIndex,
-                CharacterColumnIndexOffset = tokenInRowAboveTuple.inclusiveStartingColumnIndex
-                                             + indexInPlainText.Value
+                CurrentCharacterColumnIndex = tokenInRowAboveTuple.inclusiveStartingColumnIndex
+                                             + indexInPlainText.Value,
+                CurrentPositionIndex = focusedPlainTextEditorRecord
+                                           .FileHandle.VirtualCharacterIndexMarkerForStartOfARow[targetRowIndex]
+                                       + tokenInRowAboveTuple.inclusiveStartingColumnIndex
+                                       + indexInPlainText.Value
             };
         }
 
