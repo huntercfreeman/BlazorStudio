@@ -43,4 +43,5 @@
     --pte_active-line-number-font-color: rgb(228, 137, 16);
     --pte_hover-font-color: rgb(42, 122, 211);
     --pte_active-border-color: rgb(42, 122, 211);
+    --pte_token-keyword: rgb(216, 160, 223);
 }

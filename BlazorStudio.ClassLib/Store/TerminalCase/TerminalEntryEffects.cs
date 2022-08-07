@@ -62,7 +62,9 @@ public class TerminalEntryEffects
             void EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler(object? sender, EventArgs e)
             {
                 process.Kill(true);
-                dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey, "\n--------------\nkilled process\n--------------\n"));
+
+                dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey,
+                    _terminalEntry.ParseOutputFunc("\n--------------\nkilled process\n--------------\n")));
             }
 
             if (enqueueProcessOnTerminalEntryAction.WorkingDirectoryAbsoluteFilePath is not null)
@@ -82,7 +84,8 @@ public class TerminalEntryEffects
 
             void OutputDataReceived(object sender, DataReceivedEventArgs e)
             {
-                dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey, e.Data));
+                dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey, 
+                    _terminalEntry.ParseOutputFunc(e.Data ?? string.Empty)));
 
                 if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync != null)
                     enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync(sender, e);
@@ -125,7 +128,8 @@ public class TerminalEntryEffects
                 {
                     var output = await process.StandardOutput.ReadToEndAsync();
 
-                    dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey, output));
+                    dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey,
+                        _terminalEntry.ParseOutputFunc(output)));
 
                     enqueueProcessOnTerminalEntryAction.OnAnyDataReceived
                         .Invoke(output);
@@ -134,7 +138,8 @@ public class TerminalEntryEffects
                 {
                     var output = await process.StandardOutput.ReadToEndAsync();
 
-                    dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey, output));
+                    dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey,
+                        _terminalEntry.ParseOutputFunc(output)));
                 }
 
                 await process.WaitForExitAsync();

@@ -2,8 +2,18 @@
 
 <div class="bstudio_terminal-entry-display">
 
-<pre style="white-space: break-spaces;">
+    @{
+        var currentTerminalOutput = TerminalEntryOutputStatesSelection.Value ?? string.Empty;
+    }
+
+    @if (TerminalEntry.IsMarkupString)
+    {
+        <text>@((MarkupString) currentTerminalOutput)</text>
+    }
+    else
+    {
+        <pre style="white-space: break-spaces;">
 @(TerminalEntryOutputStatesSelection.Value ?? "null")
-</pre>
-    
+    </pre>
+    }
 </div>
