@@ -220,7 +220,8 @@ public partial record PlainTextEditorStates
             if (!keyDownEventRecord.IsForced &&
                 focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
             {
-                var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
+                                         focusedPlainTextEditorRecord,
                                          cancellationToken)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
@@ -231,10 +232,18 @@ public partial record PlainTextEditorStates
                             ? "\r\n"
                             : "\n",
                         cancellationToken);
-
-                editorMemoryMappedFile.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
+            }
+            
+            if (!keyDownEventRecord.IsForced)
+            {
+                focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
                     .Insert(focusedPlainTextEditorRecord.CurrentRowIndex + 1,
-                        focusedPlainTextEditorRecord.CurrentCharacterColumnIndex);
+                        focusedPlainTextEditorRecord.CurrentPositionIndex + 1);
+
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex + 1
+                };
             }
 
             var replacementCurrentToken = focusedPlainTextEditorRecord
