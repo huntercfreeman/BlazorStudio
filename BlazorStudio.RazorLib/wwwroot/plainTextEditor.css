@@ -6,6 +6,7 @@
     --pte_active-line-number-font-color: rgb(255, 0, 174);
     --pte_hover-font-color: #0000ff;
     --pte_active-border-color: #0000ff;
+    --pte_token-keyword: rgb(216, 160, 223);
 }
 
 .pte_visually-hidden {
@@ -138,3 +139,7 @@
         border-right: 1.5px solid var(--bstudio_primary-border-color);
         padding-right: 2px;
     }
+
+.pte_plain-text-editor-text-token-display-keyword {
+    color: var(--pte_token-keyword);
+}

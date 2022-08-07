@@ -1,7 +1,7 @@
 @using ClassLib.Store.PlainTextEditorCase
 @using BlazorStudio.ClassLib.Html
 
-<span class="pte_plain-text-editor-text-token-display">
+<span class="pte_plain-text-editor-text-token-display @TokenClass">
     @switch (TextToken.Kind)
     {
         case TextTokenKind.StartOfRow:
