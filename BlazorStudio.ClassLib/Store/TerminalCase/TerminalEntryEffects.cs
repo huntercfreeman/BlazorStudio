@@ -7,13 +7,17 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 public class TerminalEntryEffects
 {
     private readonly IState<TerminalState> _terminalStateWrap;
+    private readonly IState<TerminalSettingsState> _terminalSettingsStateWrap;
     private readonly TerminalEntry _terminalEntry;
     private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
     private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
 
-    public TerminalEntryEffects(IState<TerminalState> terminalStateWrap, TerminalEntry terminalEntry)
+    public TerminalEntryEffects(IState<TerminalState> terminalStateWrap,
+        IState<TerminalSettingsState> terminalSettingsStateWrap,
+        TerminalEntry terminalEntry)
     {
         _terminalStateWrap = terminalStateWrap;
+        _terminalSettingsStateWrap = terminalSettingsStateWrap;
         _terminalEntry = terminalEntry;
     }
 
@@ -97,6 +101,20 @@ public class TerminalEntryEffects
                     true));
 
                 enqueueProcessOnTerminalEntryAction.OnStart.Invoke();
+
+                if (_terminalSettingsStateWrap.Value.ShowTerminalOnProcessStarted)
+                {
+                    List<(TerminalEntryKey key, int index)> terminalTuples = _terminalStateWrap.Value.TerminalEntries
+                        .Select((terminal, index) => (terminal.TerminalEntryKey, index))
+                        .ToList();
+
+                    var myIndex = terminalTuples
+                        .First(x => x.key == _terminalEntry.TerminalEntryKey)
+                        .index;
+
+                    dispatcher.Dispatch(new SetActiveTerminalEntryAction(myIndex));
+                }
+
                 process.Start();
 
                 if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync is not null)

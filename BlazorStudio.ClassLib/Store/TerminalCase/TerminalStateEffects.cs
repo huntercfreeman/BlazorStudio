@@ -9,19 +9,22 @@ public class TerminalStateEffects
     private readonly Dictionary<TerminalEntryKey, TerminalEntryEffects> _terminalEffects = new();
 
     private readonly IState<TerminalState> _terminalStateWrap;
+    private readonly IState<TerminalSettingsState> _terminalSettingsStateWrap;
     private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
     private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
 
-    public TerminalStateEffects(IState<TerminalState> terminalStateWrap)
+    public TerminalStateEffects(IState<TerminalState> terminalStateWrap,
+        IState<TerminalSettingsState> terminalSettingsStateWrap)
     {
         _terminalStateWrap = terminalStateWrap;
+        _terminalSettingsStateWrap = terminalSettingsStateWrap;
 
         var localTerminalStateWrap = _terminalStateWrap.Value;
 
         foreach (var terminalEntry in localTerminalStateWrap.TerminalEntries)
         {
             _terminalEffects.Add(terminalEntry.TerminalEntryKey, 
-                new TerminalEntryEffects(terminalStateWrap, terminalEntry));
+                new TerminalEntryEffects(terminalStateWrap, _terminalSettingsStateWrap, terminalEntry));
         }
     }
 
