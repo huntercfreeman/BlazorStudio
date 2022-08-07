@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Keyboard;
@@ -762,8 +763,46 @@ public partial record PlainTextEditorStates
                 var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
                 var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
 
-                dispatcher.Dispatch(new SetPlainTextEditorStatesAction(new PlainTextEditorStates(nextImmutableMap, nextImmutableArray)));
+                var nextPlainTextEditorStates = new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
+
+                dispatcher.Dispatch(new SetPlainTextEditorStatesAction(nextPlainTextEditorStates));
+
+                if (constructTokenizedPlainTextEditorRecordAction.AbsoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.HTML ||
+                    constructTokenizedPlainTextEditorRecordAction.AbsoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP)
+                {
+                    await ConstructTokenizedHtmlTextEditorRecordAction(nextPlainTextEditorStates,
+                        resultingPlainTextEditor,
+                        dispatcher);
+                }
             });
+        }
+        
+        private async Task ConstructTokenizedHtmlTextEditorRecordAction(PlainTextEditorStates previousPlainTextEditorStates,
+            PlainTextEditorRecordTokenized previousEditor,
+            IDispatcher dispatcher)
+        {
+            var startingHtmlTags = new List<string>();
+            var endingHtmlTags = new List<string>();
+
+            foreach (var row in previousEditor.Rows)
+            {
+                foreach (var token in row.Tokens)
+                {
+                    if (token.Kind == TextTokenKind.Default)
+                    {
+                        if (token.PlainText.Contains("</"))
+                        {
+                            endingHtmlTags.Add(token.PlainText);
+                        }
+                        else if (token.PlainText.Contains("<"))
+                        {
+                            startingHtmlTags.Add(token.PlainText);
+                        }
+                    }
+                }
+            }
+
+            var z = 2;
         }
 
         [EffectMethod]
