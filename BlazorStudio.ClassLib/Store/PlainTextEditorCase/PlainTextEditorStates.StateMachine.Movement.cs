@@ -56,12 +56,6 @@ public partial record PlainTextEditorStates
                 var rememberTokenWasWhitespace =
                     focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace;
 
-                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
-                {
-                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
-                        - focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value
-                };
-
                 focusedPlainTextEditorRecord = await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord, 
                     cancellationToken);
 
@@ -84,11 +78,6 @@ public partial record PlainTextEditorStates
 
             if (currentToken.IndexInPlainText == 0)
             {
-                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
-                {
-                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex - 1
-                };
-
                 return await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
             }
@@ -279,13 +268,6 @@ public partial record PlainTextEditorStates
                 var rememberTokenWasWhitespace =
                     focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace;
 
-                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
-                {
-                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex 
-                                                  + (focusedPlainTextEditorRecord.CurrentTextToken.PlainText.Length
-                                                     - focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value)
-                };
-
                 focusedPlainTextEditorRecord = await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
 
@@ -303,6 +285,8 @@ public partial record PlainTextEditorStates
                 if (focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText !=
                     focusedPlainTextEditorRecord.CurrentTextToken.PlainText.Length - 1)
                 {
+                    var rememberIndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value;
+
                     var replacementToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<TextTokenBase>() with
                     {
                         IndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.PlainText.Length - 1
@@ -311,6 +295,12 @@ public partial record PlainTextEditorStates
                     focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord,
                         replacementToken,
                         cancellationToken);
+
+                    focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                    {
+                        CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
+                            + (focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value - rememberIndexInPlainText)
+                    };
                 }
 
                 return focusedPlainTextEditorRecord;
@@ -321,11 +311,6 @@ public partial record PlainTextEditorStates
 
             if (currentToken.IndexInPlainText == currentToken.PlainText.Length - 1)
             {
-                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
-                {
-                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
-                };
-
                 return await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
             }
@@ -340,18 +325,6 @@ public partial record PlainTextEditorStates
                 {
                     CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
                 };
-
-                //if (focusedPlainTextEditorRecord.SelectionSpan is null)
-                //{
-                //    focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
-                //    {
-                //        SelectionSpan = new()
-                //        {
-                //            InclusiveStartingDocumentTextIndex = 0,
-                //            ExclusiveEndingDocumentTextIndex = 0
-                //        }
-                //    };
-                //}
 
                 focusedPlainTextEditorRecord =
                     await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
