@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.Store.StartupProject;
+using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.SyntaxRootRender;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
@@ -84,6 +85,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     };
 
     private DialogRecord _newCSharpProjectDialog;
+    private DialogRecord _addProjectReferenceDialog;
 
     private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
 
@@ -106,6 +108,23 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 {
                     nameof(NewCSharpProjectDialog.OnProjectCreatedCallback), 
                     new Action<IAbsoluteFilePath>(OnProjectCreatedCallback)
+                }
+            }
+        );
+
+        _addProjectReferenceDialog = new DialogRecord(
+            DialogKey.NewDialogKey(),
+            "Add Project Reference",
+            typeof(InputFileDialog),
+            new Dictionary<string, object?>()
+            {
+                {
+                    nameof(InputFileDialog.IsValidSelectionOverrideFunc),
+                    new Func<ImmutableArray<IAbsoluteFilePath>, bool>(AddProjectReferenceInputIsValidOverride)
+                },
+                {
+                    nameof(InputFileDialog.InvalidSelectionTextOverride),
+                    "Choose a C# Project"
                 }
             }
         );
@@ -432,8 +451,36 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             var setAsStartupProject = MenuOptionFacts.CSharp
                 .SetAsStartupProject(() => 
                     Dispatcher.Dispatch(new SetStartupProjectAction(contextMenuEventDto.Item)));
+            
+            var addProjectReference = MenuOptionFacts.CSharp
+                .AddProjectReference(() =>
+                {
+
+                    OpenAddProjectReferenceDialog();
+                    //void OnStart()
+                    //{
+                    //}
+
+                    //void OnEnd(Process finishedProcess)
+                    //{
+                    //}
+
+                    //var enqueueProcessOnTerminalEntryAction = new EnqueueProcessOnTerminalEntryAction(
+                    //    TerminalStateFacts.ProgramTerminalEntry.TerminalEntryKey,
+                    //    $"dotnet add {contextMenuEventDto.Item.GetAbsoluteFilePathString()} reference {StartupProjectStateWrap.Value.ProjectAbsoluteFilePath.GetAbsoluteFilePathString()}",
+                    //    null,
+                    //    OnStart,
+                    //    OnEnd,
+                    //    null,
+                    //    (_, _) => { },
+                    //    null,
+                    //    CancelTokenSourceAndGetNewToken());
+
+                    //Dispatcher.Dispatch(_enqueueProcessOnTerminalEntryAction);
+                });
 
             menuOptionRecords.Add(setAsStartupProject);
+            menuOptionRecords.Add(addProjectReference);
         }
 
         return menuOptionRecords.Any()
@@ -508,6 +555,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             Dispatcher.Dispatch(new RegisterDialogAction(_newCSharpProjectDialog));
     }
     
+    private void OpenAddProjectReferenceDialog()
+    {
+        if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _addProjectReferenceDialog.DialogKey))
+            Dispatcher.Dispatch(new RegisterDialogAction(_addProjectReferenceDialog));
+    }
+    
     private void OpenSyntaxRootDisplayDialog(IAbsoluteFilePath absoluteFilePath)
     {
         Task.Run(async () =>
@@ -577,6 +630,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 null,
                 null,
                 CancellationToken.None));
+    }
+
+    private bool AddProjectReferenceInputIsValidOverride(ImmutableArray<IAbsoluteFilePath> activeItems)
+    {
+        return activeItems[0].ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT;
     }
 
     protected override void Dispose(bool disposing)

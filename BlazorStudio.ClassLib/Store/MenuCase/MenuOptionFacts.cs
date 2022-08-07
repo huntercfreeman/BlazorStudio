@@ -49,6 +49,11 @@ public static class MenuOptionFacts
             "Set as Startup Project",
             ImmutableList<MenuOptionRecord>.Empty,
             onClickAction);
+        
+        public static MenuOptionRecord AddProjectReference(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
+            "Add Project Reference",
+            ImmutableList<MenuOptionRecord>.Empty,
+            onClickAction);
     }
     
     public static class DotNet

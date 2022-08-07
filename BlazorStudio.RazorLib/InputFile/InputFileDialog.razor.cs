@@ -31,6 +31,10 @@ public partial class InputFileDialog : ComponentBase
     public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)>? OnDoubleClickOverride { get; set; }
     [Parameter]
     public bool ShowFooter { get; set; } = true;
+    [Parameter]
+    public Func<ImmutableArray<IAbsoluteFilePath>, bool>? IsValidSelectionOverrideFunc { get; set; }
+    [Parameter]
+    public string? InvalidSelectionTextOverride { get; set; }
 
     private bool _isInitialized;
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
