@@ -5,8 +5,10 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 public static class TerminalOutputParser
 {
-    public static void ParseHttpLinks(string input, StringBuilder outputBuilder)
+    public static string ParseHttpLinks(string input)
     {
+        var outputBuilder = new StringBuilder();
+
         var indexOfHttp = input.IndexOf("http");
 
         if (indexOfHttp > 0)
@@ -47,5 +49,7 @@ public static class TerminalOutputParser
         {
             outputBuilder.Append(input.EscapeHtml() + "<br />");
         }
+
+        return outputBuilder.ToString();
     }
 }
