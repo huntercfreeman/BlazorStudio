@@ -49,9 +49,8 @@ public partial record PlainTextEditorStates
         public override TextTokenKey CurrentTextTokenKey => CurrentTextToken.Key;
         public override PlainTextEditorKind PlainTextEditorKind => PlainTextEditorKind.Tokenized;
 
+        public long CurrentPositionIndex { get; init; }
         public int LongestRowCharacterLength { get; init; }
-
-        public override long CurrentPositionIndex => -1;
 
         public override IAbsoluteFilePath? AbsoluteFilePath => BackingAbsoluteFilePath;
 

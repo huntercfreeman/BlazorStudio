@@ -435,7 +435,9 @@ public partial record PlainTextEditorStates
                     Rows = nextRowList,
                     CurrentTokenIndex = previousTokenTuple.tokenIndex,
                     CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
-                        - (rememberIndexInPlainText + 1)
+                        - (rememberIndexInPlainText + 1),
+                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                           - (rememberIndexInPlainText + 1)
                 };
             }
             else
@@ -473,7 +475,9 @@ public partial record PlainTextEditorStates
 
                 return focusedPlainTextEditorRecord with
                 {
-                    CurrentCharacterColumnIndex = actualCharacterColumnIndex
+                    CurrentCharacterColumnIndex = actualCharacterColumnIndex,
+                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                           - (rememberIndexInPlainText + 1)
                 };
             }
         }
@@ -533,7 +537,9 @@ public partial record PlainTextEditorStates
                     Rows = nextRowList,
                     CurrentTokenIndex = nextTokenTuple.tokenIndex,
                     CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
-                        + (rememberToken.PlainText.Length - rememberToken.IndexInPlainText!.Value)
+                        + (rememberToken.PlainText.Length - rememberToken.IndexInPlainText!.Value),
+                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                           + (rememberToken.PlainText.Length - rememberToken.IndexInPlainText!.Value)
                 };
             }
             else
@@ -560,7 +566,9 @@ public partial record PlainTextEditorStates
                     Rows = nextRowList,
                     CurrentTokenIndex = nextTokenTuple.tokenIndex,
                     CurrentRowIndex = nextTokenTuple.rowIndex,
-                    CurrentCharacterColumnIndex = 0
+                    CurrentCharacterColumnIndex = 0,
+                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                           + (rememberToken.PlainText.Length - rememberToken.IndexInPlainText!.Value)
                 };
             }
         }

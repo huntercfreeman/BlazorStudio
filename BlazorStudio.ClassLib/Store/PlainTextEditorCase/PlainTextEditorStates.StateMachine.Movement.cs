@@ -90,7 +90,8 @@ public partial record PlainTextEditorStates
 
                 focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                 {
-                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex - 1
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex - 1,
+                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex - 1
                 };
 
                 focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
@@ -299,7 +300,9 @@ public partial record PlainTextEditorStates
                     focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                     {
                         CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
-                            + (focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value - rememberIndexInPlainText)
+                            + (focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value - rememberIndexInPlainText),
+                        CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                               + (focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value - rememberIndexInPlainText)
                     };
                 }
 
@@ -323,7 +326,8 @@ public partial record PlainTextEditorStates
 
                 focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                 {
-                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1,
+                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex + 1
                 };
 
                 focusedPlainTextEditorRecord =
@@ -367,8 +371,24 @@ public partial record PlainTextEditorStates
 
             replacementCurrentToken = currentToken with
             {
-                IndexInPlainText = currentToken.PlainText.Length - 1
+                IndexInPlainText = 0
             };
+
+            if (targetRowIndex == 0)
+            {
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentPositionIndex = 0
+                };
+            }
+            else
+            {
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentPositionIndex = focusedPlainTextEditorRecord
+                        .FileHandle.VirtualCharacterIndexMarkerForStartOfARow[focusedPlainTextEditorRecord.CurrentRowIndex]
+                };
+            }
 
             return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
                 replacementCurrentToken,

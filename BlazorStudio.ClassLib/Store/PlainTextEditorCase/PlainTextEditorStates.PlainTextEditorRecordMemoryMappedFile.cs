@@ -47,13 +47,10 @@ public partial record PlainTextEditorStates
         public override TextTokenKey CurrentTextTokenKey => CurrentTextToken.Key;
         public override PlainTextEditorKind PlainTextEditorKind => PlainTextEditorKind.MemoryMappedFile;
 
+        public long CurrentPositionIndex { get; init; }
         public int LongestRowCharacterLength { get; init; }
 
         public override IAbsoluteFilePath? AbsoluteFilePath => FileHandle.AbsoluteFilePath;
-
-        public override long CurrentPositionIndex =>
-            FileHandle.VirtualCharacterIndexMarkerForStartOfARow[RowIndexOffset + CurrentRowIndex]
-                + CharacterColumnIndexOffset + CurrentCharacterColumnIndex;
 
         public override string GetPlainText()
         {
