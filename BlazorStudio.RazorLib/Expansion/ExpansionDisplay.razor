@@ -3,7 +3,25 @@
     
     @if (OnClickShouldToggleIsExpanded)
     {
-        <span @onclick="ToggleIsExpanded">
+        <span class="bstudio_expansion-display-title @TitleCssClass"
+              @onclick="ToggleIsExpanded">
+            @if (ShowIsExpandedChevron)
+            {
+                if (IsExpanded)
+                {
+                    <IconChevronDown />
+                }
+                else
+                {
+                    <IconChevronRight />
+                }
+
+                if (RenderSeparatorBetweenChevronAndTitle)
+                {
+                    <span class="bstudio_expansion-display-chevron-title-separator"></span>
+                }
+            }
+
             @TitleRenderFragment
         </span>
     }

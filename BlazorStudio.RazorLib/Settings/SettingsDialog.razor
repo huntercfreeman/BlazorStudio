@@ -1,1 +1,26 @@
-﻿<BlazorStudio.RazorLib.Theme.ThemeSelectTreeView />
+﻿
+<div class="bstudio_settings-dialog">
+    <ExpansionDisplay TitleCssClass="bstudio_settings-section-title">
+        <TitleRenderFragment>
+            Themes
+        </TitleRenderFragment>
+        <BodyRenderFragment>
+            <div class="bstudio_settings-section-body">
+                <BlazorStudio.RazorLib.Theme.ThemeSelectTreeView/>
+            </div>
+        </BodyRenderFragment>
+    </ExpansionDisplay>
+    
+    <hr />
+
+    <ExpansionDisplay TitleCssClass="bstudio_settings-section-title">
+        <TitleRenderFragment>
+            Terminals
+        </TitleRenderFragment>
+        <BodyRenderFragment>
+            <div class="bstudio_settings-section-body">
+                <BlazorStudio.RazorLib.Terminal.TerminalSettingsDisplay />
+            </div>
+        </BodyRenderFragment>
+    </ExpansionDisplay>
+</div>
