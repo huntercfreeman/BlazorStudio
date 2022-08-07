@@ -11,6 +11,7 @@ using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.Store.StartupProject;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TaskModelManager;
+using BlazorStudio.ClassLib.Templates;
 using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.SyntaxRootRender;
@@ -53,7 +54,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
-                        new Action<string, string>(CreateNewFileFormOnAfterSubmitForm)
+                        new Action<string, string>(CreateNewEmptyFileFormOnAfterSubmitForm)
                     },
                 });
         
@@ -67,7 +68,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
-                        new Action<string, string>(CreateNewFileFormOnAfterSubmitForm)
+                        new Action<string, string>(CreateNewTemplatedFileFormOnAfterSubmitForm)
                     },
                 });
 
@@ -199,7 +200,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             };
     }
 
-    private void CreateNewFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
+    private void CreateNewEmptyFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
         string fileName)
     {
 #if DEBUG
@@ -215,7 +216,29 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
                 Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
             },
-            $"{nameof(CreateNewFileFormOnAfterSubmitForm)}",
+            $"{nameof(CreateNewEmptyFileFormOnAfterSubmitForm)}",
+            false,
+            TimeSpan.FromSeconds(10));
+#endif
+    }
+
+    private void CreateNewTemplatedFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
+        string fileName)
+    {
+#if DEBUG
+        var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
+
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+            {
+                await File
+                    .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName,
+                        CSharpClassTemplate.Value);
+
+                await localRefreshContextMenuTarget();
+
+                Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+            },
+            $"{nameof(CreateNewTemplatedFileFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
 #endif
