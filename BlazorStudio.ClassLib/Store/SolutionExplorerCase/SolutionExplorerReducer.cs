@@ -8,6 +8,7 @@ public class SolutionExplorerReducer
     public static SolutionExplorerState ReduceSetSolutionExplorerAction(SolutionExplorerState previousSolutionExplorerState,
         SetSolutionExplorerAction setSolutionExplorerAction)
     {
-        return new SolutionExplorerState(setSolutionExplorerAction.SolutionAbsoluteFilePath);
+        return new SolutionExplorerState(setSolutionExplorerAction.SolutionAbsoluteFilePath, 
+            setSolutionExplorerAction.SequenceKey);
     }
 }

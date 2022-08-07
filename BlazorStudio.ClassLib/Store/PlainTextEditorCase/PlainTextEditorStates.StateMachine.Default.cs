@@ -41,7 +41,8 @@ public partial record PlainTextEditorStates
 
                 focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                 {
-                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1,
+                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex + 1
                 };
 
                 return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
@@ -93,7 +94,8 @@ public partial record PlainTextEditorStates
 
                     focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                     {
-                        CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
+                        CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1,
+                        CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex + 1
                     };
 
                     return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
@@ -156,7 +158,8 @@ public partial record PlainTextEditorStates
 
                         focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                         {
-                            CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1
+                            CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1,
+                            CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex + 1
                         };
 
                         return await InsertNewCurrentTokenAfterCurrentPositionAsync(focusedPlainTextEditorRecord,

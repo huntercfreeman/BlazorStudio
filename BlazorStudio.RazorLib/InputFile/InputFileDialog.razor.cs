@@ -177,8 +177,8 @@ public partial class InputFileDialog : ComponentBase
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
         TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
-        var createNewFile = MenuOptionFacts.File
-            .ConstructCreateNewFile(typeof(CreateNewFileForm),
+        var createNewEmptyFile = MenuOptionFacts.File
+            .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
                 new Dictionary<string, object?>()
                 {
                     {
@@ -211,7 +211,7 @@ public partial class InputFileDialog : ComponentBase
 
         if (contextMenuEventDto.Item.IsDirectory)
         {
-            menuOptionRecords.Add(createNewFile);
+            menuOptionRecords.Add(createNewEmptyFile);
             menuOptionRecords.Add(createNewDirectory);
         }
 

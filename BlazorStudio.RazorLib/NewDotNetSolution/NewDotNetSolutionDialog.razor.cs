@@ -3,6 +3,7 @@ using System.Text;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -92,7 +93,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
                 createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + '.' + ExtensionNoPeriodFacts.DOT_NET_SOLUTION, false);
 
             Dispatcher.Dispatch(new SetWorkspaceAction(createdSolutionContainingDirectory));
-            Dispatcher.Dispatch(new SetSolutionExplorerAction(createdSolutionFile));
+            Dispatcher.Dispatch(new SetSolutionExplorerAction(createdSolutionFile, SequenceKey.NewSequenceKey()));
 
             Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
         }

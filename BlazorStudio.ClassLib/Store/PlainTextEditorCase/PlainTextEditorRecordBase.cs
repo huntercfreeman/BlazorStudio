@@ -24,9 +24,9 @@ public abstract record PlainTextEditorRecordBase(PlainTextEditorKey PlainTextEdi
     public int CharacterColumnIndexOffset { get;  init; }
     public SelectionSpanRecord? SelectionSpan { get;  init; }
     public IFileHandle FileHandle { get;  init; }
+    public long CurrentPositionIndex { get; init; }
     
     public abstract IAbsoluteFilePath? AbsoluteFilePath { get; }
-    public abstract long CurrentPositionIndex { get; }
     public abstract IPlainTextEditorRow CurrentPlainTextEditorRow { get; }
     public abstract TextTokenKey CurrentTextTokenKey { get; }
     public abstract ITextToken CurrentTextToken { get; }

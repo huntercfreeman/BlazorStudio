@@ -4,6 +4,7 @@ using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
@@ -218,8 +219,8 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
         TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
-        var createNewFile = MenuOptionFacts.File
-            .ConstructCreateNewFile(typeof(CreateNewFileForm),
+        var createNewEmptyFile = MenuOptionFacts.File
+            .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
                 new Dictionary<string, object?>()
                 {
                     {
@@ -247,7 +248,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
                 });
         
         var setActiveSolution = MenuOptionFacts.DotNet
-            .SetActiveSolution(() => Dispatcher.Dispatch(new SetSolutionExplorerAction(contextMenuEventDto.Item)));
+            .SetActiveSolution(() => Dispatcher.Dispatch(new SetSolutionExplorerAction(contextMenuEventDto.Item, SequenceKey.NewSequenceKey())));
 
         _mostRecentRefreshContextMenuTarget = contextMenuEventDto.RefreshContextMenuTarget;
 
@@ -255,7 +256,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
 
         if (contextMenuEventDto.Item.IsDirectory)
         {
-            menuOptionRecords.Add(createNewFile);
+            menuOptionRecords.Add(createNewEmptyFile);
             menuOptionRecords.Add(createNewDirectory);
         }
 
