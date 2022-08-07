@@ -573,3 +573,34 @@ em {
     background-color: var(--bstudio_secondary-hover-background-color);
     color: var(--bstudio_secondary-hover-font-color);
 }
+
+.bstudio_settings-dialog {
+    height: 100%;
+    padding: 5px;
+}
+
+.bstudio_settings-section {
+    height: 35%;
+}
+
+.bstudio_settings-section-title {
+    height: 3rem;
+    white-space: nowrap;
+    padding: 0.2rem;
+    overflow-x: auto;
+    font-size: 1rem;
+    background-color: var(--bstudio_primary-background-color);
+    color: var(--bstudio_primary-font-color);
+    display: flex;
+    align-items: center;
+}
+
+.bstudio_settings-section-body {
+    height: calc(100% - 3rem);
+    overflow-y: auto;
+}
+
+.bstudio_expansion-display-chevron-title-separator {
+    width: 5px;
+    height: 100%;
+}

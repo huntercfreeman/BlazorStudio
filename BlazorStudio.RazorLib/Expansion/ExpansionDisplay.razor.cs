@@ -11,7 +11,13 @@ public partial class ExpansionDisplay : ComponentBase
     [Parameter]
     public bool OnClickShouldToggleIsExpanded { get; set; } = true;
     [Parameter]
+    public bool ShowIsExpandedChevron { get; set; } = true;
+    [Parameter]
+    public bool RenderSeparatorBetweenChevronAndTitle { get; set; } = true;
+    [Parameter]
     public string StyleCssString { get; set; } = string.Empty;
+    [Parameter]
+    public string TitleCssClass { get; set; } = string.Empty;
 
     public bool IsExpanded { get; private set; }
 
