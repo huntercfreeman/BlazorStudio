@@ -604,3 +604,7 @@ em {
     width: 5px;
     height: 100%;
 }
+
+.bstudio_terminal-settings-display {
+    padding-left: 16px;
+}

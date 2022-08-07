@@ -1,0 +1,21 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_terminal-settings-display">
+    
+    @{
+        var localTerminalSettingsState = TerminalSettingsStateWrap.Value;
+
+        <div>
+            Show Terminal On Process Started:
+            
+            <div style="padding-left: 16px; border-left: 1.5px solid var(--bstudio_primary-border-color);">
+                <input type="checkbox" 
+                   checked="@localTerminalSettingsState.ShowTerminalOnProcessStarted"
+                       @onchange="OnShowTerminalOnProcessStartedChanged" />
+
+                :&nbsp;
+                @localTerminalSettingsState.ShowTerminalOnProcessStarted
+            </div>
+        </div>
+    }
+</div>

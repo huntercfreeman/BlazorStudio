@@ -40,6 +40,7 @@
     <_ContentIncludedByDefault Remove="SyntaxRootRender\SyntaxRootDisplay.razor" />
     <_ContentIncludedByDefault Remove="Terminal\TerminalDisplay.razor" />
     <_ContentIncludedByDefault Remove="Terminal\TerminalEntryDisplay.razor" />
+    <_ContentIncludedByDefault Remove="Terminal\TerminalSettingsDisplay.razor" />
     <_ContentIncludedByDefault Remove="Transformable\TransformableDisplay.razor" />
     <_ContentIncludedByDefault Remove="TreeViewCase\TreeViewWrapDisplay.razor" />
   </ItemGroup>
@@ -120,6 +121,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="StartupProjectControls\StartupProjectControlsDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Terminal\TerminalSettingsDisplay.razor" />
   </ItemGroup>
 
 </Project>
