@@ -45,6 +45,14 @@ public partial record PlainTextEditorStates
                     CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex + 1
                 };
 
+                if (!keyDownEventRecord.IsForced)
+                {
+                    for (int i = focusedPlainTextEditorRecord.CurrentRowIndex + 1; i < focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow.Count; i++)
+                    {
+                        focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow[i] += 1;
+                    }
+                }
+
                 return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
                     nextDefaultToken,
                     cancellationToken);
