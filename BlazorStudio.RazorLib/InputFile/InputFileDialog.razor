@@ -48,18 +48,35 @@
                             }
 
                             <div class="bstudio_input-file-dialog-control-buttons">
-                                @if (activeItems[0].IsDirectory)
-                                {
-                                    <button class="btn btn-primary" @onclick="() => ConfirmOnClick(activeItems)">
-                                        Confirm
-                                        <span class="pte_unselectable" style="visibility: hidden;">a Directory</span>
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button disabled class="btn btn-primary">
-                                        Choose a Directory
-                                    </button>
+                                
+                                @{
+                                    var isValidSelection = activeItems[0].IsDirectory;
+
+                                    if (IsValidSelectionOverrideFunc is not null)
+                                    {
+                                        isValidSelection = IsValidSelectionOverrideFunc.Invoke(activeItems);
+                                    }
+
+                                    if (isValidSelection)
+                                    {
+                                        <button class="btn btn-primary" @onclick="() => ConfirmOnClick(activeItems)">
+                                            Confirm
+                                            <span class="pte_unselectable" style="visibility: hidden;">a Directory</span>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button disabled class="btn btn-primary">
+                                            @if (InvalidSelectionTextOverride is not null)
+                                            {
+                                                <text>@InvalidSelectionTextOverride</text>
+                                            }
+                                            else
+                                            {
+                                                <text>Choose a Directory</text>
+                                            }
+                                        </button>
+                                    }
                                 }
 
                                 <button class="btn btn-warning" style="margin-left: 6px;" @onclick="CancelOnClick">

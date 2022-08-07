@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.Store.StartupProject;
+using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.SyntaxRootRender;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
@@ -84,6 +85,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     };
 
     private DialogRecord _newCSharpProjectDialog;
+    private DialogKey _addProjectReferenceDialogKey = DialogKey.NewDialogKey();
 
     private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
 
@@ -433,7 +435,78 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 .SetAsStartupProject(() => 
                     Dispatcher.Dispatch(new SetStartupProjectAction(contextMenuEventDto.Item)));
 
+            DialogRecord addProjectReferenceDialog = null;
+
+            // TODO: This is really poorly written with closure hacks and other nonsense and needs rewritten. I am really tired and should just take a break.
+            void AddProjectReferenceConfirmOnClickOverrideAction(ImmutableArray<IAbsoluteFilePath> activeItems)
+            {
+                Dispatcher.Dispatch(new DisposeDialogAction(addProjectReferenceDialog));
+
+                var localSolutionExplorerState = SolutionExplorerStateWrap.Value;
+
+                var referenceAbsoluteFilePathString = activeItems[0].GetAbsoluteFilePathString();
+
+                var contextMenuTargetAbsoluteFilePathString =
+                    contextMenuEventDto.Item.GetAbsoluteFilePathString();
+
+                void OnStart()
+                {
+
+                }
+
+                void OnEnd(Process finishedProcess)
+                {
+                    _workspace.CloseSolution();
+
+                    SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty);
+                }
+
+                var command = $"dotnet add {contextMenuTargetAbsoluteFilePathString}" +
+                              $" reference {referenceAbsoluteFilePathString}";
+
+                Dispatcher
+                    .Dispatch(new EnqueueProcessOnTerminalEntryAction(
+                        TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
+                        command,
+                        null,
+                        OnStart,
+                        OnEnd,
+                        null,
+                        null,
+                        null,
+                        CancellationToken.None));
+            }
+
+            addProjectReferenceDialog = new DialogRecord(
+                DialogKey.NewDialogKey(),
+                "Add Project Reference",
+                typeof(InputFileDialog),
+                new Dictionary<string, object?>()
+                {
+                    {
+                        nameof(InputFileDialog.IsValidSelectionOverrideFunc),
+                        new Func<ImmutableArray<IAbsoluteFilePath>, bool>(AddProjectReferenceInputIsValidOverride)
+                    },
+                    {
+                        nameof(InputFileDialog.InvalidSelectionTextOverride),
+                        "Choose a C# Project"
+                    },
+                    {
+                        nameof(InputFileDialog.ConfirmOnClickOverrideAction),
+                        new Action<ImmutableArray<IAbsoluteFilePath>>(AddProjectReferenceConfirmOnClickOverrideAction)
+                    }
+                }
+            );
+
+            var addProjectReference = MenuOptionFacts.CSharp
+                .AddProjectReference(() =>
+                {
+                    if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _addProjectReferenceDialogKey))
+                        Dispatcher.Dispatch(new RegisterDialogAction(addProjectReferenceDialog));
+                });
+
             menuOptionRecords.Add(setAsStartupProject);
+            menuOptionRecords.Add(addProjectReference);
         }
 
         return menuOptionRecords.Any()
@@ -577,6 +650,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 null,
                 null,
                 CancellationToken.None));
+    }
+
+    private bool AddProjectReferenceInputIsValidOverride(ImmutableArray<IAbsoluteFilePath> activeItems)
+    {
+        return activeItems[0].ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT;
     }
 
     protected override void Dispose(bool disposing)
