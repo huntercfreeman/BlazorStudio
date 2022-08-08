@@ -60,7 +60,14 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
                     var notification = new NotificationRecord(NotificationKey.NewNotificationKey(),
                         "Detected: 'Failed to bind to address'",
                         typeof(FailedToBindNotification),
-                        null);
+                        new()
+                        {
+                            {
+                                nameof(FailedToBindNotification.ProjectAbsoluteFilePath),
+                                localStartupProjectState.ProjectAbsoluteFilePath
+                            }
+
+                        });
 
                     Dispatcher.Dispatch(new RegisterNotificationAction(notification));
                 }
