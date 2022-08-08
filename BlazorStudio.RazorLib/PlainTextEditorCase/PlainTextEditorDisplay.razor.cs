@@ -45,8 +45,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private SequenceKey? _previousSequenceKeyShouldRender;
     private PlainTextEditorKey? _previousPlainTextEditorKey;
     private ElementReference? _activePositionMarker;
-    private double _heightOfEachRowInPixels = 30;
-    private double _widthOfEachCharacterInPixels = 9.91;
 
     private Dimensions _dimensionsOfCoordinateSystemViewport = new()
     {
@@ -97,9 +95,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         return styleCssBuilder.ToString();
     }
-
-    private string GetActivePositionMarkerLeft(int characterIndex) => $"left: {_widthOfEachCharacterInPixels * characterIndex}px;";
-    private string GetActivePositionMarkerTop(int rowIndex) => $"top: {_heightOfEachRowInPixels * rowIndex}px;";
 
     /// <summary>
     /// I need to position this PERFECTLY relative to a changeable font-size

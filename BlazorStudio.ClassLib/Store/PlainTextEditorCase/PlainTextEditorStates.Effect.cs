@@ -72,9 +72,8 @@ public partial record PlainTextEditorStates
                 var plainTextEditorUnknown = previousPlainTextEditorStates
                     .Map[plainTextEditorPixelReadRequestAction.PlainTextEditorKey];
 
-                // TODO: The font-size style attribute does not equal the size of the div that encapsulates the singular character. Figure out EXACTLY these values based off the font-size instead of hard coding what developer tools says
-                var heightOfEachRowInPixels = 27;
-                var widthOfEachCharacterInPixels = 9.91;
+                var heightOfEachRowInPixels = plainTextEditorUnknown.RichTextEditorOptions.HeightOfARowInPixels;
+                var widthOfEachCharacterInPixels = plainTextEditorUnknown.RichTextEditorOptions.WidthOfACharacterInPixels;
 
                 var startingRowIndex =
                     (int)(actionRequest.ScrollTopInPixels / heightOfEachRowInPixels);
@@ -714,8 +713,8 @@ public partial record PlainTextEditorStates
                 };
 
                 // TODO: The font-size style attribute does not equal the size of the div that encapsulates the singular character. Figure out EXACTLY these values based off the font-size instead of hard coding what developer tools says
-                var heightOfEachRowInPixels = 27;
-                var widthOfEachCharacterInPixels = 9.91;
+                var heightOfEachRowInPixels = replacementPlainTextEditor.RichTextEditorOptions.HeightOfARowInPixels;
+                var widthOfEachCharacterInPixels = replacementPlainTextEditor.RichTextEditorOptions.WidthOfACharacterInPixels;
 
                 var actualWidthOfResult = widthOfEachCharacterInPixels * 
                                           replacementPlainTextEditor.FileHandle.VirtualCharacterLengthOfLongestRow;
