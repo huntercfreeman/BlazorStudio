@@ -11,6 +11,8 @@ public partial class PlainTextEditorHeader : ComponentBase
 
     [Parameter]
     public IPlainTextEditor PlainTextEditor { get; set; } = null!;
+    [Parameter]
+    public PlainTextEditorDisplay.WidthAndHeightTestResult? WidthAndHeightTestResult { get; set; }
     
     private int _fontSize;
 

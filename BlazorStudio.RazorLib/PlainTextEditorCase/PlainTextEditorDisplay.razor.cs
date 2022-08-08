@@ -77,6 +77,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private string ActiveRowPositionMarkerId => $"pte_active-row-position-marker_{PlainTextEditorKey.Guid}";
     private string ActiveRowId => $"pte_active-row_{PlainTextEditorKey.Guid}";
     private bool _isInitialized;
+    private WidthAndHeightTestResult _widthAndHeightTestResult;
 
     private string IsFocusedCssClass => _isFocused
         ? "pte_focused"
@@ -175,10 +176,14 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         if (_previousFontSize != currentPlainTextEditor.RichTextEditorOptions.FontSizeInPixels)
         {
-            var widthAndHeightTestResult = 
-                JsRuntime.InvokeAsync<WidthAndHeightTestResult>("plainTextEditor.widthAndHeightTest",
+            _widthAndHeightTestResult = await JsRuntime.InvokeAsync<WidthAndHeightTestResult>(
+                "plainTextEditor.widthAndHeightTest",
                     _widthAndHeightTestId);
 
+
+            _previousSequenceKeyShouldRender = null;
+
+            await InvokeAsync(StateHasChanged);
             var z = 2;
         }
 

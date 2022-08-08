@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using static BlazorStudio.RazorLib.PlainTextEditorCase.PlainTextEditorDisplay;
 
 namespace BlazorStudio.RazorLib.PlainTextEditorCase;
 
@@ -13,6 +14,8 @@ public partial class DiffDialog : FluxorComponent
 
     [Parameter, EditorRequired]
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
+    [Parameter]
+    public WidthAndHeightTestResult? WidthAndHeightTestResult { get; set; }
 
     private string _plainText = string.Empty;
 

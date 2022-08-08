@@ -15,22 +15,51 @@ public partial class DiffDialogEntryPoint : ComponentBase
 
     [Parameter, EditorRequired]
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
+    [Parameter]
+    public PlainTextEditorDisplay.WidthAndHeightTestResult? WidthAndHeightTestResult { get; set; }
 
     private DialogRecord _diffDialog = null!;
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-        _diffDialog = new DialogRecord(
-            DialogKey.NewDialogKey(),
-            "Diff",
-            typeof(DiffDialog),
-            new Dictionary<string, object?>
+        if (_diffDialog is null)
+        {
+            _diffDialog = new DialogRecord(
+                DialogKey.NewDialogKey(),
+                "Diff",
+                typeof(DiffDialog),
+                new Dictionary<string, object?>
+                {
+                    {
+                        nameof(DiffDialog.PlainTextEditorKey),
+                        PlainTextEditorKey
+                    },
+                    {
+                        nameof(DiffDialog.WidthAndHeightTestResult),
+                        WidthAndHeightTestResult
+                    }
+                }
+            );
+        }
+        else
+        {
+            _diffDialog = _diffDialog with
             {
-                { nameof(DiffDialog.PlainTextEditorKey), PlainTextEditorKey }
-            }
-        );
+                Parameters = new Dictionary<string, object?>
+                {
+                    {
+                        nameof(DiffDialog.PlainTextEditorKey),
+                        PlainTextEditorKey
+                    },
+                    {
+                        nameof(DiffDialog.WidthAndHeightTestResult),
+                        WidthAndHeightTestResult
+                    }
+                }
+            };
+        }
 
-        base.OnInitialized();
+        base.OnParametersSet();
     }
 
     private void OpenDiffDialogOnClick()

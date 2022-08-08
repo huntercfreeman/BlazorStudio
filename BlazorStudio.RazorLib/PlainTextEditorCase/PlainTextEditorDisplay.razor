@@ -15,9 +15,15 @@ else
     // by making a local reference to it.
     var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
+    <button class="btn btn-primary"
+            @onclick="() => PlainTextEditorSelectorOnSelectedValueChanged(null, null)">
+            Force WidthAndHeightTest()
+    </button>
+
     <div class="pte_plain-text-editor-wrapping">
         
-        <PlainTextEditorHeader PlainTextEditor="currentPlainTextEditor" />
+        <PlainTextEditorHeader PlainTextEditor="currentPlainTextEditor"
+                           WidthAndHeightTestResult="_widthAndHeightTestResult" />
         
         <div id="@PlainTextEditorDisplayId"
              class="pte_plain-text-editor-display @IsFocusedCssClass"
@@ -45,7 +51,7 @@ else
                                                                                    PlainTextEditorRow="testRow"
                                                                                    MostDigitsInARowNumber="mostDigitsInARowNumber"
                                                                                    GetWidthAndHeightTest="true"
-                                                                                   WidthAndHeightTestId="_widthAndHeightTestId"  />
+                                                                                   WidthAndHeightTestId="@_widthAndHeightTestId"  />
                                                     </div>
                                             
                                                   

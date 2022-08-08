@@ -81,5 +81,13 @@ window.plainTextEditor = {
         let element = document.getElementById(plainTextEditorId);
 
         return element.scrollTop;
+    },
+    widthAndHeightTest: function (widthAndHeightTestId) {
+        let element = document.getElementById(widthAndHeightTestId);
+
+        return {
+            HeightOfARow: element.offsetHeight,
+            WidthOfACharacter: element.offsetWidth
+        };
     }
 };
