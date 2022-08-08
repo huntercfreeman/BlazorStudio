@@ -19,13 +19,13 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
     public int RowIndex { get; set; }
     [CascadingParameter]
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
+    [CascadingParameter(Name = "GetWidthAndHeightTest")]
+    public bool GetWidthAndHeightTest { get; set; }
 
     [Parameter, EditorRequired]
     public IPlainTextEditorRow PlainTextEditorRow { get; set; } = null!;
     [Parameter, EditorRequired]
     public int MostDigitsInARowNumber { get; set; }
-    [Parameter]
-    public bool GetWidthAndHeightTest { get; set; }
     [Parameter]
     public string WidthAndHeightTestId { get; set; }
 

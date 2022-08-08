@@ -109,7 +109,6 @@
 
 .pte_plain-text-editor-line-number-display {
     display: inline-flex;
-    margin-right: 1ch;
 }
 
 .pte_focused .pte_plain-text-editor-row-display.pte_active .pte_plain-text-editor-line-number-display {

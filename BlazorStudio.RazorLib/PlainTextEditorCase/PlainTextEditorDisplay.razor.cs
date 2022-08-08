@@ -87,18 +87,44 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         styleCssBuilder.Append($"position: absolute; ");
 
-        styleCssBuilder.Append($"width: {_widthAndHeightTestResult.WidthOfACharacter}px; ");
+        int additionalPixelWidthToLookVisuallyNice = 2;
+
+        styleCssBuilder.Append($"width: {_widthAndHeightTestResult.WidthOfACharacter + additionalPixelWidthToLookVisuallyNice}px; ");
         styleCssBuilder.Append($"height: {_widthAndHeightTestResult.HeightOfARow}px; ");
-        styleCssBuilder.Append($"left: calc(3ch + {_widthAndHeightTestResult.WidthOfACharacter * currentPlainTextEditor.CurrentCharacterColumnIndex}px); ");
+
+        var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
+        var marginRightMultiplierOfRowNumbers = 1;
+
+        if (_isInitialized)
+        {
+            var leftFromMostDigitsInRowNumber = mostDigitsInARowNumber * _widthAndHeightTestResult.WidthOfACharacter;
+            var leftFromMarginRightOfRowNumber = marginRightMultiplierOfRowNumbers * _widthAndHeightTestResult.WidthOfACharacter;
+            var leftFromCurrentCharacterColumnIndex = currentPlainTextEditor.CurrentCharacterColumnIndex * _widthAndHeightTestResult.WidthOfACharacter;
+
+            var totalLeftInPixelUnit = leftFromMostDigitsInRowNumber
+                            + leftFromMarginRightOfRowNumber
+                            + leftFromCurrentCharacterColumnIndex;
+
+            styleCssBuilder.Append($"left: {totalLeftInPixelUnit}px; ");
+        }
+        else
+        {
+
+            var leftFromMostDigitsInRowNumber = mostDigitsInARowNumber;
+            var leftFromMarginRightOfRowNumber = marginRightMultiplierOfRowNumbers;
+            var leftFromCurrentCharacterColumnIndex = currentPlainTextEditor.CurrentCharacterColumnIndex;
+
+            var totalLeftInCharacterWidthUnit = leftFromMostDigitsInRowNumber
+                            + leftFromMarginRightOfRowNumber
+                            + leftFromCurrentCharacterColumnIndex;
+
+            styleCssBuilder.Append($"left: {totalLeftInCharacterWidthUnit}ch; ");
+        }
+
         styleCssBuilder.Append($"top: {_widthAndHeightTestResult.HeightOfARow * (currentPlainTextEditor.CurrentRowIndex)}px; ");
 
         return styleCssBuilder.ToString();
     }
-
-    /// <summary>
-    /// I need to position this PERFECTLY relative to a changeable font-size
-    /// </summary>
-    private string InputFocusTrapTopStyleCss => $"top: calc({PlainTextEditorSelector.Value!.CurrentRowIndex * 30}px);";
 
     protected override void OnInitialized()
     {
