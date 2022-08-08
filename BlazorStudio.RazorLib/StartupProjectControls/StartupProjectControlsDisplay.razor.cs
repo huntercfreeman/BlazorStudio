@@ -66,7 +66,21 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
                                 nameof(FailedToBindNotification.ProjectAbsoluteFilePath),
                                 localStartupProjectState.ProjectAbsoluteFilePath
                             }
+                        });
 
+                    Dispatcher.Dispatch(new RegisterNotificationAction(notification));
+                }
+                else if (output.Contains("\"ProcessFrameworkReferences\" task failed"))
+                {
+                    var notification = new NotificationRecord(NotificationKey.NewNotificationKey(),
+                        "Detected: 'ProcessFrameworkReferences task failed'",
+                        typeof(ProcessFrameworkReferencesTaskFailedNotification),
+                        new()
+                        {
+                            {
+                                nameof(ProcessFrameworkReferencesTaskFailedNotification.ProjectAbsoluteFilePath),
+                                localStartupProjectState.ProjectAbsoluteFilePath
+                            }
                         });
 
                     Dispatcher.Dispatch(new RegisterNotificationAction(notification));

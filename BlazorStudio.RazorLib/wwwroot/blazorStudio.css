@@ -622,6 +622,7 @@ em {
     color: var(--bstudio_secondary-font-color);
     box-shadow: var(--bstudio_primary-overlay-box-shadow);
     padding: 10px;
+    margin-top: 15px;
 }
 
 .bstudio_notifications-initializer {
