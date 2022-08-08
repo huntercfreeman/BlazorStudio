@@ -1,0 +1,15 @@
+﻿<div>
+    <div>
+        @ProjectAbsoluteFilePath.FilenameWithExtension: ProcessFrameworkReferences Task failed
+    </div>
+    <div>
+        TODO: prompt user to generate global.json for project
+        <pre>
+{
+  "sdk": {
+    "version": "@(SolutionStateWrap.Value?.MsBuildAbsoluteFilePath?.FileNameNoExtension ?? "MsBuildAbsoluteFilePath was null")"
+  }
+}
+</pre>
+    </div>
+</div>
