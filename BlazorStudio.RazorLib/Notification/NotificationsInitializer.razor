@@ -1,10 +1,12 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@{
-    var notificationStates = NotificationStatesWrap.Value;
+<div class="bstudio_notifications-initializer">
+    @{
+        var notificationStates = NotificationStatesWrap.Value;
 
-    foreach (var notification in notificationStates.List)
-    {
-        <NotificationDisplay NotificationRecord="notification" />
+        foreach (var notification in notificationStates.List)
+        {
+            <NotificationDisplay NotificationRecord="notification" />
+        }
     }
-}
+</div>

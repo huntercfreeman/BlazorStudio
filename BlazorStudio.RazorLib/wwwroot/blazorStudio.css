@@ -622,3 +622,10 @@ em {
     color: var(--bstudio_secondary-font-color);
     box-shadow: var(--bstudio_primary-overlay-box-shadow);
 }
+
+.bstudio_notifications-initializer {
+    z-index: 15;
+    position: fixed;
+    bottom: 0;
+    right: 10px;
+}
