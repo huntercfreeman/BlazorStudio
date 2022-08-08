@@ -54,6 +54,36 @@ public partial record PlainTextEditorStates
 
             return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
         }
+        
+        [ReducerMethod]
+        public static PlainTextEditorStates ReducePlainTextEditorSetOptionsAction(PlainTextEditorStates previousPlainTextEditorStates,
+            PlainTextEditorSetOptionsAction plainTextEditorSetOptionsAction)
+        {
+            var nextPlainTextEditorMap =
+                new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
+            var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
+
+            var plainTextEditor = previousPlainTextEditorStates
+                    .Map[plainTextEditorSetOptionsAction.PlainTextEditorKey]
+                as PlainTextEditorRecordBase;
+
+            if (plainTextEditor is null)
+                return previousPlainTextEditorStates;
+
+            var nextPlainTextEditor = plainTextEditor with
+            {
+                RichTextEditorOptions = plainTextEditorSetOptionsAction.RichTextEditorOptions,
+                SequenceKey = SequenceKey.NewSequenceKey()
+            };
+
+            nextPlainTextEditorMap[plainTextEditorSetOptionsAction.PlainTextEditorKey] =
+                nextPlainTextEditor;
+
+            var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
+            var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
+
+            return new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
+        }
     }
 }
 

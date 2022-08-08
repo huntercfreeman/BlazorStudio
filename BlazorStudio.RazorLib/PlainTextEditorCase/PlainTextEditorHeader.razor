@@ -3,7 +3,8 @@
         var localPlainTextEditor = PlainTextEditor;
 
                 <div>
-            Row Height:&nbsp;@(WidthAndHeightTestResult?.HeightOfARow.ToString() ?? "null") CharacterWidth:&nbsp;@(WidthAndHeightTestResult?.WidthOfACharacter.ToString() ?? "null")
+                    CharacterWidth:&nbsp;@(localPlainTextEditor.RichTextEditorOptions.WidthOfACharacterInPixels)
+                    Row Height:&nbsp;@(localPlainTextEditor.RichTextEditorOptions.HeightOfARowInPixels)
 
                     <input type="number" @bind="FontSize" @bind:event="oninput" />
                 </div>

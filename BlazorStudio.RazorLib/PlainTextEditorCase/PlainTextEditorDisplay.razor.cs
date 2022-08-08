@@ -90,10 +90,10 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         styleCssBuilder.Append($"position: absolute; ");
 
-        styleCssBuilder.Append($"width: {_widthOfEachCharacterInPixels}px; ");
-        styleCssBuilder.Append($"height: {_heightOfEachRowInPixels}px; ");
-        styleCssBuilder.Append($"left: calc(3ch + {_widthOfEachCharacterInPixels * currentPlainTextEditor.CurrentCharacterColumnIndex}px); ");
-        styleCssBuilder.Append($"top: {_heightOfEachRowInPixels * (currentPlainTextEditor.CurrentRowIndex)}px; ");
+        styleCssBuilder.Append($"width: {_widthAndHeightTestResult.WidthOfACharacter}px; ");
+        styleCssBuilder.Append($"height: {_widthAndHeightTestResult.HeightOfARow}px; ");
+        styleCssBuilder.Append($"left: calc(3ch + {_widthAndHeightTestResult.WidthOfACharacter * currentPlainTextEditor.CurrentCharacterColumnIndex}px); ");
+        styleCssBuilder.Append($"top: {_widthAndHeightTestResult.HeightOfARow * (currentPlainTextEditor.CurrentRowIndex)}px; ");
 
         return styleCssBuilder.ToString();
     }
@@ -181,10 +181,16 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             _previousSequenceKeyShouldRender = null;
 
             _isInitialized = true;
-            await InvokeAsync(StateHasChanged);
-        }
 
-        _previousFontSize = currentPlainTextEditor.RichTextEditorOptions.FontSizeInPixels;
+            _previousFontSize = currentPlainTextEditor.RichTextEditorOptions.FontSizeInPixels;
+
+            Dispatcher.Dispatch(new PlainTextEditorSetOptionsAction(currentPlainTextEditor.PlainTextEditorKey,
+                currentPlainTextEditor.RichTextEditorOptions with
+                {
+                    WidthOfACharacterInPixels = _widthAndHeightTestResult.WidthOfACharacter,
+                    HeightOfARowInPixels = _widthAndHeightTestResult.HeightOfARow
+                }));
+        }
     }
 
     private async Task OnAfterFirstRenderCallbackFunc()
