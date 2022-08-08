@@ -40,7 +40,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualizeCoordinateSystem;
     private int _previousFontSize;
     private string _widthAndHeightTestId = "bstudio_pte-get-width-and-height-test";
-    private string _widthAndHeightTestCharacterId = "bstudio_pte-get-width-and-height-test-character";
 
     private SequenceKey? _previousSequenceKeyShouldRender;
     private PlainTextEditorKey? _previousPlainTextEditorKey;
