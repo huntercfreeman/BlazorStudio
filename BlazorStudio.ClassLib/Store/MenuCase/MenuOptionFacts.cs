@@ -9,18 +9,21 @@ public static class MenuOptionFacts
         public static MenuOptionRecord ConstructOpenFolder(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
             "Open Folder",
             ImmutableList<MenuOptionRecord>.Empty,
-            onClickAction);
+            onClickAction,
+            MenuOptionKind.Read);
 
         public static MenuOptionRecord ConstructOpenFile(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
             "Open File",
             ImmutableList<MenuOptionRecord>.Empty,
-            onClickAction);
+            onClickAction,
+            MenuOptionKind.Read);
         
         public static MenuOptionRecord ConstructCreateNewEmptyFile(Type widgetType, Dictionary<string, object?>? widgetParameters) => 
             new(MenuOptionKey.NewMenuOptionKey(),
                 "New Empty File",
                 ImmutableList<MenuOptionRecord>.Empty,
                 null,
+                MenuOptionKind.Create,
                 WidgetType: widgetType,
                 WidgetParameters: widgetParameters);
         
@@ -29,6 +32,7 @@ public static class MenuOptionFacts
                 "New Templated File",
                 ImmutableList<MenuOptionRecord>.Empty,
                 null,
+                MenuOptionKind.Create,
                 WidgetType: widgetType,
                 WidgetParameters: widgetParameters);
         
@@ -37,8 +41,15 @@ public static class MenuOptionFacts
                 "New Directory",
                 ImmutableList<MenuOptionRecord>.Empty,
                 null,
+                MenuOptionKind.Create,
                 WidgetType: widgetType,
                 WidgetParameters: widgetParameters);
+
+        public static MenuOptionRecord ConstructDeleteFile(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
+            "Delete File",
+            ImmutableList<MenuOptionRecord>.Empty,
+            onClickAction,
+            MenuOptionKind.Delete);
     }
     
     public static class CSharp
@@ -46,22 +57,26 @@ public static class MenuOptionFacts
         public static MenuOptionRecord ConstructCreateNewCSharpProject(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
             "C# Project",
             ImmutableList<MenuOptionRecord>.Empty,
-            onClickAction);
+            onClickAction,
+            MenuOptionKind.Create);
         
         public static MenuOptionRecord RenderSyntaxRoot(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
             "Render SyntaxRoot",
             ImmutableList<MenuOptionRecord>.Empty,
-            onClickAction);
+            onClickAction,
+            MenuOptionKind.Read);
 
         public static MenuOptionRecord SetAsStartupProject(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
             "Set as Startup Project",
             ImmutableList<MenuOptionRecord>.Empty,
-            onClickAction);
+            onClickAction,
+            MenuOptionKind.Update);
         
         public static MenuOptionRecord AddProjectReference(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
             "Add Project Reference",
             ImmutableList<MenuOptionRecord>.Empty,
-            onClickAction);
+            onClickAction,
+            MenuOptionKind.Update);
     }
     
     public static class DotNet
@@ -69,12 +84,14 @@ public static class MenuOptionFacts
         public static MenuOptionRecord SetActiveSolution(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
             "Set Active Solution",
             ImmutableList<MenuOptionRecord>.Empty,
-            onClickAction);
+            onClickAction,
+            MenuOptionKind.Update);
 
         public static MenuOptionRecord ConstructCreateNewDotNetSolution(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
             "Solution",
             ImmutableList<MenuOptionRecord>.Empty,
-            onClickAction);
+            onClickAction,
+            MenuOptionKind.Create);
     }
 
     public static MenuOptionRecord NewMenu(Action onNewCSharpProject, Action onNewDotNetSolution) => new(MenuOptionKey.NewMenuOptionKey(),
@@ -84,5 +101,6 @@ public static class MenuOptionFacts
             CSharp.ConstructCreateNewCSharpProject(onNewCSharpProject),
             DotNet.ConstructCreateNewDotNetSolution(onNewDotNetSolution)
         }.ToImmutableList(),
-        null);
+        null,
+        MenuOptionKind.Create);
 }

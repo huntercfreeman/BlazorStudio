@@ -222,7 +222,8 @@ public partial class InputFileDialog : ComponentBase
                 new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
                     "No Context Menu Options for this item",
                     ImmutableList<MenuOptionRecord>.Empty, 
-                    null)
+                    null,
+                    MenuOptionKind.Read)
             };
     }
     

@@ -1,6 +1,31 @@
 ﻿<div class="bstudio_menu-display">
-    @foreach (var menuOption in _cachedMenuOptionRecords)
+    @if (!ShouldCategorizeByMenuOptionKind)
     {
-        <MenuOptionDisplay MenuOptionRecord="menuOption" />
+        foreach (var menuOption in _cachedMenuOptionRecords)
+        {
+            <MenuOptionDisplay MenuOptionRecord="menuOption"/>
+        }
+    }
+    else
+    {
+        var categories = _cachedMenuOptionRecords
+            .GroupBy(x => x.MenuOptionKind)
+            .ToList();
+
+        for (var i = 0; i < categories.Count; i++)
+        {
+            var index = i;
+            var category = categories[index];
+
+            foreach (var menuOption in category)
+            {
+                <MenuOptionDisplay MenuOptionRecord="menuOption" />
+            }
+
+            if (index != categories.Count - 1)
+            {
+                <hr />
+            }
+        }
     }
 </div>
