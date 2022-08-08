@@ -11,15 +11,15 @@
         <hr />
 
         <div>
-            var command = $"netstat -ano | findStr \"{port}\"";
+            var getProcessId = $"netstat -ano | findStr \"{port}\"";
         </div>
 
         <div>
-            var command = $"tasklist /fi \"pid eq {processId}\"";
+            var getProcessName = $"tasklist /fi \"pid eq {processId}\"";
         </div>
 
         <div>
-            var command = $"taskkill /PID {processId} /F";
+            var killProcessWithId = $"taskkill /PID {processId} /F";
         </div>
     </div>
 </div>
