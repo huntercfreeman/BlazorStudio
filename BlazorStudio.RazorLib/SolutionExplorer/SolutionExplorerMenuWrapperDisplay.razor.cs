@@ -21,7 +21,7 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 
-namespace BlazorStudio.RazorLib.SolutionExplorerMenuWrapper;
+namespace BlazorStudio.RazorLib.SolutionExplorer;
 
 public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 {
