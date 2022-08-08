@@ -176,7 +176,10 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             // Parameter changed and the VirtualizeCoordinateSystem must reset
             if (_virtualizeCoordinateSystem is not null)
             {
-                _virtualizeCoordinateSystem.ResetState();
+                _previousFontSize = 0;
+                _isInitialized = false;
+                PlainTextEditorSelectorOnSelectedValueChanged(null, null);
+                //_virtualizeCoordinateSystem.ResetState();
             }
         }
 
