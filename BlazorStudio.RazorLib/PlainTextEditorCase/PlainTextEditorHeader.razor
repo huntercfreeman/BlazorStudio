@@ -2,19 +2,19 @@
     @{
         var localPlainTextEditor = PlainTextEditor;
 
-        <div>
-            Font Size: @(localPlainTextEditor.RichTextEditorOptions.FontSizeInPixels)px
+                <div>
+            Row Height:&nbsp;@(WidthAndHeightTestResult?.HeightOfARow.ToString() ?? "null") CharacterWidth:&nbsp;@(WidthAndHeightTestResult?.WidthOfACharacter.ToString() ?? "null")
 
-            <input type="number" @bind="FontSize" @bind:event="oninput" />
-        </div>
-        <div>
-            Use the <em>F1</em> key to scroll the caret row into view if it is offscreen.
-        </div>
+                    <input type="number" @bind="FontSize" @bind:event="oninput" />
+                </div>
+                <div>
+                    Use the <em>F1</em> key to scroll the caret row into view if it is offscreen.
+                </div>
     
-        <div>
-            <DiffDialogEntryPoint PlainTextEditorKey="localPlainTextEditor.PlainTextEditorKey"
+                <div>
+                    <DiffDialogEntryPoint PlainTextEditorKey="localPlainTextEditor.PlainTextEditorKey"
                               WidthAndHeightTestResult="WidthAndHeightTestResult" />
-        </div>
+                </div>
     }
 
     @*<div>

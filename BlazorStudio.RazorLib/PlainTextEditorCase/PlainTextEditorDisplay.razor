@@ -15,11 +15,6 @@ else
     // by making a local reference to it.
     var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
-    <button class="btn btn-primary"
-            @onclick="() => PlainTextEditorSelectorOnSelectedValueChanged(null, null)">
-            Force WidthAndHeightTest()
-    </button>
-
     <div class="pte_plain-text-editor-wrapping">
         
         <PlainTextEditorHeader PlainTextEditor="currentPlainTextEditor"
@@ -35,67 +30,67 @@ else
             @{
                 var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
 
-                        <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
-                            <CascadingValue Value="_isFocused">
-                                <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
-                                    <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
-                                        <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
-                                            
-                                            @if (!_isInitialized)
+                                    <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
+                                        <CascadingValue Value="_isFocused">
+                                            <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
+                                                <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
+                                                    <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
+                                                        
+                                                        @if (_isInitialized)
                                             {
-                                        var testRow = currentPlainTextEditor.GetWidthAndHeightTestPlainTextEditorRow();
-                                                <CascadingValue Name="RowIndex" Value="0">
-
-                                                    <div style="visibility: hidden;">
-                                                        <PlainTextEditorRowDisplay @key="testRow.Key"
-                                                                                   PlainTextEditorRow="testRow"
-                                                                                   MostDigitsInARowNumber="mostDigitsInARowNumber"
-                                                                                   GetWidthAndHeightTest="true"
-                                                                                   WidthAndHeightTestId="@_widthAndHeightTestId"  />
-                                                    </div>
-                                            
-                                                  
-                                                </CascadingValue>
-                                            }
-                                            else
-                                            {
-                                                <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
+                                                            <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
                                                                                                                        T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
                                                                                                                        VirtualizeCoordinateSystemMessage="currentPlainTextEditor.VirtualizeCoordinateSystemMessage"
                                                                                                                        DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
                                                                                                                        RequestCallbackAction="OnRequestCallbackAction"
                                                                                                                        PaddingInPixels="100"
                                                                                                                        OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
-                                                    <ItemRenderFragment Context="rowTuple">
-                                                        <CascadingValue Name="RowIndex" Value="rowTuple.Index">
-                                                            <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
+                                                                <ItemRenderFragment Context="rowTuple">
+                                                                    <CascadingValue Name="RowIndex" Value="rowTuple.Index">
+                                                                        <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
                                                                                        PlainTextEditorRow="rowTuple.PlainTextEditorRow"
                                                                                        MostDigitsInARowNumber="mostDigitsInARowNumber"/>
-                                                        </CascadingValue>
-                                                    </ItemRenderFragment>
+                                                                    </CascadingValue>
+                                                                </ItemRenderFragment>
 
-                                                    <MarkerRenderFragment>
-                                                        <input type="text"
+                                                                <MarkerRenderFragment>
+                                                                    <input type="text"
                                                                readonly="readonly"
                                                                style="@GetActivePositionMarkerDimensions(currentPlainTextEditor)"
-                                                               @ref="_activePositionMarker"
-                                                               @onkeydown="OnKeyDown"
-                                                               @onfocusin="OnFocusIn"
-                                                               @onfocusout="OnFocusOut"/>
-                                                        @*
+                                                                           @ref="_activePositionMarker"
+                                                                           @onkeydown="OnKeyDown"
+                                                                           @onfocusin="OnFocusIn"
+                                                                           @onfocusout="OnFocusOut"/>
+                                                                    @*
                                                     <span id="@ActiveRowPositionMarkerId"
                                                     class="pte_visually-hidden pte_unselectable pte_active-row-position-marker"
                                                     style="position: absolute; @InputFocusTrapTopStyleCss">
                                                     </span>
                                                 *@
-                                                    </MarkerRenderFragment>
-                                                </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
+                                                                </MarkerRenderFragment>
+                                                            </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
                                             }
+                                                        
+                                                        @{
+                                        var testRow = currentPlainTextEditor.GetWidthAndHeightTestPlainTextEditorRow();
+                                                                <CascadingValue Name="RowIndex" Value="0">
+
+                                            <div style="position: absolute; left: 0; top: 0; visibility: hidden;">
+                                                                        <PlainTextEditorRowDisplay @key="testRow.Key"
+                                                               PlainTextEditorRow="testRow"
+                                                               MostDigitsInARowNumber="mostDigitsInARowNumber"
+                                                               GetWidthAndHeightTest="true"
+                                                               WidthAndHeightTestId="@_widthAndHeightTestId" />
+                                                                    </div>
+
+
+                                                                </CascadingValue>
+                                                        }
+                                                    </CascadingValue>
+                                                </CascadingValue>
+                                            </CascadingValue>
                                         </CascadingValue>
                                     </CascadingValue>
-                                </CascadingValue>
-                            </CascadingValue>
-                        </CascadingValue>
             }
 
             <PlainTextEditorFooter PlainTextEditor="currentPlainTextEditor"/>

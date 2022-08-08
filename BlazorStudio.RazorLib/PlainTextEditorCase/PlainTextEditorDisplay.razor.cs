@@ -40,6 +40,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualizeCoordinateSystem;
     private int _previousFontSize;
     private string _widthAndHeightTestId = "bstudio_pte-get-width-and-height-test";
+    private string _widthAndHeightTestCharacterId = "bstudio_pte-get-width-and-height-test-character";
 
     private SequenceKey? _previousSequenceKeyShouldRender;
     private PlainTextEditorKey? _previousPlainTextEditorKey;
@@ -120,12 +121,9 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (_hadOnKeyDownEventCounter > 0)
+        if (firstRender)
         {
-            _hadOnKeyDownEventCounter = 0;
-
-            //await JsRuntime.InvokeVoidAsync("plainTextEditor.scrollIntoViewIfOutOfViewport",
-            //    ActiveRowPositionMarkerId);
+            PlainTextEditorSelectorOnSelectedValueChanged(null, null);
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -180,11 +178,10 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
                 "plainTextEditor.widthAndHeightTest",
                     _widthAndHeightTestId);
 
-
             _previousSequenceKeyShouldRender = null;
 
+            _isInitialized = true;
             await InvokeAsync(StateHasChanged);
-            var z = 2;
         }
 
         _previousFontSize = currentPlainTextEditor.RichTextEditorOptions.FontSizeInPixels;
