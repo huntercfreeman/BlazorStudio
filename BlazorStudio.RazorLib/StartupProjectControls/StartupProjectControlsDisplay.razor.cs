@@ -9,6 +9,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics;
+using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
 namespace BlazorStudio.RazorLib.StartupProjectControls;
@@ -25,10 +26,13 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
     private CancellationTokenSource _cancellationTokenSource = new();
     private bool _isEnqueuedToRun;
     private bool _isRunning;
+    private StringBuilder _outputBuilder;
     private EnqueueProcessOnTerminalEntryAction _enqueueProcessOnTerminalEntryAction;
 
     private void DispatchEnqueueProcessOnTerminalEntryAction()
     {
+        _outputBuilder = new();
+
         var localStartupProjectState = StartupProjectStateWrap.Value;
 
         if (localStartupProjectState.ProjectAbsoluteFilePath is null)
@@ -47,6 +51,15 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
 
             void OnEnd(Process finishedProcess)
             {
+                //Failed to bind to address
+
+                var output = _outputBuilder.ToString();
+
+                if (output.Contains("System.IO.IOException: Failed to bind to address"))
+                {
+                    var z = 2;
+                }
+
                 _isRunning = false;
 
                 InvokeAsync(StateHasChanged);
@@ -61,7 +74,7 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
                 OnStart,
                 OnEnd,
                 null,
-                (_, _) => { },
+                OutputDataReceived,
                 null,
                 CancelTokenSourceAndGetNewToken());
 
@@ -71,6 +84,11 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
         {
             _isEnqueuedToRun = false;
         }
+    }
+
+    private void OutputDataReceived(object sender, DataReceivedEventArgs e)
+    {
+        _outputBuilder.Append(e.Data ?? string.Empty);
     }
 
     public CancellationToken CancelTokenSourceAndGetNewToken()
