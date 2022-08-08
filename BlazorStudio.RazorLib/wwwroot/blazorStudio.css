@@ -621,11 +621,12 @@ em {
     background-color: var(--bstudio_secondary-background-color);
     color: var(--bstudio_secondary-font-color);
     box-shadow: var(--bstudio_primary-overlay-box-shadow);
+    padding: 10px;
 }
 
 .bstudio_notifications-initializer {
     z-index: 15;
     position: fixed;
-    bottom: 0;
+    bottom: 15px;
     right: 10px;
 }

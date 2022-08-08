@@ -28,6 +28,7 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="DebuggingHelp\DebugExpansion.razor" />
     <_ContentIncludedByDefault Remove="Editor\EditorDisplay.razor" />
+    <_ContentIncludedByDefault Remove="ExceptionNotifications\FailedToBindNotification.razor" />
     <_ContentIncludedByDefault Remove="Expansion\ExpansionDisplay.razor" />
     <_ContentIncludedByDefault Remove="Forms\CreateNewFileForm.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuDisplay.razor" />
@@ -135,6 +136,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Notification\NotificationsInitializer.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="ExceptionNotifications\FailedToBindNotification.razor" />
   </ItemGroup>
 
 </Project>
