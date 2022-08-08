@@ -608,3 +608,10 @@ em {
 .bstudio_terminal-settings-display {
     padding-left: 16px;
 }
+
+.bstudio_menu-option-separator {
+    background-color: var(--bstudio_primary-emphasis-font-color);
+    height: 1px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
