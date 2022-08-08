@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Components;
 using System.Diagnostics;
 using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.NotificationCase;
+using BlazorStudio.RazorLib.ExceptionNotifications;
 
 namespace BlazorStudio.RazorLib.StartupProjectControls;
 
@@ -51,13 +53,23 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
 
             void OnEnd(Process finishedProcess)
             {
-                //Failed to bind to address
-
                 var output = _outputBuilder.ToString();
 
                 if (output.Contains("System.IO.IOException: Failed to bind to address"))
                 {
-                    var z = 2;
+                    var notification = new NotificationRecord(NotificationKey.NewNotificationKey(),
+                        "Detected: 'Failed to bind to address'",
+                        typeof(FailedToBindNotification),
+                        new()
+                        {
+                            {
+                                nameof(FailedToBindNotification.ProjectAbsoluteFilePath),
+                                localStartupProjectState.ProjectAbsoluteFilePath
+                            }
+
+                        });
+
+                    Dispatcher.Dispatch(new RegisterNotificationAction(notification));
                 }
 
                 _isRunning = false;

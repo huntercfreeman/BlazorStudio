@@ -28,13 +28,13 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="DebuggingHelp\DebugExpansion.razor" />
     <_ContentIncludedByDefault Remove="Editor\EditorDisplay.razor" />
+    <_ContentIncludedByDefault Remove="ExceptionNotifications\FailedToBindNotification.razor" />
     <_ContentIncludedByDefault Remove="Expansion\ExpansionDisplay.razor" />
     <_ContentIncludedByDefault Remove="Forms\CreateNewFileForm.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuOptionDisplay.razor" />
     <_ContentIncludedByDefault Remove="Notification\NotificationDisplay.razor" />
     <_ContentIncludedByDefault Remove="Notification\NotificationsInitializer.razor" />
-    <_ContentIncludedByDefault Remove="Notification\TestNotificationDisplay.razor" />
     <_ContentIncludedByDefault Remove="OutOfBoundsClick\OutOfBoundsClickDisplay.razor" />
     <_ContentIncludedByDefault Remove="Settings\SettingsDialog.razor" />
     <_ContentIncludedByDefault Remove="Shared\BodyDisplay.razor" />
@@ -139,7 +139,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Notification\TestNotificationDisplay.razor" />
+    <UpToDateCheckInput Remove="ExceptionNotifications\FailedToBindNotification.razor" />
   </ItemGroup>
 
 </Project>
