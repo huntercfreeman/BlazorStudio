@@ -32,6 +32,9 @@
     <_ContentIncludedByDefault Remove="Forms\CreateNewFileForm.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuOptionDisplay.razor" />
+    <_ContentIncludedByDefault Remove="Notification\NotificationDisplay.razor" />
+    <_ContentIncludedByDefault Remove="Notification\NotificationsInitializer.razor" />
+    <_ContentIncludedByDefault Remove="Notification\TestNotificationDisplay.razor" />
     <_ContentIncludedByDefault Remove="OutOfBoundsClick\OutOfBoundsClickDisplay.razor" />
     <_ContentIncludedByDefault Remove="Settings\SettingsDialog.razor" />
     <_ContentIncludedByDefault Remove="Shared\BodyDisplay.razor" />
@@ -53,7 +56,6 @@
     <Folder Include="Drag\" />
     <Folder Include="Dropdown\" />
     <Folder Include="NewDotNetSolution\" />
-    <Folder Include="SolutionExplorerMenuWrapper\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -126,6 +128,18 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Terminal\TerminalSettingsDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Notification\NotificationDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Notification\NotificationsInitializer.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Notification\TestNotificationDisplay.razor" />
   </ItemGroup>
 
 </Project>

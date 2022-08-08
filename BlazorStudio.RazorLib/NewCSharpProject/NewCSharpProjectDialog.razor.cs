@@ -34,6 +34,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
     private string InterpolatedCommand => $"dotnet new" +
                                           $" {_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "{select a template}"}" +
                                           $" {(string.IsNullOrWhiteSpace(_projectName) ? string.Empty : $"-o {_projectName}")}" +
+                                          $"  --framework net6.0" +
                                           $" {_templateArguments}";
 
     private string _projectName = string.Empty;

@@ -24,6 +24,8 @@ using Microsoft.CodeAnalysis.MSBuild;
 using BlazorStudio.RazorLib.NewCSharpProject;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.Loader;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.RazorLib.SyntaxRootRender;
 
@@ -172,35 +174,44 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
                 if (!MSBuildLocator.IsRegistered)
                 {
-                    var previewPath = "C:\\Program Files\\dotnet\\sdk\\7.0.100-preview.6.22352.1\\";
-
-                    if (Directory.Exists(previewPath))
-                    {
-                        MSBuildLocator.RegisterMSBuildPath(previewPath);
-                    }
-                    else
-                    {
-                        MSBuildLocator.RegisterInstance(_visualStudioInstance);
-                    }
+                    MSBuildLocator.RegisterInstance(_visualStudioInstance);
 
                     //var instance = Microsoft.Build.Locator.MSBuildLocator.RegisterDefaults();
-                    //AssemblyLoadContext.Default.Resolving += (assemblyLoadContext, assemblyName) =>
-                    //{
-                    //    var path = Path.Combine(instance.MSBuildPath, assemblyName.Name + ".dll");
-                    //    if (File.Exists(path))
-                    //    {
-                    //        return assemblyLoadContext.LoadFromAssemblyPath(path);
-                    //    }
 
-                    //    return null;
-                    //};
+                    //foreach (var assemblyLoadContext in AssemblyLoadContext.All)
+                    //{
+                    //    assemblyLoadContext.Resolving += (innerAssemblyLoadContext, assemblyName) =>
+                    //    {
+                    //        var path = Path.Combine(instance.MSBuildPath, assemblyName.Name + ".dll");
+                    //        if (File.Exists(path))
+                    //        {
+                    //            return innerAssemblyLoadContext.LoadFromAssemblyPath(path);
+                    //        }
+
+                    //        return null;
+                    //    };
+                    //}
+
+                    //AssemblyLoadContext.Default.Resolving += DefaultOnResolving;
+                    //var previewPath = "C:\\Program Files\\dotnet\\sdk\\7.0.100-preview.6.22352.1\\";
+
+                    //if (Directory.Exists(previewPath))
+                    //{
+                    //    MSBuildLocator.RegisterMSBuildPath(previewPath);
+                    //}
+                    //else
+                    //{
+                    //    MSBuildLocator.RegisterInstance(_visualStudioInstance);
+                    //}
+
+                    //var instance = Microsoft.Build.Locator.MSBuildLocator.RegisterDefaults();
                 }
 
                 if (_workspace is null)
                 {
                     _workspace = MSBuildWorkspace.Create();
 
-                    Dispatcher.Dispatch(new SetSolutionAction(_workspace));
+                    Dispatcher.Dispatch(new SetSolutionAction(_workspace, _visualStudioInstance));
                 }
 
                 // Print message for WorkspaceFailed event to help diagnosing project load failures.
@@ -320,6 +331,25 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 #endif
     }
 
+    /// <summary>
+    /// This is not working
+    ///     "8: The "ProcessFrameworkReferences" task failed unexpectedly. ["
+    ///     "4018: System.IO.FileLoadException: Could not load file or assembly 'NuGet.Frameworks, Version=6.3.0.114, Culture=n"
+    /// </summary>
+    /// <param name="assemblyLoadContext"></param>
+    /// <param name="assemblyName"></param>
+    /// <returns></returns>
+    private Assembly? DefaultOnResolving(AssemblyLoadContext assemblyLoadContext, AssemblyName assemblyName)
+    {
+        var path = Path.Combine(_visualStudioInstance.MSBuildPath, assemblyName.Name + ".dll");
+        if (File.Exists(path))
+        {
+            return assemblyLoadContext.LoadFromAssemblyPath(path);
+        }
+
+        return null;
+    }
+
     private void WorkspaceExplorerTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)
     {
         if (!absoluteFilePath.IsDirectory)
@@ -424,6 +454,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     protected override void Dispose(bool disposing)
     {
         SolutionExplorerStateWrap.StateChanged -= SolutionExplorerStateWrap_StateChanged;
+        //AssemblyLoadContext.Default.Resolving -= DefaultOnResolving;
 
         base.Dispose(disposing);
     }

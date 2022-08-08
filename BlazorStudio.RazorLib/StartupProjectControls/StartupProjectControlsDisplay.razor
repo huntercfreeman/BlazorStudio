@@ -6,40 +6,51 @@
 
         if (localStartupProjectState.ProjectAbsoluteFilePath is not null)
         {
-            <div>@localStartupProjectState.ProjectAbsoluteFilePath.FileNameNoExtension</div>
+            <div>
+                <em>
+                    @localStartupProjectState.ProjectAbsoluteFilePath.FileNameNoExtension
+                </em>
+            </div>
 
-            <div class="bstudio_startup-project-controls-display-button"
-                 style="margin-left: 20px;">
-                 
-                @if (_isEnqueuedToRun)
+                <div style="margin-left: 10px;">
+                    .NET&nbsp;sdk:&nbsp;
+                    <em>
+                        @(SolutionStateWrap.Value?.MsBuildAbsoluteFilePath?.FilenameWithExtension ?? "{MsBuildAbsoluteFilePath is null}")
+                    </em>
+                </div>
+
+                <div class="bstudio_startup-project-controls-display-button"
+                     style="margin-left: 20px;">
+                     
+                    @if (_isEnqueuedToRun)
                 {
-                    <div @onclick="() => CancelTokenSourceAndGetNewToken()">
-                        <IconLoader />
-                    </div>
+                        <div @onclick="() => CancelTokenSourceAndGetNewToken()">
+                            <IconLoader />
+                        </div>
                 }
                 else if (_isRunning)
                 {
-                    <div @onclick="_enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler">
-                        <IconStopCircle />
-                    </div>
+                        <div @onclick="_enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler">
+                            <IconStopCircle />
+                        </div>
                 }
                 else
                 {
-                    <div @onclick="DispatchEnqueueProcessOnTerminalEntryAction">
-                        <IconStartWithoutDebugging />
-                    </div>
+                        <div @onclick="DispatchEnqueueProcessOnTerminalEntryAction">
+                            <IconStartWithoutDebugging />
+                        </div>
                 }
-            </div>
+                </div>
         }
         else
         {
             if (SolutionStateWrap.Value.SolutionWorkspace is null)
             {
-                <div>{Set an active Solution}</div>
+                    <div>{Set an active Solution}</div>
             }
             else
             {
-                <div>{Startup Project is null}</div>
+                    <div>{Startup Project is null}</div>
             }
         }
     }
