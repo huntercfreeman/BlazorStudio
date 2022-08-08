@@ -7,6 +7,7 @@
         if (localStartupProjectState.ProjectAbsoluteFilePath is not null)
         {
             <div>@localStartupProjectState.ProjectAbsoluteFilePath.FileNameNoExtension</div>
+            <div>@SolutionStateWrap.Value?.VisualStudioInstance?.MSBuildPath</div>
 
             <div class="bstudio_startup-project-controls-display-button"
                  style="margin-left: 20px;">

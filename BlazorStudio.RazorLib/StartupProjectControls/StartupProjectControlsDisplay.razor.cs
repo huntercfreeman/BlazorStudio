@@ -9,6 +9,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
 namespace BlazorStudio.RazorLib.StartupProjectControls;
 
@@ -51,10 +52,12 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
                 InvokeAsync(StateHasChanged);
             }
 
+            var containingDirectoryOfProject = (IAbsoluteFilePath) (StartupProjectStateWrap.Value.ProjectAbsoluteFilePath.Directories.Last());
+
             _enqueueProcessOnTerminalEntryAction = new EnqueueProcessOnTerminalEntryAction(
                 TerminalStateFacts.ProgramTerminalEntry.TerminalEntryKey,
                 $"dotnet run --project {StartupProjectStateWrap.Value.ProjectAbsoluteFilePath.GetAbsoluteFilePathString()}",
-                null,
+                containingDirectoryOfProject,
                 OnStart,
                 OnEnd,
                 null,

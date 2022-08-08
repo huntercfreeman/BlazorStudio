@@ -8,6 +8,6 @@ public class SolutionReducer
     public static SolutionState ReduceSetSolutionWorkspaceAction(SolutionState previousSolutionState,
         SetSolutionAction setSolutionAction)
     {
-        return new(setSolutionAction.SolutionWorkspace);
+        return new(setSolutionAction.SolutionWorkspace, setSolutionAction.VisualStudioInstance);
     }
 }
