@@ -10,10 +10,37 @@ public partial class ProcessFrameworkReferencesTaskFailedNotification : Componen
 {
     [Inject]
     private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     [CascadingParameter]
     public NotificationRecord NotificationRecord { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public IAbsoluteFilePath ProjectAbsoluteFilePath { get; set; } = null!;
+
+    private bool _buttonWasPressed;
+
+    private string GlobalJsonText => $@"
+{{
+  ""sdk"": {{
+    ""version"": ""{SolutionStateWrap.Value?.MsBuildAbsoluteFilePath?.FileNameNoExtension ?? "MsBuildAbsoluteFilePath was null"}""
+  }}
+}}
+";
+
+    private void WriteOutGlobalJsonOnClick()
+    {
+        if (!_buttonWasPressed)
+        {
+            _buttonWasPressed = true;
+
+            var containingDirectoryOfProject = (IAbsoluteFilePath)(ProjectAbsoluteFilePath.Directories.Last());
+
+            File.AppendAllText(containingDirectoryOfProject.GetAbsoluteFilePathString() + "global.json",
+                GlobalJsonText);
+
+            Dispatcher.Dispatch(new DisposeNotificationAction(NotificationRecord));
+        }
+    }
 }

@@ -3,13 +3,12 @@
         @ProjectAbsoluteFilePath.FilenameWithExtension: ProcessFrameworkReferences Task failed
     </div>
     <div>
-        TODO: prompt user to generate global.json for project
+        <button class="btn btn-primary" 
+                @onclick="WriteOutGlobalJsonOnClick">
+            Write out a global.json for the project:
+        </button>
         <pre>
-{
-  "sdk": {
-    "version": "@(SolutionStateWrap.Value?.MsBuildAbsoluteFilePath?.FileNameNoExtension ?? "MsBuildAbsoluteFilePath was null")"
-  }
-}
+@GlobalJsonText
 </pre>
     </div>
 </div>
