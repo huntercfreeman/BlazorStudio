@@ -3,6 +3,34 @@
 <div class="bstudio_debug-info">
     
     <div>PlainTextEditorKind: @PlainTextEditor.PlainTextEditorKind</div>
+    
+    <div>
+        @if (WidthAndHeightTestResult is null)
+        {
+            <div>
+                WidthAndHeightTestResult is null
+            </div>
+        }
+        else
+        {
+            <div>
+                WidthAndHeightTestResult:
+
+                <div>
+                    WidthOfACharacter:
+                    &nbsp;
+                    @WidthAndHeightTestResult.WidthOfACharacter
+                </div>
+                
+                <div>
+                    HeightOfARow:
+                    &nbsp;
+                    @WidthAndHeightTestResult.HeightOfARow
+                </div>
+            </div>
+        }
+    </div>
+    
 
     <DebugExpansion Title="FileHandle">
         @if (PlainTextEditor.FileHandle is not null)

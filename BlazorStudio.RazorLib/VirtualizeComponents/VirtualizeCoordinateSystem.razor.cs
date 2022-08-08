@@ -70,7 +70,7 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
     private DotNetObjectReference<VirtualizeCoordinateSystem<T>> _dotNetObjectReference = null!;
 
-    private string ComponentId => $"bstudio_virtualize-coordinate-system_{_guid}";
+    public string ComponentId => $"bstudio_virtualize-coordinate-system_{_guid}";
 
     protected override void OnInitialized()
     {

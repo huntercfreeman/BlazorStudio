@@ -166,6 +166,7 @@ public interface IPlainTextEditor
     public T GetCurrentTextTokenAs<T>() where T : class;
     public T GetCurrentPlainTextEditorRowAs<T>() where T : class;
     public IPlainTextEditorRow GetEmptyPlainTextEditorRow();
+    public IPlainTextEditorRow GetWidthAndHeightTestPlainTextEditorRow();
 
     /// <summary>
     /// The PlainTextEditor is a semantic representation of the file that was read in.

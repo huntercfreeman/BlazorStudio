@@ -24,6 +24,10 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
     public IPlainTextEditorRow PlainTextEditorRow { get; set; } = null!;
     [Parameter, EditorRequired]
     public int MostDigitsInARowNumber { get; set; }
+    [Parameter]
+    public bool GetWidthAndHeightTest { get; set; }
+    [Parameter]
+    public string WidthAndHeightTestId { get; set; }
 
     private bool _characterWasClicked;
     private SequenceKey? _previousSequenceKey;
@@ -35,10 +39,8 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
         : string.Empty;
 
     private string WidthStyleCss => $"width: calc(100% - {MostDigitsInARowNumber}ch);";
-    
-    private string IsActiveRowId => PlainTextEditorCurrentRowIndex == RowIndex
-        ? ActiveRowId
-        : string.Empty;
+
+    private string IsActiveRowId => GetActiveRowId(); 
 
     protected override bool ShouldRender()
     {
@@ -54,6 +56,20 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
         _previousSequenceKey = PlainTextEditorRow.SequenceKey;
 
         return shouldRender;
+    }
+
+    private string GetActiveRowId()
+    {
+        if (!GetWidthAndHeightTest)
+        {
+            return PlainTextEditorCurrentRowIndex == RowIndex
+                ? ActiveRowId
+                : string.Empty;
+        }
+        else
+        {
+            return WidthAndHeightTestId;
+        }
     }
 
     private void DispatchPlainTextEditorOnClickAction()

@@ -1,3 +1,4 @@
+using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Html;
 using BlazorStudio.ClassLib.Keyboard;
@@ -36,10 +37,14 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private bool _isFocused;
     private ElementReference _plainTextEditor;
     private int _hadOnKeyDownEventCounter;
-    private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)> _virtualizeCoordinateSystem = null!;
+    private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualizeCoordinateSystem;
+    private int _previousFontSize;
+    private string _widthAndHeightTestId = "bstudio_pte-get-width-and-height-test";
+    private string _widthAndHeightTestCharacterId = "bstudio_pte-get-width-and-height-test-character";
 
     private SequenceKey? _previousSequenceKeyShouldRender;
     private PlainTextEditorKey? _previousPlainTextEditorKey;
+    private ElementReference? _activePositionMarker;
 
     private Dimensions _dimensionsOfCoordinateSystemViewport = new()
     {
@@ -70,10 +75,26 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private string PlainTextEditorDisplayId => $"pte_plain-text-editor-display_{PlainTextEditorKey.Guid}";
     private string ActiveRowPositionMarkerId => $"pte_active-row-position-marker_{PlainTextEditorKey.Guid}";
     private string ActiveRowId => $"pte_active-row_{PlainTextEditorKey.Guid}";
+    private bool _isInitialized;
+    private WidthAndHeightTestResult _widthAndHeightTestResult;
 
     private string IsFocusedCssClass => _isFocused
         ? "pte_focused"
         : "";
+
+    private string GetActivePositionMarkerDimensions(IPlainTextEditor currentPlainTextEditor)
+    {
+        var styleCssBuilder = new StringBuilder();
+
+        styleCssBuilder.Append($"position: absolute; ");
+
+        styleCssBuilder.Append($"width: {_widthAndHeightTestResult.WidthOfACharacter}px; ");
+        styleCssBuilder.Append($"height: {_widthAndHeightTestResult.HeightOfARow}px; ");
+        styleCssBuilder.Append($"left: calc(3ch + {_widthAndHeightTestResult.WidthOfACharacter * currentPlainTextEditor.CurrentCharacterColumnIndex}px); ");
+        styleCssBuilder.Append($"top: {_widthAndHeightTestResult.HeightOfARow * (currentPlainTextEditor.CurrentRowIndex)}px; ");
+
+        return styleCssBuilder.ToString();
+    }
 
     /// <summary>
     /// I need to position this PERFECTLY relative to a changeable font-size
@@ -95,12 +116,9 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (_hadOnKeyDownEventCounter > 0)
+        if (firstRender)
         {
-            _hadOnKeyDownEventCounter = 0;
-
-            await JsRuntime.InvokeVoidAsync("plainTextEditor.scrollIntoViewIfOutOfViewport",
-                ActiveRowPositionMarkerId);
+            PlainTextEditorSelectorOnSelectedValueChanged(null, null);
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -131,7 +149,10 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         if (plainTextEditor.PlainTextEditorKey != _previousPlainTextEditorKey)
         {
             // Parameter changed and the VirtualizeCoordinateSystem must reset
-            _virtualizeCoordinateSystem.ResetState();
+            if (_virtualizeCoordinateSystem is not null)
+            {
+                _virtualizeCoordinateSystem.ResetState();
+            }
         }
 
         _previousPlainTextEditorKey = plainTextEditor.PlainTextEditorKey;
@@ -141,23 +162,37 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private async void PlainTextEditorSelectorOnSelectedValueChanged(object? sender, IPlainTextEditor? e)
     {
-        //var plainTextEditor = PlainTextEditorSelector.Value;
+        var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
-        //if (plainTextEditor is null)
-        //    return;
+        if (currentPlainTextEditor is null)
+            return;
 
-        //_virtualizeCoordinateSystem.SetData(plainTextEditor.VirtualizeCoordinateSystemMessage);
+        if (_previousFontSize != currentPlainTextEditor.RichTextEditorOptions.FontSizeInPixels)
+        {
+            _widthAndHeightTestResult = await JsRuntime.InvokeAsync<WidthAndHeightTestResult>(
+                "plainTextEditor.widthAndHeightTest",
+                    _widthAndHeightTestId);
 
-        //await InvokeAsync(StateHasChanged);
+            _previousSequenceKeyShouldRender = null;
 
-        //await _virtualizeCoordinateSystem.RerenderAsync();
+            _isInitialized = true;
+
+            _previousFontSize = currentPlainTextEditor.RichTextEditorOptions.FontSizeInPixels;
+
+            Dispatcher.Dispatch(new PlainTextEditorSetOptionsAction(currentPlainTextEditor.PlainTextEditorKey,
+                currentPlainTextEditor.RichTextEditorOptions with
+                {
+                    WidthOfACharacterInPixels = _widthAndHeightTestResult.WidthOfACharacter,
+                    HeightOfARowInPixels = _widthAndHeightTestResult.HeightOfARow
+                }));
+        }
     }
 
     private async Task OnAfterFirstRenderCallbackFunc()
     {
-        await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeScrollIntoView",
-            ActiveRowPositionMarkerId,
-            PlainTextEditorKey.Guid);
+        //await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeScrollIntoView",
+        //    ActiveRowPositionMarkerId,
+        //    PlainTextEditorKey.Guid);
     }
 
     private async Task OnKeyDown(KeyboardEventArgs e)
@@ -195,14 +230,19 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private void OnFocusOut()
     {
-        _previousSequenceKeyShouldRender = null;
-        _isFocused = false;
+        //_previousSequenceKeyShouldRender = null;
+        //_isFocused = false;
     }
 
     private void FocusPlainTextEditorOnClick()
     {
         _previousSequenceKeyShouldRender = null;
-        _plainTextEditor.FocusAsync();
+
+        if (_activePositionMarker is not null)
+        {
+            _activePositionMarker.Value.FocusAsync();
+        }
+
     }
 
     private string GetStyleCss()
@@ -245,12 +285,18 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     {
         PlainTextEditorSelector.SelectedValueChanged -= PlainTextEditorSelectorOnSelectedValueChanged;
 
-        _ = Task.Run(() => JsRuntime.InvokeVoidAsync("plainTextEditor.disposeScrollIntoView",
-            ActiveRowPositionMarkerId));
+        //_ = Task.Run(() => JsRuntime.InvokeVoidAsync("plainTextEditor.disposeScrollIntoView",
+        //    ActiveRowPositionMarkerId));
 
         if (AutomateDispose)
             Dispatcher.Dispatch(new DeconstructPlainTextEditorRecordAction(PlainTextEditorKey));
 
         base.Dispose(disposing);
+    }
+
+    public class WidthAndHeightTestResult
+    {
+        public double HeightOfARow { get; set; }
+        public double WidthOfACharacter { get; set; }
     }
 }
