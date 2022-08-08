@@ -55,6 +55,10 @@ public partial class WorkspaceExplorerMenuWrapperDisplay : ComponentBase
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
                         new Action<string, string>(CreateNewEmptyFileFormOnAfterSubmitForm)
                     },
+                    {
+                        nameof(CreateNewFileForm.OnAfterCancelForm),
+                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                    },
                 });
 
         var createNewDirectory = MenuOptionFacts.File
@@ -62,12 +66,34 @@ public partial class WorkspaceExplorerMenuWrapperDisplay : ComponentBase
                 new Dictionary<string, object?>()
                 {
                     {
-                        nameof(CreateNewFileForm.ParentDirectory),
+                        nameof(CreateNewDirectoryForm.ParentDirectory),
                         contextMenuEventDto.Item
                     },
                     {
-                        nameof(CreateNewFileForm.OnAfterSubmitForm),
+                        nameof(CreateNewDirectoryForm.OnAfterSubmitForm),
                         new Action<string, string>(CreateNewDirectoryFormOnAfterSubmitForm)
+                    },
+                    {
+                        nameof(CreateNewDirectoryForm.OnAfterCancelForm),
+                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                    },
+                });
+
+        var createDeleteFile = MenuOptionFacts.File
+            .ConstructDeleteFile(typeof(CreateNewDirectoryForm),
+                new Dictionary<string, object?>()
+                {
+                    {
+                        nameof(DeleteFileForm.AbsoluteFilePath),
+                        contextMenuEventDto.Item
+                    },
+                    {
+                        nameof(DeleteFileForm.OnAfterSubmitForm),
+                        new Action<IAbsoluteFilePath>(DeleteFileFormOnAfterSubmitForm)
+                    },
+                    {
+                        nameof(DeleteFileForm.OnAfterCancelForm),
+                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
                     },
                 });
 
@@ -134,6 +160,23 @@ public partial class WorkspaceExplorerMenuWrapperDisplay : ComponentBase
             Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
         },
             $"{nameof(CreateNewDirectoryFormOnAfterSubmitForm)}",
+            false,
+            TimeSpan.FromSeconds(10));
+#endif
+    }
+    
+    private void DeleteFileFormOnAfterSubmitForm(IAbsoluteFilePath absoluteFilePath)
+    {
+#if DEBUG
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        {
+            File.Delete(absoluteFilePath.GetAbsoluteFilePathString());
+
+            await ContextMenuEventDto.RefreshContextMenuTarget.Invoke();
+
+            Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+        },
+            $"{nameof(DeleteFileFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
 #endif

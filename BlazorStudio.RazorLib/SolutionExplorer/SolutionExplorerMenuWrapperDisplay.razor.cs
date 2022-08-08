@@ -57,6 +57,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
                         new Action<string, string>(CreateNewEmptyFileFormOnAfterSubmitForm)
                     },
+                    {
+                        nameof(CreateNewFileForm.OnAfterCancelForm),
+                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                    },
                 });
         
         var createNewTemplatedFile = MenuOptionFacts.File
@@ -71,6 +75,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
                         new Action<string, string>(CreateNewTemplatedFileFormOnAfterSubmitForm)
                     },
+                    {
+                        nameof(CreateNewFileForm.OnAfterCancelForm),
+                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                    },
                 });
 
         var createNewDirectory = MenuOptionFacts.File
@@ -78,12 +86,16 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 new Dictionary<string, object?>()
                 {
                     {
-                        nameof(CreateNewFileForm.ParentDirectory),
+                        nameof(CreateNewDirectoryForm.ParentDirectory),
                         contextMenuEventDto.Item
                     },
                     {
-                        nameof(CreateNewFileForm.OnAfterSubmitForm),
+                        nameof(CreateNewDirectoryForm.OnAfterSubmitForm),
                         new Action<string, string>(CreateNewDirectoryFormOnAfterSubmitForm)
+                    },
+                    {
+                        nameof(CreateNewDirectoryForm.OnAfterCancelForm),
+                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
                     },
                 });
 
@@ -200,6 +212,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                             nameof(CreateNewFileForm.OnAfterSubmitForm),
                             new Action<string, string>(CreateNewEmptyFileFormOnAfterSubmitForm)
                         },
+                        {
+                            nameof(CreateNewFileForm.OnAfterCancelForm),
+                            new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                        },
                     });
 
             createNewTemplatedFile = MenuOptionFacts.File
@@ -214,6 +230,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                             nameof(CreateNewFileForm.OnAfterSubmitForm),
                             new Action<string, string>(CreateNewTemplatedFileFormOnAfterSubmitForm)
                         },
+                        {
+                            nameof(CreateNewFileForm.OnAfterCancelForm),
+                            new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                        },
                     });
 
             createNewDirectory = MenuOptionFacts.File
@@ -221,12 +241,16 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     new Dictionary<string, object?>()
                     {
                         {
-                            nameof(CreateNewFileForm.ParentDirectory),
+                            nameof(CreateNewDirectoryForm.ParentDirectory),
                             containingDirectory
                         },
                         {
-                            nameof(CreateNewFileForm.OnAfterSubmitForm),
+                            nameof(CreateNewDirectoryForm.OnAfterSubmitForm),
                             new Action<string, string>(CreateNewDirectoryFormOnAfterSubmitForm)
+                        },
+                        {
+                            nameof(CreateNewDirectoryForm.OnAfterCancelForm),
+                            new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
                         },
                     });
 

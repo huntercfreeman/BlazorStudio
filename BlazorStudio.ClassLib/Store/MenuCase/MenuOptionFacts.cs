@@ -44,12 +44,15 @@ public static class MenuOptionFacts
                 MenuOptionKind.Create,
                 WidgetType: widgetType,
                 WidgetParameters: widgetParameters);
-
-        public static MenuOptionRecord ConstructDeleteFile(Action onClickAction) => new(MenuOptionKey.NewMenuOptionKey(),
-            "Delete File",
-            ImmutableList<MenuOptionRecord>.Empty,
-            onClickAction,
-            MenuOptionKind.Delete);
+        
+        public static MenuOptionRecord ConstructDeleteFile(Type widgetType, Dictionary<string, object?>? widgetParameters) => 
+            new(MenuOptionKey.NewMenuOptionKey(),
+                "Delete File",
+                ImmutableList<MenuOptionRecord>.Empty,
+                null,
+                MenuOptionKind.Delete,
+                WidgetType: widgetType,
+                WidgetParameters: widgetParameters);
     }
     
     public static class CSharp
