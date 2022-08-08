@@ -222,17 +222,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
-        // I need to fix scroll into view after keypress it is not working
-        // F1 is a temporary hack due to as of this comment
-        // the scrolling occurs EVERY key press.
-        //
-        // It should only scroll into view if key pressed and active
-        // row is out of viewport NOT every key press.
-        if (e.Key == "F1")
-        {
-            _hadOnKeyDownEventCounter++;
-        }
-
         Dispatcher.Dispatch(
             new KeyDownEventAction(PlainTextEditorKey,
                 new KeyDownEventRecord(
@@ -255,8 +244,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private void OnFocusOut()
     {
-        //_previousSequenceKeyShouldRender = null;
-        //_isFocused = false;
+        _previousSequenceKeyShouldRender = null;
+        _isFocused = false;
     }
 
     private void FocusPlainTextEditorOnClick()

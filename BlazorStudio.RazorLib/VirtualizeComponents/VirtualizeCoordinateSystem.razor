@@ -10,9 +10,9 @@
         // Create a local reference to avoid a new instance being set while rendering.
         var localMostRecentMessage = VirtualizeCoordinateSystemMessage;
 
-        @if (MarkerRenderFragment is not null)
+            @if (MarkerRenderFragment is not null)
         {
-            @MarkerRenderFragment
+                @MarkerRenderFragment
         }
 
         var request = localMostRecentMessage?.VirtualizeCoordinateSystemRequest;
@@ -34,35 +34,35 @@
         var bottomStyle = GetBottomBoundaryCssString(request, result);
         var contentStyle = GetContentCssString(request, result);
 
-        <div id="@_leftElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; @leftStyle">
-        </div>
+            <div id="@_leftElementId"
+                 class="bstudio_virtualize-coordinate-system-boundary"
+                 style="position: absolute; @leftStyle">
+            </div>
 
-        <div id="@_rightElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; @rightStyle">
-        </div>
+            <div id="@_rightElementId"
+                 class="bstudio_virtualize-coordinate-system-boundary"
+                 style="position: absolute; @rightStyle">
+            </div>
 
-        <div id="@_topElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; @topStyle">
-        </div>
+            <div id="@_topElementId"
+                 class="bstudio_virtualize-coordinate-system-boundary"
+                 style="position: absolute; @topStyle">
+            </div>
 
-        <div id="@_bottomElementId"
-             class="bstudio_virtualize-coordinate-system-boundary"
-             style="position: absolute; @bottomStyle">
-        </div>
+            <div id="@_bottomElementId"
+                 class="bstudio_virtualize-coordinate-system-boundary"
+                 style="position: absolute; @bottomStyle">
+            </div>
 
-        <div style="position: absolute; @contentStyle" class="@ContentWrapperCssClass">
-            
-            @if (result?.ItemsWithType?.Any() ?? false)
+            <div style="position: absolute; @contentStyle" class="@ContentWrapperCssClass">
+                
+                @if (result?.ItemsWithType?.Any() ?? false)
             {
                 foreach (var item in result.ItemsWithType)
                 {
-                    @ItemRenderFragment(item)
+                        @ItemRenderFragment(item)
                 }
             }
-        </div>
+            </div>
     }
 </div>
