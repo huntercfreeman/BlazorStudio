@@ -24,47 +24,72 @@ else
              style="@GetStyleCss()"
              @ref="_plainTextEditor"
              @onclick="FocusPlainTextEditorOnClick"
-             @onkeydown:preventDefault="true"
-             @onkeydown="OnKeyDown"
-             @onfocusin="OnFocusIn"
-             @onfocusout="OnFocusOut"
-             tabindex="-1">
-
+             @onkeydown:preventDefault="true">
+            
             @{
                 var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
 
-                <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
-                    <CascadingValue Value="_isFocused">
-                        <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
-                            <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
-                                <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
-                                    <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
-                                                                                                           T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
-                                                                                                           VirtualizeCoordinateSystemMessage="currentPlainTextEditor.VirtualizeCoordinateSystemMessage"
-                                                                                                           DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
-                                                                                                           RequestCallbackAction="OnRequestCallbackAction"
-                                                                                                           PaddingInPixels="100"
-                                                                                                           OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
-                                        <ItemRenderFragment Context="rowTuple">
-                                            <CascadingValue Name="RowIndex" Value="rowTuple.Index">
-                                                <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
-                                                                           PlainTextEditorRow="rowTuple.PlainTextEditorRow"
-                                                                           MostDigitsInARowNumber="mostDigitsInARowNumber"/>
-                                            </CascadingValue>
-                                        </ItemRenderFragment>
+                        <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
+                            <CascadingValue Value="_isFocused">
+                                <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
+                                    <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
+                                        <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
+                                            
+                                            @if (!_isInitialized)
+                                            {
+                                        var testRow = currentPlainTextEditor.GetWidthAndHeightTestPlainTextEditorRow();
+                                                <CascadingValue Name="RowIndex" Value="0">
 
-                                        <MarkerRenderFragment>
-                                            <span id="@ActiveRowPositionMarkerId"
-                                                  class="pte_visually-hidden pte_unselectable pte_active-row-position-marker"
-                                                  style="position: absolute; @InputFocusTrapTopStyleCss">
-                                            </span>
-                                        </MarkerRenderFragment>
-                                    </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
+                                                    <div style="visibility: hidden;">
+                                                        <PlainTextEditorRowDisplay @key="testRow.Key"
+                                                                                   PlainTextEditorRow="testRow"
+                                                                                   MostDigitsInARowNumber="mostDigitsInARowNumber"
+                                                                                   GetWidthAndHeightTest="true"
+                                                                                   WidthAndHeightTestId="_widthAndHeightTestId"  />
+                                                    </div>
+                                            
+                                                  
+                                                </CascadingValue>
+                                            }
+                                            else
+                                            {
+                                                <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
+                                                                                                                       T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
+                                                                                                                       VirtualizeCoordinateSystemMessage="currentPlainTextEditor.VirtualizeCoordinateSystemMessage"
+                                                                                                                       DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
+                                                                                                                       RequestCallbackAction="OnRequestCallbackAction"
+                                                                                                                       PaddingInPixels="100"
+                                                                                                                       OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
+                                                    <ItemRenderFragment Context="rowTuple">
+                                                        <CascadingValue Name="RowIndex" Value="rowTuple.Index">
+                                                            <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
+                                                                                       PlainTextEditorRow="rowTuple.PlainTextEditorRow"
+                                                                                       MostDigitsInARowNumber="mostDigitsInARowNumber"/>
+                                                        </CascadingValue>
+                                                    </ItemRenderFragment>
+
+                                                    <MarkerRenderFragment>
+                                                        <input type="text"
+                                                               readonly="readonly"
+                                                               style="@GetActivePositionMarkerDimensions(currentPlainTextEditor)"
+                                                               @ref="_activePositionMarker"
+                                                               @onkeydown="OnKeyDown"
+                                                               @onfocusin="OnFocusIn"
+                                                               @onfocusout="OnFocusOut"/>
+                                                        @*
+                                                    <span id="@ActiveRowPositionMarkerId"
+                                                    class="pte_visually-hidden pte_unselectable pte_active-row-position-marker"
+                                                    style="position: absolute; @InputFocusTrapTopStyleCss">
+                                                    </span>
+                                                *@
+                                                    </MarkerRenderFragment>
+                                                </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
+                                            }
+                                        </CascadingValue>
+                                    </CascadingValue>
                                 </CascadingValue>
                             </CascadingValue>
                         </CascadingValue>
-                    </CascadingValue>
-                </CascadingValue>
             }
 
             <PlainTextEditorFooter PlainTextEditor="currentPlainTextEditor"/>

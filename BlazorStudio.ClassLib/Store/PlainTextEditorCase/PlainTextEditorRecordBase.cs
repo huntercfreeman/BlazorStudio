@@ -60,5 +60,6 @@ public abstract record PlainTextEditorRecordBase(PlainTextEditorKey PlainTextEdi
     }
 
     public abstract IPlainTextEditorRow GetEmptyPlainTextEditorRow();
+    public abstract IPlainTextEditorRow GetWidthAndHeightTestPlainTextEditorRow();
     public abstract string GetPlainText();
 }

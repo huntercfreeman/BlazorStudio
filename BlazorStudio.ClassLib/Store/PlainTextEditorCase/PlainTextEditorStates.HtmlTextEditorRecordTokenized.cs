@@ -82,5 +82,20 @@ public partial record PlainTextEditorStates
         {
             return new PlainTextEditorRow(null);
         }
+        
+        public sealed override IPlainTextEditorRow GetWidthAndHeightTestPlainTextEditorRow()
+        {
+            var row = new PlainTextEditorRow(null);
+
+            row = row with
+            {
+                Tokens = row.Tokens.Add(new DefaultTextToken() with
+                {
+                    Content = "Abc Defg Hijk"
+                })
+            };
+
+            return row;
+        }
     }
 }
