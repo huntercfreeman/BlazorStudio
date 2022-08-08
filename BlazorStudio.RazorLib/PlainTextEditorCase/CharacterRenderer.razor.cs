@@ -19,15 +19,25 @@ public partial class CharacterRenderer : ComponentBase
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
     [CascadingParameter(Name="NotifyCharacterWasClicked")]
     public Action NotifyCharacterWasClicked { get; set; } = null!;
-    
+    [CascadingParameter]
+    public RichTextEditorOptions RichTextEditorOptions { get; set; } = null!;
+    [CascadingParameter(Name="GetWidthAndHeightTest")]
+    public bool GetWidthAndHeightTest { get; set; }
+
+    /// <summary>
+    /// The html escaped character for space is nbsp which
+    /// requires more than 1 character to represent therefore this is of type string
+    /// </summary>
     [Parameter, EditorRequired]
-    // The html escaped character for space is &nbsp; which
-    // requires more than 1 character to represent therefore this is of type string
     public string Character { get; set; } = null!;
     [Parameter, EditorRequired]
     public int CharacterIndex { get; set; }
     [Parameter, EditorRequired]
     public bool ShouldDisplayCursor { get; set; }
+
+    private string WidthStyleString => GetWidthAndHeightTest
+        ? string.Empty
+        : $"width: {RichTextEditorOptions.WidthOfACharacterInPixels}px;";
 
     private void DispatchPlainTextEditorOnClickAction()
     {
