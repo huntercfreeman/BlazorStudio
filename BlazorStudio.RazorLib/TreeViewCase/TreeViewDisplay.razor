@@ -50,7 +50,18 @@
                 {
                     Item = TreeView.Item,
                     MouseEventArgs = _mostRecentMouseEventArgs,
-                    RefreshContextMenuTarget = async () => GetChildrenAsync()
+                    RefreshContextMenuTarget = async () => GetChildrenAsync(),
+                    RefreshParentOfContextMenuTarget = async () =>
+                    {
+                        if (Parent is not null)
+                        {
+                            Parent.GetChildrenAsync();
+                        }
+                        else
+                        {
+                            await ReloadRoot.Invoke();
+                        }
+                    }
                 }; 
                 
                 @OnContextMenuRenderFragment(contextMenuEventDto)

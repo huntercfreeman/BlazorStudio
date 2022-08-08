@@ -66,6 +66,8 @@ public partial class TreeViewDisplay<T>
     public RenderFragment<TreeViewWrapDisplay<T>.ContextMenuEventDto<T>>? OnContextMenuRenderFragment { get; set; }
     [CascadingParameter(Name = "IsExpandable")]
     public Func<T, bool> IsExpandable { get; set; } = null!;
+    [CascadingParameter(Name = "ReloadRoot")]
+    public Func<Task> ReloadRoot { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeView<T> TreeView { get; set; } = null!;

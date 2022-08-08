@@ -9,6 +9,8 @@ public partial class CreateNewFileForm : ComponentBase
     public IAbsoluteFilePath ParentDirectory { get; set; } = null!;
     [Parameter]
     public Action<string, string> OnAfterSubmitForm { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Action OnAfterCancelForm { get; set; } = null!;
 
     private string _fileName = String.Empty;
 
@@ -19,6 +21,6 @@ public partial class CreateNewFileForm : ComponentBase
     
     private void DeclineForm()
     {
-
+        OnAfterCancelForm.Invoke();
     }
 }

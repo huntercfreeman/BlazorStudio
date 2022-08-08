@@ -21,7 +21,7 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 
-namespace BlazorStudio.RazorLib.SolutionExplorerMenuWrapper;
+namespace BlazorStudio.RazorLib.SolutionExplorer;
 
 public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 {
@@ -57,6 +57,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
                         new Action<string, string>(CreateNewEmptyFileFormOnAfterSubmitForm)
                     },
+                    {
+                        nameof(CreateNewFileForm.OnAfterCancelForm),
+                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                    },
                 });
         
         var createNewTemplatedFile = MenuOptionFacts.File
@@ -71,6 +75,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
                         new Action<string, string>(CreateNewTemplatedFileFormOnAfterSubmitForm)
                     },
+                    {
+                        nameof(CreateNewFileForm.OnAfterCancelForm),
+                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                    },
                 });
 
         var createNewDirectory = MenuOptionFacts.File
@@ -78,12 +86,16 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 new Dictionary<string, object?>()
                 {
                     {
-                        nameof(CreateNewFileForm.ParentDirectory),
+                        nameof(CreateNewDirectoryForm.ParentDirectory),
                         contextMenuEventDto.Item
                     },
                     {
-                        nameof(CreateNewFileForm.OnAfterSubmitForm),
+                        nameof(CreateNewDirectoryForm.OnAfterSubmitForm),
                         new Action<string, string>(CreateNewDirectoryFormOnAfterSubmitForm)
+                    },
+                    {
+                        nameof(CreateNewDirectoryForm.OnAfterCancelForm),
+                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
                     },
                 });
 
@@ -200,6 +212,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                             nameof(CreateNewFileForm.OnAfterSubmitForm),
                             new Action<string, string>(CreateNewEmptyFileFormOnAfterSubmitForm)
                         },
+                        {
+                            nameof(CreateNewFileForm.OnAfterCancelForm),
+                            new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                        },
                     });
 
             createNewTemplatedFile = MenuOptionFacts.File
@@ -214,6 +230,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                             nameof(CreateNewFileForm.OnAfterSubmitForm),
                             new Action<string, string>(CreateNewTemplatedFileFormOnAfterSubmitForm)
                         },
+                        {
+                            nameof(CreateNewFileForm.OnAfterCancelForm),
+                            new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                        },
                     });
 
             createNewDirectory = MenuOptionFacts.File
@@ -221,12 +241,16 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     new Dictionary<string, object?>()
                     {
                         {
-                            nameof(CreateNewFileForm.ParentDirectory),
+                            nameof(CreateNewDirectoryForm.ParentDirectory),
                             containingDirectory
                         },
                         {
-                            nameof(CreateNewFileForm.OnAfterSubmitForm),
+                            nameof(CreateNewDirectoryForm.OnAfterSubmitForm),
                             new Action<string, string>(CreateNewDirectoryFormOnAfterSubmitForm)
+                        },
+                        {
+                            nameof(CreateNewDirectoryForm.OnAfterCancelForm),
+                            new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
                         },
                     });
 
@@ -237,6 +261,29 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             menuOptionRecords.Add(addProjectReference);
         }
 
+        if (contextMenuEventDto.Item.ExtensionNoPeriod != ExtensionNoPeriodFacts.C_SHARP_PROJECT)
+        {
+            var createDeleteFile = MenuOptionFacts.File
+                .ConstructDeleteFile(typeof(DeleteFileForm),
+                    new Dictionary<string, object?>()
+                    {
+                        {
+                            nameof(DeleteFileForm.AbsoluteFilePath),
+                            contextMenuEventDto.Item
+                        },
+                        {
+                            nameof(DeleteFileForm.OnAfterSubmitForm),
+                            new Action<IAbsoluteFilePath>(DeleteFileFormOnAfterSubmitForm)
+                        },
+                        {
+                            nameof(DeleteFileForm.OnAfterCancelForm),
+                            new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                        },
+                    });
+
+            menuOptionRecords.Add(createDeleteFile);
+        }
+
         return menuOptionRecords.Any()
             ? menuOptionRecords
             : new[]
@@ -244,7 +291,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
                     "No Context Menu Options for this item",
                     ImmutableList<MenuOptionRecord>.Empty,
-                    null)
+                    null,
+                    MenuOptionKind.Read)
             };
     }
 
@@ -307,6 +355,30 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
             },
             $"{nameof(CreateNewDirectoryFormOnAfterSubmitForm)}",
+            false,
+            TimeSpan.FromSeconds(10));
+#endif
+    }
+
+    private void DeleteFileFormOnAfterSubmitForm(IAbsoluteFilePath absoluteFilePath)
+    {
+#if DEBUG
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+            {
+                if (absoluteFilePath.IsDirectory)
+                {
+                    Directory.Delete(absoluteFilePath.GetAbsoluteFilePathString(), true);
+                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
+                }
+                else
+                {
+                    File.Delete(absoluteFilePath.GetAbsoluteFilePathString());
+                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
+                }
+
+                Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+            },
+            $"{nameof(DeleteFileFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
 #endif

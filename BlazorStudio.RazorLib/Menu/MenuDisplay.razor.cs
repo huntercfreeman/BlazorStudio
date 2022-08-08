@@ -9,6 +9,8 @@ public partial class MenuDisplay : ComponentBase
 {
     [Parameter]
     public IEnumerable<MenuOptionRecord> MenuOptionRecords { get; set; } = null!;
+    [Parameter]
+    public bool ShouldCategorizeByMenuOptionKind { get; set; }
 
     private MenuOptionRecord[] _cachedMenuOptionRecords = Array.Empty<MenuOptionRecord>();
 

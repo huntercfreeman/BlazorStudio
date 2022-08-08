@@ -189,6 +189,10 @@ public partial class InputFileDialog : ComponentBase
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
                         new Action<string, string>(CreateNewFileFormOnAfterSubmitForm)
                     },
+                    {
+                        nameof(CreateNewFileForm.OnAfterCancelForm),
+                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                    },
                 });
         
         var createNewDirectory = MenuOptionFacts.File
@@ -196,12 +200,16 @@ public partial class InputFileDialog : ComponentBase
                 new Dictionary<string, object?>()
                 {
                     {
-                        nameof(CreateNewFileForm.ParentDirectory),
+                        nameof(CreateNewDirectoryForm.ParentDirectory),
                         contextMenuEventDto.Item
                     },
                     {
-                        nameof(CreateNewFileForm.OnAfterSubmitForm),
+                        nameof(CreateNewDirectoryForm.OnAfterSubmitForm),
                         new Action<string, string>(CreateNewDirectoryFormOnAfterSubmitForm)
+                    },
+                    {
+                        nameof(CreateNewDirectoryForm.OnAfterCancelForm),
+                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
                     },
                 });
 
@@ -222,7 +230,8 @@ public partial class InputFileDialog : ComponentBase
                 new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
                     "No Context Menu Options for this item",
                     ImmutableList<MenuOptionRecord>.Empty, 
-                    null)
+                    null,
+                    MenuOptionKind.Read)
             };
     }
     

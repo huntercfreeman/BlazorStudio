@@ -1,0 +1,29 @@
+﻿<div title="@AbsoluteFilePath.GetAbsoluteFilePathString()">
+    Delete:&nbsp;
+    <em>@AbsoluteFilePath.FilenameWithExtension</em>
+</div>
+
+@if (_isLoaded)
+{
+    if (AbsoluteFilePath.IsDirectory)
+    {
+        if (_directDescendantCount > 0)
+        {
+            <div>
+                And
+                &nbsp;
+                <em>@_directDescendantCount</em>
+                &nbsp;
+                direct descendants
+                &nbsp;
+                <em>recursively</em>
+            </div>
+        }
+        else
+        {
+            <div>Directory is <em>empty</em></div>
+        }
+    }
+
+    <YesNoButtons OnYesAction="SubmitForm" OnNoAction="DeclineForm" />
+}

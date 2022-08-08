@@ -23,28 +23,30 @@
 
         if (rootTreeViews?.Any() ?? false)
         {
-            <CascadingValue Value="GetChildrenFunc">
-                <CascadingValue Value="ItemRenderFragment">
-                    <CascadingValue Name="Depth" Value="0">
-                        <CascadingValue Name="OnEnterKeyDown" Value="OnEnterKeyDown">
-                            <CascadingValue Name="OnSpaceKeyDown" Value="OnSpaceKeyDown">
-                                <CascadingValue Name="OnDoubleClick" Value="OnDoubleClick">
-                                    <CascadingValue Value="TreeViewWrapKey">
-                                        <CascadingValue Name="OnContextMenuRenderFragment" Value="OnContextMenuRenderFragment">
-                                            <CascadingValue Name="IsExpandable" Value="IsExpandable">
-                                                <CascadingValue Value="TreeViewWrapKey">
-                                                    <div class="@BodyCssClassAttribute">
-                                                        @for (int i = 0; i < rootTreeViews.Length; i++)
-                                                        {
-                                                            int index = i;
-                                                            var child = (TreeView<T>) rootTreeViews[i];
+            <CascadingValue Name="ReloadRoot" Value="new Func<Task>(async () => Reload())">
+                <CascadingValue Value="GetChildrenFunc">
+                    <CascadingValue Value="ItemRenderFragment">
+                        <CascadingValue Name="Depth" Value="0">
+                            <CascadingValue Name="OnEnterKeyDown" Value="OnEnterKeyDown">
+                                <CascadingValue Name="OnSpaceKeyDown" Value="OnSpaceKeyDown">
+                                    <CascadingValue Name="OnDoubleClick" Value="OnDoubleClick">
+                                        <CascadingValue Value="TreeViewWrapKey">
+                                            <CascadingValue Name="OnContextMenuRenderFragment" Value="OnContextMenuRenderFragment">
+                                                <CascadingValue Name="IsExpandable" Value="IsExpandable">
+                                                    <CascadingValue Value="TreeViewWrapKey">
+                                                        <div class="@BodyCssClassAttribute">
+                                                            @for (int i = 0; i < rootTreeViews.Length; i++)
+                                                            {
+                                                                int index = i;
+                                                                var child = (TreeView<T>) rootTreeViews[i];
 
-                                                            <TreeViewDisplay TreeView="child"
-                                                                             GetSiblingsAndSelfFunc="() => rootTreeViews"
-                                                                             IndexAmongSiblings="index"
-                                                                             Parent="null"/>
-                                                        }
-                                                    </div>
+                                                                <TreeViewDisplay TreeView="child"
+                                                                                 GetSiblingsAndSelfFunc="() => rootTreeViews"
+                                                                                 IndexAmongSiblings="index"
+                                                                                 Parent="null"/>
+                                                            }
+                                                        </div>
+                                                    </CascadingValue>
                                                 </CascadingValue>
                                             </CascadingValue>
                                         </CascadingValue>
