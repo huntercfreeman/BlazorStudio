@@ -32,6 +32,8 @@
     <_ContentIncludedByDefault Remove="Forms\CreateNewFileForm.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuDisplay.razor" />
     <_ContentIncludedByDefault Remove="Menu\MenuOptionDisplay.razor" />
+    <_ContentIncludedByDefault Remove="Notification\NotificationDisplay.razor" />
+    <_ContentIncludedByDefault Remove="Notification\NotificationsInitializer.razor" />
     <_ContentIncludedByDefault Remove="OutOfBoundsClick\OutOfBoundsClickDisplay.razor" />
     <_ContentIncludedByDefault Remove="Settings\SettingsDialog.razor" />
     <_ContentIncludedByDefault Remove="Shared\BodyDisplay.razor" />
@@ -125,6 +127,14 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Terminal\TerminalSettingsDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Notification\NotificationDisplay.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Notification\NotificationsInitializer.razor" />
   </ItemGroup>
 
 </Project>

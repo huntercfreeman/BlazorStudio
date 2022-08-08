@@ -615,3 +615,10 @@ em {
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
+.bstudio_notification-display-body {
+    z-index: 15;
+    background-color: var(--bstudio_secondary-background-color);
+    color: var(--bstudio_secondary-font-color);
+    box-shadow: var(--bstudio_primary-overlay-box-shadow);
+}
