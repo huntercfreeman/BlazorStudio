@@ -1,4 +1,13 @@
 ﻿<div class="bstudio_notification-display-body">
+    <div>
+        <button class="btn btn-primary" 
+                @onclick="DismissOnClick">
+            Dismiss
+        </button>
+    </div>
+    
+    <hr />
+
     <CascadingValue Value="NotificationRecord">
         <DynamicComponent Type="NotificationRecord.Type"
                           Parameters="NotificationRecord.Parameters ?? new()"/>
