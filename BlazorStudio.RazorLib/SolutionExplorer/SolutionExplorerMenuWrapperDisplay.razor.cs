@@ -261,6 +261,29 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             menuOptionRecords.Add(addProjectReference);
         }
 
+        if (contextMenuEventDto.Item.ExtensionNoPeriod != ExtensionNoPeriodFacts.C_SHARP_PROJECT)
+        {
+            var createDeleteFile = MenuOptionFacts.File
+                .ConstructDeleteFile(typeof(DeleteFileForm),
+                    new Dictionary<string, object?>()
+                    {
+                        {
+                            nameof(DeleteFileForm.AbsoluteFilePath),
+                            contextMenuEventDto.Item
+                        },
+                        {
+                            nameof(DeleteFileForm.OnAfterSubmitForm),
+                            new Action<IAbsoluteFilePath>(DeleteFileFormOnAfterSubmitForm)
+                        },
+                        {
+                            nameof(DeleteFileForm.OnAfterCancelForm),
+                            new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                        },
+                    });
+
+            menuOptionRecords.Add(createDeleteFile);
+        }
+
         return menuOptionRecords.Any()
             ? menuOptionRecords
             : new[]
@@ -332,6 +355,30 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
             },
             $"{nameof(CreateNewDirectoryFormOnAfterSubmitForm)}",
+            false,
+            TimeSpan.FromSeconds(10));
+#endif
+    }
+
+    private void DeleteFileFormOnAfterSubmitForm(IAbsoluteFilePath absoluteFilePath)
+    {
+#if DEBUG
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+            {
+                if (absoluteFilePath.IsDirectory)
+                {
+                    Directory.Delete(absoluteFilePath.GetAbsoluteFilePathString(), true);
+                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
+                }
+                else
+                {
+                    File.Delete(absoluteFilePath.GetAbsoluteFilePathString());
+                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
+                }
+
+                Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+            },
+            $"{nameof(DeleteFileFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
 #endif

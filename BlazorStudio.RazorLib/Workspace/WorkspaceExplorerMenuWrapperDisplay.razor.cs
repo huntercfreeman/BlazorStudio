@@ -80,7 +80,7 @@ public partial class WorkspaceExplorerMenuWrapperDisplay : ComponentBase
                 });
 
         var createDeleteFile = MenuOptionFacts.File
-            .ConstructDeleteFile(typeof(CreateNewDirectoryForm),
+            .ConstructDeleteFile(typeof(DeleteFileForm),
                 new Dictionary<string, object?>()
                 {
                     {
@@ -107,6 +107,8 @@ public partial class WorkspaceExplorerMenuWrapperDisplay : ComponentBase
             menuOptionRecords.Add(createNewEmptyFile);
             menuOptionRecords.Add(createNewDirectory);
         }
+
+        menuOptionRecords.Add(createDeleteFile);
 
         if (contextMenuEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
         {
@@ -170,9 +172,16 @@ public partial class WorkspaceExplorerMenuWrapperDisplay : ComponentBase
 #if DEBUG
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
         {
-            File.Delete(absoluteFilePath.GetAbsoluteFilePathString());
-
-            await ContextMenuEventDto.RefreshContextMenuTarget.Invoke();
+            if (absoluteFilePath.IsDirectory)
+            {
+                Directory.Delete(absoluteFilePath.GetAbsoluteFilePathString(), true);
+                await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
+            }
+            else
+            {
+                File.Delete(absoluteFilePath.GetAbsoluteFilePathString());
+                await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
+            }
 
             Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
         },

@@ -12,6 +12,27 @@ public partial class DeleteFileForm : ComponentBase
     [Parameter, EditorRequired]
     public Action OnAfterCancelForm { get; set; } = null!;
 
+    private bool _isLoaded;
+    private int _directDescendantCount;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (AbsoluteFilePath.IsDirectory)
+            {
+                var childFileSystemEntries = Directory.GetFileSystemEntries(AbsoluteFilePath.GetAbsoluteFilePathString());
+
+                _directDescendantCount = childFileSystemEntries.Length;
+            }
+
+            _isLoaded = true;
+            InvokeAsync(StateHasChanged);
+        }
+
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
     private void SubmitForm()
     {
         OnAfterSubmitForm.Invoke(AbsoluteFilePath);

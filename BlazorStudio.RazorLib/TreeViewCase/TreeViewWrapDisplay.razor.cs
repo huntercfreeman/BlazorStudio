@@ -160,5 +160,6 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
         public T Item { get; set; }
         public MouseEventArgs? MouseEventArgs { get; set; }
         public Func<Task> RefreshContextMenuTarget { get; set; }
+        public Func<Task> RefreshParentOfContextMenuTarget { get; set; }
     }
 }
