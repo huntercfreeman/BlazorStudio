@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStudio.WebAssembly", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorStudio.Photino", "BlazorStudio.Photino\BlazorStudio.Photino.csproj", "{D5A0214B-3787-40AA-A4E5-1EEA300C87EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Photino.Blazor", "Photino.Blazor\Photino.Blazor.csproj", "{84896F88-B2AB-4633-861E-B4F1B5299D80}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{D5A0214B-3787-40AA-A4E5-1EEA300C87EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5A0214B-3787-40AA-A4E5-1EEA300C87EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5A0214B-3787-40AA-A4E5-1EEA300C87EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84896F88-B2AB-4633-861E-B4F1B5299D80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84896F88-B2AB-4633-861E-B4F1B5299D80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84896F88-B2AB-4633-861E-B4F1B5299D80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84896F88-B2AB-4633-861E-B4F1B5299D80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

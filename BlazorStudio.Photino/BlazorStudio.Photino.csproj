@@ -6,10 +6,6 @@
 		<ApplicationIcon>favicon.ico</ApplicationIcon>
 	</PropertyGroup>
 
-<ItemGroup>
-    <PackageReference Include="Photino.Blazor" Version="2.1.7" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<Content Update="wwwroot\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -24,6 +20,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\BlazorStudio.RazorLib\BlazorStudio.RazorLib.csproj" />
+	  <ProjectReference Include="..\Photino.Blazor\Photino.Blazor.csproj" />
 	</ItemGroup>
 
 </Project>
