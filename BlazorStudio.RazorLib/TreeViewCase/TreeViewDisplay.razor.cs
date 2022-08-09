@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Components.Web;
 namespace BlazorStudio.RazorLib.TreeViewCase;
 
 public partial class TreeViewDisplay<T>
-    where T : class
 {
     [Inject]
     private IStateSelection<TreeViewWrapStates, ITreeViewWrap?> TreeViewWrapStateSelection { get; set; } = null!;

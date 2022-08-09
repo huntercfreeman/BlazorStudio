@@ -11,7 +11,6 @@ namespace BlazorStudio.ClassLib.Store.TreeViewCase;
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class TreeViewWrap<T> : ITreeViewWrap
-    where T : class
 {
     public TreeViewWrap(TreeViewWrapKey key)
     {

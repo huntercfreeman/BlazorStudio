@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components.Web;
 namespace BlazorStudio.RazorLib.TreeViewCase;
 
 public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
-    where T : class
 {
     [Inject]
     private IStateSelection<TreeViewWrapStates, ITreeViewWrap?> TreeViewWrapStateSelection { get; set; } = null!;
