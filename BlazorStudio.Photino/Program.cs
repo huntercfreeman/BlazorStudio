@@ -25,7 +25,10 @@ namespace BlazorStudio.Photino
             // customize window
             app.MainWindow
                 .SetIconFile("favicon.ico")
-                .SetTitle("Photino Hello World");
+                .SetTitle("Photino Hello World")
+                .SetDevToolsEnabled(true)
+                .SetUseOsDefaultSize(false)
+                .SetSize(2500, 1750);
 
             AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
             {

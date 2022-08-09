@@ -150,7 +150,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
     public string ExtensionNoPeriod { get; protected set; }
     public string FilenameWithExtension => FileNameNoExtension + 
                                            (IsDirectory 
-                                               ? "\\" 
+                                               ? System.IO.Path.DirectorySeparatorChar.ToString() 
                                                : ExtensionNoPeriod == string.Empty
                                                    ? string.Empty
                                                    : $".{ExtensionNoPeriod}");

@@ -123,5 +123,5 @@ public class RelativeFilePath : IRelativeFilePath
     public List<IFilePath> Directories { get; } = new();
     public string FileNameNoExtension { get; protected set; }
     public string ExtensionNoPeriod { get; protected set; }
-    public string FilenameWithExtension => FileNameNoExtension + (IsDirectory ? "\\" : $".{ExtensionNoPeriod}");
+    public string FilenameWithExtension => FileNameNoExtension + (IsDirectory ? System.IO.Path.DirectorySeparatorChar.ToString() : $".{ExtensionNoPeriod}");
 }
