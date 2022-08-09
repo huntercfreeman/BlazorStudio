@@ -40,7 +40,6 @@ public partial class DialogDisplay : ComponentBase
     
     private void MaximizeOnClick()
     {
-
         double widthHeightViewportAmount = DialogRecord.IsMaximized ? 60 : 100;
         double leftTopViewportAmount = DialogRecord.IsMaximized ? 20 : 0;
         bool isDisabled = !DialogRecord.IsMaximized;

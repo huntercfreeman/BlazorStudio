@@ -1,0 +1,18 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<h3>TransformableSettings</h3>
+
+<div>
+    <div>
+        Change&nbsp;ResizeHandle:<input type="number" @bind="ResizeHandleSizeInPixels" @bind:event="oninput" />
+    </div>
+    
+    <div>
+        ResizeHandleDimensionUnit:&nbsp;@TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
+    </div>
+    
+    <div>
+        DimensionUnitKind:&nbsp;@TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.DimensionUnitKind
+    </div>
+</div>
+

@@ -139,8 +139,7 @@ public partial class FileSystemProvider : IFileSystemProvider
                 {
                     _memoryMappedFile = MemoryMappedFile
                         .CreateFromFile(AbsoluteFilePath.GetAbsoluteFilePathString(),
-                            FileMode.Open,
-                            mapFilename);
+                            FileMode.Open);
                 }
             }
             catch (IOException e)
@@ -149,8 +148,7 @@ public partial class FileSystemProvider : IFileSystemProvider
 
                 _memoryMappedFile = MemoryMappedFile
                     .CreateFromFile(AbsoluteFilePath.GetAbsoluteFilePathString(),
-                        FileMode.Open,
-                        mapFilename);
+                        FileMode.Open);
             }
             catch (System.ArgumentException e)
             {

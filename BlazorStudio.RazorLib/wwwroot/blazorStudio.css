@@ -289,13 +289,13 @@
 }
 
 .bstudio_transformable-column-separator {
-    width: 4px;
+    width: 5px;
     cursor: e-resize;
     background-color: var(--bstudio_primary-font-color);
 }
 
 .bstudio_transformable-row-separator {
-    height: 4px;
+    height: 5px;
     cursor: n-resize;
     background-color: var(--bstudio_primary-font-color);
 }

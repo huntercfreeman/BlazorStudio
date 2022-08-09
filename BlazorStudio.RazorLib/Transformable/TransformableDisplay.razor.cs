@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using BlazorStudio.ClassLib.Store.DragCase;
+using BlazorStudio.ClassLib.Store.TransformableCase;
 using BlazorStudio.ClassLib.UserInterface;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -11,6 +12,8 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
+    [Inject] 
+    private IState<TransformableOptionsState> TransformableOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -18,12 +21,6 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     public Dimensions Dimensions { get; set; } = null!;
     [Parameter, EditorRequired]
     public Func<Task> ReRenderFunc { get; set; } = null!;
-
-    private static readonly DimensionUnit DEFAULT_HANDLE_SIZE_IN_PIXELS = new()
-    {
-        DimensionUnitKind = DimensionUnitKind.Pixels,
-        Value = 7
-    };
 
     private Func<MouseEventArgs, Task>? _dragStateEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
@@ -45,6 +42,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         DragStateWrap.StateChanged += DragState_StateChanged;
+        TransformableOptionsStateWrap.StateChanged += TransformableOptionsStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -74,6 +72,11 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         }
     }
 
+    private void TransformableOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+    
     #region HandleCssStylings
     private string GetNorthResizeHandleCssStyling()
     {
@@ -83,7 +86,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
         
@@ -92,7 +95,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new() 
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
 
@@ -101,7 +104,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new() 
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
         
@@ -110,7 +113,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new() 
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
 
@@ -131,7 +134,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
         
@@ -141,7 +144,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
         
@@ -151,7 +154,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
         
@@ -160,7 +163,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
 
@@ -182,7 +185,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
 
@@ -191,7 +194,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
 
@@ -200,7 +203,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
 
@@ -210,7 +213,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
 
@@ -231,7 +234,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
 
@@ -241,7 +244,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
 
@@ -250,7 +253,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
 
@@ -259,7 +262,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
 
@@ -280,7 +283,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
         
@@ -289,7 +292,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
         
@@ -299,7 +302,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
         
@@ -308,7 +311,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
 
@@ -329,7 +332,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
         
@@ -338,7 +341,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
         
@@ -348,7 +351,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
         
@@ -358,7 +361,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
 
@@ -379,7 +382,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
         
@@ -388,7 +391,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
         
@@ -397,7 +400,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
         
@@ -407,7 +410,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
 
@@ -428,7 +431,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
         
@@ -437,7 +440,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = DEFAULT_HANDLE_SIZE_IN_PIXELS.Value
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
             }
         };
         
@@ -446,7 +449,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
         
@@ -455,7 +458,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * DEFAULT_HANDLE_SIZE_IN_PIXELS.Value / 2.0
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
             }
         };
 
@@ -906,5 +909,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         DragStateWrap.StateChanged -= DragState_StateChanged;
+        TransformableOptionsStateWrap.StateChanged -= TransformableOptionsStateWrapOnStateChanged;
+
     }
 }
