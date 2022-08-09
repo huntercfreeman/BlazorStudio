@@ -8,13 +8,13 @@ public record CSharpKeywords(ImmutableList<string> Keywords)
 {
     public CSharpKeywords() : this(ImmutableList<string>.Empty)
     {
-        var jsonKeywords = File.ReadAllText("C:\\BlazorStudioTestGround\\allCSharpKeywords.json");
-
-        var listOfKeywords = System.Text.Json.JsonSerializer.Deserialize<List<string>>(jsonKeywords);
-
-        if (listOfKeywords is not null)
-        {
-            Keywords = listOfKeywords.ToImmutableList();
-        }
+        // var jsonKeywords = File.ReadAllText("C:\\BlazorStudioTestGround\\allCSharpKeywords.json");
+        //
+        // var listOfKeywords = System.Text.Json.JsonSerializer.Deserialize<List<string>>(jsonKeywords);
+        //
+        // if (listOfKeywords is not null)
+        // {
+        //     Keywords = listOfKeywords.ToImmutableList();
+        // }
     }
 }
