@@ -74,9 +74,9 @@ public class TerminalEntryEffects
             }
 
             // Start the child process.
-            process.StartInfo.FileName = "cmd.exe";
+            process.StartInfo.FileName = enqueueProcessOnTerminalEntryAction.Command;
             // 2>&1 combines stdout and stderr
-            process.StartInfo.Arguments = $"/c {enqueueProcessOnTerminalEntryAction.Command} 2>&1";
+            //process.StartInfo.Arguments = $"{enqueueProcessOnTerminalEntryAction.Command}";
             // Redirect the output stream of the child process.
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
