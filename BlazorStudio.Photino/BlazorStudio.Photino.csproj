@@ -22,4 +22,8 @@
 		</None>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\BlazorStudio.RazorLib\BlazorStudio.RazorLib.csproj" />
+	</ItemGroup>
+
 </Project>

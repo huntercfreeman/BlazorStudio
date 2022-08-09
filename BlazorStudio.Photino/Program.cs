@@ -2,6 +2,7 @@
 using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
+using BlazorStudio.RazorLib;
 
 namespace BlazorStudio.Photino
 {
@@ -16,6 +17,8 @@ namespace BlazorStudio.Photino
 
             // register root component
             appBuilder.RootComponents.Add<App>("app");
+
+            appBuilder.Services.AddBlazorStudioRazorLibServices();
 
             var app = appBuilder.Build();
 
