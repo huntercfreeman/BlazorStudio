@@ -33,7 +33,7 @@ public static class TerminalOutputParser
                 }
             }
 
-            var aTag = $"<a href=\"{httpBuilder}\">{httpBuilder}</a>";
+            var aTag = $"<a href=\"{httpBuilder}\" target=\"_blank\">{httpBuilder}</a>";
 
             var result = firstSubstring.EscapeHtml()
                          + aTag.ToString();
