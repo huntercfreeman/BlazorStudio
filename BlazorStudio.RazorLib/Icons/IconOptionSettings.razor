@@ -1,0 +1,18 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<h3>IconSettings</h3>
+
+<div>
+    <div>
+        Change&nbsp;ResizeHandle:<input type="number" @bind="IconSizeInPixels" @bind:event="oninput" />
+    </div>
+    
+    <div>
+        ResizeHandleDimensionUnit:&nbsp;@IconOptionsStateWrap.Value.IconSize.Value
+    </div>
+    
+    <div>
+        DimensionUnitKind:&nbsp;@IconOptionsStateWrap.Value.IconSize.DimensionUnitKind
+    </div>
+</div>
+
