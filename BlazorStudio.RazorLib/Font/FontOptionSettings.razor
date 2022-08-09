@@ -1,0 +1,15 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div>
+    <div>
+        Change&nbsp;ResizeHandle:<input type="number" @bind="FontSizeInPixels" @bind:event="oninput" />
+    </div>
+    
+    <div>
+        ResizeHandleDimensionUnit:&nbsp;@FontOptionsStateWrap.Value.FontSize.Value
+    </div>
+    
+    <div>
+        DimensionUnitKind:&nbsp;@FontOptionsStateWrap.Value.FontSize.DimensionUnitKind
+    </div>
+</div>
