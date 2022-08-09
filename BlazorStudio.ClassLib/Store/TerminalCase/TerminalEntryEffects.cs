@@ -73,10 +73,12 @@ public class TerminalEntryEffects
                     .GetAbsoluteFilePathString();
             }
 
+            process.StartInfo.FileName = "/bin/bash";
+            process.StartInfo.Arguments = $"-c \"{enqueueProcessOnTerminalEntryAction.Command}\"";
+
             // Start the child process.
-            process.StartInfo.FileName = enqueueProcessOnTerminalEntryAction.Command;
             // 2>&1 combines stdout and stderr
-            //process.StartInfo.Arguments = $"{enqueueProcessOnTerminalEntryAction.Command}";
+            //process.StartInfo.Arguments = $"";
             // Redirect the output stream of the child process.
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;

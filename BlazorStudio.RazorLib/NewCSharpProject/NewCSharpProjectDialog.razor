@@ -5,11 +5,11 @@
     {
         if (_startingRetrievingProjectTemplates)
         {
-            <div>Executing "dotnet new list"</div>
+            <div>Executing "dotnet new --list"</div>
         }
         else
         {
-            <div>Enqueued terminal task "dotnet new list"</div>   
+            <div>Enqueued terminal task "dotnet new --list"</div>   
         }
     }
     else if (!_templates.Any())

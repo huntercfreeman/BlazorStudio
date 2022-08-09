@@ -23,7 +23,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
     public Action<IAbsoluteFilePath>? OnProjectCreatedCallback { get; set; }
 
     private List<CSharpTemplate>? _templates;
-    private string getCSharpProjectTemplatesCommand = "dotnet new list";
+    private string getCSharpProjectTemplatesCommand = "dotnet new --list";
     private string _templateArguments = string.Empty;
     private SelectCSharpProjectTemplate? _selectCSharpProjectTemplate;
     private bool _disableExecuteButton;
