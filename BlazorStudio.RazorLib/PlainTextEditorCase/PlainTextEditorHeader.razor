@@ -6,7 +6,10 @@
                     CharacterWidth:&nbsp;@(localPlainTextEditor.RichTextEditorOptions.WidthOfACharacterInPixels)
                     Row Height:&nbsp;@(localPlainTextEditor.RichTextEditorOptions.HeightOfARowInPixels)
 
-                    <input type="number" @bind="FontSize" @bind:event="oninput" />
+                    <input type="number" 
+                           @bind="FontSize" 
+                           @bind:event="oninput"
+                           class="bstudio_input bstudio_input-number" />
                 </div>
                 <div>
                     Use the <em>F1</em> key to scroll the caret row into view if it is offscreen.

@@ -42,8 +42,16 @@
             <div style="border-left: 1.5px solid var(--bstudio_primary-border-color); padding-left: 10px; margin-bottom: 5px;">
                 <div>
                     dotnet&nbsp;new&nbsp;<em>@(_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "{select a template}")</em>
-                    &nbsp;<input class="bstudio_input-text" style="padding: 2px 3px;" placeholder="project name" @bind="_projectName" @bind:event="oninput" />
-                    &nbsp;<input class="bstudio_input-text" style="padding: 2px 3px;" placeholder="optional args" @bind="_templateArguments" @bind:event="oninput" />
+                    &nbsp;
+                    <input class="bstudio_input bstudio_input-text" 
+                           placeholder="project name" 
+                           @bind="_projectName" 
+                           @bind:event="oninput" />
+                    &nbsp;
+                    <input class="bstudio_input bstudio_input-text" 
+                           placeholder="optional args" 
+                           @bind="_templateArguments" 
+                           @bind:event="oninput" />
                 </div>
                 <div style="margin-top: 2px;"><em>@InterpolatedCommand</em></div>
             </div>

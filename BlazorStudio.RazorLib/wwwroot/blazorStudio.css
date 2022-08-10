@@ -23,6 +23,7 @@
     display: flex;
     height: 100%;
     align-items: center;
+    cursor: pointer;
 }
 
     .bstudio_toolbar-display-file-dropdown:hover {
@@ -38,7 +39,14 @@
 .bstudio_tree-view-display-title {
     outline: none;
     white-space: nowrap;
+    cursor: pointer;
 }
+
+    .bstudio_tree-view-display-title:hover {
+        background-color: var(--bstudio_primary-hover-background-color);
+        color: var(--bstudio_primary-hover-font-color);
+    }
+    
     .bstudio_tree-view-display-title.bstudio_active {
         background-color: var(--bstudio_primary-active-unfocused-background-color);
         color: var(--bstudio_primary-active-font-color);
@@ -426,15 +434,21 @@ em {
     font-style: normal;
 }
 
-.bstudio_input-text {
+.bstudio_input {
     background-color: var(--bstudio_secondary-background-color);
     color: var(--bstudio_secondary-font-color);
+    padding: 2px 3px;
 }
 
-    .bstudio_input-text:focus {
+    .bstudio_input:focus {
         outline: solid 2px var(--bstudio_primary-emphasis-font-color);
         box-shadow: 0 0 21px var(--bstudio_primary-emphasis-font-color);
     }
+
+.bstudio_input-checkbox {
+    width: .8em;
+    height: .8em;
+}
 
 .bstudio_virtualize-coordinate-system {
     overflow: auto;
@@ -630,4 +644,16 @@ em {
     position: fixed;
     bottom: 15px;
     right: 10px;
+}
+
+.btn-warning {
+    background-color: #c8be2c;
+}
+
+    .btn-warning:hover {
+        background-color: #dac60a;
+    }
+    
+.bstudio_expansion-display-title {
+    cursor: pointer;
 }

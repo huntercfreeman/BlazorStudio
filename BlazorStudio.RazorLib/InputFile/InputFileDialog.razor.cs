@@ -81,11 +81,13 @@ public partial class InputFileDialog : ComponentBase
 
         var childDirectoryAbsolutePaths = Directory
             .GetDirectories(absoluteFilePath.GetAbsoluteFilePathString())
+            .OrderBy(x => x)
             .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, true))
             .ToList();
 
         var childFileAbsolutePaths = Directory
             .GetFiles(absoluteFilePath.GetAbsoluteFilePathString())
+            .OrderBy(x => x)
             .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, false))
             .ToList();
 

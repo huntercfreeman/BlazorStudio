@@ -2,13 +2,17 @@
 
 <div>
     <div>
-        Change&nbsp;ResizeHandle:<input type="number" @bind="ResizeHandleSizeInPixels" @bind:event="oninput" />
+        Change&nbsp;ResizeHandle:
+        <input type="number" 
+               @bind="ResizeHandleSizeInPixels" 
+               @bind:event="oninput"
+               class="bstudio_input bstudio_input-number" />
     </div>
-    
+
     <div>
         ResizeHandleDimensionUnit:&nbsp;@TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
     </div>
-    
+
     <div>
         DimensionUnitKind:&nbsp;@TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.DimensionUnitKind
     </div>

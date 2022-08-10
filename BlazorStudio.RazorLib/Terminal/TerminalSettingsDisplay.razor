@@ -10,8 +10,9 @@
             
             <div style="padding-left: 16px; border-left: 1.5px solid var(--bstudio_primary-border-color);">
                 <input type="checkbox" 
-                   checked="@localTerminalSettingsState.ShowTerminalOnProcessStarted"
-                       @onchange="OnShowTerminalOnProcessStartedChanged" />
+                       checked="@localTerminalSettingsState.ShowTerminalOnProcessStarted"
+                       @onchange="OnShowTerminalOnProcessStartedChanged"
+                       class="bstudio_input bstudio_input-checkbox" />
 
                 :&nbsp;
                 @localTerminalSettingsState.ShowTerminalOnProcessStarted
