@@ -1,5 +1,6 @@
 ﻿using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
+using BlazorStudio.ClassLib.Store.SolutionCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -11,7 +12,9 @@ public partial class DiffDialog : FluxorComponent
 {
     [Inject]
     private IStateSelection<PlainTextEditorStates, IPlainTextEditor?> PlainTextEditorSelector { get; set; } = null!;
-
+    [Inject]
+    private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
+    
     [Parameter, EditorRequired]
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
     [Parameter]
