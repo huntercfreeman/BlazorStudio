@@ -13,6 +13,7 @@ using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.RazorLib.ExceptionNotifications;
+using BlazorStudio.RazorLib.FileDocumentMap;
 
 namespace BlazorStudio.RazorLib.StartupProjectControls;
 
@@ -23,8 +24,17 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
     [Inject]
     private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
     [Inject]
+    private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-
+    
+    private readonly DialogRecord _fileDocumentMapDialog = new DialogRecord(
+        DialogKey.NewDialogKey(),
+        "File to Document Map",
+        typeof(FileDocumentMapDisplay),
+        null
+    );
+    
     private CancellationTokenSource _cancellationTokenSource = new();
     private bool _isEnqueuedToRun;
     private bool _isRunning;
@@ -123,6 +133,12 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
         _cancellationTokenSource = new();
 
         return _cancellationTokenSource.Token;
+    }
+    
+    public void OpenFileDocumentMapOnClick()
+    {
+        if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _fileDocumentMapDialog.DialogKey))
+            Dispatcher.Dispatch(new RegisterDialogAction(_fileDocumentMapDialog));
     }
 
     protected override void Dispose(bool disposing)

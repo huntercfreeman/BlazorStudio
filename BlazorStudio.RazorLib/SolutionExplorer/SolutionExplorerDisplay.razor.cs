@@ -26,6 +26,7 @@ using BlazorStudio.ClassLib.Store.TerminalCase;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
+using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.RazorLib.SyntaxRootRender;
 
@@ -224,6 +225,14 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 {
                     projects.Add(new AbsoluteFilePath(project.FilePath ?? "{null file path}", false));
                 }
+
+                _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+                    {
+                        await FileToDocumentIndexer.IndexFilesToDocuments(_workspace, Dispatcher, cancellationToken);
+                    },
+                    $"{nameof(FileToDocumentIndexer.IndexFilesToDocuments)}",
+                    false,
+                    TimeSpan.FromSeconds(60));
 
                 return projects.ToArray();
             }

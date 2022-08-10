@@ -19,6 +19,19 @@ public class SolutionReducer
 
         var msBuildAbsoluteFilePath = new AbsoluteFilePath(msBuildPathString, true);
 
-        return new(setSolutionAction.SolutionWorkspace, setSolutionAction.VisualStudioInstance, msBuildAbsoluteFilePath);
+        return new(setSolutionAction.SolutionWorkspace, 
+            setSolutionAction.VisualStudioInstance,
+            msBuildAbsoluteFilePath,
+            previousSolutionState.FileDocumentMap);
+    }
+    
+    [ReducerMethod]
+    public static SolutionState ReduceSetSolutionFileDocumentMapAction(SolutionState previousSolutionState,
+        SetSolutionFileDocumentMapAction setSolutionFileDocumentMapAction)
+    {
+        return previousSolutionState with
+        {
+            FileDocumentMap = setSolutionFileDocumentMapAction.FileDocumentMap
+        };
     }
 }

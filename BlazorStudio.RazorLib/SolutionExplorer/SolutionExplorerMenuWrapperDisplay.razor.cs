@@ -394,6 +394,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
             if (solutionState.SolutionWorkspace is null)
                 return;
+                
+            // solutionState.SolutionWorkspace.CurrentSolution.
 
             foreach (Project project in solutionState.SolutionWorkspace.CurrentSolution.Projects)
             {

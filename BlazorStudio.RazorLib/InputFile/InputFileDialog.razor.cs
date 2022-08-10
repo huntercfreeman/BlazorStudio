@@ -48,15 +48,15 @@ public partial class InputFileDialog : ComponentBase
     {
         if (firstRender)
         {
-            var rootAbsoluteFilePath =
-                new AbsoluteFilePath(
-                    System.IO.Path.DirectorySeparatorChar.ToString(),
-                    true);
-            
             // var rootAbsoluteFilePath =
             //     new AbsoluteFilePath(
-            //         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            //         System.IO.Path.DirectorySeparatorChar.ToString(),
             //         true);
+            
+            var rootAbsoluteFilePath =
+                new AbsoluteFilePath(
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    true);
 
             _treeViewWrap = new TreeViewWrap<IAbsoluteFilePath>(
                 TreeViewWrapKey.NewTreeViewWrapKey());
