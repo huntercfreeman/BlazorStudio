@@ -16,7 +16,7 @@ public static class FileToDocumentIndexer
         if (solutionWorkspace is null)
             return;
 
-        Dictionary<AbsoluteFilePathStringValue, Document> localFileDocumentMap = new();
+        Dictionary<AbsoluteFilePathStringValue, IndexedDocument> localFileDocumentMap = new();
                 
         foreach (Project project in solutionWorkspace.CurrentSolution.Projects)
         {
@@ -26,7 +26,9 @@ public static class FileToDocumentIndexer
                 {
                     var absoluteFilePath = new AbsoluteFilePath(document.FilePath, false);
                     
-                    localFileDocumentMap.Add(new AbsoluteFilePathStringValue(absoluteFilePath), document);
+                    localFileDocumentMap
+                        .Add(new AbsoluteFilePathStringValue(absoluteFilePath),
+                            new IndexedDocument(document, absoluteFilePath));
                 }
             }
         }

@@ -2,28 +2,13 @@
 @using BlazorStudio.ClassLib.UserInterface
 @using BlazorStudio.ClassLib.FileSystemApi
 @using BlazorStudio.ClassLib.RoslynHelpers
+@using Microsoft.CodeAnalysis
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_diff-dialog">
     @{
         var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
-        <h1>FileDocumentMap</h1>
-        if (SolutionStateWrap.Value?.FileDocumentMap is not null)
-        {
-            var document = SolutionStateWrap.Value.FileDocumentMap[new AbsoluteFilePathStringValue(currentPlainTextEditor.FileHandle.AbsoluteFilePath)];
-            
-            var structCollector = new IdentifierCollector();
-            structCollector.Visit(document.GetSyntaxRootAsync().Result); // Or any other syntax node
-            
-            foreach (var identifier in structCollector.Identifiers)
-            {
-                <div>
-                    @identifier
-                </div>
-            }
-        }
-        
         if (currentPlainTextEditor is not null)
         {
             <div>

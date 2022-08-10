@@ -2,6 +2,7 @@
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.RoslynHelpers;
 using Fluxor;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.MSBuild;
@@ -13,12 +14,12 @@ namespace BlazorStudio.ClassLib.Store.SolutionCase;
 public record SolutionState(MSBuildWorkspace? SolutionWorkspace, 
     VisualStudioInstance? VisualStudioInstance,
     IAbsoluteFilePath? MsBuildAbsoluteFilePath,
-    ImmutableDictionary<AbsoluteFilePathStringValue, Document> FileDocumentMap)
+    ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument> FileDocumentMap)
 {
     private SolutionState() : this(default(MSBuildWorkspace), 
         default(VisualStudioInstance),
         default(IAbsoluteFilePath),
-        ImmutableDictionary<AbsoluteFilePathStringValue, Document>.Empty)
+        ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument>.Empty)
     {
 
     }

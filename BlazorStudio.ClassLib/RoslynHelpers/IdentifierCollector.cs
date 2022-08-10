@@ -5,10 +5,10 @@ namespace BlazorStudio.ClassLib.RoslynHelpers;
 
 public class IdentifierCollector : CSharpSyntaxWalker
 {
-    public List<string> Identifiers { get; } = new();
+    public List<IdentifierNameSyntax> Identifiers { get; } = new();
 
     public override void VisitIdentifierName(IdentifierNameSyntax node)
     {
-        Identifiers.Add(node.Identifier.Text);
+        Identifiers.Add(node);
     }
 }

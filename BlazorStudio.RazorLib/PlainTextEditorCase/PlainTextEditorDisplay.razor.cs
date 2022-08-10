@@ -1,10 +1,14 @@
 using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Html;
 using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.KeyDownEventCase;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
+using BlazorStudio.ClassLib.Store.SolutionCase;
+using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.ClassLib.Virtualize;
 using BlazorStudio.RazorLib.VirtualizeComponents;
@@ -20,6 +24,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 {
     [Inject]
     private IStateSelection<PlainTextEditorStates, IPlainTextEditor?> PlainTextEditorSelector { get; set; } = null!;
+    [Inject]
+    private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -173,6 +179,26 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         if (plainTextEditor.PlainTextEditorKey != _previousPlainTextEditorKey)
         {
+            var propertyDeclarationCollector = new PropertyDeclarationCollector();
+
+            var absoluteFilePathValue = new AbsoluteFilePathStringValue(plainTextEditor.FileHandle.AbsoluteFilePath);
+
+            if (SolutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var document))
+            {
+                propertyDeclarationCollector.Visit(document.Document.GetSyntaxRootAsync().Result);
+
+                document.PropertyDeclarationSyntaxes = 
+                    new(propertyDeclarationCollector.PropertyDeclarations);
+            }
+            
+            // _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+            //     {
+            //         
+            //     },
+            //     $"{nameof(PropertyDeclarationCollector)}",
+            //     false,
+            //     TimeSpan.FromSeconds(60));
+            
             // Parameter changed and the VirtualizeCoordinateSystem must reset
             if (_virtualizeCoordinateSystem is not null)
             {

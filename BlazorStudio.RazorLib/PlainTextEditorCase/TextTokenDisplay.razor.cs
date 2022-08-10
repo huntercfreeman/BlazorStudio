@@ -5,16 +5,25 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System.Linq;
 using System.Text;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.Store.SolutionCase;
+using Microsoft.CodeAnalysis.Text;
 
 namespace BlazorStudio.RazorLib.PlainTextEditorCase;
 
 public partial class TextTokenDisplay : ComponentBase
 {
     [Inject]
+    private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
+    [Inject]
     private IState<CSharpKeywords> CSharpKeywordsWrap { get; set; } = null!;
     [Inject]
     private IState<RazorKeywords> RazorKeywordsWrap { get; set; } = null!;
 
+    [CascadingParameter] 
+    public IAbsoluteFilePath AbsoluteFilePath { get; set; } = null!;
+    
     [Parameter, EditorRequired]
     public ITextToken TextToken { get; set; } = null!;
     [Parameter, EditorRequired]
@@ -56,6 +65,32 @@ public partial class TextTokenDisplay : ComponentBase
                     // Don't mark as keyword twice redundantly
                     isKeyword = true;
                     classBuilder.Append("pte_plain-text-editor-text-token-display-keyword");
+                }
+            }
+        }
+
+        if (!isKeyword)
+        {
+            var startOfSpanInclusive = StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow;
+            var endOfSpanExclusive =
+                StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow + TextToken.PlainText.Length;
+
+            var absoluteFilePathValue = new AbsoluteFilePathStringValue(AbsoluteFilePath);
+
+            if (SolutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var indexedDocument))
+            {
+                if (indexedDocument.PropertyDeclarationSyntaxes?.Any() ?? false)
+                {
+                    foreach (var propertyDeclaration in indexedDocument.PropertyDeclarationSyntaxes)
+                    {
+                        var typeSpan = propertyDeclaration.Type.Span;
+                    
+                        if (typeSpan.Intersection(new TextSpan((int) startOfSpanInclusive, TextToken.PlainText.Length))
+                            is not null)
+                        {
+                            classBuilder.Append("pte_plain-text-editor-text-token-display-type");
+                        }
+                    }
                 }
             }
         }

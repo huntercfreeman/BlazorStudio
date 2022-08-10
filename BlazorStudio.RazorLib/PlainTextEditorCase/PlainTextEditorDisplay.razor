@@ -30,59 +30,61 @@ else
             @{
                 var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
 
-                <CascadingValue Value="currentPlainTextEditor.RichTextEditorOptions">
-                    <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
-                        <CascadingValue Value="_isFocused">
-                            <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
-                                <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
-                                    <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
-                                        <CascadingValue Name="VirtualCharacterIndexMarkerForStartOfARow" Value="currentPlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow">
+                <CascadingValue Value="currentPlainTextEditor.FileHandle.AbsoluteFilePath">
+                    <CascadingValue Value="currentPlainTextEditor.RichTextEditorOptions">
+                        <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
+                            <CascadingValue Value="_isFocused">
+                                <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
+                                    <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
+                                        <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
+                                            <CascadingValue Name="VirtualCharacterIndexMarkerForStartOfARow" Value="currentPlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow">
 
-                                            @if (_isInitialized)
-                                            {
-                                                <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
-                                                                                                                       T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
-                                                                                                                       VirtualizeCoordinateSystemMessage="currentPlainTextEditor.VirtualizeCoordinateSystemMessage"
-                                                                                                                       DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
-                                                                                                                       RequestCallbackAction="OnRequestCallbackAction"
-                                                                                                                       PaddingInPixels="100"
-                                                                                                                       OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
-                                                    <ItemRenderFragment Context="rowTuple">
-                                                        <CascadingValue Name="RowIndex" Value="rowTuple.Index">
-                                                            <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
-                                                                                       PlainTextEditorRow="rowTuple.PlainTextEditorRow"
-                                                                                       MostDigitsInARowNumber="mostDigitsInARowNumber"/>
+                                                @if (_isInitialized)
+                                                {
+                                                    <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
+                                                                                                                           T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
+                                                                                                                           VirtualizeCoordinateSystemMessage="currentPlainTextEditor.VirtualizeCoordinateSystemMessage"
+                                                                                                                           DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
+                                                                                                                           RequestCallbackAction="OnRequestCallbackAction"
+                                                                                                                           PaddingInPixels="100"
+                                                                                                                           OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
+                                                        <ItemRenderFragment Context="rowTuple">
+                                                            <CascadingValue Name="RowIndex" Value="rowTuple.Index">
+                                                                <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
+                                                                                           PlainTextEditorRow="rowTuple.PlainTextEditorRow"
+                                                                                           MostDigitsInARowNumber="mostDigitsInARowNumber"/>
+                                                            </CascadingValue>
+                                                        </ItemRenderFragment>
+
+                                                        <MarkerRenderFragment>
+                                                            <input type="text"
+                                                                   style="background-color: transparent; outline: none !important; border: none !important; @GetActivePositionMarkerDimensions(currentPlainTextEditor)"
+                                                                   @ref="_activePositionMarker"
+                                                                   @onkeydown="OnKeyDown"
+                                                                   @onfocusin="OnFocusIn"
+                                                                   @onfocusout="OnFocusOut"/>
+
+                                                        </MarkerRenderFragment>
+                                                    </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
+                                                }
+
+                                                @{
+                                                    var testRow = currentPlainTextEditor.GetWidthAndHeightTestPlainTextEditorRow();
+                                                    <CascadingValue Name="RowIndex" Value="0">
+                                                        <CascadingValue Name="GetWidthAndHeightTest" Value="true">
+
+                                                            <div style="position: absolute; left: 0; top: 0; visibility: hidden;">
+                                                                <PlainTextEditorRowDisplay @key="testRow.Key"
+                                                                                           PlainTextEditorRow="testRow"
+                                                                                           MostDigitsInARowNumber="mostDigitsInARowNumber"
+                                                                                           WidthAndHeightTestId="@_widthAndHeightTestId"/>
+                                                            </div>
+
+
                                                         </CascadingValue>
-                                                    </ItemRenderFragment>
-
-                                                    <MarkerRenderFragment>
-                                                        <input type="text"
-                                                               style="background-color: transparent; outline: none !important; border: none !important; @GetActivePositionMarkerDimensions(currentPlainTextEditor)"
-                                                               @ref="_activePositionMarker"
-                                                               @onkeydown="OnKeyDown"
-                                                               @onfocusin="OnFocusIn"
-                                                               @onfocusout="OnFocusOut"/>
-
-                                                    </MarkerRenderFragment>
-                                                </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
-                                            }
-
-                                            @{
-                                                var testRow = currentPlainTextEditor.GetWidthAndHeightTestPlainTextEditorRow();
-                                                <CascadingValue Name="RowIndex" Value="0">
-                                                    <CascadingValue Name="GetWidthAndHeightTest" Value="true">
-
-                                                        <div style="position: absolute; left: 0; top: 0; visibility: hidden;">
-                                                            <PlainTextEditorRowDisplay @key="testRow.Key"
-                                                                                       PlainTextEditorRow="testRow"
-                                                                                       MostDigitsInARowNumber="mostDigitsInARowNumber"
-                                                                                       WidthAndHeightTestId="@_widthAndHeightTestId"/>
-                                                        </div>
-
-
                                                     </CascadingValue>
-                                                </CascadingValue>
-                                            }
+                                                }
+                                            </CascadingValue>
                                         </CascadingValue>
                                     </CascadingValue>
                                 </CascadingValue>

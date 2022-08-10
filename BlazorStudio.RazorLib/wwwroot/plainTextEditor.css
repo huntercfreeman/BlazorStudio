@@ -7,6 +7,7 @@
     --pte_hover-font-color: #0000ff;
     --pte_active-border-color: #0000ff;
     --pte_token-keyword: rgb(216, 160, 223);
+    --pte_token-type: #4EC9B0;
 }
 
 .pte_visually-hidden {
@@ -141,4 +142,8 @@
 
 .pte_plain-text-editor-text-token-display-keyword {
     color: var(--pte_token-keyword);
+}
+
+.pte_plain-text-editor-text-token-display-type {
+    color: var(--pte_token-type);
 }
