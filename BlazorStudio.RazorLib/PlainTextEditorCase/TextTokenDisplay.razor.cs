@@ -78,8 +78,7 @@ public partial class TextTokenDisplay : ComponentBase
                 {
                     var typeSpan = propertyDeclaration.Type.Span;
                 
-                    if (typeSpan.Intersection(new TextSpan((int) startOfSpanInclusive, TextToken.PlainText.Length))
-                        is not null)
+                    if (typeSpan.IntersectsWith(new TextSpan((int) startOfSpanInclusive, TextToken.PlainText.Length)))
                     {
                         classBuilder.Append("pte_plain-text-editor-text-token-display-type");
                     }
