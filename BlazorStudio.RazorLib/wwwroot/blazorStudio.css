@@ -277,6 +277,7 @@
 
 .bstudio_menu-option-display {
     white-space: nowrap;
+    cursor: pointer;
 }
 
     .bstudio_menu-option-display.bstudio_sub-menu-is-open {
