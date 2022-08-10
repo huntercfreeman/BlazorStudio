@@ -327,6 +327,7 @@
     padding: 2px;
     margin: 2px;
     background-color: var(--bstudio_secondary-background-color);
+    cursor: pointer;
 }
 
     .bstudio_editor-tab-display:hover {
@@ -660,4 +661,9 @@ em {
     
 .bstudio_expansion-display-title {
     cursor: pointer;
+}
+
+.bstudio_expansion-chevron:hover {
+    background-color: var(--bstudio_tertiary-hover-background-color);
+    color: var(--bstudio_tertiary-hover-font-color);
 }

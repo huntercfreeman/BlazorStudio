@@ -21,7 +21,8 @@
         {
             <span @onclick="ToggleIsExpandedOnClick"
                   @onclick:stopPropagation="true"
-                  @ondblclick:stopPropagation="true">
+                  @ondblclick:stopPropagation="true"
+                  class="bstudio_expansion-chevron">
                 @if (TreeView.IsExpanded)
                 {
                     <IconChevronDown />
