@@ -773,6 +773,17 @@ public partial record PlainTextEditorStates
 
                 dispatcher.Dispatch(new SetPlainTextEditorStatesAction(nextPlainTextEditorStates));
 
+                var tokenSemantics = resultingPlainTextEditor.Rows
+                    .SelectMany(x => x.Tokens)
+                    .Select(x => (x.Key, new SemanticDescription()
+                    {
+                        SyntaxKind = default,
+                        SequenceKey = SequenceKey.NewSequenceKey()
+                    }))
+                    .ToList();
+                
+                dispatcher.Dispatch(new UpdateTokenSemanticDescriptionsAction(tokenSemantics));
+                
                 UpdateTokenSemanticDescriptions(previousPlainTextEditorStates,
                     resultingPlainTextEditor,
                     dispatcher);
@@ -833,6 +844,8 @@ public partial record PlainTextEditorStates
                             new(propertyDeclarationCollector.PropertyDeclarations);
 
                         var runningTotalOfCharactersInDocument = 0;
+
+                        List<(TextTokenKey textTokenKey, SemanticDescription semanticDescription)> tuples = new();
                         
                         foreach (var row in editor.Rows)
                         {
@@ -843,7 +856,7 @@ public partial record PlainTextEditorStates
                                     if (propertyDeclaration.Type.Span.IntersectsWith(new TextSpan(runningTotalOfCharactersInDocument,
                                             token.PlainText.Length)))
                                     {
-                                        dispatcher.Dispatch(new UpdateTokenSemanticDescriptionAction(token.Key,
+                                        tuples.Add((token.Key,
                                             new SemanticDescription
                                             {
                                                 SequenceKey = SequenceKey.NewSequenceKey(),
@@ -854,10 +867,11 @@ public partial record PlainTextEditorStates
                                     }
                                 }
                                 
-                                
                                 runningTotalOfCharactersInDocument += token.PlainText.Length;
                             }
                         }
+
+                        dispatcher.Dispatch(new UpdateTokenSemanticDescriptionsAction(tuples));
                     }
                 },
                 $"{nameof(PropertyDeclarationCollector)}",

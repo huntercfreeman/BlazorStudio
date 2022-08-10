@@ -1,3 +1,3 @@
 namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
-public record UpdateTokenSemanticDescriptionAction(TextTokenKey TextTokenKey, SemanticDescription SemanticDescription);
+public record UpdateTokenSemanticDescriptionsAction(List<(TextTokenKey textTokenKey, SemanticDescription semanticDescription)> Tuple);

@@ -39,14 +39,11 @@ public partial class TextTokenDisplay : FluxorComponent
 
     private string TokenClass => GetTokenClass();
 
+    private SequenceKey? _previousSequenceKey;
+    private TextTokenKey? _previousTextTokenKey;
+
     protected override void OnInitialized()
     {
-        Dispatcher.Dispatch(new UpdateTokenSemanticDescriptionAction(TextToken.Key, new SemanticDescription()
-        {
-            SyntaxKind = default,
-            SequenceKey = SequenceKey.NewSequenceKey()
-        }));
-        
         TokenSemanticsStateSelector
             .Select(x =>
             {
@@ -70,7 +67,15 @@ public partial class TextTokenDisplay : FluxorComponent
 
     protected override bool ShouldRender()
     {
-        Console.WriteLine("ShouldRender");
+        var currentTokenSemanticsState = TokenSemanticsStateSelector.Value;
+
+        if (_previousSequenceKey != currentTokenSemanticsState.SequenceKey ||
+            _previousTextTokenKey != TextToken.Key)
+        {
+            return true;
+        }
+
+        return false;
         
         return base.ShouldRender();
     }
@@ -107,9 +112,9 @@ public partial class TextTokenDisplay : FluxorComponent
         
         if (!isKeyword)
         {
-            var currentTokenSemanticsStateSelector = TokenSemanticsStateSelector.Value;
+            var currentTokenSemanticsState = TokenSemanticsStateSelector.Value;
 
-            classBuilder.Append(currentTokenSemanticsStateSelector.CssClassString ?? string.Empty);
+            classBuilder.Append(currentTokenSemanticsState.CssClassString ?? string.Empty);
             // classBuilder.Append(SyntaxKindToCssStringConverter.Convert(currentTokenSemanticsStateSelector.SyntaxKind));
         }
         
