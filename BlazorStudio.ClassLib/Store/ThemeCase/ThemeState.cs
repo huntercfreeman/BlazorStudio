@@ -5,7 +5,7 @@ namespace BlazorStudio.ClassLib.Store.ThemeCase;
 [FeatureState]
 public record ThemeState(ThemeKey ThemeKey)
 {
-    public ThemeState() : this(ThemeFacts.Default.Dark.BstudioDefaultDarkTheme)
+    public ThemeState() : this(ThemeFacts.Default.Light.BstudioDefaultLightTheme)
     {
 
     }

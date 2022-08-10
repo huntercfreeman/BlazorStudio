@@ -4,99 +4,101 @@
 <div class="bstudio_workspace-explorer"
      style="@Dimensions.DimensionsCssString">
 
-    <h5 class="bstudio_h5-title" style="height: 2rem;">
+    <h5 class="bstudio_large-title" style="padding: 5px;">
         Workspace Explorer&nbsp;
     </h5>
 
-    @{
-        var workspaceState = WorkspaceStateWrap.Value;
+    <div style="padding: 0 5px; height: calc(100% - 2rem - 10px);">
+        @{
+            var workspaceState = WorkspaceStateWrap.Value;
 
-        if (workspaceState.WorkspaceAbsoluteFilePath is null)
-        {
-                <div>
-                    WorkspaceAbsoluteFilePath is null, use the InputFile dialog to select a Workspace
-                    directory.
-                </div>
-                <div>
-                    <BlazorStudio.RazorLib.InputFile.InputFileDialogEntryPoint />
-                </div>
-        }
-        else
-        {
-            if (_isInitialized)
+            if (workspaceState.WorkspaceAbsoluteFilePath is null)
             {
-                if (_workspaceStateWrapStateChangedRichErrorModel is not null)
+                    <div>
+                        WorkspaceAbsoluteFilePath is null, use the InputFile dialog to select a Workspace
+                        directory.
+                    </div>
+                    <div>
+                        <BlazorStudio.RazorLib.InputFile.InputFileDialogEntryPoint />
+                    </div>
+            }
+            else
+            {
+                if (_isInitialized)
                 {
-                        <RichErrorDisplay RichErrorModel="_workspaceStateWrapStateChangedRichErrorModel" />
-                }
-                else
-                {
-                    <div class="bstudio_workspace-explorer">                        
-                        
-                        <DropdownDisplay Dimensions="_fileDropdownDimensions"
-                                         DropdownKey="_fileDropdownKey">
-                         
-                            @{
-                                var contextMenuEventDto = new TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath>
-                                {
-                                    Item = workspaceState.WorkspaceAbsoluteFilePath,
-                                    MouseEventArgs = null,
-                                    RefreshContextMenuTarget = async () => WorkspaceStateWrap_StateChanged(null, EventArgs.Empty)
-                                }; 
-                
-                                <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
-
-                                <WorkspaceExplorerMenuWrapperDisplay ContextMenuEventDto="contextMenuEventDto" />
-                            }
-
-                        </DropdownDisplay>
-
-                        <TreeViewWrapDisplay @ref="_treeViewWrapDisplay"
-                             ShouldDispose="false"
-                             TreeViewWrapKey="_inputFileTreeViewKey"
-                             T="IAbsoluteFilePath"
-                             RootItems="_rootAbsoluteFilePaths"
-                             GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
-                             Context="absoluteFilePath"
-                             OnEnterKeyDown="WorkspaceExplorerTreeViewOnEnterKeyDown"
-                             OnSpaceKeyDown="WorkspaceExplorerTreeViewOnSpaceKeyDown"
-                             OnDoubleClick="WorkspaceExplorerTreeViewOnDoubleClick"
-                             IsExpandable="GetIsExpandable"
-                             StyleString="height: 100%;"
-                             BodyCssClassAttribute="bstudio_workspace-explorer-tree-view-body">
-
-                                <ItemRenderFragment>
-                                    <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
-                                        @absoluteFilePath.FilenameWithExtension
-                                    </span>
-                                </ItemRenderFragment>
-
-                                <OnContextMenuRenderFragment Context="contextMenuEventDto">
-
+                    if (_workspaceStateWrapStateChangedRichErrorModel is not null)
+                    {
+                            <RichErrorDisplay RichErrorModel="_workspaceStateWrapStateChangedRichErrorModel" />
+                    }
+                    else
+                    {
+                        <div class="bstudio_workspace-explorer">                        
+                            
+                            <DropdownDisplay Dimensions="_fileDropdownDimensions"
+                                             DropdownKey="_fileDropdownKey">
+                             
+                                @{
+                                    var contextMenuEventDto = new TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath>
+                                    {
+                                        Item = workspaceState.WorkspaceAbsoluteFilePath,
+                                        MouseEventArgs = null,
+                                        RefreshContextMenuTarget = async () => WorkspaceStateWrap_StateChanged(null, EventArgs.Empty)
+                                    }; 
+                    
                                     <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
 
                                     <WorkspaceExplorerMenuWrapperDisplay ContextMenuEventDto="contextMenuEventDto" />
+                                }
 
-                                </OnContextMenuRenderFragment>
+                            </DropdownDisplay>
 
-                                <HeaderRenderFragment Context="activeItems">
-                                    <div class="bstudio_workspace-explorer-tree-view-header">
-                                        <button class="btn btn-primary"
-                                                @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)">
-                                            <IconAdd/> New File
-                                        </button>
-                                        &nbsp;
-                                        to
-                                        &nbsp;
-                                        <span title="@workspaceState.WorkspaceAbsoluteFilePath.GetAbsoluteFilePathString()">
-                                            @workspaceState.WorkspaceAbsoluteFilePath.FilenameWithExtension
+                            <TreeViewWrapDisplay @ref="_treeViewWrapDisplay"
+                                 ShouldDispose="false"
+                                 TreeViewWrapKey="_inputFileTreeViewKey"
+                                 T="IAbsoluteFilePath"
+                                 RootItems="_rootAbsoluteFilePaths"
+                                 GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
+                                 Context="absoluteFilePath"
+                                 OnEnterKeyDown="WorkspaceExplorerTreeViewOnEnterKeyDown"
+                                 OnSpaceKeyDown="WorkspaceExplorerTreeViewOnSpaceKeyDown"
+                                 OnDoubleClick="WorkspaceExplorerTreeViewOnDoubleClick"
+                                 IsExpandable="GetIsExpandable"
+                                 StyleString="height: 100%;"
+                                 BodyCssClassAttribute="bstudio_workspace-explorer-tree-view-body">
+
+                                    <ItemRenderFragment>
+                                        <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
+                                            @absoluteFilePath.FilenameWithExtension
                                         </span>
-                                    </div>
-                                </HeaderRenderFragment>
-                            </TreeViewWrapDisplay>
-                        </div>
+                                    </ItemRenderFragment>
+
+                                    <OnContextMenuRenderFragment Context="contextMenuEventDto">
+
+                                        <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
+
+                                        <WorkspaceExplorerMenuWrapperDisplay ContextMenuEventDto="contextMenuEventDto" />
+
+                                    </OnContextMenuRenderFragment>
+
+                                    <HeaderRenderFragment Context="activeItems">
+                                        <div class="bstudio_workspace-explorer-tree-view-header">
+                                            <button class="btn btn-primary"
+                                                    @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)">
+                                                <IconAdd/> New File
+                                            </button>
+                                            &nbsp;
+                                            to
+                                            &nbsp;
+                                            <span title="@workspaceState.WorkspaceAbsoluteFilePath.GetAbsoluteFilePathString()">
+                                                @workspaceState.WorkspaceAbsoluteFilePath.FilenameWithExtension
+                                            </span>
+                                        </div>
+                                    </HeaderRenderFragment>
+                                </TreeViewWrapDisplay>
+                            </div>
+                    }
                 }
             }
         }
-    }
+    </div>
 </div>

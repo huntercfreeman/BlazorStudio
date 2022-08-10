@@ -19,6 +19,8 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
     public int RowIndex { get; set; }
     [CascadingParameter]
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
+    [CascadingParameter]
+    public RichTextEditorOptions RichTextEditorOptions { get; set; } = null!;
     [CascadingParameter(Name="GetWidthAndHeightTest")]
     public bool GetWidthAndHeightTest { get; set; }
     [CascadingParameter(Name="VirtualCharacterIndexMarkerForStartOfARow")]
@@ -40,7 +42,10 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
         ? "pte_active"
         : string.Empty;
 
-    private string WidthStyleCss => $"width: calc(100% - {MostDigitsInARowNumber}ch);";
+    
+    private string WidthStyleCss => GetWidthAndHeightTest
+        ? $"width: calc(100% - {MostDigitsInARowNumber}ch);"
+        : $"width: calc(100% - {RichTextEditorOptions.WidthOfACharacterInPixels}px);";
 
     private string IsActiveRowId => GetActiveRowId(); 
 

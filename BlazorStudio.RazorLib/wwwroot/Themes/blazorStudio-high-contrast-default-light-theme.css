@@ -1,15 +1,16 @@
 ﻿.bstudio_high-contrast-default-light-theme {
-    --bstudio_primary-background-color: #fafafa;
-    --bstudio_secondary-background-color: #f8f8ee;
+    --bstudio_primary-background-color: rgb(254, 254, 251);
+    --bstudio_secondary-background-color: rgb(250, 250, 250);
     --bstudio_tertiary-background-color: #c8cee1;
+    --bstudio_title-background-color: red;
     --bstudio_header-footer-background-color: #8096cd;
     --bstudio_primary-font-color: #0a0a0a;
     --bstudio_secondary-font-color: #09092b;
     --bstudio_primary-active-font-color: #000000;
-    --bstudio_primary-active-background-color: rgb(92 194 250);
+    --bstudio_primary-active-background-color: rgb(136, 195, 227);
     --bstudio_primary-active-unfocused-background-color: rgb(197, 207, 217);
     --bstudio_primary-border-color: #000000;
-    --bstudio_primary-hover-background-color: rgb(228, 137, 16);
+    --bstudio_primary-hover-background-color: #a77cb3;
     --bstudio_primary-hover-font-color: #ffffff;
     --bstudio_secondary-hover-background-color: rgb(17, 96, 187);
     --bstudio_secondary-hover-font-color: #ffffff;
@@ -17,7 +18,8 @@
     --bstudio_tertiary-hover-font-color: #191919;
     --bstudio_blazor-ui-error-display-error: #af4343;
     --bstudio_blazor-ui-error-display-hint: #3d61f3;
-    --bstudio_danger-background-color: #af4343;
+    --bstudio_danger-primary-background-color: rgb(255, 158, 158);
+    --bstudio_danger-secondary-background-color: rgb(216, 95, 95);
     --bstudio_warning-background-color: #767623;
     --bstudio_blue-background-color: #3d61f3;
     --bstudio_success-background-color: #328832;
@@ -36,12 +38,14 @@
     --bstudio_icon-js-font-color: #519aba;
     --bstudio_icon-ts-font-color: #37b38b;
     --bstudio_icon-start-without-debugging-font-color: #37b38b;
+    --bstudio_inactive-tab-background-color: rgb(220, 220, 220);
     --pte_primary-cursor-color: #000000;
     --pte_secondary-cursor-color: transparent;
-    --pte_active-row: #ff00eb;
+    --pte_active-row: #c800ff;
     --pte_active-unfocused-row: rgb(117, 124, 132);
-    --pte_active-line-number-font-color: #ff00eb;
+    --pte_active-line-number-font-color: #c800ff;
     --pte_hover-font-color: rgb(42, 122, 211);
     --pte_active-border-color: rgb(42, 122, 211);
-    --pte_token-keyword: rgb(244 28 207);
+    --pte_token-keyword: rgb(0, 0, 255);
+    --pte_token-type: #2B91AF;
 }

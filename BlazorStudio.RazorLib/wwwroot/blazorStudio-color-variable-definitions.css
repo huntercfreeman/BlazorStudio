@@ -2,6 +2,7 @@
     --bstudio_primary-background-color: #1e1e1e;
     --bstudio_secondary-background-color: #2d2f34;
     --bstudio_tertiary-background-color: #071c57;
+    --bstudio_title-background-color: red;
     --bstudio_header-footer-background-color: #292929;
     --bstudio_primary-font-color: #d1d2ca;
     --bstudio_secondary-font-color: #d1d2ca;
@@ -36,6 +37,7 @@
     --bstudio_icon-js-font-color: #519aba;
     --bstudio_icon-ts-font-color: #37b38b;
     --bstudio_icon-start-without-debugging-font-color: #37b38b;
+    --bstudio_inactive-tab-background-color: #37b38b;
     --pte_primary-cursor-color: #ffffff;
     --pte_secondary-cursor-color: transparent;
     --pte_active-row: rgb(228, 137, 16);
@@ -43,4 +45,6 @@
     --pte_active-line-number-font-color: rgb(228, 137, 16);
     --pte_hover-font-color: rgb(42, 122, 211);
     --pte_active-border-color: rgb(42, 122, 211);
+    --pte_token-keyword: rgb(216, 160, 223);
+    --pte_token-type: #4EC9B0;
 }

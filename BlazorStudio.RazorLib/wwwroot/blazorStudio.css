@@ -314,7 +314,6 @@
 }
 
 .bstudio_editor-display {
-    padding: 5px;
     display: inline-flex;
     flex-direction: column;
 }
@@ -359,15 +358,14 @@
     }
 
 .bstudio_workspace-explorer {
-    height: calc(100% - 2rem);
-    padding: 5px;
+    width: 100%;
+    height: calc(100%);
     display: inline-flex;
     flex-direction: column;
 }
 
 .bstudio_solution-explorer {
-    height: calc(100% - 3rem);
-    padding: 5px;
+    height: calc(100%);
     display: inline-flex;
     flex-direction: column;
 }
@@ -411,7 +409,7 @@
     padding: 0.2rem;
     overflow-x: auto;
     font-size: 1rem;
-    background-color: var(--bstudio_primary-background-color);
+    background-color: var(--bstudio_title-background-color);
     color: var(--bstudio_primary-font-color);
 }
 
@@ -420,18 +418,17 @@
     padding: 0.1rem;
     overflow-x: auto;
     font-size: 1rem;
-    background-color: var(--bstudio_primary-background-color);
+    background-color: var(--bstudio_title-background-color);
     color: var(--bstudio_primary-font-color);
 }
 
 .bstudio_solution-explorer-tree-view-header {
     height: 3.8rem;
-    margin-bottom: 1rem;
     border-bottom: 1px solid var(--bstudio_primary-border-color);
     padding: 0.1rem;
     overflow-x: auto;
     font-size: 1rem;
-    background-color: var(--bstudio_primary-background-color);
+    background-color: var(--bstudio_title-background-color);
     color: var(--bstudio_primary-font-color);
 }
 
@@ -476,7 +473,7 @@ em {
     padding: 0.2rem;
     overflow-x: auto;
     font-size: 1rem;
-    background-color: var(--bstudio_primary-background-color);
+    background-color: var(--bstudio_title-background-color);
     color: var(--bstudio_primary-font-color);
 }
 
@@ -495,7 +492,10 @@ em {
 }
 
 .bstudio_terminal-display {
-    padding-left: 5px;
+    
+}
+
+.bstudio_terminal-body {
     overflow-y: auto;
 }
 
@@ -610,7 +610,7 @@ em {
     padding: 0.2rem;
     overflow-x: auto;
     font-size: 1rem;
-    background-color: var(--bstudio_primary-background-color);
+    background-color: var(--bstudio_title-background-color);
     color: var(--bstudio_primary-font-color);
     display: flex;
     align-items: center;
@@ -669,4 +669,21 @@ em {
 .bstudio_expansion-chevron:hover {
     background-color: var(--bstudio_tertiary-hover-background-color);
     color: var(--bstudio_tertiary-hover-font-color);
+}
+
+.bstudio_tab {
+    background-color: var(--bstudio_inactive-tab-background-color);
+}
+
+.bstudio_close-button {
+    background-color: var(--bstudio_danger-primary-background-color);
+}
+
+    .bstudio_close-button:hover {
+        background-color: var(--bstudio_danger-secondary-background-color);
+    }
+
+.bstudio_large-title {
+    background-color: var(--bstudio_title-background-color);
+    height: 2rem;
 }

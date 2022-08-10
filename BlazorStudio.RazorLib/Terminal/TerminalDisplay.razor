@@ -4,17 +4,17 @@
 <div class="bstudio_terminal-display"
      style="@Dimensions.DimensionsCssString">
 
-    <div>
-        Terminals
+    <h5 class="bstudio_large-title" style="padding: 5px;">Terminals</h5>
+
+    <div class="bstudio_terminal-body" style="padding: 0 5px; height: calc(100% - 2rem - 10px);">
+        @{
+            var localTerminalState = TerminalStatesWrap.Value;
+
+            <TerminalTabs TerminalEntries="localTerminalState.TerminalEntries" />
+
+            var activeTerminalEntry = localTerminalState.TerminalEntries[localTerminalState.ActiveIndex];
+
+            <TerminalEntryDisplay TerminalEntry="activeTerminalEntry" />
+        }
     </div>
-    
-    @{
-        var localTerminalState = TerminalStatesWrap.Value;
-
-        <TerminalTabs TerminalEntries="localTerminalState.TerminalEntries" />
-
-        var activeTerminalEntry = localTerminalState.TerminalEntries[localTerminalState.ActiveIndex];
-
-        <TerminalEntryDisplay TerminalEntry="activeTerminalEntry" />
-    }
 </div>
