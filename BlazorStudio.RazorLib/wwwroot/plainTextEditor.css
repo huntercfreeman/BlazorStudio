@@ -135,3 +135,7 @@
 .pte_plain-text-editor-text-token-display-type {
     color: var(--pte_token-type);
 }
+
+.pte_plain-text-editor-text-token-display-method-declaration {
+    color: var(--pte_token-method-declaration);
+}

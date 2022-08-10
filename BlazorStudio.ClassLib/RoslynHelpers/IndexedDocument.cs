@@ -14,6 +14,5 @@ public class IndexedDocument
     
     public Document Document { get; set; }
     public IAbsoluteFilePath AbsoluteFilePath { get; set; }
-    public List<PropertyDeclarationSyntax>? PropertyDeclarationSyntaxes { get; set; }
-    public List<IdentifierNameSyntax>? IdentifierNameSyntaxes { get; set; }
+    public GeneralSyntaxCollector GeneralSyntaxCollector { get; set; }
 }

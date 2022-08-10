@@ -836,9 +836,7 @@ public partial record PlainTextEditorStates
             Console.WriteLine("EnqueueTaskModelAsync _updateTokenSemanticDescriptions");
 
             _updateTokenSemanticDescriptions = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
-                {                        
-                    var propertyDeclarationCollector = new PropertyDeclarationCollector();
-
+                {      
                     var absoluteFilePathValue = new AbsoluteFilePathStringValue(editor.FileHandle.AbsoluteFilePath);
 
                     if (_solutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var indexedDocument))
@@ -847,11 +845,10 @@ public partial record PlainTextEditorStates
                             editor.FileHandle.Encoding));
                         
                         var syntaxRoot = await document.GetSyntaxRootAsync();
-                        
-                        propertyDeclarationCollector.Visit(syntaxRoot);
 
-                        indexedDocument.PropertyDeclarationSyntaxes = 
-                            new(propertyDeclarationCollector.PropertyDeclarations);
+                        indexedDocument.GeneralSyntaxCollector = new();
+                        
+                        indexedDocument.GeneralSyntaxCollector.Visit(syntaxRoot);
 
                         var runningTotalOfCharactersInDocument = 0;
 
@@ -861,7 +858,7 @@ public partial record PlainTextEditorStates
                         {
                             foreach (var token in row.Tokens)
                             {
-                                foreach (var propertyDeclaration in indexedDocument.PropertyDeclarationSyntaxes)
+                                foreach (var propertyDeclaration in indexedDocument.GeneralSyntaxCollector.PropertyDeclarations)
                                 {
                                     if (propertyDeclaration.Type.Span.IntersectsWith(new TextSpan(runningTotalOfCharactersInDocument,
                                             token.PlainText.Length)))
@@ -872,6 +869,22 @@ public partial record PlainTextEditorStates
                                                 SequenceKey = SequenceKey.NewSequenceKey(),
                                                 SyntaxKind = propertyDeclaration.Kind(),
                                                 CssClassString = "pte_plain-text-editor-text-token-display-type"
+                                            }));
+                                        break;
+                                    }
+                                }
+                                
+                                foreach (var methodDeclaration in indexedDocument.GeneralSyntaxCollector.MethodDeclarations)
+                                {
+                                    if (methodDeclaration.Identifier.Span.IntersectsWith(new TextSpan(runningTotalOfCharactersInDocument,
+                                            token.PlainText.Length)))
+                                    {
+                                        tuples.Add((token.Key,
+                                            new SemanticDescription
+                                            {
+                                                SequenceKey = SequenceKey.NewSequenceKey(),
+                                                SyntaxKind = methodDeclaration.Kind(),
+                                                CssClassString = "pte_plain-text-editor-text-token-display-method-declaration"
                                             }));
                                         break;
                                     }
