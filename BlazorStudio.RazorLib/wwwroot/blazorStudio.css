@@ -295,6 +295,7 @@
     border: 1.5px solid var(--bstudio_primary-hover-background-color);
     background-color: var(--bstudio_primary-background-color);
     color: var(--bstudio_primary-font-color);
+    cursor: auto;
 }
 
 .bstudio_transformable-column-separator {
@@ -501,6 +502,7 @@ em {
     padding: 2px;
     margin: 2px;
     background-color: var(--bstudio_secondary-background-color);
+    cursor: pointer;
 }
 
     .bstudio_terminal-tab-display:hover {
@@ -613,6 +615,7 @@ em {
 .bstudio_settings-section-body {
     height: calc(100% - 3rem);
     overflow-y: auto;
+    margin-top: 10px;
 }
 
 .bstudio_expansion-display-chevron-title-separator {
