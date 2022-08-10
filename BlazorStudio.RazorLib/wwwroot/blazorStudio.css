@@ -41,8 +41,8 @@
     white-space: nowrap;
     cursor: pointer;
     padding-right: 1ch;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding-top: 6px;
+    padding-bottom: 6px;
 }
 
     .bstudio_tree-view-display-title:hover {
