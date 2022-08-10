@@ -7,7 +7,8 @@
     
     <CascadingValue Name="NotifyCharacterWasClicked" Value="new Action(() => _characterWasClicked = true)">
         <div class="pte_plain-text-editor-row-display-body"
-            style="@WidthStyleCss">
+             style="@WidthStyleCss"
+             title="@VirtualCharacterIndexMarkerForStartOfARow[RowIndex]">
 
             @{
                 // Ensure reference to PlainTextEditorRow does
