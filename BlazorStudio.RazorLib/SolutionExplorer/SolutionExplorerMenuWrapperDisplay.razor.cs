@@ -108,15 +108,6 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             menuOptionRecords.Add(createNewDirectory);
         }
 
-        if (contextMenuEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_CLASS)
-        {
-            var renderSyntaxRoot = MenuOptionFacts.CSharp
-                .RenderSyntaxRoot(() =>
-                    OpenSyntaxRootDisplayDialog(contextMenuEventDto.Item));
-
-            menuOptionRecords.Add(renderSyntaxRoot);
-        }
-
         if (contextMenuEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
         {
             var setAsStartupProject = MenuOptionFacts.CSharp
@@ -382,52 +373,6 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             false,
             TimeSpan.FromSeconds(10));
 #endif
-    }
-
-    private void OpenSyntaxRootDisplayDialog(IAbsoluteFilePath absoluteFilePath)
-    {
-        Task.Run(async () =>
-        {
-            SyntaxNode? targetSyntaxNode = null;
-
-            var solutionState = SolutionStateWrap.Value;
-
-            if (solutionState.SolutionWorkspace is null)
-                return;
-                
-            // solutionState.SolutionWorkspace.CurrentSolution.
-
-            foreach (Project project in solutionState.SolutionWorkspace.CurrentSolution.Projects)
-            {
-                foreach (Document document in project.Documents)
-                {
-                    if (document.FilePath?.Contains(absoluteFilePath.FilenameWithExtension) ?? false)
-                    {
-                        var syntax = await document.GetSyntaxTreeAsync();
-
-                        targetSyntaxNode = await syntax.GetRootAsync();
-                    }
-                }
-            }
-
-            if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _syntaxRootDisplayDialogKey))
-            {
-                var dialogRecord = new DialogRecord(
-                    _syntaxRootDisplayDialogKey,
-                    "Syntax Root Render",
-                    typeof(SyntaxRootDisplay),
-                    new Dictionary<string, object?>()
-                    {
-                        {
-                            nameof(SyntaxRootDisplay.SyntaxNode),
-                            targetSyntaxNode
-                        }
-                    }
-                );
-
-                Dispatcher.Dispatch(new RegisterDialogAction(dialogRecord));
-            }
-        });
     }
 
     private bool AddProjectReferenceInputIsValidOverride(ImmutableArray<IAbsoluteFilePath> activeItems)

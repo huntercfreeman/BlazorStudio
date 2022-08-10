@@ -1,3 +1,13 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 FileDocumentMap.Count: @SolutionStateWrap.Value.FileDocumentMap.Count
+
+<hr />
+
+@{
+    var localFileDocumentMap = SolutionStateWrap.Value.FileDocumentMap;
+}
+
+<BlazorStudio.RazorLib.SyntaxRootRender.SyntaxRootDisplay 
+    SyntaxNodeTuples="localFileDocumentMap.Select(x => (x.Value.GetSyntaxRootAsync().Result, x.Key.AbsoluteFilePathString)).ToList()"  />
+

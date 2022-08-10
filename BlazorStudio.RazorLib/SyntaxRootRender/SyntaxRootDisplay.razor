@@ -2,7 +2,7 @@
 @using Microsoft.CodeAnalysis.CSharp
 <h3>SyntaxRootDisplay</h3>
 
-@if (SyntaxNode is null)
+@if (SyntaxNodeTuples is null)
 {
     <div>SyntaxNode is null</div>
 }
@@ -19,10 +19,17 @@ else
     
         <ItemRenderFragment Context="generalSyntax">
             @if (generalSyntax.GeneralSyntaxKind == GeneralSyntaxKind.Node)
-            {
+            {                    
                 var syntaxNode = (SyntaxNode) generalSyntax.Item;
 
-                <em>@syntaxNode.Kind()</em>
+                if (generalSyntax.FileName is not null && syntaxNode.Kind() == SyntaxKind.CompilationUnit)
+                {
+                    <em>@generalSyntax.FileName.Split(Path.DirectorySeparatorChar).Last()</em>
+                }
+                else
+                {
+                    <em>@syntaxNode.Kind()</em>
+                }
 
                 <text>: @syntaxNode.GetText()</text>
             }

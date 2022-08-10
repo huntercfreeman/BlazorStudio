@@ -10,21 +10,21 @@ namespace BlazorStudio.RazorLib.SyntaxRootRender;
 public partial class SyntaxRootDisplay : ComponentBase
 {
     [Parameter]
-    public SyntaxNode SyntaxNode { get; set; } = null!;
+    public List<(SyntaxNode syntaxNode, string? fileName)> SyntaxNodeTuples { get; set; } = null!;
 
     private TreeViewWrapKey _syntaxRootTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-    private GeneralSyntax[] TreeViewRoot => GetTreeViewRoot();
+    private GeneralSyntax[] TreeViewRoot => GetTreeViewRoots();
 
-    private GeneralSyntax[] GetTreeViewRoot()
+    private GeneralSyntax[] GetTreeViewRoots()
     {
-        return new GeneralSyntax[]
-        {
-            new GeneralSyntax
+        return SyntaxNodeTuples
+            .Select(x => new GeneralSyntax
             {
-                Item = SyntaxNode,
-                GeneralSyntaxKind = GeneralSyntaxKind.Node
-            }
-        };
+                Item = x.syntaxNode,
+                GeneralSyntaxKind = GeneralSyntaxKind.Node,
+                FileName = x.fileName
+            })
+            .ToArray();
     }
 
     private Task<IEnumerable<GeneralSyntax>> LoadChildren(GeneralSyntax generalSyntax)
@@ -76,6 +76,7 @@ public partial class SyntaxRootDisplay : ComponentBase
     {
         public GeneralSyntaxKind GeneralSyntaxKind { get; set; }
         public object Item { get; set; }
+        public string? FileName { get; set; }
     }
 
     private enum GeneralSyntaxKind
