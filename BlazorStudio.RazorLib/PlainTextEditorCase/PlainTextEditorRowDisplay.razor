@@ -7,23 +7,30 @@
     
     <CascadingValue Name="NotifyCharacterWasClicked" Value="new Action(() => _characterWasClicked = true)">
         <div class="pte_plain-text-editor-row-display-body"
-             style="@WidthStyleCss"
-             title="@VirtualCharacterIndexMarkerForStartOfARow[RowIndex]">
+             style="@WidthStyleCss">
 
             @{
                 // Ensure reference to PlainTextEditorRow does
                 // not change while looping over tokens
                 // by making a local reference to it.
                 var currentPlainTextEditorRow = PlainTextEditorRow;
+                var runningTotalOfCharacters = 0;
 
                 for (int i = 0; i < currentPlainTextEditorRow.Tokens.Count; i++)
                 {
                     var tokenIndex = i;
 
                     var token = currentPlainTextEditorRow.Tokens[tokenIndex];
+
+                    var localRunningTotalOfCharacters = runningTotalOfCharacters;
+                    
+                    runningTotalOfCharacters += token.PlainText.Length;
+                    
                     <CascadingValue Name="TokenIndex" Value="tokenIndex">
                         <TextTokenDisplay @key="token.Key"
-                                          TextToken="token" />
+                                          TextToken="token"
+                                          StartOfSpanRelativeToRow="localRunningTotalOfCharacters"
+                                          StartOfRowSpanRelativeToDocument="VirtualCharacterIndexMarkerForStartOfARow[RowIndex]"/>
                     </CascadingValue>
                 }
             }

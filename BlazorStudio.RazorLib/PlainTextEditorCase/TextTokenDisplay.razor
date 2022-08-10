@@ -1,7 +1,8 @@
 @using ClassLib.Store.PlainTextEditorCase
 @using BlazorStudio.ClassLib.Html
 
-<span class="pte_plain-text-editor-text-token-display @TokenClass">
+<span class="pte_plain-text-editor-text-token-display @TokenClass"
+      title="start: @(StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow) | end: @(StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow + TextToken.PlainText.Length)">
     @switch (TextToken.Kind)
     {
         case TextTokenKind.StartOfRow:

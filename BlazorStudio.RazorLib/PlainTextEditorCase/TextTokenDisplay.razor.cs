@@ -17,6 +17,10 @@ public partial class TextTokenDisplay : ComponentBase
 
     [Parameter, EditorRequired]
     public ITextToken TextToken { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public int StartOfSpanRelativeToRow { get; set; }
+    [Parameter, EditorRequired]
+    public long StartOfRowSpanRelativeToDocument { get; set; }
 
     private string TokenClass => GetTokenClass();
 
