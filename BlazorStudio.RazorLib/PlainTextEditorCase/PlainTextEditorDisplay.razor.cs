@@ -179,26 +179,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         if (plainTextEditor.PlainTextEditorKey != _previousPlainTextEditorKey)
         {
-            var propertyDeclarationCollector = new PropertyDeclarationCollector();
-
-            var absoluteFilePathValue = new AbsoluteFilePathStringValue(plainTextEditor.FileHandle.AbsoluteFilePath);
-
-            if (SolutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var document))
-            {
-                propertyDeclarationCollector.Visit(document.Document.GetSyntaxRootAsync().Result);
-
-                document.PropertyDeclarationSyntaxes = 
-                    new(propertyDeclarationCollector.PropertyDeclarations);
-            }
-            
-            // _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
-            //     {
-            //         
-            //     },
-            //     $"{nameof(PropertyDeclarationCollector)}",
-            //     false,
-            //     TimeSpan.FromSeconds(60));
-            
             // Parameter changed and the VirtualizeCoordinateSystem must reset
             if (_virtualizeCoordinateSystem is not null)
             {

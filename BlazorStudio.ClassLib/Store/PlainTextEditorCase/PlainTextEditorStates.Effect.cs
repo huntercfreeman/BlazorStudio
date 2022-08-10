@@ -4,11 +4,15 @@ using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.KeyDownEventCase;
+using BlazorStudio.ClassLib.Store.SolutionCase;
+using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.Virtualize;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.CodeAnalysis.Text;
 
 namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
@@ -17,12 +21,15 @@ public partial record PlainTextEditorStates
     public class PlainTextEditorStatesEffect
     {
         private readonly IState<PlainTextEditorStates> _plainTextEditorStatesWrap;
+        private readonly IState<SolutionState> _solutionStateWrap;
         private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
         private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
 
-        public PlainTextEditorStatesEffect(IState<PlainTextEditorStates> plainTextEditorStatesWrap)
+        public PlainTextEditorStatesEffect(IState<PlainTextEditorStates> plainTextEditorStatesWrap,
+            IState<SolutionState> solutionStateWrap)
         {
             _plainTextEditorStatesWrap = plainTextEditorStatesWrap;
+            _solutionStateWrap = solutionStateWrap;
         }
 
         private async Task QueueHandleEffectAsync(Func<Task> func)
@@ -766,6 +773,10 @@ public partial record PlainTextEditorStates
 
                 dispatcher.Dispatch(new SetPlainTextEditorStatesAction(nextPlainTextEditorStates));
 
+                UpdateTokenSemanticDescriptions(previousPlainTextEditorStates,
+                    resultingPlainTextEditor,
+                    dispatcher);
+                
                 if (constructTokenizedPlainTextEditorRecordAction.AbsoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.HTML ||
                     constructTokenizedPlainTextEditorRecordAction.AbsoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP)
                 {
@@ -800,8 +811,58 @@ public partial record PlainTextEditorStates
                     }
                 }
             }
+        }
+        
+        private void UpdateTokenSemanticDescriptions(PlainTextEditorStates previousPlainTextEditorStates,
+            PlainTextEditorRecordTokenized editor,
+            IDispatcher dispatcher)
+        {
+            _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+                {
+                    var propertyDeclarationCollector = new PropertyDeclarationCollector();
 
-            var z = 2;
+                    var absoluteFilePathValue = new AbsoluteFilePathStringValue(editor.FileHandle.AbsoluteFilePath);
+
+                    if (_solutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var document))
+                    {
+                        var syntaxRoot = await document.Document.GetSyntaxRootAsync();
+                        
+                        propertyDeclarationCollector.Visit(syntaxRoot);
+
+                        document.PropertyDeclarationSyntaxes = 
+                            new(propertyDeclarationCollector.PropertyDeclarations);
+
+                        var runningTotalOfCharactersInDocument = 0;
+                        
+                        foreach (var row in editor.Rows)
+                        {
+                            foreach (var token in row.Tokens)
+                            {
+                                foreach (var propertyDeclaration in document.PropertyDeclarationSyntaxes)
+                                {
+                                    if (propertyDeclaration.Type.Span.IntersectsWith(new TextSpan(runningTotalOfCharactersInDocument,
+                                            token.PlainText.Length)))
+                                    {
+                                        dispatcher.Dispatch(new UpdateTokenSemanticDescriptionAction(token.Key,
+                                            new SemanticDescription
+                                            {
+                                                SequenceKey = SequenceKey.NewSequenceKey(),
+                                                SyntaxKind = propertyDeclaration.Kind(),
+                                                CssClassString = "pte_plain-text-editor-text-token-display-type"
+                                            }));
+                                        break;
+                                    }
+                                }
+                                
+                                
+                                runningTotalOfCharactersInDocument += token.PlainText.Length;
+                            }
+                        }
+                    }
+                },
+                $"{nameof(PropertyDeclarationCollector)}",
+                false,
+                TimeSpan.FromSeconds(60));
         }
 
         [EffectMethod]

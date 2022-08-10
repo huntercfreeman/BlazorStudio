@@ -8,19 +8,24 @@ using System.Text;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.RoslynHelpers;
+using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.SolutionCase;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.CodeAnalysis.Text;
 
 namespace BlazorStudio.RazorLib.PlainTextEditorCase;
 
-public partial class TextTokenDisplay : ComponentBase
+public partial class TextTokenDisplay : FluxorComponent
 {
-    [Inject]
-    private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
     [Inject]
     private IState<CSharpKeywords> CSharpKeywordsWrap { get; set; } = null!;
     [Inject]
     private IState<RazorKeywords> RazorKeywordsWrap { get; set; } = null!;
+    [Inject]
+    private IStateSelection<TokenSemanticsState, SemanticDescription> TokenSemanticsStateSelector { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     [CascadingParameter] 
     public IAbsoluteFilePath AbsoluteFilePath { get; set; } = null!;
@@ -33,6 +38,42 @@ public partial class TextTokenDisplay : ComponentBase
     public long StartOfRowSpanRelativeToDocument { get; set; }
 
     private string TokenClass => GetTokenClass();
+
+    protected override void OnInitialized()
+    {
+        Dispatcher.Dispatch(new UpdateTokenSemanticDescriptionAction(TextToken.Key, new SemanticDescription()
+        {
+            SyntaxKind = default,
+            SequenceKey = SequenceKey.NewSequenceKey()
+        }));
+        
+        TokenSemanticsStateSelector
+            .Select(x =>
+            {
+                if (x.SemanticDescriptionsMap.TryGetValue(TextToken.Key, out var semanticDescription))
+                {
+                    return semanticDescription;
+                }
+
+                var defaultSemanticDescription = new SemanticDescription()
+                {
+                    SyntaxKind = default,
+                    SequenceKey = SequenceKey.NewSequenceKey()
+                };
+                
+                return defaultSemanticDescription;
+            },
+            valueEquals: (previous, next) => previous.SequenceKey == next.SequenceKey);
+        
+        base.OnInitialized();
+    }
+
+    protected override bool ShouldRender()
+    {
+        Console.WriteLine("ShouldRender");
+        
+        return base.ShouldRender();
+    }
 
     private string GetTokenClass()
     {
@@ -52,11 +93,6 @@ public partial class TextTokenDisplay : ComponentBase
         
         var absoluteFilePathValue = new AbsoluteFilePathStringValue(AbsoluteFilePath);
 
-        if (!SolutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var indexedDocument))
-        {
-            return string.Empty;
-        }
-        
         // Check is keyword
         {        
             var localCSharpKeywords = CSharpKeywordsWrap.Value;
@@ -71,21 +107,12 @@ public partial class TextTokenDisplay : ComponentBase
         
         if (!isKeyword)
         {
-            // Check is property declaration Type
-            if (indexedDocument.PropertyDeclarationSyntaxes?.Any() ?? false)
-            {
-                foreach (var propertyDeclaration in indexedDocument.PropertyDeclarationSyntaxes)
-                {
-                    var typeSpan = propertyDeclaration.Type.Span;
-                
-                    if (typeSpan.IntersectsWith(new TextSpan((int) startOfSpanInclusive, TextToken.PlainText.Length)))
-                    {
-                        classBuilder.Append("pte_plain-text-editor-text-token-display-type");
-                    }
-                }
-            }
-        }
+            var currentTokenSemanticsStateSelector = TokenSemanticsStateSelector.Value;
 
+            classBuilder.Append(currentTokenSemanticsStateSelector.CssClassString ?? string.Empty);
+            // classBuilder.Append(SyntaxKindToCssStringConverter.Convert(currentTokenSemanticsStateSelector.SyntaxKind));
+        }
+        
         return classBuilder.ToString();
     }
     
@@ -129,22 +156,7 @@ public partial class TextTokenDisplay : ComponentBase
 
             var absoluteFilePathValue = new AbsoluteFilePathStringValue(AbsoluteFilePath);
 
-            if (SolutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var indexedDocument))
-            {
-                if (indexedDocument.PropertyDeclarationSyntaxes?.Any() ?? false)
-                {
-                    foreach (var propertyDeclaration in indexedDocument.PropertyDeclarationSyntaxes)
-                    {
-                        var typeSpan = propertyDeclaration.Type.Span;
-                    
-                        if (typeSpan.Intersection(new TextSpan((int) startOfSpanInclusive, TextToken.PlainText.Length))
-                            is not null)
-                        {
-                            classBuilder.Append("pte_plain-text-editor-text-token-display-type");
-                        }
-                    }
-                }
-            }
+            
         }
 
         return classBuilder.ToString();
