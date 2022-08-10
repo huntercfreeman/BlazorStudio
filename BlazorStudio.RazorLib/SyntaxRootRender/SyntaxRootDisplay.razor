@@ -24,11 +24,11 @@ else
 
                 if (generalSyntax.FileName is not null && syntaxNode.Kind() == SyntaxKind.CompilationUnit)
                 {
-                    <em>@generalSyntax.FileName.Split(Path.DirectorySeparatorChar).Last()</em>
+                    <em title="start: @syntaxNode.Span.Start | end: @syntaxNode.Span.End">@generalSyntax.FileName.Split(Path.DirectorySeparatorChar).Last()</em>
                 }
                 else
                 {
-                    <em>@syntaxNode.Kind()</em>
+                    <em title="start: @syntaxNode.Span.Start | end: @syntaxNode.Span.End">@syntaxNode.Kind()</em>
                 }
 
                 <text>: @syntaxNode.GetText()</text>
@@ -37,7 +37,7 @@ else
             {
                 var syntaxToken = (SyntaxToken)generalSyntax.Item;
 
-                <em>@syntaxToken.Kind()</em>
+                <em title="start: @syntaxToken.Span.Start | end: @syntaxToken.Span.End">@syntaxToken.Kind()</em>
 
                 <text>:&nbsp;@syntaxToken.Text</text>
             }
