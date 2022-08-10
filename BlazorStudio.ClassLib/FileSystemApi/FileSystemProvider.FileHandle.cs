@@ -73,10 +73,6 @@ public partial class FileSystemProvider : IFileSystemProvider
         
         public async Task InitializeAsync(CancellationToken cancellationToken)
         {
-#if RELEASE
-            return;
-#endif
-
             if (AbsoluteFilePath.IsDirectory)
                 throw new ApplicationException($"{nameof(FileHandle)} does not support directories.");
 
@@ -185,11 +181,6 @@ public partial class FileSystemProvider : IFileSystemProvider
                 MostRecentReadRequest = readRequest;
 
                 var rows = new List<string>();
-
-#if RELEASE
-            return (await Edit.ApplyEditsAsync(readRequest, rows, _virtualCharacterIndexMarkerForStartOfARow, CancellationToken.None))
-                .ContentRows;
-#endif
 
                 if (_memoryMappedFile is not null)
                 {

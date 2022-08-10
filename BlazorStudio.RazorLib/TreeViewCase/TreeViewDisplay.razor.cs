@@ -216,11 +216,6 @@ public partial class TreeViewDisplay<T>
     /// <param name="keyboardEventArgs"></param>
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-#if RELEASE
-        // Blazor WebAssembly is single threaded currently
-        await Task.Delay(1);
-#endif
-
         if (_previousFocusState == false)
             return;
 

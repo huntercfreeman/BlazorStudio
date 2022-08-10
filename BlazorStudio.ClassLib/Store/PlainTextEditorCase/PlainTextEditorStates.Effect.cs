@@ -12,6 +12,7 @@ using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.Virtualize;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
 namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
@@ -24,6 +25,7 @@ public partial record PlainTextEditorStates
         private readonly IState<SolutionState> _solutionStateWrap;
         private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
         private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
+        private Task<ITaskModel> _updateTokenSemanticDescriptions;
 
         public PlainTextEditorStatesEffect(IState<PlainTextEditorStates> plainTextEditorStatesWrap,
             IState<SolutionState> solutionStateWrap)
@@ -154,11 +156,6 @@ public partial record PlainTextEditorStates
                 {
                     var plainTextEditor = plainTextEditorUnknown
                         as PlainTextEditorRecordMemoryMappedFile;
-
-#if RELEASE
-                if (plainTextEditor?.VirtualizeCoordinateSystemMessage is not null)
-                    return;
-#endif
 
                     if (plainTextEditor?.FileHandle is null)
                         return;
@@ -349,11 +346,6 @@ public partial record PlainTextEditorStates
         {
             await QueueHandleEffectAsync(async () =>
             {
-#if RELEASE
-                // Blazor WebAssembly is currently single threaded
-                await Task.Delay(1);
-#endif
-
                 var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
 
                 var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
@@ -419,7 +411,13 @@ public partial record PlainTextEditorStates
                 var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
                 var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
 
-                dispatcher.Dispatch(new SetPlainTextEditorStatesAction(new PlainTextEditorStates(nextImmutableMap, nextImmutableArray)));
+                var states = new PlainTextEditorStates(nextImmutableMap, nextImmutableArray);
+                
+                dispatcher.Dispatch(new SetPlainTextEditorStatesAction(states));
+                
+                UpdateTokenSemanticDescriptions(states,
+                    (PlainTextEditorRecordTokenized) replacementPlainTextEditor,
+                    dispatcher);
             });
         }
 
@@ -828,19 +826,31 @@ public partial record PlainTextEditorStates
             PlainTextEditorRecordTokenized editor,
             IDispatcher dispatcher)
         {
-            _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
-                {
+            if (_updateTokenSemanticDescriptions is not null &&
+                _updateTokenSemanticDescriptions.Status == TaskStatus.Running)
+            {
+                Console.WriteLine("_updateTokenSemanticDescriptions.Status == TaskStatus.Running");
+                return;
+            }
+            
+            Console.WriteLine("EnqueueTaskModelAsync _updateTokenSemanticDescriptions");
+
+            _updateTokenSemanticDescriptions = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+                {                        
                     var propertyDeclarationCollector = new PropertyDeclarationCollector();
 
                     var absoluteFilePathValue = new AbsoluteFilePathStringValue(editor.FileHandle.AbsoluteFilePath);
 
-                    if (_solutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var document))
+                    if (_solutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var indexedDocument))
                     {
-                        var syntaxRoot = await document.Document.GetSyntaxRootAsync();
+                        var document = indexedDocument.Document.WithText(SourceText.From(editor.GetPlainText(),
+                            editor.FileHandle.Encoding));
+                        
+                        var syntaxRoot = await document.GetSyntaxRootAsync();
                         
                         propertyDeclarationCollector.Visit(syntaxRoot);
 
-                        document.PropertyDeclarationSyntaxes = 
+                        indexedDocument.PropertyDeclarationSyntaxes = 
                             new(propertyDeclarationCollector.PropertyDeclarations);
 
                         var runningTotalOfCharactersInDocument = 0;
@@ -851,7 +861,7 @@ public partial record PlainTextEditorStates
                         {
                             foreach (var token in row.Tokens)
                             {
-                                foreach (var propertyDeclaration in document.PropertyDeclarationSyntaxes)
+                                foreach (var propertyDeclaration in indexedDocument.PropertyDeclarationSyntaxes)
                                 {
                                     if (propertyDeclaration.Type.Span.IntersectsWith(new TextSpan(runningTotalOfCharactersInDocument,
                                             token.PlainText.Length)))
