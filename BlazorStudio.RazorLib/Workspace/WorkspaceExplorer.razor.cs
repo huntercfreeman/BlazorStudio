@@ -131,7 +131,6 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
             return Array.Empty<IAbsoluteFilePath>();
         }
 
-#if DEBUG
         var childDirectoryAbsolutePaths = Directory
             .GetDirectories(absoluteFilePath.GetAbsoluteFilePathString())
             .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, true))
@@ -144,28 +143,6 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
 
         return childDirectoryAbsolutePaths
             .Union(childFileAbsolutePaths);
-#else
-        var childDirectoryAbsolutePaths = new string[]
-            {
-                "Dir1",
-                "Dir2",
-                "Dir3",
-            }
-            .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, true))
-            .ToList();
-
-        var childFileAbsolutePaths = new string[]
-            {
-                "File1",
-                "File2",
-                "File3",
-            }
-            .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, false))
-            .ToList();
-
-        return childDirectoryAbsolutePaths
-            .Union(childFileAbsolutePaths);
-#endif
     }
 
     private void WorkspaceExplorerTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)

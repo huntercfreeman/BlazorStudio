@@ -290,7 +290,6 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     private void CreateNewEmptyFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
         string fileName)
     {
-#if DEBUG
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
@@ -306,13 +305,11 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             $"{nameof(CreateNewEmptyFileFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
-#endif
     }
 
     private void CreateNewTemplatedFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
         string fileName)
     {
-#if DEBUG
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
@@ -328,13 +325,11 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             $"{nameof(CreateNewTemplatedFileFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
-#endif
     }
 
     private void CreateNewDirectoryFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
         string directoryName)
     {
-#if DEBUG
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
@@ -348,12 +343,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             $"{nameof(CreateNewDirectoryFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
-#endif
     }
 
     private void DeleteFileFormOnAfterSubmitForm(IAbsoluteFilePath absoluteFilePath)
     {
-#if DEBUG
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
             {
                 if (absoluteFilePath.IsDirectory)
@@ -372,7 +365,6 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             $"{nameof(DeleteFileFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
-#endif
     }
 
     private bool AddProjectReferenceInputIsValidOverride(ImmutableArray<IAbsoluteFilePath> activeItems)

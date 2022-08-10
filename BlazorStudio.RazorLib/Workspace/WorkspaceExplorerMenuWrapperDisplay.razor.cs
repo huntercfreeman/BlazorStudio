@@ -130,7 +130,6 @@ public partial class WorkspaceExplorerMenuWrapperDisplay : ComponentBase
     private void CreateNewEmptyFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
         string fileName)
     {
-#if DEBUG
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
@@ -146,13 +145,11 @@ public partial class WorkspaceExplorerMenuWrapperDisplay : ComponentBase
             $"{nameof(CreateNewEmptyFileFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
-#endif
     }
 
     private void CreateNewDirectoryFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
         string directoryName)
     {
-#if DEBUG
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
         {
             Directory.CreateDirectory(parentDirectoryAbsoluteFilePathString + directoryName);
@@ -164,12 +161,10 @@ public partial class WorkspaceExplorerMenuWrapperDisplay : ComponentBase
             $"{nameof(CreateNewDirectoryFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
-#endif
     }
     
     private void DeleteFileFormOnAfterSubmitForm(IAbsoluteFilePath absoluteFilePath)
     {
-#if DEBUG
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
         {
             if (absoluteFilePath.IsDirectory)
@@ -188,7 +183,6 @@ public partial class WorkspaceExplorerMenuWrapperDisplay : ComponentBase
             $"{nameof(DeleteFileFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
-#endif
     }
 
     private bool AddProjectReferenceInputIsValidOverride(ImmutableArray<IAbsoluteFilePath> activeItems)

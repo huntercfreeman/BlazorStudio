@@ -79,7 +79,6 @@ public partial class InputFileDialog : ComponentBase
             return Array.Empty<IAbsoluteFilePath>();
         }
 
-#if DEBUG
         var childDirectoryAbsolutePaths = Directory
             .GetDirectories(absoluteFilePath.GetAbsoluteFilePathString())
             .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, true))
@@ -92,28 +91,6 @@ public partial class InputFileDialog : ComponentBase
 
         return childDirectoryAbsolutePaths
             .Union(childFileAbsolutePaths);
-#else
-        var childDirectoryAbsolutePaths = new string[]
-            {
-                "Dir1",
-                "Dir2",
-                "Dir3",
-            }
-            .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, true))
-            .ToList();
-
-        var childFileAbsolutePaths = new string[]
-            {
-                "File1",
-                "File2",
-                "File3",
-            }
-            .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, false))
-            .ToList();
-
-        return childDirectoryAbsolutePaths
-            .Union(childFileAbsolutePaths);
-#endif
     }
 
     private void InputFileTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)
@@ -243,7 +220,6 @@ public partial class InputFileDialog : ComponentBase
     private void CreateNewFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString, 
         string fileName)
     {
-#if DEBUG
         var localRefreshContextMenuTarget = _mostRecentRefreshContextMenuTarget;
 
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
@@ -259,13 +235,11 @@ public partial class InputFileDialog : ComponentBase
             $"{nameof(CreateNewFileFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
-#endif
     }
 
     private void CreateNewDirectoryFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString, 
         string directoryName)
     {
-#if DEBUG
         var localRefreshContextMenuTarget = _mostRecentRefreshContextMenuTarget;
 
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
@@ -279,6 +253,5 @@ public partial class InputFileDialog : ComponentBase
             $"{nameof(CreateNewDirectoryFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
-#endif
     }
 }
