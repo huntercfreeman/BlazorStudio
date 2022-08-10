@@ -1,8 +1,9 @@
+@using BlazorStudio.ClassLib.UserInterface
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div>
     <div>
-        Change&nbsp;ResizeHandle:
+        Change&nbsp;resize handle size:
         <input type="number" 
                @bind="ResizeHandleSizeInPixels" 
                @bind:event="oninput"
@@ -10,11 +11,10 @@
     </div>
 
     <div>
-        ResizeHandleDimensionUnit:&nbsp;@TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-    </div>
-
-    <div>
-        DimensionUnitKind:&nbsp;@TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.DimensionUnitKind
+        <em>
+            @TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value<!--
+            -->@TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.DimensionUnitKind.ToCssString()<!--
+            -->;
+        </em>
     </div>
 </div>
-
