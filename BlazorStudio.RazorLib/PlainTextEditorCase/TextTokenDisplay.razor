@@ -10,7 +10,7 @@
         case TextTokenKind.StartOfRow:
             <CharacterRenderer Character="@string.Empty"
                                CharacterIndex="0"
-                               ShouldDisplayCursor="TextToken.IndexInPlainText is not null" />
+                               ShouldDisplayCursor="TextToken.TryGetIndexInPlainText(true, out var _)" />
             break;
         case TextTokenKind.Default:
             <text>
@@ -18,10 +18,28 @@
                     for (int i = 0; i < TextToken.PlainText.Length; i++)
                     {
                         var index = i;
+                        
+                        bool shouldDisplayCursor;
 
+                        if (TextToken.TryGetIndexInPlainText(true, out var indexInPlainText))
+                        {
+                            if (indexInPlainText == index)
+                            {
+                                shouldDisplayCursor = true;
+                            }
+                            else
+                            {
+                                shouldDisplayCursor = false;
+                            }
+                        }
+                        else
+                        {
+                            shouldDisplayCursor = false;
+                        }
+                        
                         <CharacterRenderer Character="@TextToken.PlainText[index].ToString()"
                                            CharacterIndex="index"
-                                           ShouldDisplayCursor="(TextToken.IndexInPlainText ?? -1) == index" />
+                                           ShouldDisplayCursor="shouldDisplayCursor" />
                     }
                 }
             </text>
@@ -32,10 +50,28 @@
                     for (int i = 0; i < TextToken.PlainText.Length; i++)
                     {
                         var index = i;
+                        
+                        bool shouldDisplayCursor;
+
+                        if (TextToken.TryGetIndexInPlainText(true, out var indexInPlainText))
+                        {
+                            if (indexInPlainText == index)
+                            {
+                                shouldDisplayCursor = true;
+                            }
+                            else
+                            {
+                                shouldDisplayCursor = false;
+                            }
+                        }
+                        else
+                        {
+                            shouldDisplayCursor = false;
+                        }
 
                         <CharacterRenderer Character="@TextToken.PlainText[index].ToString().EscapeHtml()"
                                             CharacterIndex="index"
-                                            ShouldDisplayCursor="(TextToken.IndexInPlainText ?? -1) == index" />
+                                            ShouldDisplayCursor="shouldDisplayCursor" />
                     }
                 }
             </text>

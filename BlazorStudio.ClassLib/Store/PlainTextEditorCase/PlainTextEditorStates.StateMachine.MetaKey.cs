@@ -92,7 +92,7 @@ public partial record PlainTextEditorStates
                         var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                                                  true,
                                                  cancellationToken)
-                                             + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+                                             + focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
 
                         await focusedPlainTextEditorRecord.FileHandle.Edit
                             .RemoveAsync(focusedPlainTextEditorRecord.CurrentRowIndex,

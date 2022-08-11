@@ -13,7 +13,7 @@ public partial record PlainTextEditorStates
             var rememberToken = focusedPlainTextEditorRecord
                     .GetCurrentTextTokenAs<TextTokenBase>();
 
-            if (rememberToken.IndexInPlainText!.Value != rememberToken.PlainText.Length - 1)
+            if (rememberToken.GetIndexInPlainText(true) != rememberToken.PlainText.Length - 1)
             {
                 if (KeyboardKeyFacts.NewLineCodes.ALL_NEW_LINE_CODES.Contains(keyDownEventRecord.Code))
                 {
@@ -52,7 +52,7 @@ public partial record PlainTextEditorStates
                     var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                                              true,
                                              cancellationToken)
-                                         + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+                                         + focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
 
                     await focusedPlainTextEditorRecord.FileHandle.Edit
                         .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,

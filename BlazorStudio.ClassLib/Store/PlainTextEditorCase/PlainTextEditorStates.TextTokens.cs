@@ -6,11 +6,28 @@ public partial record PlainTextEditorStates
 {
     private abstract record TextTokenBase : ITextToken
     {
+        protected ApplicationException IndexInPlainTextWasNullException = 
+            new ApplicationException($"{nameof(IndexInPlainText)} was null.");
+        
         public abstract string PlainText { get; }
         public abstract string CopyText { get; }
         public abstract TextTokenKind Kind { get; }
         public TextTokenKey Key { get; init; } = TextTokenKey.NewTextTokenKey();
-        public int? IndexInPlainText { get; init; }
+        public int? IndexInPlainText { protected get; init; }
+
+        public abstract int GetIndexInPlainText(bool countTabsAsFourCharacters);
+
+        public bool TryGetIndexInPlainText(bool countTabsAsFourCharacters, out int? indexInPlainText)
+        {
+            if (IndexInPlainText is null)
+            {
+                indexInPlainText = null;
+                return false;
+            }
+
+            indexInPlainText = GetIndexInPlainText(countTabsAsFourCharacters);
+            return true;
+        }
     }
 
     private record StartOfRowTextToken(KeyDownEventRecord? KeyDownEventRecord) : TextTokenBase
@@ -21,6 +38,12 @@ public partial record PlainTextEditorStates
             : PlainText;
 
         public override TextTokenKind Kind => TextTokenKind.StartOfRow;
+        
+        public override int GetIndexInPlainText(bool countTabsAsFourCharacters)
+        {
+            return IndexInPlainText
+                ?? throw IndexInPlainTextWasNullException;
+        }
 
         public bool IsCarriageReturn()
         {
@@ -42,6 +65,12 @@ public partial record PlainTextEditorStates
         public override string PlainText => Content;
         public override string CopyText => PlainText;
         public override TextTokenKind Kind => TextTokenKind.Default;
+        
+        public override int GetIndexInPlainText(bool countTabsAsFourCharacters)
+        {
+            return IndexInPlainText
+                   ?? throw IndexInPlainTextWasNullException;
+        }
     }
 
     private record WhitespaceTextToken : TextTokenBase
@@ -78,5 +107,20 @@ public partial record PlainTextEditorStates
         public override TextTokenKind Kind => TextTokenKind.Whitespace;
         
         public WhitespaceKind WhitespaceKind { get; }
+        
+        public override int GetIndexInPlainText(bool countTabsAsFourCharacters)
+        {
+            if (WhitespaceKind == WhitespaceKind.Tab && !countTabsAsFourCharacters)
+            {
+                if (IndexInPlainText is not null &&
+                    IndexInPlainText > CopyText.Length - 1)
+                {
+                    return CopyText.Length - 1;
+                }
+            }
+            
+            return IndexInPlainText
+                   ?? throw IndexInPlainTextWasNullException;
+        }
     }
 }

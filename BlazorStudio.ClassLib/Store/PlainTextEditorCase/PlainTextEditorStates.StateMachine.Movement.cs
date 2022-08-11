@@ -76,7 +76,7 @@ public partial record PlainTextEditorStates
             var currentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>();
 
-            if (currentToken.IndexInPlainText == 0)
+            if (currentToken.GetIndexInPlainText(true) == 0)
             {
                 return await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
@@ -85,7 +85,7 @@ public partial record PlainTextEditorStates
             {
                 var replacementCurrentToken = currentToken with
                 {
-                    IndexInPlainText = currentToken.IndexInPlainText - 1
+                    IndexInPlainText = currentToken.GetIndexInPlainText(true) - 1
                 };
 
                 focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
@@ -119,7 +119,7 @@ public partial record PlainTextEditorStates
 
             var currentColumnIndexWithIndexInPlainTextAccountedFor = inclusiveStartingColumnIndexOfCurrentToken +
                                                                      focusedPlainTextEditorRecord.CurrentTextToken
-                                                                         .IndexInPlainText!.Value;
+                                                                         .GetIndexInPlainText(true);
 
             var targetRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex + 1;
 
@@ -201,7 +201,7 @@ public partial record PlainTextEditorStates
 
             var currentColumnIndexWithIndexInPlainTextAccountedFor = inclusiveStartingColumnIndexOfCurrentToken +
                                                                      focusedPlainTextEditorRecord.CurrentTextToken
-                                                                         .IndexInPlainText!.Value;
+                                                                         .GetIndexInPlainText(true);
 
             var targetRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex - 1;
 
@@ -293,10 +293,10 @@ public partial record PlainTextEditorStates
                         cancellationToken);
                 }
 
-                if (focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText !=
+                if (focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) !=
                     focusedPlainTextEditorRecord.CurrentTextToken.PlainText.Length - 1)
                 {
-                    var rememberIndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value;
+                    var rememberIndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
 
                     var replacementToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<TextTokenBase>() with
                     {
@@ -310,9 +310,9 @@ public partial record PlainTextEditorStates
                     focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                     {
                         CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
-                            + (focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value - rememberIndexInPlainText),
+                            + (focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) - rememberIndexInPlainText),
                         CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
-                                               + (focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value - rememberIndexInPlainText)
+                                               + (focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) - rememberIndexInPlainText)
                     };
                 }
 
@@ -322,7 +322,7 @@ public partial record PlainTextEditorStates
             var currentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>();
 
-            if (currentToken.IndexInPlainText == currentToken.PlainText.Length - 1)
+            if (currentToken.GetIndexInPlainText(true) == currentToken.PlainText.Length - 1)
             {
                 return await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
@@ -331,7 +331,7 @@ public partial record PlainTextEditorStates
             {
                 var replacementCurrentToken = currentToken with
                 {
-                    IndexInPlainText = currentToken.IndexInPlainText + 1
+                    IndexInPlainText = currentToken.GetIndexInPlainText(true) + 1
                 };
 
                 focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
@@ -443,10 +443,10 @@ public partial record PlainTextEditorStates
 
             return focusedPlainTextEditorRecord with
             {
-                CurrentCharacterColumnIndex = startingCharacterIndexRespectiveToRow + replacementCurrentToken.IndexInPlainText.Value,
+                CurrentCharacterColumnIndex = startingCharacterIndexRespectiveToRow + replacementCurrentToken.GetIndexInPlainText(true),
                 CurrentPositionIndex = focusedPlainTextEditorRecord
                     .FileHandle.VirtualCharacterIndexMarkerForStartOfARow[targetRowIndex]
-                    + startingCharacterIndexRespectiveToRow + replacementCurrentToken.IndexInPlainText.Value
+                    + startingCharacterIndexRespectiveToRow + replacementCurrentToken.GetIndexInPlainText(true)
             };
         }
     }

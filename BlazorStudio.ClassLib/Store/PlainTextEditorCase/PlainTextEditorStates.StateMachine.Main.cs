@@ -79,11 +79,11 @@ public partial record PlainTextEditorStates
             focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
             {
                 CurrentCharacterColumnIndex = startingCharacterIndex
-                    + replacementCurrentToken.IndexInPlainText.Value,
+                    + replacementCurrentToken.GetIndexInPlainText(true),
                 CurrentPositionIndex = focusedPlainTextEditorRecord
                                            .FileHandle.VirtualCharacterIndexMarkerForStartOfARow[focusedPlainTextEditorRecord.CurrentRowIndex]
                                        + startingCharacterIndex
-                                       + replacementCurrentToken.IndexInPlainText.Value
+                                       + replacementCurrentToken.GetIndexInPlainText(true)
             };
 
             return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
@@ -231,7 +231,7 @@ public partial record PlainTextEditorStates
                                          focusedPlainTextEditorRecord,
                                          true,
                                          cancellationToken)
-                                     + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+                                     + focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
 
                 await editorMemoryMappedFile.FileHandle.Edit
                     .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
@@ -406,7 +406,7 @@ public partial record PlainTextEditorStates
         private static async Task<PlainTextEditorRecordBase> SetPreviousTokenAsCurrentAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
         {
-            var rememberIndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value;
+            var rememberIndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
 
             var replacementCurrentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>() with
@@ -495,7 +495,7 @@ public partial record PlainTextEditorStates
                         cancellationToken);
 
                 var actualCharacterColumnIndex = startingCharacterColumnIndex
-                    + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText!.Value;
+                    + focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
 
                 return focusedPlainTextEditorRecord with
                 {
@@ -561,9 +561,9 @@ public partial record PlainTextEditorStates
                     Rows = nextRowList,
                     CurrentTokenIndex = nextTokenTuple.tokenIndex,
                     CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
-                        + (rememberToken.PlainText.Length - rememberToken.IndexInPlainText!.Value),
+                        + (rememberToken.PlainText.Length - rememberToken.GetIndexInPlainText(true)),
                     CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
-                                           + (rememberToken.PlainText.Length - rememberToken.IndexInPlainText!.Value)
+                                           + (rememberToken.PlainText.Length - rememberToken.GetIndexInPlainText(true))
                 };
             }
             else
@@ -592,7 +592,7 @@ public partial record PlainTextEditorStates
                     CurrentRowIndex = nextTokenTuple.rowIndex,
                     CurrentCharacterColumnIndex = 0,
                     CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
-                                           + (rememberToken.PlainText.Length - rememberToken.IndexInPlainText!.Value)
+                                           + (rememberToken.PlainText.Length - rememberToken.GetIndexInPlainText(true))
                 };
             }
         }

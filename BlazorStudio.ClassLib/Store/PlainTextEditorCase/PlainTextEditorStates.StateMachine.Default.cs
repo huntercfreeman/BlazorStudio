@@ -17,7 +17,8 @@ public partial record PlainTextEditorStates
                 var previousDefaultToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<DefaultTextToken>();
 
                 var content = previousDefaultToken.Content
-                    .Insert(previousDefaultToken.IndexInPlainText!.Value + 1, keyDownEventRecord.Key);
+                    .Insert(previousDefaultToken.GetIndexInPlainText(true) + 1, 
+                        keyDownEventRecord.Key);
 
                 if (!keyDownEventRecord.IsForced && 
                     focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
@@ -25,7 +26,7 @@ public partial record PlainTextEditorStates
                     var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                                              true,
                                              cancellationToken)
-                                         + previousDefaultToken.IndexInPlainText.Value;
+                                         + previousDefaultToken.GetIndexInPlainText(true);
 
                     await editorMemoryMappedFile.FileHandle.Edit
                         .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
@@ -37,7 +38,7 @@ public partial record PlainTextEditorStates
                 var nextDefaultToken = previousDefaultToken with
                 {
                     Content = content,
-                    IndexInPlainText = previousDefaultToken.IndexInPlainText + 1
+                    IndexInPlainText = previousDefaultToken.GetIndexInPlainText(true) + 1
                 };
 
                 focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
@@ -78,7 +79,7 @@ public partial record PlainTextEditorStates
                         if (focusedPlainTextEditorRecord.CurrentTextToken is not WhitespaceTextToken whitespace ||
                             whitespace.WhitespaceKind != WhitespaceKind.Tab)
                         {
-                            characterIndex += focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+                            characterIndex += focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
                         }
 
                         await editorMemoryMappedFile.FileHandle.Edit
@@ -99,7 +100,7 @@ public partial record PlainTextEditorStates
                     var nextDefaultToken = previousDefaultToken with
                     {
                         Content = content,
-                        IndexInPlainText = previousDefaultToken.IndexInPlainText
+                        IndexInPlainText = previousDefaultToken.GetIndexInPlainText(true)
                     };
 
                     focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
@@ -117,7 +118,7 @@ public partial record PlainTextEditorStates
                     var rememberToken = focusedPlainTextEditorRecord
                         .GetCurrentTextTokenAs<TextTokenBase>();
 
-                    if (rememberToken.IndexInPlainText!.Value != rememberToken.PlainText.Length - 1)
+                    if (rememberToken.GetIndexInPlainText(true) != rememberToken.PlainText.Length - 1)
                     {
                         // if (active token is not a word, but the cursor is NOT at the end of that token the token is split)
                         
@@ -142,7 +143,7 @@ public partial record PlainTextEditorStates
                             var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                                                      true,
                                                      cancellationToken)
-                                                 + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+                                                 + focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
 
                             await editorMemoryMappedFile.FileHandle.Edit
                                 .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
@@ -194,7 +195,7 @@ public partial record PlainTextEditorStates
                 var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                                          true,
                                          cancellationToken)
-                                     + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+                                     + focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
 
                 await editorMemoryMappedFile.FileHandle.Edit
                     .RemoveAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
@@ -204,20 +205,20 @@ public partial record PlainTextEditorStates
             }
 
             var firstSplitContent = previousDefaultTextToken.Content
-                .Substring(0, previousDefaultTextToken.IndexInPlainText!.Value);
+                .Substring(0, previousDefaultTextToken.GetIndexInPlainText(true));
 
             var secondSplitContent = string.Empty;
 
-            if (previousDefaultTextToken.IndexInPlainText != previousDefaultTextToken.Content.Length - 1)
+            if (previousDefaultTextToken.GetIndexInPlainText(true) != previousDefaultTextToken.Content.Length - 1)
             {
                 secondSplitContent = previousDefaultTextToken.Content
-                    .Substring(previousDefaultTextToken.IndexInPlainText!.Value + 1);
+                    .Substring(previousDefaultTextToken.GetIndexInPlainText(true) + 1);
             }
 
             var nextDefaultToken = previousDefaultTextToken with
                 {
                     Content = firstSplitContent + secondSplitContent,
-                    IndexInPlainText = previousDefaultTextToken.IndexInPlainText - 1
+                    IndexInPlainText = previousDefaultTextToken.GetIndexInPlainText(true) - 1
                 };
 
             if (nextDefaultToken.Content.Length == 0)
@@ -228,7 +229,7 @@ public partial record PlainTextEditorStates
                 nextDefaultToken,
                 cancellationToken);
 
-            if (nextDefaultToken.IndexInPlainText == -1)
+            if (nextDefaultToken.GetIndexInPlainText(true) == -1)
                 return await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
 

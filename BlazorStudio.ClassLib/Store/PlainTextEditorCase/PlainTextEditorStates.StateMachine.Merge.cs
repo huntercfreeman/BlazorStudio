@@ -33,7 +33,7 @@ public partial record PlainTextEditorStates
             {
                 Content = focusedPlainTextEditorRecord.CurrentTextToken.PlainText +
                     nextTokenTuple.token.PlainText,
-                IndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText
+                IndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true)
             };
 
             var currentRow = focusedPlainTextEditorRecord

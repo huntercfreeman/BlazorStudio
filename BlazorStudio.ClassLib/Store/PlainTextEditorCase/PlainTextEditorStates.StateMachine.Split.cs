@@ -44,10 +44,10 @@ public partial record PlainTextEditorStates
             var rememberTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex;
 
             var firstSplitContent = rememberCurrentToken.Content
-                .Substring(0, rememberCurrentToken.IndexInPlainText!.Value + 1);
+                .Substring(0, rememberCurrentToken.GetIndexInPlainText(true) + 1);
 
             var secondSplitContent = rememberCurrentToken.Content
-                    .Substring(rememberCurrentToken.IndexInPlainText!.Value + 1);
+                    .Substring(rememberCurrentToken.GetIndexInPlainText(true) + 1);
 
             int? tokenFirstIndexInContent = tokenToInsertBetweenSplit is null
                 ? firstSplitContent.Length - 1
@@ -72,7 +72,7 @@ public partial record PlainTextEditorStates
                 var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                                          true,
                                          cancellationToken)
-                                     + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
+                                     + focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
 
                 await focusedPlainTextEditorRecord.FileHandle.Edit
                     .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
@@ -152,12 +152,12 @@ public partial record PlainTextEditorStates
                 return focusedPlainTextEditorRecord;
 
             var toBeRemovedTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex;
-            var toBeRemovedTokenIndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText;
+            var toBeRemovedTokenIndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
             var toBeChangedRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
 
             if (!isForced)
             {
-                // Tab key so don't '+ focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value'
+                // Tab key so don't '+ focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true)'
                 int characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
                     true,
                     cancellationToken);
@@ -241,7 +241,7 @@ public partial record PlainTextEditorStates
                 nextRow = nextRow with
                 {
                     Tokens = nextRow.Tokens
-                        .Insert(toBeRemovedTokenIndex + toBeRemovedTokenIndexInPlainText!.Value + 1,
+                        .Insert(toBeRemovedTokenIndex + toBeRemovedTokenIndexInPlainText + 1,
                             tokenToInsertBetweenSplit),
                     SequenceKey = SequenceKey.NewSequenceKey()
                 };
@@ -253,7 +253,7 @@ public partial record PlainTextEditorStates
             return focusedPlainTextEditorRecord with
             {
                 Rows = nextRowList,
-                CurrentTokenIndex = toBeRemovedTokenIndex + toBeRemovedTokenIndexInPlainText!.Value + 
+                CurrentTokenIndex = toBeRemovedTokenIndex + toBeRemovedTokenIndexInPlainText + 
                                     (tokenToInsertBetweenSplit is not null ? 1 : 0)
             };
         }
