@@ -298,6 +298,16 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
+            int? currentCharacterIndex = null;
+            
+            if (keyDownEventRecord.ShiftWasPressed)
+            {
+                currentCharacterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
+                    focusedPlainTextEditorRecord,
+                    true,
+                    cancellationToken);
+            }
+            
             // '\t' characters render as 4 spaces but must override updates to these as only 1 character
             int? updateCurrentCharacterColumnIndexBy = null;
             int? updateCurrentPositionIndexBy = null;
@@ -369,6 +379,15 @@ public partial record PlainTextEditorStates
                              rememberIndexInPlainText);
                     }
 
+                    if (keyDownEventRecord.ShiftWasPressed)
+                    {
+                        focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(
+                            focusedPlainTextEditorRecord,
+                            currentCharacterIndex!.Value,
+                            updateCurrentCharacterColumnIndexBy.Value,
+                            cancellationToken);
+                    }
+                    
                     focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                     {
                         CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
@@ -395,6 +414,15 @@ public partial record PlainTextEditorStates
                 {
                     IndexInPlainText = currentToken.GetIndexInPlainText(true) + 1
                 };
+                
+                if (keyDownEventRecord.ShiftWasPressed)
+                {
+                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(
+                        focusedPlainTextEditorRecord,
+                        currentCharacterIndex!.Value,
+                        (updateCurrentCharacterColumnIndexBy ?? 1),
+                        cancellationToken);
+                }
 
                 focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                 {

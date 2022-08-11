@@ -33,6 +33,27 @@
         }
     </div>
     
+    <DebugExpansion Title="SelectionSpan">
+            @if (PlainTextEditor.SelectionSpan is not null)
+            {
+                <div>
+                    InclusiveStartingDocumentTextIndex:&nbsp;@PlainTextEditor.SelectionSpan.InclusiveStartingDocumentTextIndex
+                </div>
+                <div>
+                    ExclusiveEndingDocumentTextIndex:&nbsp;@PlainTextEditor.SelectionSpan.ExclusiveEndingDocumentTextIndex
+                </div>
+                <div>
+                    Count characters selected:&nbsp;@(PlainTextEditor.SelectionSpan.ExclusiveEndingDocumentTextIndex - PlainTextEditor.SelectionSpan.InclusiveStartingDocumentTextIndex)
+                </div>
+            }
+            else
+            {
+                <div>
+                    SelectionSpan is null
+                </div>
+            }
+        </DebugExpansion>
+    
     <DebugExpansion Title="Solution">
             @if (SolutionStateWrap is not null)
             {

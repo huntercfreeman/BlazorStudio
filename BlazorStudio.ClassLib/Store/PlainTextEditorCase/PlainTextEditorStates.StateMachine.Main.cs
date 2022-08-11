@@ -638,20 +638,34 @@ public partial record PlainTextEditorStates
         }
 
         /// <summary>
-		/// Returns the inclusive starting column index
+		/// Returns the inclusive starting column index relative to the row
         /// </summary>
-		/// <param name="nextPlainTextEditorState"></param>
 		/// <returns></returns>
 		private static async Task<int> CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
             PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             bool countTabsAsFourCharacters,
             CancellationToken cancellationToken)
+        {
+            return await CalculateTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                countTabsAsFourCharacters,
+                focusedPlainTextEditorRecord.GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>(),
+                focusedPlainTextEditorRecord.GetCurrentTextTokenAs<TextTokenBase>(),
+                cancellationToken);
+        }
+        
+        /// <summary>
+		/// Returns the inclusive starting column index relative to the row
+        /// </summary>
+		private static async Task<int> CalculateTokenStartingCharacterIndexRespectiveToRowAsync(
+            PlainTextEditorRecordBase focusedPlainTextEditorRecord,
+            bool countTabsAsFourCharacters,
+            PlainTextEditorRow plainTextEditorRow,
+            TextTokenBase Token,
+            CancellationToken cancellationToken)
 		{
 			var rollingCount = 0;
-            var currentRow = focusedPlainTextEditorRecord
-                .GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>();
 
-			foreach (var token in currentRow.Tokens)
+			foreach (var token in plainTextEditorRow.Tokens)
 			{
 				if (token.Key == focusedPlainTextEditorRecord.CurrentTextToken.Key)
                 {
@@ -710,5 +724,63 @@ public partial record PlainTextEditorStates
 
             throw new ApplicationException("Row was empty");
 		}
+
+        private static async Task<PlainTextEditorRecordBase> HandleSelectionSpanAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
+            int startingInclusiveCharacterIndex,
+            int cursorCharacterDisplacement,
+            CancellationToken cancellationToken)
+        {
+            SelectionSpanRecord? selectionSpan;
+            
+            if (focusedPlainTextEditorRecord.SelectionSpan is null)
+            {
+                if (cursorCharacterDisplacement < 0)
+                {
+                    // ArrowLeft as an example
+                    var characterIndex = Math.Max(startingInclusiveCharacterIndex - 1, 0);
+                    
+                    selectionSpan = new SelectionSpanRecord
+                    {
+                        InclusiveStartingDocumentTextIndex = characterIndex,
+                        ExclusiveEndingDocumentTextIndex = startingInclusiveCharacterIndex
+                    };
+                }
+                else
+                {
+                    // ArrowRight as an example
+                    selectionSpan = new SelectionSpanRecord
+                    {
+                        InclusiveStartingDocumentTextIndex = startingInclusiveCharacterIndex,
+                        ExclusiveEndingDocumentTextIndex = startingInclusiveCharacterIndex + 1
+                    };
+                }
+            }
+            else
+            {
+                var nextInclusiveStartingDocumentTextIndex = 
+                    focusedPlainTextEditorRecord.SelectionSpan.InclusiveStartingDocumentTextIndex;
+                
+                var nextExclusiveEndingDocumentTextIndex = 
+                    focusedPlainTextEditorRecord.SelectionSpan.ExclusiveEndingDocumentTextIndex + cursorCharacterDisplacement;
+
+                if (nextInclusiveStartingDocumentTextIndex == nextExclusiveEndingDocumentTextIndex)
+                {
+                    selectionSpan = null;
+                }
+                else
+                {
+                    selectionSpan = new SelectionSpanRecord()
+                    {
+                        InclusiveStartingDocumentTextIndex = nextInclusiveStartingDocumentTextIndex,
+                        ExclusiveEndingDocumentTextIndex = nextExclusiveEndingDocumentTextIndex
+                    };
+                }
+            }
+            
+            return focusedPlainTextEditorRecord with
+            {
+                SelectionSpan = selectionSpan
+            };
+        }
     }
 }
