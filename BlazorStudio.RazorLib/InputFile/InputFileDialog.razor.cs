@@ -44,6 +44,10 @@ public partial class InputFileDialog : ComponentBase
     private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
     private Func<Task> _mostRecentRefreshContextMenuTarget;
 
+    private string BodyCssClassString => ShowFooter
+        ? "bstudio_input-file-dialog-body-show-footer"
+        : "bstudio_input-file-dialog-body-hide-footer";
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

@@ -383,8 +383,13 @@
     height: 100%;
 }
 
-.bstudio_input-file-dialog-body {
+.bstudio_input-file-dialog-body-show-footer {
     height: calc(100% - 5.5rem - 3rem);
+    overflow-y: auto;
+}
+
+.bstudio_input-file-dialog-body-hide-footer {
+    height: calc(100% - 3rem);
     overflow-y: auto;
 }
 
