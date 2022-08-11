@@ -43,7 +43,7 @@
                     {
                         <DebugExpansion Title="@documentPair.Key.AbsoluteFilePathString">
                             <DebugExpansion Title="PropertyDeclarations">
-                                @foreach (var propertyDeclaration in documentPair.Value.GeneralSyntaxCollector.PropertyDeclaration)
+                                @foreach (var propertyDeclaration in documentPair.Value.GeneralSyntaxCollector.PropertyDeclarations)
                                 {
                                     <DebugExpansion Title="@propertyDeclaration.GetText().ToString()">
                                         <DebugExpansion Title="Type">
@@ -58,7 +58,7 @@
                             </DebugExpansion>
                             
                             <DebugExpansion Title="MethodDeclarations">
-                                @foreach (var methodDeclaration in documentPair.Value.GeneralSyntaxCollector.MethodDeclaration)
+                                @foreach (var methodDeclaration in documentPair.Value.GeneralSyntaxCollector.MethodDeclarations)
                                 {
                                     <DebugExpansion Title="@methodDeclaration.GetText().ToString()">
                                         <DebugExpansion Title="Type">

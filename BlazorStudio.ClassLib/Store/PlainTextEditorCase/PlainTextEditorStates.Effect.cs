@@ -12,6 +12,7 @@ using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.Virtualize;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
@@ -873,125 +874,73 @@ public partial record PlainTextEditorStates
                                 
                                 var token = row.Tokens[tokenIndex];
                                 
-                                var foundSyntaxKind = false;
-
-                                if (!foundSyntaxKind)
+                                bool AttemptSetSyntaxKind<T>(string humanStringIdentifier,
+                                    List<T> items, 
+                                    Func<T, TextSpan> getTextSpanFunc,
+                                    Func<T, SyntaxKind> getSyntaxKindFunc,
+                                    string cssClassString)
                                 {
-                                    foreach (var propertyDeclaration in indexedDocument.GeneralSyntaxCollector
-                                                 .PropertyDeclaration)
+                                    foreach (var item in items)
                                     {
-                                        if (propertyDeclaration.Type.Span.IntersectsWith(new TextSpan(
+                                        if (getTextSpanFunc.Invoke(item).IntersectsWith(new TextSpan(
                                                 runningTotalOfCharactersInDocument,
                                                 token.PlainText.Length)))
                                         {
-                                            foundSyntaxKind = true;
-
                                             tuples.Add((token.Key,
                                                 new SemanticDescription
                                                 {
                                                     SequenceKey = SequenceKey.NewSequenceKey(),
-                                                    SyntaxKind = propertyDeclaration.Kind(),
-                                                    CssClassString = "pte_plain-text-editor-text-token-display-type"
+                                                    SyntaxKind = getSyntaxKindFunc.Invoke(item),
+                                                    CssClassString = cssClassString
                                                 }));
-                                            break;
+                                            
+                                            return true;
                                         }
                                     }
+                                    
+                                    return false;
                                 }
 
+                                var foundSyntaxKind =
+                                    AttemptSetSyntaxKind("property type",
+                                        indexedDocument.GeneralSyntaxCollector.PropertyDeclarations,
+                                        pds => pds.Type.Span,
+                                        pds => pds.Kind(),
+                                        "pte_plain-text-editor-text-token-display-type")
+                                    ||
+                                    AttemptSetSyntaxKind("method declaration",
+                                        indexedDocument.GeneralSyntaxCollector.MethodDeclarations,
+                                        md => md.Identifier.Span,
+                                        md => md.Kind(),
+                                        "pte_plain-text-editor-text-token-display-method-declaration")
+                                    ||
+                                    AttemptSetSyntaxKind("argument declaration",
+                                        indexedDocument.GeneralSyntaxCollector.ArgumentDeclarations,
+                                        ad => ad.Span,
+                                        ad => ad.Kind(),
+                                        "pte_plain-text-editor-text-token-display-type")
+                                    ||
+                                    AttemptSetSyntaxKind("parameter declaration",
+                                        indexedDocument.GeneralSyntaxCollector.ParameterDeclarations,
+                                        pd => pd.Span,
+                                        pd => pd.Kind(),
+                                        "pte_plain-text-editor-text-token-display-type")
+                                    ||
+                                    AttemptSetSyntaxKind("string literal",
+                                        indexedDocument.GeneralSyntaxCollector.StringLiteralExpressions,
+                                        sl => sl.Span,
+                                        sl => sl.Kind(),
+                                        "pte_plain-text-editor-text-token-display-string-literal");
+
                                 if (!foundSyntaxKind)
                                 {
-                                    foreach (var methodDeclaration in indexedDocument.GeneralSyntaxCollector
-                                                 .MethodDeclaration)
-                                    {
-                                        if (methodDeclaration.Identifier.Span.IntersectsWith(new TextSpan(
-                                                runningTotalOfCharactersInDocument,
-                                                token.PlainText.Length)))
+                                    tuples.Add((token.Key,
+                                        new SemanticDescription
                                         {
-                                            foundSyntaxKind = true;
-
-                                            tuples.Add((token.Key,
-                                                new SemanticDescription
-                                                {
-                                                    SequenceKey = SequenceKey.NewSequenceKey(),
-                                                    SyntaxKind = methodDeclaration.Kind(),
-                                                    CssClassString =
-                                                        "pte_plain-text-editor-text-token-display-method-declaration"
-                                                }));
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                if (!foundSyntaxKind)
-                                {
-                                    foreach (var argumentDeclaration in indexedDocument.GeneralSyntaxCollector
-                                                 .ArgumentDeclarations)
-                                    {
-                                        if (argumentDeclaration.Span.IntersectsWith(new TextSpan(
-                                                runningTotalOfCharactersInDocument,
-                                                token.PlainText.Length)))
-                                        {
-                                            foundSyntaxKind = true;
-
-                                            tuples.Add((token.Key,
-                                                new SemanticDescription
-                                                {
-                                                    SequenceKey = SequenceKey.NewSequenceKey(),
-                                                    SyntaxKind = argumentDeclaration.Kind(),
-                                                    CssClassString =
-                                                        "pte_plain-text-editor-text-token-display-type"
-                                                }));
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                if (!foundSyntaxKind)
-                                {
-                                    foreach (var parameterDeclaration in indexedDocument.GeneralSyntaxCollector
-                                                 .ParameterDeclarations)
-                                    {
-                                        if (parameterDeclaration.Span.IntersectsWith(new TextSpan(
-                                                runningTotalOfCharactersInDocument,
-                                                token.PlainText.Length)))
-                                        {
-                                            foundSyntaxKind = true;
-
-                                            tuples.Add((token.Key,
-                                                new SemanticDescription
-                                                {
-                                                    SequenceKey = SequenceKey.NewSequenceKey(),
-                                                    SyntaxKind = parameterDeclaration.Kind(),
-                                                    CssClassString =
-                                                        "pte_plain-text-editor-text-token-display-type"
-                                                }));
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                if (!foundSyntaxKind)
-                                {
-                                    foreach (var stringLiteralExpression in indexedDocument.GeneralSyntaxCollector
-                                                 .StringLiteralExpressions)
-                                    {
-                                        if (stringLiteralExpression.Span.IntersectsWith(new TextSpan(
-                                                runningTotalOfCharactersInDocument,
-                                                token.PlainText.Length)))
-                                        {
-                                            foundSyntaxKind = true;
-
-                                            tuples.Add((token.Key,
-                                                new SemanticDescription
-                                                {
-                                                    SequenceKey = SequenceKey.NewSequenceKey(),
-                                                    SyntaxKind = stringLiteralExpression.Kind(),
-                                                    CssClassString =
-                                                        "pte_plain-text-editor-text-token-display-string-literal"
-                                                }));
-                                            break;
-                                        }
-                                    }
+                                            SequenceKey = SequenceKey.NewSequenceKey(),
+                                            SyntaxKind = SyntaxKind.None,
+                                            CssClassString = string.Empty
+                                        }));
                                 }
 
                                 if (token.Kind == TextTokenKind.Whitespace &&
