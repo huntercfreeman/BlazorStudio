@@ -50,6 +50,29 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
+            // '\t' characters render as 4 spaces but must override updates to these as only 1 character
+            int? updateCurrentCharacterColumnIndexBy = null;
+            int? updateCurrentPositionIndexBy = null;
+            
+            if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace &&
+                ((WhitespaceTextToken)focusedPlainTextEditorRecord.CurrentTextToken).WhitespaceKind == WhitespaceKind.Tab)
+            {
+                if (focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) == 
+                    0)
+                {
+                    // Move to previous token
+                    updateCurrentCharacterColumnIndexBy = 1;
+                    updateCurrentPositionIndexBy = 1;
+                }
+                else 
+                {
+                    // Within the '\t' character move 1 'faked' space but
+                    // don't change the actual position in the file.
+                    updateCurrentCharacterColumnIndexBy = 0;
+                    updateCurrentPositionIndexBy = 0;
+                }
+            }
+            
             if (keyDownEventRecord.CtrlWasPressed)
             {
                 var rememberTokenKey = focusedPlainTextEditorRecord.CurrentTextTokenKey;
@@ -90,8 +113,10 @@ public partial record PlainTextEditorStates
 
                 focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                 {
-                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex - 1,
-                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex - 1
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex 
+                                                  - (updateCurrentCharacterColumnIndexBy ?? 1),
+                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
+                        - (updateCurrentPositionIndexBy ?? 1)
                 };
 
                 focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
@@ -273,6 +298,29 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
+            // '\t' characters render as 4 spaces but must override updates to these as only 1 character
+            int? updateCurrentCharacterColumnIndexBy = null;
+            int? updateCurrentPositionIndexBy = null;
+            
+            if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace &&
+                ((WhitespaceTextToken)focusedPlainTextEditorRecord.CurrentTextToken).WhitespaceKind == WhitespaceKind.Tab)
+            {
+                if (focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) == 
+                    focusedPlainTextEditorRecord.CurrentTextToken.PlainText.Length - 1)
+                {
+                    // Move to next token
+                    updateCurrentCharacterColumnIndexBy = 1;
+                    updateCurrentPositionIndexBy = 1;
+                }
+                else 
+                {
+                    // Within the '\t' character move 1 'faked' space but
+                    // don't change the actual position in the file.
+                    updateCurrentCharacterColumnIndexBy = 0;
+                    updateCurrentPositionIndexBy = 0;
+                }
+            }
+            
             if (keyDownEventRecord.CtrlWasPressed)
             {
                 var rememberTokenKey = focusedPlainTextEditorRecord.CurrentTextTokenKey;
@@ -307,12 +355,26 @@ public partial record PlainTextEditorStates
                         replacementToken,
                         cancellationToken);
 
+                    if (updateCurrentCharacterColumnIndexBy is null)
+                    {
+                        updateCurrentCharacterColumnIndexBy =
+                            (focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) -
+                             rememberIndexInPlainText);
+                    }
+
+                    if (updateCurrentPositionIndexBy is null)
+                    {
+                        updateCurrentPositionIndexBy =
+                            (focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) -
+                             rememberIndexInPlainText);
+                    }
+
                     focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                     {
                         CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
-                            + (focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) - rememberIndexInPlainText),
+                            + updateCurrentCharacterColumnIndexBy.Value,
                         CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
-                                               + (focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) - rememberIndexInPlainText)
+                                               + updateCurrentPositionIndexBy.Value
                     };
                 }
 
@@ -336,8 +398,10 @@ public partial record PlainTextEditorStates
 
                 focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                 {
-                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex + 1,
-                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex + 1
+                    CurrentCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex 
+                                                  + (updateCurrentCharacterColumnIndexBy ?? 1),
+                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex 
+                                           + (updateCurrentCharacterColumnIndexBy ?? 1)
                 };
 
                 focusedPlainTextEditorRecord =
