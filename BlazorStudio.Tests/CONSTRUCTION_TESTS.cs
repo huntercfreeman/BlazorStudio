@@ -10,7 +10,7 @@ public class CONSTRUCTION_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
         Dispatcher.Dispatch(new ConstructInMemoryPlainTextEditorRecordAction(plainTextEditorKey));
 
-        Assert.Single(State.Value.Map);
-        Assert.Single(State.Value.Array);
+        Assert.Single(PlainTextEditorStateWrap.Value.Map);
+        Assert.Single(PlainTextEditorStateWrap.Value.Array);
     }
 }

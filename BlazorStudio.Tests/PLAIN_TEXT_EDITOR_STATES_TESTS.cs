@@ -12,12 +12,12 @@ public class PLAIN_TEXT_EDITOR_STATES_TESTS
     protected readonly IServiceProvider ServiceProvider;
     protected readonly IDispatcher Dispatcher;
     protected readonly IStore Store;
-    protected readonly IState<PlainTextEditorStates> State;
+    protected readonly IState<PlainTextEditorStates> PlainTextEditorStateWrap;
     /// <summary>
     /// For me this is:
     /// "C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\"
     /// </summary>
-    protected readonly string AbsoluteFilePathToThisCSharpProject = "C:\\Users\\hunte\\source\\BlazorStudio\\BlazorStudio.Tests\\";
+    protected readonly string AbsoluteFilePathToThisCSharpProject = "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests";
 
     protected CancellationTokenSource CancellationTokenSource = new();
 
@@ -45,7 +45,7 @@ public class PLAIN_TEXT_EDITOR_STATES_TESTS
         }
 
         Store = ServiceProvider.GetRequiredService<IStore>();
-        State = ServiceProvider.GetRequiredService<IState<PlainTextEditorStates>>();
+        PlainTextEditorStateWrap = ServiceProvider.GetRequiredService<IState<PlainTextEditorStates>>();
 
         Store.InitializeAsync().Wait();
     }

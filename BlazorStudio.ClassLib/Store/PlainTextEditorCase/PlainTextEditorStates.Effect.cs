@@ -712,9 +712,13 @@ public partial record PlainTextEditorStates
                     }
                 }
 
+                if (!seenEnterKey)
+                    allEnterKeysAreCarriageReturnNewLine = false;
+                
                 replacementPlainTextEditor = replacementPlainTextEditor with
                 {
-                    RowIndexOffset = readRequest.RowIndexOffset
+                    RowIndexOffset = readRequest.RowIndexOffset,
+                    UseCarriageReturnNewLine = allEnterKeysAreCarriageReturnNewLine
                 };
 
                 // TODO: The font-size style attribute does not equal the size of the div that encapsulates the singular character. Figure out EXACTLY these values based off the font-size instead of hard coding what developer tools says
