@@ -416,9 +416,12 @@ public partial record PlainTextEditorStates
                 
                 dispatcher.Dispatch(new SetPlainTextEditorStatesAction(states));
                 
-                UpdateTokenSemanticDescriptions(states,
-                    (PlainTextEditorRecordTokenized) replacementPlainTextEditor,
-                    dispatcher);
+                if (!KeyboardKeyFacts.IsMovementKey(keyDownEventAction.KeyDownEventRecord))
+                {
+                    UpdateTokenSemanticDescriptions(states,
+                        (PlainTextEditorRecordTokenized) replacementPlainTextEditor,
+                        dispatcher);
+                }
             });
         }
 
