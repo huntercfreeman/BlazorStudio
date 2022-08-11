@@ -17,27 +17,33 @@ public class READ_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     {
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
-        var absoluteFilePath = 
-            new AbsoluteFilePath("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/EmptyFile.txt",
-                false);
+        // Initialize
+        {
+            var absoluteFilePath =
+                new AbsoluteFilePath("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/EmptyFile.txt",
+                    false);
 
-        var fileSystemProvider = new FileSystemProvider();
-        
-        await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey, 
-                absoluteFilePath, 
-                fileSystemProvider, 
-                CancellationToken.None),
-            PlainTextEditorStateWrap);
-        
-        Assert.Single(PlainTextEditorStateWrap.Value.Map);
-        Assert.Single(PlainTextEditorStateWrap.Value.Array);
+            var fileSystemProvider = new FileSystemProvider();
 
-        var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
-        
-        Assert.Equal(string.Empty, editor.GetPlainText());
+            await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
+                    absoluteFilePath,
+                    fileSystemProvider,
+                    CancellationToken.None),
+                PlainTextEditorStateWrap);
 
-        bool expectedUseCarriageReturnNewLine = false;
-        Assert.Equal(expectedUseCarriageReturnNewLine, editor.UseCarriageReturnNewLine);
+            Assert.Single(PlainTextEditorStateWrap.Value.Map);
+            Assert.Single(PlainTextEditorStateWrap.Value.Array);
+        }
+
+        // Assert
+        {
+            var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+
+            Assert.Equal(string.Empty, editor.GetPlainText());
+
+            bool expectedUseCarriageReturnNewLine = false;
+            Assert.Equal(expectedUseCarriageReturnNewLine, editor.UseCarriageReturnNewLine);
+        }
     }
     
     [Theory]
@@ -47,23 +53,29 @@ public class READ_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     {
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
-        var absoluteFilePath = new AbsoluteFilePath(absoluteFilePathString, false);
+        // Initialize
+        {
+            var absoluteFilePath = new AbsoluteFilePath(absoluteFilePathString, false);
 
-        var fileSystemProvider = new FileSystemProvider();
-        
-        await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey, 
-                absoluteFilePath, 
-                fileSystemProvider, 
-                CancellationToken.None),
-            PlainTextEditorStateWrap);
-        
-        Assert.Single(PlainTextEditorStateWrap.Value.Map);
-        Assert.Single(PlainTextEditorStateWrap.Value.Array);
+            var fileSystemProvider = new FileSystemProvider();
 
-        var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
-        
-        Assert.Equal(lineEnding, editor.GetPlainText());
-        Assert.Equal(expectedUseCarriageReturnNewLine, editor.UseCarriageReturnNewLine);
+            await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
+                    absoluteFilePath,
+                    fileSystemProvider,
+                    CancellationToken.None),
+                PlainTextEditorStateWrap);
+
+            Assert.Single(PlainTextEditorStateWrap.Value.Map);
+            Assert.Single(PlainTextEditorStateWrap.Value.Array);
+        }
+
+        // Assert
+        {
+            var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+
+            Assert.Equal(lineEnding, editor.GetPlainText());
+            Assert.Equal(expectedUseCarriageReturnNewLine, editor.UseCarriageReturnNewLine);
+        }
     }
 
     // /// <summary>
@@ -74,21 +86,28 @@ public class READ_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
     // {
     //     var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
     //
-    //     var absoluteFilePath =
-    //         new AbsoluteFilePath("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/Hamlet_ Entire Play.html",
-    //             false);
+    //     // Initialize (tokenize the large file)
+    //     {
+    //         var absoluteFilePath =
+    //             new AbsoluteFilePath(
+    //                 "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/Hamlet_ Entire Play.html",
+    //                 false);
     //
-    //     var fileSystemProvider = new FileSystemProvider();
+    //         var fileSystemProvider = new FileSystemProvider();
     //
-    //     await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
-    //             absoluteFilePath,
-    //             fileSystemProvider,
-    //             CancellationToken.None),
-    //         PlainTextEditorStateWrap);
+    //         await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
+    //                 absoluteFilePath,
+    //                 fileSystemProvider,
+    //                 CancellationToken.None),
+    //             PlainTextEditorStateWrap);
     //
-    //     Assert.Single(PlainTextEditorStateWrap.Value.Map);
-    //     Assert.Single(PlainTextEditorStateWrap.Value.Array);
+    //         Assert.Single(PlainTextEditorStateWrap.Value.Map);
+    //         Assert.Single(PlainTextEditorStateWrap.Value.Array);
+    //     }
     //
-    //     var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+    //     {
+    //         // ... nothing done here yet
+    //         // need to optimize tokenization
+    //     }
     // }
 }

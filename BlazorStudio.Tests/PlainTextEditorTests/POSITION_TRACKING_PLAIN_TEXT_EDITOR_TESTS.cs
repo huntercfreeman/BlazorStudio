@@ -27,94 +27,109 @@ public class POSITION_TRACKING_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATE
     [InlineData("\r\n", 371)]
     public async Task TRACK_TEXT_INSERTION(string input, int muliplyInput)
     {
-        var builder = new StringBuilder();
-
-        for (int i = 0; i < muliplyInput; i++)
-        {
-            builder.Append(input);
-        }
-
-        input = builder.ToString();
-
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-
-        var absoluteFilePath = 
-            new AbsoluteFilePath("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/PositionTracking.txt",
-                false);
-
-        var fileSystemProvider = new FileSystemProvider();
         
-        await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey, 
-                absoluteFilePath, 
-                fileSystemProvider, 
-                CancellationToken.None),
-            PlainTextEditorStateWrap);
-        
-        Assert.Single(PlainTextEditorStateWrap.Value.Map);
-        Assert.Single(PlainTextEditorStateWrap.Value.Array);
-
-        var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
-        
-        Assert.Equal(string.Empty, editor.GetPlainText());
-
-        var expectedUseCarriageReturnNewLine = false;
-        Assert.Equal(expectedUseCarriageReturnNewLine, editor.UseCarriageReturnNewLine);
-
-        var expectedPositionIndex = 0;
-        Assert.Equal(expectedPositionIndex, editor.CurrentPositionIndex);
-
-        foreach (var character in input)
+        // Generate input
         {
-            var previousCharacterWasCarriageReturn = false;
+            var builder = new StringBuilder();
 
-            string MutateIfPreviousCharacterWasCarriageReturn()
+            for (int i = 0; i < muliplyInput; i++)
             {
-                return previousCharacterWasCarriageReturn
-                    ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
-                    : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
+                builder.Append(input);
             }
 
-            if (character == '\r')
-            {
-                previousCharacterWasCarriageReturn = true;
-                continue;
-            }
-            
-            var code = character switch
-            {
-                '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
-                ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
-                '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
-                _ => character.ToString()
-            };
-
-            previousCharacterWasCarriageReturn = false;
-
-            var keyDownRecord = new KeyDownEventRecord(
-                character.ToString(),
-                code,
-                false,
-                false,
-                false
-            );
-            
-            var action = new KeyDownEventAction(plainTextEditorKey, keyDownRecord, CancellationToken.None);
-            
-            await DispatchHelperAsync(action, PlainTextEditorStateWrap);
+            input = builder.ToString();
         }
 
-        editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
-        
-        // The editor needs to be tested with "\r\n"
-        // however the expectation is that they're treated as "\r\n".Length == 1
-        // this line replaces "\r\n" then "\r" purely to get the expected value to assert
-        // for tracking CurrentPositionIndex.
-        input = input
-            .Replace("\r\n", "\n")
-            .Replace("\r", string.Empty);
-        
-        expectedPositionIndex = input.Length;
-        Assert.Equal(expectedPositionIndex, editor.CurrentPositionIndex);
+        // Initialize
+        {
+            var absoluteFilePath =
+                new AbsoluteFilePath("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/PositionTracking.txt",
+                    false);
+
+            var fileSystemProvider = new FileSystemProvider();
+
+            await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
+                    absoluteFilePath,
+                    fileSystemProvider,
+                    CancellationToken.None),
+                PlainTextEditorStateWrap);
+
+            Assert.Single(PlainTextEditorStateWrap.Value.Map);
+            Assert.Single(PlainTextEditorStateWrap.Value.Array);
+        }
+
+        // Ensure editor is empty
+        {
+            var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+
+            Assert.Equal(string.Empty, editor.GetPlainText());
+
+            var expectedUseCarriageReturnNewLine = false;
+            Assert.Equal(expectedUseCarriageReturnNewLine, editor.UseCarriageReturnNewLine);
+
+            var expectedPositionIndex = 0;
+            Assert.Equal(expectedPositionIndex, editor.CurrentPositionIndex);
+        }
+
+        // Insert
+        {
+            foreach (var character in input)
+            {
+                var previousCharacterWasCarriageReturn = false;
+
+                string MutateIfPreviousCharacterWasCarriageReturn()
+                {
+                    return previousCharacterWasCarriageReturn
+                        ? KeyboardKeyFacts.WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE
+                        : KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE;
+                }
+
+                if (character == '\r')
+                {
+                    previousCharacterWasCarriageReturn = true;
+                    continue;
+                }
+
+                var code = character switch
+                {
+                    '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
+                    ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
+                    '\n' => MutateIfPreviousCharacterWasCarriageReturn(),
+                    _ => character.ToString()
+                };
+
+                previousCharacterWasCarriageReturn = false;
+
+                var keyDownRecord = new KeyDownEventRecord(
+                    character.ToString(),
+                    code,
+                    false,
+                    false,
+                    false
+                );
+
+                var action = new KeyDownEventAction(plainTextEditorKey, keyDownRecord, CancellationToken.None);
+
+                await DispatchHelperAsync(action, PlainTextEditorStateWrap);
+            }
+        }
+
+        // Assert
+        {
+            var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+
+            // The editor needs to be tested with "\r\n"
+            // however the expectation is that they're treated as "\r\n".Length == 1
+            // this line replaces "\r\n" then "\r" purely to get the expected value to assert
+            // for tracking CurrentPositionIndex.
+            input = input
+                .Replace("\r\n", "\n")
+                .Replace("\r", string.Empty);
+
+            var expectedPositionIndex = input.Length;
+            Assert.Equal(expectedPositionIndex, editor.CurrentPositionIndex);
+        }
     }
     
     /// <summary>
@@ -128,22 +143,27 @@ public class POSITION_TRACKING_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATE
     {
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
-        var absoluteFilePath = new AbsoluteFilePath(absoluteFilePathString, false);
-
-        var fileSystemProvider = new FileSystemProvider();
-        
-        await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey, 
-                absoluteFilePath, 
-                fileSystemProvider, 
-                CancellationToken.None),
-            PlainTextEditorStateWrap);
-        
-        Assert.Single(PlainTextEditorStateWrap.Value.Map);
-        Assert.Single(PlainTextEditorStateWrap.Value.Array);
-
-        var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
-
+        // Initialize
         {
+            var absoluteFilePath = new AbsoluteFilePath(absoluteFilePathString, false);
+
+            var fileSystemProvider = new FileSystemProvider();
+
+            await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
+                    absoluteFilePath,
+                    fileSystemProvider,
+                    CancellationToken.None),
+                PlainTextEditorStateWrap);
+
+            Assert.Single(PlainTextEditorStateWrap.Value.Map);
+            Assert.Single(PlainTextEditorStateWrap.Value.Array);
+        }
+
+        // Move
+        {
+            var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+            var beforeMovementPositionIndex = editor.CurrentPositionIndex;
+
             var keyDownEventRecord = new KeyDownEventRecord(
                 KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY,
                 KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY,
@@ -156,10 +176,13 @@ public class POSITION_TRACKING_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATE
             
             await DispatchHelperAsync(action, PlainTextEditorStateWrap);
         }
-        
-        editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
 
-        Assert.Equal(positionAfterArrowLeft, editor.CurrentPositionIndex);
+        // Assert
+        {
+            var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+
+            Assert.Equal(positionAfterArrowLeft, editor.CurrentPositionIndex);
+        }
     }
     
     /// <summary>
@@ -173,22 +196,80 @@ public class POSITION_TRACKING_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATE
     {
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
-        var absoluteFilePath = new AbsoluteFilePath(absoluteFilePathString, false);
-
-        var fileSystemProvider = new FileSystemProvider();
-        
-        await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey, 
-                absoluteFilePath, 
-                fileSystemProvider, 
-                CancellationToken.None),
-            PlainTextEditorStateWrap);
-        
-        Assert.Single(PlainTextEditorStateWrap.Value.Map);
-        Assert.Single(PlainTextEditorStateWrap.Value.Array);
-
-        var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
-
+        // Initialize
         {
+            var absoluteFilePath = new AbsoluteFilePath(absoluteFilePathString, false);
+
+            var fileSystemProvider = new FileSystemProvider();
+
+            await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
+                    absoluteFilePath,
+                    fileSystemProvider,
+                    CancellationToken.None),
+                PlainTextEditorStateWrap);
+            
+            Assert.Single(PlainTextEditorStateWrap.Value.Map);
+            Assert.Single(PlainTextEditorStateWrap.Value.Array);
+        }
+
+        // Move
+        {
+            var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+            var beforeMovementPositionIndex = editor.CurrentPositionIndex;
+
+            var keyDownEventRecord = new KeyDownEventRecord(
+                KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
+                KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
+                false,
+                false,
+                false
+            );
+            
+            var action = new KeyDownEventAction(plainTextEditorKey, keyDownEventRecord, CancellationToken.None);
+            
+            await DispatchHelperAsync(action, PlainTextEditorStateWrap);
+        }
+
+        // Assert
+        {
+            var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+
+            Assert.Equal(positionAfterArrowDown, editor.CurrentPositionIndex);
+        }
+    }
+    
+    /// <summary>
+    /// As I move around a file will my position index change correctly.
+    /// </summary>
+    [Theory]
+    [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/EmptyFile.txt", 0)]
+    [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/NewLine.txt", 1)]
+    [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/CarriageReturnNewLine.txt", 1)]
+    public async Task TRACK_ARROW_UP_MOVEMENT(string absoluteFilePathString, int positionAfterArrowDown)
+    {
+        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+        // Initialize
+        {
+            var absoluteFilePath = new AbsoluteFilePath(absoluteFilePathString, false);
+
+            var fileSystemProvider = new FileSystemProvider();
+
+            await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
+                    absoluteFilePath,
+                    fileSystemProvider,
+                    CancellationToken.None),
+                PlainTextEditorStateWrap);
+
+            Assert.Single(PlainTextEditorStateWrap.Value.Map);
+            Assert.Single(PlainTextEditorStateWrap.Value.Array);
+        }
+
+        // Move
+        {
+            var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+            var beforeMovementPositionIndex = editor.CurrentPositionIndex;
+            
             var keyDownEventRecord = new KeyDownEventRecord(
                 KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
                 KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
@@ -202,8 +283,11 @@ public class POSITION_TRACKING_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATE
             await DispatchHelperAsync(action, PlainTextEditorStateWrap);
         }
         
-        editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+        // Assert
+        {
+            var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
 
-        Assert.Equal(positionAfterArrowDown, editor.CurrentPositionIndex);
+            Assert.Equal(positionAfterArrowDown, editor.CurrentPositionIndex);
+        }
     }
 }
