@@ -4,7 +4,6 @@ using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
 namespace BlazorStudio.Tests.PlainTextEditorTests;
 
-
 /// <summary>
 /// In this file I use absolute file paths "string absoluteFilePathString" as parameters
 /// for tests. This is not ideal as the tests will fail
