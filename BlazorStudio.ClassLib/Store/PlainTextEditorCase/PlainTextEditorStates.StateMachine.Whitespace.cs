@@ -61,6 +61,12 @@ public partial record PlainTextEditorStates
                             cancellationToken);
                 }
 
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    CurrentColumnIndex = focusedPlainTextEditorRecord.CurrentColumnIndex + 1,
+                    CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex + 1
+                };
+
                 return await InsertNewCurrentTokenAfterCurrentPositionAsync(focusedPlainTextEditorRecord,
                     whitespaceToken,
                     cancellationToken);
