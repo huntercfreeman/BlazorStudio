@@ -854,43 +854,71 @@ public partial record PlainTextEditorStates
                         
                         indexedDocument.GeneralSyntaxCollector.Visit(syntaxRoot);
 
+                        // The first character is always a 'fake' StartOfRowToken and should not be counted.
                         var runningTotalOfCharactersInDocument = 0;
-
-                        List<(TextTokenKey textTokenKey, SemanticDescription semanticDescription)> tuples = new();
                         
-                        foreach (var row in editor.Rows)
+                        List<(TextTokenKey textTokenKey, SemanticDescription semanticDescription)> tuples = new();
+
+                        for (var rowIndex = 0; rowIndex < editor.Rows.Count; rowIndex++)
                         {
-                            foreach (var token in row.Tokens)
+                            var row = editor.Rows[rowIndex];
+
+                            for (var tokenIndex = 0; tokenIndex < row.Tokens.Count; tokenIndex++)
                             {
-                                foreach (var propertyDeclaration in indexedDocument.GeneralSyntaxCollector.PropertyDeclarations)
+                                if (rowIndex == 0 && 
+                                    tokenIndex == 0)
                                 {
-                                    if (propertyDeclaration.Type.Span.IntersectsWith(new TextSpan(runningTotalOfCharactersInDocument,
-                                            token.PlainText.Length)))
-                                    {
-                                        tuples.Add((token.Key,
-                                            new SemanticDescription
-                                            {
-                                                SequenceKey = SequenceKey.NewSequenceKey(),
-                                                SyntaxKind = propertyDeclaration.Kind(),
-                                                CssClassString = "pte_plain-text-editor-text-token-display-type"
-                                            }));
-                                        break;
-                                    }
+                                    continue;
                                 }
                                 
-                                foreach (var methodDeclaration in indexedDocument.GeneralSyntaxCollector.MethodDeclarations)
+                                var token = row.Tokens[tokenIndex];
+                                
+                                var foundSyntaxKind = false;
+
+                                if (!foundSyntaxKind)
                                 {
-                                    if (methodDeclaration.Identifier.Span.IntersectsWith(new TextSpan(runningTotalOfCharactersInDocument,
-                                            token.PlainText.Length)))
+                                    foreach (var propertyDeclaration in indexedDocument.GeneralSyntaxCollector
+                                                 .PropertyDeclarations)
                                     {
-                                        tuples.Add((token.Key,
-                                            new SemanticDescription
-                                            {
-                                                SequenceKey = SequenceKey.NewSequenceKey(),
-                                                SyntaxKind = methodDeclaration.Kind(),
-                                                CssClassString = "pte_plain-text-editor-text-token-display-method-declaration"
-                                            }));
-                                        break;
+                                        if (propertyDeclaration.Type.Span.IntersectsWith(new TextSpan(
+                                                runningTotalOfCharactersInDocument,
+                                                token.PlainText.Length)))
+                                        {
+                                            foundSyntaxKind = true;
+
+                                            tuples.Add((token.Key,
+                                                new SemanticDescription
+                                                {
+                                                    SequenceKey = SequenceKey.NewSequenceKey(),
+                                                    SyntaxKind = propertyDeclaration.Kind(),
+                                                    CssClassString = "pte_plain-text-editor-text-token-display-type"
+                                                }));
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (!foundSyntaxKind)
+                                {
+                                    foreach (var methodDeclaration in indexedDocument.GeneralSyntaxCollector
+                                                 .MethodDeclarations)
+                                    {
+                                        if (methodDeclaration.Identifier.Span.IntersectsWith(new TextSpan(
+                                                runningTotalOfCharactersInDocument,
+                                                token.PlainText.Length)))
+                                        {
+                                            foundSyntaxKind = true;
+
+                                            tuples.Add((token.Key,
+                                                new SemanticDescription
+                                                {
+                                                    SequenceKey = SequenceKey.NewSequenceKey(),
+                                                    SyntaxKind = methodDeclaration.Kind(),
+                                                    CssClassString =
+                                                        "pte_plain-text-editor-text-token-display-method-declaration"
+                                                }));
+                                            break;
+                                        }
                                     }
                                 }
 
