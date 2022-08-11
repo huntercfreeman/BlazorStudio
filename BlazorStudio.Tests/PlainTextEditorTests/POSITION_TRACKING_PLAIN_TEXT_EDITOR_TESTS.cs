@@ -191,7 +191,7 @@ public class POSITION_TRACKING_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATE
     [Theory]
     [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/EmptyFile.txt", 0)]
     [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/NewLine.txt", 1)]
-    [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/CarriageReturnNewLine.txt", 1)]
+    [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/CarriageReturnNewLine.txt", 2)]
     public async Task TRACK_ARROW_DOWN_MOVEMENT(string absoluteFilePathString, int positionAfterArrowDown)
     {
         var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
@@ -233,7 +233,7 @@ public class POSITION_TRACKING_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATE
         // Assert
         {
             var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
-
+            
             Assert.Equal(positionAfterArrowDown, editor.CurrentPositionIndex);
         }
     }
