@@ -67,7 +67,9 @@ public class READ_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         Assert.Equal(expectedUseCarriageReturnNewLine, editor.UseCarriageReturnNewLine);
     }
 
-
+    // /// <summary>
+    // /// This took 5 minutes and 35 seconds to finish (needs optimization)
+    // /// </summary>
     // [Fact]
     // public async Task READ_LARGE_FILE_AS_TOKENIZED()
     // {

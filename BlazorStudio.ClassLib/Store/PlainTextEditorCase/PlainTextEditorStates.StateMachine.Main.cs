@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
 
@@ -11,6 +12,9 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
+            // Useful for debugging:
+            // Console.WriteLine($"HandleKeyDownEventAsync: {keyDownEventRecord.Key ?? keyDownEventRecord.Code ?? "null"}");
+            
             if (KeyboardKeyFacts.IsWhitespaceKey(keyDownEventRecord))
             {
                 return await HandleWhitespaceAsync(focusedPlainTextEditorRecord, 
