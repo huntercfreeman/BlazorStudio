@@ -952,6 +952,16 @@ public partial record PlainTextEditorStates
                                     // Do not map roslyn character indices with '\t' representing 4 spaces.
                                     runningTotalOfCharactersInDocument += token.CopyText.Length;
                                 }
+                                else if (token.Kind == TextTokenKind.StartOfRow &&
+                                        editor.UseCarriageReturnNewLine)
+                                {
+                                    // This is needed to  map roslyn character indices to the editor's
+                                    //
+                                    // "\r\n" is 2 characters versus the
+                                    // 'fake' way it would be represented in
+                                    // the editor as "\n" which is 1 character.
+                                    runningTotalOfCharactersInDocument += token.CopyText.Length;
+                                }
                                 else
                                 {
                                     runningTotalOfCharactersInDocument += token.PlainText.Length;
