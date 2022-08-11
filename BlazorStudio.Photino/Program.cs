@@ -27,6 +27,7 @@ namespace BlazorStudio.Photino
                 .SetIconFile("favicon.ico")
                 .SetTitle("Photino Hello World")
                 .SetDevToolsEnabled(true)
+                .SetContextMenuEnabled(true)
                 .SetUseOsDefaultSize(false)
                 .SetSize(2500, 1750);
 

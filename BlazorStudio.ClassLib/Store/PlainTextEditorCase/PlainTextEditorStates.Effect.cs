@@ -878,7 +878,7 @@ public partial record PlainTextEditorStates
                                 if (!foundSyntaxKind)
                                 {
                                     foreach (var propertyDeclaration in indexedDocument.GeneralSyntaxCollector
-                                                 .PropertyDeclarations)
+                                                 .PropertyDeclaration)
                                     {
                                         if (propertyDeclaration.Type.Span.IntersectsWith(new TextSpan(
                                                 runningTotalOfCharactersInDocument,
@@ -901,7 +901,7 @@ public partial record PlainTextEditorStates
                                 if (!foundSyntaxKind)
                                 {
                                     foreach (var methodDeclaration in indexedDocument.GeneralSyntaxCollector
-                                                 .MethodDeclarations)
+                                                 .MethodDeclaration)
                                     {
                                         if (methodDeclaration.Identifier.Span.IntersectsWith(new TextSpan(
                                                 runningTotalOfCharactersInDocument,
@@ -916,6 +916,78 @@ public partial record PlainTextEditorStates
                                                     SyntaxKind = methodDeclaration.Kind(),
                                                     CssClassString =
                                                         "pte_plain-text-editor-text-token-display-method-declaration"
+                                                }));
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                if (!foundSyntaxKind)
+                                {
+                                    foreach (var argumentDeclaration in indexedDocument.GeneralSyntaxCollector
+                                                 .ArgumentDeclarations)
+                                    {
+                                        if (argumentDeclaration.Span.IntersectsWith(new TextSpan(
+                                                runningTotalOfCharactersInDocument,
+                                                token.PlainText.Length)))
+                                        {
+                                            foundSyntaxKind = true;
+
+                                            tuples.Add((token.Key,
+                                                new SemanticDescription
+                                                {
+                                                    SequenceKey = SequenceKey.NewSequenceKey(),
+                                                    SyntaxKind = argumentDeclaration.Kind(),
+                                                    CssClassString =
+                                                        "pte_plain-text-editor-text-token-display-type"
+                                                }));
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                if (!foundSyntaxKind)
+                                {
+                                    foreach (var parameterDeclaration in indexedDocument.GeneralSyntaxCollector
+                                                 .ParameterDeclarations)
+                                    {
+                                        if (parameterDeclaration.Span.IntersectsWith(new TextSpan(
+                                                runningTotalOfCharactersInDocument,
+                                                token.PlainText.Length)))
+                                        {
+                                            foundSyntaxKind = true;
+
+                                            tuples.Add((token.Key,
+                                                new SemanticDescription
+                                                {
+                                                    SequenceKey = SequenceKey.NewSequenceKey(),
+                                                    SyntaxKind = parameterDeclaration.Kind(),
+                                                    CssClassString =
+                                                        "pte_plain-text-editor-text-token-display-type"
+                                                }));
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                if (!foundSyntaxKind)
+                                {
+                                    foreach (var stringLiteralExpression in indexedDocument.GeneralSyntaxCollector
+                                                 .StringLiteralExpressions)
+                                    {
+                                        if (stringLiteralExpression.Span.IntersectsWith(new TextSpan(
+                                                runningTotalOfCharactersInDocument,
+                                                token.PlainText.Length)))
+                                        {
+                                            foundSyntaxKind = true;
+
+                                            tuples.Add((token.Key,
+                                                new SemanticDescription
+                                                {
+                                                    SequenceKey = SequenceKey.NewSequenceKey(),
+                                                    SyntaxKind = stringLiteralExpression.Kind(),
+                                                    CssClassString =
+                                                        "pte_plain-text-editor-text-token-display-string-literal"
                                                 }));
                                             break;
                                         }
