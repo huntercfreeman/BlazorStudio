@@ -114,6 +114,7 @@ public partial record PlainTextEditorStates
 
             var inclusiveStartingColumnIndexOfCurrentToken = await
                 CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                    true,
                     cancellationToken);
 
             var currentColumnIndexWithIndexInPlainTextAccountedFor = inclusiveStartingColumnIndexOfCurrentToken +
@@ -195,6 +196,7 @@ public partial record PlainTextEditorStates
 
             var inclusiveStartingColumnIndexOfCurrentToken =
                 await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                    true,
                     cancellationToken);
 
             var currentColumnIndexWithIndexInPlainTextAccountedFor = inclusiveStartingColumnIndexOfCurrentToken +
@@ -436,6 +438,7 @@ public partial record PlainTextEditorStates
                 cancellationToken);
 
             var startingCharacterIndexRespectiveToRow = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                true,
                 cancellationToken);
 
             return focusedPlainTextEditorRecord with

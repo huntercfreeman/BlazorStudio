@@ -70,6 +70,7 @@ public partial record PlainTextEditorStates
             if (!isForced && tokenToInsertBetweenSplit is not null)
             {
                 var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                         true,
                                          cancellationToken)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
@@ -158,6 +159,7 @@ public partial record PlainTextEditorStates
             {
                 // Tab key so don't '+ focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value'
                 int characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                    true,
                     cancellationToken);
 
                 var spaceCount = tokenToInsertBetweenSplit is null

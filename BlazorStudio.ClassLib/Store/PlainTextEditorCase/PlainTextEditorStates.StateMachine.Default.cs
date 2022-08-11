@@ -23,6 +23,7 @@ public partial record PlainTextEditorStates
                     focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
                 {
                     var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                             true,
                                              cancellationToken)
                                          + previousDefaultToken.IndexInPlainText.Value;
 
@@ -71,6 +72,7 @@ public partial record PlainTextEditorStates
                         focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
                     {
                         var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                            true,
                             cancellationToken);
 
                         if (focusedPlainTextEditorRecord.CurrentTextToken is not WhitespaceTextToken whitespace ||
@@ -138,6 +140,7 @@ public partial record PlainTextEditorStates
                             focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
                         {
                             var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                                     true,
                                                      cancellationToken)
                                                  + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
@@ -189,6 +192,7 @@ public partial record PlainTextEditorStates
                 focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
             {
                 var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                         true,
                                          cancellationToken)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 

@@ -73,6 +73,7 @@ public partial record PlainTextEditorStates
                 };
 
             var startingCharacterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                false,
                 cancellationToken);
 
             focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
@@ -228,6 +229,7 @@ public partial record PlainTextEditorStates
             {
                 var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
                                          focusedPlainTextEditorRecord,
+                                         true,
                                          cancellationToken)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
@@ -489,6 +491,7 @@ public partial record PlainTextEditorStates
 
                 var startingCharacterColumnIndex =
                     await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                        true,
                         cancellationToken);
 
                 var actualCharacterColumnIndex = startingCharacterColumnIndex
@@ -636,11 +639,12 @@ public partial record PlainTextEditorStates
 
         /// <summary>
 		/// Returns the inclusive starting column index
-		/// </summary>
+        /// </summary>
 		/// <param name="nextPlainTextEditorState"></param>
 		/// <returns></returns>
 		private static async Task<int> CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
             PlainTextEditorRecordBase focusedPlainTextEditorRecord,
+            bool countTabsAsFourCharacters,
             CancellationToken cancellationToken)
 		{
 			var rollingCount = 0;
@@ -655,7 +659,23 @@ public partial record PlainTextEditorStates
 				}
 				else
 				{
-					rollingCount += token.PlainText.Length;
+                    if (token is WhitespaceTextToken whitespace && whitespace.WhitespaceKind == WhitespaceKind.Tab)
+                    {
+                        if (countTabsAsFourCharacters)
+                        {
+                            // '    '
+                            rollingCount += token.PlainText.Length;
+                        }
+                        else
+                        {
+                            // '\n'
+                            rollingCount += token.CopyText.Length;
+                        }
+                    }
+                    else
+                    {
+                        rollingCount += token.PlainText.Length;
+                    }
 				}
 			}
 

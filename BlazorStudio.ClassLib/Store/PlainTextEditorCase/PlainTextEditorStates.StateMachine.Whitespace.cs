@@ -50,6 +50,7 @@ public partial record PlainTextEditorStates
                 if (!keyDownEventRecord.IsForced)
                 {
                     var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                                             true,
                                              cancellationToken)
                                          + focusedPlainTextEditorRecord.CurrentTextToken.IndexInPlainText.Value;
 
