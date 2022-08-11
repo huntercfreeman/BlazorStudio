@@ -893,8 +893,17 @@ public partial record PlainTextEditorStates
                                         break;
                                     }
                                 }
-                                
-                                runningTotalOfCharactersInDocument += token.PlainText.Length;
+
+                                if (token.Kind == TextTokenKind.Whitespace &&
+                                    ((WhitespaceTextToken)token).WhitespaceKind == WhitespaceKind.Tab)
+                                {
+                                    // Do not map roslyn character indices with '\t' representing 4 spaces.
+                                    runningTotalOfCharactersInDocument += token.CopyText.Length;
+                                }
+                                else
+                                {
+                                    runningTotalOfCharactersInDocument += token.PlainText.Length;
+                                }
                             }
                         }
 

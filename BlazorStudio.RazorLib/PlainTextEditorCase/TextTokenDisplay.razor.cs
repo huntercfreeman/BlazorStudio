@@ -42,16 +42,35 @@ public partial class TextTokenDisplay : FluxorComponent
     private SequenceKey? _previousSequenceKey;
     private TextTokenKey? _previousTextTokenKey;
 
+
+    private long GetTextTokenLength()
+    {
+        // This if statement is a bit hacky by checking copy text for "\t" character.
+        // WhitespaceTextToken is a private type so I cannot check the WhitespaceKind without
+        // making changes and I don't want to get distracted down a possible rabbit hole right now.
+        if (TextToken.Kind == TextTokenKind.Whitespace &&
+            TextToken.CopyText == "\t")
+        {
+            // Do not map roslyn character indices with '\t' representing 4 spaces.
+            return TextToken.CopyText.Length;
+        }
+        else
+        {
+            return TextToken.PlainText.Length;
+        }
+    }
+
     private long StartOfSpan => StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow;
-    private long EndOfSpan => StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow + TextToken.PlainText.Length;
-    private long LengthOfSpan => EndOfSpan - StartOfSpan;
+    private long EndOfSpan =>  StartOfSpan + GetTextTokenLength();
     
     private string TitleDebuggingInfo =>
         ($"start: {StartOfSpan}" +
         " | " + 
         $"end: {EndOfSpan}" +
         " | " +
-        $"end - start: {LengthOfSpan}");
+        $"end - start: {EndOfSpan - StartOfSpan}" +
+        " | " +
+        $"GetTextTokenLength(): {GetTextTokenLength()}");
     
     protected override void OnInitialized()
     {

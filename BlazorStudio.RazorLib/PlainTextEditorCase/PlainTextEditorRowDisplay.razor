@@ -1,3 +1,4 @@
+@using BlazorStudio.ClassLib.Store.PlainTextEditorCase
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div id="@IsActiveRowId"
@@ -24,7 +25,19 @@
 
                     var localRunningTotalOfCharacters = runningTotalOfCharacters;
                     
-                    runningTotalOfCharacters += token.PlainText.Length;
+                    // This if statement is a bit hacky by checking copy text for "\t" character.
+                    // WhitespaceTextToken is a private type so I cannot check the WhitespaceKind without
+                    // making changes and I don't want to get distracted down a possible rabbit hole right now.
+                    if (token.Kind == TextTokenKind.Whitespace &&
+                        token.CopyText == "\t")
+                    {
+                        // Do not map roslyn character indices with '\t' representing 4 spaces.
+                        runningTotalOfCharacters += token.CopyText.Length;
+                    }
+                    else
+                    {
+                        runningTotalOfCharacters += token.PlainText.Length;
+                    }
                     
                     <CascadingValue Name="TokenIndex" Value="tokenIndex">
                         <TextTokenDisplay @key="token.Key"
