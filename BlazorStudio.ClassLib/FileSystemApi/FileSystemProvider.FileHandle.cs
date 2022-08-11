@@ -91,6 +91,11 @@ public partial class FileSystemProvider : IFileSystemProvider
                 {
                     var currentCharacter = (char)streamReader.Read();
 
+                    if (currentCharacter == '\r')
+                    {
+                        continue;
+                    }
+                    
                     characterCounter++;
                     rowCharacterCount++;
 

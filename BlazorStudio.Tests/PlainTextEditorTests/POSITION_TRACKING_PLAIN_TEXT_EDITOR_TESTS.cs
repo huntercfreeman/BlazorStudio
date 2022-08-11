@@ -116,4 +116,94 @@ public class POSITION_TRACKING_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATE
         expectedPositionIndex = input.Length;
         Assert.Equal(expectedPositionIndex, editor.CurrentPositionIndex);
     }
+    
+    /// <summary>
+    /// As I move around a file will my position index change correctly.
+    /// </summary>
+    [Theory]
+    [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/EmptyFile.txt", 0)]
+    [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/NewLine.txt", 0)]
+    [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/CarriageReturnNewLine.txt", 0)]
+    public async Task TRACK_ARROW_LEFT_MOVEMENT(string absoluteFilePathString, int positionAfterArrowLeft)
+    {
+        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+        var absoluteFilePath = new AbsoluteFilePath(absoluteFilePathString, false);
+
+        var fileSystemProvider = new FileSystemProvider();
+        
+        await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey, 
+                absoluteFilePath, 
+                fileSystemProvider, 
+                CancellationToken.None),
+            PlainTextEditorStateWrap);
+        
+        Assert.Single(PlainTextEditorStateWrap.Value.Map);
+        Assert.Single(PlainTextEditorStateWrap.Value.Array);
+
+        var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+
+        {
+            var keyDownEventRecord = new KeyDownEventRecord(
+                KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY,
+                KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY,
+                false,
+                false,
+                false
+            );
+            
+            var action = new KeyDownEventAction(plainTextEditorKey, keyDownEventRecord, CancellationToken.None);
+            
+            await DispatchHelperAsync(action, PlainTextEditorStateWrap);
+        }
+        
+        editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+
+        Assert.Equal(positionAfterArrowLeft, editor.CurrentPositionIndex);
+    }
+    
+    /// <summary>
+    /// As I move around a file will my position index change correctly.
+    /// </summary>
+    [Theory]
+    [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/EmptyFile.txt", 0)]
+    [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/NewLine.txt", 1)]
+    [InlineData("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/CarriageReturnNewLine.txt", 1)]
+    public async Task TRACK_ARROW_DOWN_MOVEMENT(string absoluteFilePathString, int positionAfterArrowDown)
+    {
+        var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+
+        var absoluteFilePath = new AbsoluteFilePath(absoluteFilePathString, false);
+
+        var fileSystemProvider = new FileSystemProvider();
+        
+        await DispatchHelperAsync(new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey, 
+                absoluteFilePath, 
+                fileSystemProvider, 
+                CancellationToken.None),
+            PlainTextEditorStateWrap);
+        
+        Assert.Single(PlainTextEditorStateWrap.Value.Map);
+        Assert.Single(PlainTextEditorStateWrap.Value.Array);
+
+        var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+
+        {
+            var keyDownEventRecord = new KeyDownEventRecord(
+                KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
+                KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY,
+                false,
+                false,
+                false
+            );
+            
+            var action = new KeyDownEventAction(plainTextEditorKey, keyDownEventRecord, CancellationToken.None);
+            
+            await DispatchHelperAsync(action, PlainTextEditorStateWrap);
+        }
+        
+        editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
+
+        Assert.Equal(positionAfterArrowDown, editor.CurrentPositionIndex);
+    }
 }
