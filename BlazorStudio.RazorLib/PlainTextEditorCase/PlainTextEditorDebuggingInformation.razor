@@ -1,4 +1,6 @@
-﻿@using BlazorStudio.RazorLib.DebuggingHelp
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using BlazorStudio.RazorLib.DebuggingHelp
 
 <div class="bstudio_debug-info">
     
@@ -31,6 +33,55 @@
         }
     </div>
     
+    <DebugExpansion Title="Solution">
+            @if (SolutionStateWrap is not null)
+            {
+                var currentSolutionState = SolutionStateWrap.Value;
+
+                <div>
+                    @foreach (var documentPair in currentSolutionState.FileDocumentMap)
+                    {
+                        <DebugExpansion Title="@documentPair.Key.AbsoluteFilePathString">
+                            <DebugExpansion Title="PropertyDeclarations">
+                                @foreach (var propertyDeclaration in documentPair.Value.GeneralSyntaxCollector.PropertyDeclarations)
+                                {
+                                    <DebugExpansion Title="@propertyDeclaration.GetText().ToString()">
+                                        <DebugExpansion Title="Type">
+                                            <div>Type.GetText():&nbsp;@propertyDeclaration.Type.GetText().ToString()</div>
+                                            <div>Type.GetText().Length:&nbsp;@propertyDeclaration.Type.GetText().ToString().Length</div>
+                                            <div>Type span start:&nbsp;@propertyDeclaration.Type.Span.Start</div>
+                                            <div>Type span end:&nbsp;@propertyDeclaration.Type.Span.End</div>    
+                                            <div>end - start:&nbsp;@(propertyDeclaration.Type.Span.End - propertyDeclaration.Type.Span.Start)</div>    
+                                        </DebugExpansion>
+                                    </DebugExpansion>
+                                }
+                            </DebugExpansion>
+                            
+                            <DebugExpansion Title="MethodDeclarations">
+                                @foreach (var methodDeclaration in documentPair.Value.GeneralSyntaxCollector.MethodDeclarations)
+                                {
+                                    <DebugExpansion Title="@methodDeclaration.GetText().ToString()">
+                                        <DebugExpansion Title="Type">
+                                            <div>Identifier.Text:&nbsp;@methodDeclaration.Identifier.Text</div>
+                                            <div>Identifier.Text.Length:&nbsp;@methodDeclaration.Identifier.Text.Length</div>
+                                            <div>Identifier span start:&nbsp;@methodDeclaration.Identifier.Span.Start</div>
+                                            <div>Identifier span end:&nbsp;@methodDeclaration.Identifier.Span.End</div>    
+                                            <div>end - start:&nbsp;@(methodDeclaration.Identifier.Span.End - methodDeclaration.Identifier.Span.Start)</div>    
+                                        </DebugExpansion>
+                                    </DebugExpansion>
+                                }
+                            </DebugExpansion>
+                        </DebugExpansion>
+                    }
+                </div>
+            }
+            else
+            {
+                <div>
+                    SolutionStateWrap is null
+                </div>
+            }
+        </DebugExpansion>
 
     <DebugExpansion Title="FileHandle">
         @if (PlainTextEditor.FileHandle is not null)

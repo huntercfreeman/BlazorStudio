@@ -42,6 +42,17 @@ public partial class TextTokenDisplay : FluxorComponent
     private SequenceKey? _previousSequenceKey;
     private TextTokenKey? _previousTextTokenKey;
 
+    private long StartOfSpan => StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow;
+    private long EndOfSpan => StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow + TextToken.PlainText.Length;
+    private long LengthOfSpan => EndOfSpan - StartOfSpan;
+    
+    private string TitleDebuggingInfo =>
+        ($"start: {StartOfSpan}" +
+        " | " + 
+        $"end: {EndOfSpan}" +
+        " | " +
+        $"end - start: {LengthOfSpan}");
+    
     protected override void OnInitialized()
     {
         TokenSemanticsStateSelector

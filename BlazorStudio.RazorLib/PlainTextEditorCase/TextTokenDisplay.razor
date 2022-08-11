@@ -4,7 +4,7 @@
 @using BlazorStudio.ClassLib.Html
 
 <span class="pte_plain-text-editor-text-token-display @TokenClass"
-      title="start: @(StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow) | end: @(StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow + TextToken.PlainText.Length)">
+      title="@TitleDebuggingInfo">
     @switch (TextToken.Kind)
     {
         case TextTokenKind.StartOfRow:
