@@ -113,7 +113,7 @@ public partial record PlainTextEditorStates
                     var previousRunningTotalOfCharacters = runningTotalOfCharacters;
                     runningTotalOfCharacters += token.PlainText.Length;
 
-                    if (SelectionSpan.InclusiveStartingDocumentTextIndex <= runningTotalOfCharacters)
+                    if (indexSelectionLowerInclusiveBound <= runningTotalOfCharacters)
                     {
                         // Within selection
 
@@ -125,9 +125,9 @@ public partial record PlainTextEditorStates
                         for (int i = 0; i < plainText.Length; i++)
                         {
                             // What characters actually are selected (is it the entire word?)
-                            if (SelectionSpan.InclusiveStartingDocumentTextIndex <= (previousRunningTotalOfCharacters + i))
+                            if (indexSelectionLowerInclusiveBound <= (previousRunningTotalOfCharacters + i))
                             {
-                                if (SelectionSpan.InclusiveStartingDocumentTextIndex > (previousRunningTotalOfCharacters + i))
+                                if (indexSelectionUpperExclusiveBound > (previousRunningTotalOfCharacters + i))
                                 {
                                     if (lowerSubstringIndex is null)
                                     {
@@ -165,7 +165,7 @@ public partial record PlainTextEditorStates
                         }
                     }
                     
-                    if (SelectionSpan.ExclusiveEndingDocumentTextIndex <= runningTotalOfCharacters)
+                    if (indexSelectionUpperExclusiveBound <= runningTotalOfCharacters)
                     {
                         // Went beyond the range of the selection so return early.
                         return builder.ToString();

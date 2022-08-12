@@ -377,14 +377,63 @@ public partial record PlainTextEditorStates
                     {
                         if (keyDownEventAction.KeyDownEventRecord.Key == "c")
                         {
-                            var selectionPlainText = plainTextEditor.GetSelectionPlainText();
+                            wasKeybind = true;
                             
-                            var z = 2;
+                            var selectionPlainText = plainTextEditor.GetSelectionPlainText();
+
+                            await _clipboardProvider.SetClipboard(selectionPlainText);
                         }
                         else if (keyDownEventAction.KeyDownEventRecord.Key == "v")
                         {
-                            var clipboard = await _clipboardProvider.ReadClipboard();
-                            var z = 2;
+                            wasKeybind = true;
+                            
+                            var clipboardContent = await _clipboardProvider.ReadClipboard();
+
+                            foreach (var character in clipboardContent)
+                            {
+                                if (character == '\r')
+                                {
+                                    continue;
+                                }
+                                
+                                var code = character switch
+                                {
+                                    '\t' => KeyboardKeyFacts.WhitespaceKeys.TAB_CODE,
+                                    ' ' => KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE,
+                                    '\n' => KeyboardKeyFacts.NewLineCodes.ENTER_CODE,
+                                    _ => character.ToString()
+                                };
+
+                                var keyDownRecord = new KeyDownEventRecord(
+                                    character.ToString(),
+                                    code,
+                                    false,
+                                    false,
+                                    false,
+                                    IsForced: false
+                                );
+
+                                plainTextEditor = await PlainTextEditorStates.StateMachine
+                                    .HandleKeyDownEventAsync(plainTextEditor,
+                                        keyDownRecord,
+                                        keyDownEventAction.CancellationToken);
+                            }
+                            
+                            nextPlainTextEditorMap[keyDownEventAction.PlainTextEditorKey] = plainTextEditor;
+
+                            var map = nextPlainTextEditorMap.ToImmutableDictionary();
+                            var array = nextPlainTextEditorList.ToImmutableArray();
+
+                            var editors = new PlainTextEditorStates(map, array);
+                
+                            dispatcher.Dispatch(new SetPlainTextEditorStatesAction(editors));
+                
+                            if (!KeyboardKeyFacts.IsMovementKey(keyDownEventAction.KeyDownEventRecord))
+                            {
+                                UpdateTokenSemanticDescriptions(editors,
+                                    (PlainTextEditorRecordTokenized) plainTextEditor,
+                                    dispatcher);
+                            }
                         }
                     }
 
