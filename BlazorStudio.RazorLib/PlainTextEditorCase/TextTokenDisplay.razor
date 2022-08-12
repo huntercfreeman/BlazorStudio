@@ -5,76 +5,76 @@
 
 <span class="pte_plain-text-editor-text-token-display @TokenClass"
       title="@TitleDebuggingInfo">
-    @switch (TextToken.Kind)
-    {
-        case TextTokenKind.StartOfRow:
-            <CharacterRenderer Character="@string.Empty"
-                               CharacterIndex="0"
-                               ShouldDisplayCursor="TextToken.TryGetIndexInPlainText(true, out var _)" />
-            break;
-        case TextTokenKind.Default:
-            <text>
-                @{
-                    for (int i = 0; i < TextToken.PlainText.Length; i++)
-                    {
-                        var index = i;
-                        
-                        bool shouldDisplayCursor;
+    <CascadingValue Name="StartOfSpan" Value="StartOfSpan">
+        @switch (TextToken.Kind)
+        {
+            case TextTokenKind.StartOfRow:
+                <CharacterRenderer Character="@string.Empty"
+                                   CharacterIndex="0"
+                                   ShouldDisplayCursor="TextToken.TryGetIndexInPlainText(true, out var _)"/>
+                break;
+            case TextTokenKind.Default:
+                <text>
+                    @{
+                for (int i = 0; i < TextToken.PlainText.Length; i++)
+                {
+                    var index = i;
 
-                        if (TextToken.TryGetIndexInPlainText(true, out var indexInPlainText))
+                    bool shouldDisplayCursor;
+
+                    if (TextToken.TryGetIndexInPlainText(true, out var indexInPlainText))
+                    {
+                        if (indexInPlainText == index)
                         {
-                            if (indexInPlainText == index)
-                            {
-                                shouldDisplayCursor = true;
-                            }
-                            else
-                            {
-                                shouldDisplayCursor = false;
-                            }
+                            shouldDisplayCursor = true;
                         }
                         else
                         {
                             shouldDisplayCursor = false;
                         }
-                        
-                        <CharacterRenderer Character="@TextToken.PlainText[index].ToString()"
-                                           CharacterIndex="index"
-                                           ShouldDisplayCursor="shouldDisplayCursor" />
                     }
-                }
-            </text>
-            break;
-        case TextTokenKind.Whitespace:
-            <text>
-                @{
-                    for (int i = 0; i < TextToken.PlainText.Length; i++)
+                    else
                     {
-                        var index = i;
-                        
-                        bool shouldDisplayCursor;
+                        shouldDisplayCursor = false;
+                    }
 
-                        if (TextToken.TryGetIndexInPlainText(true, out var indexInPlainText))
+                    <CharacterRenderer Character="@TextToken.PlainText[index].ToString()"
+                                       CharacterIndex="index"
+                                       ShouldDisplayCursor="shouldDisplayCursor"/>
+                }}
+                </text>
+                break;
+            case TextTokenKind.Whitespace:
+                <text>
+                    @{
+                for (int i = 0; i < TextToken.PlainText.Length; i++)
+                {
+                    var index = i;
+
+                    bool shouldDisplayCursor;
+
+                    if (TextToken.TryGetIndexInPlainText(true, out var indexInPlainText))
+                    {
+                        if (indexInPlainText == index)
                         {
-                            if (indexInPlainText == index)
-                            {
-                                shouldDisplayCursor = true;
-                            }
-                            else
-                            {
-                                shouldDisplayCursor = false;
-                            }
+                            shouldDisplayCursor = true;
                         }
                         else
                         {
                             shouldDisplayCursor = false;
                         }
-
-                        <CharacterRenderer Character="@TextToken.PlainText[index].ToString().EscapeHtml()"
-                                            CharacterIndex="index"
-                                            ShouldDisplayCursor="shouldDisplayCursor" />
                     }
-                }
-            </text>
-            break;
-    }
+                    else
+                    {
+                        shouldDisplayCursor = false;
+                    }
+
+                    <CharacterRenderer Character="@TextToken.PlainText[index].ToString().EscapeHtml()"
+                                       CharacterIndex="index"
+                                       ShouldDisplayCursor="shouldDisplayCursor"/>
+                }}
+                </text>
+                break;
+        }
+    </CascadingValue>
 </span>

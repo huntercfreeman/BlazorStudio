@@ -13,4 +13,9 @@ public record SelectionSpanRecord
     /// </summary>
     public int InclusiveStartingDocumentTextIndex { get; init; }
     public int ExclusiveEndingDocumentTextIndex { get; init; }
+
+    public SelectionDirection SelectionDirection =>
+        (ExclusiveEndingDocumentTextIndex - InclusiveStartingDocumentTextIndex) < 0
+            ? SelectionDirection.Left
+            : SelectionDirection.Right;
 }

@@ -42,7 +42,6 @@ public partial class TextTokenDisplay : FluxorComponent
     private SequenceKey? _previousSequenceKey;
     private TextTokenKey? _previousTextTokenKey;
 
-
     private long GetTextTokenLength()
     {
         // This if statement is a bit hacky by checking copy text for "\t" character.

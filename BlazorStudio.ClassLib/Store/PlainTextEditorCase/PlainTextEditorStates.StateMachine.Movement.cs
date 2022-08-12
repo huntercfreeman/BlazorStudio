@@ -302,10 +302,14 @@ public partial record PlainTextEditorStates
             
             if (keyDownEventRecord.ShiftWasPressed)
             {
-                currentCharacterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
+                var temporary = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
                     focusedPlainTextEditorRecord,
                     true,
                     cancellationToken);
+                
+                currentCharacterIndex = (int) (temporary +
+                    focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
+                        [focusedPlainTextEditorRecord.CurrentRowIndex]);
             }
             
             // '\t' characters render as 4 spaces but must override updates to these as only 1 character

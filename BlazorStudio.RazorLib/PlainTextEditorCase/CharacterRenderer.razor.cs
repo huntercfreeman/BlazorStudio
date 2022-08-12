@@ -23,6 +23,10 @@ public partial class CharacterRenderer : ComponentBase
     public RichTextEditorOptions RichTextEditorOptions { get; set; } = null!;
     [CascadingParameter(Name="GetWidthAndHeightTest")]
     public bool GetWidthAndHeightTest { get; set; }
+    [CascadingParameter(Name="SelectionSpan")] 
+    public SelectionSpanRecord? SelectionSpan { get; set; }
+    [CascadingParameter(Name="StartOfSpan")] 
+    public long StartOfSpan { get; set; }
 
     /// <summary>
     /// The html escaped character for space is nbsp which
@@ -35,9 +39,13 @@ public partial class CharacterRenderer : ComponentBase
     [Parameter, EditorRequired]
     public bool ShouldDisplayCursor { get; set; }
 
+    private string _selectedCssClassString = "pte_plain-text-editor-character-selected";
+
     private string WidthStyleString => GetWidthAndHeightTest
         ? string.Empty
         : $"width: {RichTextEditorOptions.WidthOfACharacterInPixels}px;";
+
+    private string IsSelectedCssClassString => GetIsSelectedCssClassString();
 
     private void DispatchPlainTextEditorOnClickAction()
     {
@@ -52,5 +60,36 @@ public partial class CharacterRenderer : ComponentBase
                 CancellationToken.None
             )
         );
+    }
+    
+    private string GetIsSelectedCssClassString()
+    {
+        if (SelectionSpan is null)
+            return string.Empty;
+        
+        var characterColumnIndex = StartOfSpan + CharacterIndex;
+
+        if (SelectionSpan.SelectionDirection == SelectionDirection.Left)
+        {
+            /*
+             * 
+             */
+        }
+        else
+        {
+            if (characterColumnIndex >= SelectionSpan.InclusiveStartingDocumentTextIndex &&
+                characterColumnIndex < SelectionSpan.ExclusiveEndingDocumentTextIndex)
+            {
+                return _selectedCssClassString;
+            }
+            
+            /*
+             * >= inclusive
+             *
+             * < exclusive
+             */
+        }
+        
+        return string.Empty;
     }
 }

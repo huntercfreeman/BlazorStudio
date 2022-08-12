@@ -143,3 +143,7 @@
 .pte_plain-text-editor-text-token-display-string-literal {
     color: var(--pte_plain-text-editor-text-token-display-string-literal);
 }
+
+.pte_plain-text-editor-character-selected {
+    background-color: var(--pte_plain-text-editor-selection);
+}
