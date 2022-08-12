@@ -22,6 +22,7 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
 
     private Func<MouseEventArgs, Task>? _dragStateEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
+    private SemaphoreSlim _transformableRowSeparatorSemaphoreSlim = new(1, 1);
 
     protected override void OnInitialized()
     {
@@ -39,19 +40,32 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
         }
         else
         {
-            var mouseEventArgs = DragStateWrap.Value.MouseEventArgs;
+            var success = await _transformableRowSeparatorSemaphoreSlim
+                .WaitAsync(TimeSpan.Zero);
 
-            if (_dragStateEventHandler is not null)
+            if (!success)
+                return;
+        
+            try
             {
-                if (_previousDragMouseEventArgs is not null)
+                var mouseEventArgs = DragStateWrap.Value.MouseEventArgs;
+
+                if (_dragStateEventHandler is not null)
                 {
-                    await _dragStateEventHandler(mouseEventArgs);
+                    if (_previousDragMouseEventArgs is not null)
+                    {
+                        await _dragStateEventHandler(mouseEventArgs);
+                    }
+
+                    _previousDragMouseEventArgs = mouseEventArgs;
+
+                    await ReRenderFunc();
+                    await InvokeAsync(StateHasChanged);
                 }
-
-                _previousDragMouseEventArgs = mouseEventArgs;
-
-                await ReRenderFunc();
-                await InvokeAsync(StateHasChanged);
+            }
+            finally
+            {
+                _transformableRowSeparatorSemaphoreSlim.Release();
             }
         }
     }
