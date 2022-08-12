@@ -50,6 +50,21 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
+            int? startingPositionIndex = null;
+            
+            if (keyDownEventRecord.ShiftWasPressed)
+            {
+                var temporary = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
+                    focusedPlainTextEditorRecord,
+                    false,
+                    cancellationToken);
+                
+                startingPositionIndex = (int) (temporary +
+                                               focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(false) +
+                                               focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
+                                                   [focusedPlainTextEditorRecord.CurrentRowIndex]);
+            }
+            
             // '\t' characters render as 4 spaces but must override updates to these as only 1 character
             int? updateCurrentCharacterColumnIndexBy = null;
             int? updateCurrentPositionIndexBy = null;
@@ -81,6 +96,17 @@ public partial record PlainTextEditorStates
 
                 focusedPlainTextEditorRecord = await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord, 
                     cancellationToken);
+                
+                if (keyDownEventRecord.ShiftWasPressed)
+                {
+                    var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                             - startingPositionIndex!.Value;
+
+                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
+                        startingPositionIndex.Value,
+                        (int)positionIndexDelta,
+                        cancellationToken);
+                }
 
                 var currentTokenIsWhitespace =
                     focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace;
@@ -101,8 +127,21 @@ public partial record PlainTextEditorStates
 
             if (currentToken.GetIndexInPlainText(true) == 0)
             {
-                return await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                focusedPlainTextEditorRecord = await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
+                
+                if (keyDownEventRecord.ShiftWasPressed)
+                {
+                    var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                             - startingPositionIndex!.Value;
+
+                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
+                        startingPositionIndex.Value,
+                        (int)positionIndexDelta,
+                        cancellationToken);
+                }
+
+                return focusedPlainTextEditorRecord;
             }
             else
             {
@@ -118,6 +157,17 @@ public partial record PlainTextEditorStates
                     CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
                         - (updateCurrentPositionIndexBy ?? 1)
                 };
+                
+                if (keyDownEventRecord.ShiftWasPressed)
+                {
+                    var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                             - startingPositionIndex!.Value;
+
+                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
+                        startingPositionIndex.Value,
+                        (int)positionIndexDelta,
+                        cancellationToken);
+                }
 
                 focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
                         replacementCurrentToken,
