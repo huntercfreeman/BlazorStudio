@@ -298,7 +298,7 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
-            int? rememberCharacterIndex = null;
+            int? startingPositionIndex = null;
             
             if (keyDownEventRecord.ShiftWasPressed)
             {
@@ -307,7 +307,8 @@ public partial record PlainTextEditorStates
                     false,
                     cancellationToken);
                 
-                rememberCharacterIndex = (int) (temporary +
+                startingPositionIndex = (int) (temporary +
+                                               focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(false) +
                     focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
                         [focusedPlainTextEditorRecord.CurrentRowIndex]);
             }
@@ -343,6 +344,17 @@ public partial record PlainTextEditorStates
 
                 focusedPlainTextEditorRecord = await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
+                
+                if (keyDownEventRecord.ShiftWasPressed)
+                {
+                    var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                             - startingPositionIndex!.Value;
+
+                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
+                        startingPositionIndex.Value,
+                        (int)positionIndexDelta,
+                        cancellationToken);
+                }
 
                 var currentTokenIsWhitespace =
                     focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace;
@@ -387,7 +399,7 @@ public partial record PlainTextEditorStates
                     {
                         focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(
                             focusedPlainTextEditorRecord,
-                            rememberCharacterIndex!.Value,
+                            startingPositionIndex!.Value,
                             updateCurrentCharacterColumnIndexBy.Value,
                             cancellationToken);
                     }
@@ -409,8 +421,21 @@ public partial record PlainTextEditorStates
 
             if (currentToken.GetIndexInPlainText(true) == currentToken.PlainText.Length - 1)
             {
-                return await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                focusedPlainTextEditorRecord = await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
+
+                if (keyDownEventRecord.ShiftWasPressed)
+                {
+                    var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                             - startingPositionIndex!.Value;
+
+                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
+                        startingPositionIndex.Value,
+                        (int)positionIndexDelta,
+                        cancellationToken);
+                }
+
+                return focusedPlainTextEditorRecord;
             }
             else
             {
@@ -423,7 +448,7 @@ public partial record PlainTextEditorStates
                 {
                     focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(
                         focusedPlainTextEditorRecord,
-                        rememberCharacterIndex!.Value,
+                        startingPositionIndex!.Value,
                         (updateCurrentCharacterColumnIndexBy ?? 1),
                         cancellationToken);
                 }
