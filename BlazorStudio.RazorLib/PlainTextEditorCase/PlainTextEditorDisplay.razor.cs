@@ -5,6 +5,7 @@ using BlazorStudio.ClassLib.Html;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
+using BlazorStudio.ClassLib.Store.DragCase;
 using BlazorStudio.ClassLib.Store.KeyDownEventCase;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using BlazorStudio.ClassLib.Store.SolutionCase;
@@ -46,6 +47,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualizeCoordinateSystem;
     private int _previousFontSize;
     private string _widthAndHeightTestId = "bstudio_pte-get-width-and-height-test";
+    
+    private bool _isSubscribedToDragState;
 
     private SequenceKey? _previousSequenceKeyShouldRender;
     private PlainTextEditorKey? _previousPlainTextEditorKey;
@@ -141,7 +144,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         });
 
         PlainTextEditorSelector.SelectedValueChanged += PlainTextEditorSelectorOnSelectedValueChanged;
-
+        
         base.OnInitialized();
     }
 
@@ -259,6 +262,9 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private void FocusPlainTextEditorOnClick()
     {
+        // Backup way to ensure DragEvents stop
+        _isSubscribedToDragState = false;
+        
         _previousSequenceKeyShouldRender = null;
 
         if (_activePositionMarker is not null)
@@ -302,6 +308,16 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         Dispatcher.Dispatch(new PlainTextEditorPixelReadRequestAction(PlainTextEditorKey,
             currentPlainTextEditor.VirtualizeCoordinateSystemMessage));
+    }
+
+    private void StartSelectingText()
+    {
+        _isSubscribedToDragState = true;
+    }
+    
+    private void StopSelectingText()
+    {
+        _isSubscribedToDragState = false;
     }
 
     protected override void Dispose(bool disposing)

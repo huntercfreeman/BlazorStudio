@@ -28,6 +28,8 @@ public partial class CharacterRenderer : ComponentBase
     public SelectionSpanRecord? SelectionSpan { get; set; }
     [CascadingParameter(Name="StartOfSpan")] 
     public long StartOfSpan { get; set; }
+    [CascadingParameter(Name="IsSubscribedToDragState")] 
+    public bool IsSubscribedToDragState { get; set; }
 
     /// <summary>
     /// The html escaped character for space is nbsp which
@@ -41,6 +43,7 @@ public partial class CharacterRenderer : ComponentBase
     public bool ShouldDisplayCursor { get; set; }
 
     private string _selectedCssClassString = "pte_plain-text-editor-character-selected";
+    private int _skipRerender;
 
     private string WidthStyleString => GetWidthAndHeightTest
         ? string.Empty
@@ -58,6 +61,17 @@ public partial class CharacterRenderer : ComponentBase
     // private long _characterIndexOffsetFromRoslyn = 1;
     
     private long CharacterColumnIndex => StartOfSpan + CharacterIndex;
+    
+    // protected override bool ShouldRender()
+    // {
+    //     if (_skipRerender > 0)
+    //     {
+    //         _skipRerender = 0;
+    //         return false;
+    //     }
+    //     
+    //     return base.ShouldRender();
+    // }
 
     private void DispatchPlainTextEditorOnClickAction(MouseEventArgs mouseEventArgs)
     {
@@ -70,6 +84,29 @@ public partial class CharacterRenderer : ComponentBase
                 TokenIndex,
                 CharacterIndex,
                 mouseEventArgs.ShiftKey,
+                CancellationToken.None
+            )
+        );
+    }
+    
+    private void SelectTextOnMouseMove(MouseEventArgs mouseEventArgs)
+    {
+        if (!IsSubscribedToDragState)
+        {
+            Console.WriteLine("NOT SUB DRAG");
+            _skipRerender++;
+            return;
+        }
+        
+        Console.WriteLine("YES IS SUB DRAG");
+
+        Dispatcher.Dispatch(
+            new PlainTextEditorOnClickAction(
+                PlainTextEditorKey,
+                RowIndex,
+                TokenIndex,
+                CharacterIndex,
+                true,
                 CancellationToken.None
             )
         );
