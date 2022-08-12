@@ -51,11 +51,11 @@ public partial record PlainTextEditorStates
             {
                 var temporary = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
                     focusedPlainTextEditorRecord,
-                    false,
+                    true,
                     cancellationToken);
                 
                 startingPositionIndex = (int) (temporary +
-                                               focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(false) +
+                                               focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) +
                                                focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
                                                    [focusedPlainTextEditorRecord.CurrentRowIndex]);
             }

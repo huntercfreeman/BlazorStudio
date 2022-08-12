@@ -44,19 +44,7 @@ public partial class TextTokenDisplay : FluxorComponent
 
     private long GetTextTokenLength()
     {
-        // This if statement is a bit hacky by checking copy text for "\t" character.
-        // WhitespaceTextToken is a private type so I cannot check the WhitespaceKind without
-        // making changes and I don't want to get distracted down a possible rabbit hole right now.
-        if (TextToken.Kind == TextTokenKind.Whitespace &&
-            TextToken.CopyText == "\t")
-        {
-            // Do not map roslyn character indices with '\t' representing 4 spaces.
-            return TextToken.CopyText.Length;
-        }
-        else
-        {
-            return TextToken.PlainText.Length;
-        }
+        return TextToken.PlainText.Length;
     }
 
     private long StartOfSpan => StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow;
@@ -121,12 +109,6 @@ public partial class TextTokenDisplay : FluxorComponent
 
         var classBuilder = new StringBuilder();
         
-        var startOfSpanInclusive = StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow;
-        var endOfSpanExclusive =
-            StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow + TextToken.PlainText.Length;
-        
-        var absoluteFilePathValue = new AbsoluteFilePathStringValue(AbsoluteFilePath);
-
         // Check is keyword
         {        
             var localCSharpKeywords = CSharpKeywordsWrap.Value;
@@ -180,17 +162,6 @@ public partial class TextTokenDisplay : FluxorComponent
                     classBuilder.Append("pte_plain-text-editor-text-token-display-keyword");
                 }
             }
-        }
-
-        if (!isKeyword)
-        {
-            var startOfSpanInclusive = StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow;
-            var endOfSpanExclusive =
-                StartOfRowSpanRelativeToDocument + StartOfSpanRelativeToRow + TextToken.PlainText.Length;
-
-            var absoluteFilePathValue = new AbsoluteFilePathStringValue(AbsoluteFilePath);
-
-            
         }
 
         return classBuilder.ToString();
