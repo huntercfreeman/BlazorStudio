@@ -16,6 +16,10 @@ public partial record PlainTextEditorStates
                     return await HandleBackspaceKeyAsync(focusedPlainTextEditorRecord, 
                         keyDownEventRecord,
                         cancellationToken);
+                case KeyboardKeyFacts.MetaKeys.ESCAPE_KEY:
+                    return await HandleEscapeKeyAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
                 default:
                    return focusedPlainTextEditorRecord;
             }
@@ -110,6 +114,16 @@ public partial record PlainTextEditorStates
                 cancellationToken);
 
             return focusedPlainTextEditorRecord;
+        }
+        
+        public static async Task<PlainTextEditorRecordBase> HandleEscapeKeyAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
+        {
+            return focusedPlainTextEditorRecord with
+            {
+                SelectionSpan = null
+            };
         }
     }
 }

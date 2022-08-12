@@ -298,16 +298,16 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
-            int? currentCharacterIndex = null;
+            int? rememberCharacterIndex = null;
             
             if (keyDownEventRecord.ShiftWasPressed)
             {
                 var temporary = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
                     focusedPlainTextEditorRecord,
-                    true,
+                    false,
                     cancellationToken);
                 
-                currentCharacterIndex = (int) (temporary +
+                rememberCharacterIndex = (int) (temporary +
                     focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
                         [focusedPlainTextEditorRecord.CurrentRowIndex]);
             }
@@ -387,7 +387,7 @@ public partial record PlainTextEditorStates
                     {
                         focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(
                             focusedPlainTextEditorRecord,
-                            currentCharacterIndex!.Value,
+                            rememberCharacterIndex!.Value,
                             updateCurrentCharacterColumnIndexBy.Value,
                             cancellationToken);
                     }
@@ -423,7 +423,7 @@ public partial record PlainTextEditorStates
                 {
                     focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(
                         focusedPlainTextEditorRecord,
-                        currentCharacterIndex!.Value,
+                        rememberCharacterIndex!.Value,
                         (updateCurrentCharacterColumnIndexBy ?? 1),
                         cancellationToken);
                 }
