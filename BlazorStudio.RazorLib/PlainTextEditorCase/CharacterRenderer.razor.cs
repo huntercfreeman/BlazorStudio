@@ -85,6 +85,8 @@ public partial class CharacterRenderer : ComponentBase
         
         try
         {
+            NotifyCharacterWasClicked();
+        
             Dispatcher.Dispatch(
                 new PlainTextEditorOnMouseOverCharacterAction(
                     PlainTextEditorKey,
