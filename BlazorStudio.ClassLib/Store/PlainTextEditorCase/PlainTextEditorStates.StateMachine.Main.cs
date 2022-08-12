@@ -106,6 +106,16 @@ public partial record PlainTextEditorStates
                 var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
                                          - startingPositionIndex!.Value;
 
+                // Appears to always be 1 character off
+                if (positionIndexDelta > 0)
+                {
+                    positionIndexDelta += 1;
+                }
+                else
+                {
+                    positionIndexDelta -= 1;
+                }
+                
                 focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
                     startingPositionIndex.Value,
                     (int)positionIndexDelta,
@@ -767,8 +777,8 @@ public partial record PlainTextEditorStates
                     
                     selectionSpan = new SelectionSpanRecord
                     {
-                        InclusiveStartingDocumentTextIndex = exclusiveCharacterIndex,
-                        ExclusiveEndingDocumentTextIndex = startingInclusiveCharacterIndex
+                        InclusiveStartingDocumentTextIndex = startingInclusiveCharacterIndex,
+                        ExclusiveEndingDocumentTextIndex = exclusiveCharacterIndex
                     };
                 }
                 else
@@ -777,7 +787,7 @@ public partial record PlainTextEditorStates
                     selectionSpan = new SelectionSpanRecord
                     {
                         InclusiveStartingDocumentTextIndex = startingInclusiveCharacterIndex + 1,
-                        ExclusiveEndingDocumentTextIndex = startingInclusiveCharacterIndex + 2
+                        ExclusiveEndingDocumentTextIndex = startingInclusiveCharacterIndex + cursorCharacterDisplacement
                     };
                 }
             }

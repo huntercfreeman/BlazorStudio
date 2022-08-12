@@ -83,9 +83,11 @@ public partial class CharacterRenderer : ComponentBase
 
         if (SelectionSpan.SelectionDirection == SelectionDirection.Left)
         {
-            /*
-             * 
-             */
+            if (CharacterColumnIndex <= SelectionSpan.InclusiveStartingDocumentTextIndex &&
+                CharacterColumnIndex > SelectionSpan.ExclusiveEndingDocumentTextIndex)
+            {
+                return _selectedCssClassString;
+            }
         }
         else
         {
