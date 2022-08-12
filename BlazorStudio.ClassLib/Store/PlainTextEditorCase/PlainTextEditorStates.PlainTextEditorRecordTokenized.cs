@@ -54,7 +54,7 @@ public partial record PlainTextEditorStates
 
         public override IAbsoluteFilePath? AbsoluteFilePath => BackingAbsoluteFilePath;
 
-        public override string GetPlainText()
+        public override string GetDocumentPlainText()
         {
             var builder = new StringBuilder();
 
@@ -72,6 +72,104 @@ public partial record PlainTextEditorStates
                     }
 
                     builder.Append(token.CopyText);
+                }
+            }
+
+            return builder.ToString();
+        }
+        
+        public override string GetSelectionPlainText()
+        {
+            if (SelectionSpan is null)
+                return string.Empty;
+            
+            var builder = new StringBuilder();
+
+            var runningTotalOfCharacters = 0;
+
+            // The selection span when movement is to the left would make the logic confusing so standardize it.
+            int indexSelectionLowerInclusiveBound = SelectionSpan.InclusiveStartingDocumentTextIndex;
+            int indexSelectionUpperExclusiveBound = SelectionSpan.ExclusiveEndingDocumentTextIndex;
+
+            if (SelectionSpan.SelectionDirection == SelectionDirection.Left)
+            {
+                indexSelectionLowerInclusiveBound = SelectionSpan.ExclusiveEndingDocumentTextIndex + 1;
+                indexSelectionUpperExclusiveBound = SelectionSpan.InclusiveStartingDocumentTextIndex + 1;
+            }
+
+            foreach (var row in Rows)
+            {
+                foreach (var token in row.Tokens)
+                {
+                    if (token.Key == Rows[0].Tokens[0].Key)
+                    {
+                        // Is first start of row so skip
+                        // as it would insert a enter key stroke at start
+                        // of document otherwise.
+
+                        continue;
+                    }
+
+                    var previousRunningTotalOfCharacters = runningTotalOfCharacters;
+                    runningTotalOfCharacters += token.PlainText.Length;
+
+                    if (SelectionSpan.InclusiveStartingDocumentTextIndex <= runningTotalOfCharacters)
+                    {
+                        // Within selection
+
+                        var plainText = token.PlainText;
+
+                        int? lowerSubstringIndex = null;
+                        int? upperSubstringIndex = null;
+
+                        for (int i = 0; i < plainText.Length; i++)
+                        {
+                            // What characters actually are selected (is it the entire word?)
+                            if (SelectionSpan.InclusiveStartingDocumentTextIndex <= (previousRunningTotalOfCharacters + i))
+                            {
+                                if (SelectionSpan.InclusiveStartingDocumentTextIndex > (previousRunningTotalOfCharacters + i))
+                                {
+                                    if (lowerSubstringIndex is null)
+                                    {
+                                        lowerSubstringIndex = i;
+                                    }
+                                    else 
+                                    {
+                                        upperSubstringIndex = i;
+                                    }
+                                }
+                            }
+                        }
+
+                        var copyText = token.CopyText;
+
+                        // The '\t' key is faked out as four spaces. This could cause the if statement to be true
+                        if (lowerSubstringIndex > copyText.Length - 1)
+                            lowerSubstringIndex = 0;
+
+                        if (lowerSubstringIndex is null)
+                            lowerSubstringIndex = 0;
+
+                        if (upperSubstringIndex > copyText.Length - 1)
+                            upperSubstringIndex = copyText.Length - 1;
+
+                        if (upperSubstringIndex is null)
+                            upperSubstringIndex = 0;
+
+                        if (copyText.Length != 0)
+                        {
+                            var result = copyText.Substring(lowerSubstringIndex.Value,
+                                upperSubstringIndex.Value - lowerSubstringIndex.Value + 1);
+
+                            builder.Append(result);
+                        }
+                    }
+                    
+                    if (SelectionSpan.ExclusiveEndingDocumentTextIndex <= runningTotalOfCharacters)
+                    {
+                        // Went beyond the range of the selection so return early.
+                        return builder.ToString();
+                    }
                 }
             }
 

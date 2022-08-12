@@ -63,7 +63,7 @@ public class POSITION_TRACKING_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATE
         {
             var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
 
-            Assert.Equal(string.Empty, editor.GetPlainText());
+            Assert.Equal(string.Empty, editor.GetDocumentPlainText());
 
             var expectedUseCarriageReturnNewLine = false;
             Assert.Equal(expectedUseCarriageReturnNewLine, editor.UseCarriageReturnNewLine);

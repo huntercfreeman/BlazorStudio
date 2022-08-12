@@ -54,7 +54,31 @@ public partial record PlainTextEditorStates
 
         public override IAbsoluteFilePath? AbsoluteFilePath => BackingAbsoluteFilePath;
 
-        public override string GetPlainText()
+        public override string GetDocumentPlainText()
+        {
+            var builder = new StringBuilder();
+
+            foreach (var row in Rows)
+            {
+                foreach (var token in row.Tokens)
+                {
+                    if (token.Key == Rows[0].Tokens[0].Key)
+                    {
+                        // Is first start of row so skip
+                        // as it would insert a enter key stroke at start
+                        // of document otherwise.
+
+                        continue;
+                    }
+
+                    builder.Append(token.CopyText);
+                }
+            }
+
+            return builder.ToString();
+        }
+        
+        public override string GetSelectionPlainText()
         {
             var builder = new StringBuilder();
 

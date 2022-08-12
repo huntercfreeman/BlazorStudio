@@ -172,8 +172,9 @@ public interface IPlainTextEditor
     /// The PlainTextEditor is a semantic representation of the file that was read in.
     /// So, a space character would be a <see cref="PlainTextEditorStates.WhitespaceTextToken"/>.
     /// <br/><br/>
-    /// <see cref="GetPlainText"/> converts the semantic representation to the actual plain text
+    /// <see cref="GetDocumentPlainText"/> converts the semantic representation to the actual plain text
     /// it represents.
     /// </summary>
-    public string GetPlainText();
+    public string GetDocumentPlainText();
+    public string GetSelectionPlainText();
 }

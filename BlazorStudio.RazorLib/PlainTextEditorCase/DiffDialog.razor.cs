@@ -35,7 +35,7 @@ public partial class DiffDialog : FluxorComponent
 
     private void GetPlainText(IPlainTextEditor currentPlainTextEditor)
     {
-        _plainText = currentPlainTextEditor.GetPlainText();
+        _plainText = currentPlainTextEditor.GetDocumentPlainText();
     }
 
     private async Task SaveChanges(IPlainTextEditor currentPlainTextEditor)

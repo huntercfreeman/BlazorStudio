@@ -39,7 +39,7 @@ public class READ_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         {
             var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
 
-            Assert.Equal(string.Empty, editor.GetPlainText());
+            Assert.Equal(string.Empty, editor.GetDocumentPlainText());
 
             bool expectedUseCarriageReturnNewLine = false;
             Assert.Equal(expectedUseCarriageReturnNewLine, editor.UseCarriageReturnNewLine);
@@ -73,7 +73,7 @@ public class READ_PLAIN_TEXT_EDITOR_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
         {
             var editor = PlainTextEditorStateWrap.Value.Map[plainTextEditorKey];
 
-            Assert.Equal(lineEnding, editor.GetPlainText());
+            Assert.Equal(lineEnding, editor.GetDocumentPlainText());
             Assert.Equal(expectedUseCarriageReturnNewLine, editor.UseCarriageReturnNewLine);
         }
     }

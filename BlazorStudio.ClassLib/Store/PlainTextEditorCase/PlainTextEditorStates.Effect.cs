@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Clipboard;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystemApi;
@@ -24,6 +25,7 @@ public partial record PlainTextEditorStates
     {
         private readonly IState<PlainTextEditorStates> _plainTextEditorStatesWrap;
         private readonly IState<SolutionState> _solutionStateWrap;
+        private readonly IClipboardProvider _clipboardProvider;
         private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
         private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
         private readonly SemaphoreSlim _handleOnClickSemaphoreSlim = new(1, 1);
@@ -32,10 +34,12 @@ public partial record PlainTextEditorStates
         private Task<ITaskModel> _updateTokenSemanticDescriptions;
 
         public PlainTextEditorStatesEffect(IState<PlainTextEditorStates> plainTextEditorStatesWrap,
-            IState<SolutionState> solutionStateWrap)
+            IState<SolutionState> solutionStateWrap,
+            IClipboardProvider clipboardProvider)
         {
             _plainTextEditorStatesWrap = plainTextEditorStatesWrap;
             _solutionStateWrap = solutionStateWrap;
+            _clipboardProvider = clipboardProvider;
         }
 
         private async Task QueueHandleEffectAsync(Func<Task> func)
@@ -360,6 +364,35 @@ public partial record PlainTextEditorStates
 
                 if (plainTextEditor is null)
                     return;
+                
+                // Temporarily putting some keybind logic here need to
+                // move to dependency injection likely
+                //
+                // var wasKeybind = KeymapProvider.Handle(keyDownEventAction);
+                // if wasKeybind -> return;
+                {
+                    var wasKeybind = false;
+
+                    if (keyDownEventAction.KeyDownEventRecord.CtrlWasPressed)
+                    {
+                        if (keyDownEventAction.KeyDownEventRecord.Key == "c")
+                        {
+                            var selectionPlainText = plainTextEditor.GetSelectionPlainText();
+                            
+                            var z = 2;
+                        }
+                        else if (keyDownEventAction.KeyDownEventRecord.Key == "v")
+                        {
+                            var clipboard = await _clipboardProvider.ReadClipboard();
+                            var z = 2;
+                        }
+                    }
+
+                    if (wasKeybind)
+                    {
+                        return;
+                    }
+                }
 
                 var overrideKeyDownEventRecord = keyDownEventAction.KeyDownEventRecord;
 
@@ -916,7 +949,7 @@ public partial record PlainTextEditorStates
 
                     if (_solutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var indexedDocument))
                     {
-                        var document = indexedDocument.Document.WithText(SourceText.From(editor.GetPlainText(),
+                        var document = indexedDocument.Document.WithText(SourceText.From(editor.GetDocumentPlainText(),
                             editor.FileHandle.Encoding));
                         
                         var syntaxRoot = await document.GetSyntaxRootAsync();
