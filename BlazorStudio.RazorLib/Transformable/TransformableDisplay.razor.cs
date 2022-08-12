@@ -26,6 +26,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     private MouseEventArgs? _previousDragMouseEventArgs;
 
     private int _resizeEventCounter;
+    private SemaphoreSlim _transformableDisplaySemaphoreSlim = new(1, 1);
 
     // Cardinal Resize Handles
     private Dimensions _northResizeHandleDimensions = new();
@@ -56,18 +57,31 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         }
         else
         {
-            var mouseEventArgs = DragStateWrap.Value.MouseEventArgs;
+            var success = await _transformableDisplaySemaphoreSlim
+                .WaitAsync(TimeSpan.Zero);
 
-            if (_dragStateEventHandler is not null)
+            if (!success)
+                return;
+        
+            try
             {
-                if (_previousDragMouseEventArgs is not null)
-                {
-                    await _dragStateEventHandler(mouseEventArgs);
-                }
+                var mouseEventArgs = DragStateWrap.Value.MouseEventArgs;
 
-                _previousDragMouseEventArgs = mouseEventArgs;
-                await ReRenderFunc();
-                await InvokeAsync(StateHasChanged);
+                if (_dragStateEventHandler is not null)
+                {
+                    if (_previousDragMouseEventArgs is not null)
+                    {
+                        await _dragStateEventHandler(mouseEventArgs);
+                    }
+
+                    _previousDragMouseEventArgs = mouseEventArgs;
+                    await ReRenderFunc();
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+            finally
+            {
+                _transformableDisplaySemaphoreSlim.Release();
             }
         }
     }
