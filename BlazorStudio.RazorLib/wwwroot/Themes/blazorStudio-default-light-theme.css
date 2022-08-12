@@ -48,7 +48,7 @@
     --pte_active-border-color: rgb(42, 122, 211);
     --pte_token-keyword: rgb(0, 0, 255);
     --pte_token-type: #2B91AF;
-    --pte_token-method-declaration: red;
-    --pte_plain-text-editor-text-token-display-string-literal: #D69D85;
+    --pte_token-method-declaration: #d48200;
+    --pte_plain-text-editor-text-token-display-string-literal: #A31515;
     --pte_plain-text-editor-selection: #ADD6FF;
 }
