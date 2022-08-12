@@ -17,13 +17,20 @@ public partial record PlainTextEditorStates
             {
                 var temporary = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
                     focusedPlainTextEditorRecord,
-                    true,
+                    false,
                     cancellationToken);
                 
                 startingPositionIndex = (int) (temporary +
-                                               focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) +
+                                               focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(false) +
                                                focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
                                                    [focusedPlainTextEditorRecord.CurrentRowIndex]);
+            }
+            else
+            {
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    SelectionSpan = null
+                };
             }
             
             switch (keyDownEventRecord.Key)
