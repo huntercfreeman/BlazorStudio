@@ -1,6 +1,7 @@
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.PlainTextEditorCase;
 
@@ -47,7 +48,7 @@ public partial class CharacterRenderer : ComponentBase
 
     private string IsSelectedCssClassString => GetIsSelectedCssClassString();
 
-    private void DispatchPlainTextEditorOnClickAction()
+    private void DispatchPlainTextEditorOnClickAction(MouseEventArgs mouseEventArgs)
     {
         NotifyCharacterWasClicked();
 
@@ -57,6 +58,7 @@ public partial class CharacterRenderer : ComponentBase
                 RowIndex,
                 TokenIndex,
                 CharacterIndex,
+                mouseEventArgs.ShiftKey,
                 CancellationToken.None
             )
         );

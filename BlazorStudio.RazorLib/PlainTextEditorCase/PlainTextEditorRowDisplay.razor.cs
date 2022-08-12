@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.PlainTextEditorCase;
 
@@ -79,7 +80,7 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
         }
     }
 
-    private void DispatchPlainTextEditorOnClickAction()
+    private void DispatchPlainTextEditorOnClickAction(MouseEventArgs mouseEventArgs)
     {
         if (!_characterWasClicked)
         {
@@ -89,6 +90,7 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
                     RowIndex,
                     PlainTextEditorRow.Tokens.Count - 1,
                     null,
+                    mouseEventArgs.ShiftKey,
                     CancellationToken.None
                 )
             );

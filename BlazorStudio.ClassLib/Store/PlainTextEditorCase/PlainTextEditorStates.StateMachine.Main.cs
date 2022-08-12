@@ -45,6 +45,21 @@ public partial record PlainTextEditorStates
             PlainTextEditorOnClickAction plainTextEditorOnClickAction,
             CancellationToken cancellationToken)
         {
+            int? startingPositionIndex = null;
+            
+            if (plainTextEditorOnClickAction.ShiftKey)
+            {
+                var temporary = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
+                    focusedPlainTextEditorRecord,
+                    false,
+                    cancellationToken);
+                
+                startingPositionIndex = (int) (temporary +
+                                               focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(false) +
+                                               focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
+                                                   [focusedPlainTextEditorRecord.CurrentRowIndex]);
+            }
+            
             var currentToken = focusedPlainTextEditorRecord
                 .GetCurrentTextTokenAs<TextTokenBase>();
 
@@ -85,6 +100,17 @@ public partial record PlainTextEditorStates
                                        + startingCharacterIndex
                                        + replacementCurrentToken.GetIndexInPlainText(true)
             };
+            
+            if (plainTextEditorOnClickAction.ShiftKey)
+            {
+                var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                         - startingPositionIndex!.Value;
+
+                focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
+                    startingPositionIndex.Value,
+                    (int)positionIndexDelta,
+                    cancellationToken);
+            }
 
             return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
                 replacementCurrentToken,
