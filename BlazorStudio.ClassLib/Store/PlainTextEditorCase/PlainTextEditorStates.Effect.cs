@@ -432,105 +432,127 @@ public partial record PlainTextEditorStates
         public async Task HandlePlainTextEditorOnClickAction(PlainTextEditorOnClickAction plainTextEditorOnClickAction,
             IDispatcher dispatcher)
         {
-            // TODO: Gotta walk away and do something this is in a weird state but trying to naively throttle when user drags mouse to select text.
             await QueueHandleEffectAsync(async () =>
             {
-                try
+                var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
+
+                var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
+                var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
+
+                var plainTextEditor = previousPlainTextEditorStates.Map[plainTextEditorOnClickAction.PlainTextEditorKey]
+                    as PlainTextEditorRecordBase;
+
+                if (plainTextEditor is null)
+                    return;
+
+                var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                    .HandleOnClickEventAsync(plainTextEditor,
+                        plainTextEditorOnClickAction,
+                        plainTextEditorOnClickAction.CancellationToken);
+
+                var replacementPlainTextEditor = resultPlainTextEditorRecord with
                 {
-                    var exitTask = Task.CompletedTask;
-                    
-                    if (!_ignoreOnClickEventsForDelay.IsCompleted)
-                    {
-                        var completedTask = Task.WhenAny(new Task[]
-                        {
-                            _ignoreOnClickEventsForDelay,
-                            exitTask
-                        });
+                    SequenceKey = SequenceKey.NewSequenceKey()
+                };
 
-                        if (completedTask.Id == exitTask.Id)
-                        {
-                            return;
-                        }
-                    }
-                    
-                    await _handleOnClickSemaphoreSlim.WaitAsync();
-                    
-                    if (!_ignoreOnClickEventsForDelay.IsCompleted)
-                    {
-                        var completedTask = Task.WhenAny(new Task[]
-                        {
-                            _ignoreOnClickEventsForDelay,
-                            exitTask
-                        });
-
-                        if (completedTask.Id == exitTask.Id)
-                        {
-                            return;
-                        }
-                    }
-                    
-                    _ignoreOnClickEventsForDelay = Task.Delay(TimeSpan.FromSeconds(5));
-
-                    var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
-
-                    var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
-                    var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
-
-                    var plainTextEditor = previousPlainTextEditorStates.Map[plainTextEditorOnClickAction.PlainTextEditorKey]
-                        as PlainTextEditorRecordBase;
-
-                    if (plainTextEditor is null)
-                        return;
-
-                    var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
-                        .HandleOnClickEventAsync(plainTextEditor,
-                            plainTextEditorOnClickAction,
-                            plainTextEditorOnClickAction.CancellationToken);
-
-                    var replacementPlainTextEditor = resultPlainTextEditorRecord with
-                    {
-                        SequenceKey = SequenceKey.NewSequenceKey()
-                    };
-
-                    if (replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult is null)
-                    {
-                        throw new ApplicationException(
-                            $"{nameof(replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult)} was null.");
-                    }
-
-                    var previousResult = (VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>)
-                        replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult;
-
-                    var items = replacementPlainTextEditor.Rows
-                        .Select((row, index) => (index, row))
-                        .ToList();
-
-                    var virtualizeCoordinateSystemResult = previousResult with
-                    {
-                        ItemsWithType = items,
-                        ItemsUntyped = items.Select(x => (object)x)
-                    };
-
-                    replacementPlainTextEditor = replacementPlainTextEditor with
-                    {
-                        SequenceKey = SequenceKey.NewSequenceKey(),
-                        VirtualizeCoordinateSystemMessage = replacementPlainTextEditor.VirtualizeCoordinateSystemMessage with
-                        {
-                            VirtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult
-                        }
-                    };
-
-                    nextPlainTextEditorMap[plainTextEditorOnClickAction.PlainTextEditorKey] = replacementPlainTextEditor;
-
-                    var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
-                    var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
-
-                    dispatcher.Dispatch(new SetPlainTextEditorStatesAction(new PlainTextEditorStates(nextImmutableMap, nextImmutableArray)));
-                }
-                finally
+                if (replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult is null)
                 {
-                    _handleOnClickSemaphoreSlim.Release();
+                    throw new ApplicationException(
+                        $"{nameof(replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult)} was null.");
                 }
+
+                var previousResult = (VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>)
+                    replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult;
+
+                var items = replacementPlainTextEditor.Rows
+                    .Select((row, index) => (index, row))
+                    .ToList();
+
+                var virtualizeCoordinateSystemResult = previousResult with
+                {
+                    ItemsWithType = items,
+                    ItemsUntyped = items.Select(x => (object)x)
+                };
+
+                replacementPlainTextEditor = replacementPlainTextEditor with
+                {
+                    SequenceKey = SequenceKey.NewSequenceKey(),
+                    VirtualizeCoordinateSystemMessage = replacementPlainTextEditor.VirtualizeCoordinateSystemMessage with
+                    {
+                        VirtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult
+                    }
+                };
+
+                nextPlainTextEditorMap[plainTextEditorOnClickAction.PlainTextEditorKey] = replacementPlainTextEditor;
+
+                var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
+                var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
+
+                dispatcher.Dispatch(new SetPlainTextEditorStatesAction(new PlainTextEditorStates(nextImmutableMap, nextImmutableArray)));
+            });
+        }
+        
+        [EffectMethod]
+        public async Task HandlePlainTextEditorOnMouseOverCharacterAction(PlainTextEditorOnMouseOverCharacterAction plainTextEditorOnMouseOverCharacterAction,
+            IDispatcher dispatcher)
+        {
+            await QueueHandleEffectAsync(async () =>
+            {
+                var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
+
+                var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
+                var nextPlainTextEditorList = new List<PlainTextEditorKey>(previousPlainTextEditorStates.Array);
+
+                var plainTextEditor = previousPlainTextEditorStates.Map[plainTextEditorOnMouseOverCharacterAction.PlainTextEditorKey]
+                    as PlainTextEditorRecordBase;
+
+                if (plainTextEditor is null)
+                    return;
+
+                var resultPlainTextEditorRecord = await PlainTextEditorStates.StateMachine
+                    .HandleOnMouseOverCharacterEventAsync(plainTextEditor,
+                        plainTextEditorOnMouseOverCharacterAction,
+                        plainTextEditorOnMouseOverCharacterAction.CancellationToken);
+
+                var replacementPlainTextEditor = resultPlainTextEditorRecord with
+                {
+                    SequenceKey = SequenceKey.NewSequenceKey()
+                };
+
+                if (replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult is null)
+                {
+                    throw new ApplicationException(
+                        $"{nameof(replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult)} was null.");
+                }
+
+                var previousResult = (VirtualizeCoordinateSystemResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>)
+                    replacementPlainTextEditor.VirtualizeCoordinateSystemMessage.VirtualizeCoordinateSystemResult;
+
+                var items = replacementPlainTextEditor.Rows
+                    .Select((row, index) => (index, row))
+                    .ToList();
+
+                var virtualizeCoordinateSystemResult = previousResult with
+                {
+                    ItemsWithType = items,
+                    ItemsUntyped = items.Select(x => (object)x)
+                };
+
+                replacementPlainTextEditor = replacementPlainTextEditor with
+                {
+                    SequenceKey = SequenceKey.NewSequenceKey(),
+                    VirtualizeCoordinateSystemMessage = replacementPlainTextEditor.VirtualizeCoordinateSystemMessage with
+                    {
+                        VirtualizeCoordinateSystemResult = virtualizeCoordinateSystemResult
+                    }
+                };
+
+                nextPlainTextEditorMap[plainTextEditorOnMouseOverCharacterAction.PlainTextEditorKey] = replacementPlainTextEditor;
+
+                var nextImmutableMap = nextPlainTextEditorMap.ToImmutableDictionary();
+                var nextImmutableArray = nextPlainTextEditorList.ToImmutableArray();
+
+                dispatcher.Dispatch(new SetPlainTextEditorStatesAction(new PlainTextEditorStates(nextImmutableMap, nextImmutableArray)));
             });
         }
         

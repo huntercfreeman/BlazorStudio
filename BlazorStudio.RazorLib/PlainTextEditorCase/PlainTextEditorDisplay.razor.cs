@@ -49,7 +49,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private string _widthAndHeightTestId = "bstudio_pte-get-width-and-height-test";
     
     private bool _isSubscribedToDragState;
-
+    private SemaphoreSlim _plainTextEditorOnClickActionSemaphoreSlim = new(1, 1);
+    
     private SequenceKey? _previousSequenceKeyShouldRender;
     private PlainTextEditorKey? _previousPlainTextEditorKey;
     private ElementReference? _activePositionMarker;

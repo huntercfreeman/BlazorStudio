@@ -30,6 +30,8 @@ public partial class CharacterRenderer : ComponentBase
     public long StartOfSpan { get; set; }
     [CascadingParameter(Name="IsSubscribedToDragState")] 
     public bool IsSubscribedToDragState { get; set; }
+    [CascadingParameter(Name = "PlainTextEditorOnClickActionSemaphoreSlim")]
+    public SemaphoreSlim PlainTextEditorOnClickActionSemaphoreSlim { get; set; } = null!;
 
     /// <summary>
     /// The html escaped character for space is nbsp which
@@ -43,36 +45,15 @@ public partial class CharacterRenderer : ComponentBase
     public bool ShouldDisplayCursor { get; set; }
 
     private string _selectedCssClassString = "pte_plain-text-editor-character-selected";
-    private int _skipRerender;
 
     private string WidthStyleString => GetWidthAndHeightTest
         ? string.Empty
         : $"width: {RichTextEditorOptions.WidthOfACharacterInPixels}px;";
 
     private string IsSelectedCssClassString => GetIsSelectedCssClassString();
-
-    // /// <summary>
-    // /// The PlainTextEditor starts with the first row, first token as a "StartOfRowTextToken".
-    // /// Every row in fact starts with a "StartOfRowTextToken".
-    // ///
-    // /// The issue is that the first "StartOfRowTextToken" is actually just the first character in the file contents
-    // /// from Roslyn's perspective. So 1 character index has to added for UI logic to add the First().First() token.
-    // /// </summary>
-    // private long _characterIndexOffsetFromRoslyn = 1;
     
     private long CharacterColumnIndex => StartOfSpan + CharacterIndex;
     
-    // protected override bool ShouldRender()
-    // {
-    //     if (_skipRerender > 0)
-    //     {
-    //         _skipRerender = 0;
-    //         return false;
-    //     }
-    //     
-    //     return base.ShouldRender();
-    // }
-
     private void DispatchPlainTextEditorOnClickAction(MouseEventArgs mouseEventArgs)
     {
         NotifyCharacterWasClicked();
@@ -89,34 +70,42 @@ public partial class CharacterRenderer : ComponentBase
         );
     }
     
-    private void SelectTextOnMouseMove(MouseEventArgs mouseEventArgs)
+    private async Task SelectTextOnMouseOverAsync(MouseEventArgs mouseEventArgs)
     {
         if (!IsSubscribedToDragState)
         {
-            Console.WriteLine("NOT SUB DRAG");
-            _skipRerender++;
             return;
         }
         
-        Console.WriteLine("YES IS SUB DRAG");
+        var success = await PlainTextEditorOnClickActionSemaphoreSlim
+            .WaitAsync(TimeSpan.Zero);
 
-        Dispatcher.Dispatch(
-            new PlainTextEditorOnClickAction(
-                PlainTextEditorKey,
-                RowIndex,
-                TokenIndex,
-                CharacterIndex,
-                true,
-                CancellationToken.None
-            )
-        );
+        if (!success)
+            return;
+        
+        try
+        {
+            Dispatcher.Dispatch(
+                new PlainTextEditorOnMouseOverCharacterAction(
+                    PlainTextEditorKey,
+                    RowIndex,
+                    TokenIndex,
+                    CharacterIndex,
+                    true,
+                    CancellationToken.None
+                )
+            );
+        }
+        finally
+        {
+            PlainTextEditorOnClickActionSemaphoreSlim.Release();
+        }
     }
     
     private string GetIsSelectedCssClassString()
     {
         if (SelectionSpan is null)
             return string.Empty;
-        
 
         if (SelectionSpan.SelectionDirection == SelectionDirection.Left)
         {
@@ -133,12 +122,6 @@ public partial class CharacterRenderer : ComponentBase
             {
                 return _selectedCssClassString;
             }
-            
-            /*
-             * >= inclusive
-             *
-             * < exclusive
-             */
         }
         
         return string.Empty;

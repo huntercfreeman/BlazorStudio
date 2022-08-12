@@ -123,6 +123,89 @@ public partial record PlainTextEditorStates
                 replacementCurrentToken,
                 cancellationToken);
         }
+        
+        public static async Task<PlainTextEditorRecordBase> HandleOnMouseOverCharacterEventAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord, 
+            PlainTextEditorOnMouseOverCharacterAction plainTextEditorOnMouseOverCharacterAction,
+            CancellationToken cancellationToken)
+        {
+            int? startingPositionIndex = null;
+            
+            if (plainTextEditorOnMouseOverCharacterAction.ShiftKey)
+            {
+                var temporary = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
+                    focusedPlainTextEditorRecord,
+                    true,
+                    cancellationToken);
+                
+                startingPositionIndex = (int) (temporary +
+                                               focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) +
+                                               focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
+                                                   [focusedPlainTextEditorRecord.CurrentRowIndex]);
+            }
+            else
+            {
+                focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                {
+                    SelectionSpan = null
+                };
+            }
+            
+            var currentToken = focusedPlainTextEditorRecord
+                .GetCurrentTextTokenAs<TextTokenBase>();
+
+            var replacementCurrentToken = currentToken with
+                {
+                    IndexInPlainText = null
+                };
+            
+            focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                replacementCurrentToken,
+                cancellationToken);
+    
+            focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+            {
+                CurrentTokenIndex = plainTextEditorOnMouseOverCharacterAction.TokenIndex,
+                CurrentRowIndex = plainTextEditorOnMouseOverCharacterAction.RowIndex
+            };
+
+            currentToken = focusedPlainTextEditorRecord
+                .GetCurrentTextTokenAs<TextTokenBase>();
+
+            replacementCurrentToken = currentToken with
+                {
+                    IndexInPlainText = plainTextEditorOnMouseOverCharacterAction.CharacterIndex ??
+                        currentToken.PlainText.Length - 1
+                };
+
+            var startingCharacterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
+                false,
+                cancellationToken);
+
+            focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+            {
+                CurrentCharacterColumnIndex = startingCharacterIndex
+                    + replacementCurrentToken.GetIndexInPlainText(true),
+                CurrentPositionIndex = focusedPlainTextEditorRecord
+                                           .FileHandle.VirtualCharacterIndexMarkerForStartOfARow[focusedPlainTextEditorRecord.CurrentRowIndex]
+                                       + startingCharacterIndex
+                                       + replacementCurrentToken.GetIndexInPlainText(true)
+            };
+            
+            if (plainTextEditorOnMouseOverCharacterAction.ShiftKey)
+            {
+                var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                         - startingPositionIndex!.Value;
+
+                focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
+                    startingPositionIndex.Value,
+                    (int)positionIndexDelta,
+                    cancellationToken);
+            }
+
+            return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
+                replacementCurrentToken,
+                cancellationToken);
+        }
 
         private static async Task<PlainTextEditorRecordBase> InsertNewCurrentTokenAfterCurrentPositionAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             ITextToken textToken,
