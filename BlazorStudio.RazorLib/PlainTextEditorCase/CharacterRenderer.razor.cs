@@ -48,16 +48,16 @@ public partial class CharacterRenderer : ComponentBase
 
     private string IsSelectedCssClassString => GetIsSelectedCssClassString();
 
-    /// <summary>
-    /// The PlainTextEditor starts with the first row, first token as a "StartOfRowTextToken".
-    /// Every row in fact starts with a "StartOfRowTextToken".
-    ///
-    /// The issue is that the first "StartOfRowTextToken" is actually just the first character in the file contents
-    /// from Roslyn's perspective. So 1 character index has to added for UI logic to add the First().First() token.
-    /// </summary>
-    private long _characterIndexOffsetFromRoslyn = 1;
+    // /// <summary>
+    // /// The PlainTextEditor starts with the first row, first token as a "StartOfRowTextToken".
+    // /// Every row in fact starts with a "StartOfRowTextToken".
+    // ///
+    // /// The issue is that the first "StartOfRowTextToken" is actually just the first character in the file contents
+    // /// from Roslyn's perspective. So 1 character index has to added for UI logic to add the First().First() token.
+    // /// </summary>
+    // private long _characterIndexOffsetFromRoslyn = 1;
     
-    private long CharacterColumnIndex => StartOfSpan + CharacterIndex + _characterIndexOffsetFromRoslyn;
+    private long CharacterColumnIndex => StartOfSpan + CharacterIndex;
 
     private void DispatchPlainTextEditorOnClickAction(MouseEventArgs mouseEventArgs)
     {

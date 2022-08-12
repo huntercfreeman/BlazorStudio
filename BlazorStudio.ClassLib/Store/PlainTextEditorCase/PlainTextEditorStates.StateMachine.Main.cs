@@ -113,16 +113,6 @@ public partial record PlainTextEditorStates
                 var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
                                          - startingPositionIndex!.Value;
 
-                // Appears to always be 1 character off
-                if (positionIndexDelta > 0)
-                {
-                    positionIndexDelta += 1;
-                }
-                else
-                {
-                    positionIndexDelta -= 1;
-                }
-                
                 focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
                     startingPositionIndex.Value,
                     (int)positionIndexDelta,
@@ -780,11 +770,11 @@ public partial record PlainTextEditorStates
                 if (cursorCharacterDisplacement < 0)
                 {
                     // ArrowLeft as an example
-                    var exclusiveCharacterIndex = Math.Max(startingInclusiveCharacterIndex - 1, 0);
+                    var exclusiveCharacterIndex = Math.Max(startingInclusiveCharacterIndex + cursorCharacterDisplacement - 1, 0);
                     
                     selectionSpan = new SelectionSpanRecord
                     {
-                        InclusiveStartingDocumentTextIndex = startingInclusiveCharacterIndex,
+                        InclusiveStartingDocumentTextIndex = startingInclusiveCharacterIndex - 1,
                         ExclusiveEndingDocumentTextIndex = exclusiveCharacterIndex
                     };
                 }
