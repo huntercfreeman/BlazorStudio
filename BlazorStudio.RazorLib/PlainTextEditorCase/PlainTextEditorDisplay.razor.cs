@@ -48,8 +48,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private int _previousFontSize;
     private string _widthAndHeightTestId = "bstudio_pte-get-width-and-height-test";
     
-    private bool _isSubscribedToDragState;
-    private SemaphoreSlim _plainTextEditorOnClickActionSemaphoreSlim = new(1, 1);
+    private bool _isMouseSelectingText;
+    private SemaphoreSlim _mouseTextSelectionSemaphoreSlim = new(1, 1);
     
     private SequenceKey? _previousSequenceKeyShouldRender;
     private PlainTextEditorKey? _previousPlainTextEditorKey;
@@ -174,10 +174,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         if (plainTextEditor is null)
             return true;
 
-        var shouldRender = false;
-
-        if (plainTextEditor.SequenceKey != _previousSequenceKeyShouldRender)
-            shouldRender = true;
+        bool shouldRender = plainTextEditor.SequenceKey != _previousSequenceKeyShouldRender;
 
         _previousSequenceKeyShouldRender = plainTextEditor.SequenceKey;
 
@@ -191,6 +188,11 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
                 PlainTextEditorSelectorOnSelectedValueChanged(null, null);
                 //_virtualizeCoordinateSystem.ResetState();
             }
+        }
+
+        if (_isMouseSelectingText)
+        {
+            shouldRender = true;
         }
 
         _previousPlainTextEditorKey = plainTextEditor.PlainTextEditorKey;
@@ -235,6 +237,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
+        _isMouseSelectingText = false;
+        
         Dispatcher.Dispatch(
             new KeyDownEventAction(PlainTextEditorKey,
                 new KeyDownEventRecord(
@@ -264,7 +268,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private void FocusPlainTextEditorOnClick()
     {
         // Backup way to ensure DragEvents stop
-        _isSubscribedToDragState = false;
+        _isMouseSelectingText = false;
         
         _previousSequenceKeyShouldRender = null;
 
@@ -313,12 +317,12 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private void StartSelectingText()
     {
-        _isSubscribedToDragState = true;
+        _isMouseSelectingText = true;
     }
     
     private void StopSelectingText()
     {
-        _isSubscribedToDragState = false;
+        _isMouseSelectingText = false;
     }
 
     protected override void Dispose(bool disposing)

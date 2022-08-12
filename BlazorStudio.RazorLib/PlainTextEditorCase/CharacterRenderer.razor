@@ -1,7 +1,9 @@
 <span class="pte_character-renderer @IsSelectedCssClassString"
       style="@WidthStyleString"
       @onclick="DispatchPlainTextEditorOnClickAction"
+      @onclick:stopPropagation="true"
       @onmouseover="SelectTextOnMouseOverAsync"
+      @onmouseover:stopPropagation="true"
       title="@CharacterColumnIndex">
     @if (Character == string.Empty)
     {

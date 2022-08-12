@@ -20,7 +20,7 @@ else
         <PlainTextEditorHeader PlainTextEditor="currentPlainTextEditor"
                                WidthAndHeightTestResult="_widthAndHeightTestResult"/>
 
-        <div>_isSubscribedToDragState:&nbsp;<em>@_isSubscribedToDragState</em></div>
+        <div>_isSubscribedToDragState:&nbsp;<em>@_isMouseSelectingText</em></div>
         
         <div id="@PlainTextEditorDisplayId"
              class="pte_plain-text-editor-display pte_unselectable @IsFocusedCssClass"
@@ -43,8 +43,8 @@ else
                                         <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
                                             <CascadingValue Name="VirtualCharacterIndexMarkerForStartOfARow" Value="currentPlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow">
                                                 <CascadingValue Name="SelectionSpan" Value="currentPlainTextEditor.SelectionSpan">
-                                                    <CascadingValue Name="IsSubscribedToDragState" Value="_isSubscribedToDragState">
-                                                        <CascadingValue Name="PlainTextEditorOnClickActionSemaphoreSlim" Value="_plainTextEditorOnClickActionSemaphoreSlim">
+                                                    <CascadingValue Name="IsMouseSelectingText" Value="_isMouseSelectingText">
+                                                        <CascadingValue Name="MouseTextSelectionSemaphoreSlim" Value="_mouseTextSelectionSemaphoreSlim">
 
                                                             @if (_isInitialized)
                                                             {

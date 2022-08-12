@@ -18,8 +18,6 @@ public partial class CharacterRenderer : ComponentBase
     public int RowIndex { get; set; }
     [CascadingParameter]
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
-    [CascadingParameter(Name="NotifyCharacterWasClicked")]
-    public Action NotifyCharacterWasClicked { get; set; } = null!;
     [CascadingParameter]
     public RichTextEditorOptions RichTextEditorOptions { get; set; } = null!;
     [CascadingParameter(Name="GetWidthAndHeightTest")]
@@ -28,10 +26,10 @@ public partial class CharacterRenderer : ComponentBase
     public SelectionSpanRecord? SelectionSpan { get; set; }
     [CascadingParameter(Name="StartOfSpan")] 
     public long StartOfSpan { get; set; }
-    [CascadingParameter(Name="IsSubscribedToDragState")] 
-    public bool IsSubscribedToDragState { get; set; }
-    [CascadingParameter(Name = "PlainTextEditorOnClickActionSemaphoreSlim")]
-    public SemaphoreSlim PlainTextEditorOnClickActionSemaphoreSlim { get; set; } = null!;
+    [CascadingParameter(Name="IsMouseSelectingText")] 
+    public bool IsMouseSelectingText { get; set; }
+    [CascadingParameter(Name = "MouseTextSelectionSemaphoreSlim")]
+    public SemaphoreSlim MouseTextSelectionSemaphoreSlim { get; set; } = null!;
 
     /// <summary>
     /// The html escaped character for space is nbsp which
@@ -56,8 +54,6 @@ public partial class CharacterRenderer : ComponentBase
     
     private void DispatchPlainTextEditorOnClickAction(MouseEventArgs mouseEventArgs)
     {
-        NotifyCharacterWasClicked();
-
         Dispatcher.Dispatch(
             new PlainTextEditorOnClickAction(
                 PlainTextEditorKey,
@@ -72,12 +68,12 @@ public partial class CharacterRenderer : ComponentBase
     
     private async Task SelectTextOnMouseOverAsync(MouseEventArgs mouseEventArgs)
     {
-        if (!IsSubscribedToDragState)
+        if (!IsMouseSelectingText)
         {
             return;
         }
         
-        var success = await PlainTextEditorOnClickActionSemaphoreSlim
+        var success = await MouseTextSelectionSemaphoreSlim
             .WaitAsync(TimeSpan.Zero);
 
         if (!success)
@@ -85,8 +81,6 @@ public partial class CharacterRenderer : ComponentBase
         
         try
         {
-            NotifyCharacterWasClicked();
-        
             Dispatcher.Dispatch(
                 new PlainTextEditorOnMouseOverCharacterAction(
                     PlainTextEditorKey,
@@ -100,7 +94,7 @@ public partial class CharacterRenderer : ComponentBase
         }
         finally
         {
-            PlainTextEditorOnClickActionSemaphoreSlim.Release();
+            MouseTextSelectionSemaphoreSlim.Release();
         }
     }
     

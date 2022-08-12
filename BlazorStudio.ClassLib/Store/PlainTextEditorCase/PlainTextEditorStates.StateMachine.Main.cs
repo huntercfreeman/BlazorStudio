@@ -853,12 +853,10 @@ public partial record PlainTextEditorStates
                 if (cursorCharacterDisplacement < 0)
                 {
                     // ArrowLeft as an example
-                    var exclusiveCharacterIndex = Math.Max(startingInclusiveCharacterIndex + cursorCharacterDisplacement - 1, 0);
-                    
                     selectionSpan = new SelectionSpanRecord
                     {
                         InclusiveStartingDocumentTextIndex = startingInclusiveCharacterIndex - 1,
-                        ExclusiveEndingDocumentTextIndex = exclusiveCharacterIndex
+                        ExclusiveEndingDocumentTextIndex = startingInclusiveCharacterIndex + cursorCharacterDisplacement - 1
                     };
                 }
                 else
@@ -867,7 +865,7 @@ public partial record PlainTextEditorStates
                     selectionSpan = new SelectionSpanRecord
                     {
                         InclusiveStartingDocumentTextIndex = startingInclusiveCharacterIndex + 1,
-                        ExclusiveEndingDocumentTextIndex = startingInclusiveCharacterIndex + cursorCharacterDisplacement
+                        ExclusiveEndingDocumentTextIndex = startingInclusiveCharacterIndex + 1 + cursorCharacterDisplacement
                     };
                 }
             }

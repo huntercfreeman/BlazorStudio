@@ -26,6 +26,10 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
     public bool GetWidthAndHeightTest { get; set; }
     [CascadingParameter(Name="VirtualCharacterIndexMarkerForStartOfARow")]
     public List<long> VirtualCharacterIndexMarkerForStartOfARow { get; set; }
+    [CascadingParameter(Name="IsMouseSelectingText")] 
+    public bool IsMouseSelectingText { get; set; }
+    [CascadingParameter(Name = "MouseTextSelectionSemaphoreSlim")]
+    public SemaphoreSlim MouseTextSelectionSemaphoreSlim { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public IPlainTextEditorRow PlainTextEditorRow { get; set; } = null!;
@@ -37,7 +41,9 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
     private bool _characterWasClicked;
     private SequenceKey? _previousSequenceKey;
     private int _previousMostDigitsInARowNumber;
+    private bool _previousIsMouseSelectingText;
     private bool _previousShouldDisplay;
+    private int _childOnMouseOver;
 
     private string IsActiveCss => PlainTextEditorCurrentRowIndex == RowIndex
         ? "pte_active"
@@ -61,6 +67,20 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
             shouldRender = true;
         }
 
+        if (IsMouseSelectingText != _previousIsMouseSelectingText)
+        {
+            _previousIsMouseSelectingText = IsMouseSelectingText;
+
+            if (_previousIsMouseSelectingText)
+            {
+                // If started selecting text then should render
+                // as the selection of text is dependent on
+                // calculating character indices for the entire document
+                // and this calculation is only done when rendered.
+                shouldRender = true;
+            }
+        }
+
         _previousSequenceKey = PlainTextEditorRow.SequenceKey;
 
         return shouldRender;
@@ -82,22 +102,47 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
 
     private void DispatchPlainTextEditorOnClickAction(MouseEventArgs mouseEventArgs)
     {
-        if (!_characterWasClicked)
+        Dispatcher.Dispatch(
+            new PlainTextEditorOnClickAction(
+                PlainTextEditorKey,
+                RowIndex,
+                PlainTextEditorRow.Tokens.Count - 1,
+                null,
+                mouseEventArgs.ShiftKey,
+                CancellationToken.None
+            )
+        );
+    }
+    
+    private async Task SelectTextOnMouseOverAsync(MouseEventArgs mouseEventArgs)
+    {
+        if (!IsMouseSelectingText)
+        {
+            return;
+        }
+        
+        var success = await MouseTextSelectionSemaphoreSlim
+            .WaitAsync(TimeSpan.Zero);
+
+        if (!success)
+            return;
+        
+        try
         {
             Dispatcher.Dispatch(
-                new PlainTextEditorOnClickAction(
+                new PlainTextEditorOnMouseOverCharacterAction(
                     PlainTextEditorKey,
                     RowIndex,
                     PlainTextEditorRow.Tokens.Count - 1,
                     null,
-                    mouseEventArgs.ShiftKey,
+                    true,
                     CancellationToken.None
                 )
             );
         }
-        else
+        finally
         {
-            _characterWasClicked = false;
+            MouseTextSelectionSemaphoreSlim.Release();
         }
     }
 }
