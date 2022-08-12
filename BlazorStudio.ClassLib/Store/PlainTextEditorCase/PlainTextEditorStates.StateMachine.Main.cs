@@ -51,11 +51,11 @@ public partial record PlainTextEditorStates
             {
                 var temporary = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
                     focusedPlainTextEditorRecord,
-                    false,
+                    true,
                     cancellationToken);
                 
                 startingPositionIndex = (int) (temporary +
-                                               focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(false) +
+                                               focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) +
                                                focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
                                                    [focusedPlainTextEditorRecord.CurrentRowIndex]);
             }
@@ -763,11 +763,11 @@ public partial record PlainTextEditorStates
                 if (cursorCharacterDisplacement < 0)
                 {
                     // ArrowLeft as an example
-                    var characterIndex = Math.Max(startingInclusiveCharacterIndex - 1, 0);
+                    var exclusiveCharacterIndex = Math.Max(startingInclusiveCharacterIndex - 1, 0);
                     
                     selectionSpan = new SelectionSpanRecord
                     {
-                        InclusiveStartingDocumentTextIndex = characterIndex,
+                        InclusiveStartingDocumentTextIndex = exclusiveCharacterIndex,
                         ExclusiveEndingDocumentTextIndex = startingInclusiveCharacterIndex
                     };
                 }
@@ -776,8 +776,8 @@ public partial record PlainTextEditorStates
                     // ArrowRight as an example
                     selectionSpan = new SelectionSpanRecord
                     {
-                        InclusiveStartingDocumentTextIndex = startingInclusiveCharacterIndex,
-                        ExclusiveEndingDocumentTextIndex = startingInclusiveCharacterIndex + 1
+                        InclusiveStartingDocumentTextIndex = startingInclusiveCharacterIndex + 1,
+                        ExclusiveEndingDocumentTextIndex = startingInclusiveCharacterIndex + 2
                     };
                 }
             }
