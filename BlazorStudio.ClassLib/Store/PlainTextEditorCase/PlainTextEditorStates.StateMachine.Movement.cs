@@ -11,45 +11,6 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
-            switch (keyDownEventRecord.Key)
-            {
-                case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT_KEY:
-                    return await HandleArrowLeftAsync(focusedPlainTextEditorRecord, 
-                        keyDownEventRecord,
-                        cancellationToken);
-                case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN_KEY:
-                    return await HandleArrowDownAsync(focusedPlainTextEditorRecord, 
-                        keyDownEventRecord,
-                        cancellationToken);
-                case KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP_KEY:
-                    return await HandleArrowUpAsync(focusedPlainTextEditorRecord, 
-                        keyDownEventRecord,
-                        cancellationToken);
-                case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
-                    return await HandleArrowRightAsync(focusedPlainTextEditorRecord, 
-                        keyDownEventRecord,
-                        cancellationToken);
-                case KeyboardKeyFacts.MovementKeys.HOME_KEY:
-                    return await HandleHomeAsync(focusedPlainTextEditorRecord, 
-                        keyDownEventRecord,
-                        cancellationToken);
-                case KeyboardKeyFacts.MovementKeys.END_KEY:
-                    return await HandleEndAsync(focusedPlainTextEditorRecord, 
-                        keyDownEventRecord,
-                        cancellationToken);
-            }
-
-            return focusedPlainTextEditorRecord;
-        }
-
-        public static async Task<PlainTextEditorRecordBase> HandleArrowLeftAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
-            KeyDownEventRecord keyDownEventRecord,
-            CancellationToken cancellationToken)
-        {
             int? startingPositionIndex = null;
             
             if (keyDownEventRecord.ShiftWasPressed)
@@ -65,6 +26,62 @@ public partial record PlainTextEditorStates
                                                    [focusedPlainTextEditorRecord.CurrentRowIndex]);
             }
             
+            switch (keyDownEventRecord.Key)
+            {
+                case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
+                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT_KEY:
+                    focusedPlainTextEditorRecord = await HandleArrowLeftAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
+                    break;
+                case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
+                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN_KEY:
+                    focusedPlainTextEditorRecord = await HandleArrowDownAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
+                    break;
+                case KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY:
+                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP_KEY:
+                    focusedPlainTextEditorRecord = await HandleArrowUpAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
+                    break;
+                case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
+                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
+                    focusedPlainTextEditorRecord = await HandleArrowRightAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
+                    break;
+                case KeyboardKeyFacts.MovementKeys.HOME_KEY:
+                    focusedPlainTextEditorRecord = await HandleHomeAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
+                    break;
+                case KeyboardKeyFacts.MovementKeys.END_KEY:
+                    focusedPlainTextEditorRecord = await HandleEndAsync(focusedPlainTextEditorRecord, 
+                        keyDownEventRecord,
+                        cancellationToken);
+                    break;
+            }
+            
+            if (keyDownEventRecord.ShiftWasPressed)
+            {
+                var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
+                                         - startingPositionIndex!.Value;
+
+                focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
+                    startingPositionIndex.Value,
+                    (int)positionIndexDelta,
+                    cancellationToken);
+            }
+
+            return focusedPlainTextEditorRecord;
+        }
+
+        public static async Task<PlainTextEditorRecordBase> HandleArrowLeftAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
+            KeyDownEventRecord keyDownEventRecord,
+            CancellationToken cancellationToken)
+        {
             // '\t' characters render as 4 spaces but must override updates to these as only 1 character
             int? updateCurrentCharacterColumnIndexBy = null;
             int? updateCurrentPositionIndexBy = null;
@@ -96,17 +113,6 @@ public partial record PlainTextEditorStates
 
                 focusedPlainTextEditorRecord = await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord, 
                     cancellationToken);
-                
-                if (keyDownEventRecord.ShiftWasPressed)
-                {
-                    var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
-                                             - startingPositionIndex!.Value;
-
-                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
-                        startingPositionIndex.Value,
-                        (int)positionIndexDelta,
-                        cancellationToken);
-                }
 
                 var currentTokenIsWhitespace =
                     focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace;
@@ -127,21 +133,8 @@ public partial record PlainTextEditorStates
 
             if (currentToken.GetIndexInPlainText(true) == 0)
             {
-                focusedPlainTextEditorRecord = await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                return await SetPreviousTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
-                
-                if (keyDownEventRecord.ShiftWasPressed)
-                {
-                    var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
-                                             - startingPositionIndex!.Value;
-
-                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
-                        startingPositionIndex.Value,
-                        (int)positionIndexDelta,
-                        cancellationToken);
-                }
-
-                return focusedPlainTextEditorRecord;
             }
             else
             {
@@ -157,17 +150,6 @@ public partial record PlainTextEditorStates
                     CurrentPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex
                         - (updateCurrentPositionIndexBy ?? 1)
                 };
-                
-                if (keyDownEventRecord.ShiftWasPressed)
-                {
-                    var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
-                                             - startingPositionIndex!.Value;
-
-                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
-                        startingPositionIndex.Value,
-                        (int)positionIndexDelta,
-                        cancellationToken);
-                }
 
                 focusedPlainTextEditorRecord = await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
                         replacementCurrentToken,
@@ -348,21 +330,6 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
-            int? startingPositionIndex = null;
-            
-            if (keyDownEventRecord.ShiftWasPressed)
-            {
-                var temporary = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
-                    focusedPlainTextEditorRecord,
-                    false,
-                    cancellationToken);
-                
-                startingPositionIndex = (int) (temporary +
-                                               focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(false) +
-                    focusedPlainTextEditorRecord.FileHandle.VirtualCharacterIndexMarkerForStartOfARow
-                        [focusedPlainTextEditorRecord.CurrentRowIndex]);
-            }
-            
             // '\t' characters render as 4 spaces but must override updates to these as only 1 character
             int? updateCurrentCharacterColumnIndexBy = null;
             int? updateCurrentPositionIndexBy = null;
@@ -394,17 +361,6 @@ public partial record PlainTextEditorStates
 
                 focusedPlainTextEditorRecord = await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
-                
-                if (keyDownEventRecord.ShiftWasPressed)
-                {
-                    var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
-                                             - startingPositionIndex!.Value;
-
-                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
-                        startingPositionIndex.Value,
-                        (int)positionIndexDelta,
-                        cancellationToken);
-                }
 
                 var currentTokenIsWhitespace =
                     focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Whitespace;
@@ -444,15 +400,6 @@ public partial record PlainTextEditorStates
                             (focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true) -
                              rememberIndexInPlainText);
                     }
-
-                    if (keyDownEventRecord.ShiftWasPressed)
-                    {
-                        focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(
-                            focusedPlainTextEditorRecord,
-                            startingPositionIndex!.Value,
-                            updateCurrentCharacterColumnIndexBy.Value,
-                            cancellationToken);
-                    }
                     
                     focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                     {
@@ -471,21 +418,8 @@ public partial record PlainTextEditorStates
 
             if (currentToken.GetIndexInPlainText(true) == currentToken.PlainText.Length - 1)
             {
-                focusedPlainTextEditorRecord = await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
+                return await SetNextTokenAsCurrentAsync(focusedPlainTextEditorRecord,
                     cancellationToken);
-
-                if (keyDownEventRecord.ShiftWasPressed)
-                {
-                    var positionIndexDelta = focusedPlainTextEditorRecord.CurrentPositionIndex
-                                             - startingPositionIndex!.Value;
-
-                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(focusedPlainTextEditorRecord,
-                        startingPositionIndex.Value,
-                        (int)positionIndexDelta,
-                        cancellationToken);
-                }
-
-                return focusedPlainTextEditorRecord;
             }
             else
             {
@@ -493,15 +427,6 @@ public partial record PlainTextEditorStates
                 {
                     IndexInPlainText = currentToken.GetIndexInPlainText(true) + 1
                 };
-                
-                if (keyDownEventRecord.ShiftWasPressed)
-                {
-                    focusedPlainTextEditorRecord = await HandleSelectionSpanAsync(
-                        focusedPlainTextEditorRecord,
-                        startingPositionIndex!.Value,
-                        (updateCurrentCharacterColumnIndexBy ?? 1),
-                        cancellationToken);
-                }
 
                 focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                 {
