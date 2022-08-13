@@ -26,6 +26,7 @@ using BlazorStudio.ClassLib.Store.TerminalCase;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
+using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.RazorLib.SyntaxRootRender;

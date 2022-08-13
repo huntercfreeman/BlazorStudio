@@ -1,5 +1,6 @@
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
 namespace BlazorStudio.Tests.PlainTextEditorTests;

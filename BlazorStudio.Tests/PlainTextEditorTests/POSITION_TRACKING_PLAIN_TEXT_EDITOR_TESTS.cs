@@ -1,6 +1,7 @@
 using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.KeyDownEventCase;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;

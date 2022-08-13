@@ -1,4 +1,4 @@
-﻿namespace BlazorStudio.ClassLib.FileSystemApi;
+﻿namespace BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 
 public record FileHandleKey(Guid Guid)
 {

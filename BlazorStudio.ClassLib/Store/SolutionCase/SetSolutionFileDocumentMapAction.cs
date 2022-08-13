@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.RoslynHelpers;
 using Microsoft.CodeAnalysis;
 

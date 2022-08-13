@@ -1,7 +1,7 @@
 ﻿using System.IO.MemoryMappedFiles;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
-namespace BlazorStudio.ClassLib.FileSystemApi;
+namespace BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 
 public interface IFileSystemProvider
 {

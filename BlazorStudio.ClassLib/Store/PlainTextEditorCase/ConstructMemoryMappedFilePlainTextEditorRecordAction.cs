@@ -1,5 +1,6 @@
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 
 namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 

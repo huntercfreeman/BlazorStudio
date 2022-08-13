@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Virtualize;
 

@@ -1,4 +1,4 @@
-﻿namespace BlazorStudio.ClassLib.FileSystemApi;
+﻿namespace BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 
 /// <summary>
 /// A positive <see cref="ChangeAmount"/> is interpreted as a character(s) insertion at <see cref="Index"/>

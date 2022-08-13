@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using Fluxor;
 using Microsoft.CodeAnalysis;

@@ -1,7 +1,6 @@
-﻿using System.Collections.Concurrent;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
-namespace BlazorStudio.ClassLib.FileSystemApi;
+namespace BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 
 public partial class FileSystemProvider : IFileSystemProvider, IDisposable
 {

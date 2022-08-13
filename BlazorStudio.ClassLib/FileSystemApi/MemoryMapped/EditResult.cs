@@ -1,4 +1,4 @@
-﻿namespace BlazorStudio.ClassLib.FileSystemApi;
+﻿namespace BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 
 /// <summary>
 /// As the user types in the virtual file the content of the virtual file strays further from

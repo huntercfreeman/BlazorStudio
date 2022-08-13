@@ -1,7 +1,9 @@
 using BlazorStudio.ClassLib;
+using BlazorStudio.ClassLib.Clipboard;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
+using BlazorStudio.Tests.Clipboard;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,6 +31,8 @@ public class PLAIN_TEXT_EDITOR_STATES_TESTS
         var services = new ServiceCollection();
 
         services.AddPlainTextEditorClassLibServices();
+
+        services.AddScoped<IClipboardProvider, TemporaryInMemoryClipboardProvider>();
 
         ServiceProvider = services.BuildServiceProvider();
 

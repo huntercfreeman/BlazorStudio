@@ -1,5 +1,6 @@
 ﻿using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 
 namespace BlazorStudio.Tests.FileHandleTests;
 
