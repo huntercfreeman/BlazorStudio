@@ -7,39 +7,35 @@
      @onmouseover="SelectTextOnMouseOverAsync">
     <PlainTextEditorLineNumberDisplay MostDigitsInARowNumber="MostDigitsInARowNumber" />
     
-    <CascadingValue Name="NotifyCharacterWasClicked" Value="new Action(() => _characterWasClicked = true)">
-        <CascadingValue Name="NotifyOnMouseOver" Value="new Action(() => _childOnMouseOver++)">
-            <div class="pte_plain-text-editor-row-display-body"
-                 style="@WidthStyleCss">
+    <div class="pte_plain-text-editor-row-display-body"
+         style="@WidthStyleCss">
 
-                @{
-                    // Ensure reference to PlainTextEditorRow does
-                    // not change while looping over tokens
-                    // by making a local reference to it.
-                    var currentPlainTextEditorRow = PlainTextEditorRow;
-                    
-                    // The first character is always a 'fake' StartOfRowToken and should not be counted.
-                    var runningTotalOfCharacters = 0;
+        @{
+            // Ensure reference to PlainTextEditorRow does
+            // not change while looping over tokens
+            // by making a local reference to it.
+            var currentPlainTextEditorRow = PlainTextEditorRow;
+            
+            // The first character is always a 'fake' StartOfRowToken and should not be counted.
+            var runningTotalOfCharacters = 0;
 
-                    for (int i = 0; i < currentPlainTextEditorRow.Tokens.Count; i++)
-                    {
-                        var tokenIndex = i;
+            for (int i = 0; i < currentPlainTextEditorRow.Tokens.Count; i++)
+            {
+                var tokenIndex = i;
 
-                        var token = currentPlainTextEditorRow.Tokens[tokenIndex];
+                var token = currentPlainTextEditorRow.Tokens[tokenIndex];
 
-                        var localRunningTotalOfCharacters = runningTotalOfCharacters;
-                        
-                        runningTotalOfCharacters += token.PlainText.Length;
-                        
-                        <CascadingValue Name="TokenIndex" Value="tokenIndex">
-                            <TextTokenDisplay @key="token.Key"
-                                              TextToken="token"
-                                              StartOfSpanRelativeToRow="localRunningTotalOfCharacters"
-                                              StartOfRowSpanRelativeToDocument="VirtualCharacterIndexMarkerForStartOfARow[RowIndex]"/>
-                        </CascadingValue>
-                    }
-                }
-            </div>
-        </CascadingValue>
-    </CascadingValue>
+                var localRunningTotalOfCharacters = runningTotalOfCharacters;
+                
+                runningTotalOfCharacters += token.PlainText.Length;
+                
+                <CascadingValue Name="TokenIndex" Value="tokenIndex">
+                    <TextTokenDisplay @key="token.Key"
+                                      TextToken="token"
+                                      StartOfSpanRelativeToRow="localRunningTotalOfCharacters"
+                                      StartOfRowSpanRelativeToDocument="VirtualCharacterIndexMarkerForStartOfARow[RowIndex]"/>
+                </CascadingValue>
+            }
+        }
+    </div>
 </div>

@@ -38,12 +38,10 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
     [Parameter]
     public string WidthAndHeightTestId { get; set; }
 
-    private bool _characterWasClicked;
     private SequenceKey? _previousSequenceKey;
     private int _previousMostDigitsInARowNumber;
     private bool _previousIsMouseSelectingText;
     private bool _previousShouldDisplay;
-    private int _childOnMouseOver;
     private int _previousCurrentRowIndex;
 
     private string IsActiveCss => PlainTextEditorCurrentRowIndex == RowIndex
