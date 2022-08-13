@@ -2,6 +2,7 @@
 
 @using BlazorStudio.ClassLib.FileSystem.Interfaces
 @using BlazorStudio.ClassLib.FileConstants
+@using BlazorStudio.ClassLib.FileSystem.Classes
 
 <div class="bstudio_solution-explorer"
      style="@Dimensions.DimensionsCssString">
@@ -45,7 +46,7 @@
                                              DropdownKey="_fileDropdownKey">
                                          
                                             @{
-                                                var contextMenuEventDto = new TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath>
+                                                var contextMenuEventDto = new TreeViewWrapDisplay<AbsoluteFilePathDotNet>.ContextMenuEventDto<AbsoluteFilePathDotNet>
                                                 {
                                                     Item = solutionExplorerState.SolutionAbsoluteFilePath,
                                                     MouseEventArgs = null,
@@ -62,7 +63,7 @@
                                         <TreeViewWrapDisplay @ref="_treeViewWrapDisplay"
                                  ShouldDispose="false"
                                  TreeViewWrapKey="_inputFileTreeViewKey"
-                                 T="IAbsoluteFilePath"
+                                 T="AbsoluteFilePathDotNet"
                                  RootItems="_rootAbsoluteFilePaths"
                                  GetChildrenFunc="LoadAbsoluteFilePathChildrenAsync"
                                  Context="absoluteFilePath"

@@ -184,4 +184,6 @@ public class AbsoluteFilePath : IAbsoluteFilePath
 
         return absoluteFilePathString;
     }
+
+    public virtual AbsoluteFilePathKind AbsoluteFilePathKind { get; } = AbsoluteFilePathKind.Default;
 }

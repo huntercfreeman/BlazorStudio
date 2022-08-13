@@ -25,7 +25,7 @@ public static class FileToDocumentIndexer
             {
                 if (document.FilePath is not null)
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(document.FilePath, false);
+                    var absoluteFilePath = new AbsoluteFilePathDotNet(document.FilePath, false, project.Id);
                     
                     localFileDocumentMap
                         .Add(new AbsoluteFilePathStringValue(absoluteFilePath),

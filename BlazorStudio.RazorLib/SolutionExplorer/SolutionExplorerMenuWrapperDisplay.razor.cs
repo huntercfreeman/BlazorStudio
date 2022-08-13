@@ -38,13 +38,13 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter]
-    public TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath> ContextMenuEventDto { get; set; } = null!;
+    public TreeViewWrapDisplay<AbsoluteFilePathDotNet>.ContextMenuEventDto<AbsoluteFilePathDotNet> ContextMenuEventDto { get; set; } = null!;
 
     private DialogKey _addProjectReferenceDialogKey = DialogKey.NewDialogKey();
     private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
 
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
-        TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
+        TreeViewWrapDisplay<AbsoluteFilePathDotNet>.ContextMenuEventDto<AbsoluteFilePathDotNet> contextMenuEventDto)
     {
         var createNewEmptyFile = MenuOptionFacts.File
             .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
@@ -118,7 +118,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             DialogRecord addProjectReferenceDialog = null;
 
             // TODO: This is really poorly written with closure hacks and other nonsense and needs rewritten. I am really tired and should just take a break.
-            void AddProjectReferenceConfirmOnClickOverrideAction(ImmutableArray<IAbsoluteFilePath> activeItems)
+            void AddProjectReferenceConfirmOnClickOverrideAction(ImmutableArray<AbsoluteFilePathDotNet> activeItems)
             {
                 Dispatcher.Dispatch(new DisposeDialogAction(addProjectReferenceDialog));
 
@@ -170,7 +170,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 {
                     {
                         nameof(InputFileDialog.IsValidSelectionOverrideFunc),
-                        new Func<ImmutableArray<IAbsoluteFilePath>, bool>(AddProjectReferenceInputIsValidOverride)
+                        new Func<ImmutableArray<AbsoluteFilePathDotNet>, bool>(AddProjectReferenceInputIsValidOverride)
                     },
                     {
                         nameof(InputFileDialog.InvalidSelectionTextOverride),
@@ -178,7 +178,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     },
                     {
                         nameof(InputFileDialog.ConfirmOnClickOverrideAction),
-                        new Action<ImmutableArray<IAbsoluteFilePath>>(AddProjectReferenceConfirmOnClickOverrideAction)
+                        new Action<ImmutableArray<AbsoluteFilePathDotNet>>(AddProjectReferenceConfirmOnClickOverrideAction)
                     }
                 }
             );
@@ -265,7 +265,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         },
                         {
                             nameof(DeleteFileForm.OnAfterSubmitForm),
-                            new Action<IAbsoluteFilePath>(DeleteFileFormOnAfterSubmitForm)
+                            new Action<AbsoluteFilePathDotNet>(DeleteFileFormOnAfterSubmitForm)
                         },
                         {
                             nameof(DeleteFileForm.OnAfterCancelForm),
@@ -346,7 +346,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             TimeSpan.FromSeconds(10));
     }
 
-    private void DeleteFileFormOnAfterSubmitForm(IAbsoluteFilePath absoluteFilePath)
+    private void DeleteFileFormOnAfterSubmitForm(AbsoluteFilePathDotNet absoluteFilePath)
     {
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
             {
@@ -368,7 +368,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             TimeSpan.FromSeconds(10));
     }
 
-    private bool AddProjectReferenceInputIsValidOverride(ImmutableArray<IAbsoluteFilePath> activeItems)
+    private bool AddProjectReferenceInputIsValidOverride(ImmutableArray<AbsoluteFilePathDotNet> activeItems)
     {
         return activeItems[0].ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT;
     }

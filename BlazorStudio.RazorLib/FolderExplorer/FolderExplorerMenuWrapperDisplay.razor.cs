@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileConstants;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.Sequence;
@@ -91,8 +92,10 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
                     },
                 });
 
+        var absoluteFilePathDotNet = new AbsoluteFilePathDotNet(contextMenuEventDto.Item.GetAbsoluteFilePathString(), false, null);
+        
         var setActiveSolution = MenuOptionFacts.DotNet
-            .SetActiveSolution(() => Dispatcher.Dispatch(new SetSolutionExplorerAction(contextMenuEventDto.Item, SequenceKey.NewSequenceKey())));
+            .SetActiveSolution(() => Dispatcher.Dispatch(new SetSolutionExplorerAction(absoluteFilePathDotNet, SequenceKey.NewSequenceKey())));
 
         List<MenuOptionRecord> menuOptionRecords = new();
 

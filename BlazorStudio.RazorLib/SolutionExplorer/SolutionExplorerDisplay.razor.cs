@@ -56,10 +56,10 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
     private bool _isInitialized;
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-    private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
-    private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
+    private TreeViewWrap<AbsoluteFilePathDotNet> _treeViewWrap = null!;
+    private List<AbsoluteFilePathDotNet> _rootAbsoluteFilePaths;
     private RichErrorModel? _solutionExplorerStateWrapStateChangedRichErrorModel;
-    private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
+    private TreeViewWrapDisplay<AbsoluteFilePathDotNet>? _treeViewWrapDisplay;
     private Func<Task> _mostRecentRefreshContextMenuTarget;
 
     private Dimensions _fileDropdownDimensions = new()
@@ -113,8 +113,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
         if (firstRender)
         {
             var solutionAbsoluteFilePath =
-                new AbsoluteFilePath("/home/hunter/RiderProjects/TestBlazorStudio/TestBlazorStudio.sln",
-                    false);
+                new AbsoluteFilePathDotNet("/home/hunter/RiderProjects/TestBlazorStudio/TestBlazorStudio.sln",
+                    false, 
+                    null);
 
             Dispatcher.Dispatch(new SetSolutionExplorerAction(solutionAbsoluteFilePath, SequenceKey.NewSequenceKey()));
         }       
@@ -134,7 +135,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
             await InvokeAsync(StateHasChanged);
 
-            _treeViewWrap = new TreeViewWrap<IAbsoluteFilePath>(
+            _treeViewWrap = new TreeViewWrap<AbsoluteFilePathDotNet>(
                 TreeViewWrapKey.NewTreeViewWrapKey());
 
             _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
@@ -168,9 +169,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
         }
     }
 
-    private async Task<IEnumerable<IAbsoluteFilePath>> LoadAbsoluteFilePathChildrenAsync(IAbsoluteFilePath absoluteFilePath)
+    private async Task<IEnumerable<AbsoluteFilePathDotNet>> LoadAbsoluteFilePathChildrenAsync(AbsoluteFilePathDotNet absoluteFilePathDotNet)
     {
-        if (absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+        if (absoluteFilePathDotNet.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
         {
             try
             {
@@ -178,7 +179,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
                 await InvokeAsync(StateHasChanged);
 
-                var targetPath = absoluteFilePath.GetAbsoluteFilePathString();
+                var targetPath = absoluteFilePathDotNet.GetAbsoluteFilePathString();
 
                 // Attempt to set the version of MSBuild.
                 VisualStudioInstance[] visualStudioInstances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
@@ -197,11 +198,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
                 var solution = await workspace.OpenSolutionAsync(targetPath);
 
-                var projects = new List<AbsoluteFilePath>();
+                var projects = new List<AbsoluteFilePathDotNet>();
 
                 foreach (var project in solution.Projects)
                 {
-                    projects.Add(new AbsoluteFilePath(project.FilePath ?? "{null file path}", false));
+                    projects.Add(new AbsoluteFilePathDotNet(project.FilePath ?? "{null file path}", false, project.Id));
                 }
 
                 _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
@@ -220,9 +221,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             }
         }
         
-        if (absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
+        if (absoluteFilePathDotNet.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
         {
-            var containingDirectory = absoluteFilePath.Directories.Last();
+            var containingDirectory = absoluteFilePathDotNet.Directories.Last();
 
             if (containingDirectory is AbsoluteFilePath containingDirectoryAbsoluteFilePath)
             {
@@ -232,14 +233,14 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 var projectChildDirectoryAbsolutePaths = Directory
                     .GetDirectories(containingDirectoryAbsoluteFilePath.GetAbsoluteFilePathString())
                     .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
-                    .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, true))
+                    .Select(x => new AbsoluteFilePathDotNet(x, true, absoluteFilePathDotNet.ProjectId))
                     .ToList();
 
                 var uniqueDirectories =
                     UniqueFileFacts.GetUniqueFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
 
-                var foundUniqueDirectories = new List<IAbsoluteFilePath>();
-                var foundDefaultDirectories = new List<IAbsoluteFilePath>();
+                var foundUniqueDirectories = new List<AbsoluteFilePathDotNet>();
+                var foundDefaultDirectories = new List<AbsoluteFilePathDotNet>();
 
                 foreach (var directory in projectChildDirectoryAbsolutePaths)
                 {
@@ -268,7 +269,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 var projectChildFileAbsolutePaths = Directory
                     .GetFiles(containingDirectoryAbsoluteFilePath.GetAbsoluteFilePathString())
                     .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-                    .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, false))
+                    .Select(x => new AbsoluteFilePathDotNet(x, false, absoluteFilePathDotNet.ProjectId))
                     .ToList();
 
                 return projectChildDirectoryAbsolutePaths
@@ -276,28 +277,28 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             }
         }
 
-        if (!absoluteFilePath.IsDirectory)
+        if (!absoluteFilePathDotNet.IsDirectory)
         {
-            return Array.Empty<IAbsoluteFilePath>();
+            return Array.Empty<AbsoluteFilePathDotNet>();
         }
 
         var childDirectoryAbsolutePaths = Directory
-            .GetDirectories(absoluteFilePath.GetAbsoluteFilePathString())
+            .GetDirectories(absoluteFilePathDotNet.GetAbsoluteFilePathString())
             .OrderBy(x => x)
-            .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, true))
+            .Select(x => new AbsoluteFilePathDotNet(x, true, absoluteFilePathDotNet.ProjectId))
             .ToList();
 
         var childFileAbsolutePaths = Directory
-            .GetFiles(absoluteFilePath.GetAbsoluteFilePathString())
+            .GetFiles(absoluteFilePathDotNet.GetAbsoluteFilePathString())
             .OrderBy(x => x)
-            .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, false))
+            .Select(x => new AbsoluteFilePathDotNet(x, false, absoluteFilePathDotNet.ProjectId))
             .ToList();
 
         return childDirectoryAbsolutePaths
             .Union(childFileAbsolutePaths);
     }
 
-    private void WorkspaceExplorerTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)
+    private void WorkspaceExplorerTreeViewOnEnterKeyDown(AbsoluteFilePathDotNet absoluteFilePath, Action toggleIsExpanded)
     {
         if (!absoluteFilePath.IsDirectory)
         {
@@ -316,12 +317,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
         }
     }
 
-    private void WorkspaceExplorerTreeViewOnSpaceKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)
+    private void WorkspaceExplorerTreeViewOnSpaceKeyDown(AbsoluteFilePathDotNet absoluteFilePath, Action toggleIsExpanded)
     {
         toggleIsExpanded.Invoke();
     }
 
-    private void WorkspaceExplorerTreeViewOnDoubleClick(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
+    private void WorkspaceExplorerTreeViewOnDoubleClick(AbsoluteFilePathDotNet absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
     {
         if (!absoluteFilePath.IsDirectory)
         {
@@ -340,7 +341,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
         }
     }
 
-    private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)
+    private bool GetIsExpandable(AbsoluteFilePathDotNet absoluteFilePath)
     {
         return absoluteFilePath.IsDirectory ||
                absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION ||

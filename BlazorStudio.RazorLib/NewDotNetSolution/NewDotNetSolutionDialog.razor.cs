@@ -86,11 +86,11 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
             InvokeAsync(StateHasChanged);
 
-            var createdSolutionContainingDirectory = new AbsoluteFilePath(
-                InputFileDialogSelection.GetAbsoluteFilePathString() + _solutionName, true);
+            var createdSolutionContainingDirectory = new AbsoluteFilePathDotNet(
+                InputFileDialogSelection.GetAbsoluteFilePathString() + _solutionName, true, null);
             
-            var createdSolutionFile = new AbsoluteFilePath(
-                createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + '.' + ExtensionNoPeriodFacts.DOT_NET_SOLUTION, false);
+            var createdSolutionFile = new AbsoluteFilePathDotNet(
+                createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + '.' + ExtensionNoPeriodFacts.DOT_NET_SOLUTION, false, null);
 
             Dispatcher.Dispatch(new SetFolderExplorerAction(createdSolutionContainingDirectory));
             Dispatcher.Dispatch(new SetSolutionExplorerAction(createdSolutionFile, SequenceKey.NewSequenceKey()));

@@ -20,4 +20,5 @@ public interface IAbsoluteFilePath : IFilePath
     /// </summary>
     public string GetRootDirectory { get; }
     public string GetAbsoluteFilePathString();
+    public AbsoluteFilePathKind AbsoluteFilePathKind { get; }
 }
