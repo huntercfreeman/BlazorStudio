@@ -164,6 +164,11 @@ public partial class TextTokenDisplay : FluxorComponent
             }
         }
 
+        if (TextToken.Kind == TextTokenKind.Punctuation)
+        {
+            classBuilder.Append(" pte_plain-text-editor-text-token-display-punctuation");
+        }
+
         return classBuilder.ToString();
     }
 }

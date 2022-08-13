@@ -45,13 +45,15 @@ public static class KeyboardKeyFacts
             case PunctuationKeys.CloseCurlyBrace:
             case PunctuationKeys.OpenParenthesis:
             case PunctuationKeys.CloseParenthesis:
-            case PunctuationKeys.OpenBracket:
-            case PunctuationKeys.CloseBracket:
+            case PunctuationKeys.OpenSquareBracket:
+            case PunctuationKeys.CloseSquareBracket:
             case PunctuationKeys.Period:
             case PunctuationKeys.Semicolon:
             case PunctuationKeys.Equal:
             case PunctuationKeys.DoubleQuote:
             case PunctuationKeys.SingleQuote:
+            case PunctuationKeys.OpenArrowBracket:
+            case PunctuationKeys.EndArrowBracket:
                 return true;
             default:
                 return false;
@@ -80,13 +82,15 @@ public static class KeyboardKeyFacts
         public const string CloseCurlyBrace = "}";
         public const string OpenParenthesis = "(";
         public const string CloseParenthesis = ")";
-        public const string OpenBracket = "[";
-        public const string CloseBracket = "]";
+        public const string OpenSquareBracket = "[";
+        public const string CloseSquareBracket = "]";
         public const string Period = ".";
         public const string Semicolon = ";";
         public const string Equal = "=";
         public const string DoubleQuote = "\"";
         public const string SingleQuote = "'";
+        public const string OpenArrowBracket = "<";
+        public const string EndArrowBracket = ">";
     }
     
     public static class NewLineCodes

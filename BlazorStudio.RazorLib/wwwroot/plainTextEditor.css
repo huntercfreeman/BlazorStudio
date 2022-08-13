@@ -155,3 +155,7 @@
 .pte_plain-text-editor-character-selected {
     background-color: var(--pte_plain-text-editor-selection);
 }
+
+.pte_plain-text-editor-text-token-display-punctuation {
+    color: var(--pte_plain-text-editor-punctuation);
+}
