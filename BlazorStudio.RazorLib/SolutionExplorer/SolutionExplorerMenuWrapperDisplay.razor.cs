@@ -251,8 +251,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         },
                     });
 
-            menuOptionRecords.Add(createNewEmptyFile);
             menuOptionRecords.Add(createNewTemplatedFile);
+            menuOptionRecords.Add(createNewEmptyFile);
             menuOptionRecords.Add(createNewDirectory);
             menuOptionRecords.Add(setAsStartupProject);
             menuOptionRecords.Add(addProjectReference);

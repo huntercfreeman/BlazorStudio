@@ -34,7 +34,7 @@ public partial class ExplorersDisplay : ComponentBase
         }
     };
 
-    private Dimensions _workspaceExplorerDimensions = new Dimensions
+    private Dimensions _folderExplorerDimensions = new Dimensions
     {
         DimensionsPositionKind = DimensionsPositionKind.Static,
         WidthCalc = new List<DimensionUnit>
