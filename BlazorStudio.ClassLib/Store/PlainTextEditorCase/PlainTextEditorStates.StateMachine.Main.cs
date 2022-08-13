@@ -119,6 +119,11 @@ public partial record PlainTextEditorStates
                     cancellationToken);
             }
 
+            focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+            {
+                PreviouslySetCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
+            };
+            
             return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
                 replacementCurrentToken,
                 cancellationToken);
@@ -201,6 +206,11 @@ public partial record PlainTextEditorStates
                     (int)positionIndexDelta,
                     cancellationToken);
             }
+            
+            focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+            {
+                PreviouslySetCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
+            };
 
             return await ReplaceCurrentTokenWithAsync(focusedPlainTextEditorRecord, 
                 replacementCurrentToken,

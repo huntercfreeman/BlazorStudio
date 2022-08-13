@@ -40,6 +40,11 @@ public partial record PlainTextEditorStates
                     focusedPlainTextEditorRecord = await HandleArrowLeftAsync(focusedPlainTextEditorRecord, 
                         keyDownEventRecord,
                         cancellationToken);
+
+                    focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                    {
+                        PreviouslySetCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
+                    };
                     break;
                 case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN_KEY:
@@ -58,16 +63,31 @@ public partial record PlainTextEditorStates
                     focusedPlainTextEditorRecord = await HandleArrowRightAsync(focusedPlainTextEditorRecord, 
                         keyDownEventRecord,
                         cancellationToken);
+                    
+                    focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                    {
+                        PreviouslySetCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
+                    };
                     break;
                 case KeyboardKeyFacts.MovementKeys.HOME_KEY:
                     focusedPlainTextEditorRecord = await HandleHomeAsync(focusedPlainTextEditorRecord, 
                         keyDownEventRecord,
                         cancellationToken);
+                    
+                    focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                    {
+                        PreviouslySetCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
+                    };
                     break;
                 case KeyboardKeyFacts.MovementKeys.END_KEY:
                     focusedPlainTextEditorRecord = await HandleEndAsync(focusedPlainTextEditorRecord, 
                         keyDownEventRecord,
                         cancellationToken);
+                    
+                    focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
+                    {
+                        PreviouslySetCharacterColumnIndex = focusedPlainTextEditorRecord.CurrentCharacterColumnIndex
+                    };
                     break;
             }
             
@@ -176,12 +196,7 @@ public partial record PlainTextEditorStates
                 return focusedPlainTextEditorRecord;
             }
 
-            var inclusiveStartingColumnIndexOfCurrentToken = await
-                CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
-                    true,
-                    cancellationToken);
-
-            var currentColumnIndexWithIndexInPlainTextAccountedFor = inclusiveStartingColumnIndexOfCurrentToken +
+            var currentColumnIndexWithIndexInPlainTextAccountedFor = focusedPlainTextEditorRecord.PreviouslySetCharacterColumnIndex +
                                                                      focusedPlainTextEditorRecord.CurrentTextToken
                                                                          .GetIndexInPlainText(true);
 
@@ -258,12 +273,7 @@ public partial record PlainTextEditorStates
             if (focusedPlainTextEditorRecord.CurrentRowIndex <= 0)
                 return focusedPlainTextEditorRecord;
 
-            var inclusiveStartingColumnIndexOfCurrentToken =
-                await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(focusedPlainTextEditorRecord,
-                    true,
-                    cancellationToken);
-
-            var currentColumnIndexWithIndexInPlainTextAccountedFor = inclusiveStartingColumnIndexOfCurrentToken +
+            var currentColumnIndexWithIndexInPlainTextAccountedFor = focusedPlainTextEditorRecord.PreviouslySetCharacterColumnIndex +
                                                                      focusedPlainTextEditorRecord.CurrentTextToken
                                                                          .GetIndexInPlainText(true);
 
