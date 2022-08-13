@@ -26,36 +26,39 @@ public partial class EditorDisplay : FluxorComponent
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (File.Exists("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_NEW-LINE.c"))
+        if (firstRender)
         {
-            var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+            if (File.Exists("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_NEW-LINE.c"))
+            {
+                var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
-            var absoluteFilePath = new AbsoluteFilePath(
-                "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_NEW-LINE.c", 
-                false);
+                var absoluteFilePath = new AbsoluteFilePath(
+                    "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_NEW-LINE.c", 
+                    false);
             
-            Dispatcher.Dispatch(
-                new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
-                    absoluteFilePath,
-                    FileSystemProvider,
-                    CancellationToken.None)
-            );
-        }
+                Dispatcher.Dispatch(
+                    new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
+                        absoluteFilePath,
+                        FileSystemProvider,
+                        CancellationToken.None)
+                );
+            }
         
-        if (File.Exists("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c"))
-        {
-            var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+            if (File.Exists("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c"))
+            {
+                var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
-            var absoluteFilePath = new AbsoluteFilePath(
-                "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c", 
-                false);
+                var absoluteFilePath = new AbsoluteFilePath(
+                    "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c", 
+                    false);
             
-            Dispatcher.Dispatch(
-                new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
-                    absoluteFilePath,
-                    FileSystemProvider,
-                    CancellationToken.None)
-            );
+                Dispatcher.Dispatch(
+                    new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
+                        absoluteFilePath,
+                        FileSystemProvider,
+                        CancellationToken.None)
+                );
+            }
         }
         
         base.OnAfterRender(firstRender);
