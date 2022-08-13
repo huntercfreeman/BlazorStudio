@@ -29,7 +29,9 @@ using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
+using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.SolutionCase;
+using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.SyntaxRootRender;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
@@ -184,7 +186,26 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 // Attempt to set the version of MSBuild.
                 VisualStudioInstance[] visualStudioInstances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
 
-                // TODO: Allow user to select the MSBuild
+                // var promptCancellationTokenSource = new CancellationTokenSource();
+                //
+                // var cancellationToken = promptCancellationTokenSource.Token;
+                //
+                // Action completePrompt = () => promptCancellationTokenSource.Cancel();
+                //
+                // Dispatcher.Dispatch(new RegisterNotificationAction(new NotificationRecord(
+                //     NotificationKey.NewNotificationKey(), 
+                //     "Select MSBuild version", 
+                //     typeof(SelectMSBuildForm), 
+                //     new Dictionary<string, object?>
+                //     {
+                //         {
+                //             nameof(SelectMSBuildForm.VisualStudioInstances),
+                //             visualStudioInstances
+                //         }
+                //     })));
+
+                // await cancellationToken.;
+                
                 var visualStudioInstance = visualStudioInstances[0];
 
                 if (!MSBuildLocator.IsRegistered)
