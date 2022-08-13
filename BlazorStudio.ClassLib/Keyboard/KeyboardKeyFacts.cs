@@ -49,6 +49,9 @@ public static class KeyboardKeyFacts
             case PunctuationKeys.CloseBracket:
             case PunctuationKeys.Period:
             case PunctuationKeys.Semicolon:
+            case PunctuationKeys.Equal:
+            case PunctuationKeys.DoubleQuote:
+            case PunctuationKeys.SingleQuote:
                 return true;
             default:
                 return false;
@@ -81,6 +84,9 @@ public static class KeyboardKeyFacts
         public const string CloseBracket = "]";
         public const string Period = ".";
         public const string Semicolon = ";";
+        public const string Equal = "=";
+        public const string DoubleQuote = "\"";
+        public const string SingleQuote = "'";
     }
     
     public static class NewLineCodes
