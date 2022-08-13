@@ -29,7 +29,8 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
-            if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Default)
+            if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Default ||
+                focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Punctuation)
             {
                 // Remove character from word
 
