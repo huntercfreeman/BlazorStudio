@@ -72,9 +72,13 @@ public partial record PlainTextEditorStates
                     cancellationToken);
 
                 if (nextTokenTuple.rowIndex == focusedPlainTextEditorRecord.CurrentRowIndex &&
-                    nextTokenTuple.token.Kind == matchTextTokenKind)
+                    nextTokenTuple.token.Kind == matchTextTokenKind &&
+                    focusedPlainTextEditorRecord.CurrentTextToken
+                        .GetIndexInPlainText(true) == 
+                            focusedPlainTextEditorRecord.CurrentTextToken.PlainText.Length - 1)
                 {
-                    // if (active token is not a word, and the next token is a word however then prepend text to that next token)
+                    // if at the end of the current token and the next
+                    // token is of the same Kind prepend text to that next token
 
                     if (!keyDownEventRecord.IsForced &&
                         focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)

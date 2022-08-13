@@ -19,6 +19,7 @@ public partial record PlainTextEditorStates
             switch (currentToken.Kind)
             {
                 case TextTokenKind.Default:
+                case TextTokenKind.Punctuation:
                     return await SplitDefaultTokenAsync(focusedPlainTextEditorRecord, 
                         tokenToInsertBetweenSplit, 
                         isForced,
