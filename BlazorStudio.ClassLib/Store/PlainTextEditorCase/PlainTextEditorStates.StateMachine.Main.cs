@@ -268,10 +268,13 @@ public partial record PlainTextEditorStates
                     SequenceKey = SequenceKey.NewSequenceKey()
                 });
 
-            return focusedPlainTextEditorRecord with
+            focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
             {
                 Rows = nextRowList,
             };
+            
+            return await MergeTokensIfApplicableAsync(focusedPlainTextEditorRecord,
+                cancellationToken);
         }
 
         private static async Task<PlainTextEditorRecordBase> RemoveStartOfRowTokenAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
