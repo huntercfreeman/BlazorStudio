@@ -4,7 +4,6 @@ using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Html;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.TerminalCase;
-using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.UserInterface;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;

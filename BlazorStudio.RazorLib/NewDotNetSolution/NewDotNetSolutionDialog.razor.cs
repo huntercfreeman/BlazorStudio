@@ -5,9 +5,9 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
-using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using static BlazorStudio.RazorLib.NewCSharpProject.NewCSharpProjectDialog;
@@ -92,7 +92,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
             var createdSolutionFile = new AbsoluteFilePath(
                 createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + '.' + ExtensionNoPeriodFacts.DOT_NET_SOLUTION, false);
 
-            Dispatcher.Dispatch(new SetWorkspaceAction(createdSolutionContainingDirectory));
+            Dispatcher.Dispatch(new SetFolderExplorerAction(createdSolutionContainingDirectory));
             Dispatcher.Dispatch(new SetSolutionExplorerAction(createdSolutionFile, SequenceKey.NewSequenceKey()));
 
             Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));

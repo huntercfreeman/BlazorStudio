@@ -2,7 +2,6 @@
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
-using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.NewCSharpProject;

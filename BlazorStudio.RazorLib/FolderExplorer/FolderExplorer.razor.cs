@@ -1,21 +1,13 @@
-﻿using System.Collections.Immutable;
-using BlazorStudio.ClassLib.Errors;
-using BlazorStudio.ClassLib.FileConstants;
+﻿using BlazorStudio.ClassLib.Errors;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
-using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DropdownCase;
-using BlazorStudio.ClassLib.Store.EditorCase;
-using BlazorStudio.ClassLib.Store.MenuCase;
+using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
-using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
-using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
-using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -23,12 +15,12 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace BlazorStudio.RazorLib.Workspace;
+namespace BlazorStudio.RazorLib.FolderExplorer;
 
-public partial class WorkspaceExplorer : FluxorComponent, IDisposable
+public partial class FolderExplorer : FluxorComponent, IDisposable
 {
     [Inject]
-    private IState<WorkspaceState> WorkspaceStateWrap { get; set; } = null!;
+    private IState<FolderExplorerState> WorkspaceStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -83,7 +75,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
     {
         var workspaceState = WorkspaceStateWrap.Value;
 
-        if (workspaceState.WorkspaceAbsoluteFilePath is not null)
+        if (workspaceState.FolderAbsoluteFilePath is not null)
         {
             _isInitialized = false;
             _workspaceStateWrapStateChangedRichErrorModel = null;
@@ -96,7 +88,7 @@ public partial class WorkspaceExplorer : FluxorComponent, IDisposable
 
             _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
                 {
-                    _rootAbsoluteFilePaths = (await LoadAbsoluteFilePathChildrenAsync(workspaceState.WorkspaceAbsoluteFilePath))
+                    _rootAbsoluteFilePaths = (await LoadAbsoluteFilePathChildrenAsync(workspaceState.FolderAbsoluteFilePath))
                         .ToList();
 
                     _isInitialized = true;

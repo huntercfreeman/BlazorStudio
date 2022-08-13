@@ -25,45 +25,45 @@ public partial class EditorDisplay : FluxorComponent
     [Parameter, EditorRequired]
     public ClassLib.UserInterface.Dimensions Dimensions { get; set; } = null!;
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            if (File.Exists("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_NEW-LINE.c"))
-            {
-                var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-
-                var absoluteFilePath = new AbsoluteFilePath(
-                    "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_NEW-LINE.c", 
-                    false);
-            
-                Dispatcher.Dispatch(
-                    new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
-                        absoluteFilePath,
-                        FileSystemProvider,
-                        CancellationToken.None)
-                );
-            }
-        
-            if (File.Exists("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c"))
-            {
-                var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-
-                var absoluteFilePath = new AbsoluteFilePath(
-                    "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c", 
-                    false);
-            
-                Dispatcher.Dispatch(
-                    new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
-                        absoluteFilePath,
-                        FileSystemProvider,
-                        CancellationToken.None)
-                );
-            }
-        }
-        
-        base.OnAfterRender(firstRender);
-    }
+    // protected override void OnAfterRender(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         if (File.Exists("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_NEW-LINE.c"))
+    //         {
+    //             var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+    //
+    //             var absoluteFilePath = new AbsoluteFilePath(
+    //                 "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_NEW-LINE.c", 
+    //                 false);
+    //         
+    //             Dispatcher.Dispatch(
+    //                 new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
+    //                     absoluteFilePath,
+    //                     FileSystemProvider,
+    //                     CancellationToken.None)
+    //             );
+    //         }
+    //     
+    //         if (File.Exists("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c"))
+    //         {
+    //             var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
+    //
+    //             var absoluteFilePath = new AbsoluteFilePath(
+    //                 "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c", 
+    //                 false);
+    //         
+    //             Dispatcher.Dispatch(
+    //                 new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
+    //                     absoluteFilePath,
+    //                     FileSystemProvider,
+    //                     CancellationToken.None)
+    //             );
+    //         }
+    //     }
+    //     
+    //     base.OnAfterRender(firstRender);
+    // }
 
     private void SetActiveTabIndexOnClick(int tabIndex)
     {

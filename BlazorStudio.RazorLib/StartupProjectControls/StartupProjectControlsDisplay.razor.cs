@@ -4,7 +4,6 @@ using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.Store.StartupProject;
 using BlazorStudio.ClassLib.Store.TerminalCase;
-using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;

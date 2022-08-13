@@ -1,7 +1,6 @@
 ﻿using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
-using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.TreeViewCase;
@@ -11,6 +10,7 @@ using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DropdownCase;
+using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
@@ -109,7 +109,7 @@ public partial class InputFileDialog : ComponentBase
 
         if (absoluteFilePath.IsDirectory)
         {
-            Dispatcher.Dispatch(new SetWorkspaceAction(absoluteFilePath));
+            Dispatcher.Dispatch(new SetFolderExplorerAction(absoluteFilePath));
             Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
         }
     }
@@ -152,7 +152,7 @@ public partial class InputFileDialog : ComponentBase
         }
         else if (absoluteFilePaths.Any())
         {
-            Dispatcher.Dispatch(new SetWorkspaceAction(absoluteFilePaths[0]));
+            Dispatcher.Dispatch(new SetFolderExplorerAction(absoluteFilePaths[0]));
             Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
         }
     }

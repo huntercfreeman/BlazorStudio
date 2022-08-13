@@ -12,7 +12,7 @@
         @{
             var workspaceState = WorkspaceStateWrap.Value;
 
-            if (workspaceState.WorkspaceAbsoluteFilePath is null)
+            if (workspaceState.FolderAbsoluteFilePath is null)
             {
                     <div>
                         WorkspaceAbsoluteFilePath is null, use the InputFile dialog to select a Workspace
@@ -40,7 +40,7 @@
                                 @{
                                     var contextMenuEventDto = new TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath>
                                     {
-                                        Item = workspaceState.WorkspaceAbsoluteFilePath,
+                                        Item = workspaceState.FolderAbsoluteFilePath,
                                         MouseEventArgs = null,
                                         RefreshContextMenuTarget = async () => WorkspaceStateWrap_StateChanged(null, EventArgs.Empty)
                                     }; 
@@ -89,8 +89,8 @@
                                             &nbsp;
                                             to
                                             &nbsp;
-                                            <span title="@workspaceState.WorkspaceAbsoluteFilePath.GetAbsoluteFilePathString()">
-                                                @workspaceState.WorkspaceAbsoluteFilePath.FilenameWithExtension
+                                            <span title="@workspaceState.FolderAbsoluteFilePath.GetAbsoluteFilePathString()">
+                                                @workspaceState.FolderAbsoluteFilePath.FilenameWithExtension
                                             </span>
                                         </div>
                                     </HeaderRenderFragment>

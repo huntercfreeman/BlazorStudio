@@ -999,6 +999,10 @@ public partial record PlainTextEditorStates
 
                     if (_solutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var indexedDocument))
                     {
+                        var solution = _solutionStateWrap.Value.SolutionWorkspace.CurrentSolution;
+
+                        
+                        
                         var document = indexedDocument.Document.WithText(SourceText.From(editor.GetDocumentPlainText(),
                             editor.FileHandle.Encoding));
                         

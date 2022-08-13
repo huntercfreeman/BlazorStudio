@@ -1,12 +1,12 @@
 ﻿using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
-using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Diagnostics;
 using BlazorStudio.ClassLib.FileConstants;
+using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 
 namespace BlazorStudio.RazorLib.NewCSharpProject;
@@ -160,7 +160,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
                 var createdProjectContainingDirectory = new AbsoluteFilePath(InputFileDialogSelection.GetAbsoluteFilePathString() + _projectName, 
                     true);
 
-                Dispatcher.Dispatch(new SetWorkspaceAction(createdProjectContainingDirectory));
+                Dispatcher.Dispatch(new SetFolderExplorerAction(createdProjectContainingDirectory));
 
                 if (OnProjectCreatedCallback is not null)
                 {

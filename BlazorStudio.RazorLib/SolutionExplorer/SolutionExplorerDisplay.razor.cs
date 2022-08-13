@@ -5,7 +5,6 @@ using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
-using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.TreeViewCase;
@@ -28,6 +27,8 @@ using System.Reflection;
 using System.Runtime.Loader;
 using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.RoslynHelpers;
+using BlazorStudio.ClassLib.Sequence;
+using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.RazorLib.SyntaxRootRender;
 
@@ -85,10 +86,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     private DialogRecord _newCSharpProjectDialog;
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
-    private Solution? _solution;
     private bool _loadingSln;
-    private MSBuildWorkspace _workspace;
-    private VisualStudioInstance _visualStudioInstance;
 
     protected override void OnInitialized()
     {
@@ -108,6 +106,20 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
         );
 
         base.OnInitialized();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var solutionAbsoluteFilePath =
+                new AbsoluteFilePath("/home/hunter/RiderProjects/TestBlazorStudio/TestBlazorStudio.sln",
+                    false);
+
+            Dispatcher.Dispatch(new SetSolutionExplorerAction(solutionAbsoluteFilePath, SequenceKey.NewSequenceKey()));
+        }       
+        
+        base.OnAfterRender(firstRender);
     }
 
     private async void SolutionExplorerStateWrap_StateChanged(object? sender, EventArgs e)
@@ -172,64 +184,29 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 VisualStudioInstance[] visualStudioInstances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
 
                 // TODO: Allow user to select the MSBuild
-                _visualStudioInstance = visualStudioInstances[0];
+                var visualStudioInstance = visualStudioInstances[0];
 
                 if (!MSBuildLocator.IsRegistered)
                 {
-                    MSBuildLocator.RegisterInstance(_visualStudioInstance);
-
-                    //var instance = Microsoft.Build.Locator.MSBuildLocator.RegisterDefaults();
-
-                    //foreach (var assemblyLoadContext in AssemblyLoadContext.All)
-                    //{
-                    //    assemblyLoadContext.Resolving += (innerAssemblyLoadContext, assemblyName) =>
-                    //    {
-                    //        var path = Path.Combine(instance.MSBuildPath, assemblyName.Name + ".dll");
-                    //        if (File.Exists(path))
-                    //        {
-                    //            return innerAssemblyLoadContext.LoadFromAssemblyPath(path);
-                    //        }
-
-                    //        return null;
-                    //    };
-                    //}
-
-                    //AssemblyLoadContext.Default.Resolving += DefaultOnResolving;
-                    //var previewPath = "C:\\Program Files\\dotnet\\sdk\\7.0.100-preview.6.22352.1\\";
-
-                    //if (Directory.Exists(previewPath))
-                    //{
-                    //    MSBuildLocator.RegisterMSBuildPath(previewPath);
-                    //}
-                    //else
-                    //{
-                    //    MSBuildLocator.RegisterInstance(_visualStudioInstance);
-                    //}
-
-                    //var instance = Microsoft.Build.Locator.MSBuildLocator.RegisterDefaults();
+                    MSBuildLocator.RegisterInstance(visualStudioInstance);
                 }
+                
+                var workspace = MSBuildWorkspace.Create();
 
-                if (_workspace is null)
-                {
-                    _workspace = MSBuildWorkspace.Create();
+                Dispatcher.Dispatch(new SetSolutionAction(workspace, visualStudioInstance));
 
-                    Dispatcher.Dispatch(new SetSolutionAction(_workspace, _visualStudioInstance));
-                }
-
-                // Print message for WorkspaceFailed event to help diagnosing project load failures.
-
-                _solution = await _workspace.OpenSolutionAsync(targetPath);
+                var solution = await workspace.OpenSolutionAsync(targetPath);
 
                 var projects = new List<AbsoluteFilePath>();
 
-                foreach (var project in _solution.Projects)
+                foreach (var project in solution.Projects)
                 {
                     projects.Add(new AbsoluteFilePath(project.FilePath ?? "{null file path}", false));
                 }
 
                 _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
                     {
-                        await FileToDocumentIndexer.IndexFilesToDocuments(_workspace, Dispatcher, cancellationToken);
+                        await FileToDocumentIndexer.IndexFilesToDocuments(workspace, Dispatcher, cancellationToken);
                     },
                     $"{nameof(FileToDocumentIndexer.IndexFilesToDocuments)}",
                     false,
@@ -320,25 +297,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             .Union(childFileAbsolutePaths);
     }
 
-    /// <summary>
-    /// This is not working
-    ///     "8: The "ProcessFrameworkReferences" task failed unexpectedly. ["
-    ///     "4018: System.IO.FileLoadException: Could not load file or assembly 'NuGet.Frameworks, Version=6.3.0.114, Culture=n"
-    /// </summary>
-    /// <param name="assemblyLoadContext"></param>
-    /// <param name="assemblyName"></param>
-    /// <returns></returns>
-    private Assembly? DefaultOnResolving(AssemblyLoadContext assemblyLoadContext, AssemblyName assemblyName)
-    {
-        var path = Path.Combine(_visualStudioInstance.MSBuildPath, assemblyName.Name + ".dll");
-        if (File.Exists(path))
-        {
-            return assemblyLoadContext.LoadFromAssemblyPath(path);
-        }
-
-        return null;
-    }
-
     private void WorkspaceExplorerTreeViewOnEnterKeyDown(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)
     {
         if (!absoluteFilePath.IsDirectory)
@@ -398,7 +356,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     {
         if (tupleArgument.absoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
         {
-            Dispatcher.Dispatch(new SetWorkspaceAction(tupleArgument.absoluteFilePath));
+            Dispatcher.Dispatch(new SetFolderExplorerAction(tupleArgument.absoluteFilePath));
         }
     }
 
@@ -419,9 +377,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
         void OnEnd(Process finishedProcess)
         {
-            _workspace.CloseSolution();
-
-            SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty);
+            
         }
 
         var command = $"dotnet sln {localSolutionExplorerState.SolutionAbsoluteFilePath.GetAbsoluteFilePathString()} " +

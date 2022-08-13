@@ -1,4 +1,5 @@
-﻿<div class="bstudio_explorers-display"
+﻿@using BlazorStudio.RazorLib.FolderExplorer
+<div class="bstudio_explorers-display"
      style="@ExplorersDimensions.DimensionsCssString">
     
     <BlazorStudio.RazorLib.SolutionExplorer.SolutionExplorerDisplay Dimensions="_solutionExplorerDimensions" />
@@ -7,6 +8,6 @@
                                                                    BottomDimensions="_workspaceExplorerDimensions"
                                                                    ReRenderFunc="ReRender" />
 
-    <BlazorStudio.RazorLib.Workspace.WorkspaceExplorer Dimensions="_workspaceExplorerDimensions" />
+    <WorkspaceExplorer Dimensions="_workspaceExplorerDimensions" />
 </div>
 

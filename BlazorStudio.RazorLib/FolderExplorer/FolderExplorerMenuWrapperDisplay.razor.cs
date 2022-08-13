@@ -1,28 +1,21 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
-using BlazorStudio.ClassLib.Store.StartupProject;
-using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TaskModelManager;
-using BlazorStudio.ClassLib.Templates;
 using BlazorStudio.RazorLib.Forms;
-using BlazorStudio.RazorLib.InputFile;
-using BlazorStudio.RazorLib.SyntaxRootRender;
 using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Microsoft.CodeAnalysis;
 
-namespace BlazorStudio.RazorLib.Workspace;
+namespace BlazorStudio.RazorLib.FolderExplorer;
 
-public partial class WorkspaceExplorerMenuWrapperDisplay : ComponentBase
+public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
 {
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
