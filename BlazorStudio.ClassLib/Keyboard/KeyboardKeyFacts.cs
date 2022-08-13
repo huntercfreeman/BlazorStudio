@@ -54,6 +54,8 @@ public static class KeyboardKeyFacts
             case PunctuationKeys.SingleQuote:
             case PunctuationKeys.OpenArrowBracket:
             case PunctuationKeys.EndArrowBracket:
+            case PunctuationKeys.ForwardSlash:
+            case PunctuationKeys.BackSlash:
                 return true;
             default:
                 return false;
@@ -91,6 +93,8 @@ public static class KeyboardKeyFacts
         public const string SingleQuote = "'";
         public const string OpenArrowBracket = "<";
         public const string EndArrowBracket = ">";
+        public const string ForwardSlash = "/";
+        public const string BackSlash = "\\";
     }
     
     public static class NewLineCodes
