@@ -10,9 +10,16 @@ public partial record PlainTextEditorStates
             KeyDownEventRecord keyDownEventRecord,
             CancellationToken cancellationToken)
         {
-            if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == TextTokenKind.Default)
+            var matchTextTokenKind = TextTokenKind.Default;
+            
+            if (KeyboardKeyFacts.IsPunctuationKey(keyDownEventRecord))
             {
-                // if (active token is a word)
+                matchTextTokenKind = TextTokenKind.Punctuation;
+            }
+            
+            if (focusedPlainTextEditorRecord.CurrentTextToken.Kind == matchTextTokenKind)
+            {
+                // insert text to the current token
 
                 var previousDefaultToken = focusedPlainTextEditorRecord.GetCurrentTextTokenAs<DefaultTextToken>();
 
@@ -65,7 +72,7 @@ public partial record PlainTextEditorStates
                     cancellationToken);
 
                 if (nextTokenTuple.rowIndex == focusedPlainTextEditorRecord.CurrentRowIndex &&
-                    nextTokenTuple.token.Kind == TextTokenKind.Default)
+                    nextTokenTuple.token.Kind == matchTextTokenKind)
                 {
                     // if (active token is not a word, and the next token is a word however then prepend text to that next token)
 
@@ -120,22 +127,37 @@ public partial record PlainTextEditorStates
 
                     if (rememberToken.GetIndexInPlainText(true) != rememberToken.PlainText.Length - 1)
                     {
-                        // if (active token is not a word, but the cursor is NOT at the end of that token the token is split)
-                        
-                        return await SplitCurrentTokenAsync(
-                            focusedPlainTextEditorRecord, 
-                            new DefaultTextToken
+                        // if (active token is not a word, but the cursor is NOT at the end of that token then the token is split)
+
+                        DefaultTextToken token;
+
+                        if (KeyboardKeyFacts.IsPunctuationKey(keyDownEventRecord))
+                        {
+                            token = new PunctuationTextToken
                             {
                                 Content = keyDownEventRecord.Key,
                                 IndexInPlainText = 0
-                            },
+                            };
+                        }
+                        else
+                        {
+                            token = new DefaultTextToken
+                            {
+                                Content = keyDownEventRecord.Key,
+                                IndexInPlainText = 0
+                            };
+                        }
+                        
+                        return await SplitCurrentTokenAsync(
+                            focusedPlainTextEditorRecord, 
+                            token,
                             keyDownEventRecord.IsForced,
                             cancellationToken
                         );
                     }
                     else
                     {
-                        // if (active token is not a word, and the cursor is at the end of that token then insert a new 'word token' after the active one)
+                        // if (active token is not a word, and the cursor is at the end of that token then insert a new token after the active one)
 
                         if (!keyDownEventRecord.IsForced &&
                             focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
@@ -162,11 +184,24 @@ public partial record PlainTextEditorStates
                             replacementCurrentToken,
                             cancellationToken);
 
-                        var defaultTextToken = new DefaultTextToken
+                        DefaultTextToken token;
+
+                        if (KeyboardKeyFacts.IsPunctuationKey(keyDownEventRecord))
                         {
-                            Content = keyDownEventRecord.Key,
-                            IndexInPlainText = 0
-                        };
+                            token = new PunctuationTextToken
+                            {
+                                Content = keyDownEventRecord.Key,
+                                IndexInPlainText = 0
+                            };
+                        }
+                        else
+                        {
+                            token = new DefaultTextToken
+                            {
+                                Content = keyDownEventRecord.Key,
+                                IndexInPlainText = 0
+                            };
+                        }
 
                         focusedPlainTextEditorRecord = focusedPlainTextEditorRecord with
                         {
@@ -175,7 +210,7 @@ public partial record PlainTextEditorStates
                         };
 
                         return await InsertNewCurrentTokenAfterCurrentPositionAsync(focusedPlainTextEditorRecord,
-                            defaultTextToken,
+                            token,
                             cancellationToken);
                     }
                 }

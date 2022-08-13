@@ -13,6 +13,7 @@
                                    ShouldDisplayCursor="TextToken.TryGetIndexInPlainText(true, out var _)"/>
                 break;
             case TextTokenKind.Default:
+            case TextTokenKind.Punctuation:
                 <text>
                     @{
                 for (int i = 0; i < TextToken.PlainText.Length; i++)

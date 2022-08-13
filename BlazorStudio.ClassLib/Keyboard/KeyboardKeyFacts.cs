@@ -39,7 +39,7 @@ public static class KeyboardKeyFacts
     
     public static bool IsPunctuationKey(KeyDownEventRecord onKeyDownEventArgs)
     {
-        switch (onKeyDownEventArgs.Code)
+        switch (onKeyDownEventArgs.Key)
         {
             case PunctuationKeys.OpenCurlyBrace:
             case PunctuationKeys.CloseCurlyBrace:
@@ -48,6 +48,7 @@ public static class KeyboardKeyFacts
             case PunctuationKeys.OpenBracket:
             case PunctuationKeys.CloseBracket:
             case PunctuationKeys.Period:
+            case PunctuationKeys.Semicolon:
                 return true;
             default:
                 return false;
@@ -79,6 +80,7 @@ public static class KeyboardKeyFacts
         public const string OpenBracket = "[";
         public const string CloseBracket = "]";
         public const string Period = ".";
+        public const string Semicolon = ";";
     }
     
     public static class NewLineCodes

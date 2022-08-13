@@ -59,7 +59,6 @@ public partial record PlainTextEditorStates
 
     private record DefaultTextToken : TextTokenBase
     {
-        // TODO: Immutable, efficient, updating of the _content string when user types.
         public string Content { get; init; }
         
         public override string PlainText => Content;
@@ -122,19 +121,9 @@ public partial record PlainTextEditorStates
                    ?? throw IndexInPlainTextWasNullException;
         }
     }
-    
-    private record PunctuationTextToken : TextTokenBase
+
+    private record PunctuationTextToken : DefaultTextToken
     {
-        public string Content { get; init; }
-        
-        public override string PlainText => Content;
-        public override string CopyText => PlainText;
         public override TextTokenKind Kind => TextTokenKind.Punctuation;
-        
-        public override int GetIndexInPlainText(bool countTabsAsFourCharacters)
-        {
-            return IndexInPlainText
-                   ?? throw IndexInPlainTextWasNullException;
-        }
     }
 }

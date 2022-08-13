@@ -40,6 +40,8 @@ public partial record PlainTextEditorStates
         {
             var rememberCurrentToken = focusedPlainTextEditorRecord
                     .GetCurrentTextTokenAs<DefaultTextToken>();
+            
+            var rememberCurrentTokenKind = rememberCurrentToken.Kind;
 
             var rememberTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex;
 
@@ -53,16 +55,29 @@ public partial record PlainTextEditorStates
                 ? firstSplitContent.Length - 1
                 : null;
 
-            var tokenFirst = new DefaultTextToken()
+            DefaultTextToken GetNewDefaultTextToken(string content, int? indexInPlainText)
             {
-                Content = firstSplitContent,
-                IndexInPlainText = tokenFirstIndexInContent
-            };
+                if (rememberCurrentTokenKind == TextTokenKind.Punctuation)
+                {
+                    return new PunctuationTextToken
+                    {
+                        Content = content,
+                        IndexInPlainText = indexInPlainText
+                    };
+                }
+                else
+                {
+                    return new DefaultTextToken
+                    {
+                        Content = content,
+                        IndexInPlainText = indexInPlainText
+                    };
+                }
+            }
+
+            var tokenFirst = GetNewDefaultTextToken(firstSplitContent, tokenFirstIndexInContent);
             
-            var tokenSecond = new DefaultTextToken()
-            {
-                Content = secondSplitContent
-            };
+            var tokenSecond = GetNewDefaultTextToken(secondSplitContent, null);
 
             var toBeRemovedTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex;
             var toBeChangedRowIndex = focusedPlainTextEditorRecord.CurrentRowIndex;
