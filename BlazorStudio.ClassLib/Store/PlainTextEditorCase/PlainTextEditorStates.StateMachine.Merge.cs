@@ -1,3 +1,4 @@
+using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
 
 namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
@@ -17,24 +18,41 @@ public partial record PlainTextEditorStates
         public static async Task<PlainTextEditorRecordBase> MergeTokensIfApplicableAsync(PlainTextEditorRecordBase focusedPlainTextEditorRecord,
             CancellationToken cancellationToken)
         {
-            if (focusedPlainTextEditorRecord.CurrentTextToken.Kind != TextTokenKind.Default)
+            var textTokenKind = focusedPlainTextEditorRecord.CurrentTextToken.Kind;
+            
+            if (textTokenKind != TextTokenKind.Default &&
+                textTokenKind != TextTokenKind.Punctuation)
                 return focusedPlainTextEditorRecord;
             
             var nextTokenTuple = await GetNextTokenTupleAsync(focusedPlainTextEditorRecord,
                 cancellationToken);
 
-            if (nextTokenTuple.token.Kind != TextTokenKind.Default ||
+            if (nextTokenTuple.token.Kind != textTokenKind ||
                 nextTokenTuple.token.Key == focusedPlainTextEditorRecord.CurrentTextTokenKey)
             {
                 return focusedPlainTextEditorRecord;
             }
 
-            var replacementToken = new DefaultTextToken()
+            DefaultTextToken replacementToken;
+
+            if (textTokenKind == TextTokenKind.Default)
             {
-                Content = focusedPlainTextEditorRecord.CurrentTextToken.PlainText +
-                    nextTokenTuple.token.PlainText,
-                IndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true)
-            };
+                replacementToken= new DefaultTextToken()
+                {
+                    Content = focusedPlainTextEditorRecord.CurrentTextToken.PlainText +
+                              nextTokenTuple.token.PlainText,
+                    IndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true)
+                };
+            }
+            else
+            {
+                replacementToken= new PunctuationTextToken
+                {
+                    Content = focusedPlainTextEditorRecord.CurrentTextToken.PlainText +
+                              nextTokenTuple.token.PlainText,
+                    IndexInPlainText = focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true)
+                };
+            }   
 
             var currentRow = focusedPlainTextEditorRecord
                 .GetCurrentPlainTextEditorRowAs<PlainTextEditorRow>();
