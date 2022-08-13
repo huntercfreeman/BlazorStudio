@@ -28,8 +28,10 @@ public partial class CharacterRenderer : ComponentBase
     public long StartOfSpan { get; set; }
     [CascadingParameter(Name="IsMouseSelectingText")] 
     public bool IsMouseSelectingText { get; set; }
-    [CascadingParameter(Name = "MouseTextSelectionSemaphoreSlim")]
+    [CascadingParameter(Name="MouseTextSelectionSemaphoreSlim")]
     public SemaphoreSlim MouseTextSelectionSemaphoreSlim { get; set; } = null!;
+    [CascadingParameter(Name="FocusPlainTextEditor")]
+    public Action FocusPlainTextEditor { get; set; } = null!;
 
     /// <summary>
     /// The html escaped character for space is nbsp which
@@ -54,6 +56,9 @@ public partial class CharacterRenderer : ComponentBase
     
     private void DispatchPlainTextEditorOnClickAction(MouseEventArgs mouseEventArgs)
     {
+        // Clicking results in <input /> losing focus so re-focus
+        FocusPlainTextEditor();
+        
         Dispatcher.Dispatch(
             new PlainTextEditorOnClickAction(
                 PlainTextEditorKey,

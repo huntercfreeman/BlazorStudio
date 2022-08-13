@@ -44,6 +44,7 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
     private bool _previousIsMouseSelectingText;
     private bool _previousShouldDisplay;
     private int _childOnMouseOver;
+    private int _previousCurrentRowIndex;
 
     private string IsActiveCss => PlainTextEditorCurrentRowIndex == RowIndex
         ? "pte_active"
@@ -54,7 +55,7 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
         ? $"width: calc(100% - {MostDigitsInARowNumber}ch);"
         : $"width: calc(100% - {RichTextEditorOptions.WidthOfACharacterInPixels}px);";
 
-    private string IsActiveRowId => GetActiveRowId(); 
+    private string IsActiveRowId => GetActiveRowId();
 
     protected override bool ShouldRender()
     {

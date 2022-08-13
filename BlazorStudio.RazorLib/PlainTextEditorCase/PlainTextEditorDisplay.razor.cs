@@ -272,6 +272,11 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         
         _previousSequenceKeyShouldRender = null;
 
+        FocusPlainTextEditor();
+    }
+    
+    private void FocusPlainTextEditor()
+    {
         if (_activePositionMarker is not null)
         {
             _activePositionMarker.Value.FocusAsync();
