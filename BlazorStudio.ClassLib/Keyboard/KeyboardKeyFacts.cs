@@ -36,6 +36,23 @@ public static class KeyboardKeyFacts
                 return false;
         }
     }
+    
+    public static bool IsPunctuationKey(KeyDownEventRecord onKeyDownEventArgs)
+    {
+        switch (onKeyDownEventArgs.Code)
+        {
+            case PunctuationKeys.OpenCurlyBrace:
+            case PunctuationKeys.CloseCurlyBrace:
+            case PunctuationKeys.OpenParenthesis:
+            case PunctuationKeys.CloseParenthesis:
+            case PunctuationKeys.OpenBracket:
+            case PunctuationKeys.CloseBracket:
+            case PunctuationKeys.Period:
+                return true;
+            default:
+                return false;
+        }
+    }
 
     public static class MetaKeys
     {
@@ -51,6 +68,17 @@ public static class KeyboardKeyFacts
         public const string ENTER_CODE = "Enter";
         public const string CARRIAGE_RETURN_NEW_LINE_CODE = "CarriageReturnNewLine";
         public const string SPACE_CODE = "Space";
+    }
+    
+    public static class PunctuationKeys
+    {
+        public const string OpenCurlyBrace = "{";
+        public const string CloseCurlyBrace = "}";
+        public const string OpenParenthesis = "(";
+        public const string CloseParenthesis = ")";
+        public const string OpenBracket = "[";
+        public const string CloseBracket = "]";
+        public const string Period = ".";
     }
     
     public static class NewLineCodes

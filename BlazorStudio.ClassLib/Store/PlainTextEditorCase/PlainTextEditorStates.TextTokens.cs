@@ -75,7 +75,6 @@ public partial record PlainTextEditorStates
 
     private record WhitespaceTextToken : TextTokenBase
     {
-        // TODO: Immutable, efficient, updating of the _content string when user types.
         private string _content;
 
         public WhitespaceTextToken(KeyDownEventRecord keyDownEventRecord)
@@ -119,6 +118,21 @@ public partial record PlainTextEditorStates
                 }
             }
             
+            return IndexInPlainText
+                   ?? throw IndexInPlainTextWasNullException;
+        }
+    }
+    
+    private record PunctuationTextToken : TextTokenBase
+    {
+        public string Content { get; init; }
+        
+        public override string PlainText => Content;
+        public override string CopyText => PlainText;
+        public override TextTokenKind Kind => TextTokenKind.Punctuation;
+        
+        public override int GetIndexInPlainText(bool countTabsAsFourCharacters)
+        {
             return IndexInPlainText
                    ?? throw IndexInPlainTextWasNullException;
         }

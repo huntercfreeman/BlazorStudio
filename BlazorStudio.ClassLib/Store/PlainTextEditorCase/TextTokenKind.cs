@@ -4,5 +4,6 @@ public enum TextTokenKind
 {
     StartOfRow,
     Default,
-    Whitespace
+    Whitespace,
+    Punctuation
 }
