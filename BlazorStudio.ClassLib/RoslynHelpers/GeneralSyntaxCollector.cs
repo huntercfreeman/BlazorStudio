@@ -15,21 +15,29 @@ public class GeneralSyntaxCollector : CSharpSyntaxWalker
     public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
     {        
         PropertyDeclarations.Add(node);
+        
+        base.VisitPropertyDeclaration(node);
     }
 
     public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
     {
         MethodDeclarations.Add(node);
+        
+        base.VisitMethodDeclaration(node);
     }
 
     public override void VisitArgument(ArgumentSyntax node)
     {
         ArgumentDeclarations.Add(node);
+        
+        base.VisitArgument(node);
     }
 
     public override void VisitParameter(ParameterSyntax node)
     {
         ParameterDeclarations.Add(node);
+        
+        base.VisitParameter(node);
     }
 
     public override void VisitLiteralExpression(LiteralExpressionSyntax node)
@@ -38,6 +46,8 @@ public class GeneralSyntaxCollector : CSharpSyntaxWalker
         {
             StringLiteralExpressions.Add(node);
         }
+        
+        base.VisitLiteralExpression(node);
     }
 
     public override void VisitVarPattern(VarPatternSyntax node)

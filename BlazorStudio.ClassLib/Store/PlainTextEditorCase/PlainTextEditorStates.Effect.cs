@@ -1069,17 +1069,17 @@ public partial record PlainTextEditorStates
                                         md => md.Kind(),
                                         "pte_plain-text-editor-text-token-display-method-declaration")
                                     ||
-                                    AttemptSetSyntaxKind("argument declaration",
-                                        indexedDocument.GeneralSyntaxCollector.ArgumentDeclarations,
-                                        ad => ad.Span,
-                                        ad => ad.Kind(),
-                                        "pte_plain-text-editor-text-token-display-type")
-                                    ||
                                     AttemptSetSyntaxKind("parameter declaration",
                                         indexedDocument.GeneralSyntaxCollector.ParameterDeclarations,
                                         pd => pd.Span,
                                         pd => pd.Kind(),
-                                        "pte_plain-text-editor-text-token-display-type")
+                                        "pte_plain-text-editor-text-token-display-parameter")
+                                    ||
+                                    AttemptSetSyntaxKind("argument declaration",
+                                        indexedDocument.GeneralSyntaxCollector.ArgumentDeclarations,
+                                        ad => ad.Span,
+                                        ad => ad.Kind(),
+                                        "pte_plain-text-editor-text-token-display-argument")
                                     ||
                                     AttemptSetSyntaxKind("string literal",
                                         indexedDocument.GeneralSyntaxCollector.StringLiteralExpressions,

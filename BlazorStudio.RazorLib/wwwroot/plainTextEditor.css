@@ -144,6 +144,14 @@
     color: var(--pte_plain-text-editor-text-token-display-string-literal);
 }
 
+.pte_plain-text-editor-text-token-display-parameter {
+    color: var(--pte_token-parameter-declaration);
+}
+
+.pte_plain-text-editor-text-token-display-argument {
+    color: var(--pte_token-argument-declaration);
+}
+
 .pte_plain-text-editor-character-selected {
     background-color: var(--pte_plain-text-editor-selection);
 }
