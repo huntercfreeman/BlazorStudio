@@ -74,7 +74,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
-                        new Action<string, string>(CreateNewTemplatedFileFormOnAfterSubmitForm)
+                        new Action<string, string>((parentDirectoryAbsoluteFilePathString, filename) => 
+                            CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
+                                filename, 
+                                ContextMenuEventDto.Item))
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterCancelForm),
@@ -117,7 +120,6 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
             DialogRecord addProjectReferenceDialog = null;
 
-            // TODO: This is really poorly written with closure hacks and other nonsense and needs rewritten. I am really tired and should just take a break.
             void AddProjectReferenceConfirmOnClickOverrideAction(ImmutableArray<AbsoluteFilePathDotNet> activeItems)
             {
                 Dispatcher.Dispatch(new DisposeDialogAction(addProjectReferenceDialog));
@@ -220,7 +222,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         },
                         {
                             nameof(CreateNewFileForm.OnAfterSubmitForm),
-                            new Action<string, string>(CreateNewTemplatedFileFormOnAfterSubmitForm)
+                            new Action<string, string>((parentDirectoryAbsoluteFilePathString, filename) => 
+                                CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
+                                    filename, 
+                                    ContextMenuEventDto.Item))
                         },
                         {
                             nameof(CreateNewFileForm.OnAfterCancelForm),
@@ -309,15 +314,31 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     }
 
     private void CreateNewTemplatedFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
-        string fileName)
+        string fileName,
+        AbsoluteFilePathDotNet absoluteFilePathDotNet)
     {
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
             {
+                var newFile = new AbsoluteFilePath(parentDirectoryAbsoluteFilePathString + fileName, false);
+                
+                var solutionState = SolutionStateWrap.Value;
+
+                var project = solutionState.SolutionWorkspace.CurrentSolution.GetProject(absoluteFilePathDotNet.ProjectId);
+
+                var namespaceString = project.DefaultNamespace;
+
+                if (string.IsNullOrWhiteSpace(namespaceString))
+                {
+                    namespaceString = project.Name;
+                }
+                
                 await File
                     .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName,
-                        CSharpClassTemplate.Value);
+                        CSharpClassTemplate
+                            .WithInterpolation(namespaceString, 
+                                newFile.FileNameNoExtension));
 
                 await localRefreshContextMenuTarget();
 

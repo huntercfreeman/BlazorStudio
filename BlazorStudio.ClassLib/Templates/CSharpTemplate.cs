@@ -2,11 +2,14 @@
 
 public static class CSharpClassTemplate
 {
-    public const string Value =
-        @"namespace BlazorStudio.Tests;
+    public static string WithInterpolation(string namespaceString, string className)
+    {
+        return $@"namespace {namespaceString};
 
-public class Class1
-{
+public class {className}
+{{
     
-}";
+}}";
+    }
+        
 }
