@@ -180,7 +180,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                         var projectAbsoluteFilePath = new AbsoluteFilePathDotNet(project.FilePath ?? "{null file path}", false, project.Id);
                         
                         projects.Add(projectAbsoluteFilePath);
-                        localProjectMap.Add(project.Id, new IndexedProject(project, projectAbsoluteFilePath));
+                        localProjectMap.TryAdd(project.Id, new IndexedProject(project, projectAbsoluteFilePath));
                         
                         foreach (Document document in project.Documents)
                         {
@@ -188,8 +188,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                             {
                                 var absoluteFilePath = new AbsoluteFilePathDotNet(document.FilePath, false, project.Id);
                 
-                                localFileDocumentMap
-                                    .Add(new AbsoluteFilePathStringValue(absoluteFilePath),
+                                _ = localFileDocumentMap
+                                    .TryAdd(new AbsoluteFilePathStringValue(absoluteFilePath),
                                         new IndexedDocument(document, absoluteFilePath));
                             }
                         }
