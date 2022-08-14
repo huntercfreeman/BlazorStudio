@@ -7,6 +7,7 @@ namespace BlazorStudio.ClassLib.RoslynHelpers;
 public class GeneralSyntaxCollector : CSharpSyntaxWalker
 {
     public List<PropertyDeclarationSyntax> PropertyDeclarations { get; } = new();
+    public List<ClassDeclarationSyntax> ClassDeclarations { get; } = new();
     public List<MethodDeclarationSyntax> MethodDeclarations { get; } = new();
     public List<ArgumentSyntax> ArgumentDeclarations { get; } = new();
     public List<ParameterSyntax> ParameterDeclarations { get; } = new();
@@ -48,6 +49,13 @@ public class GeneralSyntaxCollector : CSharpSyntaxWalker
         }
         
         base.VisitLiteralExpression(node);
+    }
+
+    public override void VisitClassDeclaration(ClassDeclarationSyntax node)
+    {
+        ClassDeclarations.Add(node);
+        
+        base.VisitClassDeclaration(node);
     }
 
     public override void VisitVarPattern(VarPatternSyntax node)
