@@ -23,6 +23,8 @@ public partial class NewCSharpProjectDialog : ComponentBase
     public Action<IAbsoluteFilePath>? OnProjectCreatedCallback { get; set; }
 
     private List<CSharpTemplate>? _templates;
+    // I cannot get 'dotnet new list' to run when I use Ubuntu OS
+    // Therefore I am executing the deprecated version.
     private string getCSharpProjectTemplatesCommand = "dotnet new --list";
     private string _templateArguments = string.Empty;
     private SelectCSharpProjectTemplate? _selectCSharpProjectTemplate;
@@ -63,6 +65,16 @@ public partial class NewCSharpProjectDialog : ComponentBase
                 _attemptedToRetrieveProjectTemplates = true;
 
                 _templates = new();
+
+                // I cannot get 'dotnet new list' to run when I use Ubuntu OS
+                // Therefore I am executing the deprecated version.
+                var skipIsDeprecatedNotice = output.IndexOf("Template Name");
+
+                if (skipIsDeprecatedNotice != -1)
+                {
+                    output = output
+                        .Substring(skipIsDeprecatedNotice + "Template Name".Length);
+                }
 
                 var indexOfFirstDash = output.IndexOf('-');
 

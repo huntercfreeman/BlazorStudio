@@ -73,9 +73,19 @@ public class TerminalEntryEffects
                     .GetAbsoluteFilePathString();
             }
 
-            process.StartInfo.FileName = "/bin/bash";
-            process.StartInfo.Arguments = $"-c \"{enqueueProcessOnTerminalEntryAction.Command}\"";
+            var bash = "/bin/bash";
 
+            if (File.Exists(bash))
+            {
+                process.StartInfo.FileName = bash;
+                process.StartInfo.Arguments = $"-c \"{enqueueProcessOnTerminalEntryAction.Command}\"";
+            }
+            else
+            {
+                process.StartInfo.FileName = "cmd.exe";
+                process.StartInfo.Arguments = $"/c {enqueueProcessOnTerminalEntryAction.Command} 2>&1";
+            }
+            
             // Start the child process.
             // 2>&1 combines stdout and stderr
             //process.StartInfo.Arguments = $"";
