@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
+using BlazorStudio.ClassLib.Store.SolutionCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -8,6 +9,8 @@ public partial class PlainTextEditorHeader : ComponentBase
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IState<SolutionState> SolutionState { get; set; } = null!;
 
     [Parameter]
     public IPlainTextEditor PlainTextEditor { get; set; } = null!;

@@ -692,3 +692,8 @@ em {
     background-color: var(--bstudio_title-background-color);
     height: 2rem;
 }
+
+.bstudio_syntax-node-tree-view {
+    padding: 14px;
+    height: 100%;
+}

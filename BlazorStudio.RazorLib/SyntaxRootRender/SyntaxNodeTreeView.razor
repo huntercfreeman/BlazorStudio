@@ -1,0 +1,31 @@
+﻿<div class="bstudio_syntax-node-tree-view">
+    <h5><em>@@SyntaxNode.ToFullString()</em></h5>
+
+    <ExpansionDisplay>
+        <TitleRenderFragment>
+            Change&nbsp;font size:<em>@(_preFontSize)px;</em>
+        </TitleRenderFragment>
+        
+        <BodyRenderFragment>
+            <input type="number"
+                               @bind="_preFontSize"
+                               @bind:event="oninput"
+                               class="bstudio_input bstudio_input-number"/>
+        </BodyRenderFragment>
+    </ExpansionDisplay>
+
+    <div style="overflow: auto; @_toFullStringDimensions.DimensionsCssString">
+
+        <pre style="font-size: @(_preFontSize)px;">
+@SyntaxNode.ToFullString()
+</pre>
+    </div>
+
+    <BlazorStudio.RazorLib.Transformable.TransformableRowSeparator TopDimensions="_toFullStringDimensions"
+                                                                   BottomDimensions="_anotherDimensions"
+                                                                   ReRenderFunc="ReRender"/>
+
+    <div style="overflow: auto; @_anotherDimensions.DimensionsCssString">
+        mmm
+    </div>
+</div>

@@ -1,49 +1,29 @@
-﻿<div class="pte_plain-text-editor-header">
+﻿@using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped
+@using Microsoft.CodeAnalysis
+<div class="pte_plain-text-editor-header">
     @{
         var localPlainTextEditor = PlainTextEditor;
 
-                <div>
-                    CharacterWidth:&nbsp;@(localPlainTextEditor.RichTextEditorOptions.WidthOfACharacterInPixels)
-                    Row Height:&nbsp;@(localPlainTextEditor.RichTextEditorOptions.HeightOfARowInPixels)
+        <div>
+            CharacterWidth:&nbsp;@(localPlainTextEditor.RichTextEditorOptions.WidthOfACharacterInPixels)
+            Row Height:&nbsp;@(localPlainTextEditor.RichTextEditorOptions.HeightOfARowInPixels)
 
-                    <input type="number" 
-                           @bind="FontSize" 
-                           @bind:event="oninput"
-                           class="bstudio_input bstudio_input-number" />
-                </div>
-                <div>
-                    Use the <em>F1</em> key to scroll the caret row into view if it is offscreen.
-                </div>
-    
-                <div>
-                    <DiffDialogEntryPoint PlainTextEditorKey="localPlainTextEditor.PlainTextEditorKey"
-                              WidthAndHeightTestResult="WidthAndHeightTestResult" />
-                </div>
+            <input type="number" 
+                   @bind="FontSize" 
+                   @bind:event="oninput"
+                   class="bstudio_input bstudio_input-number" />
+        </div>
+
+        <div>
+            @{
+                if (SolutionState.Value.FileAbsoluteFilePathToDocumentMap
+                    .TryGetValue(new AbsoluteFilePathStringValue(localPlainTextEditor.FileHandle.AbsoluteFilePath),
+                        out var document))
+                {
+                    <BlazorStudio.RazorLib.SyntaxRootRender.SyntaxNodeTreeViewDialogEntryPoint TitleOverride="@localPlainTextEditor.FileHandle.AbsoluteFilePath.FilenameWithExtension"
+                                                                                               GetSyntaxNodeFuncAsync="new Func<Task<SyntaxNode>>(async () => await document.Document.GetSyntaxRootAsync())"/>                    
+                }
+            }
+        </div>
     }
-
-    @*<div>
-                Toggle Readonly:&nbsp;
-                <input type="checkbox" @onchange="IsReadonlyCheckboxOnChange" checked="@currentPlainTextEditor.IsReadonly" />
-                &nbsp;->&nbsp;
-                @if (currentPlainTextEditor.IsReadonly)
-                {
-                    <text>Currently <em>ReadOnly</em></text>
-                }
-                else
-                {
-                    <text>Currently <em>Editable</em></text>
-                }
-            </div>*@
-
-    @*@if (AllowOpenDiff)
-            {
-                <div>
-                    <DiffDialogEntryPoint PlainTextEditorKey="PlainTextEditorKey" />
-                </div>
-            }*@
-
-    @*<button class="btn btn-primary"
-                    @onclick="SaveChangesOnClick">
-                Save Changes
-            </button>*@
 </div>
