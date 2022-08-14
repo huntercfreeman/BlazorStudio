@@ -239,13 +239,22 @@ public partial record PlainTextEditorStates
                 await editorMemoryMappedFile.FileHandle.Edit
                     .RemoveAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                         characterIndex - 1,
-                        characterCount: 1,
+                        characterCount: 1 + previousDefaultTextToken.GetIndexInPlainText(true),
                         cancellationToken: cancellationToken);
             }
+            
+            string firstSplitContent;
 
-            var firstSplitContent = previousDefaultTextToken.Content
-                .Substring(0, previousDefaultTextToken.GetIndexInPlainText(true));
-
+            if (keyDownEventRecord.CtrlWasPressed)
+            {
+                firstSplitContent = string.Empty;
+            }
+            else
+            {
+                firstSplitContent =  previousDefaultTextToken.Content
+                    .Substring(0, previousDefaultTextToken.GetIndexInPlainText(true));
+            }
+            
             var secondSplitContent = string.Empty;
 
             if (previousDefaultTextToken.GetIndexInPlainText(true) != previousDefaultTextToken.Content.Length - 1)

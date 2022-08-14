@@ -419,6 +419,11 @@ public partial record PlainTextEditorStates
                                         keyDownRecord,
                                         keyDownEventAction.CancellationToken);
                             }
+
+                            plainTextEditor = plainTextEditor with
+                            {
+                                SequenceKey = SequenceKey.NewSequenceKey()
+                            };
                             
                             nextPlainTextEditorMap[keyDownEventAction.PlainTextEditorKey] = plainTextEditor;
 
