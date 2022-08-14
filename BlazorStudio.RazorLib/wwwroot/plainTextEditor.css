@@ -140,6 +140,10 @@
     color: var(--pte_token-method-declaration);
 }
 
+.pte_plain-text-editor-text-token-display-class-declaration {
+    color: var(--pte_token-type);
+}
+
 .pte_plain-text-editor-text-token-display-string-literal {
     color: var(--pte_plain-text-editor-text-token-display-string-literal);
 }

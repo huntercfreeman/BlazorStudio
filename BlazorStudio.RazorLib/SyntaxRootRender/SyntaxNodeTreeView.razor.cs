@@ -4,6 +4,7 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace BlazorStudio.RazorLib.SyntaxRootRender;
 
@@ -23,7 +24,8 @@ public partial class SyntaxNodeTreeView : ComponentBase
         {
             new SyntaxTreeViewWrapper(
                 SyntaxNode,
-                SyntaxTreeViewWrapperKind.SyntaxNode)
+                SyntaxTreeViewWrapperKind.SyntaxNode,
+                null)
         };
     }
 
@@ -39,12 +41,14 @@ public partial class SyntaxNodeTreeView : ComponentBase
                 children.AddRange(syntaxNode.ChildNodes()
                     .Select(x => new SyntaxTreeViewWrapper(
                         x,
-                        SyntaxTreeViewWrapperKind.SyntaxNode)));
+                        SyntaxTreeViewWrapperKind.SyntaxNode,
+                        syntaxTreeViewWrapper)));
                 
                 children.AddRange(syntaxNode.ChildTokens()
                     .Select(x => new SyntaxTreeViewWrapper(
                         x,
-                        SyntaxTreeViewWrapperKind.SyntaxToken)));
+                        SyntaxTreeViewWrapperKind.SyntaxToken,
+                        syntaxTreeViewWrapper)));
                 
                 break;
             case SyntaxTreeViewWrapperKind.SyntaxToken:
@@ -71,6 +75,51 @@ public partial class SyntaxNodeTreeView : ComponentBase
     private void SyntaxTreeViewOnDoubleClick(SyntaxTreeViewWrapper syntaxTreeViewWrapper, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
     {
         toggleIsExpanded();
+    }
+    
+    private string GetSyntaxHighlightingCssClassForNode(SyntaxTreeViewWrapper syntaxWrap)
+    {
+        var syntaxNode = (SyntaxNode) syntaxWrap.Item;
+
+        return string.Empty;
+    }
+    
+    private string GetSyntaxHighlightingCssClassForToken(SyntaxTreeViewWrapper syntaxWrap)
+    {
+        var syntaxToken = (SyntaxToken) syntaxWrap.Item;
+
+        if (syntaxToken.Kind() == SyntaxKind.IdentifierToken)
+        {
+            return HandleIdentifierTokenSyntaxHighlighting(syntaxWrap);
+        }
+
+        return string.Empty;
+    }
+    
+    private string HandleIdentifierTokenSyntaxHighlighting(SyntaxTreeViewWrapper syntaxWrap)
+    {
+        var syntaxToken = (SyntaxToken) syntaxWrap.Item;
+
+        var parentKind = syntaxWrap.Parent?.SyntaxTreeViewWrapperKind;
+
+        if (parentKind is not null)
+        {
+            if (parentKind == SyntaxTreeViewWrapperKind.SyntaxNode)
+            {
+                var syntaxNode = (SyntaxNode) syntaxWrap.Parent.Item;
+
+                if (syntaxNode.Kind() == SyntaxKind.MethodDeclaration)
+                {
+                    return "pte_plain-text-editor-text-token-display-method-declaration";
+                }
+                else if(syntaxNode.Kind() == SyntaxKind.ClassDeclaration)
+                {
+                    return "pte_plain-text-editor-text-token-display-class-declaration";
+                }
+            }
+        }
+
+        return string.Empty;
     }
     
     private int _preFontSize = 15;
@@ -134,7 +183,8 @@ public partial class SyntaxNodeTreeView : ComponentBase
 
     private record SyntaxTreeViewWrapper(
         object Item,
-        SyntaxTreeViewWrapperKind SyntaxTreeViewWrapperKind);
+        SyntaxTreeViewWrapperKind SyntaxTreeViewWrapperKind,
+        SyntaxTreeViewWrapper? Parent);
 
     private enum SyntaxTreeViewWrapperKind
     {

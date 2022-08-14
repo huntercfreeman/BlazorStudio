@@ -45,16 +45,27 @@
                             var syntaxNode = (SyntaxNode) syntaxWrap.Item;
                         
                             <span title="@syntaxNode.ToFullString()" style="height: 100%; display: inline-flex;">
-                                <em>@syntaxNode.Kind()</em>:&nbsp;<span style="overflow:hidden; white-space:nowrap; display:inline-block; text-overflow: ellipsis; max-width: 210px;">@syntaxNode.ToFullString()</span>
+                                <span>
+                                    @syntaxNode.Kind()
+                                </span>
+                                :&nbsp;
+                                <span class="@GetSyntaxHighlightingCssClassForNode(syntaxWrap)" style="overflow:hidden; white-space:nowrap; display:inline-block; text-overflow: ellipsis; max-width: 420px;">
+                                    @syntaxNode.ToFullString()
+                                </span>
                             </span>
-                            
                             
                             break;
                         case SyntaxTreeViewWrapperKind.SyntaxToken:
                             var syntaxToken = (SyntaxToken) syntaxWrap.Item;
                             
                             <span title="@syntaxToken.ToFullString()" style="height: 100%; display: inline-flex;">
-                                <em>@syntaxToken.Kind()</em>:&nbsp;<span style="overflow:hidden; white-space:nowrap; display:inline-block; text-overflow: ellipsis; max-width: 210px;">@syntaxToken.ToFullString()</span>
+                                <span>
+                                    @syntaxToken.Kind()
+                                </span>
+                                :&nbsp;
+                                <span class="@GetSyntaxHighlightingCssClassForToken(syntaxWrap)" style="overflow:hidden; white-space:nowrap; display:inline-block; text-overflow: ellipsis; max-width: 420px;">
+                                    @syntaxToken.ToFullString()
+                                </span>
                             </span>
                             
                             break;
