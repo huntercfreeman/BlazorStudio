@@ -1,5 +1,6 @@
 ﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.NotificationCase;
+using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -10,6 +11,8 @@ public partial class ProcessFrameworkReferencesTaskFailedNotification : Componen
 {
     [Inject]
     private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<RoslynWorkspaceState> RoslynWorkspaceStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -24,7 +27,7 @@ public partial class ProcessFrameworkReferencesTaskFailedNotification : Componen
     private string GlobalJsonText => $@"
 {{
   ""sdk"": {{
-    ""version"": ""{SolutionStateWrap.Value?.MsBuildAbsoluteFilePath?.FileNameNoExtension ?? "MsBuildAbsoluteFilePath was null"}""
+    ""version"": ""{RoslynWorkspaceStateWrap.Value?.MsBuildAbsoluteFilePath?.FileNameNoExtension ?? "MsBuildAbsoluteFilePath was null"}""
   }}
 }}
 ";

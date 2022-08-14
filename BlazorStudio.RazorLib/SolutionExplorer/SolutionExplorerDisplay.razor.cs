@@ -30,6 +30,7 @@ using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
+using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.SyntaxRootRender;
@@ -142,8 +143,66 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
             _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
             {
-                _rootAbsoluteFilePaths = (await LoadAbsoluteFilePathChildrenAsync(solutionExplorerState.SolutionAbsoluteFilePath))
-                    .ToList();
+                try
+                {
+                    _loadingSln = true;
+
+                    await InvokeAsync(StateHasChanged);
+
+                    // Attempt to set the version of MSBuild.
+                    VisualStudioInstance[] visualStudioInstances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
+
+                    // TODO: Let user choose MSBuild Version
+                    var visualStudioInstance = visualStudioInstances[0];
+
+                    if (!MSBuildLocator.IsRegistered)
+                    {
+                        MSBuildLocator.RegisterInstance(visualStudioInstance);
+                    }
+                    
+                    var workspace = MSBuildWorkspace.Create();
+
+                    var msBuildAbsoluteFilePath = new AbsoluteFilePath(visualStudioInstance.MSBuildPath, true);
+                    
+                    var solution = await workspace
+                        .OpenSolutionAsync(solutionExplorerState.SolutionAbsoluteFilePath
+                            .GetAbsoluteFilePathString());
+
+                    Dispatcher.Dispatch(new SetRoslynWorkspaceStateAction(workspace, visualStudioInstance, msBuildAbsoluteFilePath));
+                    
+                    var projects = new List<AbsoluteFilePathDotNet>();
+                    
+                    Dictionary<ProjectId, Project> localProjectMap = new();
+                    Dictionary<AbsoluteFilePathStringValue, IndexedDocument> localFileDocumentMap = new();
+
+                    foreach (var project in solution.Projects)
+                    {
+                        projects.Add(new AbsoluteFilePathDotNet(project.FilePath ?? "{null file path}", false, project.Id));
+                        localProjectMap.Add(project.Id, project);
+                        
+                        foreach (Document document in project.Documents)
+                        {
+                            if (document.FilePath is not null)
+                            {
+                                var absoluteFilePath = new AbsoluteFilePathDotNet(document.FilePath, false, project.Id);
+                
+                                localFileDocumentMap
+                                    .Add(new AbsoluteFilePathStringValue(absoluteFilePath),
+                                        new IndexedDocument(document, absoluteFilePath));
+                            }
+                        }
+                    }
+        
+                    Dispatcher.Dispatch(new SetSolutionStateAction(solution,
+                        localProjectMap.ToImmutableDictionary(),
+                        localFileDocumentMap.ToImmutableDictionary()));
+                    
+                    _rootAbsoluteFilePaths = projects;
+                }
+                finally
+                {
+                    _loadingSln = false;
+                }
 
                 _isInitialized = true;
 
@@ -173,75 +232,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
     private async Task<IEnumerable<AbsoluteFilePathDotNet>> LoadAbsoluteFilePathChildrenAsync(AbsoluteFilePathDotNet absoluteFilePathDotNet)
     {
-        if (absoluteFilePathDotNet.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-        {
-            try
-            {
-                _loadingSln = true;
-
-                await InvokeAsync(StateHasChanged);
-
-                var targetPath = absoluteFilePathDotNet.GetAbsoluteFilePathString();
-
-                // Attempt to set the version of MSBuild.
-                VisualStudioInstance[] visualStudioInstances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
-
-                // var promptCancellationTokenSource = new CancellationTokenSource();
-                //
-                // var cancellationToken = promptCancellationTokenSource.Token;
-                //
-                // Action completePrompt = () => promptCancellationTokenSource.Cancel();
-                //
-                // Dispatcher.Dispatch(new RegisterNotificationAction(new NotificationRecord(
-                //     NotificationKey.NewNotificationKey(), 
-                //     "Select MSBuild version", 
-                //     typeof(SelectMSBuildForm), 
-                //     new Dictionary<string, object?>
-                //     {
-                //         {
-                //             nameof(SelectMSBuildForm.VisualStudioInstances),
-                //             visualStudioInstances
-                //         }
-                //     })));
-
-                // await cancellationToken.;
-                
-                var visualStudioInstance = visualStudioInstances[0];
-
-                if (!MSBuildLocator.IsRegistered)
-                {
-                    MSBuildLocator.RegisterInstance(visualStudioInstance);
-                }
-                
-                var workspace = MSBuildWorkspace.Create();
-
-                Dispatcher.Dispatch(new SetSolutionAction(workspace, visualStudioInstance));
-
-                var solution = await workspace.OpenSolutionAsync(targetPath);
-
-                var projects = new List<AbsoluteFilePathDotNet>();
-
-                foreach (var project in solution.Projects)
-                {
-                    projects.Add(new AbsoluteFilePathDotNet(project.FilePath ?? "{null file path}", false, project.Id));
-                }
-
-                _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
-                    {
-                        await FileToDocumentIndexer.IndexFilesToDocuments(workspace, Dispatcher, cancellationToken);
-                    },
-                    $"{nameof(FileToDocumentIndexer.IndexFilesToDocuments)}",
-                    false,
-                    TimeSpan.FromSeconds(60));
-
-                return projects.ToArray();
-            }
-            finally
-            {
-                _loadingSln = false;
-            }
-        }
-        
         if (absoluteFilePathDotNet.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
         {
             var containingDirectory = absoluteFilePathDotNet.Directories.Last();

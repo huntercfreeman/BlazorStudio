@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.NotificationCase;
+using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 using BlazorStudio.RazorLib.ExceptionNotifications;
 using BlazorStudio.RazorLib.FileDocumentMap;
 
@@ -21,7 +22,7 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
     [Inject]
     private IState<StartupProjectState> StartupProjectStateWrap { get; set; } = null!;
     [Inject]
-    private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
+    private IState<RoslynWorkspaceState> RoslynWorkspaceState { get; set; } = null!;
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]

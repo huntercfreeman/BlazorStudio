@@ -7,10 +7,10 @@ public class SolutionStateReducer
 {
     [ReducerMethod]
     public static SolutionState ReduceSetSolutionAction(SolutionState previousSolutionState,
-        SetSolutionAction setSolutionAction)
+        SetSolutionStateAction setSolutionStateAction)
     {
-        return new(setSolutionAction.Solution,
-            setSolutionAction.ProjectIdToProjectMap,
-            setSolutionAction.FileAbsoluteFilePathToDocumentMap);
+        return new(setSolutionStateAction.Solution,
+            setSolutionStateAction.ProjectIdToProjectMap,
+            setSolutionStateAction.FileAbsoluteFilePathToDocumentMap);
     }
 }

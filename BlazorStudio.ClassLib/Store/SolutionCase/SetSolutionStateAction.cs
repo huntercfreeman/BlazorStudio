@@ -13,6 +13,6 @@ using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.ClassLib.Store.SolutionCase;
 
-public record SetSolutionAction(Solution? Solution,
+public record SetSolutionStateAction(Solution? Solution,
     ImmutableDictionary<ProjectId, Project> ProjectIdToProjectMap,
     ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument> FileAbsoluteFilePathToDocumentMap);

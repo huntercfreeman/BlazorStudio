@@ -9,6 +9,8 @@ using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
+using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
+using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.Store.StartupProject;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -31,7 +33,9 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     [Inject]
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<BlazorStudio.ClassLib.Store.SolutionCase.SolutionState> SolutionStateWrap { get; set; } = null!;
+    private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<RoslynWorkspaceState> RoslynWorkspaceStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -138,11 +142,11 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
                 void OnEnd(Process finishedProcess)
                 {
-                    var localSolutionWorkspace = SolutionStateWrap.Value.SolutionWorkspace;
+                    var localMSBuildWorkspace = RoslynWorkspaceStateWrap.Value.MSBuildWorkspace;
 
-                    if (localSolutionWorkspace is not null)
+                    if (localMSBuildWorkspace is not null)
                     {
-                        localSolutionWorkspace.CloseSolution();
+                        localMSBuildWorkspace.CloseSolution();
 
                         Dispatcher.Dispatch(new SetSolutionExplorerAction(SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath, SequenceKey.NewSequenceKey()));
                     }
@@ -325,7 +329,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 
                 var solutionState = SolutionStateWrap.Value;
 
-                var project = solutionState.SolutionWorkspace.CurrentSolution.GetProject(absoluteFilePathDotNet.ProjectId);
+                var project = SolutionStateWrap.Value.ProjectIdToProjectMap[absoluteFilePathDotNet.ProjectId];
 
                 var namespaceString = project.DefaultNamespace;
 

@@ -60,7 +60,7 @@
                 var currentSolutionState = SolutionStateWrap.Value;
 
                 <div>
-                    @foreach (var documentPair in currentSolutionState.FileDocumentMap)
+                    @foreach (var documentPair in currentSolutionState.FileAbsoluteFilePathToDocumentMap)
                     {
                         <DebugExpansion Title="@documentPair.Key.AbsoluteFilePathString">
                             <DebugExpansion Title="PropertyDeclarations">
