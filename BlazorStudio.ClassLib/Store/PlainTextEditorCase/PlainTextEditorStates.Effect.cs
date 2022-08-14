@@ -1080,15 +1080,57 @@ public partial record PlainTextEditorStates
                                     md => md.Kind(),
                                     "pte_plain-text-editor-text-token-display-method-declaration")
                                 ||
+                                AttemptSetSyntaxKind("method declaration return type",
+                                    indexedDocument.GeneralSyntaxCollector.MethodDeclarations,
+                                    md =>
+                                    {
+                                        var retType = md
+                                            .ChildNodes()
+                                            .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+                                        
+                                        return retType?.Span ?? default;
+                                    },
+                                    md => md.Kind(),
+                                    "pte_plain-text-editor-text-token-display-type")
+                                ||
+                                AttemptSetSyntaxKind("InvocationExpressions",
+                                    indexedDocument.GeneralSyntaxCollector.InvocationExpressions,
+                                    md =>
+                                    {
+                                        var childNodes = md.Expression.ChildNodes();
+
+                                        var lastNode = childNodes.LastOrDefault();
+
+                                        return lastNode?.Span ?? TextSpan.FromBounds(0, 0);
+                                    },
+                                    md => md.Kind(),
+                                    "pte_plain-text-editor-text-token-display-method-declaration")
+                                ||
                                 AttemptSetSyntaxKind("parameter declaration type name",
                                     indexedDocument.GeneralSyntaxCollector.ParameterDeclarations,
-                                    pd => pd.ChildNodes().Single(x => x.Kind() == SyntaxKind.IdentifierName).Span,
+                                    pd =>
+                                    {
+                                        var identifierNameNode = pd.ChildNodes()
+                                            .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+
+                                        if (identifierNameNode is null)
+                                        {
+                                            return TextSpan.FromBounds(0, 0);
+                                        }
+                                        
+                                        return identifierNameNode.Span;
+                                    },
                                     pd => pd.Kind(),
                                     "pte_plain-text-editor-text-token-display-type")
                                 ||
                                 AttemptSetSyntaxKind("parameter declaration variable name",
                                     indexedDocument.GeneralSyntaxCollector.ParameterDeclarations,
-                                    pd => pd.ChildTokens().Single(x => x.Kind() == SyntaxKind.IdentifierToken).Span,
+                                    pd =>
+                                    {
+                                        var identifierToken = pd.ChildTokens().FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierToken);
+                                        
+                                        return identifierToken.Span;
+                                    },
                                     pd => pd.Kind(),
                                     "pte_plain-text-editor-text-token-display-parameter")
                                 ||
