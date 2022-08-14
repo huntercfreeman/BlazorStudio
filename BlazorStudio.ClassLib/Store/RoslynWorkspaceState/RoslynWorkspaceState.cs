@@ -13,6 +13,14 @@ using Microsoft.CodeAnalysis;
 namespace BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 
 [FeatureState]
-public record RoslynWorkspaceState(MSBuildWorkspace? MSBuildWorkspace, 
+public record RoslynWorkspaceState(MSBuildWorkspace? MSBuildWorkspace,
     VisualStudioInstance? VisualStudioInstance,
-    IAbsoluteFilePath? MsBuildAbsoluteFilePath);
+    IAbsoluteFilePath? MsBuildAbsoluteFilePath)
+{
+    public RoslynWorkspaceState() : this(default(MSBuildWorkspace),
+        default(VisualStudioInstance),
+        default(IAbsoluteFilePath))
+    {
+        
+    }
+}
