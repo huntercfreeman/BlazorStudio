@@ -11,6 +11,7 @@ public class SolutionStateReducer
     {
         return new(setSolutionStateAction.Solution,
             setSolutionStateAction.ProjectIdToProjectMap,
-            setSolutionStateAction.FileAbsoluteFilePathToDocumentMap);
+            setSolutionStateAction.FileAbsoluteFilePathToDocumentMap,
+            setSolutionStateAction.FileAbsoluteFilePathToAdditionalDocumentMap);
     }
 }

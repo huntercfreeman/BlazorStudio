@@ -15,4 +15,5 @@ namespace BlazorStudio.ClassLib.Store.SolutionCase;
 
 public record SetSolutionStateAction(Solution? Solution,
     ImmutableDictionary<ProjectId, IndexedProject> ProjectIdToProjectMap,
-    ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument> FileAbsoluteFilePathToDocumentMap);
+    ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument> FileAbsoluteFilePathToDocumentMap,
+    ImmutableDictionary<AbsoluteFilePathStringValue, IndexedAdditionalDocument> FileAbsoluteFilePathToAdditionalDocumentMap);

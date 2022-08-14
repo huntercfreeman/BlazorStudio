@@ -227,7 +227,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
         
                     Dispatcher.Dispatch(new SetSolutionStateAction(solution,
                         localProjectMap.ToImmutableDictionary(),
-                        localFileDocumentMap.ToImmutableDictionary()));
+                        localFileDocumentMap.ToImmutableDictionary(),
+                        localFileAdditionalDocumentMap.ToImmutableDictionary()));
                     
                     _rootAbsoluteFilePaths = projects;
                 }
