@@ -1038,7 +1038,7 @@ public partial record PlainTextEditorStates
                                 List<T> items, 
                                 Func<T, TextSpan> getTextSpanFunc,
                                 Func<T, SyntaxKind> getSyntaxKindFunc,
-                                string cssClassString)
+                                Func<T, string> cssClassString)
                             {
                                 foreach (var item in items)
                                 {
@@ -1051,7 +1051,7 @@ public partial record PlainTextEditorStates
                                             {
                                                 SequenceKey = SequenceKey.NewSequenceKey(),
                                                 SyntaxKind = getSyntaxKindFunc.Invoke(item),
-                                                CssClassString = cssClassString
+                                                CssClassString = cssClassString.Invoke(item)
                                             }));
                                         
                                         return true;
@@ -1066,31 +1066,31 @@ public partial record PlainTextEditorStates
                                     indexedDocument.GeneralSyntaxCollector.PropertyDeclarations,
                                     pds => pds.Type.Span,
                                     pds => pds.Kind(),
-                                    "pte_plain-text-editor-text-token-display-type")
+                                    pds => SyntaxKindToCssClassStringConverter.Convert(pds.Kind()))
                                 ||
                                 AttemptSetSyntaxKind("method declaration",
                                     indexedDocument.GeneralSyntaxCollector.MethodDeclarations,
                                     md => md.Identifier.Span,
                                     md => md.Kind(),
-                                    "pte_plain-text-editor-text-token-display-method-declaration")
+                                    pds => SyntaxKindToCssClassStringConverter.Convert(pds.Kind()))
                                 ||
                                 AttemptSetSyntaxKind("parameter declaration",
                                     indexedDocument.GeneralSyntaxCollector.ParameterDeclarations,
                                     pd => pd.Span,
                                     pd => pd.Kind(),
-                                    "pte_plain-text-editor-text-token-display-parameter")
+                                    pds => SyntaxKindToCssClassStringConverter.Convert(pds.Kind()))
                                 ||
                                 AttemptSetSyntaxKind("argument declaration",
                                     indexedDocument.GeneralSyntaxCollector.ArgumentDeclarations,
                                     ad => ad.Span,
                                     ad => ad.Kind(),
-                                    "pte_plain-text-editor-text-token-display-argument")
+                                    pds => SyntaxKindToCssClassStringConverter.Convert(pds.Kind()))
                                 ||
                                 AttemptSetSyntaxKind("string literal",
                                     indexedDocument.GeneralSyntaxCollector.StringLiteralExpressions,
                                     sl => sl.Span,
                                     sl => sl.Kind(),
-                                    "pte_plain-text-editor-text-token-display-string-literal");
+                                    pds => SyntaxKindToCssClassStringConverter.Convert(pds.Kind()));
 
                             if (!foundSyntaxKind)
                             {

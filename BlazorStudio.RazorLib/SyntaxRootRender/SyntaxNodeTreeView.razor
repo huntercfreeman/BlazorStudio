@@ -1,4 +1,6 @@
-﻿<div class="bstudio_syntax-node-tree-view">
+﻿@using Microsoft.CodeAnalysis
+@using Microsoft.CodeAnalysis.CSharp
+<div class="bstudio_syntax-node-tree-view">
     <h5><em>@@SyntaxNode.ToFullString()</em></h5>
 
     <ExpansionDisplay>
@@ -16,7 +18,7 @@
 
     <div style="overflow: auto; @_toFullStringDimensions.DimensionsCssString">
 
-        <pre style="font-size: @(_preFontSize)px;">
+        <pre style="font-size: @(_preFontSize)px; border-top: 1px solid var(--bstudio_primary-border-color);">
 @SyntaxNode.ToFullString()
 </pre>
     </div>
@@ -26,6 +28,39 @@
                                                                    ReRenderFunc="ReRender"/>
 
     <div style="overflow: auto; @_anotherDimensions.DimensionsCssString">
-        mmm
+        <TreeViewWrapDisplay ShouldDispose="false"
+                             TreeViewWrapKey="_syntaxNodeTreeViewKey"
+                             RootItems="GetRoot()"
+                             GetChildrenFunc="LoadSyntaxTreeViewWrapperChildren"
+                             OnEnterKeyDown="SyntaxTreeViewOnEnterKeyDown"
+                             OnSpaceKeyDown="ThemeTreeViewOnSpaceKeyDown"
+                             OnDoubleClick="SyntaxTreeViewOnDoubleClick"
+                             IsExpandable="syntaxWrap => syntaxWrap.SyntaxTreeViewWrapperKind == SyntaxTreeViewWrapperKind.SyntaxNode">
+            
+            <ItemRenderFragment Context="syntaxWrap">
+                @{
+                    switch (syntaxWrap.SyntaxTreeViewWrapperKind)
+                    {
+                        case SyntaxTreeViewWrapperKind.SyntaxNode:
+                            var syntaxNode = (SyntaxNode) syntaxWrap.Item;
+                        
+                            <span title="@syntaxNode.ToFullString()" style="height: 100%; display: inline-flex;">
+                                <em>@syntaxNode.Kind()</em>:&nbsp;<span style="overflow:hidden; white-space:nowrap; display:inline-block; text-overflow: ellipsis; max-width: 210px;">@syntaxNode.ToFullString()</span>
+                            </span>
+                            
+                            
+                            break;
+                        case SyntaxTreeViewWrapperKind.SyntaxToken:
+                            var syntaxToken = (SyntaxToken) syntaxWrap.Item;
+                            
+                            <span title="@syntaxToken.ToFullString()" style="height: 100%; display: inline-flex;">
+                                <em>@syntaxToken.Kind()</em>:&nbsp;<span style="overflow:hidden; white-space:nowrap; display:inline-block; text-overflow: ellipsis; max-width: 210px;">@syntaxToken.ToFullString()</span>
+                            </span>
+                            
+                            break;
+                    }
+                }
+            </ItemRenderFragment>
+        </TreeViewWrapDisplay>
     </div>
 </div>

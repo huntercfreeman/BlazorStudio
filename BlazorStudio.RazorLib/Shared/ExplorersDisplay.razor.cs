@@ -29,7 +29,7 @@ public partial class ExplorersDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -4
+                Value = -2.5
             },
         }
     };
@@ -55,7 +55,7 @@ public partial class ExplorersDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -4
+                Value = -2.5
             },
         }
     };

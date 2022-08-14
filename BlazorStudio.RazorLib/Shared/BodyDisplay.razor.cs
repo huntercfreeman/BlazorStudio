@@ -21,7 +21,7 @@ public partial class BodyDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -2
+                Value = -2.5
             }
         },
         HeightCalc = new List<DimensionUnit>
@@ -47,7 +47,7 @@ public partial class BodyDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -2
+                Value = -2.5
             }
         },
         HeightCalc = new List<DimensionUnit>
@@ -81,7 +81,7 @@ public partial class BodyDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -4
+                Value = -2.5
             },
         }
     };
@@ -103,7 +103,12 @@ public partial class BodyDisplay : ComponentBase
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
                 Value = 25
-            }
+            },
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -3
+            },
         }
     };
 
