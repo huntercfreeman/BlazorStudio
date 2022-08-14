@@ -191,6 +191,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                     
                     Dictionary<ProjectId, IndexedProject> localProjectMap = new();
                     Dictionary<AbsoluteFilePathStringValue, IndexedDocument> localFileDocumentMap = new();
+                    Dictionary<AbsoluteFilePathStringValue, IndexedAdditionalDocument> localFileAdditionalDocumentMap = new();
 
                     foreach (var project in solution.Projects)
                     {
@@ -208,6 +209,18 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                                 _ = localFileDocumentMap
                                     .TryAdd(new AbsoluteFilePathStringValue(absoluteFilePath),
                                         new IndexedDocument(document, absoluteFilePath));
+                            }
+                        }
+                        
+                        foreach (TextDocument textDocument in project.AdditionalDocuments)
+                        {
+                            if (textDocument.FilePath is not null)
+                            {
+                                var absoluteFilePath = new AbsoluteFilePathDotNet(textDocument.FilePath, false, project.Id);
+                
+                                _ = localFileAdditionalDocumentMap
+                                    .TryAdd(new AbsoluteFilePathStringValue(absoluteFilePath),
+                                        new IndexedAdditionalDocument(textDocument, absoluteFilePath));
                             }
                         }
                     }
