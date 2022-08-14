@@ -179,7 +179,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                     
                     var workspace = MSBuildWorkspace.Create();
 
-                    var msBuildAbsoluteFilePath = new AbsoluteFilePath(visualStudioInstance.MSBuildPath, true);
+                    var noTrailingSlashMSBuildPath = visualStudioInstance.MSBuildPath;
+                    
+                    if (visualStudioInstance.MSBuildPath.EndsWith(Path.DirectorySeparatorChar) ||
+                        visualStudioInstance.MSBuildPath.EndsWith(Path.AltDirectorySeparatorChar))
+                    {
+                        noTrailingSlashMSBuildPath = noTrailingSlashMSBuildPath.Substring(0, noTrailingSlashMSBuildPath.Length - 1);
+                    }
+                    
+                    var msBuildAbsoluteFilePath = new AbsoluteFilePath(noTrailingSlashMSBuildPath, true);
                     
                     var solution = await workspace
                         .OpenSolutionAsync(solutionExplorerState.SolutionAbsoluteFilePath

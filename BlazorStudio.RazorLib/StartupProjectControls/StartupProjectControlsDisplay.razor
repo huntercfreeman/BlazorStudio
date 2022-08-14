@@ -4,64 +4,62 @@
     @{
         var localStartupProjectState = StartupProjectStateWrap.Value;
 
-        if (localStartupProjectState.ProjectAbsoluteFilePath is not null)
-        {
-            <div>
+        <div style="margin-left: 10px; padding-left: 10px; border-left: 1px solid var(--bstudio_primary-border-color);">
+            Startup Project:&nbsp;
+            @if (localStartupProjectState.ProjectAbsoluteFilePath is not null)
+            {
                 <em>
                     @localStartupProjectState.ProjectAbsoluteFilePath.FileNameNoExtension
                 </em>
-            </div>
-
-            <div style="margin-left: 10px;">
-                .NET&nbsp;sdk:&nbsp;
-                <em>
-                    @(RoslynWorkspaceState.Value?.MsBuildAbsoluteFilePath?.FilenameWithExtension ?? "{MsBuildAbsoluteFilePath is null}")
-                </em>
-            </div>
-
-            <div class="bstudio_startup-project-controls-display-button"
-                 style="margin-left: 20px;">
-
-                @if (_isEnqueuedToRun)
-                {
-                    <div @onclick="() => CancelTokenSourceAndGetNewToken()">
-                        <IconLoader/>
-                    </div>
-                }
-                else if (_isRunning)
-                {
-                    <div @onclick="_enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler">
-                        <IconStopCircle/>
-                    </div>
-                }
-                else
-                {
-                    <div @onclick="DispatchEnqueueProcessOnTerminalEntryAction">
-                        <IconStartWithoutDebugging/>
-                    </div>
-                }
-            </div>
-        }
-        else
-        {
-            if (RoslynWorkspaceState.Value?.MSBuildWorkspace is null)
-            {
-                <div>{Set an active Solution}</div>
             }
             else
             {
-                <div>{Startup Project is null}</div>
+                <em>
+                    {not yet set}
+                </em>
             }
-        }
+        </div>
 
-        if (RoslynWorkspaceState.Value?.MSBuildWorkspace is not null)
+        <div style="margin-left: 10px; padding-left: 10px; border-left: 1px solid var(--bstudio_primary-border-color);">
+            MSBuild:&nbsp;
+            
+            @if (RoslynWorkspaceState.Value?.MsBuildAbsoluteFilePath is not null)
+            {
+                <em>
+                    @RoslynWorkspaceState.Value?.MsBuildAbsoluteFilePath.FileNameNoExtension
+                </em>
+            }
+            else
+            {
+                <em>{not yet set}</em>
+            }
+        </div>
+        
+        if (localStartupProjectState.ProjectAbsoluteFilePath is not null &&
+            RoslynWorkspaceState.Value?.MsBuildAbsoluteFilePath is not null)
         {
-            <div style="margin-left: 10px;">
-                <button class="btn btn-primary" 
-                        @onclick="OpenFileDocumentMapOnClick">
-                    FileDocumentMapDialog
-                </button>
-            </div>
+            <div class="bstudio_startup-project-controls-display-button"
+                         style="margin-left: 20px;">
+            
+            @if (_isEnqueuedToRun)
+            {
+                <div @onclick="() => CancelTokenSourceAndGetNewToken()">
+                    <IconLoader/>
+                </div>
+            }
+            else if (_isRunning)
+            {
+                <div @onclick="_enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler">
+                    <IconStopCircle/>
+                </div>
+            }
+            else
+            {
+                <div @onclick="DispatchEnqueueProcessOnTerminalEntryAction">
+                    <IconStartWithoutDebugging/>
+                </div>
+            }
+        </div>
         }
     }
 </div>

@@ -46,6 +46,7 @@
     <_ContentIncludedByDefault Remove="Terminal\TerminalSettingsDisplay.razor" />
     <_ContentIncludedByDefault Remove="Transformable\TransformableDisplay.razor" />
     <_ContentIncludedByDefault Remove="TreeViewCase\TreeViewWrapDisplay.razor" />
+    <_ContentIncludedByDefault Remove="FileDocumentMap\FileDocumentMapDisplay.razor" />
   </ItemGroup>
 
   <ItemGroup>
