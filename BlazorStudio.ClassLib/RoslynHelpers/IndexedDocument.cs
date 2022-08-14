@@ -16,3 +16,16 @@ public class IndexedDocument
     public IAbsoluteFilePath AbsoluteFilePath { get; set; }
     public GeneralSyntaxCollector GeneralSyntaxCollector { get; set; }
 }
+
+public class IndexedProject
+{
+    public IndexedProject(Document document, IAbsoluteFilePath absoluteFilePath)
+    {
+        Document = document;
+        AbsoluteFilePath = absoluteFilePath;
+    }
+    
+    public Document Document { get; set; }
+    public IAbsoluteFilePath AbsoluteFilePath { get; set; }
+    public GeneralSyntaxCollector GeneralSyntaxCollector { get; set; }
+}

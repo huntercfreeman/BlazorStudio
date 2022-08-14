@@ -14,6 +14,7 @@ using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.Virtualize;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
@@ -992,25 +993,26 @@ public partial record PlainTextEditorStates
             if (_updateTokenSemanticDescriptions is not null &&
                 _updateTokenSemanticDescriptions.Status == TaskStatus.Running)
             {
-                Console.WriteLine("_updateTokenSemanticDescriptions.Status == TaskStatus.Running");
                 return;
             }
             
-            Console.WriteLine("EnqueueTaskModelAsync _updateTokenSemanticDescriptions");
-
             _updateTokenSemanticDescriptions = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
                 {      
                     var absoluteFilePathValue = new AbsoluteFilePathStringValue(editor.FileHandle.AbsoluteFilePath);
 
-                    if (_solutionStateWrap.Value.FileDocumentMap.TryGetValue(absoluteFilePathValue, out var indexedDocument))
+                    if (_solutionStateWrap.Value.FileAbsoluteFilePathToDocumentMap.TryGetValue(absoluteFilePathValue, out var indexedDocument))
                     {
-                        var solution = _solutionStateWrap.Value.SolutionWorkspace.CurrentSolution;
-                        
-                        var document = indexedDocument.Document.WithText(SourceText.From(editor.GetDocumentPlainText(),
-                            editor.FileHandle.Encoding));
-                        
-                        var syntaxRoot = await document.GetSyntaxRootAsync();
+                        var solution = _solutionStateWrap.Value.Solution;
 
+                        var nextDocumentSyntaxTree = CSharpSyntaxTree.ParseText(SourceText.From(editor.GetDocumentPlainText(),
+                            editor.FileHandle.Encoding));
+
+                        var syntaxRoot = nextDocumentSyntaxTree.GetRoot();
+                        
+                        var document = indexedDocument.Document.WithSyntaxRoot(syntaxRoot);
+
+                        indexedDocument.Document = document;
+                        
                         indexedDocument.GeneralSyntaxCollector = new();
                         
                         indexedDocument.GeneralSyntaxCollector.Visit(syntaxRoot);

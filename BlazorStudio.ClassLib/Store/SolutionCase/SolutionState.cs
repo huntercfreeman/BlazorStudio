@@ -12,14 +12,12 @@ using Microsoft.CodeAnalysis;
 namespace BlazorStudio.ClassLib.Store.SolutionCase;
 
 [FeatureState]
-public record SolutionState(MSBuildWorkspace? SolutionWorkspace, 
-    VisualStudioInstance? VisualStudioInstance,
-    IAbsoluteFilePath? MsBuildAbsoluteFilePath,
-    ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument> FileDocumentMap)
+public record SolutionState(Solution? Solution,
+    ImmutableDictionary<ProjectId, Project> ProjectIdToProjectMap,
+    ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument> FileAbsoluteFilePathToDocumentMap)
 {
-    private SolutionState() : this(default(MSBuildWorkspace), 
-        default(VisualStudioInstance),
-        default(IAbsoluteFilePath),
+    private SolutionState() : this(default(Solution), 
+        ImmutableDictionary<ProjectId, Project>.Empty, 
         ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument>.Empty)
     {
 

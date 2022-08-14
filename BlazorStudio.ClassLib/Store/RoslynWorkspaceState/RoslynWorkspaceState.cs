@@ -1,5 +1,4 @@
-﻿using Microsoft.Build.Locator;
-using Microsoft.CodeAnalysis.MSBuild;
+﻿using Fluxor;
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -11,8 +10,9 @@ using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.CodeAnalysis;
 
-namespace BlazorStudio.ClassLib.Store.SolutionCase;
+namespace BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 
-public record SetSolutionAction(Solution? Solution,
-    ImmutableDictionary<ProjectId, Project> ProjectIdToProjectMap,
-    ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument> FileAbsoluteFilePathToDocumentMap);
+[FeatureState]
+public record RoslynWorkspaceState(MSBuildWorkspace? MSBuildWorkspace, 
+    VisualStudioInstance? VisualStudioInstance,
+    IAbsoluteFilePath? MsBuildAbsoluteFilePath);
