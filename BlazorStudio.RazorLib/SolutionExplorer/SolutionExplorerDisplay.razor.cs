@@ -115,10 +115,27 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     {
         if (firstRender)
         {
-            var solutionAbsoluteFilePath =
-                new AbsoluteFilePathDotNet("/home/hunter/RiderProjects/TestBlazorStudio/TestBlazorStudio.sln",
-                    false, 
-                    null);
+            var ubuntuOsDebugSolution = "/home/hunter/RiderProjects/TestBlazorStudio/TestBlazorStudio.sln";
+            var windowsOsDebugSolution = "C:\\Users\\hunte\\source\\BlazorDocumentationInteractive\\BlazorDocs.sln";
+            
+            AbsoluteFilePathDotNet solutionAbsoluteFilePath;
+                
+            if (File.Exists(ubuntuOsDebugSolution))
+            {
+                solutionAbsoluteFilePath =
+                    new AbsoluteFilePathDotNet(ubuntuOsDebugSolution,
+                        false, 
+                        null);
+            }
+            else
+            {
+                solutionAbsoluteFilePath =
+                    new AbsoluteFilePathDotNet(windowsOsDebugSolution,
+                        false, 
+                        null);
+            }    
+                
+                
 
             Dispatcher.Dispatch(new SetSolutionExplorerAction(solutionAbsoluteFilePath, SequenceKey.NewSequenceKey()));
         }       

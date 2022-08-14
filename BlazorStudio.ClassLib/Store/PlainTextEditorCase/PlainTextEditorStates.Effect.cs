@@ -30,10 +30,8 @@ public partial record PlainTextEditorStates
         private readonly IClipboardProvider _clipboardProvider;
         private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
         private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
-        private readonly SemaphoreSlim _handleOnClickSemaphoreSlim = new(1, 1);
         
-        private Task _ignoreOnClickEventsForDelay = Task.CompletedTask;
-        private Task<ITaskModel> _updateTokenSemanticDescriptions;
+        private SemaphoreSlim __updateTokenSemanticDescriptionsSemaphoreSlim = new(1, 1);
 
         public PlainTextEditorStatesEffect(IState<PlainTextEditorStates> plainTextEditorStatesWrap,
             IState<SolutionState> solutionStateWrap,
@@ -437,7 +435,7 @@ public partial record PlainTextEditorStates
                 
                             if (!KeyboardKeyFacts.IsMovementKey(keyDownEventAction.KeyDownEventRecord))
                             {
-                                UpdateTokenSemanticDescriptions(editors,
+                                await UpdateTokenSemanticDescriptions(editors,
                                     (PlainTextEditorRecordTokenized) plainTextEditor,
                                     dispatcher);
                             }
@@ -510,7 +508,7 @@ public partial record PlainTextEditorStates
                 
                 if (!KeyboardKeyFacts.IsMovementKey(keyDownEventAction.KeyDownEventRecord))
                 {
-                    UpdateTokenSemanticDescriptions(states,
+                    await UpdateTokenSemanticDescriptions(states,
                         (PlainTextEditorRecordTokenized) replacementPlainTextEditor,
                         dispatcher);
                 }
@@ -946,7 +944,7 @@ public partial record PlainTextEditorStates
                 
                 dispatcher.Dispatch(new UpdateTokenSemanticDescriptionsAction(tokenSemantics));
                 
-                UpdateTokenSemanticDescriptions(previousPlainTextEditorStates,
+                await UpdateTokenSemanticDescriptions(previousPlainTextEditorStates,
                     resultingPlainTextEditor,
                     dispatcher);
                 
@@ -986,154 +984,155 @@ public partial record PlainTextEditorStates
             }
         }
         
-        private void UpdateTokenSemanticDescriptions(PlainTextEditorStates previousPlainTextEditorStates,
+        private async Task UpdateTokenSemanticDescriptions(PlainTextEditorStates previousPlainTextEditorStates,
             PlainTextEditorRecordTokenized editor,
             IDispatcher dispatcher)
         {
-            if (_updateTokenSemanticDescriptions is not null &&
-                _updateTokenSemanticDescriptions.Status == TaskStatus.Running)
-            {
+            var success = await __updateTokenSemanticDescriptionsSemaphoreSlim
+                .WaitAsync(TimeSpan.Zero);
+
+            if (!success)
                 return;
-            }
-            
-            _updateTokenSemanticDescriptions = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
-                {      
-                    var absoluteFilePathValue = new AbsoluteFilePathStringValue(editor.FileHandle.AbsoluteFilePath);
+        
+            try
+            {
+                var absoluteFilePathValue = new AbsoluteFilePathStringValue(editor.FileHandle.AbsoluteFilePath);
 
-                    if (_solutionStateWrap.Value.FileAbsoluteFilePathToDocumentMap.TryGetValue(absoluteFilePathValue, out var indexedDocument))
+                if (_solutionStateWrap.Value.FileAbsoluteFilePathToDocumentMap.TryGetValue(absoluteFilePathValue, out var indexedDocument))
+                {
+                    var solution = _solutionStateWrap.Value.Solution;
+
+                    var nextDocumentSyntaxTree = CSharpSyntaxTree.ParseText(SourceText.From(editor.GetDocumentPlainText(),
+                        editor.FileHandle.Encoding));
+
+                    var syntaxRoot = nextDocumentSyntaxTree.GetRoot();
+                    
+                    var document = indexedDocument.Document.WithSyntaxRoot(syntaxRoot);
+
+                    indexedDocument.Document = document;
+                    
+                    indexedDocument.GeneralSyntaxCollector = new();
+                    
+                    indexedDocument.GeneralSyntaxCollector.Visit(syntaxRoot);
+
+                    // The first character is always a 'fake' StartOfRowToken and should not be counted.
+                    var runningTotalOfCharactersInDocument = 0;
+                    
+                    List<(TextTokenKey textTokenKey, SemanticDescription semanticDescription)> tuples = new();
+
+                    for (var rowIndex = 0; rowIndex < editor.Rows.Count; rowIndex++)
                     {
-                        var solution = _solutionStateWrap.Value.Solution;
+                        var row = editor.Rows[rowIndex];
 
-                        var nextDocumentSyntaxTree = CSharpSyntaxTree.ParseText(SourceText.From(editor.GetDocumentPlainText(),
-                            editor.FileHandle.Encoding));
-
-                        var syntaxRoot = nextDocumentSyntaxTree.GetRoot();
-                        
-                        var document = indexedDocument.Document.WithSyntaxRoot(syntaxRoot);
-
-                        indexedDocument.Document = document;
-                        
-                        indexedDocument.GeneralSyntaxCollector = new();
-                        
-                        indexedDocument.GeneralSyntaxCollector.Visit(syntaxRoot);
-
-                        // The first character is always a 'fake' StartOfRowToken and should not be counted.
-                        var runningTotalOfCharactersInDocument = 0;
-                        
-                        List<(TextTokenKey textTokenKey, SemanticDescription semanticDescription)> tuples = new();
-
-                        for (var rowIndex = 0; rowIndex < editor.Rows.Count; rowIndex++)
+                        for (var tokenIndex = 0; tokenIndex < row.Tokens.Count; tokenIndex++)
                         {
-                            var row = editor.Rows[rowIndex];
-
-                            for (var tokenIndex = 0; tokenIndex < row.Tokens.Count; tokenIndex++)
+                            if (rowIndex == 0 && 
+                                tokenIndex == 0)
                             {
-                                if (rowIndex == 0 && 
-                                    tokenIndex == 0)
+                                continue;
+                            }
+                            
+                            var token = row.Tokens[tokenIndex];
+                            
+                            bool AttemptSetSyntaxKind<T>(string humanStringIdentifier,
+                                List<T> items, 
+                                Func<T, TextSpan> getTextSpanFunc,
+                                Func<T, SyntaxKind> getSyntaxKindFunc,
+                                string cssClassString)
+                            {
+                                foreach (var item in items)
                                 {
-                                    continue;
-                                }
-                                
-                                var token = row.Tokens[tokenIndex];
-                                
-                                bool AttemptSetSyntaxKind<T>(string humanStringIdentifier,
-                                    List<T> items, 
-                                    Func<T, TextSpan> getTextSpanFunc,
-                                    Func<T, SyntaxKind> getSyntaxKindFunc,
-                                    string cssClassString)
-                                {
-                                    foreach (var item in items)
+                                    if (getTextSpanFunc.Invoke(item).IntersectsWith(new TextSpan(
+                                            runningTotalOfCharactersInDocument,
+                                            token.PlainText.Length)))
                                     {
-                                        if (getTextSpanFunc.Invoke(item).IntersectsWith(new TextSpan(
-                                                runningTotalOfCharactersInDocument,
-                                                token.PlainText.Length)))
-                                        {
-                                            tuples.Add((token.Key,
-                                                new SemanticDescription
-                                                {
-                                                    SequenceKey = SequenceKey.NewSequenceKey(),
-                                                    SyntaxKind = getSyntaxKindFunc.Invoke(item),
-                                                    CssClassString = cssClassString
-                                                }));
-                                            
-                                            return true;
-                                        }
+                                        tuples.Add((token.Key,
+                                            new SemanticDescription
+                                            {
+                                                SequenceKey = SequenceKey.NewSequenceKey(),
+                                                SyntaxKind = getSyntaxKindFunc.Invoke(item),
+                                                CssClassString = cssClassString
+                                            }));
+                                        
+                                        return true;
                                     }
-                                    
-                                    return false;
                                 }
+                                
+                                return false;
+                            }
 
-                                var foundSyntaxKind =
-                                    AttemptSetSyntaxKind("property type",
-                                        indexedDocument.GeneralSyntaxCollector.PropertyDeclarations,
-                                        pds => pds.Type.Span,
-                                        pds => pds.Kind(),
-                                        "pte_plain-text-editor-text-token-display-type")
-                                    ||
-                                    AttemptSetSyntaxKind("method declaration",
-                                        indexedDocument.GeneralSyntaxCollector.MethodDeclarations,
-                                        md => md.Identifier.Span,
-                                        md => md.Kind(),
-                                        "pte_plain-text-editor-text-token-display-method-declaration")
-                                    ||
-                                    AttemptSetSyntaxKind("parameter declaration",
-                                        indexedDocument.GeneralSyntaxCollector.ParameterDeclarations,
-                                        pd => pd.Span,
-                                        pd => pd.Kind(),
-                                        "pte_plain-text-editor-text-token-display-parameter")
-                                    ||
-                                    AttemptSetSyntaxKind("argument declaration",
-                                        indexedDocument.GeneralSyntaxCollector.ArgumentDeclarations,
-                                        ad => ad.Span,
-                                        ad => ad.Kind(),
-                                        "pte_plain-text-editor-text-token-display-argument")
-                                    ||
-                                    AttemptSetSyntaxKind("string literal",
-                                        indexedDocument.GeneralSyntaxCollector.StringLiteralExpressions,
-                                        sl => sl.Span,
-                                        sl => sl.Kind(),
-                                        "pte_plain-text-editor-text-token-display-string-literal");
+                            var foundSyntaxKind =
+                                AttemptSetSyntaxKind("property type",
+                                    indexedDocument.GeneralSyntaxCollector.PropertyDeclarations,
+                                    pds => pds.Type.Span,
+                                    pds => pds.Kind(),
+                                    "pte_plain-text-editor-text-token-display-type")
+                                ||
+                                AttemptSetSyntaxKind("method declaration",
+                                    indexedDocument.GeneralSyntaxCollector.MethodDeclarations,
+                                    md => md.Identifier.Span,
+                                    md => md.Kind(),
+                                    "pte_plain-text-editor-text-token-display-method-declaration")
+                                ||
+                                AttemptSetSyntaxKind("parameter declaration",
+                                    indexedDocument.GeneralSyntaxCollector.ParameterDeclarations,
+                                    pd => pd.Span,
+                                    pd => pd.Kind(),
+                                    "pte_plain-text-editor-text-token-display-parameter")
+                                ||
+                                AttemptSetSyntaxKind("argument declaration",
+                                    indexedDocument.GeneralSyntaxCollector.ArgumentDeclarations,
+                                    ad => ad.Span,
+                                    ad => ad.Kind(),
+                                    "pte_plain-text-editor-text-token-display-argument")
+                                ||
+                                AttemptSetSyntaxKind("string literal",
+                                    indexedDocument.GeneralSyntaxCollector.StringLiteralExpressions,
+                                    sl => sl.Span,
+                                    sl => sl.Kind(),
+                                    "pte_plain-text-editor-text-token-display-string-literal");
 
-                                if (!foundSyntaxKind)
-                                {
-                                    tuples.Add((token.Key,
-                                        new SemanticDescription
-                                        {
-                                            SequenceKey = SequenceKey.NewSequenceKey(),
-                                            SyntaxKind = SyntaxKind.None,
-                                            CssClassString = string.Empty
-                                        }));
-                                }
+                            if (!foundSyntaxKind)
+                            {
+                                tuples.Add((token.Key,
+                                    new SemanticDescription
+                                    {
+                                        SequenceKey = SequenceKey.NewSequenceKey(),
+                                        SyntaxKind = SyntaxKind.None,
+                                        CssClassString = string.Empty
+                                    }));
+                            }
 
-                                if (token.Kind == TextTokenKind.Whitespace &&
-                                    ((WhitespaceTextToken)token).WhitespaceKind == WhitespaceKind.Tab)
-                                {
-                                    // Do not map roslyn character indices with '\t' representing 4 spaces.
-                                    runningTotalOfCharactersInDocument += token.CopyText.Length;
-                                }
-                                else if (token.Kind == TextTokenKind.StartOfRow &&
-                                        editor.UseCarriageReturnNewLine)
-                                {
-                                    // This is needed to  map roslyn character indices to the editor's
-                                    //
-                                    // "\r\n" is 2 characters versus the
-                                    // 'fake' way it would be represented in
-                                    // the editor as "\n" which is 1 character.
-                                    runningTotalOfCharactersInDocument += token.CopyText.Length;
-                                }
-                                else
-                                {
-                                    runningTotalOfCharactersInDocument += token.PlainText.Length;
-                                }
+                            if (token.Kind == TextTokenKind.Whitespace &&
+                                ((WhitespaceTextToken)token).WhitespaceKind == WhitespaceKind.Tab)
+                            {
+                                // Do not map roslyn character indices with '\t' representing 4 spaces.
+                                runningTotalOfCharactersInDocument += token.CopyText.Length;
+                            }
+                            else if (token.Kind == TextTokenKind.StartOfRow &&
+                                    editor.UseCarriageReturnNewLine)
+                            {
+                                // This is needed to  map roslyn character indices to the editor's
+                                //
+                                // "\r\n" is 2 characters versus the
+                                // 'fake' way it would be represented in
+                                // the editor as "\n" which is 1 character.
+                                runningTotalOfCharactersInDocument += token.CopyText.Length;
+                            }
+                            else
+                            {
+                                runningTotalOfCharactersInDocument += token.PlainText.Length;
                             }
                         }
-
-                        dispatcher.Dispatch(new UpdateTokenSemanticDescriptionsAction(tuples));
                     }
-                },
-                $"{nameof(PropertyDeclarationCollector)}",
-                false,
-                TimeSpan.FromSeconds(60));
+
+                    dispatcher.Dispatch(new UpdateTokenSemanticDescriptionsAction(tuples));
+                }
+            }
+            finally
+            {
+                __updateTokenSemanticDescriptionsSemaphoreSlim.Release();
+            }
         }
 
         [EffectMethod]

@@ -12,6 +12,14 @@ public record IconOptionsState(DimensionUnit IconSize)
         Value = 24
     })
     {
-        
+        if (System.OperatingSystem.IsWindows())
+        {
+            // On Windows I find that everything looks about 30% larger than when I use Linux so I reduce the size
+            IconSize = new DimensionUnit()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = 18
+            };
+        }
     }
 }
