@@ -263,10 +263,22 @@ public partial record PlainTextEditorStates
                     .Substring(previousDefaultTextToken.GetIndexInPlainText(true) + 1);
             }
 
+            int? nextIndexInPlainText;
+
+            if (keyDownEventRecord.CtrlWasPressed)
+            {
+                nextIndexInPlainText = previousDefaultTextToken.GetIndexInPlainText(true) -
+                                       (1 + previousDefaultTextToken.GetIndexInPlainText(true));
+            }
+            else
+            {
+                nextIndexInPlainText = previousDefaultTextToken.GetIndexInPlainText(true) - 1;
+            }
+            
             var nextDefaultToken = previousDefaultTextToken with
                 {
                     Content = firstSplitContent + secondSplitContent,
-                    IndexInPlainText = previousDefaultTextToken.GetIndexInPlainText(true) - 1
+                    IndexInPlainText = nextIndexInPlainText
                 };
 
             if (nextDefaultToken.Content.Length == 0)
