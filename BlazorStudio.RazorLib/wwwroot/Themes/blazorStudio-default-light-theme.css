@@ -51,4 +51,6 @@
     --pte_token-method-declaration: #d48200;
     --pte_plain-text-editor-text-token-display-string-literal: #A31515;
     --pte_plain-text-editor-selection: #ADD6FF;
+    --pte_token-parameter-declaration: #8d07a9;
+    --pte_token-argument-declaration: #8d07a9;
 }
