@@ -1,3 +1,4 @@
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -6,26 +7,13 @@ namespace BlazorStudio.ClassLib.RoslynHelpers;
 
 public class IndexedDocument
 {
-    public IndexedDocument(Document document, IAbsoluteFilePath absoluteFilePath)
+    public IndexedDocument(Document document, AbsoluteFilePathDotNet absoluteFilePathDotNet)
     {
         Document = document;
-        AbsoluteFilePath = absoluteFilePath;
+        AbsoluteFilePathDotNet = absoluteFilePathDotNet;
     }
     
     public Document Document { get; set; }
-    public IAbsoluteFilePath AbsoluteFilePath { get; set; }
-    public GeneralSyntaxCollector GeneralSyntaxCollector { get; set; }
-}
-
-public class IndexedProject
-{
-    public IndexedProject(Document document, IAbsoluteFilePath absoluteFilePath)
-    {
-        Document = document;
-        AbsoluteFilePath = absoluteFilePath;
-    }
-    
-    public Document Document { get; set; }
-    public IAbsoluteFilePath AbsoluteFilePath { get; set; }
+    public AbsoluteFilePathDotNet AbsoluteFilePathDotNet { get; set; }
     public GeneralSyntaxCollector GeneralSyntaxCollector { get; set; }
 }

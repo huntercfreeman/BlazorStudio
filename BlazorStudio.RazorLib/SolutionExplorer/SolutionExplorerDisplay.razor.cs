@@ -172,13 +172,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                     
                     var projects = new List<AbsoluteFilePathDotNet>();
                     
-                    Dictionary<ProjectId, Project> localProjectMap = new();
+                    Dictionary<ProjectId, IndexedProject> localProjectMap = new();
                     Dictionary<AbsoluteFilePathStringValue, IndexedDocument> localFileDocumentMap = new();
 
                     foreach (var project in solution.Projects)
                     {
-                        projects.Add(new AbsoluteFilePathDotNet(project.FilePath ?? "{null file path}", false, project.Id));
-                        localProjectMap.Add(project.Id, project);
+                        var projectAbsoluteFilePath = new AbsoluteFilePathDotNet(project.FilePath ?? "{null file path}", false, project.Id);
+                        
+                        projects.Add(projectAbsoluteFilePath);
+                        localProjectMap.Add(project.Id, new IndexedProject(project, projectAbsoluteFilePath));
                         
                         foreach (Document document in project.Documents)
                         {
@@ -232,6 +234,13 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
     private async Task<IEnumerable<AbsoluteFilePathDotNet>> LoadAbsoluteFilePathChildrenAsync(AbsoluteFilePathDotNet absoluteFilePathDotNet)
     {
+        if (absoluteFilePathDotNet.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+        {
+            var indexedProjects = SolutionStateWrap.Value.ProjectIdToProjectMap.Values;
+
+            return indexedProjects.Select(x => x.AbsoluteFilePathDotNet);
+        }
+        
         if (absoluteFilePathDotNet.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
         {
             var containingDirectory = absoluteFilePathDotNet.Directories.Last();

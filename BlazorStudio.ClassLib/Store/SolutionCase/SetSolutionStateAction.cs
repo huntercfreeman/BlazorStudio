@@ -14,5 +14,5 @@ using Microsoft.CodeAnalysis;
 namespace BlazorStudio.ClassLib.Store.SolutionCase;
 
 public record SetSolutionStateAction(Solution? Solution,
-    ImmutableDictionary<ProjectId, Project> ProjectIdToProjectMap,
+    ImmutableDictionary<ProjectId, IndexedProject> ProjectIdToProjectMap,
     ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument> FileAbsoluteFilePathToDocumentMap);

@@ -331,11 +331,11 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
                 var project = SolutionStateWrap.Value.ProjectIdToProjectMap[absoluteFilePathDotNet.ProjectId];
 
-                var namespaceString = project.DefaultNamespace;
+                var namespaceString = project.Project.DefaultNamespace;
 
                 if (string.IsNullOrWhiteSpace(namespaceString))
                 {
-                    namespaceString = project.Name;
+                    namespaceString = project.Project.Name;
                 }
                 
                 await File

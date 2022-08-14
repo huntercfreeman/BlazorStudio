@@ -13,11 +13,11 @@ namespace BlazorStudio.ClassLib.Store.SolutionCase;
 
 [FeatureState]
 public record SolutionState(Solution? Solution,
-    ImmutableDictionary<ProjectId, Project> ProjectIdToProjectMap,
+    ImmutableDictionary<ProjectId, IndexedProject> ProjectIdToProjectMap,
     ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument> FileAbsoluteFilePathToDocumentMap)
 {
     private SolutionState() : this(default(Solution), 
-        ImmutableDictionary<ProjectId, Project>.Empty, 
+        ImmutableDictionary<ProjectId, IndexedProject>.Empty, 
         ImmutableDictionary<AbsoluteFilePathStringValue, IndexedDocument>.Empty)
     {
 
