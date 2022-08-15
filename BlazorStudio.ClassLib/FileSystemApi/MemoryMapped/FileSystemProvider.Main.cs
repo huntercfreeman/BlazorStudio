@@ -7,7 +7,8 @@ public partial class FileSystemProvider : IFileSystemProvider, IDisposable
     private readonly Dictionary<AbsoluteFilePathStringValue, IFileHandle> _fileHandles = new();
     private readonly SemaphoreSlim _fileHandlesSemaphoreSlim = new(1, 1);
 
-    public async Task<IFileHandle> OpenAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken)
+    public async Task<IFileHandle> OpenAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken,
+        FileHandleKind fileHandleKind)
     {
         var absoluteFilePathStringValue = new AbsoluteFilePathStringValue(absoluteFilePath);
 
@@ -15,9 +16,8 @@ public partial class FileSystemProvider : IFileSystemProvider, IDisposable
         {
             await _fileHandlesSemaphoreSlim.WaitAsync(cancellationToken);
 
-            var fileHandle = UnsafePerformOpen(absoluteFilePath, absoluteFilePathStringValue);
-            
-            await fileHandle.InitializeAsync(cancellationToken);
+            var fileHandle = 
+                await UnsafePerformOpenAsync(absoluteFilePath, absoluteFilePathStringValue, fileHandleKind);
             
             _fileHandles.Add(absoluteFilePathStringValue, fileHandle);
 
@@ -29,17 +29,31 @@ public partial class FileSystemProvider : IFileSystemProvider, IDisposable
         }
     }
 
-    private FileHandle UnsafePerformOpen(IAbsoluteFilePath absoluteFilePath,
-        AbsoluteFilePathStringValue filePathStringValue)
+    private async Task<IFileHandle> UnsafePerformOpenAsync(IAbsoluteFilePath absoluteFilePath,
+        AbsoluteFilePathStringValue filePathStringValue,
+        FileHandleKind fileHandleKind)
     {
         var absoluteFilePathStringValue = new AbsoluteFilePathStringValue(absoluteFilePath);
         
         if (_fileHandles.TryGetValue(absoluteFilePathStringValue, out var value))
         {
-            return (FileHandle) value;
+            return value;
         }
-        
-        var fileHandle = new FileHandle(absoluteFilePath, Close);
+
+        IFileHandle fileHandle;
+
+        if (fileHandleKind == FileHandleKind.Tokenized)
+        {
+            fileHandle = new FileHandleTokenized(absoluteFilePath, Close);
+        }
+        else
+        {
+            var memoryMappedFileHandle = new FileHandleMemoryMapped(absoluteFilePath, Close);
+            
+            await memoryMappedFileHandle.InitializeAsync(CancellationToken.None);
+
+            fileHandle = memoryMappedFileHandle;
+        }
 
         return fileHandle;
     }

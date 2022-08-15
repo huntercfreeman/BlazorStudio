@@ -7,9 +7,9 @@ namespace BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 
 public partial class FileSystemProvider : IFileSystemProvider
 {
-    private class FileHandle : IFileHandle
+    private class FileHandleMemoryMapped : IFileHandle
     {
-        private readonly Action<FileHandle> _onDisposeAction;
+        private readonly Action<IFileHandle> _onDisposeAction;
 
         private readonly SemaphoreSlim _readSemaphoreSlim = new(1, 1);
 
@@ -61,10 +61,13 @@ public partial class FileSystemProvider : IFileSystemProvider
         /// TODO: Calculate this instead of assuming each character is 1 byte 
         /// </summary>
         public int BytesPerEncodedCharacter { get; private set; } = 1;
+        public FileHandleKey FileHandleKey { get; } = FileHandleKey.NewFileHandleKey();
+        public FileHandleKind FileHandleKind => FileHandleKind.MemoryMapped;
+        public IAbsoluteFilePath AbsoluteFilePath { get; }
 
         public FileHandleReadRequest MostRecentReadRequest { get; private set; }
 
-        public FileHandle(IAbsoluteFilePath absoluteFilePath, Action<FileHandle> onDisposeAction)
+        public FileHandleMemoryMapped(IAbsoluteFilePath absoluteFilePath, Action<IFileHandle> onDisposeAction)
         {
             _onDisposeAction = onDisposeAction;
             AbsoluteFilePath = absoluteFilePath;
@@ -73,7 +76,7 @@ public partial class FileSystemProvider : IFileSystemProvider
         public async Task InitializeAsync(CancellationToken cancellationToken)
         {
             if (AbsoluteFilePath.IsDirectory)
-                throw new ApplicationException($"{nameof(FileHandle)} does not support directories.");
+                throw new ApplicationException($"{nameof(FileHandleMemoryMapped)} does not support directories.");
 
             var path = AbsoluteFilePath.GetAbsoluteFilePathString();
 
@@ -150,9 +153,6 @@ public partial class FileSystemProvider : IFileSystemProvider
                 // The file exists but is empty.
             }
         }
-
-        public FileHandleKey FileHandleKey { get; } = FileHandleKey.NewFileHandleKey();
-        public IAbsoluteFilePath AbsoluteFilePath { get; }
 
         public Task SaveAsync(string content, CancellationToken cancellationToken)
         {

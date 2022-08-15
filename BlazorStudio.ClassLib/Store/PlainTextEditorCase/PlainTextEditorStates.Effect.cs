@@ -695,7 +695,8 @@ public partial record PlainTextEditorStates
 
                 var fileHandle = await constructMemoryMappedFilePlainTextEditorRecordAction.FileSystemProvider
                     .OpenAsync(constructMemoryMappedFilePlainTextEditorRecordAction.AbsoluteFilePath,
-                        constructMemoryMappedFilePlainTextEditorRecordAction.CancellationToken);
+                        constructMemoryMappedFilePlainTextEditorRecordAction.CancellationToken,
+                        FileHandleKind.MemoryMapped);
 
                 var plainTextEditor = new
                     PlainTextEditorRecordMemoryMappedFile(constructMemoryMappedFilePlainTextEditorRecordAction.PlainTextEditorKey)
@@ -733,7 +734,8 @@ public partial record PlainTextEditorStates
 
                 var fileHandle = await constructTokenizedPlainTextEditorRecordAction.FileSystemProvider
                     .OpenAsync(constructTokenizedPlainTextEditorRecordAction.AbsoluteFilePath,
-                        constructTokenizedPlainTextEditorRecordAction.CancellationToken);
+                        constructTokenizedPlainTextEditorRecordAction.CancellationToken,
+                        FileHandleKind.Tokenized);
 
                 var plainTextEditor = new
                     PlainTextEditorRecordTokenized(constructTokenizedPlainTextEditorRecordAction.PlainTextEditorKey)
