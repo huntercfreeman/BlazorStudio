@@ -1,13 +1,39 @@
 window.plainTextEditor = {
     getVirtualizeItemDimensions: function (virtualizeItemLocatorElementReference) {
-
         let renderedTItem = virtualizeItemLocatorElementReference
             .previousElementSibling;
+
+        let parentElement = virtualizeItemLocatorElementReference
+            .parentElement;
         
         return {
-            WidthInPixels: renderedTItem.offsetWidth,
-            HeightInPixels: renderedTItem.offsetHeight
+            WidthOfTItemInPixels: renderedTItem.offsetWidth,
+            HeightOfTItemInPixels: renderedTItem.offsetHeight,
+            WidthOfScrollableContainer: parentElement.offsetWidth,
+            HeightOfScrollableContainer: parentElement.offsetHeight
         };
+    },
+    getVirtualizeScrollDimensions: function (virtualizeItemLocatorElementReference) {
+        let parentElement = virtualizeItemLocatorElementReference
+            .parentElement;
+        
+        return {
+            ScrollLeft: parentElement.scrollLeft,
+            ScrollTop: parentElement.scrollTop
+        };
+    },
+    subscribeToVirtualizeScrollEvent: function (virtualizeItemLocatorElementReference,
+                                                virtualizeCoordinateSystemDotNetReference) {
+        let parentElement = virtualizeItemLocatorElementReference
+            .parentElement;
+        
+        parent.addEventListener('scroll', (event) => {
+
+            virtualizeCoordinateSystemDotNetReference.invokeMethodAsync("OnParentElementScrollEvent", {
+                    ScrollLeft: parentElement.scrollLeft,
+                    ScrollTop: parentElement.scrollTop
+                });
+        })
     },
     intersectionObserver: 0,
     elementByIdIsIntersecting: new Map(),

@@ -11,7 +11,7 @@ namespace Experiments.Server.VirtualizeComponents;
 /// using the <see cref="ItemRenderFragment"/> and measure the rendered
 /// content's dimensions. The dimensions are stored as <see cref="VirtualizeItemDimensions"/>
 /// </summary>
-public partial class MeasureDimensionsOfTItem<TItem> : ComponentBase
+public partial class MeasureDimensionsForVirtualization<TItem> : ComponentBase
 {
     /// <summary>
     /// The JavaScript interop calls are performed through

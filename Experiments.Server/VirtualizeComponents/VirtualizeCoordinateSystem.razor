@@ -1,25 +1,24 @@
 ﻿@typeparam TItem
 
+<div @ref="_topBoundaryElementReference" style="height:@(_topBoundaryHeightInPixels)px;"></div>
 @if (Items?.Any() ?? false)
 {
-    if (_dimensionsOfTItem is null)
+    if (_dimensions is null)
     {
-        <MeasureDimensionsOfTItem Item="Items.ElementAt(0)"
+        <MeasureDimensionsForVirtualization Item="Items.ElementAt(0)"
                                   ItemRenderFragment="ChildContent"
                                   OnAfterMeasurementTakenEventCallback="OnAfterMeasurementTaken" />
     }
     else
     {
-        <div>
-            Dimensions are known
-            
-            <div>
-                @(_dimensionsOfTItem.WidthInPixels)px by @(_dimensionsOfTItem.HeightInPixels)px 
-            </div>
-        </div>        
+        foreach (var item in ResultSet)
+        {
+            @ChildContent(item)
+        }
     }
 }
 else
 {
     <div>No items</div>
 }
+<div @ref="_bottomBoundaryElementReference" style="height:@(_bottomBoundaryHeightInPixels)px;"></div>

@@ -1,5 +1,7 @@
 namespace Experiments.Server.VirtualizeComponents;
 
 public record VirtualizeItemDimensions(
-    double WidthInPixels,
-    double HeightInPixels);
+    double WidthOfTItemInPixels,
+    double HeightOfTItemInPixels,
+    double WidthOfScrollableContainer,
+    double HeightOfScrollableContainer);
