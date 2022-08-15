@@ -103,15 +103,23 @@ public partial class VirtualizeCoordinateSystem<TItem> : ComponentBase, IDisposa
         var startIndex = _scrollDimensions.ScrollTop / _dimensions.HeightOfTItemInPixels;
         var count = _dimensions.HeightOfScrollableContainer / _dimensions.HeightOfTItemInPixels;
         
-        var topBoundaryHeight = _scrollDimensions.ScrollTop;
-        
         var totalHeight = _dimensions.HeightOfTItemInPixels * Items.Count;
         
+        var topBoundaryHeight = _scrollDimensions.ScrollTop;
+
+        topBoundaryHeight = Math.Min(topBoundaryHeight,
+            totalHeight - _dimensions.HeightOfScrollableContainer);
+        
         var bottomBoundaryHeight = totalHeight - topBoundaryHeight - _dimensions.HeightOfScrollableContainer;
+
+        if (bottomBoundaryHeight < _dimensions.HeightOfTItemInPixels)
+        {
+            bottomBoundaryHeight = 0;
+        }
         
         var results = Items
-            .Skip((int) startIndex)
-            .Take((int) count)
+            .Skip((int) Math.Ceiling(startIndex))
+            .Take((int) Math.Ceiling(count))
             .ToArray();
         
         _renderData = (topBoundaryHeight, bottomBoundaryHeight, results); 
