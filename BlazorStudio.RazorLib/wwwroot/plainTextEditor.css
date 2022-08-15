@@ -156,6 +156,10 @@
     color: var(--pte_token-argument-declaration);
 }
 
+.pte_plain-text-editor-text-token-display-comment {
+    color: var(--pte_token-trivia-comment);
+}
+
 .pte_plain-text-editor-character-selected {
     background-color: var(--pte_plain-text-editor-selection);
 }

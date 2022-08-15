@@ -1,5 +1,5 @@
 ﻿.bstudio_default-light-theme {
-    --bstudio_primary-background-color: rgb(253, 253, 251);
+    --bstudio_primary-background-color: rgb(250, 250, 250);
     --bstudio_secondary-background-color: rgb(250, 250, 250);
     --bstudio_tertiary-background-color: #c8cee1;
     --bstudio_title-background-color: rgb(244, 244, 196);
@@ -53,4 +53,5 @@
     --pte_plain-text-editor-selection: #ADD6FF;
     --pte_token-parameter-declaration: #8d07a9;
     --pte_token-argument-declaration: #8d07a9;
+    --pte_token-trivia-comment: #007F00;
 }

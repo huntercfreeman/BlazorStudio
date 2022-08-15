@@ -1144,7 +1144,25 @@ public partial record PlainTextEditorStates
                                     indexedDocument.GeneralSyntaxCollector.StringLiteralExpressions,
                                     sl => sl.Span,
                                     sl => sl.Kind(),
-                                    "pte_plain-text-editor-text-token-display-string-literal");
+                                    "pte_plain-text-editor-text-token-display-string-literal")
+                                ||
+                                AttemptSetSyntaxKind("keywords",
+                                    indexedDocument.GeneralSyntaxCollector.Keywords,
+                                    sl => sl.Span,
+                                    sl => sl.Kind(),
+                                    "pte_plain-text-editor-text-token-display-keyword")
+                                ||
+                                AttemptSetSyntaxKind("comments",
+                                    indexedDocument.GeneralSyntaxCollector.TriviaComments,
+                                    sl => sl.Span,
+                                    sl => sl.Kind(),
+                                    "pte_plain-text-editor-text-token-display-comment")
+                                ||
+                                AttemptSetSyntaxKind("xml comments",
+                                    indexedDocument.GeneralSyntaxCollector.XmlComments,
+                                    sl => sl.Span,
+                                    sl => sl.Kind(),
+                                    "pte_plain-text-editor-text-token-display-comment");
 
                             if (!foundSyntaxKind)
                             {

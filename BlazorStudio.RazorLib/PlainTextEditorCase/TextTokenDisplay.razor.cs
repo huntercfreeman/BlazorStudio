@@ -109,25 +109,9 @@ public partial class TextTokenDisplay : FluxorComponent
 
         var classBuilder = new StringBuilder();
         
-        // Check is keyword
-        {        
-            var localCSharpKeywords = CSharpKeywordsWrap.Value;
+        var currentTokenSemanticsState = TokenSemanticsStateSelector.Value;
 
-            if (TextToken.Kind == TextTokenKind.Default &&
-                localCSharpKeywords.Keywords.Any(x => x == TextToken.PlainText))
-            {
-                isKeyword = true;
-                classBuilder.Append("pte_plain-text-editor-text-token-display-keyword");
-            }
-        }
-        
-        if (!isKeyword)
-        {
-            var currentTokenSemanticsState = TokenSemanticsStateSelector.Value;
-
-            classBuilder.Append(currentTokenSemanticsState.CssClassString ?? string.Empty);
-            // classBuilder.Append(SyntaxKindToCssStringConverter.Convert(currentTokenSemanticsStateSelector.SyntaxKind));
-        }
+        classBuilder.Append(currentTokenSemanticsState.CssClassString ?? string.Empty);
         
         return classBuilder.ToString();
     }
