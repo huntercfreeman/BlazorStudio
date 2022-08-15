@@ -46,9 +46,9 @@
     --pte_active-line-number-font-color: rgb(207, 124, 13);
     --pte_hover-font-color: rgb(42, 122, 211);
     --pte_active-border-color: rgb(42, 122, 211);
-    --pte_token-keyword: #D16A6A;
+    --pte_token-keyword: #EC9EEC;
     --pte_token-type: #4EC9B0;
-    --pte_token-method-declaration: #DADA7E;
+    --pte_token-method-declaration: #DFDF98;
     --pte_plain-text-editor-text-token-display-string-literal: #D69D85;
-    --pte_plain-text-editor-selection: #505028;
+    --pte_plain-text-editor-selection: #5A5A3C;
 }
