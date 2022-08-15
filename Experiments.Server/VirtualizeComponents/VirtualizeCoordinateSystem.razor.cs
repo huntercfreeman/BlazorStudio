@@ -30,7 +30,7 @@ public partial class VirtualizeCoordinateSystem<TItem> : ComponentBase, IDisposa
     private SemaphoreSlim _handleScrollEventSemaphoreSlim = new(1, 1);
     private int _scrollCounter;
     private int _throttledScrollCounter;
-    private TimeSpan _throttleDelayTimeSpan = TimeSpan.FromSeconds(5);
+    private TimeSpan _throttleDelayTimeSpan = TimeSpan.FromMilliseconds(100);
     private Task _throttleDelayTask = Task.CompletedTask;
 
     private ICollection<TItem>? ResultSet => GetResultSet();
