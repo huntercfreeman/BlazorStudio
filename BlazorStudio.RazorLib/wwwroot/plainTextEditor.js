@@ -26,14 +26,13 @@ window.plainTextEditor = {
                                                 virtualizeCoordinateSystemDotNetReference) {
         let parentElement = virtualizeItemLocatorElementReference
             .parentElement;
-        
-        parent.addEventListener('scroll', (event) => {
 
+        parentElement.addEventListener('scroll', (event) => {
             virtualizeCoordinateSystemDotNetReference.invokeMethodAsync("OnParentElementScrollEvent", {
                     ScrollLeft: parentElement.scrollLeft,
                     ScrollTop: parentElement.scrollTop
                 });
-        })
+        }, true)
     },
     intersectionObserver: 0,
     elementByIdIsIntersecting: new Map(),

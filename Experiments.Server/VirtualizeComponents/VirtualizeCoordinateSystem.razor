@@ -1,6 +1,13 @@
 ﻿@typeparam TItem
 
 <div @ref="_topBoundaryElementReference" style="height:@(_topBoundaryHeightInPixels)px;"></div>
+ 
+<div style="position: fixed; left: 0; top: 0; width: 100%; height: 100px; z-index: 1; padding: 15px; background-color: aqua;">
+    _scrollCounter:&nbsp;@_scrollCounter
+    <br/>
+    _throttledScrollCounter:&nbsp;@_throttledScrollCounter    
+</div>
+
 @if (Items?.Any() ?? false)
 {
     if (_dimensions is null)

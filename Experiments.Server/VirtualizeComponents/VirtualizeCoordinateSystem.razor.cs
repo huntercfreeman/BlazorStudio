@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.ClassLib.Virtualize;
 using Microsoft.AspNetCore.Components;
@@ -16,6 +17,7 @@ public partial class VirtualizeCoordinateSystem<TItem> : ComponentBase, IDisposa
     [Parameter, EditorRequired]
     public RenderFragment<TItem> ChildContent { get; set; } = null!;
 
+    private Guid _virtualizeCoordinateSystemIdentifier = Guid.NewGuid();
     private VirtualizeItemDimensions? _dimensions;
     private ApplicationException _dimensionsWereNullException = new (
         $"The {nameof(_dimensions)} was null");
@@ -23,7 +25,14 @@ public partial class VirtualizeCoordinateSystem<TItem> : ComponentBase, IDisposa
     private ElementReference? _bottomBoundaryElementReference;
     private double _topBoundaryHeightInPixels;
     private double _bottomBoundaryHeightInPixels;
-    
+    private ScrollDimensions? _scrollDimensions;
+    private ConcurrentStack<ScrollDimensions> _scrollEventConcurrentStack = new();
+    private SemaphoreSlim _handleScrollEventSemaphoreSlim = new(1, 1);
+    private int _scrollCounter;
+    private int _throttledScrollCounter;
+    private TimeSpan _throttleDelayTimeSpan = TimeSpan.FromSeconds(5);
+    private Task _throttleDelayTask = Task.CompletedTask;
+
     private ICollection<TItem>? ResultSet => GetResultSet();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -31,7 +40,7 @@ public partial class VirtualizeCoordinateSystem<TItem> : ComponentBase, IDisposa
         if (firstRender)
         {
             await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeToVirtualizeScrollEvent",
-                _topBoundaryHeightInPixels,
+                _topBoundaryElementReference,
                 DotNetObjectReference.Create(this));
         }
         
@@ -41,7 +50,38 @@ public partial class VirtualizeCoordinateSystem<TItem> : ComponentBase, IDisposa
     [JSInvokable]
     public async Task OnParentElementScrollEvent(ScrollDimensions scrollDimensions)
     {
-        var z = 2;
+        _scrollEventConcurrentStack.Push(scrollDimensions);
+        
+        _scrollCounter++;
+        await InvokeAsync(StateHasChanged);
+
+        ScrollDimensions? mostRecentScrollDimensions = null;
+        
+        try
+        {
+            await _handleScrollEventSemaphoreSlim.WaitAsync();
+
+            await _throttleDelayTask;
+            
+            if (!_scrollEventConcurrentStack.TryPop(out mostRecentScrollDimensions))
+            {
+                return;
+            }
+
+            _scrollEventConcurrentStack.Clear();
+
+            _throttledScrollCounter++;
+
+            _throttleDelayTask = Task.Delay(_throttleDelayTimeSpan);
+        }
+        finally
+        {
+            _handleScrollEventSemaphoreSlim.Release();
+        }
+
+        _scrollDimensions = mostRecentScrollDimensions;
+
+        await InvokeAsync(StateHasChanged);
     }
     
     private ICollection<TItem> GetResultSet()
@@ -52,9 +92,9 @@ public partial class VirtualizeCoordinateSystem<TItem> : ComponentBase, IDisposa
         // StartIndex
         // Count
 
-        var scrollDimensions = JsRuntime
-            .InvokeAsync<ScrollDimensions>("plainTextEditor.getVirtualizeScrollDimensions",
-                _topBoundaryHeightInPixels);
+        // _scrollDimensions = await JsRuntime
+        //     .InvokeAsync<ScrollDimensions>("plainTextEditor.getVirtualizeScrollDimensions",
+        //         _topBoundaryHeightInPixels);
         
         // var startIndex = _dimensions.HeightOfScrollableContainer 
 
@@ -68,8 +108,5 @@ public partial class VirtualizeCoordinateSystem<TItem> : ComponentBase, IDisposa
 
     public void Dispose()
     {
-        // JsRuntime.InvokeVoidAsync("plainTextEditor.disposeVirtualizeScrollEvent",
-        //     _topBoundaryHeightInPixels,
-        //     DotNetObjectReference.Create(this));
     }
 }
