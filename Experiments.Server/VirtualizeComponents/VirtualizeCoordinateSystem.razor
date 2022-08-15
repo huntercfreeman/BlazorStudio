@@ -1,0 +1,25 @@
+﻿@typeparam TItem
+
+@if (Items?.Any() ?? false)
+{
+    if (_dimensionsOfTItem is null)
+    {
+        <MeasureDimensionsOfTItem Item="Items.ElementAt(0)"
+                                  ItemRenderFragment="ChildContent"
+                                  OnAfterMeasurementTakenEventCallback="OnAfterMeasurementTaken" />
+    }
+    else
+    {
+        <div>
+            Dimensions are known
+            
+            <div>
+                @(_dimensionsOfTItem.WidthInPixels)px by @(_dimensionsOfTItem.HeightInPixels)px 
+            </div>
+        </div>        
+    }
+}
+else
+{
+    <div>No items</div>
+}

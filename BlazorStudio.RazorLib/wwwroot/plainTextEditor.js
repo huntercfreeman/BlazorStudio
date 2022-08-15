@@ -1,4 +1,14 @@
 window.plainTextEditor = {
+    getVirtualizeItemDimensions: function (virtualizeItemLocatorElementReference) {
+
+        let renderedTItem = virtualizeItemLocatorElementReference
+            .previousElementSibling;
+        
+        return {
+            WidthInPixels: renderedTItem.offsetWidth,
+            HeightInPixels: renderedTItem.offsetHeight
+        };
+    },
     intersectionObserver: 0,
     elementByIdIsIntersecting: new Map(),
     getActiveRowId: function (plainTextEditorGuid) {
