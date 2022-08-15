@@ -10,8 +10,4 @@
       <ProjectReference Include="..\BlazorStudio.RazorLib\BlazorStudio.RazorLib.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <AdditionalFiles Include="VirtualizeComponents\VirtualizeCoordinateSystem.razor" />
-    </ItemGroup>
-
 </Project>
