@@ -42,7 +42,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     public bool AllowDispatchEvent { get; set; } = true;
 
     private bool _isFocused;
-    private ElementReference _plainTextEditor;
+    private ElementReference? _plainTextEditor;
     private int _hadOnKeyDownEventCounter;
     private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualizeCoordinateSystem;
     private int _previousFontSize;
@@ -53,7 +53,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     
     private SequenceKey? _previousSequenceKeyShouldRender;
     private PlainTextEditorKey? _previousPlainTextEditorKey;
-    private ElementReference? _activePositionMarker;
 
     private Dimensions _dimensionsOfCoordinateSystemViewport = new()
     {
@@ -90,51 +89,6 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private string IsFocusedCssClass => _isFocused
         ? "pte_focused"
         : "";
-
-    private string GetActivePositionMarkerDimensions(IPlainTextEditor currentPlainTextEditor)
-    {
-        var styleCssBuilder = new StringBuilder();
-
-        styleCssBuilder.Append($"position: absolute; ");
-
-        int additionalPixelWidthToLookVisuallyNice = 2;
-
-        styleCssBuilder.Append($"width: {_widthAndHeightTestResult.WidthOfACharacter + additionalPixelWidthToLookVisuallyNice}px; ");
-        styleCssBuilder.Append($"height: {_widthAndHeightTestResult.HeightOfARow}px; ");
-
-        var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
-        var marginRightMultiplierOfRowNumbers = 1;
-
-        if (_isInitialized)
-        {
-            var leftFromMostDigitsInRowNumber = mostDigitsInARowNumber * _widthAndHeightTestResult.WidthOfACharacter;
-            var leftFromMarginRightOfRowNumber = marginRightMultiplierOfRowNumbers * _widthAndHeightTestResult.WidthOfACharacter;
-            var leftFromCurrentCharacterColumnIndex = currentPlainTextEditor.CurrentCharacterColumnIndex * _widthAndHeightTestResult.WidthOfACharacter;
-
-            var totalLeftInPixelUnit = leftFromMostDigitsInRowNumber
-                            + leftFromMarginRightOfRowNumber
-                            + leftFromCurrentCharacterColumnIndex;
-
-            styleCssBuilder.Append($"left: {totalLeftInPixelUnit}px; ");
-        }
-        else
-        {
-
-            var leftFromMostDigitsInRowNumber = mostDigitsInARowNumber;
-            var leftFromMarginRightOfRowNumber = marginRightMultiplierOfRowNumbers;
-            var leftFromCurrentCharacterColumnIndex = currentPlainTextEditor.CurrentCharacterColumnIndex;
-
-            var totalLeftInCharacterWidthUnit = leftFromMostDigitsInRowNumber
-                            + leftFromMarginRightOfRowNumber
-                            + leftFromCurrentCharacterColumnIndex;
-
-            styleCssBuilder.Append($"left: {totalLeftInCharacterWidthUnit}ch; ");
-        }
-
-        styleCssBuilder.Append($"top: {_widthAndHeightTestResult.HeightOfARow * (currentPlainTextEditor.CurrentRowIndex)}px; ");
-
-        return styleCssBuilder.ToString();
-    }
 
     protected override void OnInitialized()
     {
@@ -277,9 +231,9 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     
     private void FocusPlainTextEditor()
     {
-        if (_activePositionMarker is not null)
+        if (_plainTextEditor is not null)
         {
-            _activePositionMarker.Value.FocusAsync();
+            _plainTextEditor.Value.FocusAsync();
         }
 
     }

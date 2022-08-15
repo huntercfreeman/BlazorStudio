@@ -25,11 +25,15 @@ else
         <div id="@PlainTextEditorDisplayId"
              class="pte_plain-text-editor-display pte_unselectable @IsFocusedCssClass"
              style="@GetStyleCss()"
+             tabindex="-1"
              @ref="_plainTextEditor"
              @onclick="FocusPlainTextEditorOnClick"
              @onkeydown:preventDefault="true"
              @onmousedown="StartSelectingText"
-             @onmouseup="StopSelectingText">
+             @onmouseup="StopSelectingText"
+             @onkeydown="OnKeyDown"
+             @onfocusin="OnFocusIn"
+             @onfocusout="OnFocusOut">
 
             @{
                 var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
@@ -63,16 +67,6 @@ else
                                                                                                            MostDigitsInARowNumber="mostDigitsInARowNumber"/>
                                                                             </CascadingValue>
                                                                         </ItemRenderFragment>
-
-                                                                        <MarkerRenderFragment>
-                                                                            <input type="text"
-                                                                                   style="background-color: transparent; outline: none !important; border: none !important; @GetActivePositionMarkerDimensions(currentPlainTextEditor)"
-                                                                                   @ref="_activePositionMarker"
-                                                                                   @onkeydown="OnKeyDown"
-                                                                                   @onfocusin="OnFocusIn"
-                                                                                   @onfocusout="OnFocusOut"/>
-
-                                                                        </MarkerRenderFragment>
                                                                     </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
                                                                 }
 
