@@ -36,6 +36,6 @@ public class AbsoluteFilePathDotNet : AbsoluteFilePath
     /// <summary>
     /// The project the file belongs to. (this AbsoluteFilePathDotNet can also be the project itself)
     /// </summary>
-    public ProjectId ProjectId { get;  protected set; }
+    public ProjectId ProjectId { get; protected set; }
     public override AbsoluteFilePathKind AbsoluteFilePathKind { get; } = AbsoluteFilePathKind.DotNet;
 }

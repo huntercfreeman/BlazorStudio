@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -69,16 +70,19 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     public string StyleString { get; set; } = string.Empty;
 
     private int _sequence;
+    private SequenceKey? _previousSequenceKey;
 
     protected override void OnInitialized()
     {
         TreeViewWrapStateSelection.Select(x =>
         {
             x.Map.TryGetValue(TreeViewWrapKey, out var value);
-
+            
             return value;
         });
-
+        
+        TreeViewWrapStateSelection.SelectedValueChanged += TreeViewWrapStateSelectionOnSelectedValueChanged;
+ 
         if (TreeViewWrapStateSelection.Value is null)
         {
             var iterableRootItems = RootItems.ToArray();
@@ -110,6 +114,17 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
         }
 
         base.OnInitialized();
+    }
+
+    private void TreeViewWrapStateSelectionOnSelectedValueChanged(object? sender, ITreeViewWrap? treeViewWrap)
+    {
+        if (treeViewWrap is null)
+            return;
+        
+        if (_previousSequenceKey is null || treeViewWrap.SequenceKey != _previousSequenceKey)
+        {
+            
+        }
     }
 
     public void Reload()

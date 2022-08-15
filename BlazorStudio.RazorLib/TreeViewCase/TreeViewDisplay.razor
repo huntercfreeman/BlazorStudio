@@ -100,7 +100,8 @@
                             int index = i;
                             var child = (TreeView<T>)TreeView.Children[i];
 
-                            <TreeViewDisplay TreeView="child"
+                            <TreeViewDisplay @key="child.Key"
+                                             TreeView="child"
                                              GetSiblingsAndSelfFunc="() => TreeView.Children"
                                              IndexAmongSiblings="index"
                                              Parent="this"/>

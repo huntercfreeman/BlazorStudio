@@ -44,7 +44,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     [Inject]
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<BlazorStudio.ClassLib.Store.SolutionCase.SolutionState> SolutionStateWrap { get; set; } = null!;
+    private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<RoslynWorkspaceState> RoslynWorkspaceStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -58,7 +60,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     }
 
     private bool _isInitialized;
-    private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+    private TreeViewWrapKey _solutionExplorerTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private TreeViewWrap<AbsoluteFilePathDotNet> _treeViewWrap = null!;
     private List<AbsoluteFilePathDotNet> _rootAbsoluteFilePaths;
     private RichErrorModel? _solutionExplorerStateWrapStateChangedRichErrorModel;
@@ -94,6 +96,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     protected override void OnInitialized()
     {
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrap_StateChanged;
+        SolutionStateWrap.StateChanged += SolutionStateWrapOnStateChanged;
 
         _newCSharpProjectDialog = new DialogRecord(
             DialogKey.NewDialogKey(),
@@ -103,14 +106,14 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             {
                 {
                     nameof(NewCSharpProjectDialog.OnProjectCreatedCallback), 
-                    new Action<IAbsoluteFilePath>(OnProjectCreatedCallback)
+                    new Action<AbsoluteFilePathDotNet>(OnProjectCreatedCallback)
                 }
             }
         );
 
         base.OnInitialized();
     }
-
+    
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
@@ -270,6 +273,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 });
         }
     }
+    
+    private void SolutionStateWrapOnStateChanged(object? sender, EventArgs e)
+    {
+        
+    }
 
     private async Task<IEnumerable<AbsoluteFilePathDotNet>> LoadAbsoluteFilePathChildrenAsync(AbsoluteFilePathDotNet absoluteFilePathDotNet)
     {
@@ -426,7 +434,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             Dispatcher.Dispatch(new RegisterDialogAction(_newCSharpProjectDialog));
     }
     
-    private void OnProjectCreatedCallback(IAbsoluteFilePath absoluteFilePath)
+    private void OnProjectCreatedCallback(AbsoluteFilePathDotNet absoluteFilePathDotNet)
     {
         var localSolutionExplorerState = SolutionExplorerStateWrap.Value;
 
@@ -437,11 +445,43 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
 
         void OnEnd(Process finishedProcess)
         {
-            
+            _ = Task.Run(async () =>
+            {
+                var roslynWorkspaceState = RoslynWorkspaceStateWrap.Value;
+                var solutionState = SolutionStateWrap.Value;
+                
+                if (roslynWorkspaceState.MSBuildWorkspace is null ||
+                    solutionState.Solution is null)
+                {
+                    return;
+                }
+
+                var nextSolution = solutionState.Solution.WithProjectFilePath(absoluteFilePathDotNet.ProjectId, absoluteFilePathDotNet.GetAbsoluteFilePathString());
+
+                var nextProjectIdToProjectMap = new Dictionary<ProjectId, IndexedProject>(solutionState.ProjectIdToProjectMap);
+
+                var recentlyCreatedProject = nextSolution.Projects.Single(x => x.Id == absoluteFilePathDotNet.ProjectId);
+                
+                var indexedProject = new IndexedProject(recentlyCreatedProject, absoluteFilePathDotNet);
+                
+                nextProjectIdToProjectMap.Add(absoluteFilePathDotNet.ProjectId, 
+                    indexedProject);
+                
+                Dispatcher.Dispatch(new SetSolutionStateAction(nextSolution,
+                    solutionState.ProjectIdToProjectMap,
+                    solutionState.FileAbsoluteFilePathToDocumentMap,
+                    solutionState.FileAbsoluteFilePathToAdditionalDocumentMap));
+                
+                Dispatcher.Dispatch(new AddTreeViewRootsAction(_solutionExplorerTreeViewKey,
+                    new List<ITreeView>
+                    {
+                        new TreeView<AbsoluteFilePathDotNet>(TreeViewKey.NewTreeViewKey(), absoluteFilePathDotNet)
+                    }));
+            });
         }
 
         var command = $"dotnet sln {localSolutionExplorerState.SolutionAbsoluteFilePath.GetAbsoluteFilePathString()} " +
-                      $"add {absoluteFilePath.GetAbsoluteFilePathString()}";
+                      $"add {absoluteFilePathDotNet.GetAbsoluteFilePathString()}";
 
         Dispatcher
             .Dispatch(new EnqueueProcessOnTerminalEntryAction(

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.RazorLib.NewCSharpProject;
 
@@ -20,7 +21,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
     public DialogRecord DialogRecord { get; set; } = null!;
 
     [Parameter]
-    public Action<IAbsoluteFilePath>? OnProjectCreatedCallback { get; set; }
+    public Action<AbsoluteFilePathDotNet>? OnProjectCreatedCallback { get; set; }
 
     private List<CSharpTemplate>? _templates;
     // I cannot get 'dotnet new list' to run when I use Ubuntu OS
@@ -176,9 +177,12 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
                 if (OnProjectCreatedCallback is not null)
                 {
-                    var createdProject = new AbsoluteFilePath(
+                    var createdProjectId = ProjectId.CreateNewId();
+                    
+                    var createdProject = new AbsoluteFilePathDotNet(
                         createdProjectContainingDirectory.GetAbsoluteFilePathString() + _projectName + '.' + ExtensionNoPeriodFacts.C_SHARP_PROJECT, 
-                        false);
+                        false,
+                        createdProjectId);
 
                     OnProjectCreatedCallback.Invoke(createdProject);
                 }

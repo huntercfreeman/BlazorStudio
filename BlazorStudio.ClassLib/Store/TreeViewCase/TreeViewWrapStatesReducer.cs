@@ -46,4 +46,23 @@ public class TreeViewWrapStatesReducer
             return previousTreeViewWrapStates;
         }
     }
+    
+    [ReducerMethod]
+    public static TreeViewWrapStates ReduceAddTreeViewRootsAction(TreeViewWrapStates previousTreeViewWrapStates,
+        AddTreeViewRootsAction addTreeViewRootsAction)
+    {
+        // The user of the TreeView component might have 'OnClick' close the TreeView causing a not found exception
+        if (previousTreeViewWrapStates.Map.TryGetValue(addTreeViewRootsAction.TreeViewWrapKey, out var treeViewWrap))
+        {
+            var iterableRootItems = addTreeViewRootsAction.RootTreeViews.ToArray();
+
+            treeViewWrap.RootTreeViews.AddRange(iterableRootItems);
+
+            return previousTreeViewWrapStates;
+        }
+        else
+        {
+            return previousTreeViewWrapStates;
+        }
+    }
 }
