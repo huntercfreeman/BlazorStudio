@@ -15,7 +15,7 @@ public class FILE_HANDLE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var fileSystemProvider = new FileSystemProvider();
 
-        var fileHandle = await fileSystemProvider.OpenAsync(inputAbsoluteFilePath, CancellationToken.None);
+        var fileHandle = await fileSystemProvider.OpenAsync(inputAbsoluteFilePath, CancellationToken.None, FileHandleKind.Tokenized);
 
         var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
@@ -39,7 +39,7 @@ public class FILE_HANDLE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var fileSystemProvider = new FileSystemProvider();
 
-        var fileHandle = await fileSystemProvider.OpenAsync(inputAbsoluteFilePath, CancellationToken.None);
+        var fileHandle = await fileSystemProvider.OpenAsync(inputAbsoluteFilePath, CancellationToken.None, FileHandleKind.Tokenized);
 
         var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
@@ -63,7 +63,7 @@ public class FILE_HANDLE_TESTS : PLAIN_TEXT_EDITOR_STATES_TESTS
 
         var fileSystemProvider = new FileSystemProvider();
 
-        var fileHandle = await fileSystemProvider.OpenAsync(inputAbsoluteFilePath, CancellationToken.None);
+        var fileHandle = await fileSystemProvider.OpenAsync(inputAbsoluteFilePath, CancellationToken.None, FileHandleKind.Tokenized);
 
         var characterLengthOfLongestRow = (Int32) Math.Min(Int32.MaxValue, fileHandle.PhysicalCharacterLengthOfLongestRow);
         
