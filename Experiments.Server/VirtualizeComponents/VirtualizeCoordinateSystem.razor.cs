@@ -33,7 +33,8 @@ public partial class VirtualizeCoordinateSystem<TItem> : ComponentBase, IDisposa
     private TimeSpan _throttleDelayTimeSpan = TimeSpan.FromMilliseconds(100);
     private Task _throttleDelayTask = Task.CompletedTask;
 
-    private ICollection<TItem>? ResultSet => GetResultSet();
+    // TODO: Make a class for this. I need to ensure the top and bottom boundaries rerender with the same batch of data
+    private (double topBoundaryHeightInPixels, double bottomBoundaryHeightInPixels, ICollection<TItem>? resultSet) _renderData;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -42,6 +43,11 @@ public partial class VirtualizeCoordinateSystem<TItem> : ComponentBase, IDisposa
             await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeToVirtualizeScrollEvent",
                 _topBoundaryElementReference,
                 DotNetObjectReference.Create(this));
+            
+            var firstScrollDimensions = await JsRuntime.InvokeAsync<ScrollDimensions>("plainTextEditor.getVirtualizeScrollDimensions",
+                _topBoundaryElementReference);
+
+            await OnParentElementScrollEvent(firstScrollDimensions);
         }
         
         await base.OnAfterRenderAsync(firstRender);
@@ -81,24 +87,36 @@ public partial class VirtualizeCoordinateSystem<TItem> : ComponentBase, IDisposa
 
         _scrollDimensions = mostRecentScrollDimensions;
 
-        await InvokeAsync(StateHasChanged);
+        await GetResultSetAsync();
     }
     
-    private ICollection<TItem> GetResultSet()
+    private async Task GetResultSetAsync()
     {
         if (_dimensions is null)
             throw _dimensionsWereNullException;
 
-        // StartIndex
-        // Count
-
-        // _scrollDimensions = await JsRuntime
-        //     .InvokeAsync<ScrollDimensions>("plainTextEditor.getVirtualizeScrollDimensions",
-        //         _topBoundaryHeightInPixels);
+        if (_scrollDimensions is null)
+        {
+            return;
+        }
         
-        // var startIndex = _dimensions.HeightOfScrollableContainer 
-
-        return Items;
+        var startIndex = _scrollDimensions.ScrollTop / _dimensions.HeightOfTItemInPixels;
+        var count = _dimensions.HeightOfScrollableContainer / _dimensions.HeightOfTItemInPixels;
+        
+        var topBoundaryHeight = _scrollDimensions.ScrollTop;
+        
+        var totalHeight = _dimensions.HeightOfTItemInPixels * Items.Count;
+        
+        var bottomBoundaryHeight = totalHeight - topBoundaryHeight - _dimensions.HeightOfScrollableContainer;
+        
+        var results = Items
+            .Skip((int) startIndex)
+            .Take((int) count)
+            .ToArray();
+        
+        _renderData = (topBoundaryHeight, bottomBoundaryHeight, results); 
+        
+        await InvokeAsync(StateHasChanged);
     }
 
     private void OnAfterMeasurementTaken(VirtualizeItemDimensions virtualizeItemDimensions)

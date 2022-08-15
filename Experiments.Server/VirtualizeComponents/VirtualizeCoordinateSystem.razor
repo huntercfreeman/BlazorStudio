@@ -1,6 +1,6 @@
 ﻿@typeparam TItem
 
-<div @ref="_topBoundaryElementReference" style="height:@(_topBoundaryHeightInPixels)px;"></div>
+<div @ref="_topBoundaryElementReference" style="height:@(_renderData.topBoundaryHeightInPixels)px;"></div>
  
 <div style="position: fixed; left: 0; top: 0; width: 100%; height: 100px; z-index: 1; padding: 15px; background-color: #e5f2f2;">
     _scrollCounter:&nbsp;@_scrollCounter
@@ -18,7 +18,7 @@
     }
     else
     {
-        foreach (var item in ResultSet)
+        foreach (var item in _renderData.resultSet ?? Array.Empty<TItem>())
         {
             @ChildContent(item)
         }
@@ -28,4 +28,4 @@ else
 {
     <div>No items</div>
 }
-<div @ref="_bottomBoundaryElementReference" style="height:@(_bottomBoundaryHeightInPixels)px;"></div>
+<div @ref="_bottomBoundaryElementReference" style="height:@(_renderData.bottomBoundaryHeightInPixels)px;"></div>
