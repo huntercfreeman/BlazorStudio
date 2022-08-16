@@ -33,7 +33,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     /// and after the visible region. This help to reduce the frequency of rendering during
     /// scrolling. However, higher values mean that more elements will be present in the page.
     /// <br/>--<br/>
-    /// Default value: <see cref="GetDefaultScrollThrottleDelayTimeSpan"/>
+    /// Default value: <see cref="GetDefaultOverScanCount"/>
     /// </summary>
     [Parameter, EditorRequired]
     public int OverscanCount { get; set; } = GetDefaultOverScanCount();
@@ -232,6 +232,8 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
 
                 var heightOfRenderedContent = _dimensions.HeightOfScrollableContainerInPixels;
 
+                double topOverscanHeight = 0;
+                
                 // Apply OverscanCount
                 if (OverscanCount > 0)
                 {
@@ -245,15 +247,12 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
 
                         if (topAvailableOverscan > 0)
                         {
-                            var overscan = Math.Min(topAvailableOverscan, OverscanCount);
+                            double topOverscan = Math.Min(topAvailableOverscan, OverscanCount);
 
-                            startIndex -= overscan;
-                            count += overscan;
+                            startIndex -= topOverscan;
+                            count += topOverscan;
 
-                            var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
-
-                            heightOfRenderedContent += extraRenderedHeight;
-                            topBoundaryHeight -= extraRenderedHeight;
+                            topOverscanHeight = topOverscan * _dimensions.HeightOfItemInPixels;
                         }
                     }
 
@@ -267,14 +266,9 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
 
                         if (bottomAvailableOverscan > 0)
                         {
-                            var overscan = Math.Min(bottomAvailableOverscan, OverscanCount);
+                            double bottomOverscan = Math.Min(bottomAvailableOverscan, OverscanCount);
 
-                            count += overscan;
-
-                            var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
-
-                            heightOfRenderedContent += extraRenderedHeight;
-                            bottomBoundaryHeight -= extraRenderedHeight;
+                            count += bottomOverscan;
                         }
                     }
                 }
@@ -282,7 +276,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
                 if (bottomBoundaryHeight < 0)
                 {
                     var tooFarAmount = Math.Abs(bottomBoundaryHeight);
-
+                
                     topBoundaryHeight -= tooFarAmount;
                     bottomBoundaryHeight += tooFarAmount;
                 }
@@ -292,7 +286,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
                     .Take((int)Math.Ceiling(count))
                     .Select((item, i) =>
                         new VirtualizeItemWrapper<TItem>(item,
-                            topBoundaryHeight + (i * _dimensions.HeightOfItemInPixels),
+                            (topBoundaryHeight - topOverscanHeight) + (i * _dimensions.HeightOfItemInPixels),
                             100))
                     .ToArray();
 
