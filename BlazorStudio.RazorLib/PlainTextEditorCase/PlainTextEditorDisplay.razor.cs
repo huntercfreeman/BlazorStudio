@@ -12,6 +12,7 @@ using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.ClassLib.Virtualize;
+using BlazorStudio.RazorLib.VirtualizeComponentExperiments;
 using BlazorStudio.RazorLib.VirtualizeComponents;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -44,7 +45,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private bool _isFocused;
     private ElementReference? _plainTextEditor;
     private int _hadOnKeyDownEventCounter;
-    private VirtualizeCoordinateSystem<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualizeCoordinateSystem;
+    private VirtualizeCoordinateSystemExperimental<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualizeCoordinateSystemExperimental;
     private int _previousFontSize;
     private string _widthAndHeightTestId = "bstudio_pte-get-width-and-height-test";
     
@@ -135,7 +136,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         if (plainTextEditor.PlainTextEditorKey != _previousPlainTextEditorKey)
         {
             // Parameter changed and the VirtualizeCoordinateSystem must reset
-            if (_virtualizeCoordinateSystem is not null)
+            if (_virtualizeCoordinateSystemExperimental is not null)
             {
                 _previousFontSize = 0;
                 _isInitialized = false;
@@ -301,5 +302,12 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     {
         public double HeightOfARow { get; set; }
         public double WidthOfACharacter { get; set; }
+    }
+
+    private ICollection<(int Index, IPlainTextEditorRow PlainTextEditorRow)> GetItems(IPlainTextEditor currentPlainTextEditor)
+    {
+        return currentPlainTextEditor.Rows
+            .Select((row, index) => (index, row))
+            .ToArray();
     }
 }

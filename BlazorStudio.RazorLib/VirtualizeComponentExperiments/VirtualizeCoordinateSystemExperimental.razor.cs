@@ -33,6 +33,16 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     // TODO: Make a class for this. I need to ensure the top and bottom boundaries rerender with the same batch of data
     private (double topBoundaryHeightInPixels, double bottomBoundaryHeightInPixels, ICollection<TItem>? resultSet) _renderData;
 
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_scrollDimensions is not null)
+        {
+            await GetResultSetAsync();
+        }
+        
+        await base.OnParametersSetAsync();
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

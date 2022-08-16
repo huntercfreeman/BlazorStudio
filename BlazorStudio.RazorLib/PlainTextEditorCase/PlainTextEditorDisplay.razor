@@ -53,21 +53,16 @@ else
 
                                                                 @if (_isInitialized)
                                                                 {
-                                                                    <BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem @ref="_virtualizeCoordinateSystem"
-                                                                                                                                           T="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
-                                                                                                                                           VirtualizeCoordinateSystemMessage="currentPlainTextEditor.VirtualizeCoordinateSystemMessage"
-                                                                                                                                           DimensionsOfCoordinateSystemViewport="_dimensionsOfCoordinateSystemViewport"
-                                                                                                                                           RequestCallbackAction="OnRequestCallbackAction"
-                                                                                                                                           PaddingInPixels="100"
-                                                                                                                                           OnAfterFirstRenderCallbackFunc="OnAfterFirstRenderCallbackFunc">
-                                                                        <ItemRenderFragment Context="rowTuple">
-                                                                            <CascadingValue Name="RowIndex" Value="rowTuple.Index">
-                                                                                <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
-                                                                                                           PlainTextEditorRow="rowTuple.PlainTextEditorRow"
-                                                                                                           MostDigitsInARowNumber="mostDigitsInARowNumber"/>
-                                                                            </CascadingValue>
-                                                                        </ItemRenderFragment>
-                                                                    </BlazorStudio.RazorLib.VirtualizeComponents.VirtualizeCoordinateSystem>
+                                                                    <BlazorStudio.RazorLib.VirtualizeComponentExperiments.VirtualizeCoordinateSystemExperimental @ref="_virtualizeCoordinateSystemExperimental"
+                                                                                                                                                                 TItem="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
+                                                                                                                                                                 Context="rowTuple"
+                                                                                                                                                                 Items="GetItems(currentPlainTextEditor)">
+                                                                        <CascadingValue Name="RowIndex" Value="rowTuple.Index">
+                                                                            <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
+                                                                                                       PlainTextEditorRow="rowTuple.PlainTextEditorRow"
+                                                                                                       MostDigitsInARowNumber="mostDigitsInARowNumber"/>
+                                                                        </CascadingValue>
+                                                                    </BlazorStudio.RazorLib.VirtualizeComponentExperiments.VirtualizeCoordinateSystemExperimental>
                                                                 }
 
                                                                 @{
@@ -98,9 +93,8 @@ else
                         </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
-            }
-
-            <PlainTextEditorFooter PlainTextEditor="currentPlainTextEditor"/>
-        </div>
+                }
+            </div>
+        <PlainTextEditorFooter PlainTextEditor="currentPlainTextEditor"/>
     </div>
 }

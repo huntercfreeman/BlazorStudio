@@ -1,39 +1,6 @@
 ﻿@typeparam TItem
 
 <div @ref="_topBoundaryElementReference" style="height:@(_renderData.topBoundaryHeightInPixels)px;"></div>
- 
-<div style="position: fixed; display: flex; left: 0; top: 0; width: 100%; height: 100px; z-index: 1; padding: 15px; background-color: #e5f2f2;">
-    <div style="margin-right: 25px;">
-        _scrollCounter:&nbsp;@_scrollCounter
-        <br/>
-        _throttledScrollCounter:&nbsp;@_throttledScrollCounter    
-    </div>
-    
-    <div style="margin-left: 25px; padding-left: 25px; border-left: 2px solid black;">
-            topBoundaryHeightInPixels:&nbsp;@(_renderData.topBoundaryHeightInPixels)px;
-            <br/>
-            bottomBoundaryHeightInPixels:&nbsp;@(_renderData.bottomBoundaryHeightInPixels)px;
-        </div>
-    
-    <div style="margin-left: 25px; padding-left: 25px; border-left: 2px solid black;">
-        WidthOfScrollableContainer:&nbsp;@(_dimensions?.WidthOfScrollableContainer ?? 0)px;
-        <br/>
-        HeightOfScrollableContainer:&nbsp;@(_dimensions?.HeightOfScrollableContainer ?? 0)px;
-    </div>
-    
-    <div style="margin-left: 25px; padding-left: 25px; border-left: 2px solid black;">
-        WidthOfTItemInPixels:&nbsp;@(_dimensions?.WidthOfTItemInPixels ?? 0)px;
-        <br/>
-        HeightOfTItemInPixels:&nbsp;@(_dimensions?.HeightOfTItemInPixels ?? 0)px;
-    </div>
-    
-    <div style="margin-left: 25px; padding-left: 25px; border-left: 2px solid black;">
-        resultSet.Count:&nbsp;@(_renderData.resultSet?.Count ?? 0)px;
-        <br/>
-        (the entire list) Items.Count:&nbsp;@(Items?.Count ?? 0)px;
-    </div>
-</div>
-
 @if (Items?.Any() ?? false)
 {
     if (_dimensions is null)
