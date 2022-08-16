@@ -116,7 +116,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
                 throw _itemsWereNullException;
         
             if (_scrollDimensions is not null)
-                await GetResultSetAsync();
+                await OnIntersectionObserverThresholdChanged(_scrollDimensions);
         }
 
         _previousItemsSequenceKey = ItemsSequenceKey;
@@ -141,7 +141,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
             // Only allow Push when the Stack is not being Cleared
             // as to not lose the most recent modification due to timing
             await _clearOutdatedUserInterfaceModificationSemaphoreSlim.WaitAsync();
-        
+            
             _userInterfaceModificationConcurrentStack.Push(func);
         }
         finally
@@ -175,7 +175,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
                 // while we await this possibly long running modification.
                 _clearOutdatedUserInterfaceModificationSemaphoreSlim.Release();
             }
-            
+
             // Await the modification func.
             await modificationFunc.Invoke();
         }
@@ -205,104 +205,105 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
         Console.WriteLine($"OnIntersectionObserverThresholdChanged: {++_onIntersectionThresholdChangedCounter}");
 
         _scrollDimensions = scrollDimensions;
-        
-        await GetResultSetAsync();
-    }
-    
-    private async Task GetResultSetAsync()
-    {
-        await PushUserInterfaceModificationAsync(async () =>
+
+        // Task.Run as to not block the UI thread when doing the SemaphoreSlim logic in PushUserInterfaceModificationAsync         
+        _ = Task.Run(async () =>
         {
-            Console.WriteLine($"PushUserInterfaceModificationAsync: {++_pushUserInterfaceModificationAsyncCounter}");
-            
-            if (_dimensions is null)
-                return;
-
-            if (_scrollDimensions is null)
-                return;
-            
-            var startIndex = _scrollDimensions.ScrollTop / _dimensions.HeightOfItemInPixels;
-            var count = _dimensions.HeightOfScrollableContainerInPixels / _dimensions.HeightOfItemInPixels;
-            
-            var totalHeight = _dimensions.HeightOfItemInPixels * Items.Count;
-            
-            var topBoundaryHeight = _scrollDimensions.ScrollTop;
-            
-            var bottomBoundaryHeight = totalHeight - topBoundaryHeight - _dimensions.HeightOfScrollableContainerInPixels;
-
-            var heightOfRenderedContent = _dimensions.HeightOfScrollableContainerInPixels;
-            
-            // Apply OverscanCount
-            if (OverscanCount > 0)
+            await PushUserInterfaceModificationAsync(async () =>
             {
-                // Apply Top Overscan
+                Console.WriteLine(
+                    $"PushUserInterfaceModificationAsync: {++_pushUserInterfaceModificationAsyncCounter}");
+
+                if (_dimensions is null)
+                    return;
+
+                if (_scrollDimensions is null)
+                    return;
+
+                var startIndex = _scrollDimensions.ScrollTop / _dimensions.HeightOfItemInPixels;
+                var count = _dimensions.HeightOfScrollableContainerInPixels / _dimensions.HeightOfItemInPixels;
+
+                var totalHeight = _dimensions.HeightOfItemInPixels * Items.Count;
+
+                var topBoundaryHeight = _scrollDimensions.ScrollTop;
+
+                var bottomBoundaryHeight =
+                    totalHeight - topBoundaryHeight - _dimensions.HeightOfScrollableContainerInPixels;
+
+                var heightOfRenderedContent = _dimensions.HeightOfScrollableContainerInPixels;
+
+                // Apply OverscanCount
+                if (OverscanCount > 0)
                 {
-                    var overallFirstIndex = 0;
-
-                    var resultsMapFirstIndex = startIndex;
-
-                    var topAvailableOverscan = resultsMapFirstIndex - overallFirstIndex;
-
-                    if (topAvailableOverscan > 0)
+                    // Apply Top Overscan
                     {
-                        var overscan = Math.Min(topAvailableOverscan, OverscanCount);
+                        var overallFirstIndex = 0;
 
-                        startIndex -= overscan;
-                        count += overscan;
-                        
-                        var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
+                        var resultsMapFirstIndex = startIndex;
 
-                        heightOfRenderedContent += extraRenderedHeight;
-                        topBoundaryHeight -= extraRenderedHeight;
+                        var topAvailableOverscan = resultsMapFirstIndex - overallFirstIndex;
+
+                        if (topAvailableOverscan > 0)
+                        {
+                            var overscan = Math.Min(topAvailableOverscan, OverscanCount);
+
+                            startIndex -= overscan;
+                            count += overscan;
+
+                            var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
+
+                            heightOfRenderedContent += extraRenderedHeight;
+                            topBoundaryHeight -= extraRenderedHeight;
+                        }
+                    }
+
+                    // Apply Bottom Overscan
+                    {
+                        var overallLastIndex = Items.Count - 1;
+
+                        var resultsMapLastIndex = startIndex + count - 1;
+
+                        var bottomAvailableOverscan = overallLastIndex - resultsMapLastIndex;
+
+                        if (bottomAvailableOverscan > 0)
+                        {
+                            var overscan = Math.Min(bottomAvailableOverscan, OverscanCount);
+
+                            count += overscan;
+
+                            var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
+
+                            heightOfRenderedContent += extraRenderedHeight;
+                            bottomBoundaryHeight -= extraRenderedHeight;
+                        }
                     }
                 }
 
-                // Apply Bottom Overscan
+                if (bottomBoundaryHeight < 0)
                 {
-                    var overallLastIndex = Items.Count - 1;
-                    
-                    var resultsMapLastIndex = startIndex + count - 1;
-                
-                    var bottomAvailableOverscan = overallLastIndex - resultsMapLastIndex;
+                    var tooFarAmount = Math.Abs(bottomBoundaryHeight);
 
-                    if (bottomAvailableOverscan > 0)
-                    {
-                        var overscan = Math.Min(bottomAvailableOverscan, OverscanCount);
-
-                        count += overscan;
-
-                        var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
-                    
-                        heightOfRenderedContent += extraRenderedHeight;
-                        bottomBoundaryHeight -= extraRenderedHeight;
-                    }
+                    topBoundaryHeight -= tooFarAmount;
+                    bottomBoundaryHeight += tooFarAmount;
                 }
-            }
 
-            if (bottomBoundaryHeight < 0)
-            {
-                var tooFarAmount = Math.Abs(bottomBoundaryHeight);
-                
-                topBoundaryHeight -= tooFarAmount;
-                bottomBoundaryHeight += tooFarAmount;
-            }
-            
-            var results = Items
-                .Skip((int) Math.Floor(startIndex))
-                .Take((int) Math.Ceiling(count))
-                .Select((item, i) => 
-                    new VirtualizeItemWrapper<TItem>(item, 
-                        topBoundaryHeight + (i * _dimensions.HeightOfItemInPixels), 
-                        100))
-                .ToArray();
+                var results = Items
+                    .Skip((int)Math.Floor(startIndex))
+                    .Take((int)Math.Ceiling(count))
+                    .Select((item, i) =>
+                        new VirtualizeItemWrapper<TItem>(item,
+                            topBoundaryHeight + (i * _dimensions.HeightOfItemInPixels),
+                            100))
+                    .ToArray();
 
-            _topVirtualizeBoundary.HeightInPixels = topBoundaryHeight;
-            _bottomVirtualizeBoundary.HeightInPixels = bottomBoundaryHeight;
-            _bottomVirtualizeBoundary.OffsetFromTopInPixels = topBoundaryHeight + heightOfRenderedContent;
+                _topVirtualizeBoundary.HeightInPixels = topBoundaryHeight;
+                _bottomVirtualizeBoundary.HeightInPixels = bottomBoundaryHeight;
+                _bottomVirtualizeBoundary.OffsetFromTopInPixels = topBoundaryHeight + heightOfRenderedContent;
 
-            _virtualizeItemWrappers = results; 
-            
-            await InvokeAsync(StateHasChanged);
+                _virtualizeItemWrappers = results;
+
+                await InvokeAsync(StateHasChanged);
+            });
         });
     }
 
