@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using BlazorStudio.ClassLib.Sequence;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.VirtualizeComponentExperiments;
@@ -24,6 +25,18 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     /// </summary>
     [Parameter, EditorRequired]
     public RenderFragment<TItem> ChildContent { get; set; } = null!;
+
+    /// <summary>
+    /// Same purpose as <see cref="Virtualize{TItem}"/>
+    /// <br/>--<br/>
+    /// Gets or sets a value that determines how many additional items will be rendered before
+    /// and after the visible region. This help to reduce the frequency of rendering during
+    /// scrolling. However, higher values mean that more elements will be present in the page.
+    /// <br/>--<br/>
+    /// Default value: <see cref="GetDefaultScrollThrottleDelayTimeSpan"/>
+    /// </summary>
+    [Parameter, EditorRequired]
+    public int OverscanCount { get; set; } = GetDefaultOverScanCount();
     /// <summary>
     /// If the <see cref="VirtualizeItemDimensions"/> are changed and one wishes to remeasure
     /// the scrollable parent html element. 
@@ -50,6 +63,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     public TimeSpan ScrollThrottleDelayTimeSpan { get; set; } = GetDefaultScrollThrottleDelayTimeSpan();
     
     private static TimeSpan GetDefaultScrollThrottleDelayTimeSpan() => TimeSpan.FromMilliseconds(100);
+    private static int GetDefaultOverScanCount() => 3;
 
     private Guid _virtualizeCoordinateSystemIdentifier = Guid.NewGuid();
     private bool _forceGetDimensions = false;
