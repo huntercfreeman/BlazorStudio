@@ -34,7 +34,8 @@ else
              @onmouseup="StopSelectingText"
              @onkeydown="OnKeyDown"
              @onfocusin="OnFocusIn"
-             @onfocusout="OnFocusOut">
+             @onfocusout="OnFocusOut"
+             @onscroll="StopSelectingText">
 
             @{
                 var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
