@@ -101,7 +101,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
             _forceGetDimensions = true;
         }
 
-        _previousItemsSequenceKey = DimensionsSequenceKey;
+        _previousDimensionsSequenceKey = DimensionsSequenceKey;
         
         if (_previousItemsSequenceKey is not null && _previousItemsSequenceKey != ItemsSequenceKey)
         {
