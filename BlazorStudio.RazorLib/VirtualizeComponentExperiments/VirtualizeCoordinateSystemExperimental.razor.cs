@@ -27,7 +27,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     private SemaphoreSlim _handleScrollEventSemaphoreSlim = new(1, 1);
     private int _scrollCounter;
     private int _throttledScrollCounter;
-    private TimeSpan _throttleDelayTimeSpan = TimeSpan.FromMilliseconds(100);
+    private TimeSpan _throttleDelayTimeSpan = TimeSpan.FromMilliseconds(50);
     private Task _throttleDelayTask = Task.CompletedTask;
 
     // TODO: Make a class for this. I need to ensure the top and bottom boundaries rerender with the same batch of data
