@@ -227,6 +227,8 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
 
     private async Task OnAfterMeasurementTaken(VirtualizeItemDimensions virtualizeItemDimensions)
     {
+        // Before OnAfterRenderAsync JavaScript cannot be ran
+        // Conveniently before OnAfterRenderAsync virtualizeItemDimensions is passed in as null
         if (virtualizeItemDimensions is null)
             return;
         
