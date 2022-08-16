@@ -63,6 +63,10 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     private ApplicationException _dimensionsWereNullException = new ($"The {nameof(_dimensions)} was null");
     private ApplicationException _itemsWereNullException = new ($"The {nameof(Items)} was null");
     private int _onIntersectionThresholdChangedCounter;
+    private int _pushUserInterfaceModificationAsyncCounter;
+    private readonly ConcurrentStack<Func<Task>> _userInterfaceModificationConcurrentStack = new();
+    private readonly SemaphoreSlim _executeUserInterfaceModificationSemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _clearOutdatedUserInterfaceModificationSemaphoreSlim = new(1, 1);
 
     /// <summary>
     /// In addition to the typical functionality of being a <see cref="VirtualizeBoundary"/>
@@ -130,6 +134,58 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
         await base.OnAfterRenderAsync(firstRender);
     }
     
+    private async Task PushUserInterfaceModificationAsync(Func<Task> func)
+    {
+        try
+        {
+            // Only allow Push when the Stack is not being Cleared
+            // as to not lose the most recent modification due to timing
+            await _clearOutdatedUserInterfaceModificationSemaphoreSlim.WaitAsync();
+        
+            _userInterfaceModificationConcurrentStack.Push(func);
+        }
+        finally
+        {
+            _clearOutdatedUserInterfaceModificationSemaphoreSlim.Release();
+        }
+        
+        try
+        {
+            // Only one UserInterface modification at a time.
+            await _executeUserInterfaceModificationSemaphoreSlim.WaitAsync();
+
+            Func<Task>? modificationFunc;
+            
+            try
+            {
+                // The current UserModification thread needs to stop anyone from pushing to the Stack
+                // otherwise timing errors could result in modifications getting pushed just as we're about to clear
+                // causing a lost event.
+                await _clearOutdatedUserInterfaceModificationSemaphoreSlim.WaitAsync();
+                
+                if (!_userInterfaceModificationConcurrentStack.TryPop(out modificationFunc))
+                    return;
+
+                // Clear previous events as they are out of date.
+                _userInterfaceModificationConcurrentStack.Clear();
+            }
+            finally
+            {
+                // Ensure to release so the Stack can be pushed onto again
+                // while we await this possibly long running modification.
+                _clearOutdatedUserInterfaceModificationSemaphoreSlim.Release();
+            }
+            
+            // Await the modification func.
+            await modificationFunc.Invoke();
+        }
+        finally
+        {
+            // Allow a different thread to have a turn at executing a modification func.
+            _executeUserInterfaceModificationSemaphoreSlim.Release();
+        }
+    }
+    
     public async Task InitializeVirtualizeIntersectionObserver()
     {
         if (_topBoundaryBlazorComponent is null)
@@ -155,94 +211,99 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     
     private async Task GetResultSetAsync()
     {
-        if (_dimensions is null)
-            return;
-
-        if (_scrollDimensions is null)
-            return;
-        
-        var startIndex = _scrollDimensions.ScrollTop / _dimensions.HeightOfItemInPixels;
-        var count = _dimensions.HeightOfScrollableContainerInPixels / _dimensions.HeightOfItemInPixels;
-        
-        var totalHeight = _dimensions.HeightOfItemInPixels * Items.Count;
-        
-        var topBoundaryHeight = _scrollDimensions.ScrollTop;
-        
-        var bottomBoundaryHeight = totalHeight - topBoundaryHeight - _dimensions.HeightOfScrollableContainerInPixels;
-
-        var heightOfRenderedContent = _dimensions.HeightOfScrollableContainerInPixels;
-        
-        // Apply OverscanCount
-        if (OverscanCount > 0)
+        await PushUserInterfaceModificationAsync(async () =>
         {
-            // Apply Top Overscan
+            Console.WriteLine($"PushUserInterfaceModificationAsync: {++_pushUserInterfaceModificationAsyncCounter}");
+            
+            if (_dimensions is null)
+                return;
+
+            if (_scrollDimensions is null)
+                return;
+            
+            var startIndex = _scrollDimensions.ScrollTop / _dimensions.HeightOfItemInPixels;
+            var count = _dimensions.HeightOfScrollableContainerInPixels / _dimensions.HeightOfItemInPixels;
+            
+            var totalHeight = _dimensions.HeightOfItemInPixels * Items.Count;
+            
+            var topBoundaryHeight = _scrollDimensions.ScrollTop;
+            
+            var bottomBoundaryHeight = totalHeight - topBoundaryHeight - _dimensions.HeightOfScrollableContainerInPixels;
+
+            var heightOfRenderedContent = _dimensions.HeightOfScrollableContainerInPixels;
+            
+            // Apply OverscanCount
+            if (OverscanCount > 0)
             {
-                var overallFirstIndex = 0;
-
-                var resultsMapFirstIndex = startIndex;
-
-                var topAvailableOverscan = resultsMapFirstIndex - overallFirstIndex;
-
-                if (topAvailableOverscan > 0)
+                // Apply Top Overscan
                 {
-                    var overscan = Math.Min(topAvailableOverscan, OverscanCount);
+                    var overallFirstIndex = 0;
 
-                    startIndex -= overscan;
-                    count += overscan;
+                    var resultsMapFirstIndex = startIndex;
+
+                    var topAvailableOverscan = resultsMapFirstIndex - overallFirstIndex;
+
+                    if (topAvailableOverscan > 0)
+                    {
+                        var overscan = Math.Min(topAvailableOverscan, OverscanCount);
+
+                        startIndex -= overscan;
+                        count += overscan;
+                        
+                        var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
+
+                        heightOfRenderedContent += extraRenderedHeight;
+                        topBoundaryHeight -= extraRenderedHeight;
+                    }
+                }
+
+                // Apply Bottom Overscan
+                {
+                    var overallLastIndex = Items.Count - 1;
                     
-                    var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
+                    var resultsMapLastIndex = startIndex + count - 1;
+                
+                    var bottomAvailableOverscan = overallLastIndex - resultsMapLastIndex;
 
-                    heightOfRenderedContent += extraRenderedHeight;
-                    topBoundaryHeight -= extraRenderedHeight;
+                    if (bottomAvailableOverscan > 0)
+                    {
+                        var overscan = Math.Min(bottomAvailableOverscan, OverscanCount);
+
+                        count += overscan;
+
+                        var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
+                    
+                        heightOfRenderedContent += extraRenderedHeight;
+                        bottomBoundaryHeight -= extraRenderedHeight;
+                    }
                 }
             }
 
-            // Apply Bottom Overscan
+            if (bottomBoundaryHeight < 0)
             {
-                var overallLastIndex = Items.Count - 1;
+                var tooFarAmount = Math.Abs(bottomBoundaryHeight);
                 
-                var resultsMapLastIndex = startIndex + count - 1;
-            
-                var bottomAvailableOverscan = overallLastIndex - resultsMapLastIndex;
-
-                if (bottomAvailableOverscan > 0)
-                {
-                    var overscan = Math.Min(bottomAvailableOverscan, OverscanCount);
-
-                    count += overscan;
-
-                    var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
-                
-                    heightOfRenderedContent += extraRenderedHeight;
-                    bottomBoundaryHeight -= extraRenderedHeight;
-                }
+                topBoundaryHeight -= tooFarAmount;
+                bottomBoundaryHeight += tooFarAmount;
             }
-        }
-
-        if (bottomBoundaryHeight < 0)
-        {
-            var tooFarAmount = Math.Abs(bottomBoundaryHeight);
             
-            topBoundaryHeight -= tooFarAmount;
-            bottomBoundaryHeight += tooFarAmount;
-        }
-        
-        var results = Items
-            .Skip((int) Math.Floor(startIndex))
-            .Take((int) Math.Ceiling(count))
-            .Select((item, i) => 
-                new VirtualizeItemWrapper<TItem>(item, 
-                    topBoundaryHeight + (i * _dimensions.HeightOfItemInPixels), 
-                    100))
-            .ToArray();
+            var results = Items
+                .Skip((int) Math.Floor(startIndex))
+                .Take((int) Math.Ceiling(count))
+                .Select((item, i) => 
+                    new VirtualizeItemWrapper<TItem>(item, 
+                        topBoundaryHeight + (i * _dimensions.HeightOfItemInPixels), 
+                        100))
+                .ToArray();
 
-        _topVirtualizeBoundary.HeightInPixels = topBoundaryHeight;
-        _bottomVirtualizeBoundary.HeightInPixels = bottomBoundaryHeight;
-        _bottomVirtualizeBoundary.OffsetFromTopInPixels = topBoundaryHeight + heightOfRenderedContent;
+            _topVirtualizeBoundary.HeightInPixels = topBoundaryHeight;
+            _bottomVirtualizeBoundary.HeightInPixels = bottomBoundaryHeight;
+            _bottomVirtualizeBoundary.OffsetFromTopInPixels = topBoundaryHeight + heightOfRenderedContent;
 
-        _virtualizeItemWrappers = results; 
-        
-        await InvokeAsync(StateHasChanged);
+            _virtualizeItemWrappers = results; 
+            
+            await InvokeAsync(StateHasChanged);
+        });
     }
 
     private void OnAfterMeasurementTaken(VirtualizeItemDimensions? virtualizeItemDimensions)
