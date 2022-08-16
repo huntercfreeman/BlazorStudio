@@ -2,12 +2,12 @@
 
 public enum DimensionsPositionKind
 {
+    Static,
     Absolute,
     Fixed,
     Inherit,
     Relative,
     Revert,
-    Static,
     Sticky,
     Unset,
 }

@@ -1,26 +1,34 @@
 ﻿@typeparam TItem
 
-<div @ref="_topBoundaryElementReference" style="width: 100%; position: absolute; top: 0; height:@(_renderData.topBoundaryHeightInPixels)px;"></div>
+<VirtualizeBoundaryDisplay VirtualizeBoundary="_topVirtualizeBoundary" />
 @if (Items?.Any() ?? false)
 {
     if (_dimensions is null)
     {
+        // Measure the dimensions of a single rendered item.
         <MeasureDimensionsForVirtualization Item="Items.ElementAt(0)"
                                   ItemRenderFragment="ChildContent"
                                   OnAfterMeasurementTakenEventCallback="OnAfterMeasurementTaken" />
     }
+    else if (_virtualizeRenderData is not null)
+    {
+        // Render the items that are within the virtualization bounds.
+        foreach (var wrapper in _virtualizeRenderData.VirtualizeItemWrappers ?? Array.Empty<VirtualizeItemWrapper<TItem>>())
+        {
+            <div style="position: absolute; top: @(wrapper.TopInPixels)px; width: @(wrapper.WidthInPercentage)%;">
+                @ChildContent(wrapper.Item)
+            </div>
+        }   
+    }
     else
     {
-        foreach (var itemTuple in _renderData.resultSet ?? Array.Empty<(TItem, double)>())
-        {
-            <div style="position: absolute; top: @(itemTuple.top)px; width: 100%;">
-                @ChildContent(itemTuple.item)
-            </div>
-        }
+        // Something unexpected went wrong
+        <div>_virtualizeRenderData is null</div>
     }
 }
 else
 {
+    // No items were provided.
     <div>No items</div>
 }
-<div @ref="_bottomBoundaryElementReference" style="width: 100%; position: absolute; top: @(_renderData.topBoundaryHeightInPixels + _dimensions?.HeightOfScrollableContainer ?? 0)px; height:@(_renderData.bottomBoundaryHeightInPixels)px;"></div>
+<VirtualizeBoundaryDisplay VirtualizeBoundary="_bottomVirtualizeBoundary" />

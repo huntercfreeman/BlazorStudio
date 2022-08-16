@@ -20,18 +20,13 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
         $"The {nameof(_dimensions)} was null");
     private ElementReference? _topBoundaryElementReference;
     private ElementReference? _bottomBoundaryElementReference;
-    private double _topBoundaryHeightInPixels;
-    private double _bottomBoundaryHeightInPixels;
     private ScrollDimensions? _scrollDimensions;
     private ConcurrentStack<ScrollDimensions> _scrollEventConcurrentStack = new();
     private SemaphoreSlim _handleScrollEventSemaphoreSlim = new(1, 1);
-    private int _scrollCounter;
-    private int _throttledScrollCounter;
-    private TimeSpan _throttleDelayTimeSpan = TimeSpan.FromMilliseconds(50);
+    private TimeSpan _throttleDelayTimeSpan = TimeSpan.FromMilliseconds(100);
     private Task _throttleDelayTask = Task.CompletedTask;
 
-    // TODO: Make a class for this. I need to ensure the top and bottom boundaries rerender with the same batch of data
-    private (double topBoundaryHeightInPixels, double bottomBoundaryHeightInPixels, ICollection<(TItem item, double top)>? resultSet) _renderData;
+    private VirtualizeRenderData<TItem> _virtualizeRenderData = new();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -63,10 +58,8 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     [JSInvokable]
     public async Task OnParentElementScrollEvent(ScrollDimensions scrollDimensions)
     {
+        // TODO: ensure this semaphore logic does not lose the most recent event in any cases.
         _scrollEventConcurrentStack.Push(scrollDimensions);
-        
-        _scrollCounter++;
-        await InvokeAsync(StateHasChanged);
 
         ScrollDimensions? mostRecentScrollDimensions = null;
         
@@ -82,8 +75,6 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
             }
 
             _scrollEventConcurrentStack.Clear();
-
-            _throttledScrollCounter++;
 
             _throttleDelayTask = Task.Delay(_throttleDelayTimeSpan);
         }
@@ -107,27 +98,42 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
             return;
         }
         
-        var startIndex = _scrollDimensions.ScrollTop / _dimensions.HeightOfTItemInPixels;
-        var count = _dimensions.HeightOfScrollableContainer / _dimensions.HeightOfTItemInPixels;
+        var startIndex = _scrollDimensions.ScrollTop / _dimensions.HeightOfItemInPixels;
+        var count = _dimensions.HeightOfScrollableContainerInPixels / _dimensions.HeightOfItemInPixels;
         
-        var totalHeight = _dimensions.HeightOfTItemInPixels * Items.Count;
+        var totalHeight = _dimensions.HeightOfItemInPixels * Items.Count;
         
         var topBoundaryHeight = _scrollDimensions.ScrollTop;
         
-        var bottomBoundaryHeight = totalHeight - topBoundaryHeight - _dimensions.HeightOfScrollableContainer;
+        var bottomBoundaryHeight = totalHeight - topBoundaryHeight - _dimensions.HeightOfScrollableContainerInPixels;
 
-        // if (bottomBoundaryHeight < _dimensions.HeightOfTItemInPixels)
-        // {
-        //     bottomBoundaryHeight = 0;
-        // }
-        
         var results = Items
             .Skip((int) (startIndex))
             .Take((int) (count))
-            .Select((item, i) => (item, topBoundaryHeight + (i * _dimensions.HeightOfTItemInPixels)))
+            .Select((item, i) => 
+                new VirtualizeItemWrapper<TItem>(item, 
+                    topBoundaryHeight + (i * _dimensions.HeightOfItemInPixels), 
+                    100))
             .ToArray();
         
-        _renderData = (topBoundaryHeight, bottomBoundaryHeight, results); 
+        var bottomVirtualizeBoundary = _virtualizeRenderData.BottomVirtualizeBoundary with
+        {
+            HeightInPixels = bottomBoundaryHeight,
+            OffsetFromTopInPixels = topBoundaryHeight + _dimensions.HeightOfScrollableContainerInPixels
+        };
+        
+        var topVirtualizeBoundary = _virtualizeRenderData.TopVirtualizeBoundary with
+        {
+            HeightInPixels = topBoundaryHeight,
+            OffsetFromTopInPixels = 0
+        };
+
+        _virtualizeRenderData = _virtualizeRenderData with
+        {
+            BottomVirtualizeBoundary = bottomVirtualizeBoundary,
+            TopVirtualizeBoundary = topVirtualizeBoundary,
+            VirtualizeItemWrappers = results
+        }; 
         
         await InvokeAsync(StateHasChanged);
     }

@@ -1,7 +1,7 @@
 namespace BlazorStudio.RazorLib.VirtualizeComponentExperiments;
 
 public record VirtualizeItemDimensions(
-    double WidthOfTItemInPixels,
-    double HeightOfTItemInPixels,
-    double WidthOfScrollableContainer,
-    double HeightOfScrollableContainer);
+    double WidthOfItemInPixels,
+    double HeightOfItemInPixels,
+    double WidthOfScrollableContainerInPixels,
+    double HeightOfScrollableContainerInPixels);
