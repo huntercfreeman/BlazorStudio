@@ -62,7 +62,7 @@ public partial class MeasureDimensionsForVirtualization<TItem> : ComponentBase
         {
             var virtualizeItemDimensions = await JsRuntime
                 .InvokeAsync<VirtualizeItemDimensions>(
-                    "plainTextEditor.getVirtualizeItemDimensions",
+                    "virtualizeCoordinateSystem.getVirtualizeItemDimensions",
                     _virtualizeItemLocatorElementReference);
 
             if (virtualizeItemDimensions is not null)

@@ -1,6 +1,7 @@
 ﻿@typeparam TItem
 
-<VirtualizeBoundaryDisplay @ref="_topBoundaryVirtualizeBoundaryDisplay" VirtualizeBoundary="_virtualizeRenderData.TopVirtualizeBoundary" />
+<VirtualizeBoundaryDisplay @ref="_topBoundaryVirtualizeBoundaryDisplay" 
+                           VirtualizeBoundary="_virtualizeRenderData.TopVirtualizeBoundary" />
 @if (Items?.Any() ?? false)
 {
     if (_dimensions is null || _forceGetDimensions)
@@ -26,4 +27,5 @@ else
     // No items were provided.
     <div>No items</div>
 }
-<VirtualizeBoundaryDisplay VirtualizeBoundary="_virtualizeRenderData.BottomVirtualizeBoundary" />
+<VirtualizeBoundaryDisplay @ref="_bottomBoundaryVirtualizeBoundaryDisplay" 
+                           VirtualizeBoundary="_virtualizeRenderData.BottomVirtualizeBoundary"/>

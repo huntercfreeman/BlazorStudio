@@ -1,39 +1,4 @@
 window.plainTextEditor = {
-    getVirtualizeItemDimensions: function (virtualizeItemLocatorElementReference) {
-        let renderedItem = virtualizeItemLocatorElementReference
-            .previousElementSibling;
-
-        let parentElement = virtualizeItemLocatorElementReference
-            .parentElement;
-        
-        return {
-            WidthOfItemInPixels: renderedItem.offsetWidth,
-            HeightOfItemInPixels: renderedItem.offsetHeight,
-            WidthOfScrollableContainerInPixels: parentElement.offsetWidth,
-            HeightOfScrollableContainerInPixels: parentElement.offsetHeight
-        };
-    },
-    getVirtualizeScrollDimensions: function (virtualizeItemLocatorElementReference) {
-        let parentElement = virtualizeItemLocatorElementReference
-            .parentElement;
-        
-        return {
-            ScrollLeft: parentElement.scrollLeft,
-            ScrollTop: parentElement.scrollTop
-        };
-    },
-    subscribeToVirtualizeScrollEvent: function (virtualizeItemLocatorElementReference,
-                                                virtualizeCoordinateSystemDotNetReference) {
-        let parentElement = virtualizeItemLocatorElementReference
-            .parentElement;
-
-        parentElement.addEventListener('scroll', (event) => {
-            virtualizeCoordinateSystemDotNetReference.invokeMethodAsync("OnParentElementScrollEvent", {
-                    ScrollLeft: parentElement.scrollLeft,
-                    ScrollTop: parentElement.scrollTop
-                });
-        }, true)
-    },
     intersectionObserver: 0,
     elementByIdIsIntersecting: new Map(),
     getActiveRowId: function (plainTextEditorGuid) {
