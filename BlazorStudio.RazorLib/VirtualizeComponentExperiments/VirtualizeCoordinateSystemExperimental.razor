@@ -1,7 +1,8 @@
 ﻿@typeparam TItem
 
-<VirtualizeBoundaryDisplay @ref="_topBoundaryVirtualizeBoundaryDisplay" 
-                           VirtualizeBoundary="_virtualizeRenderData.TopVirtualizeBoundary" />
+<VirtualizeBoundaryDisplay @ref="_topBoundaryBlazorComponent" 
+                           VirtualizeBoundary="_topVirtualizeBoundary"
+                           VirtualizeCoordinateSystemIdentifier="_virtualizeCoordinateSystemIdentifier" />
 @if (Items?.Any() ?? false)
 {
     if (_dimensions is null || _forceGetDimensions)
@@ -14,7 +15,7 @@
     else
     {
         // Render the items that are within the virtualization bounds.
-        foreach (var wrapper in _virtualizeRenderData.VirtualizeItemWrappers ?? Array.Empty<VirtualizeItemWrapper<TItem>>())
+        foreach (var wrapper in _virtualizeItemWrappers)
         {
             <div style="position: absolute; top: @(wrapper.TopInPixels)px; width: @(wrapper.WidthInPercentage)%; height: @(_dimensions.HeightOfItemInPixels)px;">
                 @ChildContent(wrapper.Item)
@@ -27,5 +28,6 @@ else
     // No items were provided.
     <div>No items</div>
 }
-<VirtualizeBoundaryDisplay @ref="_bottomBoundaryVirtualizeBoundaryDisplay" 
-                           VirtualizeBoundary="_virtualizeRenderData.BottomVirtualizeBoundary"/>
+<VirtualizeBoundaryDisplay @ref="_bottomBoundaryBlazorComponent" 
+                           VirtualizeBoundary="_bottomVirtualizeBoundary"
+                           VirtualizeCoordinateSystemIdentifier="_virtualizeCoordinateSystemIdentifier" />

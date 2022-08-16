@@ -2,8 +2,16 @@ using BlazorStudio.ClassLib.UserInterface;
 
 namespace BlazorStudio.RazorLib.VirtualizeComponentExperiments;
 
-public record VirtualizeBoundary(VirtualizeBoundaryKind VirtualizeBoundaryKind,
-    double WidthInPercentage,
-    double OffsetFromTopInPixels,
-    double HeightInPixels,
-    DimensionsPositionKind DimensionsPositionKind = DimensionsPositionKind.Absolute);
+public class VirtualizeBoundary
+{
+    public VirtualizeBoundary(VirtualizeBoundaryKind virtualizeBoundaryKind)
+    {
+        VirtualizeBoundaryKind = virtualizeBoundaryKind;
+    }
+
+    public VirtualizeBoundaryKind VirtualizeBoundaryKind { get; }
+    public double WidthInPercentage { get; } = 100;
+    public double OffsetFromTopInPixels { get; set; }
+    public double HeightInPixels { get; set; }
+    public DimensionsPositionKind DimensionsPositionKind { get; } = DimensionsPositionKind.Absolute;
+}

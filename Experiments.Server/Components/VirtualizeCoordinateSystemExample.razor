@@ -6,14 +6,14 @@
 @{
     var musicBands = MusicBandRepository.GetMusicBands();
 
-    var last10 = musicBands.TakeLast(10).OrderBy(x => x.SeedIndex).ToArray();
+    var debugItems = musicBands.TakeLast(5).OrderBy(x => x.SeedIndex).ToArray();
 }
 
 <div>
     musicBands.Count:&nbsp;@musicBands.Count
     <hr/>
     <br/>
-    @foreach (var musicBand in last10)
+    @foreach (var musicBand in debugItems)
     {
         <MusicBandDisplay @key="musicBand.SeedIndex" MusicBand="musicBand" />
     }

@@ -54,15 +54,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     /// </summary>
     [Parameter, EditorRequired]
     public SequenceKey ItemsSequenceKey { get; set; } = null!;
-    /// <summary>
-    /// To avoid an overly abundant amount of scroll events there is a default throttling delay: <see cref="GetDefaultScrollThrottleDelayTimeSpan"/>
-    /// <br/>--<br/>
-    /// Use this parameter to set a different throttling delay if desired.
-    /// </summary>
-    [Parameter]
-    public TimeSpan ScrollThrottleDelayTimeSpan { get; set; } = GetDefaultScrollThrottleDelayTimeSpan();
     
-    private static TimeSpan GetDefaultScrollThrottleDelayTimeSpan() => TimeSpan.FromMilliseconds(100);
     private static int GetDefaultOverScanCount() => 3;
 
     private Guid _virtualizeCoordinateSystemIdentifier = Guid.NewGuid();
@@ -70,6 +62,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     private VirtualizeItemDimensions? _dimensions;
     private ApplicationException _dimensionsWereNullException = new ($"The {nameof(_dimensions)} was null");
     private ApplicationException _itemsWereNullException = new ($"The {nameof(Items)} was null");
+    private int _onIntersectionThresholdChangedCounter;
     
     /// <summary>
     /// In addition to the typical functionality of being a <see cref="VirtualizeBoundary"/>
@@ -78,23 +71,24 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     /// the component thereby cannot find the scrollable container except by getting the parent element of
     /// a <see cref="VirtualizeBoundary"/>
     /// </summary>
-    private VirtualizeBoundaryDisplay? _topBoundaryVirtualizeBoundaryDisplay;
-    private VirtualizeBoundaryDisplay? _bottomBoundaryVirtualizeBoundaryDisplay;
+    private VirtualizeBoundaryDisplay? _topBoundaryBlazorComponent;
+    private VirtualizeBoundaryDisplay? _bottomBoundaryBlazorComponent;
 
-    private List<VirtualizeBoundaryDisplay?> GetVirtualizeBoundaryDisplays() => new()
+    private List<VirtualizeBoundaryDisplay?> GetVirtualizeBoundaryBlazorComponents() => new()
     {
-        _topBoundaryVirtualizeBoundaryDisplay,
-        _bottomBoundaryVirtualizeBoundaryDisplay
+        _topBoundaryBlazorComponent,
+        _bottomBoundaryBlazorComponent
     };
 
     private ScrollDimensions? _scrollDimensions;
-    private ConcurrentStack<ScrollDimensions> _scrollEventConcurrentStack = new();
-    private SemaphoreSlim _handleScrollEventSemaphoreSlim = new(1, 1);
-    private Task _throttleDelayTask = Task.CompletedTask;
     private SequenceKey? _previousItemsSequenceKey;
     private SequenceKey? _previousDimensionsSequenceKey;
 
-    private VirtualizeRenderData<TItem> _virtualizeRenderData = new();
+    private VirtualizeItemWrapper<TItem>[] _virtualizeItemWrappers = 
+        Array.Empty<VirtualizeItemWrapper<TItem>>();
+
+    private VirtualizeBoundary _topVirtualizeBoundary = new(VirtualizeBoundaryKind.Top);
+    private VirtualizeBoundary _bottomVirtualizeBoundary = new(VirtualizeBoundaryKind.Bottom);
 
     protected override async Task OnParametersSetAsync()
     {
@@ -130,93 +124,32 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     {
         if (firstRender)
         {
-            await SubscribeToVirtualizeScrollEvent();
             await InitializeVirtualizeIntersectionObserver();
-
-            // The JavaScript cannot be invoked during the first
-            // measurement as on after first render did not occur yet which is normal Blazor functionality.
-            //
-            // Therefore the measurement must be taken a second time after the first render to get
-            // the JavaScript calls (which were initially skipped by returning early) to get invoked.
-            await OnAfterMeasurementTaken(_dimensions);
-            
-            // The first render needs to be forced as opposed to checking for the IntersectionObserver
-            await GetResultSetAsync();
         }
         
         await base.OnAfterRenderAsync(firstRender);
     }
-
-    /// <summary>
-    /// This method is called during <see cref="OnAfterRenderAsync"/>
-    /// when it is the firstRender.
-    /// <br/>--<br/>
-    /// This method is public as I feel there might be some edge cases where
-    /// someone will need to re-subscribe.
-    /// <br/>--<br/>
-    /// Calling this method when one is not in the edge case of needing to re-subscribe
-    /// will result in multiple subscriptions.
-    /// <br/>--<br/>
-    /// I am not sure of an edge case that would require re-subscribing as of writing this comment
-    /// but it is a lingering thought in the back of my mind that there could be one.
-    /// Therefore this method is here and is public.
-    /// </summary>
-    public async Task SubscribeToVirtualizeScrollEvent()
-    {
-        if (_topBoundaryVirtualizeBoundaryDisplay is null)
-            return;
-        
-        await JsRuntime.InvokeVoidAsync("virtualizeCoordinateSystem.subscribeToVirtualizeScrollEvent",
-            _topBoundaryVirtualizeBoundaryDisplay.BoundaryElementReference,
-            DotNetObjectReference.Create(this));
-    }
     
     public async Task InitializeVirtualizeIntersectionObserver()
     {
-        if (_topBoundaryVirtualizeBoundaryDisplay is null)
+        if (_topBoundaryBlazorComponent is null)
             return;
         
         await JsRuntime.InvokeVoidAsync("virtualizeCoordinateSystem.initializeVirtualizeIntersectionObserver",
             _virtualizeCoordinateSystemIdentifier,
             DotNetObjectReference.Create(this),
-            GetVirtualizeBoundaryDisplays()
+            GetVirtualizeBoundaryBlazorComponents()
                 .Select(vb => 
                     vb?.Id ?? string.Empty));
     }
-
-    [JSInvokable]
-    public async Task OnParentElementScrollEvent(ScrollDimensions scrollDimensions)
-    {
-        // TODO: ensure this semaphore logic does not lose the most recent event in any cases.
-        _scrollEventConcurrentStack.Push(scrollDimensions);
-
-        ScrollDimensions? mostRecentScrollDimensions = null;
-        
-        try
-        {
-            await _handleScrollEventSemaphoreSlim.WaitAsync();
-
-            await _throttleDelayTask;
-            
-            if (!_scrollEventConcurrentStack.TryPop(out mostRecentScrollDimensions))
-                return;
-
-            _scrollEventConcurrentStack.Clear();
-
-            _throttleDelayTask = Task.Delay(ScrollThrottleDelayTimeSpan);
-        }
-        finally
-        {
-            _handleScrollEventSemaphoreSlim.Release();
-        }
-
-        _scrollDimensions = mostRecentScrollDimensions;
-    }
     
     [JSInvokable]
-    public async Task OnIntersectionObserverThresholdChanged()
+    public async Task OnIntersectionObserverThresholdChanged(ScrollDimensions scrollDimensions)
     {
-        Console.WriteLine("OnIntersectionObserverThresholdChanged");
+        Console.WriteLine($"OnIntersectionObserverThresholdChanged: {++_onIntersectionThresholdChangedCounter}");
+
+        _scrollDimensions = scrollDimensions;
+        
         await GetResultSetAsync();
     }
     
@@ -309,11 +242,6 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
             heightOfRenderedContent += heightShift;
             bottomBoundaryHeight -= heightShift;
         }
-
-        // Experiencing a negative top style for topVirtualizeBoundary when scrolling back to top
-        {
-            topBoundaryHeight = Math.Max(topBoundaryHeight, 0);
-        }
         
         var results = Items
             .Skip((int) Math.Floor(startIndex))
@@ -323,47 +251,22 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
                     topBoundaryHeight + (i * _dimensions.HeightOfItemInPixels), 
                     100))
             .ToArray();
-        
-        var bottomVirtualizeBoundary = _virtualizeRenderData.BottomVirtualizeBoundary with
-        {
-            HeightInPixels = bottomBoundaryHeight,
-            OffsetFromTopInPixels = topBoundaryHeight + heightOfRenderedContent
-        };
-        
-        var topVirtualizeBoundary = _virtualizeRenderData.TopVirtualizeBoundary with
-        {
-            HeightInPixels = topBoundaryHeight,
-            OffsetFromTopInPixels = 0
-        };
 
-        _virtualizeRenderData = _virtualizeRenderData with
-        {
-            BottomVirtualizeBoundary = bottomVirtualizeBoundary,
-            TopVirtualizeBoundary = topVirtualizeBoundary,
-            VirtualizeItemWrappers = results
-        }; 
+        _topVirtualizeBoundary.HeightInPixels = topBoundaryHeight;
+
+        _bottomVirtualizeBoundary.HeightInPixels = bottomBoundaryHeight;
+        _bottomVirtualizeBoundary.OffsetFromTopInPixels = topBoundaryHeight + heightOfRenderedContent;
+
+        _virtualizeItemWrappers = results; 
         
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnAfterMeasurementTaken(VirtualizeItemDimensions? virtualizeItemDimensions)
+    private void OnAfterMeasurementTaken(VirtualizeItemDimensions? virtualizeItemDimensions)
     {
-        // Before OnAfterRenderAsync JavaScript cannot be ran
-        // Conveniently before OnAfterRenderAsync virtualizeItemDimensions is passed in as null
-        if (virtualizeItemDimensions is null)
-            return;
-        
         _forceGetDimensions = false;
         
         _dimensions = virtualizeItemDimensions;
-
-        if (_topBoundaryVirtualizeBoundaryDisplay is null)
-            return;
-        
-        _scrollDimensions = await JsRuntime.InvokeAsync<ScrollDimensions>("virtualizeCoordinateSystem.getVirtualizeScrollDimensions",
-            _topBoundaryVirtualizeBoundaryDisplay.BoundaryElementReference);
-
-        await OnParentElementScrollEvent(_scrollDimensions);
     }
 
     public void Dispose()
@@ -372,7 +275,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
         {
             await JsRuntime.InvokeVoidAsync("virtualizeCoordinateSystem.disposeVirtualizeIntersectionObserver",
                 _virtualizeCoordinateSystemIdentifier,
-                GetVirtualizeBoundaryDisplays()
+                GetVirtualizeBoundaryBlazorComponents()
                     .Select(vb =>
                         vb?.Id ?? string.Empty));
         });

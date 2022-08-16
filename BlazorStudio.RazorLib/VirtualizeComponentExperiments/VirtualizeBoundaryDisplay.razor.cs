@@ -11,5 +11,5 @@ public partial class VirtualizeBoundaryDisplay : ComponentBase
     
     public ElementReference? BoundaryElementReference;
 
-    public string Id => $"vcs-{VirtualizeBoundary.DimensionsPositionKind}_{VirtualizeCoordinateSystemIdentifier}";
+    public string Id => $"vcs-{VirtualizeBoundary.VirtualizeBoundaryKind}_{VirtualizeCoordinateSystemIdentifier}";
 }

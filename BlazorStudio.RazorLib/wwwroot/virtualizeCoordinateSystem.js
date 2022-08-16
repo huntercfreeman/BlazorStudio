@@ -23,41 +23,71 @@ window.virtualizeCoordinateSystem = {
             ScrollTop: parentElement.scrollTop
         };
     },
-    subscribeToVirtualizeScrollEvent: function (virtualizeItemLocatorElementReference,
-                                                virtualizeCoordinateSystemDotNetReference) {
-        let parentElement = virtualizeItemLocatorElementReference
-            .parentElement;
-
-        parentElement.addEventListener('scroll', (event) => {
-            virtualizeCoordinateSystemDotNetReference.invokeMethodAsync("OnParentElementScrollEvent", {
-                    ScrollLeft: parentElement.scrollLeft,
-                    ScrollTop: parentElement.scrollTop
-                });
-        }, true)
-    },
     initializeVirtualizeIntersectionObserver: function (virtualizeCoordinateSystemIdentifier,
                                                         virtualizeCoordinateSystemDotNetReference,
                                                         virtualizeBoundaryIds) {
 
+        if (!virtualizeBoundaryIds || virtualizeBoundaryIds.length === 0) {
+            return;
+        }
+        
+        // Need reference to parent element to know the scroll top and scroll events
+        let blazorVirtualizeBoundary = document.getElementById(virtualizeBoundaryIds[0]);
+
+        let parentElement = blazorVirtualizeBoundary.parentElement;
+
+        parentElement.addEventListener('scroll', (event) => {
+            let intersectionObserverWrap = this.intersectionObserverMap.get(virtualizeCoordinateSystemIdentifier);
+
+            for (let i = 0; i < virtualizeBoundaryIds.length; i++) {
+                let currentVirtualizeBoundaryId = virtualizeBoundaryIds[i];
+
+                let previousIntersectionThreshold = intersectionObserverWrap.intersectionRatioMap
+                    .get(currentVirtualizeBoundaryId);
+
+                if (previousIntersectionThreshold >= 0) {
+                    // In view
+                    let parentElement = blazorVirtualizeBoundary.parentElement;
+
+                    let scrollDimensions = {
+                        ScrollLeft: parentElement.scrollLeft,
+                        ScrollTop: parentElement.scrollTop
+                    };
+
+                    virtualizeCoordinateSystemDotNetReference.invokeMethodAsync("OnIntersectionObserverThresholdChanged", scrollDimensions);
+                }
+            }
+        }, true)
+        
         let options = {
             rootMargin: '0px',
             threshold: [
-                .1
+                0
             ]
         }
 
         let intersectionObserver = new IntersectionObserver(
             (entries) => 
-                this.handleThresholdChange(entries, virtualizeCoordinateSystemDotNetReference), 
+                this.handleThresholdChange(entries, 
+                    virtualizeCoordinateSystemDotNetReference,
+                    blazorVirtualizeBoundary,
+                    virtualizeCoordinateSystemIdentifier), 
             options);
         
-        this.intersectionObserverMap.set(virtualizeCoordinateSystemIdentifier, intersectionObserver);
+        let intersectionRatioMap = new Map();
+        
+        this.intersectionObserverMap.set(virtualizeCoordinateSystemIdentifier, {
+            intersectionObserver: intersectionObserver,
+            intersectionRatioMap: intersectionRatioMap
+        });
         
         for (let i = 0; i < virtualizeBoundaryIds.length; i++) {
             let currentId = virtualizeBoundaryIds[i];
             
             if (currentId) {
                 let element = document.getElementById(currentId);
+
+                intersectionRatioMap.set(currentId, -1);
                 
                 intersectionObserver.observe(element);
             }
@@ -65,18 +95,37 @@ window.virtualizeCoordinateSystem = {
     },
     disposeVirtualizeIntersectionObserver: function (virtualizeCoordinateSystemIdentifier,
                                                         virtualizeBoundaryIds) {
-        let intersectionObserver = this.intersectionObserverMap.get(virtualizeCoordinateSystemIdentifier);
-        
-        intersectionObserver.disconnect();
+        let intersectionObserverWrap = this.intersectionObserverMap.get(virtualizeCoordinateSystemIdentifier);
+
+        this.intersectionObserverMap.delete(virtualizeCoordinateSystemIdentifier);
+
+        intersectionObserverWrap.intersectionObserver.disconnect();
     },
-    handleThresholdChange: function (entries, virtualizeCoordinateSystemDotNetReference) {
+    handleThresholdChange: function (entries, virtualizeCoordinateSystemDotNetReference, blazorVirtualizeBoundary, virtualizeCoordinateSystemIdentifier) {
+        let intersectionObserverWrap = this.intersectionObserverMap.get(virtualizeCoordinateSystemIdentifier);
+
         for (let i = 0; i < entries.length; i++) {
             let currentEntry = entries[i];
 
-            if (currentEntry.intersectionRatio >= .1) {
-                // Scrolling into view (whereas < .1 would be scrolling out of view)
+            intersectionObserverWrap.intersectionRatioMap
+                .set(currentEntry.target.id, currentEntry.intersectionRatio);
+        }
+        
+        for (let i = 0; i < entries.length; i++) {
+            let currentEntry = entries[i];
 
-                virtualizeCoordinateSystemDotNetReference.invokeMethodAsync("OnIntersectionObserverThresholdChanged");
+            if (currentEntry.intersectionRatio >= 0) {
+                // Scrolling into view
+
+                let parentElement = blazorVirtualizeBoundary.parentElement;
+
+                let scrollDimensions = {
+                    ScrollLeft: parentElement.scrollLeft,
+                    ScrollTop: parentElement.scrollTop
+                };
+                
+                virtualizeCoordinateSystemDotNetReference.invokeMethodAsync("OnIntersectionObserverThresholdChanged", scrollDimensions);
+                return;
             }
         }
     },
