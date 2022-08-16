@@ -56,8 +56,16 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     private VirtualizeItemDimensions? _dimensions;
     private ApplicationException _dimensionsWereNullException = new ($"The {nameof(_dimensions)} was null");
     private ApplicationException _itemsWereNullException = new ($"The {nameof(Items)} was null");
-    private ElementReference? _topBoundaryElementReference;
-    private ElementReference? _bottomBoundaryElementReference;
+    
+    /// <summary>
+    /// In addition to the typical functionality of being a <see cref="VirtualizeBoundary"/>
+    /// this is used to find the <see cref="VirtualizeCoordinateSystemExperimental{TItem}"/>
+    /// within the HTML as the scrollable container is provided by the user of this component
+    /// the component thereby cannnot find the scrollable container except by getting the parent element of
+    /// a <see cref="VirtualizeBoundary"/>
+    /// </summary>
+    private VirtualizeBoundaryDisplay? _topBoundaryVirtualizeBoundaryDisplay;
+    
     private ScrollDimensions? _scrollDimensions;
     private ConcurrentStack<ScrollDimensions> _scrollEventConcurrentStack = new();
     private SemaphoreSlim _handleScrollEventSemaphoreSlim = new(1, 1);
@@ -102,6 +110,14 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
         if (firstRender)
         {
             await SubscribeToVirtualizeScrollEvent();
+
+            // The JavaScript cannot be invoked during the first
+            // measurement as on after first render did not occcur yet which is expected Blazor functionality.
+            //
+            // Therefore I call OnAfterMeasurementTaken a second time after the first render to get
+            // the JavaScript calls (which were initially skipped by returning early) to get invoked.
+            if (_dimensions is not null)
+                await OnAfterMeasurementTaken(_dimensions);
         }
         
         await base.OnAfterRenderAsync(firstRender);
@@ -123,8 +139,11 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     /// </summary>
     public async Task SubscribeToVirtualizeScrollEvent()
     {
+        if (_topBoundaryVirtualizeBoundaryDisplay is null)
+            return;
+        
         await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeToVirtualizeScrollEvent",
-            _topBoundaryElementReference,
+            _topBoundaryVirtualizeBoundaryDisplay.BoundaryElementReference,
             DotNetObjectReference.Create(this));
     }
 
@@ -209,10 +228,15 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
 
     private async Task OnAfterMeasurementTaken(VirtualizeItemDimensions virtualizeItemDimensions)
     {
+        var isFirstRender = _dimensions is null;
+        
         _dimensions = virtualizeItemDimensions;
+
+        if (isFirstRender)
+            return;
         
         _scrollDimensions = await JsRuntime.InvokeAsync<ScrollDimensions>("plainTextEditor.getVirtualizeScrollDimensions",
-            _topBoundaryElementReference);
+            _topBoundaryVirtualizeBoundaryDisplay);
 
         await OnParentElementScrollEvent(_scrollDimensions);
     }

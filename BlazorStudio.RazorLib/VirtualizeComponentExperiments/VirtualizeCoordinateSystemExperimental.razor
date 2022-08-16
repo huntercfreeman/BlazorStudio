@@ -1,9 +1,9 @@
 ﻿@typeparam TItem
 
-<VirtualizeBoundaryDisplay VirtualizeBoundary="_virtualizeRenderData.TopVirtualizeBoundary" />
+<VirtualizeBoundaryDisplay @ref="_topBoundaryVirtualizeBoundaryDisplay" VirtualizeBoundary="_virtualizeRenderData.TopVirtualizeBoundary" />
 @if (Items?.Any() ?? false)
 {
-    if (_getDimensions)
+    if (_dimensions is null || _getDimensions)
     {
         // Measure the dimensions of a single rendered item.
         <MeasureDimensionsForVirtualization Item="Items.ElementAt(0)"
