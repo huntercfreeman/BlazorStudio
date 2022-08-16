@@ -1,16 +1,16 @@
 ﻿@typeparam TItem
 
-<VirtualizeBoundaryDisplay VirtualizeBoundary="_topVirtualizeBoundary" />
+<VirtualizeBoundaryDisplay VirtualizeBoundary="_virtualizeRenderData.TopVirtualizeBoundary" />
 @if (Items?.Any() ?? false)
 {
-    if (_dimensions is null)
+    if (_getDimensions)
     {
         // Measure the dimensions of a single rendered item.
         <MeasureDimensionsForVirtualization Item="Items.ElementAt(0)"
                                   ItemRenderFragment="ChildContent"
                                   OnAfterMeasurementTakenEventCallback="OnAfterMeasurementTaken" />
     }
-    else if (_virtualizeRenderData is not null)
+    else
     {
         // Render the items that are within the virtualization bounds.
         foreach (var wrapper in _virtualizeRenderData.VirtualizeItemWrappers ?? Array.Empty<VirtualizeItemWrapper<TItem>>())
@@ -20,15 +20,10 @@
             </div>
         }   
     }
-    else
-    {
-        // Something unexpected went wrong
-        <div>_virtualizeRenderData is null</div>
-    }
 }
 else
 {
     // No items were provided.
     <div>No items</div>
 }
-<VirtualizeBoundaryDisplay VirtualizeBoundary="_bottomVirtualizeBoundary" />
+<VirtualizeBoundaryDisplay VirtualizeBoundary="_virtualizeRenderData.BottomVirtualizeBoundary" />

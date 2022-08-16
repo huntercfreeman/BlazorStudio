@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using BlazorStudio.ClassLib.Sequence;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -9,31 +10,89 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     [Inject] 
     private IJSRuntime JsRuntime { get; set; } = null!;
     
+    /// <summary>
+    /// The <see cref="ICollection{T}"/> of <see cref="TItem"/>.
+    /// The virtualization result pulls a range of <see cref="TItem"/> from
+    /// this collection as specified by the scroll position and etc...
+    /// then renders those <see cref="TItem"/>
+    /// </summary>
     [Parameter, EditorRequired] 
     public ICollection<TItem>? Items { get; set; } = null!;
+    /// <summary>
+    /// The <see cref="RenderFragment"/> to render foreach <see cref="TItem"/>
+    /// in the virtualization result.
+    /// </summary>
     [Parameter, EditorRequired]
     public RenderFragment<TItem> ChildContent { get; set; } = null!;
+    /// <summary>
+    /// If the <see cref="VirtualizeItemDimensions"/> are changed and one wishes to remeasure
+    /// the scrollable parent html element. 
+    /// <br/>--<br/>
+    /// Then pass in a <see cref="SequenceKey.NewSequenceKey"/> and the parent html element
+    /// will be remeasured.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public SequenceKey DimensionsSequenceKey { get; set; } = null!;
+    /// <summary>
+    /// If the <see cref="Items"/> are changed and one wishes to recalculate the current items that
+    /// should be displayed given the scroll position.
+    /// <br/>--<br/>
+    /// Then pass in a <see cref="SequenceKey.NewSequenceKey"/> and the items will be recalculated.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public SequenceKey ItemsSequenceKey { get; set; } = null!;
+    /// <summary>
+    /// To avoid an overly abundant amount of scroll events there is a default throttling delay: <see cref="GetDefaultScrollThrottleDelayTimeSpan"/>
+    /// <br/>--<br/>
+    /// Use this parameter to set a different throttling delay if desired.
+    /// </summary>
+    [Parameter]
+    public TimeSpan ScrollThrottleDelayTimeSpan { get; set; } = GetDefaultScrollThrottleDelayTimeSpan();
+    
+    private static TimeSpan GetDefaultScrollThrottleDelayTimeSpan() => TimeSpan.FromMilliseconds(100);
 
     private Guid _virtualizeCoordinateSystemIdentifier = Guid.NewGuid();
+    private bool _getDimensions = true;
     private VirtualizeItemDimensions? _dimensions;
-    private ApplicationException _dimensionsWereNullException = new (
-        $"The {nameof(_dimensions)} was null");
+    private ApplicationException _dimensionsWereNullException = new ($"The {nameof(_dimensions)} was null");
+    private ApplicationException _itemsWereNullException = new ($"The {nameof(Items)} was null");
     private ElementReference? _topBoundaryElementReference;
     private ElementReference? _bottomBoundaryElementReference;
     private ScrollDimensions? _scrollDimensions;
     private ConcurrentStack<ScrollDimensions> _scrollEventConcurrentStack = new();
     private SemaphoreSlim _handleScrollEventSemaphoreSlim = new(1, 1);
-    private TimeSpan _throttleDelayTimeSpan = TimeSpan.FromMilliseconds(100);
     private Task _throttleDelayTask = Task.CompletedTask;
+    private SequenceKey? _previousItemsSequenceKey;
+    private SequenceKey? _previousDimensionsSequenceKey;
 
     private VirtualizeRenderData<TItem> _virtualizeRenderData = new();
 
     protected override async Task OnParametersSetAsync()
     {
-        if (_scrollDimensions is not null)
+        if (_previousDimensionsSequenceKey is not null && _previousDimensionsSequenceKey != DimensionsSequenceKey)
         {
-            await GetResultSetAsync();
+            // "_previousDimensionsSequenceKey is not null" is done to avoid the first OnParametersSetAsync
+
+            if (Items is null)
+                throw _itemsWereNullException;
+
+            _getDimensions = true;
         }
+
+        _previousItemsSequenceKey = DimensionsSequenceKey;
+        
+        if (_previousItemsSequenceKey is not null && _previousItemsSequenceKey != ItemsSequenceKey)
+        {
+            // "_previousSequenceKey is not null" is done to avoid the first OnParametersSetAsync
+
+            if (Items is null)
+                throw _itemsWereNullException;
+        
+            if (_scrollDimensions is not null)
+                await GetResultSetAsync();
+        }
+
+        _previousItemsSequenceKey = ItemsSequenceKey;
         
         await base.OnParametersSetAsync();
     }
@@ -42,17 +101,31 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     {
         if (firstRender)
         {
-            await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeToVirtualizeScrollEvent",
-                _topBoundaryElementReference,
-                DotNetObjectReference.Create(this));
-            
-            var firstScrollDimensions = await JsRuntime.InvokeAsync<ScrollDimensions>("plainTextEditor.getVirtualizeScrollDimensions",
-                _topBoundaryElementReference);
-
-            await OnParentElementScrollEvent(firstScrollDimensions);
+            await SubscribeToVirtualizeScrollEvent();
         }
         
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    /// <summary>
+    /// This method is called during <see cref="OnAfterRenderAsync"/>
+    /// when it is the firstRender.
+    /// <br/>--<br/>
+    /// This method is public as I feel there might be some edge cases where
+    /// someone will need to re-subscribe.
+    /// <br/>--<br/>
+    /// Calling this method when one is not in the edge case of needing to re-subscribe
+    /// will result in multiple subscriptions.
+    /// <br/>--<br/>
+    /// I am not sure of an edge case that would require re-subscribing as of writing this comment
+    /// but it is a lingering thought in the back of my mind that there could be one.
+    /// Therefore this method is here and is public.
+    /// </summary>
+    public async Task SubscribeToVirtualizeScrollEvent()
+    {
+        await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeToVirtualizeScrollEvent",
+            _topBoundaryElementReference,
+            DotNetObjectReference.Create(this));
     }
 
     [JSInvokable]
@@ -70,13 +143,11 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
             await _throttleDelayTask;
             
             if (!_scrollEventConcurrentStack.TryPop(out mostRecentScrollDimensions))
-            {
                 return;
-            }
 
             _scrollEventConcurrentStack.Clear();
 
-            _throttleDelayTask = Task.Delay(_throttleDelayTimeSpan);
+            _throttleDelayTask = Task.Delay(ScrollThrottleDelayTimeSpan);
         }
         finally
         {
@@ -94,9 +165,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
             throw _dimensionsWereNullException;
 
         if (_scrollDimensions is null)
-        {
             return;
-        }
         
         var startIndex = _scrollDimensions.ScrollTop / _dimensions.HeightOfItemInPixels;
         var count = _dimensions.HeightOfScrollableContainerInPixels / _dimensions.HeightOfItemInPixels;
@@ -138,9 +207,14 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
         await InvokeAsync(StateHasChanged);
     }
 
-    private void OnAfterMeasurementTaken(VirtualizeItemDimensions virtualizeItemDimensions)
+    private async Task OnAfterMeasurementTaken(VirtualizeItemDimensions virtualizeItemDimensions)
     {
         _dimensions = virtualizeItemDimensions;
+        
+        _scrollDimensions = await JsRuntime.InvokeAsync<ScrollDimensions>("plainTextEditor.getVirtualizeScrollDimensions",
+            _topBoundaryElementReference);
+
+        await OnParentElementScrollEvent(_scrollDimensions);
     }
 
     public void Dispose()
