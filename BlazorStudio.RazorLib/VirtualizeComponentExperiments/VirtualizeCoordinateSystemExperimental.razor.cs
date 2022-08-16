@@ -239,7 +239,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnAfterMeasurementTaken(VirtualizeItemDimensions virtualizeItemDimensions)
+    private async Task OnAfterMeasurementTaken(VirtualizeItemDimensions? virtualizeItemDimensions)
     {
         // Before OnAfterRenderAsync JavaScript cannot be ran
         // Conveniently before OnAfterRenderAsync virtualizeItemDimensions is passed in as null
