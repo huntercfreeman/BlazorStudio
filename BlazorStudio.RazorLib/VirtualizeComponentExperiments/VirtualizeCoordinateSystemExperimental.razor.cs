@@ -208,6 +208,30 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
         
         var bottomBoundaryHeight = totalHeight - topBoundaryHeight - _dimensions.HeightOfScrollableContainerInPixels;
 
+        var heightOfRenderedContent = _dimensions.HeightOfScrollableContainerInPixels;
+        
+        // Apply OverscanCount
+        if (OverscanCount > 0)
+        {
+            var overallLastIndex = Items.Count - 1;
+
+            var resultsMapLastIndex = startIndex + count - 1;
+            
+            var bottomAvailableOverscan = overallLastIndex - resultsMapLastIndex;
+
+            if (bottomAvailableOverscan > 0)
+            {
+                var overscan = Math.Min(bottomAvailableOverscan, OverscanCount);
+
+                count += overscan;
+
+                var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
+                
+                heightOfRenderedContent += extraRenderedHeight;
+                bottomBoundaryHeight -= extraRenderedHeight;
+            }
+        }
+        
         var results = Items
             .Skip((int) (startIndex))
             .Take((int) (count))
@@ -220,7 +244,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
         var bottomVirtualizeBoundary = _virtualizeRenderData.BottomVirtualizeBoundary with
         {
             HeightInPixels = bottomBoundaryHeight,
-            OffsetFromTopInPixels = topBoundaryHeight + _dimensions.HeightOfScrollableContainerInPixels
+            OffsetFromTopInPixels = topBoundaryHeight + heightOfRenderedContent
         };
         
         var topVirtualizeBoundary = _virtualizeRenderData.TopVirtualizeBoundary with

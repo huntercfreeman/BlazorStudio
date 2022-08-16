@@ -4,7 +4,9 @@
 <hr />
 
 <div style="height: 500px; overflow-y: scroll; position: relative;">
-    <VirtualizeCoordinateSystemExperimental Items="MusicBandRepository.GetMusicBands()" Context="musicBand">
+    <VirtualizeCoordinateSystemExperimental Items="MusicBandRepository.GetMusicBands()" 
+                                            Context="musicBand"
+                                            OverscanCount="4">
         <MusicBandDisplay @key="musicBand.SeedIndex" MusicBand="musicBand" />
     </VirtualizeCoordinateSystemExperimental>
 </div>
