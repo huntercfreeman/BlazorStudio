@@ -213,22 +213,47 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
         // Apply OverscanCount
         if (OverscanCount > 0)
         {
-            var overallLastIndex = Items.Count - 1;
-
-            var resultsMapLastIndex = startIndex + count - 1;
-            
-            var bottomAvailableOverscan = overallLastIndex - resultsMapLastIndex;
-
-            if (bottomAvailableOverscan > 0)
+            // Apply Top Overscan
             {
-                var overscan = Math.Min(bottomAvailableOverscan, OverscanCount);
+                var overallFirstIndex = 0;
 
-                count += overscan;
+                var resultsMapFirstIndex = startIndex;
 
-                var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
+                var topAvailableOverscan = resultsMapFirstIndex - overallFirstIndex;
+
+                if (topAvailableOverscan > 0)
+                {
+                    var overscan = Math.Min(topAvailableOverscan, OverscanCount);
+
+                    startIndex -= overscan;
+                    count += overscan;
+                    
+                    var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
+
+                    heightOfRenderedContent += extraRenderedHeight;
+                    topBoundaryHeight -= extraRenderedHeight;
+                }
+            }
+
+            // Apply Bottom Overscan
+            {
+                var overallLastIndex = Items.Count - 1;
                 
-                heightOfRenderedContent += extraRenderedHeight;
-                bottomBoundaryHeight -= extraRenderedHeight;
+                var resultsMapLastIndex = startIndex + count - 1;
+            
+                var bottomAvailableOverscan = overallLastIndex - resultsMapLastIndex;
+
+                if (bottomAvailableOverscan > 0)
+                {
+                    var overscan = Math.Min(bottomAvailableOverscan, OverscanCount);
+
+                    count += overscan;
+
+                    var extraRenderedHeight = overscan * _dimensions.HeightOfItemInPixels;
+                
+                    heightOfRenderedContent += extraRenderedHeight;
+                    bottomBoundaryHeight -= extraRenderedHeight;
+                }
             }
         }
         
