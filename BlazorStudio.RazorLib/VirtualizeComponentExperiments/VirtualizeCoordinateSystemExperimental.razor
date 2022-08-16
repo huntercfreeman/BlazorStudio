@@ -1,6 +1,6 @@
 ﻿@typeparam TItem
 
-<div @ref="_topBoundaryElementReference" style="position: absolute; left: 0; top: 0; height:@(_renderData.topBoundaryHeightInPixels)px;"></div>
+<div @ref="_topBoundaryElementReference" style="width: 100%; position: absolute; top: 0; height:@(_renderData.topBoundaryHeightInPixels)px;"></div>
 @if (Items?.Any() ?? false)
 {
     if (_dimensions is null)
@@ -23,4 +23,4 @@ else
 {
     <div>No items</div>
 }
-<div @ref="_bottomBoundaryElementReference" style="position: absolute; left: 0; top: @(_renderData.topBoundaryHeightInPixels + _dimensions?.HeightOfScrollableContainer ?? 0)px; height:@(_renderData.bottomBoundaryHeightInPixels)px;"></div>
+<div @ref="_bottomBoundaryElementReference" style="width: 100%; position: absolute; top: @(_renderData.topBoundaryHeightInPixels + _dimensions?.HeightOfScrollableContainer ?? 0)px; height:@(_renderData.bottomBoundaryHeightInPixels)px;"></div>
