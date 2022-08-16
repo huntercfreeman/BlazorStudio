@@ -31,7 +31,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     private Task _throttleDelayTask = Task.CompletedTask;
 
     // TODO: Make a class for this. I need to ensure the top and bottom boundaries rerender with the same batch of data
-    private (double topBoundaryHeightInPixels, double bottomBoundaryHeightInPixels, ICollection<TItem>? resultSet) _renderData;
+    private (double topBoundaryHeightInPixels, double bottomBoundaryHeightInPixels, ICollection<(TItem item, double top)>? resultSet) _renderData;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -113,20 +113,18 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
         var totalHeight = _dimensions.HeightOfTItemInPixels * Items.Count;
         
         var topBoundaryHeight = _scrollDimensions.ScrollTop;
-
-        topBoundaryHeight = Math.Min(topBoundaryHeight,
-            totalHeight - _dimensions.HeightOfScrollableContainer);
         
         var bottomBoundaryHeight = totalHeight - topBoundaryHeight - _dimensions.HeightOfScrollableContainer;
 
-        if (bottomBoundaryHeight < _dimensions.HeightOfTItemInPixels)
-        {
-            bottomBoundaryHeight = 0;
-        }
+        // if (bottomBoundaryHeight < _dimensions.HeightOfTItemInPixels)
+        // {
+        //     bottomBoundaryHeight = 0;
+        // }
         
         var results = Items
-            .Skip((int) Math.Ceiling(startIndex))
-            .Take((int) Math.Ceiling(count))
+            .Skip((int) (startIndex))
+            .Take((int) (count))
+            .Select((item, i) => (item, topBoundaryHeight + (i * _dimensions.HeightOfTItemInPixels)))
             .ToArray();
         
         _renderData = (topBoundaryHeight, bottomBoundaryHeight, results); 
