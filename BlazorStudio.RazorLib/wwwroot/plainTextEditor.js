@@ -1,16 +1,16 @@
 window.plainTextEditor = {
     getVirtualizeItemDimensions: function (virtualizeItemLocatorElementReference) {
-        let renderedTItem = virtualizeItemLocatorElementReference
+        let renderedItem = virtualizeItemLocatorElementReference
             .previousElementSibling;
 
         let parentElement = virtualizeItemLocatorElementReference
             .parentElement;
         
         return {
-            WidthOfTItemInPixels: renderedTItem.offsetWidth,
-            HeightOfTItemInPixels: renderedTItem.offsetHeight,
-            WidthOfScrollableContainer: parentElement.offsetWidth,
-            HeightOfScrollableContainer: parentElement.offsetHeight
+            WidthOfItemInPixels: renderedItem.offsetWidth,
+            HeightOfItemInPixels: renderedItem.offsetHeight,
+            WidthOfScrollableContainerInPixels: parentElement.offsetWidth,
+            HeightOfScrollableContainerInPixels: parentElement.offsetHeight
         };
     },
     getVirtualizeScrollDimensions: function (virtualizeItemLocatorElementReference) {

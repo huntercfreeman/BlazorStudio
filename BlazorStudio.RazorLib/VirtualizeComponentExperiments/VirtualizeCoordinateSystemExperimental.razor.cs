@@ -227,14 +227,12 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
 
     private async Task OnAfterMeasurementTaken(VirtualizeItemDimensions virtualizeItemDimensions)
     {
+        if (virtualizeItemDimensions is null)
+            return;
+        
         _forceGetDimensions = false;
         
-        var isFirstRender = _dimensions is null;
-        
         _dimensions = virtualizeItemDimensions;
-
-        if (isFirstRender)
-            return;
 
         if (_topBoundaryVirtualizeBoundaryDisplay is null)
             return;
