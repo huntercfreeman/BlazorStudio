@@ -3,7 +3,7 @@
 <VirtualizeBoundaryDisplay @ref="_topBoundaryVirtualizeBoundaryDisplay" VirtualizeBoundary="_virtualizeRenderData.TopVirtualizeBoundary" />
 @if (Items?.Any() ?? false)
 {
-    if (_dimensions is null || _getDimensions)
+    if (_dimensions is null || _forceGetDimensions)
     {
         // Measure the dimensions of a single rendered item.
         <MeasureDimensionsForVirtualization Item="Items.ElementAt(0)"

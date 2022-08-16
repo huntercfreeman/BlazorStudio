@@ -52,7 +52,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     private static TimeSpan GetDefaultScrollThrottleDelayTimeSpan() => TimeSpan.FromMilliseconds(100);
 
     private Guid _virtualizeCoordinateSystemIdentifier = Guid.NewGuid();
-    private bool _getDimensions = true;
+    private bool _forceGetDimensions = false;
     private VirtualizeItemDimensions? _dimensions;
     private ApplicationException _dimensionsWereNullException = new ($"The {nameof(_dimensions)} was null");
     private ApplicationException _itemsWereNullException = new ($"The {nameof(Items)} was null");
@@ -84,7 +84,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
             if (Items is null)
                 throw _itemsWereNullException;
 
-            _getDimensions = true;
+            _forceGetDimensions = true;
         }
 
         _previousItemsSequenceKey = DimensionsSequenceKey;
@@ -112,12 +112,11 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
             await SubscribeToVirtualizeScrollEvent();
 
             // The JavaScript cannot be invoked during the first
-            // measurement as on after first render did not occcur yet which is expected Blazor functionality.
+            // measurement as on after first render did not occur yet which is normal Blazor functionality.
             //
-            // Therefore I call OnAfterMeasurementTaken a second time after the first render to get
+            // Therefore the measurement must be taken a second time after the first render to get
             // the JavaScript calls (which were initially skipped by returning early) to get invoked.
-            if (_dimensions is not null)
-                await OnAfterMeasurementTaken(_dimensions);
+            await OnAfterMeasurementTaken(_dimensions);
         }
         
         await base.OnAfterRenderAsync(firstRender);
@@ -228,15 +227,20 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
 
     private async Task OnAfterMeasurementTaken(VirtualizeItemDimensions virtualizeItemDimensions)
     {
+        _forceGetDimensions = false;
+        
         var isFirstRender = _dimensions is null;
         
         _dimensions = virtualizeItemDimensions;
 
         if (isFirstRender)
             return;
+
+        if (_topBoundaryVirtualizeBoundaryDisplay is null)
+            return;
         
         _scrollDimensions = await JsRuntime.InvokeAsync<ScrollDimensions>("plainTextEditor.getVirtualizeScrollDimensions",
-            _topBoundaryVirtualizeBoundaryDisplay);
+            _topBoundaryVirtualizeBoundaryDisplay.BoundaryElementReference);
 
         await OnParentElementScrollEvent(_scrollDimensions);
     }
