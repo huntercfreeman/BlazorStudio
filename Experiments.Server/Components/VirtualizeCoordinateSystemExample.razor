@@ -3,8 +3,29 @@
 
 <hr />
 
+@{
+    var musicBands = MusicBandRepository.GetMusicBands();
+
+    var last10 = musicBands.TakeLast(10).OrderBy(x => x.SeedIndex).ToArray();
+}
+
+<div>
+    musicBands.Count:&nbsp;@musicBands.Count
+    <hr/>
+    <br/>
+    @foreach (var musicBand in last10)
+    {
+        <MusicBandDisplay @key="musicBand.SeedIndex" MusicBand="musicBand" />
+    }
+    
+    <br/>
+    end of debug
+</div>
+
+<hr />
+
 <div style="height: 500px; overflow-y: scroll; position: relative;">
-    <VirtualizeCoordinateSystemExperimental Items="MusicBandRepository.GetMusicBands()" 
+    <VirtualizeCoordinateSystemExperimental Items="musicBands" 
                                             Context="musicBand"
                                             OverscanCount="4">
         <MusicBandDisplay @key="musicBand.SeedIndex" MusicBand="musicBand" />

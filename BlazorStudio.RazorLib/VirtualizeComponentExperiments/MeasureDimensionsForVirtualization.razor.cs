@@ -65,6 +65,18 @@ public partial class MeasureDimensionsForVirtualization<TItem> : ComponentBase
                     "plainTextEditor.getVirtualizeItemDimensions",
                     _virtualizeItemLocatorElementReference);
 
+            if (virtualizeItemDimensions is not null)
+            {
+                // I am encountering some rounding issues going to try rounding everything up
+                virtualizeItemDimensions = virtualizeItemDimensions with
+                {
+                    WidthOfScrollableContainerInPixels = Math.Ceiling(virtualizeItemDimensions.WidthOfScrollableContainerInPixels),
+                    HeightOfScrollableContainerInPixels = Math.Ceiling(virtualizeItemDimensions.HeightOfScrollableContainerInPixels),
+                    WidthOfItemInPixels = Math.Ceiling(virtualizeItemDimensions.WidthOfItemInPixels),
+                    HeightOfItemInPixels = Math.Ceiling(virtualizeItemDimensions.HeightOfItemInPixels),
+                };
+            }
+            
             await OnAfterMeasurementTakenEventCallback.InvokeAsync(virtualizeItemDimensions);
         }
         

@@ -256,10 +256,39 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
                 }
             }
         }
+
+        // Round startIndex down
+        {
+            var percentageOfAnItemLost = startIndex - Math.Truncate(startIndex);
+
+            var percentageOfAnItemGained = .1 - percentageOfAnItemLost;
+
+            var heightShift = _dimensions.HeightOfItemInPixels * percentageOfAnItemGained;
+
+            topBoundaryHeight -= heightShift;
+            heightOfRenderedContent += heightShift;
+        }
+        
+        // Round count up
+        {
+            var percentageOfAnItemLost = count - Math.Truncate(count);
+
+            var percentageOfAnItemGained = .1 - percentageOfAnItemLost;
+
+            var heightShift = _dimensions.HeightOfItemInPixels * percentageOfAnItemGained;
+
+            heightOfRenderedContent += heightShift;
+            bottomBoundaryHeight -= heightShift;
+        }
+
+        // Experiencing a negative top style for topVirtualizeBoundary when scrolling back to top
+        {
+            topBoundaryHeight = Math.Max(topBoundaryHeight, 0);
+        }
         
         var results = Items
-            .Skip((int) (startIndex))
-            .Take((int) (count))
+            .Skip((int) Math.Floor(startIndex))
+            .Take((int) Math.Ceiling(count))
             .Select((item, i) => 
                 new VirtualizeItemWrapper<TItem>(item, 
                     topBoundaryHeight + (i * _dimensions.HeightOfItemInPixels), 

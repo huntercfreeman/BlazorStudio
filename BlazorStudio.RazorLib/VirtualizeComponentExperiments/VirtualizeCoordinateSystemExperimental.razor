@@ -15,7 +15,7 @@
         // Render the items that are within the virtualization bounds.
         foreach (var wrapper in _virtualizeRenderData.VirtualizeItemWrappers ?? Array.Empty<VirtualizeItemWrapper<TItem>>())
         {
-            <div style="position: absolute; top: @(wrapper.TopInPixels)px; width: @(wrapper.WidthInPercentage)%;">
+            <div style="position: absolute; top: @(wrapper.TopInPixels)px; width: @(wrapper.WidthInPercentage)%; height: @(_dimensions.HeightOfItemInPixels)px;">
                 @ChildContent(wrapper.Item)
             </div>
         }   
