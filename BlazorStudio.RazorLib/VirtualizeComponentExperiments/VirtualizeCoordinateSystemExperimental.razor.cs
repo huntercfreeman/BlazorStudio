@@ -63,7 +63,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     private ApplicationException _dimensionsWereNullException = new ($"The {nameof(_dimensions)} was null");
     private ApplicationException _itemsWereNullException = new ($"The {nameof(Items)} was null");
     private int _onIntersectionThresholdChangedCounter;
-    
+
     /// <summary>
     /// In addition to the typical functionality of being a <see cref="VirtualizeBoundary"/>
     /// this is used to find the <see cref="VirtualizeCoordinateSystemExperimental{TItem}"/>
@@ -156,7 +156,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     private async Task GetResultSetAsync()
     {
         if (_dimensions is null)
-            throw _dimensionsWereNullException;
+            return;
 
         if (_scrollDimensions is null)
             return;
@@ -219,28 +219,12 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
             }
         }
 
-        // Round startIndex down
+        if (bottomBoundaryHeight < 0)
         {
-            var percentageOfAnItemLost = startIndex - Math.Truncate(startIndex);
-
-            var percentageOfAnItemGained = .1 - percentageOfAnItemLost;
-
-            var heightShift = _dimensions.HeightOfItemInPixels * percentageOfAnItemGained;
-
-            topBoundaryHeight -= heightShift;
-            heightOfRenderedContent += heightShift;
-        }
-        
-        // Round count up
-        {
-            var percentageOfAnItemLost = count - Math.Truncate(count);
-
-            var percentageOfAnItemGained = .1 - percentageOfAnItemLost;
-
-            var heightShift = _dimensions.HeightOfItemInPixels * percentageOfAnItemGained;
-
-            heightOfRenderedContent += heightShift;
-            bottomBoundaryHeight -= heightShift;
+            var tooFarAmount = Math.Abs(bottomBoundaryHeight);
+            
+            topBoundaryHeight -= tooFarAmount;
+            bottomBoundaryHeight += tooFarAmount;
         }
         
         var results = Items
@@ -253,7 +237,6 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
             .ToArray();
 
         _topVirtualizeBoundary.HeightInPixels = topBoundaryHeight;
-
         _bottomVirtualizeBoundary.HeightInPixels = bottomBoundaryHeight;
         _bottomVirtualizeBoundary.OffsetFromTopInPixels = topBoundaryHeight + heightOfRenderedContent;
 

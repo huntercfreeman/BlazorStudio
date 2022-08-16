@@ -4,22 +4,28 @@
 <hr />
 
 @{
+    var takeCount = 5;
+    
     var musicBands = MusicBandRepository.GetMusicBands();
 
-    var debugItems = musicBands.TakeLast(5).OrderBy(x => x.SeedIndex).ToArray();
+    var debugItems = musicBands.TakeLast(takeCount).OrderBy(x => x.SeedIndex).ToArray();
 }
 
-<div>
-    musicBands.Count:&nbsp;@musicBands.Count
+<div style="background-color: #c8c9f1;">
+    <h4>start of debug</h4>
+    <br/>
+    
+    total musicBands.Count:&nbsp;@musicBands.Count
     <hr/>
     <br/>
+    The last @takeCount music bands in the repository
     @foreach (var musicBand in debugItems)
     {
-        <MusicBandDisplay @key="musicBand.SeedIndex" MusicBand="musicBand" />
+        <MusicBandDisplay @key="musicBand.SeedIndex" MusicBand="musicBand"/>
     }
-    
+
     <br/>
-    end of debug
+    <h4>end of debug</h4>
 </div>
 
 <hr />
