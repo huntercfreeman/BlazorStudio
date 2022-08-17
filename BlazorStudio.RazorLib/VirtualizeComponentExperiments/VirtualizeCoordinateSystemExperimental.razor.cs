@@ -220,8 +220,8 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
                 if (_scrollDimensions is null)
                     return;
 
-                var startIndex = _scrollDimensions.ScrollTop / _dimensions.HeightOfItemInPixels;
-                var count = _dimensions.HeightOfScrollableContainerInPixels / _dimensions.HeightOfItemInPixels;
+                var startIndex = (int) Math.Floor(_scrollDimensions.ScrollTop / _dimensions.HeightOfItemInPixels);
+                var count = (int) Math.Ceiling(_dimensions.HeightOfScrollableContainerInPixels / _dimensions.HeightOfItemInPixels);
 
                 var totalHeight = _dimensions.HeightOfItemInPixels * Items.Count;
 
@@ -247,7 +247,7 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
 
                         if (topAvailableOverscan > 0)
                         {
-                            double topOverscan = Math.Min(topAvailableOverscan, OverscanCount);
+                            int topOverscan = Math.Min(topAvailableOverscan, OverscanCount);
 
                             startIndex -= topOverscan;
                             count += topOverscan;
@@ -266,24 +266,16 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
 
                         if (bottomAvailableOverscan > 0)
                         {
-                            double bottomOverscan = Math.Min(bottomAvailableOverscan, OverscanCount);
+                            int bottomOverscan = Math.Min(bottomAvailableOverscan, OverscanCount);
 
                             count += bottomOverscan;
                         }
                     }
                 }
 
-                if (bottomBoundaryHeight < 0)
-                {
-                    var tooFarAmount = Math.Abs(bottomBoundaryHeight);
-                
-                    topBoundaryHeight -= tooFarAmount;
-                    bottomBoundaryHeight += tooFarAmount;
-                }
-
                 var results = Items
-                    .Skip((int)Math.Floor(startIndex))
-                    .Take((int)Math.Ceiling(count))
+                    .Skip(startIndex)
+                    .Take(count)
                     .Select((item, i) =>
                         new VirtualizeItemWrapper<TItem>(item,
                             (topBoundaryHeight - topOverscanHeight) + (i * _dimensions.HeightOfItemInPixels),
