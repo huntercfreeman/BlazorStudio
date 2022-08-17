@@ -1,5 +1,5 @@
 # Blazor Studio (Not yet released)
-A free and open source IDE written using .NET - a Maui host, Blazor UI, and C#
+A free and open source IDE written using .NET - a Photino host, Blazor UI, and C#
 
 # Demo Website (WebAssembly)
 Make sure to clear your cache for the latest demo:
