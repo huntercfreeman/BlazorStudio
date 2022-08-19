@@ -309,7 +309,7 @@ public partial class TreeViewDisplay<T>
                 RefreshTreeViewTargetAsync, 
                 RefreshParentOfTreeViewTargetAsync));
         }
-        else if (KeyboardKeyFacts.CheckIsAlternateContextMenuEvent(keyboardEventArgs.Key, keyboardEventArgs.ShiftKey))
+        else if (KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs.Key, keyboardEventArgs.ShiftKey))
         {
             HandleOnContextMenu(null);
         }

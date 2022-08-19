@@ -144,6 +144,14 @@ public static class KeyboardKeyFacts
         return (key == keyOne || key == keyTwo)
                && shiftWasPressed;
     }
+    
+    public static bool CheckIsContextMenuEvent(string key, bool shiftWasPressed)
+    {
+        string keyOne = "ContextMenu";
+
+        return key == keyOne ||
+               CheckIsAlternateContextMenuEvent(key, shiftWasPressed);
+    }
 
     public static bool IsMovementKey(KeyDownEventRecord onKeyDownEventArgs)
     {
