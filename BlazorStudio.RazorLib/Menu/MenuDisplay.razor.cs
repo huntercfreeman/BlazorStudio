@@ -111,10 +111,16 @@ public partial class MenuDisplay : ComponentBase
                     // TODO: Open submenu
                     break;
                 case KeyboardKeyFacts.MovementKeys.HOME_KEY:
-                    // TODO: Go to first menu option
+                    if (_cachedMenuOptionRecords.Length > 0)
+                    {
+                        _activeMenuOptionIndex = 0;
+                    }
                     break;
                 case KeyboardKeyFacts.MovementKeys.END_KEY:
-                    // TODO: Go to last menu option
+                    if (_cachedMenuOptionRecords.Length > 0)
+                    {
+                        _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
+                    }
                     break;
             }
         }
