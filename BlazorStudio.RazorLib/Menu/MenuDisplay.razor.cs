@@ -83,10 +83,28 @@ public partial class MenuDisplay : ComponentBase
                     {
                         _activeMenuOptionIndex++;
                     }
+                    else if (_cachedMenuOptionRecords.Length > 0)
+                    {
+                        // Wrap around
+                        _activeMenuOptionIndex = 0;
+                    }
                     break;
                 case KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY:
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP_KEY:
-                    // TODO: Go to previous menu option
+                    if (_activeMenuOptionIndex is null &&
+                        _cachedMenuOptionRecords.Length > 0)
+                    {
+                        _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
+                    }
+                    else if (_activeMenuOptionIndex > 0)
+                    {
+                        _activeMenuOptionIndex--;
+                    }
+                    else if (_cachedMenuOptionRecords.Length > 0)
+                    {
+                        // Wrap around
+                        _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
+                    }
                     break;
                 case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
