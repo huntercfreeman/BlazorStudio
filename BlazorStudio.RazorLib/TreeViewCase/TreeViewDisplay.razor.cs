@@ -331,7 +331,8 @@ public partial class TreeViewDisplay<T>
                 ToggleIsExpandedOnClick, 
                 DispatchSetSelfAsActiveTreeView,
                 RefreshTreeViewTargetAsync, 
-                RefreshParentOfTreeViewTargetAsync));
+                RefreshParentOfTreeViewTargetAsync,
+                _titleSpan));
         }
 
         if (OnContextMenuRenderFragment is not null)

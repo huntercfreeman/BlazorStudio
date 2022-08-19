@@ -44,7 +44,6 @@ public partial class InputFileDialog : ComponentBase
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
     private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
-    private Func<Task> _mostRecentRefreshContextMenuTarget;
 
     private string BodyCssClassString => ShowFooter
         ? "bstudio_input-file-dialog-body-show-footer"
@@ -190,11 +189,20 @@ public partial class InputFileDialog : ComponentBase
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
-                        new Action<string, string>(CreateNewFileFormOnAfterSubmitForm)
+                        (string str1, string str2) => 
+                            CreateNewFileFormOnAfterSubmitForm(
+                                str1, 
+                                str2, 
+                                contextMenuEventDto)
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterCancelForm),
-                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                        new Action(() =>
+                        {
+                            Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+
+                            _ = Task.Run(async () => await contextMenuEventDto.FocusAfterTarget.FocusAsync());
+                        })
                     },
                 });
         
@@ -208,15 +216,22 @@ public partial class InputFileDialog : ComponentBase
                     },
                     {
                         nameof(CreateNewDirectoryForm.OnAfterSubmitForm),
-                        new Action<string, string>(CreateNewDirectoryFormOnAfterSubmitForm)
+                        (string str1, string str2) => 
+                            CreateNewDirectoryFormOnAfterSubmitForm(
+                                str1, 
+                                str2, 
+                                contextMenuEventDto)
                     },
                     {
                         nameof(CreateNewDirectoryForm.OnAfterCancelForm),
-                        new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
+                        new Action(() =>
+                        {
+                            Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+
+                            _ = Task.Run(async () => await contextMenuEventDto.FocusAfterTarget.FocusAsync());
+                        })
                     },
                 });
-
-        _mostRecentRefreshContextMenuTarget = contextMenuEventDto.RefreshContextMenuTarget;
 
         if (contextMenuEventDto.Item.IsDirectory)
         {
@@ -237,17 +252,17 @@ public partial class InputFileDialog : ComponentBase
     }
     
     private void CreateNewFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString, 
-        string fileName)
+        string fileName,
+        TreeViewContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
-        var localRefreshContextMenuTarget = _mostRecentRefreshContextMenuTarget;
-
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
             {
                 await File
                     .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName, 
                         string.Empty);
 
-                await localRefreshContextMenuTarget();
+                await contextMenuEventDto.RefreshContextMenuTarget.Invoke();
+                await contextMenuEventDto.FocusAfterTarget.FocusAsync();
 
                 Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
             },
@@ -257,15 +272,15 @@ public partial class InputFileDialog : ComponentBase
     }
 
     private void CreateNewDirectoryFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString, 
-        string directoryName)
+        string directoryName,
+        TreeViewContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
-        var localRefreshContextMenuTarget = _mostRecentRefreshContextMenuTarget;
-
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
             {
                 Directory.CreateDirectory(parentDirectoryAbsoluteFilePathString + directoryName);
 
-                await localRefreshContextMenuTarget();
+                await contextMenuEventDto.RefreshContextMenuTarget.Invoke();
+                await contextMenuEventDto.FocusAfterTarget.FocusAsync();
 
                 Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
             },
