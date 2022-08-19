@@ -22,7 +22,7 @@
 
         <div style="margin-left: 10px; padding-left: 10px; border-left: 1px solid var(--bstudio_primary-border-color);">
             MSBuild:&nbsp;
-            
+
             @if (RoslynWorkspaceState.Value?.MsBuildAbsoluteFilePath is not null)
             {
                 <em>
@@ -34,32 +34,44 @@
                 <em>{not yet set}</em>
             }
         </div>
-        
+
         if (localStartupProjectState.ProjectAbsoluteFilePath is not null &&
             RoslynWorkspaceState.Value?.MsBuildAbsoluteFilePath is not null)
         {
             <div class="bstudio_startup-project-controls-display-button"
-                         style="margin-left: 20px;">
-            
-            @if (_isEnqueuedToRun)
-            {
-                <div @onclick="() => CancelTokenSourceAndGetNewToken()">
-                    <IconLoader/>
-                </div>
-            }
-            else if (_isRunning)
-            {
-                <div @onclick="_enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler">
-                    <IconStopCircle/>
-                </div>
-            }
-            else
-            {
-                <div @onclick="DispatchEnqueueProcessOnTerminalEntryAction">
-                    <IconStartWithoutDebugging/>
-                </div>
+                 style="margin-left: 20px;">
+
+                @if (_isEnqueuedToRun)
+                {
+                    <div @onclick="() => CancelTokenSourceAndGetNewToken()">
+                        <IconLoader/>
+                    </div>
+                }
+                else if (_isRunning)
+                {
+                    <div @onclick="_enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler">
+                        <IconStopCircle/>
+                    </div>
+                }
+                else
+                {
+                    <div @onclick="DispatchEnqueueProcessOnTerminalEntryAction">
+                        <IconStartWithoutDebugging/>
+                    </div>
+                }
+            </div>
+        }
+        
+        <div>
+            @{
+                var localContextRecords = ContextStateWrap.Value.ActiveContextRecords;
+
+                for (var index = 0; index < localContextRecords.Count; index++)
+                {
+                    var contextRecord = localContextRecords[index];
+                    <span>@index:&nbsp;<em>@contextRecord.DisplayName</em>|/\|</span>
+                }
             }
         </div>
-        }
     }
 </div>

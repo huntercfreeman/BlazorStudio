@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components;
 using System.Diagnostics;
 using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 using BlazorStudio.RazorLib.ExceptionNotifications;
@@ -26,6 +27,8 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
     private IState<RoslynWorkspaceState> RoslynWorkspaceState { get; set; } = null!;
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
+    [Inject]
+    private IState<ContextState> ContextStateWrap { get; set; } = null!;    
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     
