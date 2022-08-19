@@ -149,7 +149,7 @@
                 "altWasPressed": e.altKey
             };
 
-            keymapDotNetObjectReference.invokeMethodAsync('OnKeyDownEventHandlerInvokeAsync', keydownDto);
+            keymapDotNetObjectReference.invokeMethodAsync('DispatchHandleKeymapEvent', keydownDto);
         });
     }
 };

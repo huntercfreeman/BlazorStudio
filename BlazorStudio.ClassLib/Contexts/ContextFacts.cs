@@ -13,7 +13,7 @@ public static class ContextFacts
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
             {
-                new KeyDownEventRecord("A", "A", false, false, true),
+                new KeyDownEventRecord("a", "KeyA", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Test Global", "Test Global", () => Console.WriteLine("Test Global"))
             }
         }.ToImmutableDictionary()));
@@ -25,7 +25,7 @@ public static class ContextFacts
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
             {
-                new KeyDownEventRecord("A", "A", false, false, true),
+                new KeyDownEventRecord("a", "KeyA", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Test Plain Text Editor", "Test Plain Text Editor", () => Console.WriteLine("Test Plain Text Editor"))
             }
         }.ToImmutableDictionary()));
@@ -37,7 +37,7 @@ public static class ContextFacts
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
             {
-                new KeyDownEventRecord("A", "A", false, false, true),
+                new KeyDownEventRecord("a", "KeyA", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Test Solution Explorer", "Test Solution Explorer", () => Console.WriteLine("Test Solution Explorer"))
             }
         }.ToImmutableDictionary()));
@@ -49,7 +49,7 @@ public static class ContextFacts
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
             {
-                new KeyDownEventRecord("A", "A", false, false, true),
+                new KeyDownEventRecord("a", "KeyA", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Test Folder Explorer", "Test Folder Explorer", () => Console.WriteLine("Test Folder Explorer"))
             }
         }.ToImmutableDictionary()));

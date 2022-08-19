@@ -9,16 +9,17 @@
          @onfocusin="() =>_contextBoundary.DispatchSetActiveContextStatesAction(new())"
          @onfocusin:stopPropagation="true">
         <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
+            <BlazorStudio.RazorLib.KeymapCase.KeymapEventListener />
             <BlazorStudio.RazorLib.Dialog.DialogsInitializer/>
-            <BlazorStudio.RazorLib.Notification.NotificationsInitializer />
+            <BlazorStudio.RazorLib.Notification.NotificationsInitializer/>
 
             <ToolbarDisplay/>
 
-            <BodyDisplay />
-            
-            <BlazorStudio.RazorLib.Dialog.DialogTaskBar />
-            
-            <BlazorStudio.RazorLib.Drag.DragDisplay />
+            <BodyDisplay/>
+
+            <BlazorStudio.RazorLib.Dialog.DialogTaskBar/>
+
+            <BlazorStudio.RazorLib.Drag.DragDisplay/>
         </ContextBoundary>
     </div>
 </div>
