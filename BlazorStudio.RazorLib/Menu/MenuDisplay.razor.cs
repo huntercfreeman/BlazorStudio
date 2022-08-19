@@ -20,6 +20,8 @@ public partial class MenuDisplay : ComponentBase
     public IEnumerable<MenuOptionRecord> MenuOptionRecords { get; set; } = null!;
     [Parameter]
     public bool ShouldCategorizeByMenuOptionKind { get; set; }
+    [Parameter]
+    public ElementReference? FocusAfterTarget { get; set; }
 
     private MenuOptionRecord[] _cachedMenuOptionRecords = Array.Empty<MenuOptionRecord>();
     private ElementReference _menuDisplayElementReference;
@@ -55,7 +57,7 @@ public partial class MenuDisplay : ComponentBase
         await InvokeAsync(StateHasChanged);
     }
     
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         var keyDownEventRecord = new KeyDownEventRecord(
             keyboardEventArgs.Key,
@@ -130,6 +132,11 @@ public partial class MenuDisplay : ComponentBase
             {
                 case KeyboardKeyFacts.MetaKeys.ESCAPE_KEY:
                     Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+
+                    if (FocusAfterTarget is not null)
+                    {
+                        await FocusAfterTarget.Value.FocusAsync();
+                    }
                     break;                    
             }
         }
