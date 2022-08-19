@@ -25,21 +25,12 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     public Func<T, Task<IEnumerable<T>>> GetChildrenFunc { get; set; } = null!;
     [Parameter, EditorRequired]
     public RenderFragment<T> ItemRenderFragment { get; set; } = null!;
-    /// <summary>
-    /// Action parameters: Action(T item, Action toggleIsExpanded)
-    /// </summary>
     [Parameter, EditorRequired]
-    public Action<T, Action> OnEnterKeyDown { get; set; } = null!;
-    /// <summary>
-    /// Action parameters: Action(T item, Action toggleIsExpanded)
-    /// </summary>
+    public Action<TreeViewKeyboardEventDto<T>> OnEnterKeyDown { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action<T, Action> OnSpaceKeyDown { get; set; } = null!;
-    /// <summary>
-    /// Action parameters: Action(T item, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
-    /// </summary>
+    public Action<TreeViewKeyboardEventDto<T>> OnSpaceKeyDown { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action<T, Action, MouseEventArgs>? OnDoubleClick { get; set; } = null!;
+    public Action<TreeViewMouseEventDto<T>>? OnDoubleClick { get; set; } = null!;
     [Parameter, EditorRequired]
     public Func<T, bool> IsExpandable { get; set; } = null!;
     /// <summary>
@@ -50,7 +41,7 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     /// the MouseEventArgs will be null.
     /// </summary>
     [Parameter]
-    public Action<T, MouseEventArgs?>? OnContextMenu { get; set; }
+    public Action<TreeViewContextMenuEventDto<T>>? OnContextMenu { get; set; }
     /// <summary>
     /// If <see cref="OnContextMenuRenderFragment"/> is provided then:
     /// upon ContextMenuEvent event the RenderFragment will be rendered.
@@ -59,7 +50,7 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     /// the MouseEventArgs will be null.
     /// </summary>
     [Parameter]
-    public RenderFragment<ContextMenuEventDto<T>>? OnContextMenuRenderFragment { get; set; }
+    public RenderFragment<TreeViewContextMenuEventDto<T>>? OnContextMenuRenderFragment { get; set; }
     [Parameter]
     public RenderFragment<ImmutableArray<T>>? FooterRenderFragment { get; set; }
     [Parameter]
@@ -167,13 +158,5 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
         }
 
         base.Dispose(disposing);
-    }
-
-    public class ContextMenuEventDto<T>
-    {
-        public T Item { get; set; }
-        public MouseEventArgs? MouseEventArgs { get; set; }
-        public Func<Task> RefreshContextMenuTarget { get; set; }
-        public Func<Task> RefreshParentOfContextMenuTarget { get; set; }
     }
 }

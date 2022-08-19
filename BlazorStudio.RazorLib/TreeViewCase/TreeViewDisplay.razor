@@ -47,23 +47,13 @@
                          
             @if (OnContextMenuRenderFragment is not null)
             {
-                var contextMenuEventDto = new TreeViewWrapDisplay<T>.ContextMenuEventDto<T>
-                {
-                    Item = TreeView.Item,
-                    MouseEventArgs = _mostRecentMouseEventArgs,
-                    RefreshContextMenuTarget = async () => GetChildrenAsync(),
-                    RefreshParentOfContextMenuTarget = async () =>
-                    {
-                        if (Parent is not null)
-                        {
-                            Parent.GetChildrenAsync();
-                        }
-                        else
-                        {
-                            await ReloadRoot.Invoke();
-                        }
-                    }
-                }; 
+                var contextMenuEventDto = new TreeViewContextMenuEventDto<T>(_mostRecentMouseEventArgs,
+                    null,
+                    TreeView.Item,
+                    ToggleIsExpandedOnClick,
+                    DispatchSetSelfAsActiveTreeView,
+                    RefreshTreeViewTargetAsync,
+                    RefreshParentOfTreeViewTargetAsync);
                 
                 @OnContextMenuRenderFragment(contextMenuEventDto)
             }

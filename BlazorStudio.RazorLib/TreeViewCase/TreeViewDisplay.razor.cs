@@ -30,21 +30,12 @@ public partial class TreeViewDisplay<T>
     public int Depth { get; set; }
     [CascadingParameter]
     public TreeViewWrapKey TreeViewWrapKey { get; set; } = null!;
-    /// <summary>
-    /// Action parameters: Action(T item, Action toggleIsExpanded)
-    /// </summary>
     [CascadingParameter(Name="OnEnterKeyDown")]
-    public Action<T, Action> OnEnterKeyDown { get; set; } = null!;
-    /// <summary>
-    /// Action parameters: Action(T item, Action toggleIsExpanded)
-    /// </summary>
+    public Action<TreeViewKeyboardEventDto<T>> OnEnterKeyDown { get; set; } = null!;
     [CascadingParameter(Name= "OnSpaceKeyDown")]
-    public Action<T, Action> OnSpaceKeyDown { get; set; } = null!;
-    /// <summary>
-    /// Action parameters: Action(T item, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
-    /// </summary>
+    public Action<TreeViewKeyboardEventDto<T>> OnSpaceKeyDown { get; set; } = null!;
     [CascadingParameter(Name= "OnDoubleClick")]
-    public Action<T, Action, MouseEventArgs>? OnDoubleClick { get; set; } = null!;
+    public Action<TreeViewMouseEventDto<T>>? OnDoubleClick { get; set; } = null!;
     /// <summary>
     /// If <see cref="OnContextMenu"/> is provided then:
     /// upon ContextMenuEvent event the Action will be invoked.
@@ -53,7 +44,7 @@ public partial class TreeViewDisplay<T>
     /// the MouseEventArgs will be null.
     /// </summary>
     [CascadingParameter(Name="OnContextMenu")]
-    public Action<T, MouseEventArgs?>? OnContextMenu { get; set; }
+    public Action<TreeViewContextMenuEventDto<T>>? OnContextMenu { get; set; }
     /// <summary>
     /// If <see cref="OnContextMenuRenderFragment"/> is provided then:
     /// upon ContextMenuEvent event the RenderFragment will be rendered.
@@ -62,7 +53,7 @@ public partial class TreeViewDisplay<T>
     /// the MouseEventArgs will be null.
     /// </summary>
     [CascadingParameter(Name="OnContextMenuRenderFragment")]
-    public RenderFragment<TreeViewWrapDisplay<T>.ContextMenuEventDto<T>>? OnContextMenuRenderFragment { get; set; }
+    public RenderFragment<TreeViewContextMenuEventDto<T>>? OnContextMenuRenderFragment { get; set; }
     [CascadingParameter(Name = "IsExpandable")]
     public Func<T, bool> IsExpandable { get; set; } = null!;
     [CascadingParameter(Name = "ReloadRoot")]
@@ -302,11 +293,21 @@ public partial class TreeViewDisplay<T>
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE)
         {
-            OnEnterKeyDown(TreeView.Item, ToggleIsExpandedOnClick);
+            OnEnterKeyDown(new TreeViewKeyboardEventDto<T>(keyboardEventArgs, 
+                TreeView.Item, 
+                ToggleIsExpandedOnClick, 
+                DispatchSetSelfAsActiveTreeView,
+                RefreshTreeViewTargetAsync, 
+                RefreshParentOfTreeViewTargetAsync));
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE)
         {
-            OnSpaceKeyDown(TreeView.Item, ToggleIsExpandedOnClick);
+            OnSpaceKeyDown(new TreeViewKeyboardEventDto<T>(keyboardEventArgs, 
+                TreeView.Item, 
+                ToggleIsExpandedOnClick, 
+                DispatchSetSelfAsActiveTreeView,
+                RefreshTreeViewTargetAsync, 
+                RefreshParentOfTreeViewTargetAsync));
         }
         else if (KeyboardKeyFacts.CheckIsAlternateContextMenuEvent(keyboardEventArgs.Key, keyboardEventArgs.ShiftKey))
         {
@@ -324,7 +325,13 @@ public partial class TreeViewDisplay<T>
 
         if (OnContextMenu is not null)
         {
-            OnContextMenu(TreeView.Item, mouseEventArgs);
+            OnContextMenu(new TreeViewContextMenuEventDto<T>(mouseEventArgs, 
+                null, 
+                TreeView.Item, 
+                ToggleIsExpandedOnClick, 
+                DispatchSetSelfAsActiveTreeView,
+                RefreshTreeViewTargetAsync, 
+                RefreshParentOfTreeViewTargetAsync));
         }
 
         if (OnContextMenuRenderFragment is not null)
@@ -371,7 +378,36 @@ public partial class TreeViewDisplay<T>
     {
         if (OnDoubleClick is not null)
         {
-            OnDoubleClick.Invoke(TreeView.Item, ToggleIsExpandedOnClick, mouseEventArgs);
+            OnDoubleClick.Invoke(
+                new TreeViewMouseEventDto<T>(mouseEventArgs, 
+                    TreeView.Item, 
+                    ToggleIsExpandedOnClick, 
+                    DispatchSetSelfAsActiveTreeView,
+                    RefreshTreeViewTargetAsync, 
+                    RefreshParentOfTreeViewTargetAsync));
+        }
+    }
+
+    private void DispatchSetSelfAsActiveTreeView()
+    {
+        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, TreeView));
+    }
+    
+    private Task RefreshTreeViewTargetAsync()
+    {
+        GetChildrenAsync();
+        return Task.CompletedTask;
+    }
+    
+    private async Task RefreshParentOfTreeViewTargetAsync()
+    {
+        if (Parent is not null)
+        {
+            Parent.GetChildrenAsync();
+        }
+        else
+        {
+            await ReloadRoot.Invoke();
         }
     }
 
