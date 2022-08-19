@@ -42,13 +42,13 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter]
-    public TreeViewWrapDisplay<AbsoluteFilePathDotNet>.ContextMenuEventDto<AbsoluteFilePathDotNet> ContextMenuEventDto { get; set; } = null!;
+    public TreeViewContextMenuEventDto<AbsoluteFilePathDotNet> ContextMenuEventDto { get; set; } = null!;
 
     private DialogKey _addProjectReferenceDialogKey = DialogKey.NewDialogKey();
     private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
 
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
-        TreeViewWrapDisplay<AbsoluteFilePathDotNet>.ContextMenuEventDto<AbsoluteFilePathDotNet> contextMenuEventDto)
+        TreeViewContextMenuEventDto<AbsoluteFilePathDotNet> contextMenuEventDto)
     {
         var createNewEmptyFile = MenuOptionFacts.File
             .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),

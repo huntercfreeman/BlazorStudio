@@ -365,46 +365,46 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             .Union(childFileAbsolutePaths);
     }
 
-    private void WorkspaceExplorerTreeViewOnEnterKeyDown(AbsoluteFilePathDotNet absoluteFilePath, Action toggleIsExpanded)
+    private void WorkspaceExplorerTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<AbsoluteFilePathDotNet>  treeViewKeyboardEventDto)
     {
-        if (!absoluteFilePath.IsDirectory)
+        if (!treeViewKeyboardEventDto.Item.IsDirectory)
         {
             var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
             Dispatcher.Dispatch(
                 new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
-                    absoluteFilePath,
+                    treeViewKeyboardEventDto.Item,
                     FileSystemProvider,
                     CancellationToken.None)
             );
         }
         else
         {
-            toggleIsExpanded.Invoke();
+            treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
         }
     }
 
-    private void WorkspaceExplorerTreeViewOnSpaceKeyDown(AbsoluteFilePathDotNet absoluteFilePath, Action toggleIsExpanded)
+    private void WorkspaceExplorerTreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<AbsoluteFilePathDotNet> treeViewKeyboardEventDto)
     {
-        toggleIsExpanded.Invoke();
+        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
     }
 
-    private void WorkspaceExplorerTreeViewOnDoubleClick(AbsoluteFilePathDotNet absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
+    private void WorkspaceExplorerTreeViewOnDoubleClick(TreeViewMouseEventDto<AbsoluteFilePathDotNet> treeViewMouseEventDto)
     {
-        if (!absoluteFilePath.IsDirectory)
+        if (!treeViewMouseEventDto.Item.IsDirectory)
         {
             var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
 
             Dispatcher.Dispatch(
                 new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
-                    absoluteFilePath,
+                    treeViewMouseEventDto.Item,
                     FileSystemProvider,
                     CancellationToken.None)
             );
         }
         else
         {
-            toggleIsExpanded.Invoke();
+            treeViewMouseEventDto.ToggleIsExpanded.Invoke();
         }
     }
 

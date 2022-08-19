@@ -1,6 +1,7 @@
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
+using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -38,18 +39,18 @@ public partial class SelectMSBuildForm : ComponentBase
         return Task.FromResult(Array.Empty<VisualStudioInstance>().AsEnumerable());
     }
 
-    private void ThemeTreeViewOnEnterKeyDown(VisualStudioInstance visualStudioInstance, Action toggleIsExpanded)
+    private void ThemeTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<VisualStudioInstance> treeViewKeyboardEventDto)
     {
-        _providedAbsoluteFilePathToMSBuildVersion = visualStudioInstance.MSBuildPath;
+        _providedAbsoluteFilePathToMSBuildVersion = treeViewKeyboardEventDto.Item.MSBuildPath;
     }
 
-    private void ThemeTreeViewOnSpaceKeyDown(VisualStudioInstance visualStudioInstance, Action toggleIsExpanded)
+    private void ThemeTreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<VisualStudioInstance> treeViewKeyboardEventDto)
     {
-        _providedAbsoluteFilePathToMSBuildVersion = visualStudioInstance.MSBuildPath;
+        _providedAbsoluteFilePathToMSBuildVersion = treeViewKeyboardEventDto.Item.MSBuildPath;
     }
 
-    private void ThemeTreeViewOnDoubleClick(VisualStudioInstance visualStudioInstance, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
+    private void ThemeTreeViewOnDoubleClick(TreeViewMouseEventDto<VisualStudioInstance> treeViewMouseEventDto)
     {
-        _providedAbsoluteFilePathToMSBuildVersion = visualStudioInstance.MSBuildPath;
+        _providedAbsoluteFilePathToMSBuildVersion = treeViewMouseEventDto.Item.MSBuildPath;
     }
 }

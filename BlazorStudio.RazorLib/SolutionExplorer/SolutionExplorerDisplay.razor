@@ -46,12 +46,14 @@
                                              DropdownKey="_fileDropdownKey">
                                          
                                             @{
-                                                var contextMenuEventDto = new TreeViewWrapDisplay<AbsoluteFilePathDotNet>.ContextMenuEventDto<AbsoluteFilePathDotNet>
-                                                {
-                                                    Item = solutionExplorerState.SolutionAbsoluteFilePath,
-                                                    MouseEventArgs = null,
-                                                    RefreshContextMenuTarget = async () => SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty)
-                                                }; 
+                                                var contextMenuEventDto = new TreeViewContextMenuEventDto<AbsoluteFilePathDotNet>(
+                                                    null,
+                                                    null,
+                                                    solutionExplorerState.SolutionAbsoluteFilePath,
+                                                    null,
+                                                    null,
+                                                    async () => SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty),
+                                                    null);
                     
                                                 <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
 

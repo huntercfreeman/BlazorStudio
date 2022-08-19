@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.Store.TreeViewCase;
+using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -83,20 +84,20 @@ public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
         }.AsEnumerable());
     }
 
-    private void TreeViewOnEnterKeyDown(RenderCSharpTemplate renderCSharpTemplate, Action toggleIsExpanded)
+    private void TreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<RenderCSharpTemplate> treeViewKeyboardEventDto)
     {
-        _selectedCSharpTemplate = renderCSharpTemplate.CSharpTemplate;
+        _selectedCSharpTemplate = treeViewKeyboardEventDto.Item.CSharpTemplate;
         ReRenderCallbackFunc.Invoke();
     }
 
-    private void TreeViewOnSpaceKeyDown(RenderCSharpTemplate renderCSharpTemplate, Action toggleIsExpanded)
+    private void TreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<RenderCSharpTemplate> treeViewKeyboardEventDto)
     {
-        toggleIsExpanded();
+        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
     }
 
-    private void TreeViewOnDoubleClick(RenderCSharpTemplate renderCSharpTemplate, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
+    private void TreeViewOnDoubleClick(TreeViewMouseEventDto<RenderCSharpTemplate> treeViewMouseEventDto)
     {
-        toggleIsExpanded();
+        treeViewMouseEventDto.ToggleIsExpanded.Invoke();
     }
 
     public void Dispose()

@@ -1,5 +1,6 @@
 ﻿using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.UserInterface;
+using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -62,19 +63,19 @@ public partial class SyntaxNodeTreeView : ComponentBase
         return Task.FromResult(children.AsEnumerable());
     }
 
-    private void SyntaxTreeViewOnEnterKeyDown(SyntaxTreeViewWrapper syntaxTreeViewWrapper, Action toggleIsExpanded)
+    private void SyntaxTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<SyntaxTreeViewWrapper> treeViewKeyboardEventDto)
     {
-        toggleIsExpanded();
+        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
     }
 
-    private void ThemeTreeViewOnSpaceKeyDown(SyntaxTreeViewWrapper syntaxTreeViewWrapper, Action toggleIsExpanded)
+    private void ThemeTreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<SyntaxTreeViewWrapper> treeViewKeyboardEventDto)
     {
-        toggleIsExpanded();
+        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
     }
 
-    private void SyntaxTreeViewOnDoubleClick(SyntaxTreeViewWrapper syntaxTreeViewWrapper, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)
+    private void SyntaxTreeViewOnDoubleClick(TreeViewMouseEventDto<SyntaxTreeViewWrapper> treeViewMouseEventDto)
     {
-        toggleIsExpanded();
+        treeViewMouseEventDto.ToggleIsExpanded.Invoke();
     }
     
     private string GetSyntaxHighlightingCssClassForNode(SyntaxTreeViewWrapper syntaxWrap)

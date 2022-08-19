@@ -30,13 +30,13 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter]
-    public TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath> ContextMenuEventDto { get; set; } = null!;
+    public TreeViewContextMenuEventDto<IAbsoluteFilePath> ContextMenuEventDto { get; set; } = null!;
 
     private DialogKey _addProjectReferenceDialogKey = DialogKey.NewDialogKey();
     private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
 
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
-        TreeViewWrapDisplay<IAbsoluteFilePath>.ContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
+        TreeViewContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
         var createNewEmptyFile = MenuOptionFacts.File
             .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
