@@ -21,11 +21,8 @@ public class ContextStateEffects
         {
             if (contextRecord.Keymap.Map.TryGetValue(keymapEventAction.KeyDownEventRecord, out var command))
             {
-                if (command.Action is not null)
-                {
-                    command.Action.Invoke();
-                    break;
-                }
+                dispatcher.Dispatch(command.ActionToDispatch);
+                break;
             }
         }
     }

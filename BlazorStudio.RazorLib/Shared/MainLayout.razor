@@ -7,7 +7,9 @@
      style="font-size: @(FontOptionsStateWrap.Value.FontSize.Value)px;">
     <div class="bstudio_main-layout"
          @onfocusin="() =>_contextBoundary.DispatchSetActiveContextStatesAction(new())"
-         @onfocusin:stopPropagation="true">
+         @onfocusin:stopPropagation="true"
+         tabindex="-1"
+         @ref="_mainLayoutElementReference">
         <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
             <BlazorStudio.RazorLib.KeymapCase.KeymapEventListener />
             <BlazorStudio.RazorLib.Dialog.DialogsInitializer/>

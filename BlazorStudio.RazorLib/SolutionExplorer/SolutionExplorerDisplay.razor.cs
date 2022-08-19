@@ -72,6 +72,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     private TreeViewWrapDisplay<AbsoluteFilePathDotNet>? _treeViewWrapDisplay;
     private Func<Task> _mostRecentRefreshContextMenuTarget;
     private ContextBoundary _contextBoundary = null!;
+    private ElementReference _solutionExplorerElementReference;
 
     private Dimensions _fileDropdownDimensions = new()
     {
@@ -123,37 +124,20 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
         base.OnInitialized();
     }
     
-    // protected override void OnAfterRender(bool firstRender)
-    // {
-    //     if (firstRender)
-    //     {
-    //         var ubuntuOsDebugSolution = "/home/hunter/RiderProjects/TestBlazorStudio/TestBlazorStudio.sln";
-    //         var windowsOsDebugSolution = "C:\\Users\\hunte\\source\\BlazorDocumentationInteractive\\BlazorDocs.sln";
-    //         
-    //         AbsoluteFilePathDotNet solutionAbsoluteFilePath;
-    //             
-    //         if (File.Exists(ubuntuOsDebugSolution))
-    //         {
-    //             solutionAbsoluteFilePath =
-    //                 new AbsoluteFilePathDotNet(ubuntuOsDebugSolution,
-    //                     false, 
-    //                     null);
-    //         }
-    //         else
-    //         {
-    //             solutionAbsoluteFilePath =
-    //                 new AbsoluteFilePathDotNet(windowsOsDebugSolution,
-    //                     false, 
-    //                     null);
-    //         }    
-    //             
-    //             
-    //
-    //         Dispatcher.Dispatch(new SetSolutionExplorerAction(solutionAbsoluteFilePath, SequenceKey.NewSequenceKey()));
-    //     }       
-    //     
-    //     base.OnAfterRender(firstRender);
-    // }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
+        }
+        
+        base.OnAfterRender(firstRender);
+    }
+
+    private async void ValueOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
+    {
+        await _solutionExplorerElementReference.FocusAsync();
+    }
 
     private async void SolutionExplorerStateWrap_StateChanged(object? sender, EventArgs e)
     {
@@ -508,6 +492,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     protected override void Dispose(bool disposing)
     {
         SolutionExplorerStateWrap.StateChanged -= SolutionExplorerStateWrap_StateChanged;
+        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
 
         base.Dispose(disposing);
     }

@@ -6,6 +6,8 @@
 
 <div class="bstudio_solution-explorer"
      style="@Dimensions.DimensionsCssString"
+     tabindex="-1"
+     @ref="_solutionExplorerElementReference"
      @onfocusin="() =>_contextBoundary.DispatchSetActiveContextStatesAction(new())"
      @onfocusin:stopPropagation="true">
 

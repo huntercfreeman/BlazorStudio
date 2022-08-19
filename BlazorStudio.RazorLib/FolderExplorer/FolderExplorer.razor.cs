@@ -46,6 +46,7 @@ public partial class FolderExplorer : FluxorComponent, IDisposable
     private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
     private Func<Task> _mostRecentRefreshContextMenuTarget;
     private ContextBoundary _contextBoundary = null!;
+    private ElementReference _folderExplorerElementReference;
     
     private Dimensions _fileDropdownDimensions = new()
     {
@@ -78,6 +79,21 @@ public partial class FolderExplorer : FluxorComponent, IDisposable
             .Select(x => x.ContextRecords[ContextFacts.FolderExplorerContext.ContextKey]);
 
         base.OnInitialized();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
+        }
+        
+        base.OnAfterRender(firstRender);
+    }
+
+    private async void ValueOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
+    {
+        await _folderExplorerElementReference.FocusAsync();
     }
 
     private async void WorkspaceStateWrap_StateChanged(object? sender, EventArgs e)
@@ -205,6 +221,7 @@ public partial class FolderExplorer : FluxorComponent, IDisposable
     protected override void Dispose(bool disposing)
     {
         WorkspaceStateWrap.StateChanged -= WorkspaceStateWrap_StateChanged;
+        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
 
 
         base.Dispose(disposing);

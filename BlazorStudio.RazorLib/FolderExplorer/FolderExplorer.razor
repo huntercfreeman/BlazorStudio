@@ -3,6 +3,8 @@
 
 <div class="bstudio_workspace-explorer"
      style="@Dimensions.DimensionsCssString"
+     tabindex="-1"
+     @ref="_folderExplorerElementReference"
      @onfocusin="() =>_contextBoundary.DispatchSetActiveContextStatesAction(new())"
      @onfocusin:stopPropagation="true">
 

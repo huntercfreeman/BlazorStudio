@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Commands;
 using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Store.CommandCase.Focus;
 
 namespace BlazorStudio.ClassLib.Contexts;
 
@@ -15,7 +16,15 @@ public static class ContextFacts
             {
                 new KeyDownEventRecord("a", "KeyA", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Test Global", "Test Global", () => Console.WriteLine("Test Global"))
-            }
+            },
+            {
+                new KeyDownEventRecord("f", "KeyF", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Folder Explorer", "set-focus_folder-explorer", new FocusFolderExplorerAction())
+            },
+            {
+                new KeyDownEventRecord("g", "KeyG", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Main Layout", "set-focus_main-layout", new FocusMainLayoutAction())
+            },
         }.ToImmutableDictionary()));
     
     public static readonly ContextRecord PlainTextEditorContext = new ContextRecord(
