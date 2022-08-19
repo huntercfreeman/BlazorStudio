@@ -8,6 +8,7 @@
      @ref="_menuOptionDisplayElementReference"
      @onclick:stopPropagation="true"
      @onclick="() => DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey)"
+     @onkeydown="HandleOnKeyDown"
      @onfocusin="() => _hasFocus = true"
      @onfocusout="() => _hasFocus = false">
 

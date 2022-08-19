@@ -1,9 +1,11 @@
-﻿using BlazorStudio.ClassLib.Store.DropdownCase;
+﻿using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.UserInterface;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Menu;
 
@@ -80,5 +82,26 @@ public partial class MenuOptionDisplay : FluxorComponent
             Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(fileDropdownKey));
         else
             Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
+    }
+    
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        var keyDownEventRecord = new KeyDownEventRecord(
+            keyboardEventArgs.Key,
+            keyboardEventArgs.Code,
+            keyboardEventArgs.CtrlKey,
+            keyboardEventArgs.ShiftKey,
+            keyboardEventArgs.AltKey);
+        
+        if (keyDownEventRecord.Code == KeyboardKeyFacts.NewLineCodes.ENTER_CODE ||
+                 keyDownEventRecord.Code == KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE)
+        {
+            DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);
+
+            if (MenuOptionRecord.WidgetType is not null)
+            {
+                _displayWidget = !_displayWidget;
+            }
+        }
     }
 }

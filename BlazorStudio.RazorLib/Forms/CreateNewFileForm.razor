@@ -1,5 +1,8 @@
 ﻿<input class="bstudio_input bstudio_input-text" 
        style="min-width: 100%"
-       @bind="_fileName" />
+       @ref="_inputElementReference"
+       @bind="_fileName"
+       @onkeydown="HandleOnKeyDown"
+       @onkeydown:stopPropagation="true" />
 
 <YesNoButtons OnYesAction="SubmitForm" OnNoAction="DeclineForm" />
