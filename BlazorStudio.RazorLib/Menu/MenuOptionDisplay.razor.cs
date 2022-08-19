@@ -14,14 +14,20 @@ public partial class MenuOptionDisplay : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
+    [CascadingParameter(Name = "ActiveMenuOptionIndex")]
+    public int? ActiveMenuOptionIndex { get; set; }
+
     [Parameter]
     public MenuOptionRecord MenuOptionRecord { get; set; } = null!;
+    [Parameter]
+    public int MenuOptionIndex { get; set; }
 
     private string HasSubmenuOpenCssClass => DropdownStateWrap.Value.ActiveDropdownKeys.Any(x => x == _dropdownKey)
         ? "bstudio_sub-menu-is-open"
         : string.Empty;
 
     private bool _displayWidget;
+    private ElementReference _menuOptionDisplayElementReference;
 
     private Dimensions _dropdownDimensions = new()
     {
@@ -45,6 +51,19 @@ public partial class MenuOptionDisplay : FluxorComponent
     };
 
     private DropdownKey _dropdownKey = DropdownKey.NewDropdownKey();
+    private int _activeMenuOptionIndex;
+    private bool _hasFocus;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ActiveMenuOptionIndex == MenuOptionIndex &&
+            !_hasFocus)
+        {
+            await _menuOptionDisplayElementReference.FocusAsync();
+        }
+        
+        await base.OnParametersSetAsync();
+    }
 
     private void DispatchToggleActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
     {

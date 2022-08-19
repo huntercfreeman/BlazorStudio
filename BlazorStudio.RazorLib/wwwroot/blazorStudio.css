@@ -293,6 +293,11 @@
     color: var(--bstudio_primary-hover-font-color);
 }
 
+.bstudio_menu-option-display:focus {
+    background-color: var(--bstudio_primary-hover-background-color);
+    color: var(--bstudio_primary-hover-font-color);
+}
+
 .bstudio_menu-option-display-widget {
     padding: 2px;
     border: 1.5px solid var(--bstudio_primary-hover-background-color);

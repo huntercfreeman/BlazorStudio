@@ -14,7 +14,9 @@
         <div class="bstudio_dropdown-display"
              style="@Dimensions.DimensionsCssString">
 
-            @ChildContent
+            <CascadingValue Value="DropdownKey">
+                @ChildContent
+            </CascadingValue>
         </div>
     </div>
 }

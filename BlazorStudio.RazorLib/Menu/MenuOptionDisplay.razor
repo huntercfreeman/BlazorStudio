@@ -4,8 +4,12 @@
 @using BlazorStudio.ClassLib.Store.DropdownCase
 
 <div class="bstudio_menu-option-display @HasSubmenuOpenCssClass"
+     tabindex="-1"
+     @ref="_menuOptionDisplayElementReference"
      @onclick:stopPropagation="true"
-     @onclick="() => DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey)">
+     @onclick="() => DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey)"
+     @onfocusin="() => _hasFocus = true"
+     @onfocusout="() => _hasFocus = false">
 
     @if (MenuOptionRecord.Children.Any())
     {

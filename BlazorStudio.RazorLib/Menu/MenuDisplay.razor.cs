@@ -1,24 +1,45 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Menu;
 
 public partial class MenuDisplay : ComponentBase
 {
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    
+    [CascadingParameter]
+    public DropdownKey DropdownKey { get; set; } = null!;
+    
     [Parameter]
     public IEnumerable<MenuOptionRecord> MenuOptionRecords { get; set; } = null!;
     [Parameter]
     public bool ShouldCategorizeByMenuOptionKind { get; set; }
 
     private MenuOptionRecord[] _cachedMenuOptionRecords = Array.Empty<MenuOptionRecord>();
+    private ElementReference _menuDisplayElementReference;
+    private int? _activeMenuOptionIndex = null;
 
     protected override void OnInitialized()
     {
         ReloadParameters();
 
         base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _menuDisplayElementReference.FocusAsync();
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private void ReloadParameters()
@@ -32,5 +53,61 @@ public partial class MenuDisplay : ComponentBase
         ReloadParameters();
 
         await InvokeAsync(StateHasChanged);
+    }
+    
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        var keyDownEventRecord = new KeyDownEventRecord(
+            keyboardEventArgs.Key,
+            keyboardEventArgs.Code,
+            keyboardEventArgs.CtrlKey,
+            keyboardEventArgs.ShiftKey,
+            keyboardEventArgs.AltKey);
+        
+        if (KeyboardKeyFacts.IsMovementKey(keyDownEventRecord))
+        {
+            switch (keyDownEventRecord.Key)
+            {
+                case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
+                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT_KEY:
+                    // TODO: Close submenu
+                    break;
+                case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
+                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN_KEY:
+                    if (_activeMenuOptionIndex is null &&
+                        _cachedMenuOptionRecords.Length > 0)
+                    {
+                        _activeMenuOptionIndex = 0;
+                    }
+                    else if (_activeMenuOptionIndex < _cachedMenuOptionRecords.Length - 1)
+                    {
+                        _activeMenuOptionIndex++;
+                    }
+                    break;
+                case KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY:
+                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP_KEY:
+                    // TODO: Go to previous menu option
+                    break;
+                case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
+                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
+                    // TODO: Open submenu
+                    break;
+                case KeyboardKeyFacts.MovementKeys.HOME_KEY:
+                    // TODO: Go to first menu option
+                    break;
+                case KeyboardKeyFacts.MovementKeys.END_KEY:
+                    // TODO: Go to last menu option
+                    break;
+            }
+        }
+        else if (KeyboardKeyFacts.IsMetaKey(keyDownEventRecord))
+        {
+            switch (keyDownEventRecord.Key)
+            {
+                case KeyboardKeyFacts.MetaKeys.ESCAPE_KEY:
+                    Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+                    break;                    
+            }
+        }
     }
 }
