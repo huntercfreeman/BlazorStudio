@@ -8,6 +8,7 @@ using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using static BlazorStudio.RazorLib.NewCSharpProject.NewCSharpProjectDialog;
@@ -45,6 +46,18 @@ public partial class NewDotNetSolutionDialog : ComponentBase
         if (tupleArgument.absoluteFilePath.IsDirectory)
         {
             InputFileDialogSelection = tupleArgument.absoluteFilePath;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+    
+    private void InputFileDialogChooseContextMenuOption(TreeViewContextMenuEventDto<IAbsoluteFilePath> treeViewContextMenuEventDto)
+    {
+        if (_disableExecuteButton || _finishedCreatingSolution)
+            return;
+
+        if (treeViewContextMenuEventDto.Item.IsDirectory)
+        {
+            InputFileDialogSelection = treeViewContextMenuEventDto.Item;
             InvokeAsync(StateHasChanged);
         }
     }

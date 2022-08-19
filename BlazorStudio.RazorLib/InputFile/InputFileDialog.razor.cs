@@ -30,6 +30,8 @@ public partial class InputFileDialog : ComponentBase
     [Parameter]
     public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)>? OnDoubleClickOverride { get; set; }
     [Parameter]
+    public Action<TreeViewContextMenuEventDto<IAbsoluteFilePath>>? ChooseContextMenuOption { get; set; }
+    [Parameter]
     public bool ShowFooter { get; set; } = true;
     [Parameter]
     public Func<ImmutableArray<IAbsoluteFilePath>, bool>? IsValidSelectionOverrideFunc { get; set; }
@@ -165,11 +167,18 @@ public partial class InputFileDialog : ComponentBase
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
         TreeViewContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
-        var setActiveSelection = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
-            "Set Selection",
-            ImmutableList<MenuOptionRecord>.Empty,
-            contextMenuEventDto.SetIsActive,
-            MenuOptionKind.Update);
+        List<MenuOptionRecord> menuOptionRecords = new();
+        
+        if (ChooseContextMenuOption is not null)
+        {
+            var setActiveSelection = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
+                "Set Selection",
+                ImmutableList<MenuOptionRecord>.Empty,
+                () => ChooseContextMenuOption(contextMenuEventDto),
+                MenuOptionKind.Update);
+                
+            menuOptionRecords.Add(setActiveSelection);
+        }
         
         var createNewEmptyFile = MenuOptionFacts.File
             .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
@@ -208,8 +217,6 @@ public partial class InputFileDialog : ComponentBase
                 });
 
         _mostRecentRefreshContextMenuTarget = contextMenuEventDto.RefreshContextMenuTarget;
-
-        List<MenuOptionRecord> menuOptionRecords = new();
 
         if (contextMenuEventDto.Item.IsDirectory)
         {

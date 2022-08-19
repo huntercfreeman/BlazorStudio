@@ -8,6 +8,7 @@ using System.Diagnostics;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorStudio.RazorLib.TreeViewCase;
 using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.RazorLib.NewCSharpProject;
@@ -212,6 +213,18 @@ public partial class NewCSharpProjectDialog : ComponentBase
         if (tupleArgument.absoluteFilePath.IsDirectory)
         {
             InputFileDialogSelection = tupleArgument.absoluteFilePath;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+    
+    private void InputFileDialogChooseContextMenuOption(TreeViewContextMenuEventDto<IAbsoluteFilePath> treeViewContextMenuEventDto)
+    {
+        if (_disableExecuteButton || _finishedCreatingProject)
+            return;
+
+        if (treeViewContextMenuEventDto.Item.IsDirectory)
+        {
+            InputFileDialogSelection = treeViewContextMenuEventDto.Item;
             InvokeAsync(StateHasChanged);
         }
     }
