@@ -25,9 +25,11 @@ using BlazorStudio.ClassLib.Store.TerminalCase;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
+using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
+using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
@@ -51,6 +53,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
@@ -97,6 +101,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     {
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrap_StateChanged;
         SolutionStateWrap.StateChanged += SolutionStateWrapOnStateChanged;
+        
+        ContextStateSelector
+            .Select(x => x.ContextRecords[ContextFacts.SolutionExplorerContext.ContextKey]);
 
         _newCSharpProjectDialog = new DialogRecord(
             DialogKey.NewDialogKey(),
@@ -499,7 +506,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     protected override void Dispose(bool disposing)
     {
         SolutionExplorerStateWrap.StateChanged -= SolutionExplorerStateWrap_StateChanged;
-        //AssemblyLoadContext.Default.Resolving -= DefaultOnResolving;
 
         base.Dispose(disposing);
     }

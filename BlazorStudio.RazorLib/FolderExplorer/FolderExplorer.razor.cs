@@ -1,7 +1,9 @@
-﻿using BlazorStudio.ClassLib.Errors;
+﻿using BlazorStudio.ClassLib.Contexts;
+using BlazorStudio.ClassLib.Errors;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
+using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
@@ -25,6 +27,8 @@ public partial class FolderExplorer : FluxorComponent, IDisposable
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
@@ -67,6 +71,9 @@ public partial class FolderExplorer : FluxorComponent, IDisposable
     protected override void OnInitialized()
     {
         WorkspaceStateWrap.StateChanged += WorkspaceStateWrap_StateChanged;
+        
+        ContextStateSelector
+            .Select(x => x.ContextRecords[ContextFacts.FolderExplorerContext.ContextKey]);
 
         base.OnInitialized();
     }

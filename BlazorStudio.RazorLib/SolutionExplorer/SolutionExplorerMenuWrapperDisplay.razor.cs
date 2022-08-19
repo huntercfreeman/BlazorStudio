@@ -311,6 +311,15 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 await localRefreshContextMenuTarget();
 
                 Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+
+                // if (SolutionStateWrap.Value.ProjectIdToProjectMap.TryGetValue(ContextMenuEventDto.Item.ProjectId, 
+                //         out var containingProject))
+                // {
+                //     if (fileName.EndsWith(ExtensionNoPeriodFacts.C_SHARP_CLASS))
+                //     {
+                //         containingProject.Project.AddDocument()
+                //     }
+                // }
             },
             $"{nameof(CreateNewEmptyFileFormOnAfterSubmitForm)}",
             false,

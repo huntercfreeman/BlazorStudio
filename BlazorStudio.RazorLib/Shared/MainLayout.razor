@@ -6,16 +6,17 @@
 <div class="bstudio_theme-wrapper @ThemeStateWrap.Value.ThemeKey.KeyName"
      style="font-size: @(FontOptionsStateWrap.Value.FontSize.Value)px;">
     <div class="bstudio_main-layout">
+        <CascadingValue Value="ContextStateSelector.Value">
+            <BlazorStudio.RazorLib.Dialog.DialogsInitializer/>
+            <BlazorStudio.RazorLib.Notification.NotificationsInitializer />
 
-        <BlazorStudio.RazorLib.Dialog.DialogsInitializer/>
-        <BlazorStudio.RazorLib.Notification.NotificationsInitializer />
+            <ToolbarDisplay/>
 
-        <ToolbarDisplay/>
-
-        <BodyDisplay />
-        
-        <BlazorStudio.RazorLib.Dialog.DialogTaskBar />
-        
-        <BlazorStudio.RazorLib.Drag.DragDisplay />
+            <BodyDisplay />
+            
+            <BlazorStudio.RazorLib.Dialog.DialogTaskBar />
+            
+            <BlazorStudio.RazorLib.Drag.DragDisplay />
+        </CascadingValue>
     </div>
 </div>

@@ -1,10 +1,12 @@
 using System.Text;
+using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Html;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
+using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DragCase;
 using BlazorStudio.ClassLib.Store.KeyDownEventCase;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
@@ -32,6 +34,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+    [Inject]
+    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public PlainTextEditorKey PlainTextEditorKey { get; set; } = null!;
@@ -98,6 +102,9 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             x.Map.TryGetValue(PlainTextEditorKey, out var value);
             return value;
         });
+        
+        ContextStateSelector
+            .Select(x => x.ContextRecords[ContextFacts.PlainTextEditorContext.ContextKey]);
 
         PlainTextEditorSelector.SelectedValueChanged += PlainTextEditorSelectorOnSelectedValueChanged;
         
