@@ -34,6 +34,7 @@ using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 using BlazorStudio.ClassLib.Store.SolutionCase;
+using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.SyntaxRootRender;
 
@@ -70,6 +71,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     private RichErrorModel? _solutionExplorerStateWrapStateChangedRichErrorModel;
     private TreeViewWrapDisplay<AbsoluteFilePathDotNet>? _treeViewWrapDisplay;
     private Func<Task> _mostRecentRefreshContextMenuTarget;
+    private ContextBoundary _contextBoundary = null!;
 
     private Dimensions _fileDropdownDimensions = new()
     {

@@ -5,9 +5,11 @@ using Fluxor;
 namespace BlazorStudio.ClassLib.Store.ContextCase;
 
 [FeatureState]
-public record ContextState(ImmutableDictionary<ContextKey, ContextRecord> ContextRecords)
+public record ContextState(ImmutableDictionary<ContextKey, ContextRecord> ContextRecords,
+    ImmutableList<ContextRecord> ActiveContextRecords)
 {
-    public ContextState() : this(ImmutableDictionary<ContextKey, ContextRecord>.Empty)
+    public ContextState() : this(ImmutableDictionary<ContextKey, ContextRecord>.Empty,
+        ImmutableList<ContextRecord>.Empty)
     {
         ContextRecords = new Dictionary<ContextKey, ContextRecord>
         {
@@ -28,5 +30,10 @@ public record ContextState(ImmutableDictionary<ContextKey, ContextRecord> Contex
                 ContextFacts.PlainTextEditorContext
             },
         }.ToImmutableDictionary();
+
+        ActiveContextRecords = new List<ContextRecord>
+        {
+            ContextFacts.GlobalContext
+        }.ToImmutableList();
     }
 }

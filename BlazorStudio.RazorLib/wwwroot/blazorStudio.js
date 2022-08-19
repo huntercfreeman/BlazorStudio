@@ -139,4 +139,17 @@
 
         return;
     },
+    initKeymap: function (keymapDotNetObjectReference) {
+        document.addEventListener('keydown', (e) => {
+            let keydownDto = {
+                "key": e.key,
+                "code": e.code,
+                "ctrlWasPressed": e.ctrlKey,
+                "shiftWasPressed": e.shiftKey,
+                "altWasPressed": e.altKey
+            };
+
+            keymapDotNetObjectReference.invokeMethodAsync('OnKeyDownEventHandlerInvokeAsync', keydownDto);
+        });
+    }
 };

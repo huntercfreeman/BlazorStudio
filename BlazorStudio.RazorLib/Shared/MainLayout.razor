@@ -5,8 +5,10 @@
 
 <div class="bstudio_theme-wrapper @ThemeStateWrap.Value.ThemeKey.KeyName"
      style="font-size: @(FontOptionsStateWrap.Value.FontSize.Value)px;">
-    <div class="bstudio_main-layout">
-        <CascadingValue Value="ContextStateSelector.Value">
+    <div class="bstudio_main-layout"
+         @onfocusin="() =>_contextBoundary.DispatchSetActiveContextStatesAction(new())"
+         @onfocusin:stopPropagation="true">
+        <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
             <BlazorStudio.RazorLib.Dialog.DialogsInitializer/>
             <BlazorStudio.RazorLib.Notification.NotificationsInitializer />
 
@@ -17,6 +19,6 @@
             <BlazorStudio.RazorLib.Dialog.DialogTaskBar />
             
             <BlazorStudio.RazorLib.Drag.DragDisplay />
-        </CascadingValue>
+        </ContextBoundary>
     </div>
 </div>

@@ -10,6 +10,7 @@ using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
+using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -44,6 +45,7 @@ public partial class FolderExplorer : FluxorComponent, IDisposable
     private RichErrorModel? _workspaceStateWrapStateChangedRichErrorModel;
     private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
     private Func<Task> _mostRecentRefreshContextMenuTarget;
+    private ContextBoundary _contextBoundary = null!;
     
     private Dimensions _fileDropdownDimensions = new()
     {

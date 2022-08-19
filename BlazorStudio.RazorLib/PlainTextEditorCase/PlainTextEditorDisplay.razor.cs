@@ -14,6 +14,7 @@ using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.ClassLib.Virtualize;
+using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.VirtualizeComponentExperiments;
 using BlazorStudio.RazorLib.VirtualizeComponents;
 using Fluxor;
@@ -90,7 +91,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private string ActiveRowId => $"pte_active-row_{PlainTextEditorKey.Guid}";
     private bool _isInitialized;
     private WidthAndHeightTestResult _widthAndHeightTestResult;
-
+    private ContextBoundary _contextBoundary = null!;
+    
     private string IsFocusedCssClass => _isFocused
         ? "pte_focused"
         : "";
@@ -291,7 +293,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     {
         _isMouseSelectingText = false;
     }
-
+    
     protected override void Dispose(bool disposing)
     {
         PlainTextEditorSelector.SelectedValueChanged -= PlainTextEditorSelectorOnSelectedValueChanged;

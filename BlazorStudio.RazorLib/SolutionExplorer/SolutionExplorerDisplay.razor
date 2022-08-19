@@ -5,9 +5,11 @@
 @using BlazorStudio.ClassLib.FileSystem.Classes
 
 <div class="bstudio_solution-explorer"
-     style="@Dimensions.DimensionsCssString">
+     style="@Dimensions.DimensionsCssString"
+     @onfocusin="() =>_contextBoundary.DispatchSetActiveContextStatesAction(new())"
+     @onfocusin:stopPropagation="true">
 
-    <CascadingValue Value="ContextStateSelector.Value">
+    <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
     
         <h5 class="bstudio_large-title" style="padding: 5px;">
             Solution Explorer&nbsp;
@@ -130,5 +132,5 @@
                 }
             }
         </div>
-    </CascadingValue>
+    </ContextBoundary>
 </div>

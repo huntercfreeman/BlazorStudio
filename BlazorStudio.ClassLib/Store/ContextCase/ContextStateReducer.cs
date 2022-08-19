@@ -29,4 +29,14 @@ public class ContextStateReducer
             ContextRecords = nextImmutableList
         }; 
     }
+    
+    [ReducerMethod]
+    public static ContextState ReduceSetActiveContextStatesAction(ContextState previousContextState,
+        SetActiveContextStatesAction setActiveContextStatesAction)
+    {
+        return previousContextState with
+        {
+            ActiveContextRecords = setActiveContextStatesAction.ActiveContextStates
+        }; 
+    }
 }

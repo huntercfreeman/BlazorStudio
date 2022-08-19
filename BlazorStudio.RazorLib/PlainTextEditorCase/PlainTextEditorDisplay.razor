@@ -16,9 +16,11 @@ else
     // by making a local reference to it.
     var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
-    <div class="pte_plain-text-editor-wrapping">
+    <div class="pte_plain-text-editor-wrapping"
+         @onfocusin="() =>_contextBoundary.DispatchSetActiveContextStatesAction(new())"
+         @onfocusin:stopPropagation="true">
         
-        <CascadingValue Value="ContextStateSelector.Value">
+        <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
 
             <PlainTextEditorHeader PlainTextEditor="currentPlainTextEditor"
                                    WidthAndHeightTestResult="_widthAndHeightTestResult"/>
@@ -103,6 +105,6 @@ else
 
             </div>
             <PlainTextEditorFooter PlainTextEditor="currentPlainTextEditor"/>
-        </CascadingValue>
+        </ContextBoundary>
     </div>
 }
