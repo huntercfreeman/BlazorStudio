@@ -33,4 +33,11 @@ public class FocusEffects
         _contextStateWrap.Value.ContextRecords[ContextFacts.SolutionExplorerContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
     }
+    
+    [EffectMethod(typeof(FocusDialogDisplayAction))]
+    public async Task HandleFocusDialogDisplayAction(IDispatcher dispatcher)
+    {
+        _contextStateWrap.Value.ContextRecords[ContextFacts.DialogDisplayContext.ContextKey]
+            .InvokeOnFocusRequestedEventHandler();
+    }
 }

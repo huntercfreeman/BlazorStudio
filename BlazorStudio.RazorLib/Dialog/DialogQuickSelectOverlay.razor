@@ -1,0 +1,15 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@if (_displayDialogQuickSelectOverlay)
+{
+    <div class="bstudio_dialog-quick-select-overlay">
+        @{
+            var dialogStates = DialogStatesWrap.Value;
+    
+            foreach (var dialog in dialogStates.List)
+            {
+                <div>Bobaaaa</div>
+            }
+        }
+    </div>    
+}

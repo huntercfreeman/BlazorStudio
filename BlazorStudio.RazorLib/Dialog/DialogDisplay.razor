@@ -1,47 +1,54 @@
 ﻿<div class="bstudio_dialog-display"
-     style="@DialogRecord.Dimensions.DimensionsCssString">
-    
-    @if (DialogRecord.IsTransformable)
-    {
-        <BlazorStudio.RazorLib.Transformable.TransformableDisplay @ref="_transformableDisplay"
-                                                                  Dimensions="DialogRecord.Dimensions"
-                                                                  ReRenderFunc="ReRender" />
-    }
-    
-    <div class="bstudio_dialog-display-tool-bar"
-         @onmousedown="FireSubscribeToDragEventWithMoveHandle">
-        <div class="bstudio_dialog-display-tool-bar-entry bstudio_dialog-display-tool-bar-title">
-            @DialogRecord.Title
-        </div>
-        
-        <div class="bstudio_dialog-display-tool-bar-entry bstudio_dialog-display-tool-bar-control-buttons">
-            <div class="bstudio_dialog-display-tool-bar-control-buttons-item"
-                 @onmousedown:stopPropagation="true"
-                 @onclick="MinimizeOnClick">
-                 
-                <IconMinimize/>
-            </div>
-            
-            <div class="bstudio_dialog-display-tool-bar-control-buttons-item"
-                 @onmousedown:stopPropagation="true"
-                 @onclick="MaximizeOnClick">
+     style="@DialogRecord.Dimensions.DimensionsCssString"
+     @onfocusin="() =>_contextBoundary.DispatchSetActiveContextStatesAction(new())"
+     @onfocusin:stopPropagation="true"
+     tabindex="-1"
+     @ref="_dialogDisplayElementReference">
 
-                <IconMaximize/>
-            </div>
-            
-            <div class="bstudio_dialog-display-tool-bar-control-buttons-item"
-                 @onmousedown:stopPropagation="true"
-                 @onclick="CloseOnClick">
+    <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
+        @if (DialogRecord.IsTransformable)
+        {
+            <BlazorStudio.RazorLib.Transformable.TransformableDisplay @ref="_transformableDisplay"
+                                                                      Dimensions="DialogRecord.Dimensions"
+                                                                      ReRenderFunc="ReRender"/>
+        }
 
-                <IconClose/>
+        <div class="bstudio_dialog-display-tool-bar"
+             @onmousedown="FireSubscribeToDragEventWithMoveHandle">
+            <div class="bstudio_dialog-display-tool-bar-entry bstudio_dialog-display-tool-bar-title">
+                @DialogRecord.Title
+            </div>
+
+            <div class="bstudio_dialog-display-tool-bar-entry bstudio_dialog-display-tool-bar-control-buttons">
+                <div class="bstudio_dialog-display-tool-bar-control-buttons-item"
+                     @onmousedown:stopPropagation="true"
+                     @onclick="MinimizeOnClick">
+
+                    <IconMinimize/>
+                </div>
+
+                <div class="bstudio_dialog-display-tool-bar-control-buttons-item"
+                     @onmousedown:stopPropagation="true"
+                     @onclick="MaximizeOnClick">
+
+                    <IconMaximize/>
+                </div>
+
+                <div class="bstudio_dialog-display-tool-bar-control-buttons-item"
+                     @onmousedown:stopPropagation="true"
+                     @onclick="CloseOnClick">
+
+                    <IconClose/>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div class="bstudio_dialog-display-body">
-        <CascadingValue Value="DialogRecord">
-            <DynamicComponent Type="DialogRecord.Type"
-                              Parameters="DialogRecord.Parameters ?? new()"/>
-        </CascadingValue>
-    </div>
+
+        <div class="bstudio_dialog-display-body">
+            <CascadingValue Value="DialogRecord">
+                <DynamicComponent Type="DialogRecord.Type"
+                                  Parameters="DialogRecord.Parameters ?? new()"/>
+            </CascadingValue>
+        </div>
+
+    </ContextBoundary>
 </div>

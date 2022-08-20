@@ -1,5 +1,8 @@
-﻿using BlazorStudio.ClassLib.Store.DialogCase;
+﻿using BlazorStudio.ClassLib.Contexts;
+using BlazorStudio.ClassLib.Store.ContextCase;
+using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.UserInterface;
+using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.Transformable;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -9,6 +12,8 @@ namespace BlazorStudio.RazorLib.Dialog;
 public partial class DialogDisplay : ComponentBase
 {
     [Inject]
+    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter]
@@ -16,6 +21,16 @@ public partial class DialogDisplay : ComponentBase
 
     private TransformableDisplay? _transformableDisplay;
 
+    private ContextBoundary _contextBoundary;
+    private ElementReference _dialogDisplayElementReference;
+
+    protected override void OnInitialized()
+    {
+        ContextStateSelector.Select(x => x.ContextRecords[ContextFacts.GlobalContext.ContextKey]);
+        
+        base.OnInitialized();
+    }
+    
     private void FireSubscribeToDragEventWithMoveHandle()
     {
         if (_transformableDisplay is not null)

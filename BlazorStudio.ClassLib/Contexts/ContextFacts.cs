@@ -29,6 +29,10 @@ public static class ContextFacts
                 new KeyDownEventRecord("s", "KeyS", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Solution Explorer", "set-focus_solution-explorer", new FocusSolutionExplorerAction())
             },
+            {
+                new KeyDownEventRecord("d", "KeyD", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Dialog Display", "set-focus_dialog-display", new FocusDialogDisplayAction())
+            },
         }.ToImmutableDictionary()));
     
     public static readonly ContextRecord PlainTextEditorContext = new ContextRecord(
@@ -64,6 +68,18 @@ public static class ContextFacts
             {
                 new KeyDownEventRecord("a", "KeyA", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Test Folder Explorer", "Test Folder Explorer", () => Console.WriteLine("Test Folder Explorer"))
+            }
+        }.ToImmutableDictionary()));
+    
+    public static readonly ContextRecord DialogDisplayContext = new ContextRecord(
+        ContextKey.NewContextKey(), 
+        "DialogDisplay",
+        "dialog-display",
+        new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
+        {
+            {
+                new KeyDownEventRecord("a", "KeyA", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Test Dialog Display", "Test Dialog Display", () => Console.WriteLine("Test Dialog Display"))
             }
         }.ToImmutableDictionary()));
 }
