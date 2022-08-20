@@ -41,6 +41,10 @@ public record ContextState(ImmutableDictionary<ContextKey, ContextRecord> Contex
                 ContextFacts.EditorDisplayContext.ContextKey,
                 ContextFacts.EditorDisplayContext
             },
+            {
+                ContextFacts.TerminalDisplayContext.ContextKey,
+                ContextFacts.TerminalDisplayContext
+            },
         }.ToImmutableDictionary();
 
         ActiveContextRecords = new List<ContextRecord>

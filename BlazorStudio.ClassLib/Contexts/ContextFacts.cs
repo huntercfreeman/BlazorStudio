@@ -41,6 +41,10 @@ public static class ContextFacts
                 new KeyDownEventRecord("e", "KeyE", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Editor Display", "set-focus_editor-display", new FocusEditorDisplayAction())
             },
+            {
+                new KeyDownEventRecord("r", "KeyR", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Terminal Display", "set-focus_terminal-display", new FocusTerminalDisplayAction())
+            },
         }.ToImmutableDictionary()));
     
     public static readonly ContextRecord PlainTextEditorContext = new ContextRecord(
@@ -112,6 +116,18 @@ public static class ContextFacts
             {
                 new KeyDownEventRecord("a", "KeyA", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Test Editor Display", "Test Editor Display", () => Console.WriteLine("Test Editor Display"))
+            }
+        }.ToImmutableDictionary()));
+    
+    public static readonly ContextRecord TerminalDisplayContext = new ContextRecord(
+        ContextKey.NewContextKey(), 
+        "TerminalDisplay",
+        "terminal-display",
+        new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
+        {
+            {
+                new KeyDownEventRecord("a", "KeyA", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Test Terminal Display", "Test Terminal Display", () => Console.WriteLine("Test Terminal Display"))
             }
         }.ToImmutableDictionary()));
 }

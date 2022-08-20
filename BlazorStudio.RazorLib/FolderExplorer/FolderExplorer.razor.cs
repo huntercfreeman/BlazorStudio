@@ -34,10 +34,6 @@ public partial class FolderExplorer : FluxorComponent, IDisposable
     [Parameter, EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
 
-    private void LoadFile(InputFileChangeEventArgs e)
-    {
-    }
-
     private bool _isInitialized;
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;

@@ -8,7 +8,7 @@
      style="@Dimensions.DimensionsCssString"
      tabindex="-1"
      @ref="_solutionExplorerElementReference"
-     @onfocusin="() =>_contextBoundary.DispatchSetActiveContextStatesAction(new())"
+     @onfocusin="() => _contextBoundary.DispatchSetActiveContextStatesAction(new())"
      @onfocusin:stopPropagation="true">
 
     <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">

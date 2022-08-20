@@ -53,16 +53,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
     private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
-
-    private void LoadFile(InputFileChangeEventArgs e)
-    {
-    }
 
     private bool _isInitialized;
     private TreeViewWrapKey _solutionExplorerTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();

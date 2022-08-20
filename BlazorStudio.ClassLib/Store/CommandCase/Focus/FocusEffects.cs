@@ -54,4 +54,11 @@ public class FocusEffects
         _contextStateWrap.Value.ContextRecords[ContextFacts.EditorDisplayContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
     }
+    
+    [EffectMethod(typeof(FocusTerminalDisplayAction))]
+    public async Task HandleFocusTerminalDisplayAction(IDispatcher dispatcher)
+    {
+        _contextStateWrap.Value.ContextRecords[ContextFacts.TerminalDisplayContext.ContextKey]
+            .InvokeOnFocusRequestedEventHandler();
+    }
 }

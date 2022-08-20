@@ -25,6 +25,15 @@ public partial class FocusTrap : ComponentBase
 
     public async Task FocusAsync()
     {
-        await _focusTrapElementReference.FocusAsync();
+        try
+        {
+            await _focusTrapElementReference.FocusAsync();
+        }
+        catch (Microsoft.JSInterop.JSException)
+        {
+            // Caused when calling:
+            // await _focusTrap.FocusAsync();
+            // After component is no longer rendered
+        }
     }
 }
