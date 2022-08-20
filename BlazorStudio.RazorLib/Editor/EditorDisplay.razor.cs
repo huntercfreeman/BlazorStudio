@@ -1,9 +1,12 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+﻿using BlazorStudio.ClassLib.Contexts;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
+using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using BlazorStudio.ClassLib.UserInterface;
+using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.PlainTextEditorCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -20,50 +23,41 @@ public partial class EditorDisplay : FluxorComponent
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
+    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ClassLib.UserInterface.Dimensions Dimensions { get; set; } = null!;
+    
+    private ContextBoundary _contextBoundary;
+    private ElementReference? _editorDisplayElementReference;
 
-    // protected override void OnAfterRender(bool firstRender)
-    // {
-    //     if (firstRender)
-    //     {
-    //         if (File.Exists("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_NEW-LINE.c"))
-    //         {
-    //             var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-    //
-    //             var absoluteFilePath = new AbsoluteFilePath(
-    //                 "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_NEW-LINE.c", 
-    //                 false);
-    //         
-    //             Dispatcher.Dispatch(
-    //                 new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
-    //                     absoluteFilePath,
-    //                     FileSystemProvider,
-    //                     CancellationToken.None)
-    //             );
-    //         }
-    //     
-    //         if (File.Exists("/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c"))
-    //         {
-    //             var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-    //
-    //             var absoluteFilePath = new AbsoluteFilePath(
-    //                 "/home/hunter/Repos/BlazorStudio/BlazorStudio.Tests/TestData/helloWorld_CARRIAGE-RETURN-NEW-LINE.c", 
-    //                 false);
-    //         
-    //             Dispatcher.Dispatch(
-    //                 new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
-    //                     absoluteFilePath,
-    //                     FileSystemProvider,
-    //                     CancellationToken.None)
-    //             );
-    //         }
-    //     }
-    //     
-    //     base.OnAfterRender(firstRender);
-    // }
+    protected override void OnInitialized()
+    {
+        ContextStateSelector
+            .Select(x => x.ContextRecords[ContextFacts.EditorDisplayContext.ContextKey]);
+        
+        base.OnInitialized();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
+        }
+        
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async void ValueOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
+    {
+        if (_editorDisplayElementReference is not null)
+        {
+            await _editorDisplayElementReference.Value.FocusAsync();
+        }
+    }
 
     private void SetActiveTabIndexOnClick(int tabIndex)
     {
@@ -91,5 +85,12 @@ public partial class EditorDisplay : FluxorComponent
         }
         
         Dispatcher.Dispatch(new DeconstructPlainTextEditorRecordAction(plainTextEditorKey));
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
+        
+        base.Dispose(disposing);
     }
 }
