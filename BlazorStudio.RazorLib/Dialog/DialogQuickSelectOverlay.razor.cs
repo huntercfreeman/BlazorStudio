@@ -62,6 +62,10 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
             {
                 _activeEntryIndex++;
             }
+            else
+            {
+                _activeEntryIndex = 0;
+            }
         }
 
         await InvokeAsync(StateHasChanged);
