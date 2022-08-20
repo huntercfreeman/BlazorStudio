@@ -1,5 +1,6 @@
 ﻿using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.Store.ContextCase;
+using BlazorStudio.ClassLib.Store.DragCase;
 using BlazorStudio.ClassLib.Store.FontCase;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.RazorLib.ContextCase;
@@ -18,9 +19,15 @@ public partial class MainLayout : FluxorLayout
     private IState<FontOptionsState> FontOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
+    [Inject]
+    private IState<DragState> DragStateWrap { get; set; } = null!;
 
     private ContextBoundary _contextBoundary = null!;
     private ElementReference _mainLayoutElementReference;
+
+    private string UnselectableCssClassString => DragStateWrap.Value.IsDisplayed
+        ? "pte_unselectable"
+        : string.Empty;
     
     protected override void OnInitialized()
     {
