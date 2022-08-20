@@ -1,19 +1,25 @@
 ﻿@using BlazorStudio.ClassLib.Store.MenuCase
-<div class="bstudio_toolbar-display">
-    <BlazorStudio.RazorLib.Settings.SettingsDialogEntryPoint />
+<div class="bstudio_toolbar-display"
+     @onfocusin="() => _contextBoundary.DispatchSetActiveContextStatesAction(new())"
+     @onfocusin:stopPropagation="true"
+     tabindex="-1"
+     @ref="_toolbarDisplayElementReference">
+    <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
+        <BlazorStudio.RazorLib.Settings.SettingsDialogEntryPoint/>
 
-    <div class="bstudio_toolbar-display-file-dropdown"
-         @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)">
+        <div class="bstudio_toolbar-display-file-dropdown"
+             @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)">
 
-        File
+            File
 
-        <DropdownDisplay Dimensions="_fileDropdownDimensions"
-                         DropdownKey="_fileDropdownKey">
+            <DropdownDisplay Dimensions="_fileDropdownDimensions"
+                             DropdownKey="_fileDropdownKey">
 
-            <MenuDisplay MenuOptionRecords="GetMenuOptionRecords()" />
+                <MenuDisplay MenuOptionRecords="GetMenuOptionRecords()"/>
 
-        </DropdownDisplay>
-    </div>
-    
-    <BlazorStudio.RazorLib.StartupProjectControls.StartupProjectControlsDisplay />
+            </DropdownDisplay>
+        </div>
+
+        <BlazorStudio.RazorLib.StartupProjectControls.StartupProjectControlsDisplay/>
+    </ContextBoundary>
 </div>

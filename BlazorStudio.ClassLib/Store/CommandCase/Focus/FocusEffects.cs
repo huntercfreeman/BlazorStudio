@@ -40,4 +40,11 @@ public class FocusEffects
         _contextStateWrap.Value.ContextRecords[ContextFacts.DialogDisplayContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
     }
+    
+    [EffectMethod(typeof(FocusToolbarDisplayAction))]
+    public async Task HandleFocusToolbarDisplayAction(IDispatcher dispatcher)
+    {
+        _contextStateWrap.Value.ContextRecords[ContextFacts.ToolbarDisplayContext.ContextKey]
+            .InvokeOnFocusRequestedEventHandler();
+    }
 }

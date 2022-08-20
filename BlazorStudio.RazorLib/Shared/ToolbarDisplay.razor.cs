@@ -1,8 +1,11 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using BlazorStudio.ClassLib.Contexts;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.UserInterface;
+using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.NewCSharpProject;
 using BlazorStudio.RazorLib.NewDotNetSolution;
@@ -12,12 +15,17 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Shared;
 
-public partial class ToolbarDisplay : ComponentBase
+public partial class ToolbarDisplay : IDisposable
 {
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
+    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+
+    private ContextBoundary _contextBoundary = null!;
+    private ElementReference _toolbarDisplayElementReference;
 
     private DialogRecord _inputFileDialog = new DialogRecord(
         DialogKey.NewDialogKey(),
@@ -62,6 +70,28 @@ public partial class ToolbarDisplay : ComponentBase
     };
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
+
+    protected override void OnInitialized()
+    {
+        ContextStateSelector.Select(x => x.ContextRecords[ContextFacts.ToolbarDisplayContext.ContextKey]);
+        
+        base.OnInitialized();
+    }
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
+        }
+        
+        base.OnAfterRender(firstRender);
+    }
+
+    private async void ValueOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
+    {
+        await _toolbarDisplayElementReference.FocusAsync();
+    }
     
     private void DispatchAddActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
     {
@@ -94,5 +124,10 @@ public partial class ToolbarDisplay : ComponentBase
         var newMenu = MenuOptionFacts.NewMenu(OpenNewCSharpProjectDialog, OpenNewSlnDialog);
 
         return new[] { openFolder, newMenu };
+    }
+    
+    public void Dispose()
+    {
+        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
     }
 }
