@@ -2,7 +2,8 @@
      tabindex="-1"
      @ref="_menuDisplayElementReference"
      @onkeydown="HandleOnKeyDown"
-     @onkeydown:preventDefault="true">
+     @onkeydown:preventDefault="true"
+     @onkeydown:stopPropagation="true">
     
     <CascadingValue Name="ActiveMenuOptionIndex" Value="_activeMenuOptionIndex">
         @if (!ShouldCategorizeByMenuOptionKind)

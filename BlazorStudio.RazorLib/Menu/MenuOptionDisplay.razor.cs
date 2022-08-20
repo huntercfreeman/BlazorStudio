@@ -52,10 +52,11 @@ public partial class MenuOptionDisplay : FluxorComponent
         },
     };
 
-    private DropdownKey _dropdownKey = DropdownKey.NewDropdownKey();
     private int _activeMenuOptionIndex;
     private bool _hasFocus;
 
+    private DropdownKey _dropdownKey = DropdownKey.NewDropdownKey();
+    
     protected override async Task OnParametersSetAsync()
     {
         if (ActiveMenuOptionIndex == MenuOptionIndex &&
@@ -93,14 +94,27 @@ public partial class MenuOptionDisplay : FluxorComponent
             keyboardEventArgs.ShiftKey,
             keyboardEventArgs.AltKey);
         
-        if (keyDownEventRecord.Code == KeyboardKeyFacts.NewLineCodes.ENTER_CODE ||
-                 keyDownEventRecord.Code == KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE)
+        switch (keyDownEventRecord.Code)
         {
-            DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);
-
-            if (MenuOptionRecord.WidgetType is not null)
+            case KeyboardKeyFacts.NewLineCodes.ENTER_CODE:
+            case KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE:
             {
-                _displayWidget = !_displayWidget;
+                DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);
+
+                if (MenuOptionRecord.WidgetType is not null)
+                {
+                    _displayWidget = !_displayWidget;
+                }
+
+                break;
+            }
+            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
+            {
+                if (MenuOptionRecord.Children.Any())
+                    DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);
+                
+                break;
             }
         }
     }

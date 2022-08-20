@@ -109,10 +109,6 @@ public partial class MenuDisplay : ComponentBase
                         _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
                     }
                     break;
-                case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
-                    // TODO: Open submenu
-                    break;
                 case KeyboardKeyFacts.MovementKeys.HOME_KEY:
                     if (_cachedMenuOptionRecords.Length > 0)
                     {
