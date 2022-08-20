@@ -354,6 +354,11 @@ public partial record PlainTextEditorStates
         {
             await QueueHandleEffectAsync(async () =>
             {
+                // In process of adding Keymap functionality Alt is currently only used
+                // in the global keymap so ignore any keyboard events with Alt pressed
+                if (keyDownEventAction.KeyDownEventRecord.AltWasPressed)
+                    return;
+                
                 var previousPlainTextEditorStates = _plainTextEditorStatesWrap.Value;
 
                 var nextPlainTextEditorMap = new Dictionary<PlainTextEditorKey, IPlainTextEditor>(previousPlainTextEditorStates.Map);
