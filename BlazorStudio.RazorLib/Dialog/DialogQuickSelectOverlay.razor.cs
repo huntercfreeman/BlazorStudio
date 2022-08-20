@@ -18,7 +18,7 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
 
     private bool _displayDialogQuickSelectOverlay;
     private int _activeEntryIndex;
-    private FocusTrap _focusTrap;
+    private FocusTrap? _focusTrap;
     
     protected override void OnInitialized()
     {
@@ -72,7 +72,8 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
 
         if (DialogStatesWrap.Value.List.Count == 0)
         {
-            await _focusTrap.FocusAsync();
+            if (_focusTrap is not null)
+                await _focusTrap.FocusAsync();
         }
 
         await InvokeAsync(StateHasChanged);

@@ -7,8 +7,20 @@
     max-height: 100vh;
 }
 
-.bstudio_focus-display:focus {
+.bstudio_focus-display-small:focus {
     box-shadow: inset 0 0 7px var(--bstudio_primary-emphasis-font-color);
+}
+
+.bstudio_focus-display-medium:focus {
+    box-shadow: inset 0 0 14px var(--bstudio_primary-emphasis-font-color);
+}
+
+.bstudio_focus-display-large:focus {
+    box-shadow: inset 0 0 35px var(--bstudio_primary-emphasis-font-color);
+}
+
+.bstudio_focus-display-extra-large:focus {
+    box-shadow: inset 0 0 42px var(--bstudio_primary-emphasis-font-color);
 }
 
 .bstudio_focus-within-display:focus-within {
