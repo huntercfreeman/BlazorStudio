@@ -22,7 +22,9 @@
                      DropdownKind="DropdownKind.Horizontal"
                      CloseOnOutOfBoundsClick="false">
 
-            <MenuDisplay MenuOptionRecords="MenuOptionRecord.Children" />
+            <CascadingValue Name="CloseParentSubmenuFuncAsync" Value="CloseSelfSubmenuAsync">
+                <MenuDisplay MenuOptionRecords="MenuOptionRecord.Children" />
+            </CascadingValue>
 
         </DropdownDisplay>
     }

@@ -18,6 +18,8 @@ public partial class MenuOptionDisplay : FluxorComponent
 
     [CascadingParameter(Name = "ActiveMenuOptionIndex")]
     public int? ActiveMenuOptionIndex { get; set; }
+    [CascadingParameter(Name = "CloseParentSubmenuFuncAsync")]
+    public Func<Task>? CloseParentSubmenuFuncAsync { get; set; }
 
     [Parameter]
     public MenuOptionRecord MenuOptionRecord { get; set; } = null!;
@@ -85,7 +87,7 @@ public partial class MenuOptionDisplay : FluxorComponent
             Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
     }
     
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         var keyDownEventRecord = new KeyDownEventRecord(
             keyboardEventArgs.Key,
@@ -102,12 +104,16 @@ public partial class MenuOptionDisplay : FluxorComponent
                 DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);
 
                 if (MenuOptionRecord.WidgetType is not null)
-                {
                     _displayWidget = !_displayWidget;
-                }
 
                 break;
             }
+            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT_KEY:
+                if (CloseParentSubmenuFuncAsync is not null)
+                    await CloseParentSubmenuFuncAsync.Invoke();
+                
+                break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
             {
@@ -117,5 +123,12 @@ public partial class MenuOptionDisplay : FluxorComponent
                 break;
             }
         }
+    }
+
+    private async Task CloseSelfSubmenuAsync()
+    {
+        DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);
+
+        await _menuOptionDisplayElementReference.FocusAsync();
     }
 }

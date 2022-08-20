@@ -71,10 +71,6 @@ public partial class MenuDisplay : ComponentBase
         {
             switch (keyDownEventRecord.Key)
             {
-                case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT_KEY:
-                    // TODO: Close submenu
-                    break;
                 case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN_KEY:
                     if (_activeMenuOptionIndex is null &&
