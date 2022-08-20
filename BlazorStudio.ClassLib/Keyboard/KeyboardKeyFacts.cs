@@ -168,4 +168,18 @@ public static class KeyboardKeyFacts
                 return false;
         }
     }
+    
+    public static bool IsAlternateMovementKey(KeyDownEventRecord onKeyDownEventArgs)
+    {
+        switch (onKeyDownEventArgs.Key)
+        {
+            case AlternateMovementKeys.ARROW_LEFT_KEY:
+            case AlternateMovementKeys.ARROW_DOWN_KEY:
+            case AlternateMovementKeys.ARROW_UP_KEY:
+            case AlternateMovementKeys.ARROW_RIGHT_KEY:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

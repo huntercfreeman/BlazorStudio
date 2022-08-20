@@ -66,7 +66,8 @@ public partial class MenuDisplay : ComponentBase
             keyboardEventArgs.ShiftKey,
             keyboardEventArgs.AltKey);
         
-        if (KeyboardKeyFacts.IsMovementKey(keyDownEventRecord))
+        if (KeyboardKeyFacts.IsMovementKey(keyDownEventRecord) ||
+            KeyboardKeyFacts.IsAlternateMovementKey(keyDownEventRecord))
         {
             switch (keyDownEventRecord.Key)
             {

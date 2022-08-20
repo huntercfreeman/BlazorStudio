@@ -212,110 +212,134 @@ public partial class TreeViewDisplay<T>
 
         _previousFocusState = false;
 
-        if (keyboardEventArgs.Key == KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY)
+        switch (keyboardEventArgs.Key)
         {
-            if (!IsExpandable(TreeView.Item))
-                return;
-
-            if (!TreeView.IsExpanded)
+            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
             {
-                ToggleIsExpandedOnClick();
-            }
-            else
-            {
-                var children = TreeView.Children;
+                if (!IsExpandable(TreeView.Item))
+                    return;
 
-                if (children.Length > 0)
+                if (!TreeView.IsExpanded)
                 {
-                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, children[0]));
+                    ToggleIsExpandedOnClick();
                 }
+                else
+                {
+                    var children = TreeView.Children;
+
+                    if (children.Length > 0)
+                    {
+                        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, children[0]));
+                    }
+                }
+
+                break;
             }
-        }
-        else if (keyboardEventArgs.Key == KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY)
-        {
-            if (TreeView.IsExpanded)
+            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT_KEY:
             {
-                ToggleIsExpandedOnClick();
+                if (TreeView.IsExpanded)
+                {
+                    ToggleIsExpandedOnClick();
+                }
+                else
+                {
+                    if (Parent is not null)
+                    {
+                        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, Parent.TreeView));
+                    }
+                }
+
+                break;
             }
-            else
+            case KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP_KEY:
             {
-                if (Parent is not null)
+                if (IndexAmongSiblings == 0 &&
+                    Parent is not null)
                 {
                     Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, Parent.TreeView));
                 }
+                else
+                {
+                    var siblingsAndSelf = GetSiblingsAndSelfFunc.Invoke();
+
+                    if (IndexAmongSiblings > 0)
+                    {
+                        RecursivelySetArrowUp(siblingsAndSelf[IndexAmongSiblings - 1]);
+                    }
+                }
+
+                break;
             }
-        }
-        else if (keyboardEventArgs.Key == KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY)
-        {
-            if (IndexAmongSiblings == 0 &&
-                Parent is not null)
+            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN_KEY:
             {
-                Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, Parent.TreeView));
-            }
-            else
-            {
+                var rememberTreeViewChildren = TreeView.Children;
+
                 var siblingsAndSelf = GetSiblingsAndSelfFunc.Invoke();
 
-                if (IndexAmongSiblings > 0)
+                if (TreeView.IsExpanded &&
+                    rememberTreeViewChildren.Length > 0)
                 {
-                    RecursivelySetArrowUp(siblingsAndSelf[IndexAmongSiblings - 1]);
+                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, rememberTreeViewChildren[0]));
                 }
+                else if (IndexAmongSiblings == siblingsAndSelf.Length - 1 &&
+                         Parent is not null)
+                {
+                    var activeTreeViewChanged = RecursivelySetArrowDown(Parent);
+
+                    if (!activeTreeViewChanged)
+                    {
+                        _previousFocusState = true;
+                    }
+                }
+                else
+                {
+                    if (IndexAmongSiblings < siblingsAndSelf.Length - 1)
+                    {
+                        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[IndexAmongSiblings + 1]));
+                    }
+                }
+
+                break;
             }
-        }
-        else if (keyboardEventArgs.Key == KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY)
-        {
-            var rememberTreeViewChildren = TreeView.Children;
-
-            var siblingsAndSelf = GetSiblingsAndSelfFunc.Invoke();
-
-            if (TreeView.IsExpanded &&
-                rememberTreeViewChildren.Length > 0)
+            case KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE:
             {
-                Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, rememberTreeViewChildren[0]));
+                OnEnterKeyDown(new TreeViewKeyboardEventDto<T>(keyboardEventArgs, 
+                    TreeView.Item, 
+                    ToggleIsExpandedOnClick, 
+                    DispatchSetSelfAsActiveTreeView,
+                    RefreshTreeViewTargetAsync, 
+                    RefreshParentOfTreeViewTargetAsync));
+
+                break;
             }
-            else if (IndexAmongSiblings == siblingsAndSelf.Length - 1 &&
-                     Parent is not null)
+            case KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE:
             {
-                var activeTreeViewChanged = RecursivelySetArrowDown(Parent);
+                OnSpaceKeyDown(new TreeViewKeyboardEventDto<T>(keyboardEventArgs, 
+                    TreeView.Item, 
+                    ToggleIsExpandedOnClick, 
+                    DispatchSetSelfAsActiveTreeView,
+                    RefreshTreeViewTargetAsync, 
+                    RefreshParentOfTreeViewTargetAsync));
 
-                if (!activeTreeViewChanged)
+                break;
+            }
+            default:
+            {
+                if (KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs.Key, keyboardEventArgs.ShiftKey))
+                {
+                    HandleOnContextMenu(null);
+                }
+                else
                 {
                     _previousFocusState = true;
                 }
+
+                break;
             }
-            else
-            {
-                if (IndexAmongSiblings < siblingsAndSelf.Length - 1)
-                {
-                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[IndexAmongSiblings + 1]));
-                }
-            }
-        }
-        else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE)
-        {
-            OnEnterKeyDown(new TreeViewKeyboardEventDto<T>(keyboardEventArgs, 
-                TreeView.Item, 
-                ToggleIsExpandedOnClick, 
-                DispatchSetSelfAsActiveTreeView,
-                RefreshTreeViewTargetAsync, 
-                RefreshParentOfTreeViewTargetAsync));
-        }
-        else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE)
-        {
-            OnSpaceKeyDown(new TreeViewKeyboardEventDto<T>(keyboardEventArgs, 
-                TreeView.Item, 
-                ToggleIsExpandedOnClick, 
-                DispatchSetSelfAsActiveTreeView,
-                RefreshTreeViewTargetAsync, 
-                RefreshParentOfTreeViewTargetAsync));
-        }
-        else if (KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs.Key, keyboardEventArgs.ShiftKey))
-        {
-            HandleOnContextMenu(null);
-        }
-        else
-        {
-            _previousFocusState = true;
         }
     }
     
