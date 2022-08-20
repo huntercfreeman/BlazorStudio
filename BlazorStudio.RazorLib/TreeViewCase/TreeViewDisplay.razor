@@ -1,6 +1,7 @@
 ﻿@typeparam T
 @using BlazorStudio.ClassLib.Store.TreeViewCase
 @using BlazorStudio.ClassLib.Store.DropdownCase
+@using BlazorStudio.RazorLib.CustomEvents
 
 <div class="bstudio_tree-view-display">
     
@@ -8,6 +9,7 @@
           class="bstudio_tree-view-display-title pte_unselectable @IsActiveStyling"
           style="padding-left: calc(@(GetScaledByDepthPixelsOffset(Depth)) + 5px);"
           tabindex='@(IsActive ? "0" : "-1")'
+          @oncustomkeydown="HandleCustomOnKeyDown"
           @onclick:stopPropagation="true"
           @onclick="SetIsActiveOnClick"
           @ondblclick:stopPropagation="true"

@@ -6,6 +6,7 @@ using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
+using BlazorStudio.RazorLib.CustomEvents;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -439,5 +440,10 @@ public partial class TreeViewDisplay<T>
     private void DispatchAddActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
     {
         Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
+    }
+    
+    private void HandleCustomOnKeyDown(CustomKeyDown customKeyDown)
+    {
+        var z = 2;
     }
 }
