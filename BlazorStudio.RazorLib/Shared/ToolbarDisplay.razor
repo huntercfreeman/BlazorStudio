@@ -7,8 +7,10 @@
     <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
         <BlazorStudio.RazorLib.Settings.SettingsDialogEntryPoint/>
 
-        <div class="bstudio_toolbar-display-file-dropdown"
-             @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)">
+        <div class="bstudio_toolbar-display-file-dropdown bstudio_focus-display-extra-large"
+             @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)"
+             @onkeydown="FileDropdownHandleOnKeyDown"
+             tabindex="0">
 
             File
 

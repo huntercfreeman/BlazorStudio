@@ -1,5 +1,6 @@
 ﻿using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
@@ -124,6 +125,15 @@ public partial class ToolbarDisplay : IDisposable
         var newMenu = MenuOptionFacts.NewMenu(OpenNewCSharpProjectDialog, OpenNewSlnDialog);
 
         return new[] { openFolder, newMenu };
+    }
+    
+    private void FileDropdownHandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (KeyboardKeyFacts.NewLineCodes.ENTER_CODE == keyboardEventArgs.Code ||
+            KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE == keyboardEventArgs.Code)
+        {
+            DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey);
+        }
     }
     
     public void Dispose()
