@@ -1,4 +1,6 @@
-﻿<div class="bstudio_terminal-tab-display bstudio_tab @IsActiveCssClass"
+﻿<div class="bstudio_terminal-tab-display bstudio_tab bstudio_focus-display-outline @IsActiveCssClass"
+     tabindex="0"
+     @onkeydown="TerminalTabHandleOnKeyDown"
      @onclick="DispatchSetActiveTerminalEntryAction">
     
     @TerminalEntry.Title

@@ -1,6 +1,8 @@
-﻿using BlazorStudio.ClassLib.Store.TerminalCase;
+﻿using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Terminal;
 
@@ -23,5 +25,14 @@ public partial class TerminalTabDisplay : ComponentBase
     private void DispatchSetActiveTerminalEntryAction()
     {
         Dispatcher.Dispatch(new SetActiveTerminalEntryAction(Index));
+    }
+    
+    private void TerminalTabHandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (KeyboardKeyFacts.NewLineCodes.ENTER_CODE == keyboardEventArgs.Code ||
+            KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE == keyboardEventArgs.Code)
+        {
+            DispatchSetActiveTerminalEntryAction();
+        }
     }
 }
