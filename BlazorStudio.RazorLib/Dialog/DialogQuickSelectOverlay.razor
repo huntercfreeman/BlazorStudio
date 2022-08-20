@@ -2,14 +2,21 @@
 
 @if (_displayDialogQuickSelectOverlay)
 {
-    <div class="bstudio_dialog-quick-select-overlay">
-        @{
-            var dialogStates = DialogStatesWrap.Value;
-    
-            foreach (var dialog in dialogStates.List)
-            {
-                <div>Bobaaaa</div>
+    <div class="bstudio_dialog-quick-select-overlay"
+         @onkeydown:preventDefault="true"
+         @onkeyup="HandleOnKeyUp">
+        <CascadingValue Name="ActiveEntryIndex" Value="_activeEntryIndex">
+            @{
+                var dialogStates = DialogStatesWrap.Value;
+
+                for (var i = 0; i < dialogStates.List.Count; i++)
+                {
+                    var index = i;
+                    var dialog = dialogStates.List[index];
+                    <DialogQuickSelectEntry EntryIndex="index"
+                                            DialogRecord="dialog"/>
+                }
             }
-        }
+        </CascadingValue>
     </div>    
 }

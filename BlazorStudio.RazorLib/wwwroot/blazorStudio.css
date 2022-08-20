@@ -737,3 +737,7 @@ em {
     padding: 14px;
     height: 100%;
 }
+
+.bstudio_dialog-quick-select-entry:focus {
+    background-color: var(--bstudio_primary-active-background-color);
+}
