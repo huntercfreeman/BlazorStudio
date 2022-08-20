@@ -7,9 +7,13 @@
     max-height: 100vh;
 }
 
-    .bstudio_main-layout:focus {
-        box-shadow: inset 0 0 42px var(--bstudio_primary-emphasis-font-color);
-    }
+.bstudio_focus-display:focus {
+    box-shadow: inset 0 0 7px var(--bstudio_primary-emphasis-font-color);
+}
+
+.bstudio_focus-within-display:focus-within {
+    box-shadow: inset 0 0 7px var(--bstudio_primary-emphasis-font-color);
+}
 
 .bstudio_toolbar-display {
     background-color: var(--bstudio_header-footer-background-color);
@@ -386,19 +390,11 @@
     flex-direction: column;
 }
 
-    .bstudio_workspace-explorer:focus {
-        box-shadow: inset 0 0 42px var(--bstudio_primary-emphasis-font-color);
-    }
-
 .bstudio_solution-explorer {
     height: calc(100%);
     display: inline-flex;
     flex-direction: column;
 }
-
-    .bstudio_solution-explorer:focus {
-        box-shadow: inset 0 0 42px var(--bstudio_primary-emphasis-font-color);
-    }
 
 .bstudio_workspace-explorer-new-file {
     

@@ -1,6 +1,7 @@
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.RazorLib.Focus;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -17,6 +18,7 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
 
     private bool _displayDialogQuickSelectOverlay;
     private int _activeEntryIndex;
+    private FocusTrap _focusTrap;
     
     protected override void OnInitialized()
     {
@@ -66,6 +68,11 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
             {
                 _activeEntryIndex = 0;
             }
+        }
+
+        if (DialogStatesWrap.Value.List.Count == 0)
+        {
+            await _focusTrap.FocusAsync();
         }
 
         await InvokeAsync(StateHasChanged);
