@@ -107,7 +107,7 @@ public partial class BodyDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -3
+                Value = -5
             },
         }
     };
