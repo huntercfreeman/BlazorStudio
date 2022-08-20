@@ -11,4 +11,5 @@ public record DialogStates(ImmutableList<DialogRecord> List)
     }
 
     public DialogKey? DialogKeyWithOverridenZIndex { get; set; }
+    public DialogKey? MostRecentlyFocusedDialogKey { get; set; }
 }

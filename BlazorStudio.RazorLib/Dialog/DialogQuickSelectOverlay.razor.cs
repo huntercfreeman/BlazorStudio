@@ -90,26 +90,9 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
             
             var dialogStates = DialogStatesWrap.Value;
 
-            if (_activeEntryIndex < dialogStates.List.Count)
-            {
-                var activeDialog = dialogStates.List[_activeEntryIndex];
-
-                DialogStatesWrap.Value.DialogKeyWithOverridenZIndex = activeDialog.DialogKey;
-                
-                if (_previouslyActiveDialogKey is not null &&
-                    activeDialog.DialogKey != _previouslyActiveDialogKey)
-                {
-                    var dialog = dialogStates.List
-                        .FirstOrDefault(d => d.DialogKey == _previouslyActiveDialogKey);
-
-                    if (dialog is not null)
-                        dialog.InvokeOnFocusRequestedEventHandler();
-                }
-                
-                _previouslyActiveDialogKey = activeDialog.DialogKey;
-                
-                activeDialog.InvokeOnFocusRequestedEventHandler();
-            }
+            var activeDialog = dialogStates.List[_activeEntryIndex];
+            
+            activeDialog.InvokeOnFocusRequestedEventHandler();
             
             // Set starting _activeEntryIndex 
             {

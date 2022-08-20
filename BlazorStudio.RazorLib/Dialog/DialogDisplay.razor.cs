@@ -44,6 +44,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         if (firstRender)
         {
             DialogRecord.OnFocusRequestedEventHandler += DialogRecordOnOnFocusRequestedEventHandler;
+            DialogRecord.OnStateHasChangeRequestedEventHandler += DialogRecordOnOnStateHasChangeRequestedEventHandler;
         }
         
         return base.OnAfterRenderAsync(firstRender);
@@ -54,7 +55,13 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         if (_dialogDisplayElementReference is not null)
         {
             await _dialogDisplayElementReference.Value.FocusAsync();
+            await InvokeAsync(StateHasChanged);
         }
+    }
+    
+    private async void DialogRecordOnOnStateHasChangeRequestedEventHandler(object? sender, EventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
     }
 
     private void FireSubscribeToDragEventWithMoveHandle()
@@ -150,9 +157,32 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     {
         Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
     }
+    
+    private void HandleOnFocusIn()
+    {
+        _contextBoundary.DispatchSetActiveContextStatesAction(new());
+
+        var dialogStates = DialogStatesWrap.Value;
+
+        if (dialogStates.DialogKeyWithOverridenZIndex is not null &&
+            dialogStates.DialogKeyWithOverridenZIndex != DialogRecord.DialogKey)
+        {
+            var dialog = dialogStates.List
+                .FirstOrDefault(d => d.DialogKey == dialogStates.DialogKeyWithOverridenZIndex);
+
+            dialogStates.DialogKeyWithOverridenZIndex = null;
+            
+            if (dialog is not null)
+                dialog.InvokeOnStateHasChangeRequestedEventHandler();
+        }
+        
+        DialogStatesWrap.Value.DialogKeyWithOverridenZIndex = DialogRecord.DialogKey;
+        DialogStatesWrap.Value.MostRecentlyFocusedDialogKey = DialogRecord.DialogKey;
+    }
 
     public void Dispose()
     {
-        
+        DialogRecord.OnFocusRequestedEventHandler -= DialogRecordOnOnFocusRequestedEventHandler;
+        DialogRecord.OnStateHasChangeRequestedEventHandler -= DialogRecordOnOnStateHasChangeRequestedEventHandler;
     }
 }

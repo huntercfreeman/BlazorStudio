@@ -1,6 +1,6 @@
 ﻿<div class="bstudio_dialog-display bstudio_focus-display-large"
      style="@OverrideZIndex @DialogRecord.Dimensions.DimensionsCssString"
-     @onfocusin="() =>_contextBoundary.DispatchSetActiveContextStatesAction(new())"
+     @onfocusin="HandleOnFocusIn"
      @onfocusin:stopPropagation="true"
      tabindex="-1"
      @ref="_dialogDisplayElementReference">
