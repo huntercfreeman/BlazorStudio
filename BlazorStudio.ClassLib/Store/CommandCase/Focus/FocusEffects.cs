@@ -13,6 +13,13 @@ public class FocusEffects
         _contextStateWrap = contextStateWrap;
     }
 
+    [EffectMethod(typeof(FocusMainLayoutAction))]
+    public async Task HandleFocusMainLayoutAction(IDispatcher dispatcher)
+    {
+        _contextStateWrap.Value.ContextRecords[ContextFacts.GlobalContext.ContextKey]
+            .InvokeOnFocusRequestedEventHandler();
+    }
+    
     [EffectMethod(typeof(FocusFolderExplorerAction))]
     public async Task HandleFocusFolderExplorerAction(IDispatcher dispatcher)
     {
@@ -20,10 +27,10 @@ public class FocusEffects
             .InvokeOnFocusRequestedEventHandler();
     }
     
-    [EffectMethod(typeof(FocusMainLayoutAction))]
-    public async Task HandleFocusMainLayoutAction(IDispatcher dispatcher)
+    [EffectMethod(typeof(FocusSolutionExplorerAction))]
+    public async Task HandleFocusSolutionExplorerAction(IDispatcher dispatcher)
     {
-        _contextStateWrap.Value.ContextRecords[ContextFacts.GlobalContext.ContextKey]
+        _contextStateWrap.Value.ContextRecords[ContextFacts.SolutionExplorerContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
     }
 }

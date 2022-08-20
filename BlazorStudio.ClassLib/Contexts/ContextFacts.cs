@@ -18,12 +18,16 @@ public static class ContextFacts
                 new CommandRecord(CommandKey.NewCommandKey(), "Test Global", "Test Global", () => Console.WriteLine("Test Global"))
             },
             {
+                new KeyDownEventRecord("g", "KeyG", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Main Layout", "set-focus_main-layout", new FocusMainLayoutAction())
+            },
+            {
                 new KeyDownEventRecord("f", "KeyF", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Folder Explorer", "set-focus_folder-explorer", new FocusFolderExplorerAction())
             },
             {
-                new KeyDownEventRecord("g", "KeyG", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Main Layout", "set-focus_main-layout", new FocusMainLayoutAction())
+                new KeyDownEventRecord("s", "KeyS", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Solution Explorer", "set-focus_solution-explorer", new FocusSolutionExplorerAction())
             },
         }.ToImmutableDictionary()));
     
