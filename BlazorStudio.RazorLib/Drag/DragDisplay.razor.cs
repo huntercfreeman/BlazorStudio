@@ -23,7 +23,9 @@ public partial class DragDisplay : FluxorComponent
 
     private void DispatchNotifyMouseEventOnMouseMove(MouseEventArgs mouseEventArgs)
     {
-        if (mouseEventArgs.Button != MouseFacts.MOUSE_LEFT_BUTTON)
+        // Buttons is a bit flag
+        // '& 1' gets if left mouse button is held 
+        if ((mouseEventArgs.Buttons & 1) != 1)
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
         }
