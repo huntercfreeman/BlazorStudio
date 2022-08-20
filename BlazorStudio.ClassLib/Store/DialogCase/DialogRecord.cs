@@ -11,7 +11,13 @@ public record DialogRecord(DialogKey DialogKey,
     public bool IsMinimized { get; init; }
     public bool IsMaximized { get; set; }
     public bool IsTransformable { get; set; } = true;
+    public event EventHandler? OnFocusRequestedEventHandler;
 
+    public void InvokeOnFocusRequestedEventHandler()
+    {
+        OnFocusRequestedEventHandler?.Invoke(null, EventArgs.Empty);
+    }
+    
     public static Dimensions ConstructDefaultDialogDimensions()
     {
         return new Dimensions

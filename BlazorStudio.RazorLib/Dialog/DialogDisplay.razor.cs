@@ -9,10 +9,12 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Dialog;
 
-public partial class DialogDisplay : ComponentBase
+public partial class DialogDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
+    [Inject]
+    private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -22,15 +24,39 @@ public partial class DialogDisplay : ComponentBase
     private TransformableDisplay? _transformableDisplay;
 
     private ContextBoundary _contextBoundary;
-    private ElementReference _dialogDisplayElementReference;
+    private ElementReference? _dialogDisplayElementReference;
+
+    private string OverrideZIndex => DialogStatesWrap.Value.DialogKeyWithOverridenZIndex is not null &&
+                                     DialogStatesWrap.Value.DialogKeyWithOverridenZIndex == DialogRecord.DialogKey
+        ? "z-index: 11;"
+        : string.Empty;
 
     protected override void OnInitialized()
     {
-        ContextStateSelector.Select(x => x.ContextRecords[ContextFacts.GlobalContext.ContextKey]);
+        ContextStateSelector
+            .Select(x => x.ContextRecords[ContextFacts.DialogDisplayContext.ContextKey]);
         
         base.OnInitialized();
     }
-    
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            DialogRecord.OnFocusRequestedEventHandler += DialogRecordOnOnFocusRequestedEventHandler;
+        }
+        
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async void DialogRecordOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
+    {
+        if (_dialogDisplayElementReference is not null)
+        {
+            await _dialogDisplayElementReference.Value.FocusAsync();
+        }
+    }
+
     private void FireSubscribeToDragEventWithMoveHandle()
     {
         if (_transformableDisplay is not null)
@@ -123,5 +149,10 @@ public partial class DialogDisplay : ComponentBase
     private void CloseOnClick()
     {
         Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
+    }
+
+    public void Dispose()
+    {
+        
     }
 }

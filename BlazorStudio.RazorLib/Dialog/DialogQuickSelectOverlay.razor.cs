@@ -1,6 +1,7 @@
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.Focus;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -16,10 +17,12 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
     [Inject]
     private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
 
+    private ContextBoundary _contextBoundary;
     private bool _displayDialogQuickSelectOverlay;
     private int _activeEntryIndex;
     private FocusTrap? _focusTrap;
-    
+    private DialogKey? _previouslyActiveDialogKey;
+
     protected override void OnInitialized()
     {
         ContextStateSelector.Select(x => x.ContextRecords[ContextFacts.DialogDisplayContext.ContextKey]);
@@ -84,6 +87,29 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
         if (keyboardEventArgs.AltKey == false)
         {
             _displayDialogQuickSelectOverlay = false;
+            
+            var dialogStates = DialogStatesWrap.Value;
+
+            if (_activeEntryIndex < dialogStates.List.Count)
+            {
+                var activeDialog = dialogStates.List[_activeEntryIndex];
+
+                DialogStatesWrap.Value.DialogKeyWithOverridenZIndex = activeDialog.DialogKey;
+                
+                if (_previouslyActiveDialogKey is not null &&
+                    activeDialog.DialogKey != _previouslyActiveDialogKey)
+                {
+                    var dialog = dialogStates.List
+                        .FirstOrDefault(d => d.DialogKey == _previouslyActiveDialogKey);
+
+                    if (dialog is not null)
+                        dialog.InvokeOnFocusRequestedEventHandler();
+                }
+                
+                _previouslyActiveDialogKey = activeDialog.DialogKey;
+                
+                activeDialog.InvokeOnFocusRequestedEventHandler();
+            }
             
             // Set starting _activeEntryIndex 
             {
