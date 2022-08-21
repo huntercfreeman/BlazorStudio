@@ -1,4 +1,6 @@
-﻿<div class="bstudio_editor-tab-display bstudio_tab @IsActiveCssClass"
+﻿<div class="bstudio_editor-tab-display bstudio_tab bstudio_focus-display-outline @IsActiveCssClass"
+     tabindex="0"
+     @onkeydown="EditorTabHandleOnKeyDown"
      @onclick="FireSetActiveTabIndexOnClick">
     @if (PlainTextEditor.FileHandle?.AbsoluteFilePath is not null)
     {

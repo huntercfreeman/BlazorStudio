@@ -1,5 +1,7 @@
-﻿using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
+﻿using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Editor;
 
@@ -33,5 +35,14 @@ public partial class EditorTabDisplay : ComponentBase
     private void FireDisposePlainTextEditorOnClick()
     {
         DisposePlainTextEditorOnClick.Invoke(PlainTextEditor.PlainTextEditorKey);
+    }
+    
+    private void EditorTabHandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (KeyboardKeyFacts.NewLineCodes.ENTER_CODE == keyboardEventArgs.Code ||
+            KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE == keyboardEventArgs.Code)
+        {
+            FireSetActiveTabIndexOnClick();
+        }
     }
 }
