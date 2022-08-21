@@ -82,7 +82,7 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
         await InvokeAsync(StateHasChanged);
     }
     
-    private Task HandleOnKeyUpAsync(KeyboardEventArgs keyboardEventArgs)
+    private async Task HandleOnKeyUpAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.AltKey == false)
         {
@@ -90,9 +90,17 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
             
             var dialogStates = DialogStatesWrap.Value;
 
-            var activeDialog = dialogStates.List[_activeEntryIndex];
+            if (_activeEntryIndex < dialogStates.List.Count - 1)
+            {
+                var activeDialog = dialogStates.List[_activeEntryIndex];
             
-            activeDialog.InvokeOnFocusRequestedEventHandler();
+                activeDialog.InvokeOnFocusRequestedEventHandler();    
+            }
+            else
+            {
+                _displayDialogQuickSelectOverlay = false;
+                await InvokeAsync(StateHasChanged);
+            }
             
             // Set starting _activeEntryIndex 
             {
@@ -104,8 +112,6 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
                 }
             }
         }
-
-        return Task.CompletedTask;
     }
     
     protected override void Dispose(bool disposing)
