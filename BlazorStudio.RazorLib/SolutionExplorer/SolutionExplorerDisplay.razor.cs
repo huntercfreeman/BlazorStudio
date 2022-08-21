@@ -445,27 +445,68 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                     return;
                 }
 
-                var nextSolution = solutionState.Solution.WithProjectFilePath(absoluteFilePathDotNet.ProjectId, absoluteFilePathDotNet.GetAbsoluteFilePathString());
+                var mSBuildProjectLoader = new MSBuildProjectLoader(roslynWorkspaceState.MSBuildWorkspace);
 
+                var projectInfo = await mSBuildProjectLoader.LoadProjectInfoAsync(absoluteFilePathDotNet.GetAbsoluteFilePathString());
+
+                if (!projectInfo.Any())
+                    return;
+                
+                var nextSolution = solutionState.Solution.AddProject(projectInfo.First());
+                
                 var nextProjectIdToProjectMap = new Dictionary<ProjectId, IndexedProject>(solutionState.ProjectIdToProjectMap);
-
-                var recentlyCreatedProject = nextSolution.Projects.Single(x => x.Id == absoluteFilePathDotNet.ProjectId);
+                
+                var recentlyCreatedProject = nextSolution.Projects.Single(x => x.Id == projectInfo.First().Id);
                 
                 var indexedProject = new IndexedProject(recentlyCreatedProject, absoluteFilePathDotNet);
                 
                 nextProjectIdToProjectMap.Add(absoluteFilePathDotNet.ProjectId, 
                     indexedProject);
+
+                var localFileDocumentMap = 
+                    new Dictionary<AbsoluteFilePathStringValue, IndexedDocument>(
+                        solutionState.FileAbsoluteFilePathToDocumentMap);
+                
+                var localFileAdditionalDocumentMap = 
+                    new Dictionary<AbsoluteFilePathStringValue, IndexedAdditionalDocument>(
+                        solutionState.FileAbsoluteFilePathToAdditionalDocumentMap);
+                
+                foreach (Document document in recentlyCreatedProject.Documents)
+                {
+                    if (document.FilePath is not null)
+                    {
+                        var absoluteFilePath = new AbsoluteFilePathDotNet(document.FilePath, false, recentlyCreatedProject.Id);
+                
+                        _ = localFileDocumentMap
+                            .TryAdd(new AbsoluteFilePathStringValue(absoluteFilePath),
+                                new IndexedDocument(document, absoluteFilePath));
+                    }
+                }
+                        
+                foreach (TextDocument textDocument in recentlyCreatedProject.AdditionalDocuments)
+                {
+                    if (textDocument.FilePath is not null)
+                    {
+                        var absoluteFilePath = new AbsoluteFilePathDotNet(textDocument.FilePath, false, recentlyCreatedProject.Id);
+                
+                        _ = localFileAdditionalDocumentMap
+                            .TryAdd(new AbsoluteFilePathStringValue(absoluteFilePath),
+                                new IndexedAdditionalDocument(textDocument, absoluteFilePath));
+                    }
+                }
                 
                 Dispatcher.Dispatch(new SetSolutionStateAction(nextSolution,
-                    solutionState.ProjectIdToProjectMap,
-                    solutionState.FileAbsoluteFilePathToDocumentMap,
-                    solutionState.FileAbsoluteFilePathToAdditionalDocumentMap));
+                    nextProjectIdToProjectMap.ToImmutableDictionary(),
+                    localFileDocumentMap.ToImmutableDictionary(),
+                    localFileAdditionalDocumentMap.ToImmutableDictionary()));
                 
                 Dispatcher.Dispatch(new AddTreeViewRootsAction(_solutionExplorerTreeViewKey,
                     new List<ITreeView>
                     {
                         new TreeView<AbsoluteFilePathDotNet>(TreeViewKey.NewTreeViewKey(), absoluteFilePathDotNet)
                     }));
+
+                await InvokeAsync(StateHasChanged);
             });
         }
 
