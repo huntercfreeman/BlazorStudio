@@ -13,8 +13,6 @@ namespace BlazorStudio.RazorLib.Dialog;
 public partial class DialogDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
-    [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;

@@ -14,48 +14,13 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
 {
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
-    [Inject]
-    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
 
-    private ContextBoundary _contextBoundary;
     private bool _displayDialogQuickSelectOverlay;
     private int _activeEntryIndex;
     private FocusTrap? _focusTrap;
     private DialogKey? _previouslyActiveDialogKey;
 
-    protected override void OnInitialized()
-    {
-        ContextStateSelector.Select(x => x.ContextRecords[ContextFacts.DialogDisplayContext.ContextKey]);
-
-        // Set starting _activeEntryIndex 
-        {
-            _activeEntryIndex = 1;
-
-            if (DialogStatesWrap.Value.List.Count < 1)
-            {
-                _activeEntryIndex = 0;
-            }
-        }
-
-        base.OnInitialized();
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
-        }
-
-        if (_activeEntryIndex > DialogStatesWrap.Value.List.Count - 1)
-        {
-            _activeEntryIndex = 0;
-        }
-        
-        base.OnAfterRender(firstRender);
-    }
-
-    private async void ValueOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
+    private async Task HandleOnFocusIn(FocusEventArgs focusEventArgs)
     {
         if (!_displayDialogQuickSelectOverlay)
         {
@@ -94,10 +59,8 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
             {
                 var activeDialog = dialogStates.List[_activeEntryIndex];
             
-                activeDialog.InvokeOnFocusRequestedEventHandler();    
-            }
-            else
-            {
+                activeDialog.InvokeOnFocusRequestedEventHandler();
+                
                 _displayDialogQuickSelectOverlay = false;
                 await InvokeAsync(StateHasChanged);
             }
@@ -112,10 +75,5 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
                 }
             }
         }
-    }
-    
-    protected override void Dispose(bool disposing)
-    {
-        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
     }
 }

@@ -1,32 +1,35 @@
 @using BlazorStudio.ClassLib.Contexts
+
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@if (_displayDialogQuickSelectOverlay)
-{
-    <ContextBoundary CssClassString="bstudio_dialog-quick-select-overlay bstudio_focus-within-display"
-                     OnKeyDownPreventDefault="true"
-                     OnKeyUp="HandleOnKeyUpAsync"
-                     ContextKey="ContextFacts.DialogDisplayContext.ContextKey">
+<ContextBoundary CssClassString="bstudio_dialog-quick-select-overlay bstudio_focus-within-display"
+                 OnFocusIn="HandleOnFocusIn"
+                 OnKeyDownPreventDefault="true"
+                 OnKeyUp="HandleOnKeyUpAsync"
+                 ContextKey="ContextFacts.DialogDisplayContext.ContextKey">
+    @if (_displayDialogQuickSelectOverlay)
+    {
+        <div @onfocusin:stopPropagation="true">
+            <CascadingValue Name="ActiveEntryIndex" Value="_activeEntryIndex">
+                @{
+                    var dialogStates = DialogStatesWrap.Value;
 
-        <CascadingValue Name="ActiveEntryIndex" Value="_activeEntryIndex">
-            @{
-                var dialogStates = DialogStatesWrap.Value;
-
-                if (dialogStates.List.Count > 0)
-                {
-                    for (var i = 0; i < dialogStates.List.Count; i++)
+                    if (dialogStates.List.Count > 0)
                     {
-                        var index = i;
-                        var dialog = dialogStates.List[index];
-                        <DialogQuickSelectEntry EntryIndex="index"
-                                                DialogRecord="dialog"/>
+                        for (var i = 0; i < dialogStates.List.Count; i++)
+                        {
+                            var index = i;
+                            var dialog = dialogStates.List[index];
+                            <DialogQuickSelectEntry EntryIndex="index"
+                                                    DialogRecord="dialog"/>
+                        }
+                    }
+                    else
+                    {
+                        <BlazorStudio.RazorLib.Focus.FocusTrap @ref="_focusTrap"/>
                     }
                 }
-                else
-                {
-                    <BlazorStudio.RazorLib.Focus.FocusTrap @ref="_focusTrap"/>
-                }
-            }
-        </CascadingValue>
-    </ContextBoundary>
-}
+            </CascadingValue>
+        </div>
+    }
+</ContextBoundary>

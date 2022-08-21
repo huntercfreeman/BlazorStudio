@@ -39,6 +39,8 @@ public partial class ContextBoundary : ComponentBase, IDisposable
     [Parameter]
     public Func<FocusEventArgs?, Task>? OnFocusIn { get; set; }
     [Parameter]
+    public bool IgnoreFocusRequests { get; set; }
+    [Parameter]
     public Func<KeyboardEventArgs, Task>? OnKeyUp { get; set; }
     [Parameter]
     public bool OnKeyDownPreventDefault { get; set; }
@@ -56,7 +58,10 @@ public partial class ContextBoundary : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
+            if (!IgnoreFocusRequests)
+            {
+                ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
+            }
         }
         
         base.OnAfterRender(firstRender);
