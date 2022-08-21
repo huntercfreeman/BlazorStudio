@@ -53,8 +53,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
-    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -100,9 +98,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     {
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrap_StateChanged;
         SolutionStateWrap.StateChanged += SolutionStateWrapOnStateChanged;
-        
-        ContextStateSelector
-            .Select(x => x.ContextRecords[ContextFacts.SolutionExplorerContext.ContextKey]);
 
         _newCSharpProjectDialog = new DialogRecord(
             DialogKey.NewDialogKey(),
@@ -120,21 +115,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
         base.OnInitialized();
     }
     
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
-        }
-        
-        base.OnAfterRender(firstRender);
-    }
-
-    private async void ValueOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
-    {
-        await _solutionExplorerElementReference.FocusAsync();
-    }
-
     private async void SolutionExplorerStateWrap_StateChanged(object? sender, EventArgs e)
     {
         var solutionExplorerState = SolutionExplorerStateWrap.Value;
@@ -529,7 +509,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     protected override void Dispose(bool disposing)
     {
         SolutionExplorerStateWrap.StateChanged -= SolutionExplorerStateWrap_StateChanged;
-        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
 
         base.Dispose(disposing);
     }

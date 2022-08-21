@@ -1,3 +1,12 @@
-<CascadingValue Value="this">
-    @ChildContent
-</CascadingValue>
+<div class="@CssClassString"
+     style="@CssStyleString"
+     tabindex="@TabIndex"
+     @ref="_contextBoundaryElementReference"
+     @onfocusin="HandleOnFocusInAsync"
+     @onkeyup="HandleOnKeyUpAsync"
+     @onfocusin:stopPropagation="true"
+     @onkeydown:preventDefault="OnKeyDownPreventDefault">
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>    
+</div>

@@ -1,6 +1,7 @@
 @using Fluxor.Blazor.Web.Components
 @using BlazorStudio.ClassLib.Store.PlainTextEditorCase
 @using System.Diagnostics.CodeAnalysis
+@using BlazorStudio.ClassLib.Contexts
 @using BlazorStudio.ClassLib.Sequence
 
 @inherits FluxorComponent
@@ -16,80 +17,76 @@ else
     // by making a local reference to it.
     var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
-    <div class="pte_plain-text-editor-wrapping"
-         @onfocusin="() =>_contextBoundary.DispatchSetActiveContextStatesAction(new())"
-         @onfocusin:stopPropagation="true">
-        
-        <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
+    <ContextBoundary CssClassString="pte_plain-text-editor-wrapping"
+                     ContextKey="ContextFacts.PlainTextEditorContext.ContextKey">
 
-            <PlainTextEditorHeader PlainTextEditor="currentPlainTextEditor"
-                                   WidthAndHeightTestResult="_widthAndHeightTestResult"/>
+        <PlainTextEditorHeader PlainTextEditor="currentPlainTextEditor"
+                               WidthAndHeightTestResult="_widthAndHeightTestResult"/>
 
-            <div>_isSubscribedToDragState:&nbsp;<em>@_isMouseSelectingText</em></div>
+        <div>_isSubscribedToDragState:&nbsp;<em>@_isMouseSelectingText</em></div>
 
-            <div id="@PlainTextEditorDisplayId"
-                 class="pte_plain-text-editor-display pte_unselectable @IsFocusedCssClass"
-                 style="@GetStyleCss()"
-                 tabindex="@TabIndex"
-                 @ref="_plainTextEditor"
-                 @onclick="FocusPlainTextEditorOnClick"
-                 @onkeydown:preventDefault="true"
-                 @onmousedown="StartSelectingText"
-                 @onmouseup="StopSelectingText"
-                 @onkeydown="OnKeyDown"
-                 @onfocusin="OnFocusIn"
-                 @onfocusout="OnFocusOut"
-                 @onscroll="StopSelectingText">
+        <div id="@PlainTextEditorDisplayId"
+             class="pte_plain-text-editor-display pte_unselectable @IsFocusedCssClass"
+             style="@GetStyleCss()"
+             tabindex="@TabIndex"
+             @ref="_plainTextEditor"
+             @onclick="FocusPlainTextEditorOnClick"
+             @onkeydown:preventDefault="true"
+             @onmousedown="StartSelectingText"
+             @onmouseup="StopSelectingText"
+             @onkeydown="OnKeyDown"
+             @onfocusin="OnFocusIn"
+             @onfocusout="OnFocusOut"
+             @onscroll="StopSelectingText">
 
-                @{
-                    var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
+            @{
+                var mostDigitsInARowNumber = currentPlainTextEditor.FileHandle.VirtualRowCount.ToString().Length;
 
-                    <CascadingValue Value="currentPlainTextEditor.FileHandle.AbsoluteFilePath">
-                        <CascadingValue Value="currentPlainTextEditor.RichTextEditorOptions">
-                            <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
-                                <CascadingValue Value="_isFocused">
-                                    <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
-                                        <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
-                                            <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
-                                                <CascadingValue Name="VirtualCharacterIndexMarkerForStartOfARow" Value="currentPlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow">
-                                                    <CascadingValue Name="SelectionSpan" Value="currentPlainTextEditor.SelectionSpan">
-                                                        <CascadingValue Name="IsMouseSelectingText" Value="_isMouseSelectingText">
-                                                            <CascadingValue Name="MouseTextSelectionSemaphoreSlim" Value="_mouseTextSelectionSemaphoreSlim">
-                                                                <CascadingValue Name="FocusPlainTextEditor" Value="new Action(FocusPlainTextEditor)">
+                <CascadingValue Value="currentPlainTextEditor.FileHandle.AbsoluteFilePath">
+                    <CascadingValue Value="currentPlainTextEditor.RichTextEditorOptions">
+                        <CascadingValue Value="currentPlainTextEditor.PlainTextEditorKey">
+                            <CascadingValue Value="_isFocused">
+                                <CascadingValue Name="CurrentRowIndex" Value="currentPlainTextEditor.CurrentRowIndex">
+                                    <CascadingValue Name="RowIndexOffset" Value="currentPlainTextEditor.RowIndexOffset">
+                                        <CascadingValue Name="ActiveRowId" Value="ActiveRowId">
+                                            <CascadingValue Name="VirtualCharacterIndexMarkerForStartOfARow" Value="currentPlainTextEditor.FileHandle.VirtualCharacterIndexMarkerForStartOfARow">
+                                                <CascadingValue Name="SelectionSpan" Value="currentPlainTextEditor.SelectionSpan">
+                                                    <CascadingValue Name="IsMouseSelectingText" Value="_isMouseSelectingText">
+                                                        <CascadingValue Name="MouseTextSelectionSemaphoreSlim" Value="_mouseTextSelectionSemaphoreSlim">
+                                                            <CascadingValue Name="FocusPlainTextEditor" Value="new Action(FocusPlainTextEditor)">
 
-                                                                    @if (_isInitialized)
-                                                                    {
-                                                                        <BlazorStudio.RazorLib.VirtualizeComponentExperiments.VirtualizeCoordinateSystemExperimental @ref="_virtualizeCoordinateSystemExperimental"
-                                                                                                                                                                     TItem="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
-                                                                                                                                                                     Context="rowTuple"
-                                                                                                                                                                     OverscanCount="6"
-                                                                                                                                                                     Items="GetItems(currentPlainTextEditor)"
-                                                                                                                                                                     ItemsSequenceKey="SequenceKey.NewSequenceKey()">
-                                                                            <CascadingValue Name="RowIndex" Value="rowTuple.Index">
-                                                                                <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
-                                                                                                           PlainTextEditorRow="rowTuple.PlainTextEditorRow"
-                                                                                                           MostDigitsInARowNumber="mostDigitsInARowNumber"/>
-                                                                            </CascadingValue>
-                                                                        </BlazorStudio.RazorLib.VirtualizeComponentExperiments.VirtualizeCoordinateSystemExperimental>
-                                                                    }
-
-                                                                    @{
-                                                                        var testRow = currentPlainTextEditor.GetWidthAndHeightTestPlainTextEditorRow();
-                                                                        <CascadingValue Name="RowIndex" Value="0">
-                                                                            <CascadingValue Name="GetWidthAndHeightTest" Value="true">
-
-                                                                                <div style="position: absolute; left: 0; top: 0; visibility: hidden;">
-                                                                                    <PlainTextEditorRowDisplay @key="testRow.Key"
-                                                                                                               PlainTextEditorRow="testRow"
-                                                                                                               MostDigitsInARowNumber="mostDigitsInARowNumber"
-                                                                                                               WidthAndHeightTestId="@_widthAndHeightTestId"/>
-                                                                                </div>
-
-
-                                                                            </CascadingValue>
+                                                                @if (_isInitialized)
+                                                                {
+                                                                    <BlazorStudio.RazorLib.VirtualizeComponentExperiments.VirtualizeCoordinateSystemExperimental @ref="_virtualizeCoordinateSystemExperimental"
+                                                                                                                                                                 TItem="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
+                                                                                                                                                                 Context="rowTuple"
+                                                                                                                                                                 OverscanCount="6"
+                                                                                                                                                                 Items="GetItems(currentPlainTextEditor)"
+                                                                                                                                                                 ItemsSequenceKey="SequenceKey.NewSequenceKey()">
+                                                                        <CascadingValue Name="RowIndex" Value="rowTuple.Index">
+                                                                            <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
+                                                                                                       PlainTextEditorRow="rowTuple.PlainTextEditorRow"
+                                                                                                       MostDigitsInARowNumber="mostDigitsInARowNumber"/>
                                                                         </CascadingValue>
-                                                                    }
-                                                                </CascadingValue>
+                                                                    </BlazorStudio.RazorLib.VirtualizeComponentExperiments.VirtualizeCoordinateSystemExperimental>
+                                                                }
+
+                                                                @{
+                                                                    var testRow = currentPlainTextEditor.GetWidthAndHeightTestPlainTextEditorRow();
+                                                                    <CascadingValue Name="RowIndex" Value="0">
+                                                                        <CascadingValue Name="GetWidthAndHeightTest" Value="true">
+
+                                                                            <div style="position: absolute; left: 0; top: 0; visibility: hidden;">
+                                                                                <PlainTextEditorRowDisplay @key="testRow.Key"
+                                                                                                           PlainTextEditorRow="testRow"
+                                                                                                           MostDigitsInARowNumber="mostDigitsInARowNumber"
+                                                                                                           WidthAndHeightTestId="@_widthAndHeightTestId"/>
+                                                                            </div>
+
+
+                                                                        </CascadingValue>
+                                                                    </CascadingValue>
+                                                                }
                                                             </CascadingValue>
                                                         </CascadingValue>
                                                     </CascadingValue>
@@ -101,10 +98,10 @@ else
                             </CascadingValue>
                         </CascadingValue>
                     </CascadingValue>
-                }
+                </CascadingValue>
+            }
 
-            </div>
-            <PlainTextEditorFooter PlainTextEditor="currentPlainTextEditor"/>
-        </ContextBoundary>
-    </div>
+        </div>
+        <PlainTextEditorFooter PlainTextEditor="currentPlainTextEditor"/>
+    </ContextBoundary>
 }

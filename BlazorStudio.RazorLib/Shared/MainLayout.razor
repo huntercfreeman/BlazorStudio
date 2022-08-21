@@ -1,27 +1,23 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorLayout
+﻿@using BlazorStudio.ClassLib.Contexts
+@inherits Fluxor.Blazor.Web.Components.FluxorLayout
 
 <BlazorStudio.RazorLib.StoreInitializerWrap/>
 <BlazorStudio.RazorLib.PlainTextEditorInitializer InitializeFluxor="false"/>
 
 <div class="bstudio_theme-wrapper @ThemeStateWrap.Value.ThemeKey.KeyName"
      style="font-size: @(FontOptionsStateWrap.Value.FontSize.Value)px;">
-    <div class="bstudio_main-layout bstudio_focus-display-extra-large @UnselectableCssClassString"
-         @onfocusin="() => _contextBoundary.DispatchSetActiveContextStatesAction(new())"
-         @onfocusin:stopPropagation="true"
-         tabindex="-1"
-         @ref="_mainLayoutElementReference">
-        <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
-            <BlazorStudio.RazorLib.KeymapCase.KeymapEventListener/>
-            <BlazorStudio.RazorLib.Dialog.DialogsInitializer/>
-            <BlazorStudio.RazorLib.Notification.NotificationsInitializer/>
+    <ContextBoundary CssClassString="@CssClassString"
+                     ContextKey="ContextFacts.GlobalContext.ContextKey">
+        <BlazorStudio.RazorLib.KeymapCase.KeymapEventListener/>
+        <BlazorStudio.RazorLib.Dialog.DialogsInitializer/>
+        <BlazorStudio.RazorLib.Notification.NotificationsInitializer/>
 
-            <ToolbarDisplay/>
+        <ToolbarDisplay/>
 
-            <BodyDisplay/>
+        <BodyDisplay/>
 
-            <BlazorStudio.RazorLib.Dialog.DialogTaskBar/>
+        <BlazorStudio.RazorLib.Dialog.DialogTaskBar/>
 
-            <BlazorStudio.RazorLib.Drag.DragDisplay/>
-        </ContextBoundary>
-    </div>
+        <BlazorStudio.RazorLib.Drag.DragDisplay/>
+    </ContextBoundary>
 </div>

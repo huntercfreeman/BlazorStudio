@@ -23,41 +23,11 @@ public partial class EditorDisplay : FluxorComponent
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
-    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ClassLib.UserInterface.Dimensions Dimensions { get; set; } = null!;
     
-    private ContextBoundary _contextBoundary;
-    private ElementReference? _editorDisplayElementReference;
-
-    protected override void OnInitialized()
-    {
-        ContextStateSelector
-            .Select(x => x.ContextRecords[ContextFacts.EditorDisplayContext.ContextKey]);
-        
-        base.OnInitialized();
-    }
-
-    protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
-        }
-        
-        return base.OnAfterRenderAsync(firstRender);
-    }
-
-    private async void ValueOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
-    {
-        if (_editorDisplayElementReference is not null)
-        {
-            await _editorDisplayElementReference.Value.FocusAsync();
-        }
-    }
 
     private void SetActiveTabIndexOnClick(int tabIndex)
     {
@@ -85,12 +55,5 @@ public partial class EditorDisplay : FluxorComponent
         }
         
         Dispatcher.Dispatch(new DeconstructPlainTextEditorRecordAction(plainTextEditorKey));
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
-        
-        base.Dispose(disposing);
     }
 }

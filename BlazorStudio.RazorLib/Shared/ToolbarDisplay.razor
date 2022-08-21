@@ -1,27 +1,24 @@
 ﻿@using BlazorStudio.ClassLib.Store.MenuCase
-<div class="bstudio_toolbar-display bstudio_focus-display-large"
-     @onfocusin="() => _contextBoundary.DispatchSetActiveContextStatesAction(new())"
-     @onfocusin:stopPropagation="true"
-     tabindex="-1"
-     @ref="_toolbarDisplayElementReference">
-    <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
-        <BlazorStudio.RazorLib.Settings.SettingsDialogEntryPoint/>
+@using BlazorStudio.ClassLib.Contexts
 
-        <div class="bstudio_toolbar-display-file-dropdown bstudio_focus-display-extra-large"
-             @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)"
-             @onkeydown="FileDropdownHandleOnKeyDown"
-             tabindex="0">
+<ContextBoundary CssClassString="bstudio_toolbar-display bstudio_focus-display-large"
+                 ContextKey="ContextFacts.ToolbarDisplayContext.ContextKey">
+    <BlazorStudio.RazorLib.Settings.SettingsDialogEntryPoint/>
 
-            File
+    <div class="bstudio_toolbar-display-file-dropdown bstudio_focus-display-extra-large"
+         @onclick="() => DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey)"
+         @onkeydown="FileDropdownHandleOnKeyDown"
+         tabindex="0">
 
-            <DropdownDisplay Dimensions="_fileDropdownDimensions"
-                             DropdownKey="_fileDropdownKey">
+        File
 
-                <MenuDisplay MenuOptionRecords="GetMenuOptionRecords()"/>
+        <DropdownDisplay Dimensions="_fileDropdownDimensions"
+                         DropdownKey="_fileDropdownKey">
 
-            </DropdownDisplay>
-        </div>
+            <MenuDisplay MenuOptionRecords="GetMenuOptionRecords()"/>
 
-        <BlazorStudio.RazorLib.StartupProjectControls.StartupProjectControlsDisplay/>
-    </ContextBoundary>
-</div>
+        </DropdownDisplay>
+    </div>
+
+    <BlazorStudio.RazorLib.StartupProjectControls.StartupProjectControlsDisplay/>
+</ContextBoundary>

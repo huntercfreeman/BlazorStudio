@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.FolderExplorer;
 
-public partial class FolderExplorer : FluxorComponent, IDisposable
+public partial class FolderExplorer : FluxorComponent
 {
     [Inject]
     private IState<FolderExplorerState> WorkspaceStateWrap { get; set; } = null!;
@@ -28,8 +28,6 @@ public partial class FolderExplorer : FluxorComponent, IDisposable
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
@@ -41,8 +39,6 @@ public partial class FolderExplorer : FluxorComponent, IDisposable
     private RichErrorModel? _workspaceStateWrapStateChangedRichErrorModel;
     private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
     private Func<Task> _mostRecentRefreshContextMenuTarget;
-    private ContextBoundary _contextBoundary = null!;
-    private ElementReference _folderExplorerElementReference;
     
     private Dimensions _fileDropdownDimensions = new()
     {
@@ -66,31 +62,6 @@ public partial class FolderExplorer : FluxorComponent, IDisposable
     };
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
-
-    protected override void OnInitialized()
-    {
-        WorkspaceStateWrap.StateChanged += WorkspaceStateWrap_StateChanged;
-        
-        ContextStateSelector
-            .Select(x => x.ContextRecords[ContextFacts.FolderExplorerContext.ContextKey]);
-
-        base.OnInitialized();
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
-        }
-        
-        base.OnAfterRender(firstRender);
-    }
-
-    private async void ValueOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
-    {
-        await _folderExplorerElementReference.FocusAsync();
-    }
 
     private async void WorkspaceStateWrap_StateChanged(object? sender, EventArgs e)
     {
@@ -217,8 +188,6 @@ public partial class FolderExplorer : FluxorComponent, IDisposable
     protected override void Dispose(bool disposing)
     {
         WorkspaceStateWrap.StateChanged -= WorkspaceStateWrap_StateChanged;
-        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
-
 
         base.Dispose(disposing);
     }

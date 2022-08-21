@@ -6,6 +6,7 @@ using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.Transformable;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Dialog;
 
@@ -22,22 +23,14 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     public DialogRecord DialogRecord { get; set; } = null!;
 
     private TransformableDisplay? _transformableDisplay;
+    private ContextBoundary? _contextBoundary;
 
-    private ContextBoundary _contextBoundary;
-    private ElementReference? _dialogDisplayElementReference;
-
+    private string CssStyleString => $"{OverrideZIndex} {DialogRecord.Dimensions.DimensionsCssString}";
+    
     private string OverrideZIndex => DialogStatesWrap.Value.DialogKeyWithOverridenZIndex is not null &&
                                      DialogStatesWrap.Value.DialogKeyWithOverridenZIndex == DialogRecord.DialogKey
         ? "z-index: 11;"
         : string.Empty;
-
-    protected override void OnInitialized()
-    {
-        ContextStateSelector
-            .Select(x => x.ContextRecords[ContextFacts.DialogDisplayContext.ContextKey]);
-        
-        base.OnInitialized();
-    }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -52,9 +45,9 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private async void DialogRecordOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
     {
-        if (_dialogDisplayElementReference is not null)
+        if (_contextBoundary is not null)
         {
-            await _dialogDisplayElementReference.Value.FocusAsync();
+            await _contextBoundary.HandleOnFocusInAsync(null);
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -158,7 +151,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
     }
     
-    private void HandleOnFocusIn()
+    private Task HandleOnFocusInAsync(FocusEventArgs focusEventArgs)
     {
         _contextBoundary.DispatchSetActiveContextStatesAction(new());
 
@@ -178,6 +171,8 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         
         DialogStatesWrap.Value.DialogKeyWithOverridenZIndex = DialogRecord.DialogKey;
         DialogStatesWrap.Value.MostRecentlyFocusedDialogKey = DialogRecord.DialogKey;
+
+        return Task.CompletedTask;
     }
 
     public void Dispose()

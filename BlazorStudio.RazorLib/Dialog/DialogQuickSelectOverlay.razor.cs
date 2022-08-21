@@ -82,7 +82,7 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
         await InvokeAsync(StateHasChanged);
     }
     
-    private void HandleOnKeyUp(KeyboardEventArgs keyboardEventArgs)
+    private Task HandleOnKeyUpAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.AltKey == false)
         {
@@ -104,6 +104,8 @@ public partial class DialogQuickSelectOverlay : FluxorComponent
                 }
             }
         }
+
+        return Task.CompletedTask;
     }
     
     protected override void Dispose(bool disposing)

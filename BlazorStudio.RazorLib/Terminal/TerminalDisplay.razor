@@ -1,27 +1,23 @@
 ﻿@using BlazorStudio.ClassLib.Html
+@using BlazorStudio.ClassLib.Contexts
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<div class="bstudio_terminal-display bstudio_focus-display-large"
-     style="@Dimensions.DimensionsCssString"
-     tabindex="-1"
-     @ref="_terminalDisplayElementReference"
-     @onfocusin="() => _contextBoundary.DispatchSetActiveContextStatesAction(new())"
-     @onfocusin:stopPropagation="true">
+<ContextBoundary @ref="_contextBoundary"
+                 CssClassString="bstudio_terminal-display bstudio_focus-display-large"
+                 CssStyleString="@Dimensions.DimensionsCssString"
+                 ContextKey="ContextFacts.TerminalDisplayContext.ContextKey">
 
-    <ContextBoundary @ref="_contextBoundary" ContextRecord="ContextStateSelector.Value">
+    <h5 class="bstudio_large-title" style="padding: 5px;">Terminals</h5>
 
-        <h5 class="bstudio_large-title" style="padding: 5px;">Terminals</h5>
+    <div class="bstudio_terminal-body" style="padding: 0 5px; height: calc(100% - 2rem - 10px);">
+        @{
+            var localTerminalState = TerminalStatesWrap.Value;
 
-        <div class="bstudio_terminal-body" style="padding: 0 5px; height: calc(100% - 2rem - 10px);">
-            @{
-                var localTerminalState = TerminalStatesWrap.Value;
+            <TerminalTabs TerminalEntries="localTerminalState.TerminalEntries"/>
 
-                <TerminalTabs TerminalEntries="localTerminalState.TerminalEntries"/>
+            var activeTerminalEntry = localTerminalState.TerminalEntries[localTerminalState.ActiveIndex];
 
-                var activeTerminalEntry = localTerminalState.TerminalEntries[localTerminalState.ActiveIndex];
-
-                <TerminalEntryDisplay TerminalEntry="activeTerminalEntry"/>
-            }
-        </div>
-    </ContextBoundary>
-</div>
+            <TerminalEntryDisplay TerminalEntry="activeTerminalEntry"/>
+        }
+    </div>
+</ContextBoundary>

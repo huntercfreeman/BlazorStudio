@@ -16,17 +16,12 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Shared;
 
-public partial class ToolbarDisplay : IDisposable
+public partial class ToolbarDisplay
 {
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
-    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-
-    private ContextBoundary _contextBoundary = null!;
-    private ElementReference _toolbarDisplayElementReference;
 
     private DialogRecord _inputFileDialog = new DialogRecord(
         DialogKey.NewDialogKey(),
@@ -72,28 +67,6 @@ public partial class ToolbarDisplay : IDisposable
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
 
-    protected override void OnInitialized()
-    {
-        ContextStateSelector.Select(x => x.ContextRecords[ContextFacts.ToolbarDisplayContext.ContextKey]);
-        
-        base.OnInitialized();
-    }
-    
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
-        }
-        
-        base.OnAfterRender(firstRender);
-    }
-
-    private async void ValueOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
-    {
-        await _toolbarDisplayElementReference.FocusAsync();
-    }
-    
     private void DispatchAddActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
     {
         Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
@@ -134,10 +107,5 @@ public partial class ToolbarDisplay : IDisposable
         {
             DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey);
         }
-    }
-    
-    public void Dispose()
-    {
-        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
     }
 }

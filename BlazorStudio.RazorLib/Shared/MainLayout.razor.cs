@@ -18,43 +18,11 @@ public partial class MainLayout : FluxorLayout
     [Inject]
     private IState<FontOptionsState> FontOptionsStateWrap { get; set; } = null!;
     [Inject]
-    private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
-    [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
 
-    private ContextBoundary _contextBoundary = null!;
-    private ElementReference _mainLayoutElementReference;
-
+    private string CssClassString => $"bstudio_main-layout bstudio_focus-display-extra-large {UnselectableCssClassString}";
+    
     private string UnselectableCssClassString => DragStateWrap.Value.IsDisplayed
         ? "pte_unselectable"
         : string.Empty;
-    
-    protected override void OnInitialized()
-    {
-        ContextStateSelector.Select(x => x.ContextRecords[ContextFacts.GlobalContext.ContextKey]);
-        
-        base.OnInitialized();
-    }
-    
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            ContextStateSelector.Value.OnFocusRequestedEventHandler += ValueOnOnFocusRequestedEventHandler;
-        }
-        
-        base.OnAfterRender(firstRender);
-    }
-
-    private async void ValueOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
-    {
-        await _mainLayoutElementReference.FocusAsync();
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
-        
-        base.Dispose(disposing);
-    }
 }
