@@ -195,154 +195,6 @@ public partial class TreeViewDisplay<T>
 
         _titleSpan.FocusAsync();
     }
-
-    /// <summary>
-    /// Need to conditionally call PreventDefault
-    ///
-    /// Tab key to go to next focusable element should work
-    ///
-    /// However, ArrowDown to scroll the viewport should be prevent defaulted
-    ///
-    /// If the active tree view entry goes out of viewport then scroll manually
-    /// </summary>
-    /// <param name="keyboardEventArgs"></param>
-    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
-    {
-        if (_previousFocusState == false)
-            return;
-
-        _previousFocusState = false;
-
-        switch (keyboardEventArgs.Key)
-        {
-            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
-            {
-                if (!IsExpandable(TreeView.Item))
-                    return;
-
-                if (!TreeView.IsExpanded)
-                {
-                    ToggleIsExpandedOnClick();
-                }
-                else
-                {
-                    var children = TreeView.Children;
-
-                    if (children.Length > 0)
-                    {
-                        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, children[0]));
-                    }
-                }
-
-                break;
-            }
-            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT_KEY:
-            {
-                if (TreeView.IsExpanded)
-                {
-                    ToggleIsExpandedOnClick();
-                }
-                else
-                {
-                    if (Parent is not null)
-                    {
-                        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, Parent.TreeView));
-                    }
-                }
-
-                break;
-            }
-            case KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP_KEY:
-            {
-                if (IndexAmongSiblings == 0 &&
-                    Parent is not null)
-                {
-                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, Parent.TreeView));
-                }
-                else
-                {
-                    var siblingsAndSelf = GetSiblingsAndSelfFunc.Invoke();
-
-                    if (IndexAmongSiblings > 0)
-                    {
-                        RecursivelySetArrowUp(siblingsAndSelf[IndexAmongSiblings - 1]);
-                    }
-                }
-
-                break;
-            }
-            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN_KEY:
-            {
-                var rememberTreeViewChildren = TreeView.Children;
-
-                var siblingsAndSelf = GetSiblingsAndSelfFunc.Invoke();
-
-                if (TreeView.IsExpanded &&
-                    rememberTreeViewChildren.Length > 0)
-                {
-                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, rememberTreeViewChildren[0]));
-                }
-                else if (IndexAmongSiblings == siblingsAndSelf.Length - 1 &&
-                         Parent is not null)
-                {
-                    var activeTreeViewChanged = RecursivelySetArrowDown(Parent);
-
-                    if (!activeTreeViewChanged)
-                    {
-                        _previousFocusState = true;
-                    }
-                }
-                else
-                {
-                    if (IndexAmongSiblings < siblingsAndSelf.Length - 1)
-                    {
-                        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[IndexAmongSiblings + 1]));
-                    }
-                }
-
-                break;
-            }
-            case KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE:
-            {
-                OnEnterKeyDown(new TreeViewKeyboardEventDto<T>(keyboardEventArgs, 
-                    TreeView.Item, 
-                    ToggleIsExpandedOnClick, 
-                    DispatchSetSelfAsActiveTreeView,
-                    RefreshTreeViewTargetAsync, 
-                    RefreshParentOfTreeViewTargetAsync));
-
-                break;
-            }
-            case KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE:
-            {
-                OnSpaceKeyDown(new TreeViewKeyboardEventDto<T>(keyboardEventArgs, 
-                    TreeView.Item, 
-                    ToggleIsExpandedOnClick, 
-                    DispatchSetSelfAsActiveTreeView,
-                    RefreshTreeViewTargetAsync, 
-                    RefreshParentOfTreeViewTargetAsync));
-
-                break;
-            }
-            default:
-            {
-                if (KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs.Key, keyboardEventArgs.ShiftKey))
-                {
-                    HandleOnContextMenu(null);
-                }
-                else
-                {
-                    _previousFocusState = true;
-                }
-
-                break;
-            }
-        }
-    }
     
     private void HandleOnContextMenu(MouseEventArgs? mouseEventArgs)
     {
@@ -444,6 +296,139 @@ public partial class TreeViewDisplay<T>
     
     private void HandleCustomOnKeyDown(CustomKeyDown customKeyDown)
     {
-        var z = 2;
+        if (_previousFocusState == false)
+            return;
+
+        _previousFocusState = false;
+
+        switch (customKeyDown.Key)
+        {
+            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
+            {
+                if (!IsExpandable(TreeView.Item))
+                    return;
+
+                if (!TreeView.IsExpanded)
+                {
+                    ToggleIsExpandedOnClick();
+                }
+                else
+                {
+                    var children = TreeView.Children;
+
+                    if (children.Length > 0)
+                    {
+                        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, children[0]));
+                    }
+                }
+
+                break;
+            }
+            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT_KEY:
+            {
+                if (TreeView.IsExpanded)
+                {
+                    ToggleIsExpandedOnClick();
+                }
+                else
+                {
+                    if (Parent is not null)
+                    {
+                        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, Parent.TreeView));
+                    }
+                }
+
+                break;
+            }
+            case KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP_KEY:
+            {
+                if (IndexAmongSiblings == 0 &&
+                    Parent is not null)
+                {
+                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, Parent.TreeView));
+                }
+                else
+                {
+                    var siblingsAndSelf = GetSiblingsAndSelfFunc.Invoke();
+
+                    if (IndexAmongSiblings > 0)
+                    {
+                        RecursivelySetArrowUp(siblingsAndSelf[IndexAmongSiblings - 1]);
+                    }
+                }
+
+                break;
+            }
+            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN_KEY:
+            {
+                var rememberTreeViewChildren = TreeView.Children;
+
+                var siblingsAndSelf = GetSiblingsAndSelfFunc.Invoke();
+
+                if (TreeView.IsExpanded &&
+                    rememberTreeViewChildren.Length > 0)
+                {
+                    Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, rememberTreeViewChildren[0]));
+                }
+                else if (IndexAmongSiblings == siblingsAndSelf.Length - 1 &&
+                         Parent is not null)
+                {
+                    var activeTreeViewChanged = RecursivelySetArrowDown(Parent);
+
+                    if (!activeTreeViewChanged)
+                    {
+                        _previousFocusState = true;
+                    }
+                }
+                else
+                {
+                    if (IndexAmongSiblings < siblingsAndSelf.Length - 1)
+                    {
+                        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[IndexAmongSiblings + 1]));
+                    }
+                }
+
+                break;
+            }
+            case KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE:
+            {
+                OnEnterKeyDown(new TreeViewKeyboardEventDto<T>(customKeyDown, 
+                    TreeView.Item, 
+                    ToggleIsExpandedOnClick, 
+                    DispatchSetSelfAsActiveTreeView,
+                    RefreshTreeViewTargetAsync, 
+                    RefreshParentOfTreeViewTargetAsync));
+
+                break;
+            }
+            case KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE:
+            {
+                OnSpaceKeyDown(new TreeViewKeyboardEventDto<T>(customKeyDown, 
+                    TreeView.Item, 
+                    ToggleIsExpandedOnClick, 
+                    DispatchSetSelfAsActiveTreeView,
+                    RefreshTreeViewTargetAsync, 
+                    RefreshParentOfTreeViewTargetAsync));
+
+                break;
+            }
+            default:
+            {
+                if (KeyboardKeyFacts.CheckIsContextMenuEvent(customKeyDown.Key, customKeyDown.ShiftWasPressed))
+                {
+                    HandleOnContextMenu(null);
+                }
+                else
+                {
+                    _previousFocusState = true;
+                }
+
+                break;
+            }
+        }
     }
 }

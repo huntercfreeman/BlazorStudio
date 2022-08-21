@@ -1,8 +1,9 @@
+using BlazorStudio.RazorLib.CustomEvents;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.TreeViewCase;
 
-public record TreeViewKeyboardEventDto<T>(KeyboardEventArgs KeyboardEventArgs,
+public record TreeViewKeyboardEventDto<T>(CustomKeyDown CustomKeyDown,
         T Item,
         Action ToggleIsExpanded,
         Action SetIsActive,

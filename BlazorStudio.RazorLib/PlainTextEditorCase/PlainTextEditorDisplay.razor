@@ -30,7 +30,7 @@ else
             <div id="@PlainTextEditorDisplayId"
                  class="pte_plain-text-editor-display pte_unselectable @IsFocusedCssClass"
                  style="@GetStyleCss()"
-                 tabindex="-1"
+                 tabindex="@TabIndex"
                  @ref="_plainTextEditor"
                  @onclick="FocusPlainTextEditorOnClick"
                  @onkeydown:preventDefault="true"

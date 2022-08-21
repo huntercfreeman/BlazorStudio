@@ -46,6 +46,20 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     public bool AllowOpenDiff { get; set; } = true;
     [Parameter]
     public bool AllowDispatchEvent { get; set; } = true;
+    /// <summary>
+    /// -1 means only focusable through JavaScript
+    ///<br/>--<br/>
+    /// 0 or >0 means focusable through hitting 'Tab' key
+    ///<br/>--<br/>
+    /// This Parameter is here because after setting focus the the PlainTextEditor one
+    /// no longer can use the 'Tab' key to change focus. One would have to use a separate
+    /// custom made keymap to move focus out of the editor or click with the mouse out of the Editor. 
+    ///<br/>--<br/>
+    /// I recommend TabIndex = 0 however the default is TabIndex = -1 to ensure nobody unknowingly gets
+    /// 'focus trapped' in the editor.
+    /// </summary>
+    [Parameter]
+    public int TabIndex { get; set; } = -1;
 
     private bool _isFocused;
     private ElementReference? _plainTextEditor;

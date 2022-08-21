@@ -157,6 +157,10 @@
 Blazor.registerCustomEventType('customkeydown', {
     browserEventName: 'keydown',
     createEventArgs: e => {
+        if (e.key !== "Tab") {
+            e.preventDefault();
+        }
+        
         return {
             "key": e.key,
             "code": e.code,
