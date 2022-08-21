@@ -1,12 +1,14 @@
-<div class="@CssClassString"
-     style="@CssStyleString"
-     tabindex="@TabIndex"
-     @ref="_contextBoundaryElementReference"
-     @onfocusin="HandleOnFocusInAsync"
-     @onkeyup="HandleOnKeyUpAsync"
-     @onfocusin:stopPropagation="true"
-     @onkeydown:preventDefault="OnKeyDownPreventDefault">
-    <CascadingValue Value="this">
-        @ChildContent
-    </CascadingValue>    
-</div>
+<ShouldRenderBoundary ShouldRenderFunc="HandleShouldRenderBoundary">
+    <div class="@CssClassString"
+         style="@CssStyleString"
+         tabindex="@TabIndex"
+         @ref="_contextBoundaryElementReference"
+         @onfocusin="HandleOnFocusInAsync"
+         @onkeyup="HandleOnKeyUpAsync"
+         @onfocusin:stopPropagation="true"
+         @onkeydown:preventDefault="OnKeyDownPreventDefault">
+        <CascadingValue Value="this">
+            @ChildContent
+        </CascadingValue>    
+    </div>
+</ShouldRenderBoundary>

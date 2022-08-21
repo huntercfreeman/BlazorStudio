@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.Store.ContextCase;
+using BlazorStudio.RazorLib.ShouldRender;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -27,6 +28,14 @@ public partial class ContextBoundary : ComponentBase, IDisposable
     public int TabIndex { get; set; } = -1;
     [Parameter, EditorRequired]
     public RenderFragment ChildContent { get; set; } = null!;
+    /// <summary>
+    /// <see cref="IsIsland"/> set to true means the Blazor component
+    /// will only rerender due to FluxorComponent state [Inject]
+    /// (or other EventHandler like logic). And will ShouldRender => false
+    /// on any cascading StateHasChanged events from a parent component. 
+    /// </summary>
+    [Parameter]
+    public bool IsIsland { get; set; }
     [Parameter]
     public Func<FocusEventArgs?, Task>? OnFocusIn { get; set; }
     [Parameter]
@@ -85,6 +94,17 @@ public partial class ContextBoundary : ComponentBase, IDisposable
     {
         if (OnKeyUp is not null)
             await OnKeyUp.Invoke(keyboardEventArgs);
+    }
+    
+    public bool HandleShouldRenderBoundary(ShouldRenderBoundary.IsFirstShouldRenderValue isFirstShouldRenderValue)
+    {
+        if (!IsIsland)
+            return true;
+
+        if (isFirstShouldRenderValue.IsFirstShouldRender)
+            return true;
+
+        return false;
     }
 
     public void Dispose()
