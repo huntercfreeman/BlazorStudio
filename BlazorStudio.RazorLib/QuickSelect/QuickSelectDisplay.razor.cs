@@ -32,9 +32,10 @@ public partial class QuickSelectDisplay : ComponentBase
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
+        var localQuickSelectState = QuickSelectState;
         if (keyboardEventArgs.Key == "d")
         {
-            if (_activeEntryIndex < QuickSelectState.QuickSelectItems.Length - 1)
+            if (_activeEntryIndex < localQuickSelectState.QuickSelectItems.Length - 1)
             {
                 _activeEntryIndex++;
             }
@@ -45,7 +46,12 @@ public partial class QuickSelectDisplay : ComponentBase
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE)
         {
-            await QuickSelectState.OnItemSelectedFunc.Invoke(QuickSelectState.QuickSelectItems[_activeEntryIndex]);
+            if (_activeEntryIndex < localQuickSelectState.QuickSelectItems.Length)
+            {
+                HandleOnFocusOut();
+                
+                await localQuickSelectState.OnItemSelectedFunc.Invoke(localQuickSelectState.QuickSelectItems[_activeEntryIndex]);
+            }
         }
     }
     
