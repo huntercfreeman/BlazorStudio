@@ -23,7 +23,7 @@ namespace BlazorStudio.RazorLib.FolderExplorer;
 public partial class FolderExplorer : FluxorComponent
 {
     [Inject]
-    private IState<FolderExplorerState> WorkspaceStateWrap { get; set; } = null!;
+    private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -63,9 +63,16 @@ public partial class FolderExplorer : FluxorComponent
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
 
+    protected override void OnInitialized()
+    {
+        FolderExplorerStateWrap.StateChanged += WorkspaceStateWrap_StateChanged;
+        
+        base.OnInitialized();
+    }
+
     private async void WorkspaceStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        var workspaceState = WorkspaceStateWrap.Value;
+        var workspaceState = FolderExplorerStateWrap.Value;
 
         if (workspaceState.FolderAbsoluteFilePath is not null)
         {
@@ -187,7 +194,7 @@ public partial class FolderExplorer : FluxorComponent
 
     protected override void Dispose(bool disposing)
     {
-        WorkspaceStateWrap.StateChanged -= WorkspaceStateWrap_StateChanged;
+        FolderExplorerStateWrap.StateChanged -= WorkspaceStateWrap_StateChanged;
 
         base.Dispose(disposing);
     }
