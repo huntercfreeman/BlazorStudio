@@ -10,7 +10,7 @@ public partial class CreateNewFileForm : ComponentBase
     [Parameter]
     public IAbsoluteFilePath ParentDirectory { get; set; } = null!;
     [Parameter]
-    public Action<string, string> OnAfterSubmitForm { get; set; } = null!;
+    public Action<string, string, bool> OnAfterSubmitForm { get; set; } = null!;
     [Parameter]
     public bool IsTemplated { get; set; }
     [Parameter, EditorRequired]
@@ -32,7 +32,7 @@ public partial class CreateNewFileForm : ComponentBase
     
     private void SubmitForm()
     {
-        OnAfterSubmitForm(ParentDirectory.GetAbsoluteFilePathString(), _fileName);
+        OnAfterSubmitForm(ParentDirectory.GetAbsoluteFilePathString(), _fileName, _shouldAddCodebehind);
     }
     
     private void DeclineForm()

@@ -63,7 +63,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
-                        new Action<string, string>((parentDirectoryAbsoluteFilePathString, filename) => 
+                        new Action<string, string, bool>((parentDirectoryAbsoluteFilePathString, filename, _) => 
                             CreateNewEmptyFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
                                 filename, 
                                 ContextMenuEventDto.Item))
@@ -84,10 +84,11 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
-                        new Action<string, string>((parentDirectoryAbsoluteFilePathString, filename) => 
+                        new Action<string, string, bool>((parentDirectoryAbsoluteFilePathString, filename, shouldAddCodebehind) => 
                             CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
                                 filename, 
-                                ContextMenuEventDto.Item))
+                                ContextMenuEventDto.Item,
+                                shouldAddCodebehind))
                     },
                     {
                         nameof(CreateNewFileForm.IsTemplated),
@@ -218,7 +219,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         },
                         {
                             nameof(CreateNewFileForm.OnAfterSubmitForm),
-                            new Action<string, string>((parentDirectoryAbsoluteFilePathString, filename) => 
+                            new Action<string, string, bool>((parentDirectoryAbsoluteFilePathString, filename, _) => 
                                 CreateNewEmptyFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
                                     filename, 
                                     ContextMenuEventDto.Item))
@@ -239,10 +240,11 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         },
                         {
                             nameof(CreateNewFileForm.OnAfterSubmitForm),
-                            new Action<string, string>((parentDirectoryAbsoluteFilePathString, filename) => 
+                            new Action<string, string, bool>((parentDirectoryAbsoluteFilePathString, filename, shouldAddCodebehind) => 
                                 CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
                                     filename, 
-                                    ContextMenuEventDto.Item))
+                                    ContextMenuEventDto.Item,
+                                    shouldAddCodebehind))
                         },
                         {
                             nameof(CreateNewFileForm.IsTemplated),
@@ -393,7 +395,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
     private void CreateNewTemplatedFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
         string fileName,
-        AbsoluteFilePathDotNet absoluteFilePathDotNet)
+        AbsoluteFilePathDotNet absoluteFilePathDotNet,
+        bool shouldAddCodebehind)
     {
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
@@ -417,7 +420,11 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 await File
                     .AppendAllTextAsync(newFile.GetAbsoluteFilePathString(),
                         DotNetTemplates
-                            .CSharpClass(namespaceString, 
+                            .GetTemplate(
+                                newFile.FilenameWithExtension.EndsWith(ExtensionNoPeriodFacts.RAZOR_CODEBEHIND)
+                                    ? ExtensionNoPeriodFacts.RAZOR_CODEBEHIND
+                                    : newFile.ExtensionNoPeriod,
+                                namespaceString, 
                                 newFile.FileNameNoExtension));
 
                 await localRefreshContextMenuTarget();
@@ -468,6 +475,14 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         nextProjectIdToProjectMap,
                         solutionState.FileAbsoluteFilePathToDocumentMap,
                         nextAdditionalDocumentMap));
+                }
+
+                if (shouldAddCodebehind && newFile.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP)
+                {
+                    CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString, 
+                        fileName + '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS, 
+                        absoluteFilePathDotNet, 
+                        false);
                 }
             },
             $"{nameof(CreateNewTemplatedFileFormOnAfterSubmitForm)}",

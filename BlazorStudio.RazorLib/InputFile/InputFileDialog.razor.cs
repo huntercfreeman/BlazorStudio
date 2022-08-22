@@ -189,7 +189,7 @@ public partial class InputFileDialog : ComponentBase
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
-                        (string str1, string str2) => 
+                        (string str1, string str2, bool _) => 
                             CreateNewFileFormOnAfterSubmitForm(
                                 str1, 
                                 str2, 
