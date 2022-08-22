@@ -11,12 +11,15 @@ public partial class CreateNewFileForm : ComponentBase
     public IAbsoluteFilePath ParentDirectory { get; set; } = null!;
     [Parameter]
     public Action<string, string> OnAfterSubmitForm { get; set; } = null!;
+    [Parameter]
+    public bool IsTemplated { get; set; }
     [Parameter, EditorRequired]
     public Action OnAfterCancelForm { get; set; } = null!;
 
     private string _fileName = String.Empty;
     private ElementReference _inputElementReference;
-
+    private bool _shouldAddCodebehind = true;
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

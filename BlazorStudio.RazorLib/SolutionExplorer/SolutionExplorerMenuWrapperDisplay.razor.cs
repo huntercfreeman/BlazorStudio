@@ -90,6 +90,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                                 ContextMenuEventDto.Item))
                     },
                     {
+                        nameof(CreateNewFileForm.IsTemplated),
+                        true
+                    },
+                    {
                         nameof(CreateNewFileForm.OnAfterCancelForm),
                         new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
                     },
@@ -239,6 +243,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                                 CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
                                     filename, 
                                     ContextMenuEventDto.Item))
+                        },
+                        {
+                            nameof(CreateNewFileForm.IsTemplated),
+                            true
                         },
                         {
                             nameof(CreateNewFileForm.OnAfterCancelForm),
@@ -408,8 +416,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 
                 await File
                     .AppendAllTextAsync(newFile.GetAbsoluteFilePathString(),
-                        CSharpClassTemplate
-                            .WithInterpolation(namespaceString, 
+                        DotNetTemplates
+                            .CSharpClass(namespaceString, 
                                 newFile.FileNameNoExtension));
 
                 await localRefreshContextMenuTarget();
