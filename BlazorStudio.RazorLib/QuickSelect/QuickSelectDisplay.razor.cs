@@ -1,6 +1,8 @@
+using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.QuickSelectCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.QuickSelect;
 
@@ -13,6 +15,7 @@ public partial class QuickSelectDisplay : ComponentBase
     public QuickSelectState QuickSelectState { get; set; } = null!;
     
     private ElementReference? _quickSelectDisplayElementReference;
+    private int _activeEntryIndex;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -27,11 +30,22 @@ public partial class QuickSelectDisplay : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private void HandleOnKeyDown()
+    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        for (int i = 0; i < 10; i++)
+        if (keyboardEventArgs.Key == "d")
         {
-            Console.WriteLine("QuickSelectDisplay HandleOnKeyDown");
+            if (_activeEntryIndex < QuickSelectState.QuickSelectItems.Length - 1)
+            {
+                _activeEntryIndex++;
+            }
+            else
+            {
+                _activeEntryIndex = 0;
+            }
+        }
+        else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE)
+        {
+            await QuickSelectState.OnItemSelectedFunc.Invoke(QuickSelectState.QuickSelectItems[_activeEntryIndex]);
         }
     }
     

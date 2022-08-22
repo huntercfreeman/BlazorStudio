@@ -6,12 +6,18 @@
      @onkeydown="HandleOnKeyDown"
      @onfocusout="HandleOnFocusOut">
      
-     @{
-          var localQuickSelectState = QuickSelectState;
+     <CascadingValue Value="_activeEntryIndex">
+          @{
+               var localQuickSelectState = QuickSelectState;
 
-          foreach (var item in localQuickSelectState.QuickSelectItems)
-          {
-               <QuickSelectDisplayEntry QuickSelectItem="item"/>
+               for (var i = 0; i < localQuickSelectState.QuickSelectItems.Length; i++)
+               {
+                    var index = i;
+                    var item = localQuickSelectState.QuickSelectItems[index];
+                    
+                    <QuickSelectDisplayEntry QuickSelectItem="@item"
+                                             EntryIndex="index" />
+               }
           }
-     }
+     </CascadingValue>
 </div>

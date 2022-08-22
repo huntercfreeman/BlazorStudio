@@ -72,15 +72,15 @@ public class FocusEffects
     [EffectMethod(typeof(FocusDialogQuickSelectDisplayAction))]
     public async Task HandleFocusDialogQuickSelectDisplayAction(IDispatcher dispatcher)
     {
-        if (true || _quickSelectStateWrap.Value.IsDisplayed)
+        if (_quickSelectStateWrap.Value.IsDisplayed)
         {
-            var registerNotificationAction = new RegisterNotificationAction(new NotificationRecord(
-                NotificationKey.NewNotificationKey(), 
-                "ERROR: Quick Select was busy",
-                _defaultErrorRenderer.GetType(),
-                null));
-
-            dispatcher.Dispatch(registerNotificationAction);
+            // var registerNotificationAction = new RegisterNotificationAction(new NotificationRecord(
+            //     NotificationKey.NewNotificationKey(), 
+            //     "ERROR: Quick Select was busy",
+            //     _defaultErrorRenderer.GetType(),
+            //     null));
+            //
+            // dispatcher.Dispatch(registerNotificationAction);
             
             return;
         }
