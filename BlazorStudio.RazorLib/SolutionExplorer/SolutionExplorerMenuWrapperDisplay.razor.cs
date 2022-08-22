@@ -5,6 +5,7 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
+using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
@@ -23,6 +24,8 @@ using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Text;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
@@ -334,7 +337,9 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
             {
-                var newFile = new AbsoluteFilePath(parentDirectoryAbsoluteFilePathString + fileName, false);
+                var newFile = new AbsoluteFilePathDotNet(parentDirectoryAbsoluteFilePathString + fileName, 
+                    false,
+                    absoluteFilePathDotNet.ProjectId);
                 
                 var solutionState = SolutionStateWrap.Value;
 
@@ -348,7 +353,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 }
                 
                 await File
-                    .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName,
+                    .AppendAllTextAsync(newFile.GetAbsoluteFilePathString(),
                         CSharpClassTemplate
                             .WithInterpolation(namespaceString, 
                                 newFile.FileNameNoExtension));
@@ -356,6 +361,52 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 await localRefreshContextMenuTarget();
 
                 Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+
+                if (newFile.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_CLASS)
+                {
+                    var syntaxTree = CSharpSyntaxTree.ParseText(await File.ReadAllTextAsync(newFile.GetAbsoluteFilePathString()));
+
+                    var document = project.Project.AddDocument(fileName, await syntaxTree.GetRootAsync());
+
+                    var nextProjectIdToProjectMap = 
+                        SolutionStateWrap.Value.ProjectIdToProjectMap
+                            .SetItem(project.Project.Id, 
+                                new IndexedProject(document.Project, project.AbsoluteFilePathDotNet));
+
+                    var nextDocumentMap =
+                        SolutionStateWrap.Value.FileAbsoluteFilePathToDocumentMap
+                            .SetItem(
+                                new AbsoluteFilePathStringValue(newFile), 
+                                new IndexedDocument(document, newFile));
+
+                    Dispatcher.Dispatch(new SetSolutionStateAction(solutionState.Solution,
+                        nextProjectIdToProjectMap,
+                        nextDocumentMap,
+                        solutionState.FileAbsoluteFilePathToAdditionalDocumentMap));
+                }
+                else
+                {
+                    var document = project.Project
+                        .AddDocument(
+                            fileName, 
+                            await File.ReadAllTextAsync(newFile.GetAbsoluteFilePathString()));
+
+                    var nextProjectIdToProjectMap = 
+                        SolutionStateWrap.Value.ProjectIdToProjectMap
+                            .SetItem(project.Project.Id, 
+                                new IndexedProject(document.Project, project.AbsoluteFilePathDotNet));
+
+                    var nextAdditionalDocumentMap =
+                        SolutionStateWrap.Value.FileAbsoluteFilePathToAdditionalDocumentMap
+                            .SetItem(
+                                new AbsoluteFilePathStringValue(newFile), 
+                                new IndexedAdditionalDocument(document, newFile));
+
+                    Dispatcher.Dispatch(new SetSolutionStateAction(solutionState.Solution,
+                        nextProjectIdToProjectMap,
+                        solutionState.FileAbsoluteFilePathToDocumentMap,
+                        nextAdditionalDocumentMap));
+                }
             },
             $"{nameof(CreateNewTemplatedFileFormOnAfterSubmitForm)}",
             false,
