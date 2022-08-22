@@ -1,5 +1,8 @@
+using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.Store.ContextCase;
+using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.QuickSelectCase;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.CommandCase.Focus;
@@ -7,10 +10,13 @@ namespace BlazorStudio.ClassLib.Store.CommandCase.Focus;
 public class FocusEffects
 {
     private readonly IState<ContextState> _contextStateWrap;
+    private readonly IState<DialogStates> _dialogStatesWrap;
 
-    public FocusEffects(IState<ContextState> contextStateWrap)
+    public FocusEffects(IState<ContextState> contextStateWrap,
+        IState<DialogStates> dialogStatesWrap)
     {
         _contextStateWrap = contextStateWrap;
+        _dialogStatesWrap = dialogStatesWrap;
     }
 
     [EffectMethod(typeof(FocusMainLayoutAction))]
@@ -34,13 +40,6 @@ public class FocusEffects
             .InvokeOnFocusRequestedEventHandler();
     }
     
-    [EffectMethod(typeof(FocusDialogDisplayAction))]
-    public async Task HandleFocusDialogDisplayAction(IDispatcher dispatcher)
-    {
-        _contextStateWrap.Value.ContextRecords[ContextFacts.DialogDisplayContext.ContextKey]
-            .InvokeOnFocusRequestedEventHandler();
-    }
-    
     [EffectMethod(typeof(FocusToolbarDisplayAction))]
     public async Task HandleFocusToolbarDisplayAction(IDispatcher dispatcher)
     {
@@ -60,5 +59,23 @@ public class FocusEffects
     {
         _contextStateWrap.Value.ContextRecords[ContextFacts.TerminalDisplayContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
+    }
+            
+    [EffectMethod(typeof(FocusDialogQuickSelectDisplayAction))]
+    public async Task HandleFocusDialogQuickSelectDisplayAction(IDispatcher dispatcher)
+    {
+        var quickSelectItems = _dialogStatesWrap.Value.List
+            .Select(x => (IQuickSelectItem) new QuickSelectItem<DialogRecord>(x.Title, x))
+            .ToImmutableArray();
+
+        var quickSelectState = new QuickSelectState
+        {
+            IsDisplayed = true,
+            QuickSelectItems = quickSelectItems,
+            OnItemSelectedFunc = (item) => Task.CompletedTask,
+            OnHoveredItemChangedFunc = (item) => Task.CompletedTask
+        };
+        
+        dispatcher.Dispatch(new SetQuickSelectStateAction(quickSelectState));
     }
 }

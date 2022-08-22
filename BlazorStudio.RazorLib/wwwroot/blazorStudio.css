@@ -103,19 +103,6 @@
     box-shadow: var(--bstudio_primary-overlay-box-shadow);
 }
 
-.bstudio_dialog-quick-select-overlay {
-    z-index: 100;
-    background-color: var(--bstudio_secondary-background-color);
-    color: var(--bstudio_secondary-font-color);
-    box-shadow: var(--bstudio_primary-overlay-box-shadow);
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    min-height: 30vh;
-    min-width: 30vw;
-}
-
 .bstudio_dialog-display-tool-bar {
     height: 2rem;
     padding: .25rem;
@@ -752,6 +739,19 @@ em {
     height: 100%;
 }
 
-.bstudio_dialog-quick-select-entry:focus {
+.bstudio_quick-select-display {
+    z-index: 100;
+    background-color: var(--bstudio_secondary-background-color);
+    color: var(--bstudio_secondary-font-color);
+    box-shadow: var(--bstudio_primary-overlay-box-shadow);
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    min-height: 30vh;
+    min-width: 30vw;
+}
+
+.bstudio_quick-select-display-entry:focus {
     background-color: var(--bstudio_primary-active-background-color);
 }

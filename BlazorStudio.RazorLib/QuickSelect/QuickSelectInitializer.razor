@@ -1,0 +1,11 @@
+@using BlazorStudio.ClassLib.Contexts
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var currentQuickSelectState = QuickSelectStateWrap.Value;
+
+    if (currentQuickSelectState.IsDisplayed)
+    {
+        <QuickSelectDisplay />
+    }
+}

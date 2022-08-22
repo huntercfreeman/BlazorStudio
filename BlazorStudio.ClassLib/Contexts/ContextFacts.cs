@@ -30,10 +30,6 @@ public static class ContextFacts
                 new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Solution Explorer", "set-focus_solution-explorer", new FocusSolutionExplorerAction())
             },
             {
-                new KeyDownEventRecord("d", "KeyD", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Dialog Display", "set-focus_dialog-display", new FocusDialogDisplayAction())
-            },
-            {
                 new KeyDownEventRecord("t", "KeyT", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Toolbar Display", "set-focus_toolbar-display", new FocusToolbarDisplayAction())
             },
@@ -44,6 +40,10 @@ public static class ContextFacts
             {
                 new KeyDownEventRecord("r", "KeyR", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Terminal Display", "set-focus_terminal-display", new FocusTerminalDisplayAction())
+            },
+            {
+                new KeyDownEventRecord("d", "KeyD", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Dialog Quick Select Display", "set-focus_dialog-quick-select-display", new FocusDialogQuickSelectDisplayAction())
             },
         }.ToImmutableDictionary()));
     
@@ -128,6 +128,18 @@ public static class ContextFacts
             {
                 new KeyDownEventRecord("a", "KeyA", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Test Terminal Display", "Test Terminal Display", () => Console.WriteLine("Test Terminal Display"))
+            }
+        }.ToImmutableDictionary()));
+    
+    public static readonly ContextRecord QuickSelectDisplayContext = new ContextRecord(
+        ContextKey.NewContextKey(), 
+        "Quick SelectDisplay",
+        "quick-select-display",
+        new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
+        {
+            {
+                new KeyDownEventRecord("a", "KeyA", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Test Quick Select Display", "Test Quick Select Display", () => Console.WriteLine("Test Quick Select Display"))
             }
         }.ToImmutableDictionary()));
 }
