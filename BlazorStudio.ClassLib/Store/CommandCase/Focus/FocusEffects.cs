@@ -64,6 +64,8 @@ public class FocusEffects
     [EffectMethod(typeof(FocusDialogQuickSelectDisplayAction))]
     public async Task HandleFocusDialogQuickSelectDisplayAction(IDispatcher dispatcher)
     {
+        Console.WriteLine("FocusEffects HandleFocusDialogQuickSelectDisplayAction");
+        
         var quickSelectItems = _dialogStatesWrap.Value.List
             .Select(x => (IQuickSelectItem) new QuickSelectItem<DialogRecord>(x.Title, x))
             .ToImmutableArray();
@@ -72,7 +74,11 @@ public class FocusEffects
         {
             IsDisplayed = true,
             QuickSelectItems = quickSelectItems,
-            OnItemSelectedFunc = (item) => Task.CompletedTask,
+            OnItemSelectedFunc = (dialogRecord) =>
+            {
+                ((DialogRecord)dialogRecord.ItemNoType).InvokeOnFocusRequestedEventHandler();
+                return Task.CompletedTask;
+            },
             OnHoveredItemChangedFunc = (item) => Task.CompletedTask
         };
         

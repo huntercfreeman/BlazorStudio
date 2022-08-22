@@ -144,10 +144,10 @@ public static class KeyboardKeyFacts
         var wasShiftF10 = (key == keyOne || key == keyTwo)  
                           && shiftWasPressed;
         
-        var wasAltSpace = (code == WhitespaceKeys.SPACE_CODE)
+        var wasAltPeriod = (key == ".")
                           && altWasPressed;
 
-        return wasShiftF10 || wasAltSpace;
+        return wasShiftF10 || wasAltPeriod;
     }
     
     public static bool CheckIsContextMenuEvent(string key, string code, bool shiftWasPressed, bool altWasPressed)

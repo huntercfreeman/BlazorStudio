@@ -752,6 +752,6 @@ em {
     min-width: 30vw;
 }
 
-.bstudio_quick-select-display-entry:focus {
+.bstudio_quick-select-display-entry.bstudio_active {
     background-color: var(--bstudio_primary-active-background-color);
 }

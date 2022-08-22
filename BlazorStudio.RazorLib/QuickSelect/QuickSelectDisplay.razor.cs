@@ -1,9 +1,17 @@
+using BlazorStudio.ClassLib.Store.QuickSelectCase;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.QuickSelect;
 
 public partial class QuickSelectDisplay : ComponentBase
 {
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    
+    [Parameter, EditorRequired]
+    public QuickSelectState QuickSelectState { get; set; } = null!;
+    
     private ElementReference? _quickSelectDisplayElementReference;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -17,5 +25,18 @@ public partial class QuickSelectDisplay : ComponentBase
         }
         
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void HandleOnKeyDown()
+    {
+        Console.WriteLine("QuickSelectDisplay HandleOnKeyDown");
+    }
+    
+    private void HandleOnFocusOut()
+    {
+        Dispatcher.Dispatch(new SetQuickSelectStateAction(QuickSelectState with
+        {
+            IsDisplayed = false
+        }));
     }
 }

@@ -1,5 +1,17 @@
 <div class="bstudio_quick-select-display bstudio_focus-display-extra-large"
      tabindex="-1"
-     @ref="_quickSelectDisplayElementReference">
-   AAAAAAAAAAAAAAAAAAAAAAAAAAa 
+     @ref="_quickSelectDisplayElementReference"
+     @onkeydown:preventDefault="true"
+     @onkeydown:stopPropagation="true"
+     @onkeydown="HandleOnKeyDown"
+     @onfocusout="HandleOnFocusOut">
+     
+     @{
+          var localQuickSelectState = QuickSelectState;
+
+          foreach (var item in localQuickSelectState.QuickSelectItems)
+          {
+               <QuickSelectDisplayEntry QuickSelectItem="item"/>
+          }
+     }
 </div>
