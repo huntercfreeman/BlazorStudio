@@ -79,16 +79,14 @@ public partial class FileSystemProvider : IFileSystemProvider
                 throw new ApplicationException($"{nameof(FileHandleMemoryMapped)} does not support directories.");
         }
 
-        public Task SaveAsync(string content, CancellationToken cancellationToken)
+        public async Task SaveAsync(string content, CancellationToken cancellationToken)
         {
-            Dispose();
+            await File.WriteAllTextAsync(
+                AbsoluteFilePath.GetAbsoluteFilePathString(), 
+                content,
+                cancellationToken);
 
-            File.WriteAllText(AbsoluteFilePath.GetAbsoluteFilePathString(), content);
-
-            //var viewStream = _memoryMappedFile.CreateViewStream();
-            //viewStream..Write(data, 0, data.Length); // write hello world
-
-            return Task.CompletedTask;
+            await Edit.ClearAsync(cancellationToken);
         }
         
         public async Task<List<string>?> ReadAsync(FileHandleReadRequest readRequest)

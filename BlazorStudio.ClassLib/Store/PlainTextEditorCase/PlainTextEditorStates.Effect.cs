@@ -445,6 +445,15 @@ public partial record PlainTextEditorStates
                                     dispatcher);
                             }
                         }
+                        else if (keyDownEventAction.KeyDownEventRecord.Key == "s")
+                        {
+                            wasKeybind = true;
+
+                            await plainTextEditor.FileHandle
+                                .SaveAsync(
+                                    plainTextEditor.GetDocumentPlainText(), 
+                                    CancellationToken.None);
+                        }
                     }
 
                     if (wasKeybind)
