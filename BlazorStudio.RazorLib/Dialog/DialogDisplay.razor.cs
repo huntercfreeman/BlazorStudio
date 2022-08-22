@@ -46,7 +46,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         if (_contextBoundary is not null)
         {
             await _contextBoundary.HandleOnFocusInAsync(null);
-            // await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         }
     }
     
