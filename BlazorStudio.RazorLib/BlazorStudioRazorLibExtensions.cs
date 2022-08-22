@@ -1,6 +1,8 @@
 using BlazorStudio.ClassLib;
 using BlazorStudio.ClassLib.Clipboard;
+using BlazorStudio.ClassLib.Renderer;
 using BlazorStudio.RazorLib.Clipboard;
+using BlazorStudio.RazorLib.Notification;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BlazorStudio.RazorLib;
@@ -11,6 +13,7 @@ public static class BlazorStudioRazorLibExtensions
     {
         return services
             .AddScoped<IClipboardProvider, TemporaryInMemoryClipboardProvider>()
+            .AddScoped<IDefaultErrorRenderer, DefaultErrorRenderer>()
             .AddBlazorStudioClassLibServices();
     }
 }

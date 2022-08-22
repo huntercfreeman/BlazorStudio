@@ -1,7 +1,9 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Contexts;
+using BlazorStudio.ClassLib.Renderer;
 using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.QuickSelectCase;
 using Fluxor;
 
@@ -11,12 +13,18 @@ public class FocusEffects
 {
     private readonly IState<ContextState> _contextStateWrap;
     private readonly IState<DialogStates> _dialogStatesWrap;
+    private readonly IState<QuickSelectState> _quickSelectStateWrap;
+    private readonly IDefaultErrorRenderer _defaultErrorRenderer;
 
     public FocusEffects(IState<ContextState> contextStateWrap,
-        IState<DialogStates> dialogStatesWrap)
+        IState<DialogStates> dialogStatesWrap,
+        IState<QuickSelectState> quickSelectStateWrap,
+        IDefaultErrorRenderer defaultErrorRenderer)
     {
         _contextStateWrap = contextStateWrap;
         _dialogStatesWrap = dialogStatesWrap;
+        _quickSelectStateWrap = quickSelectStateWrap;
+        _defaultErrorRenderer = defaultErrorRenderer;
     }
 
     [EffectMethod(typeof(FocusMainLayoutAction))]
@@ -64,7 +72,18 @@ public class FocusEffects
     [EffectMethod(typeof(FocusDialogQuickSelectDisplayAction))]
     public async Task HandleFocusDialogQuickSelectDisplayAction(IDispatcher dispatcher)
     {
-        Console.WriteLine("FocusEffects HandleFocusDialogQuickSelectDisplayAction");
+        if (true || _quickSelectStateWrap.Value.IsDisplayed)
+        {
+            var registerNotificationAction = new RegisterNotificationAction(new NotificationRecord(
+                NotificationKey.NewNotificationKey(), 
+                "ERROR: Quick Select was busy",
+                _defaultErrorRenderer.GetType(),
+                null));
+
+            dispatcher.Dispatch(registerNotificationAction);
+            
+            return;
+        }
         
         var quickSelectItems = _dialogStatesWrap.Value.List
             .Select(x => (IQuickSelectItem) new QuickSelectItem<DialogRecord>(x.Title, x))
