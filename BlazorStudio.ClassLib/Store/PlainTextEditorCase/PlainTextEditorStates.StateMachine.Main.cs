@@ -353,8 +353,7 @@ public partial record PlainTextEditorStates
         {
             var rememberPositionIndex = focusedPlainTextEditorRecord.CurrentPositionIndex;
 
-            if (!keyDownEventRecord.IsForced &&
-                focusedPlainTextEditorRecord is PlainTextEditorRecordMemoryMappedFile editorMemoryMappedFile)
+            if (!keyDownEventRecord.IsForced)
             {
                 var characterIndex = await CalculateCurrentTokenStartingCharacterIndexRespectiveToRowAsync(
                                          focusedPlainTextEditorRecord,
@@ -362,7 +361,7 @@ public partial record PlainTextEditorStates
                                          cancellationToken)
                                      + focusedPlainTextEditorRecord.CurrentTextToken.GetIndexInPlainText(true);
 
-                await editorMemoryMappedFile.FileHandle.Edit
+                await focusedPlainTextEditorRecord.FileHandle.Edit
                     .InsertAsync(focusedPlainTextEditorRecord.CurrentRowIndex,
                         characterIndex,
                         focusedPlainTextEditorRecord.UseCarriageReturnNewLine
