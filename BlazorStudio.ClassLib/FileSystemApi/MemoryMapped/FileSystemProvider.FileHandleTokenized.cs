@@ -124,6 +124,22 @@ public partial class FileSystemProvider : IFileSystemProvider
 
                     var rowBuilder = new StringBuilder();
 
+                    void AddToRows()
+                    {
+                        _physicalCharacterIndexMarkerForStartOfARow.Add(characterCounter);
+                        _virtualCharacterIndexMarkerForStartOfARow.Add(characterCounter);
+
+                        if (rowCharacterCount > PhysicalCharacterLengthOfLongestRow)
+                        {
+                            PhysicalCharacterLengthOfLongestRow = rowCharacterCount;
+                        }
+
+                        rowCharacterCount = 0;
+
+                        rows.Add(rowBuilder.ToString());
+                        rowBuilder.Clear();
+                    }
+                    
                     while (streamReader.Peek() != -1)
                     {
                         var currentCharacter = (char)streamReader.Read();
@@ -134,19 +150,13 @@ public partial class FileSystemProvider : IFileSystemProvider
 
                         if (currentCharacter == '\n')
                         {
-                            _physicalCharacterIndexMarkerForStartOfARow.Add(characterCounter);
-                            _virtualCharacterIndexMarkerForStartOfARow.Add(characterCounter);
-
-                            if (rowCharacterCount > PhysicalCharacterLengthOfLongestRow)
-                            {
-                                PhysicalCharacterLengthOfLongestRow = rowCharacterCount;
-                            }
-
-                            rowCharacterCount = 0;
-
-                            rows.Add(rowBuilder.ToString());
-                            rowBuilder.Clear();
+                            AddToRows();
                         }
+                    }
+                    
+                    if (rowBuilder.Length > 0)
+                    {
+                        AddToRows();
                     }
                 }
 
