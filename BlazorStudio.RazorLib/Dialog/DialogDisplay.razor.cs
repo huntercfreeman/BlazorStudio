@@ -151,8 +151,6 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     
     private Task HandleOnFocusInAsync(FocusEventArgs focusEventArgs)
     {
-        _contextBoundary.DispatchSetActiveContextStatesAction(new());
-
         var dialogStates = DialogStatesWrap.Value;
 
         if (dialogStates.DialogKeyWithOverridenZIndex is not null &&

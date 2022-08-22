@@ -1,9 +1,11 @@
 ﻿using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.RazorLib.ContextCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Dialog;
 

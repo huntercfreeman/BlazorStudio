@@ -136,21 +136,26 @@ public static class KeyboardKeyFacts
                && keyDownEventRecord.ShiftWasPressed;
     }
     
-    public static bool CheckIsAlternateContextMenuEvent(string key, bool shiftWasPressed)
+    public static bool CheckIsAlternateContextMenuEvent(string key, string code, bool shiftWasPressed, bool altWasPressed)
     {
         string keyOne = "F10";
         string keyTwo = "f10";
 
-        return (key == keyOne || key == keyTwo)
-               && shiftWasPressed;
+        var wasShiftF10 = (key == keyOne || key == keyTwo)  
+                          && shiftWasPressed;
+        
+        var wasAltSpace = (code == WhitespaceKeys.SPACE_CODE)
+                          && altWasPressed;
+
+        return wasShiftF10 || wasAltSpace;
     }
     
-    public static bool CheckIsContextMenuEvent(string key, bool shiftWasPressed)
+    public static bool CheckIsContextMenuEvent(string key, string code, bool shiftWasPressed, bool altWasPressed)
     {
         string keyOne = "ContextMenu";
 
         return key == keyOne ||
-               CheckIsAlternateContextMenuEvent(key, shiftWasPressed);
+               CheckIsAlternateContextMenuEvent(key, code, shiftWasPressed, altWasPressed);
     }
 
     public static bool IsMovementKey(KeyDownEventRecord onKeyDownEventArgs)

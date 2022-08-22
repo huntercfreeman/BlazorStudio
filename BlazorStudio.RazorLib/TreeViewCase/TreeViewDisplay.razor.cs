@@ -418,7 +418,7 @@ public partial class TreeViewDisplay<T>
             }
             default:
             {
-                if (KeyboardKeyFacts.CheckIsContextMenuEvent(customKeyDown.Key, customKeyDown.ShiftWasPressed))
+                if (KeyboardKeyFacts.CheckIsContextMenuEvent(customKeyDown.Key, customKeyDown.Code, customKeyDown.ShiftWasPressed, customKeyDown.AltWasPressed))
                 {
                     HandleOnContextMenu(null);
                 }

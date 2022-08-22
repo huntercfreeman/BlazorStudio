@@ -1,11 +1,10 @@
 ﻿@using BlazorStudio.ClassLib.Contexts
 
-<ContextBoundary @ref="_contextBoundary"
+<ContextBoundary ContextKey="ContextFacts.DialogDisplayContext.ContextKey"
+                 OnFocusIn="HandleOnFocusInAsync"
                  CssClassString="bstudio_dialog-display bstudio_focus-display-large"
                  CssStyleString="@CssStyleString"
-                 OnFocusIn="HandleOnFocusInAsync"
-                 ContextKey="ContextFacts.DialogDisplayContext.ContextKey"
-                 IgnoreFocusRequests="true">
+                 @ref="_contextBoundary">
     @if (DialogRecord.IsTransformable)
     {
         <BlazorStudio.RazorLib.Transformable.TransformableDisplay @ref="_transformableDisplay"
@@ -51,5 +50,4 @@
             </CascadingValue>
         </ShouldRenderBoundary>
     </div>
-
 </ContextBoundary>

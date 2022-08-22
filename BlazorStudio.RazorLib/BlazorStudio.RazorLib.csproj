@@ -57,6 +57,7 @@
     <Folder Include="Drag\" />
     <Folder Include="Dropdown\" />
     <Folder Include="NewDotNetSolution\" />
+    <Folder Include="QuickSelect" />
   </ItemGroup>
 
   <ItemGroup>

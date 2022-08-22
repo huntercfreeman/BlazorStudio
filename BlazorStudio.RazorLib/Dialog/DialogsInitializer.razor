@@ -1,4 +1,5 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+﻿@using BlazorStudio.ClassLib.Contexts
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @{
     var dialogStates = DialogStatesWrap.Value;
@@ -7,10 +8,10 @@
     {
         if (!dialog.IsMinimized)
         {
-            <DialogDisplay @key="dialog.DialogKey" 
-                           DialogRecord="dialog" />
+            <DialogDisplay @key="dialog.DialogKey"
+                           DialogRecord="dialog"/>
         }
     }
 }
 
-<DialogQuickSelectOverlay />
+<DialogQuickSelectOverlayWrapper />
