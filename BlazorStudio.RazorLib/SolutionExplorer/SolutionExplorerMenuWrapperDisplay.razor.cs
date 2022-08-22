@@ -283,7 +283,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         },
                         {
                             nameof(DeleteFileForm.OnAfterSubmitForm),
-                            new Action<AbsoluteFilePathDotNet>(DeleteFileFormOnAfterSubmitForm)
+                            new Action<IAbsoluteFilePath>((x) => DeleteFileFormOnAfterSubmitForm((AbsoluteFilePathDotNet)x))
                         },
                         {
                             nameof(DeleteFileForm.OnAfterCancelForm),
