@@ -106,7 +106,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
             {
                 Item = np,
                 IsExpandable = true,
-                TitleDisplay = np.Title,
+                MarkupStringTitleDisplay = (MarkupString)np.Title,
                 NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.NugetPackage
             }).ToList();
     }
@@ -117,21 +117,21 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         
         switch (nugetPackageManagerTreeViewEntry.NugetPackageManagerTreeViewEntryKind)
         {
-            case NugetPackageManagerTreeViewEntryKind.StringValue:
+            case NugetPackageManagerTreeViewEntryKind.MarkupStringValue:
                 break;
-            case NugetPackageManagerTreeViewEntryKind.WrappedStringValue:
-                var wrappedStringValue = (WrappedStringValue)nugetPackageManagerTreeViewEntry.Item;
+            case NugetPackageManagerTreeViewEntryKind.WrappedMarkupStringValue:
+                var wrappedMarkupStringValue = (WrappedMarkupStringValue)nugetPackageManagerTreeViewEntry.Item;
 
                 children.Add(new NugetPackageManagerTreeViewEntry
                     {
-                        Item = wrappedStringValue.StringValue,
+                        Item = wrappedMarkupStringValue.MarkupStringValue,
                         IsExpandable = true,
-                        TitleDisplay = wrappedStringValue.StringValue,
-                        NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+                        MarkupStringTitleDisplay = wrappedMarkupStringValue.MarkupStringValue,
+                        NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
                     });
                 
                 break;
-            case NugetPackageManagerTreeViewEntryKind.StringValueEnumerable:
+            case NugetPackageManagerTreeViewEntryKind.MarkupStringValueEnumerable:
                 var stringValueEnumerable = (IEnumerable<string>)nugetPackageManagerTreeViewEntry.Item;
 
                 children.AddRange(stringValueEnumerable
@@ -139,8 +139,8 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
                     {
                         Item = x,
                         IsExpandable = false,
-                        TitleDisplay = x,
-                        NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+                        MarkupStringTitleDisplay = (MarkupString)x,
+                        NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
                     }));
                 
                 break;
@@ -151,24 +151,24 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
                 {
                     Item = nugetPackageVersion.Downloads,
                     IsExpandable = false,
-                    TitleDisplay = $"Downloads: {nugetPackageVersion.Downloads:N0}",
-                    NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+                    MarkupStringTitleDisplay = (MarkupString)$"Downloads: {nugetPackageVersion.Downloads:N0}",
+                    NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
                 });
                 
                 children.Add(new NugetPackageManagerTreeViewEntry
                 {
                     Item = nugetPackageVersion.Version,
                     IsExpandable = false,
-                    TitleDisplay = $"Version: {nugetPackageVersion.Version}",
-                    NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+                    MarkupStringTitleDisplay = (MarkupString)$"Version: {nugetPackageVersion.Version}",
+                    NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
                 });
                 
                 children.Add(new NugetPackageManagerTreeViewEntry
                 {
                     Item = nugetPackageVersion.AtId,
                     IsExpandable = false,
-                    TitleDisplay = $"@id: {nugetPackageVersion.AtId}",
-                    NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+                    MarkupStringTitleDisplay = (MarkupString)$"@id: {nugetPackageVersion.AtId}",
+                    NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
                 });
                 
                 break;
@@ -180,7 +180,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
                     {
                         Item = x,
                         IsExpandable = false,
-                        TitleDisplay = x.Version,
+                        MarkupStringTitleDisplay = (MarkupString)x.Version,
                         NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.NugetPackageVersion
                     }));
                 
@@ -225,95 +225,95 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         {
             Item = nugetPackageRecord.Authors,
             IsExpandable = false,
-            TitleDisplay = "Authors",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValueEnumerable
+            MarkupStringTitleDisplay = (MarkupString)"Authors",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValueEnumerable
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
-            Item = new WrappedStringValue { StringValue = nugetPackageRecord.Description },
+            Item = new WrappedMarkupStringValue { MarkupStringValue = (MarkupString)nugetPackageRecord.Description },
             IsExpandable = false,
-            TitleDisplay = "Description",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.WrappedStringValue
+            MarkupStringTitleDisplay = (MarkupString)"Description",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.WrappedMarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Id,
             IsExpandable = false,
-            TitleDisplay = $"Id: {nugetPackageRecord.Id}",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+            MarkupStringTitleDisplay = (MarkupString)$"Id: <em>{nugetPackageRecord.Id}</em>",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Owners,
             IsExpandable = false,
-            TitleDisplay = "Owners",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValueEnumerable
+            MarkupStringTitleDisplay = (MarkupString)"Owners",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValueEnumerable
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Registration,
             IsExpandable = false,
-            TitleDisplay = $"Registration: {nugetPackageRecord.Registration}",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+            MarkupStringTitleDisplay = (MarkupString)$"Registration: <em>{nugetPackageRecord.Registration}</em>",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
-            Item = new WrappedStringValue { StringValue = nugetPackageRecord.Summary },
+            Item = new WrappedMarkupStringValue { MarkupStringValue = (MarkupString)nugetPackageRecord.Summary },
             IsExpandable = false,
-            TitleDisplay = "Summary",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.WrappedStringValue
+            MarkupStringTitleDisplay = (MarkupString)"Summary",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.WrappedMarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Tags,
             IsExpandable = false,
-            TitleDisplay = "Tags",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValueEnumerable
+            MarkupStringTitleDisplay = (MarkupString)"Tags",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValueEnumerable
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Title,
             IsExpandable = false,
-            TitleDisplay = $"Title: {nugetPackageRecord.Title}",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+            MarkupStringTitleDisplay = (MarkupString)$"Title: <em>{nugetPackageRecord.Title}</em>",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Type,
             IsExpandable = false,
-            TitleDisplay = $"Type: {nugetPackageRecord.Type}",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+            MarkupStringTitleDisplay = (MarkupString)$"Type: <em>{nugetPackageRecord.Type}</em>",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Verified,
             IsExpandable = false,
-            TitleDisplay = $"Verified: {nugetPackageRecord.Verified}",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+            MarkupStringTitleDisplay = (MarkupString)$"Verified: <em>{nugetPackageRecord.Verified}</em>",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Version,
             IsExpandable = false,
-            TitleDisplay = $"Recent Version: {nugetPackageRecord.Version}",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+            MarkupStringTitleDisplay = (MarkupString)$"Recent Version: <em>{nugetPackageRecord.Version}</em>",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Versions,
             IsExpandable = false,
-            TitleDisplay = "Versions",
+            MarkupStringTitleDisplay = (MarkupString)"Versions",
             NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.NugetPackageVersionEnumerable
         });
         
@@ -321,40 +321,40 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         {
             Item = nugetPackageRecord.AtId,
             IsExpandable = false,
-            TitleDisplay = $"@id: {nugetPackageRecord.AtId}",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+            MarkupStringTitleDisplay = (MarkupString)$"@id: <em>{nugetPackageRecord.AtId}</em>",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.IconUrl,
             IsExpandable = false,
-            TitleDisplay = $"IconUrl: {nugetPackageRecord.IconUrl}",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+            MarkupStringTitleDisplay = (MarkupString)$"IconUrl: <a href='{nugetPackageRecord.IconUrl}'>{nugetPackageRecord.IconUrl}</a>",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.LicenseUrl,
             IsExpandable = false,
-            TitleDisplay = $"LicenseUrl: {nugetPackageRecord.LicenseUrl}",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+            MarkupStringTitleDisplay = (MarkupString)$"LicenseUrl: <a href='{nugetPackageRecord.LicenseUrl}'>{nugetPackageRecord.LicenseUrl}</a>",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.ProjectUrl,
             IsExpandable = false,
-            TitleDisplay = $"ProjectUrl: {nugetPackageRecord.ProjectUrl}",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+            MarkupStringTitleDisplay = (MarkupString)$"ProjectUrl: <a href='{nugetPackageRecord.ProjectUrl}'>{nugetPackageRecord.ProjectUrl}</a>",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
         });
         
         children.Add(new NugetPackageManagerTreeViewEntry
-        {
+        {  
             Item = nugetPackageRecord.TotalDownloads,
             IsExpandable = false,
-            TitleDisplay = $"Total Downloads: {nugetPackageRecord.TotalDownloads:N0}",
-            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.StringValue
+            MarkupStringTitleDisplay = (MarkupString)$"Total Downloads: <em>{nugetPackageRecord.TotalDownloads:N0}</em>",
+            NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
         });
 
         return children;
@@ -364,7 +364,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     {
         public NugetPackageManagerTreeViewEntryKind NugetPackageManagerTreeViewEntryKind { get; set; }
         public object Item { get; set; } = null!;
-        public string TitleDisplay { get; set; }
+        public MarkupString MarkupStringTitleDisplay { get; set; }
         public bool IsExpandable { get; set; }
     }
     
@@ -374,17 +374,17 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         NugetPackage,
         NugetPackageVersion,
         NugetPackageVersionEnumerable,
-        StringValue,
-        WrappedStringValue,
-        StringValueEnumerable,
+        MarkupStringValue,
+        WrappedMarkupStringValue,
+        MarkupStringValueEnumerable,
     }
     
     /// <summary>
     /// This class is used when a string's value is very large and should have its own
     /// child to hide the text until desired that it is shown.
     /// </summary>
-    private class WrappedStringValue
+    private class WrappedMarkupStringValue
     {
-        public string StringValue { get; set; }
+        public MarkupString MarkupStringValue { get; set; }
     }
 }
