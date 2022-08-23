@@ -138,7 +138,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
                     .Select(x => new NugetPackageManagerTreeViewEntry
                     {
                         Item = x,
-                        IsExpandable = false,
+                        IsExpandable = true,
                         MarkupStringTitleDisplay = (MarkupString)x,
                         NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValue
                     }));
@@ -179,7 +179,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
                     .Select(x => new NugetPackageManagerTreeViewEntry
                     {
                         Item = x,
-                        IsExpandable = false,
+                        IsExpandable = true,
                         MarkupStringTitleDisplay = (MarkupString)x.Version,
                         NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.NugetPackageVersion
                     }));
@@ -224,7 +224,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Authors,
-            IsExpandable = false,
+            IsExpandable = true,
             MarkupStringTitleDisplay = (MarkupString)"Authors",
             NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValueEnumerable
         });
@@ -232,7 +232,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = new WrappedMarkupStringValue { MarkupStringValue = (MarkupString)nugetPackageRecord.Description },
-            IsExpandable = false,
+            IsExpandable = true,
             MarkupStringTitleDisplay = (MarkupString)"Description",
             NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.WrappedMarkupStringValue
         });
@@ -248,7 +248,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Owners,
-            IsExpandable = false,
+            IsExpandable = true,
             MarkupStringTitleDisplay = (MarkupString)"Owners",
             NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValueEnumerable
         });
@@ -264,7 +264,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = new WrappedMarkupStringValue { MarkupStringValue = (MarkupString)nugetPackageRecord.Summary },
-            IsExpandable = false,
+            IsExpandable = true,
             MarkupStringTitleDisplay = (MarkupString)"Summary",
             NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.WrappedMarkupStringValue
         });
@@ -272,7 +272,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Tags,
-            IsExpandable = false,
+            IsExpandable = true,
             MarkupStringTitleDisplay = (MarkupString)"Tags",
             NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.MarkupStringValueEnumerable
         });
@@ -312,7 +312,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         children.Add(new NugetPackageManagerTreeViewEntry
         {
             Item = nugetPackageRecord.Versions,
-            IsExpandable = false,
+            IsExpandable = true,
             MarkupStringTitleDisplay = (MarkupString)"Versions",
             NugetPackageManagerTreeViewEntryKind = NugetPackageManagerTreeViewEntryKind.NugetPackageVersionEnumerable
         });
