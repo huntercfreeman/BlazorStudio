@@ -25,23 +25,4 @@ public partial class TerminalDisplay : FluxorComponent
 
     private ContextBoundary _contextBoundary = null!;
     private ElementReference _terminalDisplayElementReference;
-    
-    protected override void OnInitialized()
-    {
-        TerminalStatesWrap.StateChanged += TerminalStatesWrapOnStateChanged;
-        
-        base.OnInitialized();
-    }
-
-    private void TerminalStatesWrapOnStateChanged(object? sender, EventArgs e)
-    {
-        Dispatcher.Dispatch(new SetActiveFooterWindowKindAction(FooterWindowKind.Terminal));
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        TerminalStatesWrap.StateChanged -= TerminalStatesWrapOnStateChanged;
-        
-        base.Dispose(disposing);
-    }
 }

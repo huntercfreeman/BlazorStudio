@@ -1,4 +1,5 @@
 using BlazorStudio.ClassLib.Sequence;
+using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -10,6 +11,8 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
 {
     [Inject]
     private IState<NugetPackageManagerState> NugetPackageManagerStateWrapper { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     private SequenceKey? _previousFocusRequestedSequenceKey;
     private ElementReference? _nugetPackageManagerDisplayElementReference;

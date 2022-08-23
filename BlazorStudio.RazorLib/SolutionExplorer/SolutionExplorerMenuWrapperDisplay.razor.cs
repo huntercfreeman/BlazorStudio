@@ -9,6 +9,7 @@ using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
+using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
@@ -279,7 +280,11 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 MenuOptionKey.NewMenuOptionKey(), 
                 "Nuget Packages",
                 ImmutableList<MenuOptionRecord>.Empty, 
-                () => Dispatcher.Dispatch(new RequestFocusOnNugetPackageManagerAction()),
+                () =>
+                {
+                    Dispatcher.Dispatch(new SetActiveFooterWindowKindAction(FooterWindowKind.NugetPackageManager));
+                    Dispatcher.Dispatch(new RequestFocusOnNugetPackageManagerAction());
+                },
                 MenuOptionKind.Update);
 
             menuOptionRecords.Add(createNewTemplatedFile);

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
+using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
@@ -130,6 +131,8 @@ public class TerminalEntryEffects
                     dispatcher.Dispatch(new SetActiveTerminalEntryAction(myIndex));
                 }
 
+                dispatcher.Dispatch(new SetActiveFooterWindowKindAction(FooterWindowKind.Terminal));
+                
                 process.Start();
 
                 if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync is not null)
