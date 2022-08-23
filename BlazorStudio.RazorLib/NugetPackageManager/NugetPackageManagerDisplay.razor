@@ -56,10 +56,40 @@
 
                 <hr/>
                 
-                <div>Titles:</div>
-                foreach (var nugetPackage in _nugetPackages)
+                if (_nugetPackages.Any())
                 {
-                    <div>@nugetPackage.Title</div>
+                    <TreeViewWrapDisplay ShouldDispose="false"
+                                         TreeViewWrapKey="_nugetPackageManagerTreeViewKey"
+                                         RootItems="_rootNugetPackageManagerTreeViewEntries"
+                                         GetChildrenFunc="LoadThemesChildren"
+                                         OnEnterKeyDown="ThemeTreeViewOnEnterKeyDown"
+                                         OnSpaceKeyDown="ThemeTreeViewOnSpaceKeyDown"
+                                         OnDoubleClick="ThemeTreeViewOnDoubleClick"
+                                         IsExpandable="nugetPackageManagerTreeViewEntry => nugetPackageManagerTreeViewEntry.IsExpandable">
+    
+                        <ItemRenderFragment Context="nugetPackageManagerTreeViewEntry">
+                            @nugetPackageManagerTreeViewEntry.TitleDisplay
+                        </ItemRenderFragment>
+                    </TreeViewWrapDisplay>
+                }
+                else
+                {
+                    var localActiveQuery = _activeQueryForNugetPackages;
+                    
+                    if (localActiveQuery is not null)
+                    {
+                        <div>
+                            Querying&nbsp;<IconLoader/><br/>
+                            
+                            <em style="margin-left: 15px; border-left: 1px solid var(--bstudio_primary-border-color)">
+                                @localActiveQuery
+                            </em>
+                        </div>
+                    }
+                    else
+                    {
+                        <div>No results</div>
+                    }
                 }
             }
         }

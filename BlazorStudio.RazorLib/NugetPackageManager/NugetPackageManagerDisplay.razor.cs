@@ -7,7 +7,9 @@ using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
+using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.RazorLib.ContextCase;
+using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -33,6 +35,10 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     private string _nugetQuery = string.Empty;
     private bool _includePrerelease;
     private ImmutableArray<NugetPackageRecord> _nugetPackages = ImmutableArray<NugetPackageRecord>.Empty;
+    
+    private TreeViewWrapKey _nugetPackageManagerTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+    private List<NugetPackageManagerTreeViewEntry> _rootNugetPackageManagerTreeViewEntries = GetRootNugetPackageManagerTreeViewEntries();
+    private string? _activeQueryForNugetPackages;
 
     private NugetPackageManagerQuery BuiltNugetQuery => NugetPackageManagerProvider
         .BuildQuery(_nugetQuery, _includePrerelease);
@@ -72,8 +78,67 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         
         if (keyDownEventRecord.Code == KeyboardKeyFacts.NewLineCodes.ENTER_CODE)
         {
-            _nugetPackages = await NugetPackageManagerProvider.QueryForNugetPackagesAsync(BuiltNugetQuery);
+            try
+            {
+                // Update UserInterface
+                {
+                    _activeQueryForNugetPackages = BuiltNugetQuery.Query;
+                    await InvokeAsync(StateHasChanged);
+                }
+
+                // Perform Query
+                _nugetPackages = await NugetPackageManagerProvider.QueryForNugetPackagesAsync(BuiltNugetQuery);
+            }
+            finally
+            {
+                // Update UserInterface
+                {
+                    _activeQueryForNugetPackages = null;
+                    // EventCallback will cause rerender no StateHasChanged needed
+                }
+            }
         }
+    }
+
+    private static List<NugetPackageManagerTreeViewEntry> GetRootNugetPackageManagerTreeViewEntries()
+    {
+    }
+
+    private Task<IEnumerable<NugetPackageManagerTreeViewEntry>> LoadThemesChildren(NugetPackageManagerTreeViewEntry nugetPackageManagerTreeViewEntry)
+    {
+        switch (nugetPackageManagerTreeViewEntry.NugetPackageManagerTreeViewEntryKind)
+        {
+            case NugetPackageManagerTreeViewEntryKind.StringValue:
+                break;
+            case NugetPackageManagerTreeViewEntryKind.StringValueEnumerable:
+                break;
+            case NugetPackageManagerTreeViewEntryKind.NugetPackageVersion:
+                return Task.FromResult(
+                    Array
+                        .Empty<NugetPackageManagerTreeViewEntry>()
+                        .AsEnumerable());
+            case NugetPackageManagerTreeViewEntryKind.NugetPackageVersionEnumerable:
+                break;
+            case NugetPackageManagerTreeViewEntryKind.NugetPackage:
+                var nugetPackage = (NugetPackageRecord)nugetPackageManagerTreeViewEntry.Item;
+                return Task.FromResult(
+                    nugetPackage.)
+        }
+    }
+
+    private void ThemeTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<NugetPackageManagerTreeViewEntry> treeViewKeyboardEventDto)
+    {
+        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
+    }
+
+    private void ThemeTreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<NugetPackageManagerTreeViewEntry> treeViewKeyboardEventDto)
+    {
+        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
+    }
+
+    private void ThemeTreeViewOnDoubleClick(TreeViewMouseEventDto<NugetPackageManagerTreeViewEntry> treeViewMouseEventDto)
+    {
+        treeViewMouseEventDto.ToggleIsExpanded.Invoke();
     }
 
     protected override void Dispose(bool disposing)
@@ -81,5 +146,23 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         NugetPackageManagerStateWrapper.StateChanged -= NugetPackageManagerStateWrapperOnStateChanged;
 
         base.Dispose(disposing);
+    }
+
+    private class NugetPackageManagerTreeViewEntry
+    {
+        public NugetPackageManagerTreeViewEntryKind NugetPackageManagerTreeViewEntryKind { get; set; }
+        public object Item { get; set; } = null!;
+        public string TitleDisplay { get; set; }
+        public bool IsExpandable { get; set; }
+    }
+    
+    
+    private enum NugetPackageManagerTreeViewEntryKind
+    {
+        NugetPackage,
+        NugetPackageVersion,
+        NugetPackageVersionEnumerable,
+        StringValue,
+        StringValueEnumerable,
     }
 }
