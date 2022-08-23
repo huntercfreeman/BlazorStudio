@@ -27,6 +27,34 @@
                     Active Solution:<br/>
                     <em>@localSolutionExplorerState.SolutionAbsoluteFilePath.FilenameWithExtension</em>
                 </div>
+                
+                <hr/>
+                
+                <input type="checkbox"
+                       class="bstudio_input bstudio_input-checkbox" 
+                       @onkeydown:stopPropagation="true" 
+                       @bind="_includePrerelease"/>
+                                                               
+                <text>&nbsp;Include Prerelease?</text>
+                       
+                <br/>
+                
+                <div>
+                    <input class="bstudio_input bstudio_input-text" 
+                           @bind="_nugetQuery"
+                           @bind:event="oninput"
+                           @onkeydown="HandleOnKeyDown"
+                           @onkeydown:stopPropagation="true" />
+                </div>
+                
+                <div>
+                    Query:<br/>
+                    <em style="margin-left: 15px; border-left: 1px solid var(--bstudio_primary-border-color)">
+                        @NugetPackageManagerProvider.BuildQuery(_nugetQuery, _includePrerelease).Query
+                    </em>
+                </div>
+
+                <hr/>
             }
         }
     </div>

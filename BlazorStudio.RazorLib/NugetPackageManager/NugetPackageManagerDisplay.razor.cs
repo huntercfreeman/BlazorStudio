@@ -1,4 +1,6 @@
 using BlazorStudio.ClassLib.Contexts;
+using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.NugetPackageManager;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
@@ -8,11 +10,14 @@ using BlazorStudio.RazorLib.ContextCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.NugetPackageManager;
 
 public partial class NugetPackageManagerDisplay : FluxorComponent
 {
+    [Inject]
+    private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
     [Inject]
     private IState<NugetPackageManagerState> NugetPackageManagerStateWrapper { get; set; } = null!;
     [Inject]
@@ -24,6 +29,8 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
 
     private SequenceKey? _previousFocusRequestedSequenceKey;
     private ContextBoundary? _contextBoundary;
+    private string _nugetQuery = string.Empty;
+    private bool _includePrerelease;
     
     protected override void OnInitialized()
     {
@@ -42,6 +49,21 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
                 await _contextBoundary.HandleOnFocusInAsync(null);
                 ContextFacts.NugetPackageManagerDisplayContext.InvokeOnFocusRequestedEventHandler();
             }
+        }
+    }
+    
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        var keyDownEventRecord = new KeyDownEventRecord(
+            keyboardEventArgs.Key,
+            keyboardEventArgs.Code,
+            keyboardEventArgs.CtrlKey,
+            keyboardEventArgs.ShiftKey,
+            keyboardEventArgs.AltKey);
+        
+        if (keyDownEventRecord.Code == KeyboardKeyFacts.NewLineCodes.ENTER_CODE)
+        {
+            // TODO: Send http request
         }
     }
 

@@ -19,6 +19,8 @@ namespace BlazorStudio.Photino
             appBuilder.RootComponents.Add<App>("app");
 
             appBuilder.Services.AddBlazorStudioRazorLibServices();
+            
+            appBuilder.Services.AddHttpClient();
 
             var app = appBuilder.Build();
 

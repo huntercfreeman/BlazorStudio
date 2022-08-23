@@ -1,5 +1,6 @@
 ﻿using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
+using BlazorStudio.ClassLib.NugetPackageManager;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +17,7 @@ public static class BlazorStudioClassLibExtensions
                     typeof(PlainTextEditorClassLibExtensionMethods).Assembly
                 ))
             .AddPlainTextEditorService()
-            .AddScoped<IFileSystemProvider, FileSystemProvider>();
+            .AddScoped<IFileSystemProvider, FileSystemProvider>()
+            .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>();
     }
 }
