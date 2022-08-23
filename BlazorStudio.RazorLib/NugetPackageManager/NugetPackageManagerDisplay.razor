@@ -1,15 +1,16 @@
+@using BlazorStudio.ClassLib.Contexts
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<div class="bstudio_nuget-package-manager"
-     @ref="_nugetPackageManagerDisplayElementReference"
-     tabindex="0">
-    
+<ContextBoundary @ref="_contextBoundary"
+                 CssClassString="bstudio_nuget-package-manager bstudio_focus-display-large"
+                 ContextKey="ContextFacts.NugetPackageManagerDisplayContext.ContextKey">
+
     <h5 class="bstudio_large-title" style="padding: 5px;">NugetPackageManager</h5>
-    
-    <div class="bstudio_terminal-body" style="padding: 0 5px; height: calc(100% - 2rem - 10px);">
+
+    <div class="bstudio_nuget-package-manager-body" style="padding: 0 5px; height: calc(100% - 2rem - 10px);">
         @{
             var localSolutionExplorerState = SolutionExplorerStateWrap.Value;
-    
+
             if (localSolutionExplorerState.SolutionAbsoluteFilePath is null)
             {
                 <div>
@@ -18,14 +19,15 @@
                 </div>
                 <div>
                     <BlazorStudio.RazorLib.InputFile.InputFileDialogEntryPoint/>
-                </div>            
+                </div>
             }
             else
             {
-                <div>Active Solution:<br/>
+                <div>
+                    Active Solution:<br/>
                     <em>@localSolutionExplorerState.SolutionAbsoluteFilePath.FilenameWithExtension</em>
-                </div>    
+                </div>
             }
         }
     </div>
-</div>
+</ContextBoundary>

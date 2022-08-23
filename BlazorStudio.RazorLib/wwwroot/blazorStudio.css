@@ -760,8 +760,8 @@ em {
     
 }
 
-.bstudio_nuget-package-manager:focus {
-    background-color: red;
+.bstudio_nuget-package-manager-body {
+    overflow-y: auto;
 }
 
 .bstudio_footer-window-tabs {

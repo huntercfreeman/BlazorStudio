@@ -5,6 +5,7 @@ using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
+using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 using BlazorStudio.ClassLib.Store.QuickSelectCase;
 using Fluxor;
 
@@ -105,5 +106,12 @@ public class FocusEffects
         };
         
         dispatcher.Dispatch(new SetQuickSelectStateAction(quickSelectState));
+    }
+    
+    [EffectMethod(typeof(FocusNugetPackageManagerDisplayAction))]
+    public async Task HandleFocusNugetPackageManagerDisplayAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new SetActiveFooterWindowKindAction(FooterWindowKind.NugetPackageManager));
+        dispatcher.Dispatch(new RequestFocusOnNugetPackageManagerAction());
     }
 }

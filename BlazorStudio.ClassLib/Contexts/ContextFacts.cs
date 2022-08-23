@@ -45,6 +45,10 @@ public static class ContextFacts
                 new KeyDownEventRecord("d", "KeyD", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Dialog Quick Select Display", "set-focus_dialog-quick-select-display", new FocusDialogQuickSelectDisplayAction())
             },
+            {
+                new KeyDownEventRecord("n", "KeyN", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Nuget Package Manager Display", "set-focus_nuget-package-manager-display", new FocusNugetPackageManagerDisplayAction())
+            },
         }.ToImmutableDictionary()));
     
     public static readonly ContextRecord PlainTextEditorContext = new ContextRecord(
@@ -140,6 +144,18 @@ public static class ContextFacts
             {
                 new KeyDownEventRecord("a", "KeyA", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Test Quick Select Display", "Test Quick Select Display", () => Console.WriteLine("Test Quick Select Display"))
+            }
+        }.ToImmutableDictionary()));
+    
+    public static readonly ContextRecord NugetPackageManagerDisplayContext = new ContextRecord(
+        ContextKey.NewContextKey(), 
+        "NugetPackageManagerDisplay",
+        "nuget-package-manager-display",
+        new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
+        {
+            {
+                new KeyDownEventRecord("a", "KeyA", false, false, true),
+                new CommandRecord(CommandKey.NewCommandKey(), "Test NugetPackageManager Display", "Test NugetPackageManager Display", () => Console.WriteLine("Test NugetPackageManager Display"))
             }
         }.ToImmutableDictionary()));
 }

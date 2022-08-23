@@ -1,8 +1,10 @@
+using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
+using BlazorStudio.RazorLib.ContextCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -21,7 +23,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private SequenceKey? _previousFocusRequestedSequenceKey;
-    private ElementReference? _nugetPackageManagerDisplayElementReference;
+    private ContextBoundary? _contextBoundary;
     
     protected override void OnInitialized()
     {
@@ -35,8 +37,11 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         if (_previousFocusRequestedSequenceKey is null ||
             _previousFocusRequestedSequenceKey != NugetPackageManagerStateWrapper.Value.FocusRequestedSequenceKey)
         {
-            if (_nugetPackageManagerDisplayElementReference is not null) 
-                await _nugetPackageManagerDisplayElementReference.Value.FocusAsync();
+            if (_contextBoundary is not null)
+            {
+                await _contextBoundary.HandleOnFocusInAsync(null);
+                ContextFacts.NugetPackageManagerDisplayContext.InvokeOnFocusRequestedEventHandler();
+            }
         }
     }
 
