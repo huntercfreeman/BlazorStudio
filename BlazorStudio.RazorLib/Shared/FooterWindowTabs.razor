@@ -1,0 +1,12 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_footer-window-tabs">
+    @{
+        var array = FooterWindowStateWrap.Value.GetFooterWindowTabEntries();
+
+        foreach (var footerWindowTabEntry in array)
+        {
+            <FooterWindowTabEntryDisplay FooterWindowTabEntry="footerWindowTabEntry" />
+        }
+    }
+</div>

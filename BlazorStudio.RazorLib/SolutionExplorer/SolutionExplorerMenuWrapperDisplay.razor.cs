@@ -135,7 +135,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
             DialogRecord addProjectReferenceDialog = null;
 
-            void AddProjectReferenceConfirmOnClickOverrideAction(ImmutableArray<AbsoluteFilePathDotNet> activeItems)
+            void AddProjectReferenceConfirmOnClickOverrideAction(ImmutableArray<IAbsoluteFilePath> activeItems)
             {
                 Dispatcher.Dispatch(new DisposeDialogAction(addProjectReferenceDialog));
 
@@ -187,7 +187,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 {
                     {
                         nameof(InputFileDialog.IsValidSelectionOverrideFunc),
-                        new Func<ImmutableArray<AbsoluteFilePathDotNet>, bool>(AddProjectReferenceInputIsValidOverride)
+                        AddProjectReferenceInputIsValidOverride
                     },
                     {
                         nameof(InputFileDialog.InvalidSelectionTextOverride),
@@ -195,7 +195,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     },
                     {
                         nameof(InputFileDialog.ConfirmOnClickOverrideAction),
-                        new Action<ImmutableArray<AbsoluteFilePathDotNet>>(AddProjectReferenceConfirmOnClickOverrideAction)
+                        AddProjectReferenceConfirmOnClickOverrideAction
                     }
                 }
             );
@@ -530,7 +530,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
             TimeSpan.FromSeconds(10));
     }
 
-    private bool AddProjectReferenceInputIsValidOverride(ImmutableArray<AbsoluteFilePathDotNet> activeItems)
+    private bool AddProjectReferenceInputIsValidOverride(ImmutableArray<IAbsoluteFilePath> activeItems)
     {
         return activeItems[0].ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT;
     }
