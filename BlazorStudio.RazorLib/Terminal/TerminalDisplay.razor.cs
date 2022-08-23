@@ -23,6 +23,9 @@ public partial class TerminalDisplay : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
+    private ContextBoundary _contextBoundary = null!;
+    private ElementReference _terminalDisplayElementReference;
+    
     protected override void OnInitialized()
     {
         TerminalStatesWrap.StateChanged += TerminalStatesWrapOnStateChanged;
@@ -35,6 +38,10 @@ public partial class TerminalDisplay : FluxorComponent
         Dispatcher.Dispatch(new SetActiveFooterWindowKindAction(FooterWindowKind.Terminal));
     }
 
-    private ContextBoundary _contextBoundary = null!;
-    private ElementReference _terminalDisplayElementReference;
+    protected override void Dispose(bool disposing)
+    {
+        TerminalStatesWrap.StateChanged -= TerminalStatesWrapOnStateChanged;
+        
+        base.Dispose(disposing);
+    }
 }

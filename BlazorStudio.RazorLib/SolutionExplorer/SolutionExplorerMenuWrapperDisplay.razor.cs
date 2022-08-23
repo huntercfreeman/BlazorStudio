@@ -10,6 +10,7 @@ using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
+using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
@@ -273,12 +274,20 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                             new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
                         },
                     });
+            
+            var requestFocusOnNugetPackageManager = new MenuOptionRecord(
+                MenuOptionKey.NewMenuOptionKey(), 
+                "Nuget Packages",
+                ImmutableList<MenuOptionRecord>.Empty, 
+                () => Dispatcher.Dispatch(new RequestFocusOnNugetPackageManagerAction()),
+                MenuOptionKind.Update);
 
             menuOptionRecords.Add(createNewTemplatedFile);
             menuOptionRecords.Add(createNewEmptyFile);
             menuOptionRecords.Add(createNewDirectory);
             menuOptionRecords.Add(setAsStartupProject);
             menuOptionRecords.Add(addProjectReference);
+            menuOptionRecords.Add(requestFocusOnNugetPackageManager);
         }
 
         if (contextMenuEventDto.Item.ExtensionNoPeriod != ExtensionNoPeriodFacts.C_SHARP_PROJECT)

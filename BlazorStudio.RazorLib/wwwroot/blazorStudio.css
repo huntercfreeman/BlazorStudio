@@ -760,6 +760,10 @@ em {
     
 }
 
+.bstudio_nuget-package-manager:focus {
+    background-color: red;
+}
+
 .bstudio_footer-window-tabs {
     display: flex;
     height: 2.5rem;
