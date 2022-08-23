@@ -1,0 +1,24 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using BlazorStudio.ClassLib.Store.FooterWindowCase
+@using BlazorStudio.RazorLib.Dialog
+@using BlazorStudio.RazorLib.Terminal
+
+<div style="@Dimensions.DimensionsCssString">
+    @{
+        var localFooterWindowState = FooterWindowStateWrap.Value;
+
+        switch (localFooterWindowState.ActiveFooterWindowKind)
+        {
+            case FooterWindowKind.Terminal:
+                <TerminalDisplay />
+                break;
+            case FooterWindowKind.NugetPackageManager:
+                <BlazorStudio.RazorLib.NugetPackageManager.NugetPackageManagerDisplay />
+                break;
+            case FooterWindowKind.TaskBar:
+                <DialogTaskBar />
+                break;
+        }
+    }
+</div>

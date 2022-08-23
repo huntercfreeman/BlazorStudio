@@ -86,7 +86,7 @@ public partial class BodyDisplay : ComponentBase
         }
     };
     
-    private Dimensions _terminalSectionDimensions = new Dimensions
+    private Dimensions _footerWindowDimensions = new Dimensions
     {
         DimensionsPositionKind = DimensionsPositionKind.Static,
         WidthCalc = new List<DimensionUnit>

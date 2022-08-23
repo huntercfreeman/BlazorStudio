@@ -5,6 +5,7 @@ using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Html;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.ContextCase;
+using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.ContextCase;
@@ -19,10 +20,21 @@ public partial class TerminalDisplay : FluxorComponent
 {
     [Inject]
     private IState<TerminalState> TerminalStatesWrap { get; set; } = null!;
-    
-    [Parameter, EditorRequired]
-    public Dimensions Dimensions { get; set; } = null!;
-    
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        TerminalStatesWrap.StateChanged += TerminalStatesWrapOnStateChanged;
+        
+        base.OnInitialized();
+    }
+
+    private void TerminalStatesWrapOnStateChanged(object? sender, EventArgs e)
+    {
+        Dispatcher.Dispatch(new SetActiveFooterWindowKindAction(FooterWindowKind.Terminal));
+    }
+
     private ContextBoundary _contextBoundary = null!;
     private ElementReference _terminalDisplayElementReference;
 }
