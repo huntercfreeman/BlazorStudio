@@ -50,11 +50,17 @@
                 <div>
                     Query:<br/>
                     <em style="margin-left: 15px; border-left: 1px solid var(--bstudio_primary-border-color)">
-                        @NugetPackageManagerProvider.BuildQuery(_nugetQuery, _includePrerelease).Query
+                        @BuiltNugetQuery.Query
                     </em>
                 </div>
 
                 <hr/>
+                
+                <div>Titles:</div>
+                foreach (var nugetPackage in _nugetPackages)
+                {
+                    <div>@nugetPackage.Title</div>
+                }
             }
         }
     </div>

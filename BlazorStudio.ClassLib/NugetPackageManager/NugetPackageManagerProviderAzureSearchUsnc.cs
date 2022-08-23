@@ -32,11 +32,11 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
         var query = nugetPackageManagerQuery.Query;
         
         var nugetPackages = await _httpClient
-            .GetFromJsonAsync<List<NugetPackageRecord>>(
+            .GetFromJsonAsync<NugetResponse>(
                 query, 
                 cancellationToken: cancellationToken);
 
-        return nugetPackages.ToImmutableArray();
+        return nugetPackages.Data.ToImmutableArray();
     }
     
     public NugetPackageManagerQuery BuildQuery(string query, bool includePrerelease = false)

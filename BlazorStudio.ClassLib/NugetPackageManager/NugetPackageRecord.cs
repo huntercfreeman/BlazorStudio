@@ -22,9 +22,10 @@ public record NugetPackageRecord(
     ImmutableArray<string> Owners,
     int TotalDownloads,
     bool Verified,
-    ImmutableArray<string> PackageTypes,
     ImmutableArray<NugetPackageVersionRecord> Versions)
 {
     [JsonPropertyName("@id")] 
     public string AtId { get; init; }
+    // TODO: Pull this data from the JSON but it seems to not be VITAL at this moment.
+    // public ImmutableArray<string> PackageTypes { get; init; }
 }

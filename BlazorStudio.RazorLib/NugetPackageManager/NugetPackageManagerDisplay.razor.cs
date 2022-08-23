@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.NugetPackageManager;
@@ -31,6 +32,10 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     private ContextBoundary? _contextBoundary;
     private string _nugetQuery = string.Empty;
     private bool _includePrerelease;
+    private ImmutableArray<NugetPackageRecord> _nugetPackages = ImmutableArray<NugetPackageRecord>.Empty;
+
+    private NugetPackageManagerQuery BuiltNugetQuery => NugetPackageManagerProvider
+        .BuildQuery(_nugetQuery, _includePrerelease);
     
     protected override void OnInitialized()
     {
@@ -52,8 +57,12 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         }
     }
     
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
+        // Do not accidentally send many requests
+        if (keyboardEventArgs.Repeat)
+            return;
+        
         var keyDownEventRecord = new KeyDownEventRecord(
             keyboardEventArgs.Key,
             keyboardEventArgs.Code,
@@ -63,7 +72,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         
         if (keyDownEventRecord.Code == KeyboardKeyFacts.NewLineCodes.ENTER_CODE)
         {
-            // TODO: Send http request
+            _nugetPackages = await NugetPackageManagerProvider.QueryForNugetPackagesAsync(BuiltNugetQuery);
         }
     }
 
