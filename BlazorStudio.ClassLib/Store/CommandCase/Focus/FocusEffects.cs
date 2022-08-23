@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.Renderer;
 using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.QuickSelectCase;
 using Fluxor;
@@ -65,6 +66,8 @@ public class FocusEffects
     [EffectMethod(typeof(FocusTerminalDisplayAction))]
     public async Task HandleFocusTerminalDisplayAction(IDispatcher dispatcher)
     {
+        dispatcher.Dispatch(new SetActiveFooterWindowKindAction(FooterWindowKind.Terminal));
+        
         _contextStateWrap.Value.ContextRecords[ContextFacts.TerminalDisplayContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
     }

@@ -1,6 +1,8 @@
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
+using BlazorStudio.ClassLib.Store.SolutionCase;
+using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -11,6 +13,10 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
 {
     [Inject]
     private IState<NugetPackageManagerState> NugetPackageManagerStateWrapper { get; set; } = null!;
+    [Inject]
+    private IState<SolutionState> SolutionStateWrapper { get; set; } = null!;
+    [Inject]
+    private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
