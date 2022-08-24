@@ -360,7 +360,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         return children;
     }
 
-    private class NugetPackageManagerTreeViewEntry
+    public class NugetPackageManagerTreeViewEntry
     {
         public NugetPackageManagerTreeViewEntryKind NugetPackageManagerTreeViewEntryKind { get; set; }
         public object Item { get; set; } = null!;
@@ -369,7 +369,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     }
     
     
-    private enum NugetPackageManagerTreeViewEntryKind
+    public enum NugetPackageManagerTreeViewEntryKind
     {
         NugetPackage,
         NugetPackageVersion,
@@ -383,7 +383,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     /// This class is used when a string's value is very large and should have its own
     /// child to hide the text until desired that it is shown.
     /// </summary>
-    private class WrappedMarkupStringValue
+    public class WrappedMarkupStringValue
     {
         public MarkupString MarkupStringValue { get; set; }
     }

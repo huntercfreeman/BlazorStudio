@@ -70,6 +70,12 @@
                         <ItemRenderFragment Context="nugetPackageManagerTreeViewEntry">
                             @nugetPackageManagerTreeViewEntry.MarkupStringTitleDisplay
                         </ItemRenderFragment>
+                        
+                        <OnContextMenuRenderFragment Context="contextMenuEventDto">
+                            
+                            <NugetPackageManagerMenuWrapperDisplay ContextMenuEventDto="contextMenuEventDto"/>
+
+                        </OnContextMenuRenderFragment>
                     </TreeViewWrapDisplay>
                 }
                 else
