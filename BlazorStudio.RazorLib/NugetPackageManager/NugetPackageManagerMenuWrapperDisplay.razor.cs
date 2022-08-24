@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.NugetPackageManager;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.RazorLib.TreeViewCase;
 using Microsoft.AspNetCore.Components;
@@ -15,28 +16,33 @@ public partial class NugetPackageManagerMenuWrapperDisplay : ComponentBase
         TreeViewContextMenuEventDto<NugetPackageManagerDisplay.NugetPackageManagerTreeViewEntry> contextMenuEventDto)
     {
         var menuOptionRecords = new List<MenuOptionRecord>();
-        
-        // var createNewEmptyFile = MenuOptionFacts.File
-        //     .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
-        //         new Dictionary<string, object?>()
-        //         {
-        //             {
-        //                 nameof(CreateNewFileForm.ParentDirectory),
-        //                 contextMenuEventDto.Item
-        //             },
-        //             {
-        //                 nameof(CreateNewFileForm.OnAfterSubmitForm),
-        //                 new Action<string, string, bool>((parentDirectoryAbsoluteFilePathString, filename, _) => 
-        //                     CreateNewEmptyFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
-        //                         filename, 
-        //                         ContextMenuEventDto.Item))
-        //             },
-        //             {
-        //                 nameof(CreateNewFileForm.OnAfterCancelForm),
-        //                 new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
-        //             },
-        //         });
-        
+
+        if (contextMenuEventDto.Item.NugetPackageManagerTreeViewEntryKind == 
+            NugetPackageManagerDisplay.NugetPackageManagerTreeViewEntryKind.NugetPackage)
+        {
+            var nugetPackageRecord = (NugetPackageRecord)contextMenuEventDto.Item.Item;
+
+            var versionStrings = nugetPackageRecord.Versions
+                .OrderByDescending(x => x.Version)
+                .Select(x => x.Version);
+
+            var childrenMenu = versionStrings
+                .Select(version => new MenuOptionRecord(
+                    MenuOptionKey.NewMenuOptionKey(),
+                    version,
+                    ImmutableList<MenuOptionRecord>.Empty,
+                    null,
+                    MenuOptionKind.Read))
+                .ToImmutableList();
+            
+            var referenceNugetPackageForm = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
+                "Add Reference",
+                childrenMenu,
+                null,
+                MenuOptionKind.Read);
+
+            menuOptionRecords.Add(referenceNugetPackageForm);
+        }
         
         return menuOptionRecords.Any()
             ? menuOptionRecords
