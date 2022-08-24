@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorLayout
+
+@using BlazorStudio.ClassLib.Contexts
 
 <PageTitle>Experiments.Server</PageTitle>
 
@@ -8,12 +10,23 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+        <BlazorStudio.RazorLib.StoreInitializerWrap/>
+        <BlazorStudio.RazorLib.PlainTextEditorInitializer InitializeFluxor="false"/>
+        
+        <div class="bstudio_theme-wrapper @ThemeStateWrap.Value.ThemeKey.KeyName"
+             style="font-size: @(FontOptionsStateWrap.Value.FontSize.Value)px;">
+            <BlazorStudio.RazorLib.ContextCase.ContextBoundary CssClassString="@CssClassString"
+                                                               CssStyleString="width: calc(100vw - 250px);"
+                                                               ContextKey="ContextFacts.GlobalContext.ContextKey">
+                <BlazorStudio.RazorLib.KeymapCase.KeymapEventListener/>
+                <BlazorStudio.RazorLib.Dialog.DialogsInitializer/>
+                <BlazorStudio.RazorLib.Notification.NotificationsInitializer/>
+                <BlazorStudio.RazorLib.QuickSelect.QuickSelectInitializer />
 
-        <article class="content px-4" style="font-size: 18px;">
-            @Body
-        </article>
+                @Body
+                
+                <BlazorStudio.RazorLib.Drag.DragDisplay/>
+            </BlazorStudio.RazorLib.ContextCase.ContextBoundary>
+        </div>
     </main>
 </div>

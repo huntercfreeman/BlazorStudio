@@ -13,6 +13,10 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<IMusicBandRepository>(provider => 
     new MusicBandRepository(seedCount: 10_000));
 
+builder.Services.AddBlazorStudioRazorLibServices();
+            
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
