@@ -93,7 +93,8 @@
                 
                 if (_nugetPackages.Any())
                 {
-                    <TreeViewWrapDisplay ShouldDispose="false"
+                    <TreeViewWrapDisplay @ref="_nugetPackagesTreeViewWrapDisplay"
+                                         ShouldDispose="false"
                                          TreeViewWrapKey="_nugetPackageManagerTreeViewKey"
                                          RootItems="GetRootNugetPackageManagerTreeViewEntries()"
                                          GetChildrenFunc="LoadThemesChildren"
@@ -117,6 +118,7 @@
                 else
                 {
                     var localActiveQuery = _activeQueryForNugetPackages;
+                    var localJsonExceptionFromQueryingNuget = _jsonExceptionFromQueryingNuget;
                     
                     if (localActiveQuery is not null)
                     {
@@ -130,7 +132,17 @@
                     }
                     else
                     {
-                        <div>No results</div>
+                        if (localJsonExceptionFromQueryingNuget is not null)
+                        {
+                            <div>ERROR:</div>
+                            <pre>
+@_jsonExceptionFromQueryingNuget.Message
+</pre>
+                        }
+                        else
+                        {
+                            <div>No results</div>
+                        }
                     }
                     
                     <div style="margin-top: 100px;" class="bstudio_nuget-package-manager-display-spacer"></div>

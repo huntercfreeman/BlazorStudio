@@ -12,8 +12,8 @@ public interface INugetPackageManagerProvider
         CancellationToken cancellationToken = default);
 
     public Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
-        NugetPackageManagerQuery nugetPackageManagerQuery,
+        INugetPackageManagerQuery nugetPackageManagerQuery,
         CancellationToken cancellationToken = default);
 
-    public NugetPackageManagerQuery BuildQuery(string query, bool includePrerelease = false);
+    public INugetPackageManagerQuery BuildQuery(string query, bool includePrerelease = false);
 }

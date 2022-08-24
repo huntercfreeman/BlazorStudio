@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Text.Json;
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.NugetPackageManager;
@@ -40,9 +41,11 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     private Project? _selectedProjectToModify;
     
     private TreeViewWrapKey _nugetPackageManagerTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+    private TreeViewWrapDisplay<NugetPackageManagerTreeViewEntry>? _nugetPackagesTreeViewWrapDisplay;
     private string? _activeQueryForNugetPackages;
+    private JsonException? _jsonExceptionFromQueryingNuget;
 
-    private NugetPackageManagerQuery BuiltNugetQuery => NugetPackageManagerProvider
+    private INugetPackageManagerQuery BuiltNugetQuery => NugetPackageManagerProvider
         .BuildQuery(_nugetQuery, _includePrerelease);
     
     protected override void OnInitialized()
@@ -109,12 +112,31 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
             {
                 // Update UserInterface
                 {
+                    _nugetPackages = ImmutableArray<NugetPackageRecord>.Empty;
+                    if (_nugetPackagesTreeViewWrapDisplay is not null)
+                    {
+                        await InvokeAsync(StateHasChanged);
+                        _nugetPackagesTreeViewWrapDisplay.Reload();
+                    }
                     _activeQueryForNugetPackages = BuiltNugetQuery.Query;
+                    _jsonExceptionFromQueryingNuget = null;
                     await InvokeAsync(StateHasChanged);
                 }
 
                 // Perform Query
-                _nugetPackages = await NugetPackageManagerProvider.QueryForNugetPackagesAsync(BuiltNugetQuery);
+                try
+                {
+                    _nugetPackages = await NugetPackageManagerProvider.QueryForNugetPackagesAsync(BuiltNugetQuery);
+                    if (_nugetPackagesTreeViewWrapDisplay is not null)
+                    {
+                        await InvokeAsync(StateHasChanged);
+                        _nugetPackagesTreeViewWrapDisplay.Reload();
+                    }
+                }
+                catch (System.Text.Json.JsonException jsonException)
+                {
+                    _jsonExceptionFromQueryingNuget = jsonException;
+                }
             }
             finally
             {

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Net.Http.Json;
 using System.Text;
+using System.Web;
 
 namespace BlazorStudio.ClassLib.NugetPackageManager;
 
@@ -26,11 +27,14 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
     }
     
     public async Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
-        NugetPackageManagerQuery nugetPackageManagerQuery, 
+        INugetPackageManagerQuery nugetPackageManagerQuery, 
         CancellationToken cancellationToken = default)
     {
         var query = nugetPackageManagerQuery.Query;
         
+        var response = await _httpClient.PostAsync(query, null);
+        var debugging = await response.Content.ReadAsStringAsync();
+
         var nugetPackages = await _httpClient
             .GetFromJsonAsync<NugetResponse>(
                 query, 
@@ -39,16 +43,18 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
         return nugetPackages.Data.ToImmutableArray();
     }
     
-    public NugetPackageManagerQuery BuildQuery(string query, bool includePrerelease = false)
+    public INugetPackageManagerQuery BuildQuery(string query, bool includePrerelease = false)
     {
         var queryBuilder = new StringBuilder(ProviderWebsiteUrlNoFormatting + "query?");
 
-        queryBuilder.Append($"q={query}");
+        queryBuilder.Append($"q={HttpUtility.UrlEncode(query)}");
         
         queryBuilder.Append('&');
         
         queryBuilder.Append($"prerelease={includePrerelease}");
         
-        return new(queryBuilder.ToString());
+        return new NugetPackageManagerQuery(queryBuilder.ToString());
     }
+    
+    private record NugetPackageManagerQuery(string Query) : INugetPackageManagerQuery;
 }

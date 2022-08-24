@@ -20,7 +20,7 @@ public record NugetPackageRecord(
     ImmutableArray<string> Tags,
     ImmutableArray<string> Authors,
     ImmutableArray<string> Owners,
-    int TotalDownloads,
+    long TotalDownloads,
     bool Verified,
     ImmutableArray<NugetPackageVersionRecord> Versions)
 {

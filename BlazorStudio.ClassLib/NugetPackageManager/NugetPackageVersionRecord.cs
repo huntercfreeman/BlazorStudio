@@ -7,7 +7,7 @@ namespace BlazorStudio.ClassLib.NugetPackageManager;
 /// </summary>
 public record NugetPackageVersionRecord(
     string Version,
-    int Downloads)
+    long Downloads)
 {
     [JsonPropertyName("@id")] 
     public string AtId { get; init; }
