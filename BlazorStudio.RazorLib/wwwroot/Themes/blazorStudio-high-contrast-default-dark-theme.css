@@ -1,10 +1,10 @@
 ﻿.bstudio_high-contrast-default-dark-theme {
-    --bstudio_primary-background-color: #1e1e1e;
+    --bstudio_primary-background-color: #2B2B2B;
     --bstudio_secondary-background-color: #2d2f34;
     --bstudio_tertiary-background-color: #071c57;
     --bstudio_title-background-color: #1e1e1e;
     --bstudio_header-footer-background-color: #292929;
-    --bstudio_primary-font-color: #d1d2ca;
+    --bstudio_primary-font-color: #D7D7D7;
     --bstudio_secondary-font-color: #d1d2ca;
     --bstudio_primary-active-font-color: #ffffff;
     --bstudio_primary-active-background-color: rgb(19 81 150);
@@ -46,12 +46,12 @@
     --pte_active-line-number-font-color: rgb(207, 124, 13);
     --pte_hover-font-color: rgb(42, 122, 211);
     --pte_active-border-color: rgb(42, 122, 211);
-    --pte_token-keyword: #D988D9;
-    --pte_token-type: #76CD69;
-    --pte_token-method-declaration: #D6D567;
-    --pte_token-parameter-declaration: #85C4E5;
-    --pte_token-argument-declaration: #85C4E5;
-    --pte_token-trivia-comment: #318323;
-    --pte_plain-text-editor-text-token-display-string-literal: #DAA277;
-    --pte_plain-text-editor-selection: #245B82;
+    --pte_token-keyword: #D78181;
+    --pte_token-type: #75A7D3;
+    --pte_token-method-declaration: #8ACF7F;
+    --pte_token-parameter-declaration: #E0ABDA;
+    --pte_token-argument-declaration: #E0ABDA;
+    --pte_token-trivia-comment: #808080;
+    --pte_plain-text-editor-text-token-display-string-literal: #DCAD6E;
+    --pte_plain-text-editor-selection: #3C5082;
 }
