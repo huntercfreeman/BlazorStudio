@@ -14,6 +14,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.RazorLib.NugetPackageManager;
 
@@ -35,6 +36,8 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     private string _nugetQuery = string.Empty;
     private bool _includePrerelease;
     private ImmutableArray<NugetPackageRecord> _nugetPackages = ImmutableArray<NugetPackageRecord>.Empty;
+
+    private Project? _selectedProjectToModify;
     
     private TreeViewWrapKey _nugetPackageManagerTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private string? _activeQueryForNugetPackages;
@@ -45,8 +48,33 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     protected override void OnInitialized()
     {
         NugetPackageManagerStateWrapper.StateChanged += NugetPackageManagerStateWrapperOnStateChanged;
+        SolutionStateWrapper.StateChanged += SolutionStateWrapperOnStateChanged;
         
         base.OnInitialized();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        // Initially select a Project
+        SolutionStateWrapperOnStateChanged(null, EventArgs.Empty);
+        
+        base.OnAfterRender(firstRender);
+    }
+
+    private void SolutionStateWrapperOnStateChanged(object? sender, EventArgs e)
+    {
+        var localSolutionState = SolutionStateWrapper.Value;
+        var localSelectedProjectToModify = _selectedProjectToModify;
+        
+        if (localSelectedProjectToModify is null || 
+            !localSolutionState.ProjectIdToProjectMap.TryGetValue(localSelectedProjectToModify.Id, out var project))
+        {
+            if (localSolutionState.ProjectIdToProjectMap.Any())
+            {
+                _selectedProjectToModify = 
+                    localSolutionState.ProjectIdToProjectMap.Values.ElementAt(0).Project;
+            }
+        }
     }
 
     private async void NugetPackageManagerStateWrapperOnStateChanged(object? sender, EventArgs e)
@@ -96,6 +124,16 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
                     // EventCallback will cause rerender no StateHasChanged needed
                 }
             }
+        }
+    }
+    
+    private void SelectedProjectToModifyChanged(ChangeEventArgs e)
+    {
+        if (e.Value is not null)
+        {
+            _selectedProjectToModify = SolutionStateWrapper.Value.ProjectIdToProjectMap
+                [ProjectId.CreateFromSerialized(Guid.Parse((string)e.Value))]
+                    .Project;
         }
     }
 
@@ -209,13 +247,6 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     private void ThemeTreeViewOnDoubleClick(TreeViewMouseEventDto<NugetPackageManagerTreeViewEntry> treeViewMouseEventDto)
     {
         treeViewMouseEventDto.ToggleIsExpanded.Invoke();
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        NugetPackageManagerStateWrapper.StateChanged -= NugetPackageManagerStateWrapperOnStateChanged;
-
-        base.Dispose(disposing);
     }
     
      private IEnumerable<NugetPackageManagerTreeViewEntry> GetNugetPackageRecordChildren(ref List<NugetPackageManagerTreeViewEntry> children,
@@ -358,6 +389,14 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         });
 
         return children;
+    }
+     
+    protected override void Dispose(bool disposing)
+    {
+        NugetPackageManagerStateWrapper.StateChanged -= NugetPackageManagerStateWrapperOnStateChanged;
+        SolutionStateWrapper.StateChanged -= SolutionStateWrapperOnStateChanged;
+
+        base.Dispose(disposing);
     }
 
     public class NugetPackageManagerTreeViewEntry

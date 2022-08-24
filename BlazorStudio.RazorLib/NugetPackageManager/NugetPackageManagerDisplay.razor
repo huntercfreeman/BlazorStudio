@@ -56,6 +56,41 @@
 
                 <hr/>
                 
+                <div>
+                    Pick Project to modify:<br/>
+                    
+                    @* 
+                        I cannot get this <select/> element to have nearly any 
+                        CSS applied therefore I am just leaving it background-color: white;
+                        
+                        Side Information:
+                            - running Operating System is Ubuntu 
+                    *@
+                    <select class="bstudio_select-element" @onchange="SelectedProjectToModifyChanged">
+                        @{
+                            var projects = SolutionStateWrapper.Value.ProjectIdToProjectMap.Values
+                                .Select(x => x.Project)
+                                .ToList();
+                            
+                            for (int i = 0; i < projects.Count; i++)
+                            {
+                                var index = i;
+                                var project = projects[index];
+                                
+                                <option value="@project.Id.Id.ToString()"
+                                        selected="@(_selectedProjectToModify is not null && _selectedProjectToModify.Id == project.Id)">
+                                    @project.Name
+                                </option>
+                            }
+                        }
+                    </select>
+                    <br/>
+                    
+                    Selected&nbsp;Project:&nbsp;<em>@(_selectedProjectToModify?.Name ?? "not yet selected")</em>
+                </div>
+
+                <hr/>
+                
                 if (_nugetPackages.Any())
                 {
                     <TreeViewWrapDisplay ShouldDispose="false"
@@ -96,10 +131,10 @@
                     {
                         <div>No results</div>
                     }
+                    
+                    <div style="margin-top: 100px;" class="bstudio_nuget-package-manager-display-spacer"></div>
                 }
             }
         }
-        
-        <div style="margin-top: 60px;" class="bstudio_nuget-package-manager-display-spacer"></div>
     </div>
 </ContextBoundary>
