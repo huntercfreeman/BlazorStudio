@@ -65,11 +65,22 @@
         <div>
             @{
                 var localContextRecords = ContextStateWrap.Value.ActiveContextRecords;
-
+                
+                <span style="margin-left: 20px;">
+                    Focus:&nbsp;
+                </span>
+                
                 for (var index = 0; index < localContextRecords.Count; index++)
                 {
                     var contextRecord = localContextRecords[index];
-                    <span>@index:&nbsp;<em>@contextRecord.DisplayName</em>|/\|</span>
+                    <span>
+                        <em>@contextRecord.DisplayName</em>
+                        
+                        @if (index < localContextRecords.Count - 1)
+                        {
+                            <text>&nbsp;->&nbsp;</text>
+                        }
+                    </span>
                 }
             }
         </div>
