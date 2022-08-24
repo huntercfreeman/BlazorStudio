@@ -131,9 +131,15 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     {
         if (e.Value is not null)
         {
-            _selectedProjectToModify = SolutionStateWrapper.Value.ProjectIdToProjectMap
-                [ProjectId.CreateFromSerialized(Guid.Parse((string)e.Value))]
-                    .Project;
+            if (SolutionStateWrapper.Value.ProjectIdToProjectMap
+                .TryGetValue(ProjectId.CreateFromSerialized(Guid.Parse((string)e.Value)), out var indexedProject))
+            {
+                _selectedProjectToModify = indexedProject.Project;
+            }
+            else
+            {
+                _selectedProjectToModify = null;
+            }
         }
     }
 
