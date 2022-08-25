@@ -52,7 +52,7 @@ else
                                 @if (_isInitialized)
                                 {
                                     @* Cursor uses css style "position: absolute" and calculates position *@
-                                    <PlainTextEditorCursorDisplay/>
+                                    <PlainTextEditorCursorDisplay MostDigitsInARowNumber="mostDigitsInARowNumber" />
                                     
                                     @* Render the 'entire' file with Virtualization techniques *@
                                     <VirtualizeCoordinateSystemExperimental @ref="_virtualizeCoordinateSystemExperimental"

@@ -68,8 +68,6 @@
 .pte_cursor-display {
     position: absolute;
     display: inline-block;
-    width: 1.5px;
-    height: calc(100% + 2px);
     background-color: var(--pte_primary-cursor-color);
     animation-name: pte_blink;
     animation-duration: 1.5s;
