@@ -19,16 +19,15 @@ window.plainTextEditor = {
 
         let cursorElementReference = document.getElementById(cursorElementId);
 
-        // cursorElementReference.scrollIntoView();
         cursorElementReference
             .scrollIntoView({
-                behavior: "smooth", 
+                behavior: "auto", 
                 block: "nearest", 
                 inline: "nearest"
             });
     },
     initializeIntersectionObserverForCursorOffscreen: function (
-        editorElementReference,
+        editorElementId,
         cursorElementId) {
         
         if (!cursorElementId) {
@@ -36,8 +35,8 @@ window.plainTextEditor = {
         }
 
         let options = {
-            root: editorElementReference,
-            rootMargin: '0px',
+            root: document.querySelector('#' + editorElementId),
+            rootMargin: '0px 0px 0px 0px',
             threshold: [
                 0, 1
             ]

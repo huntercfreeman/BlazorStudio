@@ -135,7 +135,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             {
                 await JsRuntime.InvokeVoidAsync(
                     "plainTextEditor.initializeIntersectionObserverForCursorOffscreen",
-                    _plainTextEditor,
+                    PlainTextEditorDisplayId,
                     _plainTextEditorCursorDisplay.CursorElementId);
             }
 
@@ -251,7 +251,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         {
             await JsRuntime.InvokeVoidAsync(
                 "plainTextEditor.scrollCursorIntoViewIfOutOfViewport",
-                _plainTextEditorCursorDisplay.CursorElementId);    
+                _plainTextEditorCursorDisplay.CursorElementId);
         }
     }
 
