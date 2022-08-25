@@ -66,7 +66,7 @@ window.plainTextEditor = {
         let element = document.getElementById(widthAndHeightTestId);
 
         // TODO: This is not a good way to find the width of character.
-        var characterWidth = element.children[1].children[1].children[0].offsetWidth;
+        var characterWidth = element.children[1].children[1].offsetWidth;
 
         return {
             HeightOfARow: element.offsetHeight,

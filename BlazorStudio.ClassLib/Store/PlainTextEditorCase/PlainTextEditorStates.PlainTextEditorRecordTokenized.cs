@@ -189,7 +189,7 @@ public partial record PlainTextEditorStates
             {
                 Tokens = row.Tokens.Add(new DefaultTextToken() with
                 {
-                    Content = "Abc Defg Hijk"
+                    Content = "0"
                 })
             };
 
