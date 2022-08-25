@@ -56,13 +56,15 @@
 }
 
 @keyframes pte_blink {
-    0% {
-        background-color: var(--pte_primary-cursor-color);
-    }
-
-    50% {
-        background-color: var(--pte_secondary-cursor-color);
-    }
+    /* When the cursor moves I need to reset the animation but I am focusing on other features first */
+   
+    /*0% {*/
+    /*    background-color: var(--pte_primary-cursor-color);*/
+    /*}*/
+    
+    /*50% {*/
+    /*    background-color: var(--pte_secondary-cursor-color);*/
+    /*}*/
 }
 
 .pte_cursor-display {
@@ -76,7 +78,7 @@
     border: none;
     overflow: hidden;
     animation-name: pte_blink;
-    animation-duration: 1.5s;
+    animation-duration: .75s;
     animation-iteration-count: infinite
 }
 

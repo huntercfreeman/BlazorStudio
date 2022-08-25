@@ -75,11 +75,15 @@ window.plainTextEditor = {
             
             'var characterWidth = row.tokens[1].children[1].offsetWidth;'
          */
-        var characterWidth = element.children[1].children[1].offsetWidth;
+        let widthOfTestToken = element.children[1].children[1].offsetWidth;
 
+        // Trying to get EXACT width the span width seemingly 
+        // is not the character width when rendering 1 character only
+        let amountOfCharactersRendered = 768;
+        
         return {
             HeightOfARow: element.offsetHeight,
-            WidthOfACharacter: characterWidth
+            WidthOfACharacter: widthOfTestToken / amountOfCharactersRendered 
         };
     },
     readClipboard: async function () {
