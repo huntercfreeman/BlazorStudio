@@ -45,8 +45,7 @@ Run the .NET Maui host.
   
 #### Visual Studio Code:
   - One can open Developer Tools in VSCode and actually look at the HTML markup of any part of the site. See the following gif:
-![Cloning the repo](/Images/RootREADME/CloneTheRepo.gif)
-
+![VSCode web developer tools](/Images/RootREADME/vscodeWebtools.gif)
 
 </details>
 
