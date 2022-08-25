@@ -1,5 +1,5 @@
 window.plainTextEditor = {
-    intersectionObserver: 0,
+    intersectionObserverMap: new Map(),
     elementByIdIsIntersecting: new Map(),
     getActiveRowId: function (plainTextEditorGuid) {
         return `pte_active-row_${plainTextEditorGuid}`;
@@ -10,50 +10,70 @@ window.plainTextEditor = {
     clearInputElement: function (inputElementReference) {
         inputElementReference.value = "";
     },
-    scrollIntoViewIfOutOfViewport: function (elementId) {
-        const value = this.elementByIdIsIntersecting.get(elementId);
+    scrollCursorIntoViewIfOutOfViewport: function (cursorElementId) {
+        const value = this.intersectionObserverMap.get(cursorElementId);
 
-        if (value.intersectionRatio >= 1) {
+        if (value.intersectionRatio === 1) {
             return;
         }
 
-        let element = document.getElementById(elementId);
-        let plainTextEditorDisplay = document.getElementById(this.getPlainTextEditorId(value.plainTextEditorGuid));
+        let cursorElementReference = document.getElementById(cursorElementId);
 
-        plainTextEditorDisplay.scrollTop = element.offsetTop - 5;
+        // cursorElementReference.scrollIntoView();
+        cursorElementReference
+            .scrollIntoView({
+                behavior: "smooth", 
+                block: "nearest", 
+                inline: "nearest"
+            });
     },
-    initializeIntersectionObserver: function () {
+    initializeIntersectionObserverForCursorOffscreen: function (
+        editorElementReference,
+        cursorElementId) {
+        
+        if (!cursorElementId) {
+            return;
+        }
+
         let options = {
+            root: editorElementReference,
             rootMargin: '0px',
             threshold: [
-                0, .25, .50, .75, 1
+                0, 1
             ]
         }
 
-        this.intersectionObserver = new IntersectionObserver((entries) => this.handleThresholdChange(entries, this.elementByIdIsIntersecting), options);
-    },
-    subscribeScrollIntoView: function (elementId, plainTextEditorGuid) {
-        this.elementByIdIsIntersecting.set(elementId, {
-            intersectionRatio: 0,
-            plainTextEditorGuid: plainTextEditorGuid
-        });
+        let intersectionObserver = new IntersectionObserver(
+            (entries) =>
+                this.handleThresholdChange(entries, this.intersectionObserverMap),
+            options);
 
-        let element = document.getElementById(elementId);
-        this.intersectionObserver.observe(element);
+        this.intersectionObserverMap.set(cursorElementId, {
+            intersectionObserver: intersectionObserver,
+            intersectionRatio: 1
+        });
+        
+        let cursorElementReference = document.getElementById(cursorElementId);
+        
+        intersectionObserver.observe(cursorElementReference);
     },
-    disposeScrollIntoView: function (elementId) {
-        let element = document.getElementById(elementId);
-        this.intersectionObserver.unobserve(element);
+    disposeIntersectionObserverForCursorOffscreen: function (cursorElementId) {
+        let intersectionObserver = this.intersectionObserverMap.get(cursorElementId);
+
+        this.intersectionObserverMap.delete(cursorElementId);
+
+        intersectionObserver.disconnect();
     },
-    handleThresholdChange: function (entries, elementByIdIsIntersecting) {
+    handleThresholdChange: function (entries, intersectionObserverMap) {
         for (let i = 0; i < entries.length; i++) {
             let currentEntry = entries[i];
-
-            let previousValue = elementByIdIsIntersecting.get(currentEntry.target.id);
-
-            elementByIdIsIntersecting.set(currentEntry.target.id, {
-                intersectionRatio: currentEntry.intersectionRatio,
-                plainTextEditorGuid: previousValue.plainTextEditorGuid
+            
+            let previousState = intersectionObserverMap
+                .get(currentEntry.target.id);
+            
+            intersectionObserverMap.set(currentEntry.target.id, {
+                intersectionObserver: previousState.intersectionObserver,
+                intersectionRatio: currentEntry.intersectionRatio
             });
         }
     },

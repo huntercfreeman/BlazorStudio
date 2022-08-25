@@ -131,6 +131,14 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     {
         if (firstRender)
         {
+            if (_plainTextEditorCursorDisplay is not null)
+            {
+                await JsRuntime.InvokeVoidAsync(
+                    "plainTextEditor.initializeIntersectionObserverForCursorOffscreen",
+                    _plainTextEditor,
+                    _plainTextEditorCursorDisplay.CursorElementId);
+            }
+
             PlainTextEditorSelectorOnSelectedValueChanged(null, null);
         }
 
@@ -238,6 +246,13 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
                 CancellationToken.None
             )
         );
+
+        if (_plainTextEditorCursorDisplay is not null)
+        {
+            await JsRuntime.InvokeVoidAsync(
+                "plainTextEditor.scrollCursorIntoViewIfOutOfViewport",
+                _plainTextEditorCursorDisplay.CursorElementId);    
+        }
     }
 
     private void OnFocusIn()
@@ -331,8 +346,15 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     {
         PlainTextEditorSelector.SelectedValueChanged -= PlainTextEditorSelectorOnSelectedValueChanged;
 
-        //_ = Task.Run(() => JsRuntime.InvokeVoidAsync("plainTextEditor.disposeScrollIntoView",
-        //    ActiveRowPositionMarkerId));
+        if (_plainTextEditorCursorDisplay is not null)
+        {
+            _ = Task.Run(async () =>
+            {
+                await JsRuntime.InvokeVoidAsync(
+                    "plainTextEditor.disposeIntersectionObserverForCursorOffscreen",
+                    _plainTextEditorCursorDisplay.CursorElementId);    
+            });
+        }
 
         if (AutomateDispose)
             Dispatcher.Dispatch(new DeconstructPlainTextEditorRecordAction(PlainTextEditorKey));
