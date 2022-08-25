@@ -69,8 +69,6 @@
     position: absolute;
     display: inline-block;
     width: 1.5px;
-    right: -1px;
-    top: -1px;
     height: calc(100% + 2px);
     background-color: var(--pte_primary-cursor-color);
     animation-name: pte_blink;
