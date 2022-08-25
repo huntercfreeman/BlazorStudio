@@ -90,10 +90,6 @@ else
                                     @*                                    MostDigitsInARowNumber="mostDigitsInARowNumber"/> *@
                                     @*     </CascadingValue> *@
                                     @* </VirtualizeCoordinateSystemExperimental> *@
-                                    
-                                    @* Cursor uses css style "position: absolute" and calculates position *@
-                                    <PlainTextEditorCursorDisplay @ref="_plainTextEditorCursorDisplay" 
-                                                                  MostDigitsInARowNumber="mostDigitsInARowNumber" />
                                 }
                                 else
                                 {
@@ -122,6 +118,10 @@ else
                                         </CascadingValue>
                                     </CascadingValue>
                                 }
+                                
+                                @* Cursor uses css style "position: absolute" and calculates position *@
+                                <PlainTextEditorCursorDisplay @ref="_plainTextEditorCursorDisplay" 
+                                                              MostDigitsInARowNumber="mostDigitsInARowNumber" />
                             </CascadingValue>
                         </CascadingValue>
                     </CascadingValue>
