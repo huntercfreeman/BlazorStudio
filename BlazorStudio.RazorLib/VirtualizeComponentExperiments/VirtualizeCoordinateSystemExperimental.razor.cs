@@ -54,6 +54,12 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     /// </summary>
     [Parameter, EditorRequired]
     public SequenceKey ItemsSequenceKey { get; set; } = null!;
+    /// <summary>
+    /// If <see cref="VirtualizeItemDimensions"/> is provided this <see cref="VirtualizeCoordinateSystemExperimental{TItem}"/>
+    /// component will not measure the dimensions itself.
+    /// </summary>
+    [Parameter]
+    public VirtualizeItemDimensions? VirtualizeItemDimensions { get; set; }
     
     private static int GetDefaultOverScanCount() => 3;
 
@@ -78,12 +84,6 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
     private VirtualizeBoundaryDisplay? _topBoundaryBlazorComponent;
     private VirtualizeBoundaryDisplay? _bottomBoundaryBlazorComponent;
 
-    private List<VirtualizeBoundaryDisplay?> GetVirtualizeBoundaryBlazorComponents() => new()
-    {
-        _topBoundaryBlazorComponent,
-        _bottomBoundaryBlazorComponent
-    };
-
     private ScrollDimensions? _scrollDimensions;
     private SequenceKey? _previousItemsSequenceKey;
     private SequenceKey? _previousDimensionsSequenceKey;
@@ -93,7 +93,15 @@ public partial class VirtualizeCoordinateSystemExperimental<TItem> : ComponentBa
 
     private VirtualizeBoundary _topVirtualizeBoundary = new(VirtualizeBoundaryKind.Top);
     private VirtualizeBoundary _bottomVirtualizeBoundary = new(VirtualizeBoundaryKind.Bottom);
+    
+    private VirtualizeItemDimensions? Dimensions => VirtualizeItemDimensions ?? _dimensions;
 
+    private List<VirtualizeBoundaryDisplay?> GetVirtualizeBoundaryBlazorComponents() => new()
+    {
+        _topBoundaryBlazorComponent,
+        _bottomBoundaryBlazorComponent
+    };
+    
     protected override async Task OnParametersSetAsync()
     {
         if (_previousDimensionsSequenceKey is not null && _previousDimensionsSequenceKey != DimensionsSequenceKey)

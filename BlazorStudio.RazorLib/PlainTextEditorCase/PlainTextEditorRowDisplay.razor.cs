@@ -55,6 +55,11 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
         : $"width: calc(100% - {(MostDigitsInARowNumber + _lineNumberMarginRightCharacterWidthCount) * RichTextEditorOptions.WidthOfACharacterInPixels}px);";
 
     private string IsActiveRowId => GetActiveRowId();
+    
+    // Ensure empty rows do not render smaller than rows containing character text
+    private string StyleCssString => GetWidthAndHeightTest
+        ? string.Empty
+        : $"height: {RichTextEditorOptions.HeightOfARowInPixels}px;";
 
     protected override bool ShouldRender()
     {

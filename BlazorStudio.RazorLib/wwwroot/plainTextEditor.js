@@ -63,27 +63,43 @@ window.plainTextEditor = {
         return element.scrollTop;
     },
     widthAndHeightTest: function (widthAndHeightTestId) {
-        let element = document.getElementById(widthAndHeightTestId);
+        let row = document.getElementById(widthAndHeightTestId);
 
-        // TODO: This is not a good way to find the width of character.
-        /*
-            As of this comment the assignment expression:
-            
-            'var characterWidth = element.children[1].children[1].offsetWidth;' 
+        let heightOfARow = row.offsetHeight;
         
-            Is in human wording:
+        // TODO: I feel like this is not a good way to find the width of character.
+        /*
+            Here I am looking at a test invisible row and getting offsetWidth
+            of the single row's single token.
             
-            'var characterWidth = row.tokens[1].children[1].offsetWidth;'
+            That single token as of this comment contains 768 characters in it
+            as the span width seemingly is not the
+            character width when rendering 1 character only
          */
-        let widthOfTestToken = element.children[1].children[1].offsetWidth;
+        let widthOfTestToken = row.children[1].children[1].offsetWidth;
 
-        // Trying to get EXACT width the span width seemingly 
-        // is not the character width when rendering 1 character only
         let amountOfCharactersRendered = 768;
         
+        let widthOfACharacter = widthOfTestToken / amountOfCharactersRendered
+        
+        /*
+            -Plain text editor html element
+                -Virtualization html element
+                    -Row html element
+                    
+            therefore psuedo code:
+                WidthOfEditor -> row.parent.parent.width
+                HEightOfEditor -> row.parent.parent.height
+         */
+        
+        let widthOfEditor = row.parentElement.parentElement.offsetWidth;
+        let heightOfEditor = row.parentElement.parentElement.offsetHeight;
+        
         return {
-            HeightOfARow: element.offsetHeight,
-            WidthOfACharacter: widthOfTestToken / amountOfCharactersRendered 
+            HeightOfARow: heightOfARow,
+            WidthOfACharacter: widthOfACharacter,
+            WidthOfEditor: widthOfEditor,
+            HeightOfEditor: heightOfEditor
         };
     },
     readClipboard: async function () {
