@@ -1,3 +1,4 @@
+using System.Net.NetworkInformation;
 using System.Text;
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.FileSystem.Classes;
@@ -21,6 +22,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.PlainTextEditorCase;
@@ -62,7 +64,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private bool _isFocused;
     private ElementReference? _plainTextEditor;
     private int _hadOnKeyDownEventCounter;
-    private VirtualizeCoordinateSystemExperimental<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualizeCoordinateSystemExperimental;
+    private Virtualize<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualize;
     private int _previousFontSize;
     private string _widthAndHeightTestId = "bstudio_pte-get-width-and-height-test";
     
@@ -156,12 +158,10 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         if (plainTextEditor.PlainTextEditorKey != _previousPlainTextEditorKey)
         {
             // Parameter changed and the VirtualizeCoordinateSystem must reset
-            if (_virtualizeCoordinateSystemExperimental is not null)
+            if (_virtualize is not null)
             {
                 _previousFontSize = 0;
-                _isInitialized = false;
                 PlainTextEditorSelectorOnSelectedValueChanged(null, null);
-                //_virtualizeCoordinateSystem.ResetState();
             }
         }
 
@@ -184,13 +184,20 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         if (_previousFontSize != currentPlainTextEditor.RichTextEditorOptions.FontSizeInPixels)
         {
-            _widthAndHeightTestResult = await JsRuntime.InvokeAsync<WidthAndHeightTestResult>(
-                "plainTextEditor.widthAndHeightTest",
-                    _widthAndHeightTestId);
+            // rerender and measure the new character width / row height values
+            {
+                _isInitialized = false;
+            
+                await InvokeAsync(StateHasChanged);
+            
+                _widthAndHeightTestResult = await JsRuntime.InvokeAsync<WidthAndHeightTestResult>(
+                    "plainTextEditor.widthAndHeightTest",
+                    _widthAndHeightTestId);    
+
+                _isInitialized = true;
+            }
 
             _previousSequenceKeyShouldRender = null;
-
-            _isInitialized = true;
 
             _previousFontSize = currentPlainTextEditor.RichTextEditorOptions.FontSizeInPixels;
 
@@ -198,16 +205,11 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
                 currentPlainTextEditor.RichTextEditorOptions with
                 {
                     WidthOfACharacterInPixels = _widthAndHeightTestResult.WidthOfACharacter,
-                    HeightOfARowInPixels = _widthAndHeightTestResult.HeightOfARow
+                    HeightOfARowInPixels = _widthAndHeightTestResult.HeightOfARow,
+                    WidthOfEditorInPixels = _widthAndHeightTestResult.WidthOfEditor,
+                    HeightOfEditorInPixels = _widthAndHeightTestResult.HeightOfEditor
                 }));
         }
-    }
-
-    private async Task OnAfterFirstRenderCallbackFunc()
-    {
-        //await JsRuntime.InvokeVoidAsync("plainTextEditor.subscribeScrollIntoView",
-        //    ActiveRowPositionMarkerId,
-        //    PlainTextEditorKey.Guid);
     }
 
     private async Task OnKeyDown(KeyboardEventArgs e)
@@ -330,8 +332,10 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     public class WidthAndHeightTestResult
     {
-        public double HeightOfARow { get; set; }
         public double WidthOfACharacter { get; set; }
+        public double HeightOfARow { get; set; }
+        public double WidthOfEditor { get; set; }
+        public double HeightOfEditor { get; set; }
     }
 
     private ICollection<(int Index, IPlainTextEditorRow PlainTextEditorRow)> GetItems(IPlainTextEditor currentPlainTextEditor)
@@ -339,5 +343,40 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         return currentPlainTextEditor.Rows
             .Select((row, index) => (index, row))
             .ToArray();
+    }
+
+    private VirtualizeItemDimensions GetVirtualizeItemDimensions(IPlainTextEditor currentPlainTextEditor)
+    {
+        return new VirtualizeItemDimensions(
+            currentPlainTextEditor.RichTextEditorOptions.WidthOfACharacterInPixels,
+            currentPlainTextEditor.RichTextEditorOptions.HeightOfARowInPixels,
+            currentPlainTextEditor.RichTextEditorOptions.WidthOfEditorInPixels,
+            currentPlainTextEditor.RichTextEditorOptions.HeightOfEditorInPixels);
+    }
+
+    private async ValueTask<ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>> RowItemsProvider(
+        ItemsProviderRequest request)
+    {
+        var currentPlainTextEditor = PlainTextEditorSelector.Value;
+
+        (int Index, IPlainTextEditorRow PlainTextEditorRow)[] rowTuples =
+            Array.Empty<(int Index, IPlainTextEditorRow PlainTextEditorRow)>();
+        
+        var numberOfRows = Math.Min(request.Count, currentPlainTextEditor.Rows.Count - request.StartIndex);
+
+        if (numberOfRows > 0)
+        {
+            rowTuples = currentPlainTextEditor.Rows
+                .Select((row, index) => (index, row))
+                .Skip(request.StartIndex)
+                .Take(numberOfRows)
+                .ToArray();
+
+            return new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
+                currentPlainTextEditor.FileHandle.VirtualRowCount);
+        }
+
+        return new ItemsProviderResult<(int Index, IPlainTextEditorRow PlainTextEditorRow)>(rowTuples,
+            0);
     }
 }
