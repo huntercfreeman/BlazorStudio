@@ -6,6 +6,11 @@
 @using BlazorStudio.RazorLib.VirtualizeComponentExperiments
 @inherits FluxorComponent
 
+<button class="btn btn-primary"
+        @onclick="FocusCursorAsync">
+    FocusCursorAsync @_focusCursorAsyncClickCount
+</button>
+
 @if (PlainTextEditorSelector.Value is null)
 {
     @* This div should never display *@
@@ -68,7 +73,8 @@ else
                                     </VirtualizeCoordinateSystemExperimental>
                                     
                                     @* Cursor uses css style "position: absolute" and calculates position *@
-                                    <PlainTextEditorCursorDisplay MostDigitsInARowNumber="mostDigitsInARowNumber" />
+                                    <PlainTextEditorCursorDisplay @ref="_plainTextEditorCursorDisplay" 
+                                                                  MostDigitsInARowNumber="mostDigitsInARowNumber" />
                                 }
                                 else
                                 {

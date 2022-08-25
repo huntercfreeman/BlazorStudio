@@ -16,6 +16,9 @@ public partial class PlainTextEditorCursorDisplay : ComponentBase
     public int MostDigitsInARowNumber { get; set; }
 
     private int _lineNumberMarginRight = 1;
+
+    private ElementReference? _textAreaElementReference;
+    private ElementReference? _spanElementReference;
     
     private int LineNumberOffset => MostDigitsInARowNumber + _lineNumberMarginRight;
     
@@ -26,4 +29,17 @@ public partial class PlainTextEditorCursorDisplay : ComponentBase
     private string GetWidthHeightCssStyling =>
         $"width: 1.5px;" +
         $"height: {RichTextEditorOptions.HeightOfARowInPixels}px;";
+
+    public async Task FocusAsync()
+    {
+        if (_textAreaElementReference is not null)
+        {
+            await _textAreaElementReference.Value.FocusAsync();
+        }
+    }
+
+    private async Task HandleOnKeyDown()
+    {
+        await FocusAsync();
+    }
 }
