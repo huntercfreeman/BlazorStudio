@@ -4,10 +4,10 @@
 <div id="@IsActiveRowId"
      class="pte_plain-text-editor-row-display @IsActiveCss"
      title="@RowIndex"
-     @onclick="DispatchPlainTextEditorOnClickAction"
-     @onmouseover="SelectTextOnMouseOverAsync">
-    <PlainTextEditorLineNumberDisplay MostDigitsInARowNumber="MostDigitsInARowNumber" />
+     @onclick="DispatchPlainTextEditorOnClickAction">
     
+    <PlainTextEditorLineNumberDisplay MostDigitsInARowNumber="MostDigitsInARowNumber"/>
+
     <div class="pte_plain-text-editor-row-display-body"
          style="@WidthStyleCss">
 
@@ -16,7 +16,7 @@
             // not change while looping over tokens
             // by making a local reference to it.
             var currentPlainTextEditorRow = PlainTextEditorRow;
-            
+
             // The first character is always a 'fake' StartOfRowToken and should not be counted.
             var runningTotalOfCharacters = 0;
 
@@ -27,9 +27,9 @@
                 var token = currentPlainTextEditorRow.Tokens[tokenIndex];
 
                 var localRunningTotalOfCharacters = runningTotalOfCharacters;
-                
+
                 runningTotalOfCharacters += token.PlainText.Length;
-                
+
                 <CascadingValue Name="TokenIndex" Value="tokenIndex">
                     <TextTokenDisplay @key="token.Key"
                                       TextToken="token"

@@ -66,11 +66,24 @@ window.plainTextEditor = {
         let element = document.getElementById(widthAndHeightTestId);
 
         // TODO: This is not a good way to find the width of character.
-        var characterWidth = element.children[1].children[1].children[0].offsetWidth;
+        /*
+            As of this comment the assignment expression:
+            
+            'var characterWidth = element.children[1].children[1].offsetWidth;' 
+        
+            Is in human wording:
+            
+            'var characterWidth = row.tokens[1].children[1].offsetWidth;'
+         */
+        let widthOfTestToken = element.children[1].children[1].offsetWidth;
 
+        // Trying to get EXACT width the span width seemingly 
+        // is not the character width when rendering 1 character only
+        let amountOfCharactersRendered = 768;
+        
         return {
             HeightOfARow: element.offsetHeight,
-            WidthOfACharacter: characterWidth
+            WidthOfACharacter: widthOfTestToken / amountOfCharactersRendered 
         };
     },
     readClipboard: async function () {

@@ -72,6 +72,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private SequenceKey? _previousSequenceKeyShouldRender;
     private PlainTextEditorKey? _previousPlainTextEditorKey;
 
+    private PlainTextEditorCursorDisplay? _plainTextEditorCursorDisplay;
+
     private Dimensions _dimensionsOfCoordinateSystemViewport = new()
     {
         DimensionsPositionKind = DimensionsPositionKind.Relative,
@@ -103,7 +105,8 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private string ActiveRowId => $"pte_active-row_{PlainTextEditorKey.Guid}";
     private bool _isInitialized;
     private WidthAndHeightTestResult _widthAndHeightTestResult;
-    
+    private int _focusCursorAsyncClickCount;
+
     private string IsFocusedCssClass => _isFocused
         ? "pte_focused"
         : "";
@@ -300,6 +303,16 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private void StopSelectingText()
     {
         _isMouseSelectingText = false;
+    }
+
+    private async Task FocusCursorAsync()
+    {
+        _focusCursorAsyncClickCount++;
+        
+        if (_plainTextEditorCursorDisplay is not null)
+        {
+            await _plainTextEditorCursorDisplay.FocusAsync();
+        }
     }
     
     protected override void Dispose(bool disposing)

@@ -3,6 +3,7 @@ using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileSystemApi;
+using BlazorStudio.ClassLib.Html;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.KeyDownEventCase;
@@ -185,11 +186,41 @@ public partial record PlainTextEditorStates
         {
             var row = new PlainTextEditorRow(null);
 
+            var contentBuilder = new StringBuilder();
+
+            var repeatCount = 12;
+
+            // 26 is the length of the 'HTML RENDERED' character content
+            var letters = "abcdefghijklmnopqrstuvwxyz";
+            // 10 is the length of the 'HTML RENDERED' character content
+            var numbers = "0123456789";
+            // 28 is the length of the 'HTML RENDERED' character content
+            var punctuation = "`~-_=+\\|'\";:/?.>,<!@#$%^&*()".EscapeHtml();
+            
+            /*
+             * width of character: 10.84375 when 1 repeat
+             * width of character: 10.8359375 when 2 repeat
+             * width of character: 10.8359375 when 6 repeat
+             * width of character: 10.837239583333334 when 12 repeat
+             * width of character: 10.836875 when 25 repeat
+             * width of character: 10.8365625 when 50 repeat
+             * width of character: 10.83734375 when 100 repeat
+             */
+            
+            
+            for (int i = 0; i < repeatCount; i++)
+            {
+                contentBuilder.Append(letters);
+                contentBuilder.Append(numbers);
+                contentBuilder.Append(punctuation);    
+            }
+            
             row = row with
             {
                 Tokens = row.Tokens.Add(new DefaultTextToken() with
                 {
-                    Content = "Abc Defg Hijk"
+                    // Added an extra 'q'
+                    Content = contentBuilder.ToString()
                 })
             };
 

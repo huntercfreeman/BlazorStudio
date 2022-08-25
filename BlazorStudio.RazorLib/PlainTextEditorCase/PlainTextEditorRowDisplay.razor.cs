@@ -43,7 +43,8 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
     private bool _previousIsMouseSelectingText;
     private bool _previousShouldDisplay;
     private int _previousCurrentRowIndex;
-
+    private int _lineNumberMarginRightCharacterWidthCount = 1;
+    
     private string IsActiveCss => PlainTextEditorCurrentRowIndex == RowIndex
         ? "pte_active"
         : string.Empty;
@@ -51,7 +52,7 @@ public partial class PlainTextEditorRowDisplay : FluxorComponent
     
     private string WidthStyleCss => GetWidthAndHeightTest
         ? $"width: calc(100% - {MostDigitsInARowNumber}ch);"
-        : $"width: calc(100% - {RichTextEditorOptions.WidthOfACharacterInPixels}px);";
+        : $"width: calc(100% - {(MostDigitsInARowNumber + _lineNumberMarginRightCharacterWidthCount) * RichTextEditorOptions.WidthOfACharacterInPixels}px);";
 
     private string IsActiveRowId => GetActiveRowId();
 
