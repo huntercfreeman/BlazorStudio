@@ -65,7 +65,7 @@ else
                                                 OverscanCount="6"
                                                 ItemsProvider="RowItemsProvider"
                                                 ItemSize="(float) currentPlainTextEditor.RichTextEditorOptions.HeightOfARowInPixels">
-                            
+                                    
                                         @* ChildContent RenderFragment is foreach row *@
                                         <CascadingValue Name="RowIndex" Value="rowTuple.Index">
                                             <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"

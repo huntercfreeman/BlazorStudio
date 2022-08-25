@@ -41,7 +41,7 @@ public partial class PlainTextEditorExperiments : FluxorComponent
     private ImmutableArray<IAbsoluteFilePath> _testingFiles = new IAbsoluteFilePath[]
     {
         new AbsoluteFilePath("/home/hunter/Documents/TestData/PlainTextEditorStates.Effect.cs", false),
-        new AbsoluteFilePath("/home/hunter/Documents/TestData/main.c", false),
+        // new AbsoluteFilePath("/home/hunter/Documents/TestData/main.c", false),
     }.ToImmutableArray();
 
     protected override Task OnAfterRenderAsync(bool firstRender)
