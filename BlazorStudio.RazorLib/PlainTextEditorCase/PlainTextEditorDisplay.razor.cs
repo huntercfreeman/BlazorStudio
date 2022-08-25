@@ -65,6 +65,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private ElementReference? _plainTextEditor;
     private int _hadOnKeyDownEventCounter;
     private Virtualize<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualize;
+    private VirtualizeCoordinateSystemExperimental<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualizeCoordinateSystemExperimental;
     private int _previousFontSize;
     private string _widthAndHeightTestId = "bstudio_pte-get-width-and-height-test";
     
@@ -171,7 +172,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
         }
 
         _previousPlainTextEditorKey = plainTextEditor.PlainTextEditorKey;
-
+        
         return shouldRender;
     }
 
@@ -187,6 +188,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
             // rerender and measure the new character width / row height values
             {
                 _isInitialized = false;
+                _previousSequenceKeyShouldRender = null;
             
                 await InvokeAsync(StateHasChanged);
             
@@ -196,10 +198,13 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
                 _isInitialized = true;
             }
-
-            _previousSequenceKeyShouldRender = null;
-
+            
             _previousFontSize = currentPlainTextEditor.RichTextEditorOptions.FontSizeInPixels;
+            
+            if (_virtualize is not null)
+                await _virtualize.RefreshDataAsync();
+            
+            _previousSequenceKeyShouldRender = null;
 
             Dispatcher.Dispatch(new PlainTextEditorSetOptionsAction(currentPlainTextEditor.PlainTextEditorKey,
                 currentPlainTextEditor.RichTextEditorOptions with
@@ -210,6 +215,11 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
                     HeightOfEditorInPixels = _widthAndHeightTestResult.HeightOfEditor
                 }));
         }
+        
+        if (_virtualize is not null)
+            await _virtualize.RefreshDataAsync();
+            
+        _previousSequenceKeyShouldRender = null;
     }
 
     private async Task OnKeyDown(KeyboardEventArgs e)
