@@ -69,6 +69,12 @@
     position: absolute;
     display: inline-block;
     background-color: var(--pte_primary-cursor-color);
+    margin: 0;
+    padding: 0;
+    outline: none !important;
+    resize: none;
+    border: none;
+    overflow: hidden;
     animation-name: pte_blink;
     animation-duration: 1.5s;
     animation-iteration-count: infinite

@@ -51,9 +51,6 @@ else
                             <CascadingValue Name="FocusPlainTextEditor" Value="new Action(FocusPlainTextEditor)">
                                 @if (_isInitialized)
                                 {
-                                    @* Cursor uses css style "position: absolute" and calculates position *@
-                                    <PlainTextEditorCursorDisplay MostDigitsInARowNumber="mostDigitsInARowNumber" />
-                                    
                                     @* Render the 'entire' file with Virtualization techniques *@
                                     <VirtualizeCoordinateSystemExperimental @ref="_virtualizeCoordinateSystemExperimental"
                                                                             TItem="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
@@ -69,6 +66,9 @@ else
                                                                        MostDigitsInARowNumber="mostDigitsInARowNumber"/>
                                         </CascadingValue>
                                     </VirtualizeCoordinateSystemExperimental>
+                                    
+                                    @* Cursor uses css style "position: absolute" and calculates position *@
+                                    <PlainTextEditorCursorDisplay MostDigitsInARowNumber="mostDigitsInARowNumber" />
                                 }
                                 else
                                 {

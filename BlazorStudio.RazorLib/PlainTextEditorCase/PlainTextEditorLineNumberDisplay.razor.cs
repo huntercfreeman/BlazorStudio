@@ -21,7 +21,7 @@ public partial class PlainTextEditorLineNumberDisplay : ComponentBase
 
     private string WidthStyleCss => GetWidthAndHeightTest
         ? $"width: {MostDigitsInARowNumber}ch;"
-        : $"width: {RichTextEditorOptions.WidthOfACharacterInPixels}px;";
+        : $"width: {MostDigitsInARowNumber * RichTextEditorOptions.WidthOfACharacterInPixels}px;";
 
     private string PaddingLeftStyleCss => GetWidthAndHeightTest
         ? $"padding-left: {MostDigitsInARowNumber - CountOfDigitsInRowNumber}ch;"

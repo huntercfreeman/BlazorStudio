@@ -19,7 +19,6 @@ public partial class PlainTextEditorCursorDisplay : ComponentBase
     
     private int LineNumberOffset => MostDigitsInARowNumber + _lineNumberMarginRight;
     
-    //MostDigitsInARowNumber
     private string GetPositionCssStyling => 
         $"top: {CurrentRowIndex * RichTextEditorOptions.HeightOfARowInPixels}px;" +
         $"left: {(CurrentCharacterColumnIndex + LineNumberOffset) * RichTextEditorOptions.WidthOfACharacterInPixels}px;";
