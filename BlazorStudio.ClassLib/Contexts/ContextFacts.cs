@@ -2,6 +2,9 @@ using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Commands;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.CommandCase.Focus;
+using BlazorStudio.ClassLib.Store.ContextCase;
+using BlazorStudio.ClassLib.Store.KeyDownEventCase;
+using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
 namespace BlazorStudio.ClassLib.Contexts;
 
@@ -14,40 +17,36 @@ public static class ContextFacts
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
             {
-                new KeyDownEventRecord("a", "KeyA", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Test Global", "Test Global", () => Console.WriteLine("Test Global"))
-            },
-            {
                 new KeyDownEventRecord("g", "KeyG", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Main Layout", "set-focus_main-layout", new FocusMainLayoutAction())
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Main Layout", "set-focus_main-layout", (_) =>  new FocusMainLayoutAction())
             },
             {
                 new KeyDownEventRecord("f", "KeyF", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Folder Explorer", "set-focus_folder-explorer", new FocusFolderExplorerAction())
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Folder Explorer", "set-focus_folder-explorer", (_) =>  new FocusFolderExplorerAction())
             },
             {
                 new KeyDownEventRecord("s", "KeyS", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Solution Explorer", "set-focus_solution-explorer", new FocusSolutionExplorerAction())
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Solution Explorer", "set-focus_solution-explorer", (_) =>  new FocusSolutionExplorerAction())
             },
             {
                 new KeyDownEventRecord("t", "KeyT", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Toolbar Display", "set-focus_toolbar-display", new FocusToolbarDisplayAction())
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Toolbar Display", "set-focus_toolbar-display", (_) =>  new FocusToolbarDisplayAction())
             },
             {
                 new KeyDownEventRecord("e", "KeyE", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Editor Display", "set-focus_editor-display", new FocusEditorDisplayAction())
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Editor Display", "set-focus_editor-display", (_) =>  new FocusEditorDisplayAction())
             },
             {
                 new KeyDownEventRecord("r", "KeyR", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Terminal Display", "set-focus_terminal-display", new FocusTerminalDisplayAction())
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Terminal Display", "set-focus_terminal-display", (_) =>  new FocusTerminalDisplayAction())
             },
             {
                 new KeyDownEventRecord("d", "KeyD", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Dialog Quick Select Display", "set-focus_dialog-quick-select-display", new FocusDialogQuickSelectDisplayAction())
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Dialog Quick Select Display", "set-focus_dialog-quick-select-display", (_) =>  new FocusDialogQuickSelectDisplayAction())
             },
             {
                 new KeyDownEventRecord("n", "KeyN", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Nuget Package Manager Display", "set-focus_nuget-package-manager-display", new FocusNugetPackageManagerDisplayAction())
+                new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Nuget Package Manager Display", "set-focus_nuget-package-manager-display", (_) => new FocusNugetPackageManagerDisplayAction())
             },
         }.ToImmutableDictionary()));
     
@@ -58,8 +57,21 @@ public static class ContextFacts
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
             {
-                new KeyDownEventRecord("a", "KeyA", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Test Plain Text Editor", "Test Plain Text Editor", () => Console.WriteLine("Test Plain Text Editor"))
+                new KeyDownEventRecord("s", "KeyS", true, false, false),
+                new CommandRecord(CommandKey.NewCommandKey(), 
+                    "Save", 
+                    "save-changes-of-active-plain-text-editor-file", 
+                    (keymapEventAction) =>
+                    {
+                        if (keymapEventAction.Parameters is PlainTextEditorKey plainTextEditorKey)
+                        {
+                            return new PlainTextEditorOnSaveRequestedAction(
+                                plainTextEditorKey,
+                                keymapEventAction.CancellationToken);
+                        }
+
+                        return new VoidAction();
+                    })
             }
         }.ToImmutableDictionary()));
     
@@ -69,10 +81,7 @@ public static class ContextFacts
         "solution-explorer",
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
-            {
-                new KeyDownEventRecord("a", "KeyA", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Test Solution Explorer", "Test Solution Explorer", () => Console.WriteLine("Test Solution Explorer"))
-            }
+            // Keymaps go here
         }.ToImmutableDictionary()));
     
     public static readonly ContextRecord FolderExplorerContext = new ContextRecord(
@@ -81,10 +90,7 @@ public static class ContextFacts
         "folder-explorer",
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
-            {
-                new KeyDownEventRecord("a", "KeyA", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Test Folder Explorer", "Test Folder Explorer", () => Console.WriteLine("Test Folder Explorer"))
-            }
+            // Keymaps go here
         }.ToImmutableDictionary()));
     
     public static readonly ContextRecord DialogDisplayContext = new ContextRecord(
@@ -93,10 +99,7 @@ public static class ContextFacts
         "dialog-display",
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
-            {
-                new KeyDownEventRecord("a", "KeyA", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Test Dialog Display", "Test Dialog Display", () => Console.WriteLine("Test Dialog Display"))
-            }
+            // Keymaps go here
         }.ToImmutableDictionary()));
     
     public static readonly ContextRecord ToolbarDisplayContext = new ContextRecord(
@@ -105,10 +108,7 @@ public static class ContextFacts
         "toolbar-display",
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
-            {
-                new KeyDownEventRecord("a", "KeyA", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Test Toolbar Display", "Test Toolbar Display", () => Console.WriteLine("Test Toolbar Display"))
-            }
+            // Keymaps go here
         }.ToImmutableDictionary()));
     
     public static readonly ContextRecord EditorDisplayContext = new ContextRecord(
@@ -117,10 +117,7 @@ public static class ContextFacts
         "editor-display",
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
-            {
-                new KeyDownEventRecord("a", "KeyA", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Test Editor Display", "Test Editor Display", () => Console.WriteLine("Test Editor Display"))
-            }
+            // Keymaps go here
         }.ToImmutableDictionary()));
     
     public static readonly ContextRecord TerminalDisplayContext = new ContextRecord(
@@ -129,10 +126,7 @@ public static class ContextFacts
         "terminal-display",
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
-            {
-                new KeyDownEventRecord("a", "KeyA", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Test Terminal Display", "Test Terminal Display", () => Console.WriteLine("Test Terminal Display"))
-            }
+            // Keymaps go here
         }.ToImmutableDictionary()));
     
     public static readonly ContextRecord QuickSelectDisplayContext = new ContextRecord(
@@ -141,10 +135,7 @@ public static class ContextFacts
         "quick-select-display",
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
-            {
-                new KeyDownEventRecord("a", "KeyA", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Test Quick Select Display", "Test Quick Select Display", () => Console.WriteLine("Test Quick Select Display"))
-            }
+            // Keymaps go here
         }.ToImmutableDictionary()));
     
     public static readonly ContextRecord NugetPackageManagerDisplayContext = new ContextRecord(
@@ -153,9 +144,6 @@ public static class ContextFacts
         "nuget-package-manager-display",
         new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
         {
-            {
-                new KeyDownEventRecord("a", "KeyA", false, false, true),
-                new CommandRecord(CommandKey.NewCommandKey(), "Test NugetPackageManager Display", "Test NugetPackageManager Display", () => Console.WriteLine("Test NugetPackageManager Display"))
-            }
+            // Keymaps go here
         }.ToImmutableDictionary()));
 }

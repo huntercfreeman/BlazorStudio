@@ -27,6 +27,6 @@ public partial class KeymapEventListener : ComponentBase
     [JSInvokable]
     public void DispatchHandleKeymapEvent(KeyDownEventRecord keyDownEventRecord)
     {
-        Dispatcher.Dispatch(new KeymapEventAction(keyDownEventRecord));
+        Dispatcher.Dispatch(new KeymapEventAction(keyDownEventRecord, null, CancellationToken.None));
     }
 }

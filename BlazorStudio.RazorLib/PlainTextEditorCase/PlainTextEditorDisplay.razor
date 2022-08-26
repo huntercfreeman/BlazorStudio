@@ -26,7 +26,8 @@ else
     var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
     @* ContextBoundary to allow for specific PlainTextEditor keymappings *@
-    <ContextBoundary CssClassString="pte_plain-text-editor-wrapping"
+    <ContextBoundary @ref="_contextBoundary" 
+                     CssClassString="pte_plain-text-editor-wrapping"
                      ContextKey="ContextFacts.PlainTextEditorContext.ContextKey">
 
         @* 'hide' all end user information displayed in this component to ease reading of this file. *@

@@ -63,6 +63,7 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
     private bool _isFocused;
     private ElementReference? _plainTextEditor;
+    private ContextBoundary? _contextBoundary;
     private int _hadOnKeyDownEventCounter;
     private Virtualize<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualize;
     private VirtualizeCoordinateSystemExperimental<(int Index, IPlainTextEditorRow PlainTextEditorRow)>? _virtualizeCoordinateSystemExperimental;
@@ -233,16 +234,37 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
         _isMouseSelectingText = false;
+
+        if (e.AltKey)
+        {
+            return;
+        }
         
+        var keyDownEventRecord = new KeyDownEventRecord(
+            e.Key,
+            e.Code,
+            e.CtrlKey,
+            e.ShiftKey,
+            e.AltKey
+        );
+
+        if (e.CtrlKey)
+        {
+            if (_contextBoundary is not null &&
+                _contextBoundary.GetContextState.Keymap.Map.TryGetValue(keyDownEventRecord, out var command))
+            {
+                Dispatcher.Dispatch(new KeymapEventAction(
+                    keyDownEventRecord,
+                    PlainTextEditorKey,
+                    CancellationToken.None));
+
+                return;
+            }
+        }
+
         Dispatcher.Dispatch(
             new KeyDownEventAction(PlainTextEditorKey,
-                new KeyDownEventRecord(
-                    e.Key,
-                    e.Code,
-                    e.CtrlKey,
-                    e.ShiftKey,
-                    e.AltKey
-                ),
+                keyDownEventRecord,
                 CancellationToken.None
             )
         );

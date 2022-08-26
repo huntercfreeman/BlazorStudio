@@ -46,6 +46,8 @@ public partial class ContextBoundary : ComponentBase, IDisposable
     public bool OnKeyDownPreventDefault { get; set; }
 
     private ElementReference? _contextBoundaryElementReference;
+
+    public ContextRecord GetContextState => ContextStateSelector.Value;
     
     protected override void OnInitialized()
     {

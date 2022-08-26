@@ -23,7 +23,7 @@ namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
 public partial record PlainTextEditorStates
 {
-    public class PlainTextEditorStatesEffect
+    public class PlainTextEditorStatesEffectEditing
     {
         private readonly IState<PlainTextEditorStates> _plainTextEditorStatesWrap;
         private readonly IState<SolutionState> _solutionStateWrap;
@@ -33,7 +33,7 @@ public partial record PlainTextEditorStates
         
         private SemaphoreSlim __updateTokenSemanticDescriptionsSemaphoreSlim = new(1, 1);
 
-        public PlainTextEditorStatesEffect(IState<PlainTextEditorStates> plainTextEditorStatesWrap,
+        public PlainTextEditorStatesEffectEditing(IState<PlainTextEditorStates> plainTextEditorStatesWrap,
             IState<SolutionState> solutionStateWrap,
             IClipboardProvider clipboardProvider)
         {
