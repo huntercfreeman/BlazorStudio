@@ -58,11 +58,13 @@ else
                             <CascadingValue Name="FocusPlainTextEditor" Value="new Action(FocusPlainTextEditor)">
                                 @if (_isInitialized)
                                 {
+                                    @* OverscanCount="" *@
+                                    
+                                    
                                     @* Render the 'entire' file with Virtualization techniques *@
                                     <Virtualize @ref="_virtualize"
                                                 TItem="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
                                                 Context="rowTuple"
-                                                OverscanCount="6"
                                                 ItemsProvider="RowItemsProvider"
                                                 ItemSize="(float) currentPlainTextEditor.RichTextEditorOptions.HeightOfARowInPixels">
                                     

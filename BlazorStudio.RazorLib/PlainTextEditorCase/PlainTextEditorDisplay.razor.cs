@@ -398,6 +398,9 @@ public partial class PlainTextEditorDisplay : FluxorComponent, IDisposable
 
         if (numberOfRows > 0)
         {
+            if (request.CancellationToken.IsCancellationRequested)
+                return default;
+            
             rowTuples = currentPlainTextEditor.Rows
                 .Select((row, index) => (index, row))
                 .Skip(request.StartIndex)
