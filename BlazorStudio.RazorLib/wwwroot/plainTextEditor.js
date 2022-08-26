@@ -95,7 +95,7 @@ window.plainTextEditor = {
             as the span width seemingly is not the
             character width when rendering 1 character only
          */
-        let widthOfTestToken = row.children[1].children[1].offsetWidth;
+        let widthOfTestToken = row.children[1].offsetWidth;
 
         let amountOfCharactersRendered = 768;
         

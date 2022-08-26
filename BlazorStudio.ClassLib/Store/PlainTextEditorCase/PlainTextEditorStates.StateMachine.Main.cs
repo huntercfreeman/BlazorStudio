@@ -246,7 +246,8 @@ public partial record PlainTextEditorStates
             return focusedPlainTextEditorRecord with
             {
                 Rows = nextRowList,
-                CurrentTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex + 1
+                CurrentTokenIndex = focusedPlainTextEditorRecord.CurrentTokenIndex + 1,
+                SequenceKey = SequenceKey.NewSequenceKey()
             };
         }
 

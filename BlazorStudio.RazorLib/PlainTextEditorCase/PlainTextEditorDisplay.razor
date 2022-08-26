@@ -26,7 +26,7 @@ else
     var currentPlainTextEditor = PlainTextEditorSelector.Value;
 
     @* ContextBoundary to allow for specific PlainTextEditor keymappings *@
-    <ContextBoundary @ref="_contextBoundary" 
+    <ContextBoundary @ref="_contextBoundary"
                      CssClassString="pte_plain-text-editor-wrapping"
                      ContextKey="ContextFacts.PlainTextEditorContext.ContextKey">
 
@@ -59,24 +59,23 @@ else
                             <CascadingValue Name="FocusPlainTextEditor" Value="new Action(FocusPlainTextEditor)">
                                 @if (_isInitialized)
                                 {
-                                    @* OverscanCount="" *@
-                                    
-                                    
-                                    @* Render the 'entire' file with Virtualization techniques *@
+                                    @* Render the line numbers with Virtualization techniques *@
                                     <Virtualize @ref="_virtualize"
                                                 TItem="(int Index, IPlainTextEditorRow PlainTextEditorRow)"
                                                 Context="rowTuple"
                                                 ItemsProvider="RowItemsProvider"
-                                                ItemSize="(float) currentPlainTextEditor.RichTextEditorOptions.HeightOfARowInPixels">
-                                    
-                                        @* ChildContent RenderFragment is foreach row *@
+                                                ItemSize="(float)currentPlainTextEditor.RichTextEditorOptions.HeightOfARowInPixels">
+
                                         <CascadingValue Name="RowIndex" Value="rowTuple.Index">
-                                            <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
-                                                                       PlainTextEditorRow="rowTuple.PlainTextEditorRow"
-                                                                       MostDigitsInARowNumber="mostDigitsInARowNumber"/>
+                                            <div class="pte_plain-text-editor-row-display">
+                                                <PlainTextEditorLineNumberDisplay MostDigitsInARowNumber="mostDigitsInARowNumber"/>
+                                                <PlainTextEditorRowDisplay @key="rowTuple.PlainTextEditorRow.Key"
+                                                                           PlainTextEditorRow="rowTuple.PlainTextEditorRow"
+                                                                           MostDigitsInARowNumber="mostDigitsInARowNumber"/>
+                                            </div>
                                         </CascadingValue>
                                     </Virtualize>
-                                    
+
                                     @* $1$ Render the 'entire' file with Virtualization techniques #1# *@
                                     @* <VirtualizeCoordinateSystemExperimental @ref="_virtualizeCoordinateSystemExperimental" *@
                                     @*                                         TItem="(int Index, IPlainTextEditorRow PlainTextEditorRow)" *@
@@ -111,26 +110,29 @@ else
                                                 does not notice measurements being taken. 
                                             *@
                                             <div style="position: absolute; left: 0; top: 0; visibility: hidden;">
-                                                <PlainTextEditorRowDisplay @key="testRow.Key"
-                                                                           PlainTextEditorRow="testRow"
-                                                                           MostDigitsInARowNumber="mostDigitsInARowNumber"
-                                                                           WidthAndHeightTestId="@_widthAndHeightTestId"/>
+
+                                                <div class="pte_plain-text-editor-row-display">
+                                                    <PlainTextEditorRowDisplay @key="testRow.Key"
+                                                                               PlainTextEditorRow="testRow"
+                                                                               MostDigitsInARowNumber="mostDigitsInARowNumber"
+                                                                               WidthAndHeightTestId="@_widthAndHeightTestId"/>
+                                                </div>
                                             </div>
 
 
                                         </CascadingValue>
                                     </CascadingValue>
                                 }
-                                
                                 @* Cursor uses css style "position: absolute" and calculates position *@
-                                <PlainTextEditorCursorDisplay @ref="_plainTextEditorCursorDisplay" 
-                                                              MostDigitsInARowNumber="mostDigitsInARowNumber" />
+                                <PlainTextEditorCursorDisplay @ref="_plainTextEditorCursorDisplay"
+                                                              MostDigitsInARowNumber="mostDigitsInARowNumber"/>
                             </CascadingValue>
                         </CascadingValue>
                     </CascadingValue>
                 </PlainTextEditorCascadingValues>
             }
         </div>
+
         
         @* Render Footer for miscellaneous information about the Editor to be displayed to the end user *@
         <PlainTextEditorFooter PlainTextEditor="currentPlainTextEditor"/>
