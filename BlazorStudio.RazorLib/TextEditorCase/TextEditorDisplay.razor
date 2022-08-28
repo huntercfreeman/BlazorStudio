@@ -1,5 +1,6 @@
 @using BlazorStudio.ClassLib.TextEditor.IndexWrappers
 @using System.Text
+@using BlazorStudio.ClassLib.Keyboard
 @using BlazorStudio.ClassLib.TextEditor.Enums
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -27,12 +28,23 @@
                             {
                                 if (currentDecorationByte == textCharacter.DecorationByte)
                                 {
-                                    spanTextBuilder.Append(textCharacter.Value);
+                                    if (textCharacter.Value == '\t')
+                                    {
+                                        spanTextBuilder.Append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                                    }
+                                    else if (textCharacter.Value == ' ')
+                                    {
+                                        spanTextBuilder.Append("&nbsp;");
+                                    }
+                                    else
+                                    {
+                                        spanTextBuilder.Append(textCharacter.Value);
+                                    }
                                 }
                                 else
                                 {
                                     <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
-                                        @spanTextBuilder.ToString()
+                                        @((MarkupString)spanTextBuilder.ToString())
                                     </span>
 
                                     spanTextBuilder.Clear();
@@ -47,7 +59,7 @@
                         @if (spanTextBuilder.Length > 0)
                         {
                             <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
-                                @spanTextBuilder.ToString()
+                                @((MarkupString)spanTextBuilder.ToString())
                             </span>    
                         }
                     </div>
