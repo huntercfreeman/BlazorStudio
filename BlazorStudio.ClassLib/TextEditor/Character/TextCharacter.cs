@@ -13,5 +13,5 @@ namespace BlazorStudio.ClassLib.TextEditor.Character;
 public class TextCharacter
 {
     public char Value { get; set; }   
-    public byte Decoration { get; set; }   
+    public byte DecorationByte { get; set; }   
 }

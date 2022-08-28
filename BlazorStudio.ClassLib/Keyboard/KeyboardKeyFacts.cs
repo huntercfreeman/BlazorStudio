@@ -73,6 +73,8 @@ public static class KeyboardKeyFacts
     public static class WhitespaceKeys
     {
         public const string TAB_CODE = "Tab";
+        // TODO: Get CARRIAGE_RETURN_CODE code
+        public const string CARRIAGE_RETURN_CODE = "";
         public const string ENTER_CODE = "Enter";
         public const string CARRIAGE_RETURN_NEW_LINE_CODE = "CarriageReturnNewLine";
         public const string SPACE_CODE = "Space";
@@ -99,14 +101,23 @@ public static class KeyboardKeyFacts
     
     public static class NewLineCodes
     {
+        public const string CARRIAGE_RETURN_CODE = WhitespaceKeys.CARRIAGE_RETURN_CODE;
         public const string ENTER_CODE = WhitespaceKeys.ENTER_CODE;
         public const string CARRIAGE_RETURN_NEW_LINE_CODE = WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE;
 
         public static readonly ImmutableArray<string> ALL_NEW_LINE_CODES = new string[]
         {
+            CARRIAGE_RETURN_CODE,
             ENTER_CODE,
             CARRIAGE_RETURN_NEW_LINE_CODE
         }.ToImmutableArray();
+    }
+    
+    public static class NewLineKeys
+    {
+        public const string CARRIAGE_RETURN_KEY = "\r";
+        public const string NEW_LINE_KEY = "\n";
+        public const string CARRIAGE_RETURN_NEW_LINE_KEY = "\r\n";
     }
 
     public static class MovementKeys
