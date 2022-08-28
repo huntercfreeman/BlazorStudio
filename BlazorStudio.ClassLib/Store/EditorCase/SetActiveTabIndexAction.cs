@@ -1,5 +1,5 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using BlazorStudio.ClassLib.TextEditor;
 
 namespace BlazorStudio.ClassLib.Store.EditorCase;
 
-public record SetActiveTabIndexAction(int TabIndex);
+public record SetActiveTextEditorKeyAction(TextEditorKey TextEditorKey);

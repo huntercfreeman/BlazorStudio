@@ -133,7 +133,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
                         _nugetPackagesTreeViewWrapDisplay.Reload();
                     }
                 }
-                catch (System.Text.Json.JsonException jsonException)
+                catch (JsonException jsonException)
                 {
                     _jsonExceptionFromQueryingNuget = jsonException;
                 }

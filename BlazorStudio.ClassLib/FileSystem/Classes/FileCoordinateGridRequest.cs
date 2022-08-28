@@ -1,6 +1,4 @@
-﻿using BlazorStudio.ClassLib.Virtualize;
-
-namespace BlazorStudio.ClassLib.FileSystem.Classes;
+﻿namespace BlazorStudio.ClassLib.FileSystem.Classes;
 
 public readonly struct FileCoordinateGridRequest
 {

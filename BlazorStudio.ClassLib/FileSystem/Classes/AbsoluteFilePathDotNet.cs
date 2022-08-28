@@ -1,5 +1,4 @@
-﻿using System.Text;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.ClassLib.FileSystem.Classes;

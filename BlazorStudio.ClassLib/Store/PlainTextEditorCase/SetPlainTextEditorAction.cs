@@ -1,3 +1,0 @@
-﻿namespace BlazorStudio.ClassLib.Store.PlainTextEditorCase;
-
-public record SetPlainTextEditorStatesAction(PlainTextEditorStates PlainTextEditorStates);

@@ -1,6 +1,4 @@
 using BlazorStudio.RazorLib;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Experiments.Server.Data;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,13 +1,12 @@
 ﻿using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystemApi;
-using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
-using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
+using BlazorStudio.ClassLib.Store.TextEditorCase;
+using BlazorStudio.ClassLib.TextEditor;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.ContextCase;
-using BlazorStudio.RazorLib.PlainTextEditorCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -19,7 +18,7 @@ public partial class EditorDisplay : FluxorComponent
     [Inject]
     private IState<EditorState> EditorStateWrap { get; set; } = null!;
     [Inject]
-    private IState<PlainTextEditorStates> PlainTextEditorStatesWrap { get; set; } = null!;
+    private IState<TextEditorStates> TextEditorStatesWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -27,33 +26,30 @@ public partial class EditorDisplay : FluxorComponent
 
     [Parameter, EditorRequired]
     public ClassLib.UserInterface.Dimensions Dimensions { get; set; } = null!;
-    
 
-    private void SetActiveTabIndexOnClick(int tabIndex)
-    {
-        Dispatcher.Dispatch(new SetActiveTabIndexAction(tabIndex));
-    }
+    private TextEditorKey _textEditorKey = TextEditorKey.NewTextEditorKey();
+    private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath(
+        "/home/hunter/Documents/TestData/PlainTextEditorStates.Effect.cs", 
+        false);
     
-    private void DisposePlainTextEditorOnClick(PlainTextEditorKey plainTextEditorKey)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var plainTextEditorStates = PlainTextEditorStatesWrap.Value;
-        var editorState = EditorStateWrap.Value;
-
-        // -1 for the to be removed plainTextEditorKey
-        // and -1 again to start index from 0
-        if (editorState.TabIndex > plainTextEditorStates.Array.Length - 2)
+        if (firstRender)
         {
-            // Out of bounds of the upcoming Array length
-
-            var nextTabIndex = plainTextEditorStates.Array.Length - 2;
-
-            nextTabIndex = nextTabIndex < 0
-                ? 0
-                : nextTabIndex;
-
-            Dispatcher.Dispatch(new SetActiveTabIndexAction(nextTabIndex));
+            var content = await FileSystemProvider.ReadFileAsync(
+                _absoluteFilePath);
+            
+            Dispatcher.Dispatch(new RequestConstructTextEditorAction(
+                _textEditorKey,
+                _absoluteFilePath,
+                content,
+                (_, _) => Task.CompletedTask,
+                () => null
+            ));
+            
+            Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(_textEditorKey));
         }
         
-        Dispatcher.Dispatch(new DeconstructPlainTextEditorRecordAction(plainTextEditorKey));
+        await base.OnAfterRenderAsync(firstRender);
     }
 }

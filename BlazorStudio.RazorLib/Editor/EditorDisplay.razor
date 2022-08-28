@@ -1,5 +1,5 @@
-﻿@using BlazorStudio.ClassLib.Store.PlainTextEditorCase
-@using BlazorStudio.ClassLib.Contexts
+﻿@using BlazorStudio.ClassLib.Contexts
+@using BlazorStudio.ClassLib.TextEditor
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <ContextBoundary CssClassString="bstudio_editor-display bstudio_focus-display-large"
@@ -10,41 +10,12 @@
 
     <div style="padding: 0 5px; height: calc(100% - 2rem - 10px);">
         @{
-            var plainTextEditorStates = PlainTextEditorStatesWrap.Value;
+            var textEditorStates = TextEditorStatesWrap.Value;
             var editorState = EditorStateWrap.Value;
 
-            PlainTextEditorKey? activePlainTextEditorKey = null;
-
-            if (editorState.TabIndex < plainTextEditorStates.Array.Length)
+            if (editorState.TextEditorKey != TextEditorKey.Empty())
             {
-                activePlainTextEditorKey = plainTextEditorStates.Array[editorState.TabIndex];
-            }
-
-            if (activePlainTextEditorKey is not null)
-            {
-                <div class="bstudio_editor-tabs-listing">
-                    <CascadingValue Name="ActiveTabIndex" Value="editorState.TabIndex">
-                        @for (int i = 0; i < plainTextEditorStates.Array.Length; i++)
-                        {
-                            var index = i;
-                            var plainTextEditorKey = plainTextEditorStates.Array[index];
-                            var plainTextEditor = plainTextEditorStates.Map[plainTextEditorKey];
-
-                            <EditorTabDisplay TabIndex="index"
-                                              SetActiveTabIndexOnClick="SetActiveTabIndexOnClick"
-                                              PlainTextEditor="plainTextEditor"
-                                              DisposePlainTextEditorOnClick="DisposePlainTextEditorOnClick"/>
-                        }
-                    </CascadingValue>
-                </div>
-
-                <BlazorStudio.RazorLib.PlainTextEditorCase.PlainTextEditorDisplay PlainTextEditorKey="activePlainTextEditorKey"
-                                                                                  AutomateDispose="false"
-                                                                                  TabIndex="0"/>
-            }
-            else
-            {
-                <div>No opened files</div>
+                <BlazorStudio.RazorLib.TextEditorCase.TextEditorDisplay TextEditorKey="editorState.TextEditorKey" />
             }
         }
     </div>

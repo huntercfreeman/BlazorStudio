@@ -10,5 +10,5 @@ public class FileSystemDrive : IFileSystemDrive
     }
 
     public string DriveNameAsIdentifier { get; }
-    public string DriveNameAsPath => $"{DriveNameAsIdentifier}:{System.IO.Path.DirectorySeparatorChar}";
+    public string DriveNameAsPath => $"{DriveNameAsIdentifier}:{Path.DirectorySeparatorChar}";
 }

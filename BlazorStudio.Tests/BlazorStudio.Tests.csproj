@@ -25,16 +25,4 @@
     <ProjectReference Include="..\BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="TestData\CacheTestsData\singleCharacter.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\helloWorld_CARRIAGE-RETURN-NEW-LINE.c">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\helloWorld_NEW-LINE.c">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

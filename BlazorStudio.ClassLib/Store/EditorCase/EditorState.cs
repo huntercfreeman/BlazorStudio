@@ -1,12 +1,12 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using BlazorStudio.ClassLib.TextEditor;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.EditorCase;
 
 [FeatureState]
-public record EditorState(int TabIndex)
+public record EditorState(TextEditorKey TextEditorKey)
 {
-    public EditorState() : this(0)
+    public EditorState() : this(TextEditorKey.Empty())
     {
 
     }
