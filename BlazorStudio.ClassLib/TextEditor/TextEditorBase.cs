@@ -14,14 +14,14 @@ public record TextEditorBase() : IDisposable
     /// </summary>
     private readonly ImmutableArray<TextCharacter> _content;
     private readonly Func<string, CancellationToken, Task> _onSaveRequestedFuncAsync;
-    private readonly Func<EventHandler> _getInstanceOfPhysicalFileWatcher;
+    private readonly Func<EventHandler> _getInstanceOfPhysicalFileWatcherFunc;
     
     private EventHandler? _physicalFileWatcher;
     
     public TextEditorBase(
         string content, 
         Func<string, CancellationToken, Task> onSaveRequestedFuncAsync,
-        Func<EventHandler> getInstanceOfPhysicalFileWatcher) 
+        Func<EventHandler> getInstanceOfPhysicalFileWatcherFuncFunc) 
             : this()
     {
         _content = content.Select(x => new TextCharacter
@@ -31,7 +31,7 @@ public record TextEditorBase() : IDisposable
         }).ToImmutableArray();
         
         _onSaveRequestedFuncAsync = onSaveRequestedFuncAsync;
-        _getInstanceOfPhysicalFileWatcher = getInstanceOfPhysicalFileWatcher;
+        _getInstanceOfPhysicalFileWatcherFunc = getInstanceOfPhysicalFileWatcherFuncFunc;
     }
 
     /// <summary>
@@ -58,7 +58,7 @@ public record TextEditorBase() : IDisposable
     /// </summary>
     public void WatchPhysicalFile()
     {
-        _physicalFileWatcher = _getInstanceOfPhysicalFileWatcher.Invoke();
+        _physicalFileWatcher = _getInstanceOfPhysicalFileWatcherFunc.Invoke();
 
         _physicalFileWatcher += OnPhysicalFileChanged;
     }
