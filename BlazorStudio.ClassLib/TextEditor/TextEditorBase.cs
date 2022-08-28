@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.TextEditor.Character;
 using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
 
@@ -48,7 +49,12 @@ public record TextEditorBase : IDisposable
                 // '\n'
                 (KeyboardKeyFacts.NewLineKeys.NEW_LINE_KEY == key && previousKey != KeyboardKeyFacts.NewLineKeys.CARRIAGE_RETURN_KEY))
             {
-                _lineEndingPositions[rowIndex++] = index;                
+                // Track line ending position and
+                // increment row index
+                {
+                    _lineEndingPositions.Add(index);
+                    rowIndex++;
+                }
             }
 
             previousKey = key;
@@ -147,7 +153,8 @@ public record TextEditorBase : IDisposable
         return new TextPartition(
             TextEditorLink.Empty(), 
             rectangularCoordinates,
-            textSpanRows.ToImmutableArray());
+            textSpanRows.ToImmutableArray(),
+            SequenceKey.NewSequenceKey());
     }
     
     /// <summary>

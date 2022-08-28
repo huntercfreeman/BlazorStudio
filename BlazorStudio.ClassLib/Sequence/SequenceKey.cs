@@ -6,4 +6,9 @@ public record SequenceKey(Guid Guid)
     {
         return new SequenceKey(Guid.NewGuid());
     }
+    
+    public static SequenceKey Empty()
+    {
+        return new SequenceKey(Guid.Empty);
+    }
 }
