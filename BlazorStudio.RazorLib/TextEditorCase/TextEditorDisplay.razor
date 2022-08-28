@@ -1,3 +1,11 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <h3>TextEditorDisplay (@TextEditorKey.Guid)</h3>
+
+<div class="pte_plain-text-editor-wrapping">
+    <div class="pte_plain-text-editor-display">
+        <pre>
+@TextEditorStatesSelection.Value.GetText()
+</pre>
+    </div>
+</div>

@@ -69,6 +69,11 @@ public record TextEditorBase : IDisposable
 
         _physicalFileWatcher += OnPhysicalFileChanged;
     }
+
+    public string GetText()
+    {
+        return new string(_content.Select(x => x.Value).ToArray());
+    }
     
     /// <summary>
     /// Overwrite the contents of the physical file with the edited version.
@@ -76,7 +81,7 @@ public record TextEditorBase : IDisposable
     public async Task SaveToPhysicalFileAsync(CancellationToken cancellationToken = default)
     {
         await _onSaveRequestedFuncAsync.Invoke(
-            new string(_content.Select(x => x.Value).ToArray()), 
+            GetText(), 
             cancellationToken);
     }
 
