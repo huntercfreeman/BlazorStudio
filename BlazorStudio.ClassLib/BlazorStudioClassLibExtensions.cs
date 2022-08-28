@@ -1,6 +1,4 @@
-﻿using BlazorStudio.ClassLib.FileSystemApi;
-using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
-using BlazorStudio.ClassLib.NugetPackageManager;
+﻿using BlazorStudio.ClassLib.NugetPackageManager;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 

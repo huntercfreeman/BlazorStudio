@@ -1,5 +1,3 @@
-using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
-
 namespace BlazorStudio.ClassLib.Services;
 
 public interface IPlainTextEditorService

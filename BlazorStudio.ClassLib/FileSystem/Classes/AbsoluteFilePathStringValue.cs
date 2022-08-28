@@ -1,6 +1,6 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
-namespace BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
+namespace BlazorStudio.ClassLib.FileSystem.Classes;
 
 public record AbsoluteFilePathStringValue(string AbsoluteFilePathString)
 {

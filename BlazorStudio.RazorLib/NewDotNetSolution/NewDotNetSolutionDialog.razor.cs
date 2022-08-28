@@ -11,7 +11,6 @@ using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using static BlazorStudio.RazorLib.NewCSharpProject.NewCSharpProjectDialog;
 
 namespace BlazorStudio.RazorLib.NewDotNetSolution;
 

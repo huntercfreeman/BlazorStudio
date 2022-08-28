@@ -2,9 +2,6 @@ using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Commands;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.CommandCase.Focus;
-using BlazorStudio.ClassLib.Store.ContextCase;
-using BlazorStudio.ClassLib.Store.KeyDownEventCase;
-using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
 namespace BlazorStudio.ClassLib.Contexts;
 
@@ -49,32 +46,6 @@ public static class ContextFacts
                 new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Nuget Package Manager Display", "set-focus_nuget-package-manager-display", (_) => new FocusNugetPackageManagerDisplayAction())
             },
         }.ToImmutableDictionary()));
-    
-    public static readonly ContextRecord PlainTextEditorContext = new ContextRecord(
-        ContextKey.NewContextKey(), 
-        "PlainTextEditor",
-        "plain-text-editor",
-        new Keymap(new Dictionary<KeyDownEventRecord, CommandRecord>
-        {
-            {
-                new KeyDownEventRecord("s", "KeyS", true, false, false),
-                new CommandRecord(CommandKey.NewCommandKey(), 
-                    "Save", 
-                    "save-changes-of-active-plain-text-editor-file", 
-                    (keymapEventAction) =>
-                    {
-                        if (keymapEventAction.Parameters is PlainTextEditorKey plainTextEditorKey)
-                        {
-                            return new PlainTextEditorOnSaveRequestedAction(
-                                plainTextEditorKey,
-                                keymapEventAction.CancellationToken);
-                        }
-
-                        return new VoidAction();
-                    })
-            }
-        }.ToImmutableDictionary()));
-    
     public static readonly ContextRecord SolutionExplorerContext = new ContextRecord(
         ContextKey.NewContextKey(), 
         "SolutionExplorer",

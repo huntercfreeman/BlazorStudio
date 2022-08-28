@@ -1,5 +1,4 @@
 using BlazorStudio.ClassLib.Keyboard;
-using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 
 namespace BlazorStudio.ClassLib.Store.KeyDownEventCase;
 

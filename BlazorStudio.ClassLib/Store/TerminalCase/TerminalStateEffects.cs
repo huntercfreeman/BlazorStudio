@@ -1,5 +1,4 @@
-﻿using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
-using Fluxor;
+﻿using Fluxor;
 using System.Collections.Concurrent;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;

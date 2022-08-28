@@ -47,6 +47,16 @@
     <_ContentIncludedByDefault Remove="Transformable\TransformableDisplay.razor" />
     <_ContentIncludedByDefault Remove="TreeViewCase\TreeViewWrapDisplay.razor" />
     <_ContentIncludedByDefault Remove="FileDocumentMap\FileDocumentMapDisplay.razor" />
+    <_ContentIncludedByDefault Remove="PlainTextEditorCase\CountOfPlainTextEditors.razor" />
+    <_ContentIncludedByDefault Remove="PlainTextEditorCase\PlainTextEditorCascadingValues.razor" />
+    <_ContentIncludedByDefault Remove="PlainTextEditorCase\PlainTextEditorCursorDisplay.razor" />
+    <_ContentIncludedByDefault Remove="PlainTextEditorCase\PlainTextEditorDisplay.razor" />
+    <_ContentIncludedByDefault Remove="PlainTextEditorCase\PlainTextEditorFooter.razor" />
+    <_ContentIncludedByDefault Remove="PlainTextEditorCase\PlainTextEditorHeader.razor" />
+    <_ContentIncludedByDefault Remove="PlainTextEditorCase\PlainTextEditorLineNumberDisplay.razor" />
+    <_ContentIncludedByDefault Remove="PlainTextEditorCase\PlainTextEditorRowDisplay.razor" />
+    <_ContentIncludedByDefault Remove="PlainTextEditorCase\PlainTextEditorSpawn.razor" />
+    <_ContentIncludedByDefault Remove="PlainTextEditorCase\TextTokenDisplay.razor" />
   </ItemGroup>
 
   <ItemGroup>
