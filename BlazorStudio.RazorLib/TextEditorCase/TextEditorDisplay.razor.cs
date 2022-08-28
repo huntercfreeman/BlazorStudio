@@ -9,6 +9,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Text;
 
 namespace BlazorStudio.RazorLib.TextEditorCase;
 
@@ -86,11 +87,128 @@ public partial class TextEditorDisplay : FluxorComponent
 
         generalSyntaxCollector.Visit(syntaxNodeRoot);
 
-        localTextEditorStates.ApplyDecorationRange(
-            DecorationKind.Method,
-            generalSyntaxCollector.InvocationExpressions
-                .Select(x => x.Span));
+        ApplyDecorations(localTextEditorStates, generalSyntaxCollector);
         
         _previousTextPartitionSequenceKey = SequenceKey.Empty();
+    }
+
+    private void ApplyDecorations(TextEditorBase localTextEditorStates, GeneralSyntaxCollector generalSyntaxCollector)
+    {
+        // Type decorations
+        {
+            // Property Type
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Type,
+                generalSyntaxCollector.PropertyDeclarations
+                    .Select(pds => pds.Type.Span));
+
+            // Class Declaration
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Type,
+                generalSyntaxCollector.ClassDeclarations
+                    .Select(cd => cd.Identifier.Span));
+
+            // Method return Type
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Type,
+                generalSyntaxCollector.MethodDeclarations
+                    .Select(md =>
+                    {
+                        var retType = md
+                            .ChildNodes()
+                            .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+
+                        return retType?.Span ?? default;
+                    }));
+            
+            // Parameter declaration Type
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Type,
+                generalSyntaxCollector.ParameterDeclarations
+                    .Select(pd =>
+                    {
+                        var identifierNameNode = pd.ChildNodes()
+                            .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+
+                        if (identifierNameNode is null)
+                        {
+                            return TextSpan.FromBounds(0, 0);
+                        }
+                
+                        return identifierNameNode.Span;
+                    }));
+        }
+
+        // Method decorations
+        {
+            // Method declaration identifier
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Method,
+                generalSyntaxCollector.MethodDeclarations
+                    .Select(md => md.Identifier.Span));
+            
+            // InvocationExpression
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Method,
+                generalSyntaxCollector.InvocationExpressions
+                    .Select(md =>
+                    {
+                        var childNodes = md.Expression.ChildNodes();
+
+                        var lastNode = childNodes.LastOrDefault();
+
+                        return lastNode?.Span ?? TextSpan.FromBounds(0, 0);
+                    }));
+        }
+
+        // Local variable decorations
+        {
+            // Parameter declaration identifier
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.AltFlagOne | DecorationKind.Variable,
+                generalSyntaxCollector.ParameterDeclarations
+                    .Select(pd =>
+                    {
+                        var identifierToken = pd.ChildTokens().FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierToken);
+                
+                        return identifierToken.Span;
+                    }));
+            
+            // Argument declaration identifier
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.AltFlagOne | DecorationKind.Variable,
+                generalSyntaxCollector.ArgumentDeclarations
+                    .Select(ad => ad.Span));
+        }
+
+        // String literal
+        {
+            // String literal
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.AltFlagOne | DecorationKind.Constant,
+                generalSyntaxCollector.StringLiteralExpressions
+                    .Select(sl => sl.Span));
+        }
+
+        // Keywords
+        {
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.AltFlagOne | DecorationKind.Keyword,
+                generalSyntaxCollector.Keywords
+                    .Select(keyword => keyword.Span));
+        }
+
+        // Comments
+        {
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.AltFlagTwo | DecorationKind.Method,
+                generalSyntaxCollector.TriviaComments
+                    .Select(tc => tc.Span));
+            
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.AltFlagTwo | DecorationKind.Method,
+                generalSyntaxCollector.XmlComments
+                    .Select(tc => tc.Span));
+        }
     }
 }

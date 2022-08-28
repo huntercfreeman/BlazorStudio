@@ -9,6 +9,8 @@ public static class DecorationKindHelper
         return decorationKind switch
         {
             DecorationKind.Method => "pte_plain-text-editor-text-token-display-method-declaration",
+            DecorationKind.Type => "pte_plain-text-editor-text-token-display-type",
+            DecorationKind.AltFlagOne | DecorationKind.Variable => "pte_plain-text-editor-text-token-display-parameter",
             _ => string.Empty
         };
     }
