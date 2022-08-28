@@ -5,9 +5,9 @@ namespace BlazorStudio.ClassLib.Store.EditorCase;
 public class EditorStateReducer
 {
     [ReducerMethod]
-    public static EditorState ReduceSetActiveTabIndexAction(EditorState previousEditorState,
-        SetActiveTabIndexAction setActiveTabIndexAction)
+    public static EditorState ReduceSetActiveTextEditorKeyAction(EditorState previousEditorState,
+        SetActiveTextEditorKeyAction setActiveTextEditorKeyAction)
     {
-        return new EditorState(setActiveTabIndexAction.TabIndex);
+        return new EditorState(setActiveTextEditorKeyAction.TextEditorKey);
     }
 }

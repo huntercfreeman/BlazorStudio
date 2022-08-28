@@ -1,34 +1,66 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.TextEditor;
+using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TextEditorCase;
 
+[FeatureState]
 public record TextEditorStates(
     ImmutableDictionary<TextEditorKey, TextEditorBase> TextEditorMap,
-    ImmutableDictionary<AbsoluteFilePathStringValue, TextEditorKey> AbsoluteFilePathToActiveTextEditorMap);
+    ImmutableDictionary<AbsoluteFilePathStringValue, TextEditorKey> AbsoluteFilePathToActiveTextEditorMap)
+{
+    public TextEditorStates() : this(
+        ImmutableDictionary<TextEditorKey, TextEditorBase>.Empty,
+        ImmutableDictionary<AbsoluteFilePathStringValue, TextEditorKey>.Empty)
+    {
+        
+    }
+}
 
-/// <summary>
-/// Either returns a constructed TextEditor or returns
-/// an existing TextEditor if there already exists one
-/// for the given physical file.
-/// <br/><br/>
-/// In the case that there already exists one
-/// for the given physical file the two requesters of the TextEditor can
-/// have different viewports (scroll positions etc...) due to <see cref="TextPartition"/>
-/// </summary>
-public record RequestConstructTextEditorAction(
-    TextEditorKey TextEditorKey, 
-    IAbsoluteFilePath AbsoluteFilePath, 
-    Func<string, CancellationToken, Task> OnSaveRequestedFuncAsync,
-    Func<EventHandler> GetInstanceOfPhysicalFileWatcherFunc);
+public class TextEditorStatesReducer
+{
+    [ReducerMethod]
+    public static TextEditorStates ReduceRequestConstructTextEditorAction(TextEditorStates previousTextEditorStates,
+        RequestConstructTextEditorAction requestConstructTextEditorAction)
+    {
+        var absoluteFilePathStringValue = new AbsoluteFilePathStringValue(requestConstructTextEditorAction.AbsoluteFilePath);
+        
+        if (!previousTextEditorStates.AbsoluteFilePathToActiveTextEditorMap
+            .ContainsKey(absoluteFilePathStringValue))
+        {
+            var constructedTextEditor = new TextEditorBase(
+                requestConstructTextEditorAction.TextEditorKey,
+                requestConstructTextEditorAction.Content,
+                requestConstructTextEditorAction.AbsoluteFilePath,
+                requestConstructTextEditorAction.OnSaveRequestedFuncAsync,
+                requestConstructTextEditorAction.GetInstanceOfPhysicalFileWatcherFunc);
 
-/// <summary>
-/// Decreases the amount of <see cref="TextPartition"/>(s) in use for
-/// the <see cref="TextEditorBase"/> with the corresponding <see cref="TextEditorKey"/>
-/// <br/><br/>
-/// If <see cref="TextPartition"/>(s) is empty after this action then the TextEditor
-/// will be disposed.
-/// </summary>
-public record RequestDisposePlainTextEditorAction(TextEditorKey TextEditorKey);
+
+            var nextAbsoluteFilePathToActiveTextEditorMap = 
+                previousTextEditorStates.AbsoluteFilePathToActiveTextEditorMap
+                    .SetItem(
+                        absoluteFilePathStringValue,
+                        constructedTextEditor.TextEditorKey);
+
+            var nextTextEditorMap =
+                previousTextEditorStates.TextEditorMap
+                    .SetItem(
+                        constructedTextEditor.TextEditorKey,
+                        constructedTextEditor);
+
+            return new TextEditorStates(
+                nextTextEditorMap,
+                nextAbsoluteFilePathToActiveTextEditorMap);
+        }
+
+        return previousTextEditorStates;
+    }
+    
+    [ReducerMethod]
+    public static TextEditorStates ReduceRequestDisposePlainTextEditorAction(TextEditorStates previousTextEditorStates,
+        RequestDisposePlainTextEditorAction requestDisposePlainTextEditorAction)
+    {
+        throw new NotImplementedException();
+    }
+}

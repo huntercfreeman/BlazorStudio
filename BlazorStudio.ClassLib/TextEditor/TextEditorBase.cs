@@ -1,9 +1,10 @@
 using System.Collections.Immutable;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.TextEditor.Character;
 
 namespace BlazorStudio.ClassLib.TextEditor;
 
-public record TextEditorBase() : IDisposable
+public record TextEditorBase : IDisposable
 {
     /// <summary>
     /// Thank you to "A Crawford" who commented on my youtube video:
@@ -13,23 +14,29 @@ public record TextEditorBase() : IDisposable
     /// I am going to give this a go and <see cref="_content"/> is the copy in memory.
     /// </summary>
     private readonly ImmutableArray<TextCharacter> _content;
+
+    private readonly IAbsoluteFilePath _absoluteFilePath;
     private readonly Func<string, CancellationToken, Task> _onSaveRequestedFuncAsync;
     private readonly Func<EventHandler> _getInstanceOfPhysicalFileWatcherFunc;
     
     private EventHandler? _physicalFileWatcher;
-    
+
     public TextEditorBase(
-        string content, 
+        TextEditorKey textEditorKey,
+        string content,
+        IAbsoluteFilePath absoluteFilePath,
         Func<string, CancellationToken, Task> onSaveRequestedFuncAsync,
-        Func<EventHandler> getInstanceOfPhysicalFileWatcherFuncFunc) 
-            : this()
+        Func<EventHandler> getInstanceOfPhysicalFileWatcherFuncFunc)
     {
+        TextEditorKey = textEditorKey;
+        
         _content = content.Select(x => new TextCharacter
         {
             Value = x,
             Decoration = default
         }).ToImmutableArray();
-        
+
+        _absoluteFilePath = absoluteFilePath;
         _onSaveRequestedFuncAsync = onSaveRequestedFuncAsync;
         _getInstanceOfPhysicalFileWatcherFunc = getInstanceOfPhysicalFileWatcherFuncFunc;
     }

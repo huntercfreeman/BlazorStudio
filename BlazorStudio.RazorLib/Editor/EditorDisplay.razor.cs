@@ -26,33 +26,16 @@ public partial class EditorDisplay : FluxorComponent
 
     [Parameter, EditorRequired]
     public ClassLib.UserInterface.Dimensions Dimensions { get; set; } = null!;
-    
 
-    private void SetActiveTabIndexOnClick(int tabIndex)
-    {
-        Dispatcher.Dispatch(new SetActiveTabIndexAction(tabIndex));
-    }
+    private TextEditorKey _textEditorKey = TextEditorKey.NewTextEditorKey();
     
-    private void DisposePlainTextEditorOnClick(TextEditorKey textEditorKey)
+    protected override void OnAfterRender(bool firstRender)
     {
-        var textEditorStates = TextEditorStatesWrap.Value;
-        var editorState = EditorStateWrap.Value;
-
-        // -1 for the to be removed plainTextEditorKey
-        // and -1 again to start index from 0
-        if (editorState.TabIndex > textEditorStates.TextEditorMap.Count - 2)
+        if (firstRender)
         {
-            // Out of bounds of the upcoming Array length
-
-            var nextTabIndex = textEditorStates.TextEditorMap.Count - 2;
-
-            nextTabIndex = nextTabIndex < 0
-                ? 0
-                : nextTabIndex;
-
-            Dispatcher.Dispatch(new SetActiveTabIndexAction(nextTabIndex));
+            Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(_textEditorKey));
         }
         
-        Dispatcher.Dispatch(new DeconstructPlainTextEditorRecordAction(textEditorKey));
+        base.OnAfterRender(firstRender);
     }
 }

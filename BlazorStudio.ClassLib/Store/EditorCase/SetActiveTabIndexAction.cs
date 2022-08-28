@@ -1,3 +1,5 @@
-﻿namespace BlazorStudio.ClassLib.Store.EditorCase;
+﻿using BlazorStudio.ClassLib.TextEditor;
 
-public record SetActiveTabIndexAction(int TabIndex);
+namespace BlazorStudio.ClassLib.Store.EditorCase;
+
+public record SetActiveTextEditorKeyAction(TextEditorKey TextEditorKey);

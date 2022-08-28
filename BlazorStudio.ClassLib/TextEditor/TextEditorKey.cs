@@ -6,4 +6,9 @@ public record TextEditorKey(Guid Guid)
     {
         return new TextEditorKey(Guid.NewGuid());
     }
+    
+    public static TextEditorKey Empty()
+    {
+        return new TextEditorKey(Guid.Empty);
+    }
 }
