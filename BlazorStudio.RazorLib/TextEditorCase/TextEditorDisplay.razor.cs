@@ -193,7 +193,7 @@ public partial class TextEditorDisplay : FluxorComponent
         // Keywords
         {
             localTextEditorStates.ApplyDecorationRange(
-                DecorationKind.AltFlagOne | DecorationKind.Keyword,
+                DecorationKind.Keyword,
                 generalSyntaxCollector.Keywords
                     .Select(keyword => keyword.Span));
         }
@@ -208,7 +208,7 @@ public partial class TextEditorDisplay : FluxorComponent
             localTextEditorStates.ApplyDecorationRange(
                 DecorationKind.AltFlagTwo | DecorationKind.Method,
                 generalSyntaxCollector.XmlComments
-                    .Select(tc => tc.Span));
+                    .Select(xml => xml.Span));
         }
     }
 }
