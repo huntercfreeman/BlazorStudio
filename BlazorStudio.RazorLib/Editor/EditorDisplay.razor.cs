@@ -29,7 +29,7 @@ public partial class EditorDisplay : FluxorComponent
 
     private TextEditorKey _textEditorKey = TextEditorKey.NewTextEditorKey();
     private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath(
-        "/home/hunter/Documents/TestData/PlainTextEditorStates.Effect.cs", 
+        "/home/hunter/Documents/TestData/TextEditorDisplay.razor.cs", 
         false);
     
     protected override async Task OnAfterRenderAsync(bool firstRender)

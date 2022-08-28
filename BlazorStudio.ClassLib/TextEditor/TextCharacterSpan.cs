@@ -6,10 +6,10 @@ namespace BlazorStudio.ClassLib.TextEditor;
 /// <summary>
 /// The length of a row might horizontally go offscreen and not get rendered.
 /// Therefore the end user's viewport is instead represented as a <see cref="TextPartition"/>
-/// and that <see cref="TextPartition"/> has one or many <see cref="TextSpan"/> of which
+/// and that <see cref="TextPartition"/> has one or many <see cref="TextCharacterSpan"/> of which
 /// represent the 'row' and may or may not be the 'entirety' of that row.
 /// </summary>
-public record TextSpan
+public record TextCharacterSpan
 {
     /// <summary>
     /// <see cref="Start"/> is inclusive

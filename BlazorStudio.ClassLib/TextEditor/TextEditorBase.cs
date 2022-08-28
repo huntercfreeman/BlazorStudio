@@ -3,7 +3,9 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.TextEditor.Character;
+using BlazorStudio.ClassLib.TextEditor.Enums;
 using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
+using Microsoft.CodeAnalysis.Text;
 
 namespace BlazorStudio.ClassLib.TextEditor;
 
@@ -62,7 +64,7 @@ public record TextEditorBase : IDisposable
             return new TextCharacter
             {
                 Value = character,
-                Decoration = default
+                DecorationByte = default
             };   
         }).ToImmutableArray();
 
@@ -120,7 +122,7 @@ public record TextEditorBase : IDisposable
 
         var endingRowIndexExclusive = rectangularCoordinates.TopLeftCorner.RowIndex.Value + rowCount;
 
-        var textSpanRows = new List<TextSpan>();
+        var textSpanRows = new List<TextCharacterSpan>();
         
         for (int i = rectangularCoordinates.TopLeftCorner.RowIndex.Value; 
              i < endingRowIndexExclusive;
@@ -137,7 +139,7 @@ public record TextEditorBase : IDisposable
 
             var endOfTextSpanRowExclusive = _lineEndingPositions[i];
 
-            var textSpan = new TextSpan
+            var textCharacterSpan = new TextCharacterSpan
             {
                 Start = startOfTextSpanRowInclusive,
                 End = _lineEndingPositions[i],
@@ -147,7 +149,7 @@ public record TextEditorBase : IDisposable
                     .ToImmutableArray()
             };
             
-            textSpanRows.Add(textSpan);
+            textSpanRows.Add(textCharacterSpan);
         }
         
         return new TextPartition(
@@ -170,6 +172,17 @@ public record TextEditorBase : IDisposable
     private void OnPhysicalFileChanged(object? sender, EventArgs e)
     {
         throw new NotImplementedException();
+    }
+
+    public void ApplyDecorationRange(DecorationKind decorationKind, IEnumerable<TextSpan> textSpans)
+    {
+        foreach (var textSpan in textSpans)
+        {
+            for (int i = textSpan.Start; i < textSpan.End; i++)
+            {
+                _content[i].DecorationByte = (byte) decorationKind;
+            }
+        }
     }
     
     private void ReleaseUnmanagedResources()

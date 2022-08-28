@@ -1,8 +1,15 @@
 @using BlazorStudio.ClassLib.TextEditor.IndexWrappers
+@using System.Text
+@using BlazorStudio.ClassLib.TextEditor.Enums
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <ShouldRenderBoundary ShouldRenderFunc="ShouldRenderFunc">
     <h3>TextEditorDisplay (@TextEditorKey.Guid)</h3>
+    
+    <button @onclick="ApplyRoslynSyntaxHighlightingAsyncOnClick"
+            class="btn btn-primary">
+        Apply Roslyn Syntax Highlighting
+    </button>
 
     <div class="pte_plain-text-editor-wrapping">
         <div class="pte_plain-text-editor-display">
@@ -11,9 +18,38 @@
                 foreach (var textSpan in _textPartition.TextSpanRows)
                 {
                     <div style="background-color: @GetBackgroundColor()">
-                        <pre>
-    @textSpan.GetText
-    </pre>    
+                        @{
+                            var spanTextBuilder = new StringBuilder();
+                            var currentDecorationByte = textSpan.TextCharacters
+                                .First().DecorationByte;
+                            
+                            foreach (var textCharacter in textSpan.TextCharacters)
+                            {
+                                if (currentDecorationByte == textCharacter.DecorationByte)
+                                {
+                                    spanTextBuilder.Append(textCharacter.Value);
+                                }
+                                else
+                                {
+                                    <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
+                                        @spanTextBuilder.ToString()
+                                    </span>
+
+                                    spanTextBuilder.Clear();
+
+                                    currentDecorationByte = textCharacter.DecorationByte;
+                                    spanTextBuilder.Append(textCharacter.Value);
+                                }
+                            }
+                        }
+
+                        @* Render out the last <span> *@
+                        @if (spanTextBuilder.Length > 0)
+                        {
+                            <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
+                                @spanTextBuilder.ToString()
+                            </span>    
+                        }
                     </div>
                 }
             }

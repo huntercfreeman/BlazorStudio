@@ -1,11 +1,14 @@
+using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.TextEditorCase;
 using BlazorStudio.ClassLib.TextEditor;
+using BlazorStudio.ClassLib.TextEditor.Enums;
 using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
 using BlazorStudio.RazorLib.ShouldRender;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace BlazorStudio.RazorLib.TextEditorCase;
 
@@ -66,5 +69,28 @@ public partial class TextEditorDisplay : FluxorComponent
         _previousTextPartitionSequenceKey = _textPartition?.SequenceKey ?? SequenceKey.Empty();
 
         return shouldRender;
+    }
+
+    private async Task ApplyRoslynSyntaxHighlightingAsyncOnClick()
+    {
+        // I don't want the IMMUTABLE state changing due to Blazor using a MUTABLE reference.
+        var localTextEditorStates = TextEditorStatesSelection.Value;
+
+        var text = localTextEditorStates.GetAllText();
+
+        var generalSyntaxCollector = new GeneralSyntaxCollector();
+
+        var syntaxTree = CSharpSyntaxTree.ParseText(text);
+
+        var syntaxNodeRoot = await syntaxTree.GetRootAsync();
+
+        generalSyntaxCollector.Visit(syntaxNodeRoot);
+
+        localTextEditorStates.ApplyDecorationRange(
+            DecorationKind.Method,
+            generalSyntaxCollector.InvocationExpressions
+                .Select(x => x.Span));
+        
+        _previousTextPartitionSequenceKey = SequenceKey.Empty();
     }
 }
