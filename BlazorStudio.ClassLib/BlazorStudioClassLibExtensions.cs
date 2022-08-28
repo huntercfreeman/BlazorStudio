@@ -1,4 +1,6 @@
-﻿using BlazorStudio.ClassLib.NugetPackageManager;
+﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.NugetPackageManager;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,12 +12,8 @@ public static class BlazorStudioClassLibExtensions
     {
         return services
             .AddFluxor(options => options
-                .ScanAssemblies(
-                    typeof(BlazorStudioClassLibExtensions).Assembly, 
-                    typeof(PlainTextEditorClassLibExtensionMethods).Assembly
-                ))
-            .AddPlainTextEditorService()
-            .AddScoped<IFileSystemProvider, FileSystemProvider>()
+                .ScanAssemblies(typeof(BlazorStudioClassLibExtensions).Assembly))
+            .AddScoped<IFileSystemProvider, LocalFileSystemProvider>()
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>();
     }
 }

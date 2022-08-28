@@ -1,5 +1,4 @@
 ﻿using BlazorStudio.ClassLib.Keyboard;
-using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -12,16 +11,17 @@ public partial class EditorTabDisplay : ComponentBase
 
     [Parameter, EditorRequired]
     public int TabIndex { get; set; }
-    [Parameter, EditorRequired]
-    public IPlainTextEditor PlainTextEditor { get; set; } = null!;
     /// <summary>
     /// Do not use EventCallback it will call StateHasChanged implicitly
     /// causing a second 'StateHasChanged' one from Fluxor one from the EventCallback
     /// </summary>
     [Parameter, EditorRequired]
     public Action<int> SetActiveTabIndexOnClick { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public Action<PlainTextEditorKey> DisposePlainTextEditorOnClick { get; set; } = null!;
+    
+    // TODO: Dispose plain text editor
+    //
+    // [Parameter, EditorRequired]
+    // public Action<PlainTextEditorKey> DisposePlainTextEditorOnClick { get; set; } = null!;
 
     private string IsActiveCssClass => ActiveTabIndex == TabIndex
         ? "bstudio_active"
@@ -34,7 +34,7 @@ public partial class EditorTabDisplay : ComponentBase
     
     private void FireDisposePlainTextEditorOnClick()
     {
-        DisposePlainTextEditorOnClick.Invoke(PlainTextEditor.PlainTextEditorKey);
+        // TODO: Dispose plain text editor
     }
     
     private void EditorTabHandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

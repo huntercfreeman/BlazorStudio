@@ -17,12 +17,12 @@ public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public Func<Task> ReRenderCallbackFunc { get; set; } = null!;
 
-    private NewCSharpProjectDialog.CSharpTemplate? _selectedCSharpTemplate;
+    private CSharpTemplate? _selectedCSharpTemplate;
     private bool _forceSelectCSharpTemplateTreeViewOpen;
 
     private TreeViewWrapKey _newCSharpProjectTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     
-    public NewCSharpProjectDialog.CSharpTemplate? SelectedCSharpTemplate => _selectedCSharpTemplate;
+    public CSharpTemplate? SelectedCSharpTemplate => _selectedCSharpTemplate;
 
     private List<RenderCSharpTemplate> GetRootThemes()
     {

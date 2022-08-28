@@ -33,8 +33,8 @@ public class RelativeFilePath : IRelativeFilePath
                  * System.IO.Path.DirectorySeparatorChar is not a constant character
                  * As a result this is an if statement instead of a switch statement
                  */
-                if (currentCharacter == System.IO.Path.DirectorySeparatorChar ||
-                    currentCharacter == System.IO.Path.AltDirectorySeparatorChar)
+                if (currentCharacter == Path.DirectorySeparatorChar ||
+                    currentCharacter == Path.AltDirectorySeparatorChar)
                 {
                     break;
                 }
@@ -51,8 +51,8 @@ public class RelativeFilePath : IRelativeFilePath
              * System.IO.Path.DirectorySeparatorChar is not a constant character
              * As a result this is an if statement instead of a switch statement
              */
-            if (currentCharacter == System.IO.Path.DirectorySeparatorChar ||
-                currentCharacter == System.IO.Path.AltDirectorySeparatorChar)
+            if (currentCharacter == Path.DirectorySeparatorChar ||
+                currentCharacter == Path.AltDirectorySeparatorChar)
             {
                 ConsumeTokenAsDirectory();
             }
@@ -96,7 +96,7 @@ public class RelativeFilePath : IRelativeFilePath
     {
         IFilePath directoryFilePath = (IFilePath)new RelativeFilePath(new List<IFilePath>(Directories),
             _tokenBuilder.ToString(),
-            System.IO.Path.DirectorySeparatorChar.ToString(),
+            Path.DirectorySeparatorChar.ToString(),
             true);
 
         Directories.Add(directoryFilePath);
@@ -123,5 +123,5 @@ public class RelativeFilePath : IRelativeFilePath
     public List<IFilePath> Directories { get; } = new();
     public string FileNameNoExtension { get; protected set; }
     public string ExtensionNoPeriod { get; protected set; }
-    public string FilenameWithExtension => FileNameNoExtension + (IsDirectory ? System.IO.Path.DirectorySeparatorChar.ToString() : $".{ExtensionNoPeriod}");
+    public string FilenameWithExtension => FileNameNoExtension + (IsDirectory ? Path.DirectorySeparatorChar.ToString() : $".{ExtensionNoPeriod}");
 }

@@ -1,9 +1,7 @@
 ﻿using BlazorStudio.ClassLib.Errors;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.FileSystemApi;
 using BlazorStudio.ClassLib.Store.DropdownCase;
-using BlazorStudio.ClassLib.Store.PlainTextEditorCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
@@ -26,7 +24,6 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
 using BlazorStudio.ClassLib.Contexts;
-using BlazorStudio.ClassLib.FileSystemApi.MemoryMapped;
 using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.ContextCase;
@@ -338,14 +335,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     {
         if (!treeViewKeyboardEventDto.Item.IsDirectory)
         {
-            var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-
-            Dispatcher.Dispatch(
-                new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
-                    treeViewKeyboardEventDto.Item,
-                    FileSystemProvider,
-                    CancellationToken.None)
-            );
+            // TODO: Open plain text editor
         }
         else
         {
@@ -362,14 +352,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     {
         if (!treeViewMouseEventDto.Item.IsDirectory)
         {
-            var plainTextEditorKey = PlainTextEditorKey.NewPlainTextEditorKey();
-
-            Dispatcher.Dispatch(
-                new ConstructTokenizedPlainTextEditorRecordAction(plainTextEditorKey,
-                    treeViewMouseEventDto.Item,
-                    FileSystemProvider,
-                    CancellationToken.None)
-            );
+            // TODO: Open plain text editor
         }
         else
         {

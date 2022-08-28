@@ -14,8 +14,8 @@ public class AbsoluteFilePath : IAbsoluteFilePath
 
         // TODO: Go through and make sure any malformed absoluteFilePathStrings received get parsed in a well defined manner
         
-        if (absoluteFilePathString.StartsWith(System.IO.Path.DirectorySeparatorChar) 
-            || absoluteFilePathString.StartsWith(System.IO.Path.AltDirectorySeparatorChar))
+        if (absoluteFilePathString.StartsWith(Path.DirectorySeparatorChar) 
+            || absoluteFilePathString.StartsWith(Path.AltDirectorySeparatorChar))
         {
             _position++;
         }
@@ -28,8 +28,8 @@ public class AbsoluteFilePath : IAbsoluteFilePath
              * System.IO.Path.DirectorySeparatorChar is not a constant character
              * As a result this is an if statement instead of a switch statement
              */
-            if (currentCharacter == System.IO.Path.DirectorySeparatorChar ||
-                currentCharacter == System.IO.Path.AltDirectorySeparatorChar)
+            if (currentCharacter == Path.DirectorySeparatorChar ||
+                currentCharacter == Path.AltDirectorySeparatorChar)
             {
                 ConsumeTokenAsDirectory();
             }
@@ -135,7 +135,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
         IFilePath directoryFilePath = (IFilePath)new AbsoluteFilePath(RootDrive,
             new List<IFilePath>(Directories),
             _tokenBuilder.ToString(),
-            System.IO.Path.DirectorySeparatorChar.ToString(),
+            Path.DirectorySeparatorChar.ToString(),
             true);
 
         Directories.Add(directoryFilePath);
@@ -150,7 +150,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
     public string ExtensionNoPeriod { get; protected set; }
     public string FilenameWithExtension => FileNameNoExtension + 
                                            (IsDirectory 
-                                               ? System.IO.Path.DirectorySeparatorChar.ToString() 
+                                               ? Path.DirectorySeparatorChar.ToString() 
                                                : ExtensionNoPeriod == string.Empty
                                                    ? string.Empty
                                                    : $".{ExtensionNoPeriod}");
@@ -158,7 +158,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
     public IFileSystemDrive? RootDrive { get; private set; }
 
     public string GetRootDirectory => RootDrive is null
-        ? System.IO.Path.DirectorySeparatorChar.ToString()
+        ? Path.DirectorySeparatorChar.ToString()
         : RootDrive.DriveNameAsPath;
 
     public string GetAbsoluteFilePathString()
@@ -176,10 +176,10 @@ public class AbsoluteFilePath : IAbsoluteFilePath
 
         var absoluteFilePathString = absoluteFilePathStringBuilder.ToString();
 
-        if (absoluteFilePathString == new string(System.IO.Path.DirectorySeparatorChar, 2) ||
-            absoluteFilePathString == new string(System.IO.Path.AltDirectorySeparatorChar, 2))
+        if (absoluteFilePathString == new string(Path.DirectorySeparatorChar, 2) ||
+            absoluteFilePathString == new string(Path.AltDirectorySeparatorChar, 2))
         {
-            return System.IO.Path.DirectorySeparatorChar.ToString();
+            return Path.DirectorySeparatorChar.ToString();
         }
 
         return absoluteFilePathString;

@@ -26,10 +26,6 @@ public record ContextState(ImmutableDictionary<ContextKey, ContextRecord> Contex
                 ContextFacts.FolderExplorerContext
             },
             {
-                ContextFacts.PlainTextEditorContext.ContextKey,
-                ContextFacts.PlainTextEditorContext
-            },
-            {
                 ContextFacts.DialogDisplayContext.ContextKey,
                 ContextFacts.DialogDisplayContext
             },
