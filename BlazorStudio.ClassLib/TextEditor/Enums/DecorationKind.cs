@@ -1,4 +1,4 @@
-namespace ExperimentalTextEditor.ClassLib.TextEditor.Enums;
+namespace BlazorStudio.ClassLib.TextEditor.Enums;
 
 /// <summary>
 /// <see cref="Variable"/> example: "private bool _myField;  \n public int MyProperty { get; set; }"

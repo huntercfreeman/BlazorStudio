@@ -1,4 +1,4 @@
-namespace ExperimentalTextEditor.ClassLib.TextEditor;
+namespace BlazorStudio.ClassLib.TextEditor.Character;
 
 /// <summary>
 /// I got the idea to have the characters as 'rich characters' instead

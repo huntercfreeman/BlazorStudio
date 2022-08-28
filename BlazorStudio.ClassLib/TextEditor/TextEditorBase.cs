@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
+using BlazorStudio.ClassLib.TextEditor.Character;
 
-namespace ExperimentalTextEditor.ClassLib.TextEditor;
+namespace BlazorStudio.ClassLib.TextEditor;
 
 public record TextEditorBase() : IDisposable
 {
@@ -46,7 +47,11 @@ public record TextEditorBase() : IDisposable
     /// When all 'active link'(s) are gone then the TextEditorBase is disposed of.
     /// </summary>
     public ImmutableList<TextPartition> TextPartitions { get; set; }
-
+    /// <summary>
+    /// Unique identifier for a <see cref="TextEditorBase"/>
+    /// </summary>
+    public TextEditorKey TextEditorKey { get; init; } = TextEditorKey.NewTextEditorKey();
+    
     /// <summary>
     /// When the physical file has changes saved to it (whether that be from a different process
     /// or not) a notification is sent.

@@ -1,4 +1,4 @@
-namespace ExperimentalTextEditor.ClassLib.TextEditor.Enums;
+namespace BlazorStudio.ClassLib.TextEditor.Enums;
 
 public enum TextCharacterKind
 {

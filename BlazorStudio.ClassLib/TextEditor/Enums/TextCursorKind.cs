@@ -1,4 +1,4 @@
-namespace ExperimentalTextEditor.ClassLib.TextEditor.Enums;
+namespace BlazorStudio.ClassLib.TextEditor.Enums;
 
 /// <summary>
 /// <see cref="TextCursorKind.Beam"/> is intended for text insertion via typing.

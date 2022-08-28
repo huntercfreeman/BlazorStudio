@@ -1,4 +1,4 @@
-namespace ExperimentalTextEditor.ClassLib.TextEditor;
+namespace BlazorStudio.ClassLib.TextEditor.Character;
 
 public record TextCharacterDecoration
 {

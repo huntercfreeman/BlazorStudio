@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
+using BlazorStudio.ClassLib.TextEditor.Character;
 
-namespace ExperimentalTextEditor.ClassLib.TextEditor;
+namespace BlazorStudio.ClassLib.TextEditor;
 
 /// <summary>
 /// The length of a row might horizontally go offscreen and not get rendered.

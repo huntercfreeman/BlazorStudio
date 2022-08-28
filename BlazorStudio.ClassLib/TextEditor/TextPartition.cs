@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
-using ExperimentalTextEditor.ClassLib.TextEditor.IndexWrappers;
+using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
 
-namespace ExperimentalTextEditor.ClassLib.TextEditor;
+namespace BlazorStudio.ClassLib.TextEditor;
 
 public record TextPartition(RectangularCoordinates RectangularCoordinates, ImmutableArray<TextSpan> TextSpanRows);

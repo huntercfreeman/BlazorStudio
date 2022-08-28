@@ -1,7 +1,7 @@
-using ExperimentalTextEditor.ClassLib.TextEditor.Enums;
-using ExperimentalTextEditor.ClassLib.TextEditor.IndexWrappers;
+using BlazorStudio.ClassLib.TextEditor.Enums;
+using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
 
-namespace ExperimentalTextEditor.ClassLib.TextEditor;
+namespace BlazorStudio.ClassLib.TextEditor.Cursor;
 
 public class TextCursor
 {

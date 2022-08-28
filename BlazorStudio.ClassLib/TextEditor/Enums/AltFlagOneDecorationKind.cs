@@ -1,4 +1,4 @@
-namespace ExperimentalTextEditor.ClassLib.TextEditor.Enums;
+namespace BlazorStudio.ClassLib.TextEditor.Enums;
 
 /// <summary>
 /// <see cref="Local"/> example: "private void MyMethod() { var myLocalVariable = 45; }"
