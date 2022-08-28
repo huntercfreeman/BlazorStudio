@@ -28,14 +28,28 @@ public partial class EditorDisplay : FluxorComponent
     public ClassLib.UserInterface.Dimensions Dimensions { get; set; } = null!;
 
     private TextEditorKey _textEditorKey = TextEditorKey.NewTextEditorKey();
+    private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath(
+        "/home/hunter/Documents/TestData/PlainTextEditorStates.Effect.cs", 
+        false);
     
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            var content = await FileSystemProvider.ReadFileAsync(
+                _absoluteFilePath);
+            
+            Dispatcher.Dispatch(new RequestConstructTextEditorAction(
+                _textEditorKey,
+                _absoluteFilePath,
+                content,
+                (_, _) => Task.CompletedTask,
+                () => null
+            ));
+            
             Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(_textEditorKey));
         }
         
-        base.OnAfterRender(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
     }
 }
