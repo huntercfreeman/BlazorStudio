@@ -20,4 +20,7 @@ public record TextSpan
     /// </summary>
     public int End { get; init; }
     public ImmutableArray<TextCharacter> TextCharacters { get; init; }
+    public string GetText => new string(TextCharacters
+        .Select(x => x.Value)
+        .ToArray());
 }

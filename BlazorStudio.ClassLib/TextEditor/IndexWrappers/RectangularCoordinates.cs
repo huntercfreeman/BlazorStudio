@@ -13,8 +13,6 @@ namespace BlazorStudio.ClassLib.TextEditor.IndexWrappers;
 /// For now I will only do vertical Virtualization
 /// and ignore the <see cref="ColumnIndex"/>(s)
 /// </summary>
-public record RectangularCoordinates
-{
-    public (RowIndex RowIndex, ColumnIndex ColumnIndex) TopLeftCorner { get; set; }
-    public (RowIndex RowIndex, ColumnIndex ColumnIndex) BottomRightCorner { get; set; }
-}
+public record RectangularCoordinates(
+    (RowIndex RowIndex, ColumnIndex ColumnIndex) TopLeftCorner,
+    (RowIndex RowIndex, ColumnIndex ColumnIndex) BottomRightCorner);

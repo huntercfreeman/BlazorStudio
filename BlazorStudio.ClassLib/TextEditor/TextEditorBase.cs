@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.TextEditor.Character;
 using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
 
@@ -33,11 +34,30 @@ public record TextEditorBase : IDisposable
         Func<EventHandler> getInstanceOfPhysicalFileWatcherFuncFunc)
     {
         TextEditorKey = textEditorKey;
+
+        var previousKey = string.Empty;
+
+        var rowIndex = 0;
         
-        _content = content.Select(x => new TextCharacter
+        _content = content.Select((character, index) =>
         {
-            Value = x,
-            Decoration = default
+            var key = character.ToString();
+
+                // '\r' and '\r\n'
+            if ((KeyboardKeyFacts.NewLineKeys.CARRIAGE_RETURN_KEY == key) ||
+                // '\n'
+                (KeyboardKeyFacts.NewLineKeys.NEW_LINE_KEY == key && previousKey != KeyboardKeyFacts.NewLineKeys.CARRIAGE_RETURN_KEY))
+            {
+                _lineEndingPositions[rowIndex++] = index;                
+            }
+
+            previousKey = key;
+            
+            return new TextCharacter
+            {
+                Value = character,
+                Decoration = default
+            };   
         }).ToImmutableArray();
 
         _absoluteFilePath = absoluteFilePath;
@@ -80,7 +100,7 @@ public record TextEditorBase : IDisposable
         return new string(_content.Select(x => x.Value).ToArray());
     }
     
-    public TextPartition GetTextSpanRows(RectangularCoordinates rectangularCoordinates)
+    public TextPartition GetTextPartition(RectangularCoordinates rectangularCoordinates)
     {
         var rowCountRequested = rectangularCoordinates.BottomRightCorner.RowIndex.Value -
                             rectangularCoordinates.TopLeftCorner.RowIndex.Value;

@@ -1,11 +1,26 @@
+@using BlazorStudio.ClassLib.TextEditor.IndexWrappers
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <h3>TextEditorDisplay (@TextEditorKey.Guid)</h3>
 
 <div class="pte_plain-text-editor-wrapping">
     <div class="pte_plain-text-editor-display">
-        <pre>
-@TextEditorStatesSelection.Value.GetAllText()
-</pre>
+        @{
+            // I don't want the IMMUTABLE state changing due to Blazor using a MUTABLE reference.
+            var localTextEditorStates = TextEditorStatesSelection.Value;
+
+            var textPartition = localTextEditorStates.GetTextPartition(new RectangularCoordinates(
+                TopLeftCorner: (new(0), new(0)),
+                BottomRightCorner: (new(10), new(10))));
+
+            foreach (var textSpan in textPartition.TextSpanRows)
+            {
+                <div style="margin-top: 10px; margin-bottom:  10px;" border: 1.5px solid blue>
+                    <pre>
+@textSpan.GetText
+</pre>    
+                </div>
+            }
+        }
     </div>
 </div>
