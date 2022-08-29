@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.TextEditor.Character;
+using BlazorStudio.ClassLib.TextEditor.Cursor;
 using BlazorStudio.ClassLib.TextEditor.Enums;
 using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
 using Microsoft.CodeAnalysis.Text;

@@ -2,12 +2,14 @@ using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.TextEditorCase;
 using BlazorStudio.ClassLib.TextEditor;
+using BlazorStudio.ClassLib.TextEditor.Cursor;
 using BlazorStudio.ClassLib.TextEditor.Enums;
 using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
 using BlazorStudio.RazorLib.ShouldRender;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
@@ -24,7 +26,9 @@ public partial class TextEditorDisplay : FluxorComponent
     private bool _colorFlip;
     private TextPartition? _textPartition;
     private SequenceKey _previousTextPartitionSequenceKey = SequenceKey.Empty();
-
+    private TextCursor _cursor = new();
+    private TextEditorCursorDisplay? _textEditorCursorDisplay;
+    
     private string BackgroundColor => GetBackgroundColor();
 
     protected override void OnInitialized()
@@ -45,7 +49,7 @@ public partial class TextEditorDisplay : FluxorComponent
             _textPartition = localTextEditorStates.GetTextPartition(new RectangularCoordinates(
                 TopLeftCorner: (new(0), new(0)),
                 BottomRightCorner: (new(Int32.MaxValue), new(10))));
-
+            
             await InvokeAsync(StateHasChanged);
         }
         
@@ -75,9 +79,9 @@ public partial class TextEditorDisplay : FluxorComponent
     private async Task ApplyRoslynSyntaxHighlightingAsyncOnClick()
     {
         // I don't want the IMMUTABLE state changing due to Blazor using a MUTABLE reference.
-        var localTextEditorStates = TextEditorStatesSelection.Value;
+        var localTextEditorState = TextEditorStatesSelection.Value;
 
-        var text = localTextEditorStates.GetAllText();
+        var text = localTextEditorState.GetAllText();
 
         var generalSyntaxCollector = new GeneralSyntaxCollector();
 
@@ -87,7 +91,7 @@ public partial class TextEditorDisplay : FluxorComponent
 
         generalSyntaxCollector.Visit(syntaxNodeRoot);
 
-        ApplyDecorations(localTextEditorStates, generalSyntaxCollector);
+        ApplyDecorations(localTextEditorState, generalSyntaxCollector);
         
         _previousTextPartitionSequenceKey = SequenceKey.Empty();
     }
@@ -209,6 +213,22 @@ public partial class TextEditorDisplay : FluxorComponent
                 DecorationKind.AltFlagTwo | DecorationKind.Method,
                 generalSyntaxCollector.XmlComments
                     .Select(xml => xml.Span));
+        }
+    }
+
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (_textEditorCursorDisplay is not null)
+        {
+            _textEditorCursorDisplay.MoveCursor(keyboardEventArgs);
+        }
+    }
+    
+    private async Task HandleOnClick(MouseEventArgs mouseEventArgs)
+    {
+        if (_textEditorCursorDisplay is not null)
+        {
+            await _textEditorCursorDisplay.FocusAsync();
         }
     }
 }

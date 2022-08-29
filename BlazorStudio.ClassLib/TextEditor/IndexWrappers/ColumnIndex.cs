@@ -1,3 +1,11 @@
 namespace BlazorStudio.ClassLib.TextEditor.IndexWrappers;
 
-public record ColumnIndex(int Value);
+public class ColumnIndex
+{
+    public ColumnIndex(int value)
+    {
+        Value = value;
+    }
+    
+    public int Value { get; set; }
+}

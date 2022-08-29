@@ -5,7 +5,7 @@ namespace BlazorStudio.ClassLib.TextEditor.Cursor;
 
 public class TextCursor
 {
-    public RowIndex RowIndex { get; set; }
-    public ColumnIndex ColumnIndex { get; set; }
-    public TextCursorKind TextCursorKind { get; set; }
+    public RowIndex RowIndex { get; set; } = new(0);
+    public ColumnIndex ColumnIndex { get; set; } = new(0);
+    public TextCursorKind TextCursorKind { get; set; } = TextCursorKind.Beam;
 }
