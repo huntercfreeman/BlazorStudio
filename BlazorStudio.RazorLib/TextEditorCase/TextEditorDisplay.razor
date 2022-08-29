@@ -13,57 +13,68 @@
     </button>
 
     <div class="pte_plain-text-editor-wrapping">
-        <div class="pte_plain-text-editor-display">
-            @if (_textPartition is not null)
-            {
-                foreach (var textSpan in _textPartition.TextSpanRows)
+        <div class="pte_plain-text-editor-display"
+             @onkeydown="HandleOnKeyDown"
+             @onkeydown:preventDefault="true"
+             @onclick="HandleOnClick">
+            @{
+                var localTextEditorState = TextEditorStatesSelection.Value;
+                if (_textPartition is not null)
                 {
-                    <div style="background-color: @GetBackgroundColor()">
-                        @{
-                            var spanTextBuilder = new StringBuilder();
-                            var currentDecorationByte = textSpan.TextCharacters
-                                .First().DecorationByte;
-                            
-                            foreach (var textCharacter in textSpan.TextCharacters)
-                            {
-                                if (currentDecorationByte == textCharacter.DecorationByte)
+
+                    foreach (var textSpan in _textPartition.TextSpanRows)
+                    {
+                        <div style="background-color: @GetBackgroundColor()">
+                            @{
+                                var spanTextBuilder = new StringBuilder();
+                                var currentDecorationByte = textSpan.TextCharacters
+                                    .First().DecorationByte;
+
+                                foreach (var textCharacter in textSpan.TextCharacters)
                                 {
-                                    if (textCharacter.Value == '\t')
+                                    if (currentDecorationByte == textCharacter.DecorationByte)
                                     {
-                                        spanTextBuilder.Append("&nbsp;&nbsp;&nbsp;&nbsp;");
-                                    }
-                                    else if (textCharacter.Value == ' ')
-                                    {
-                                        spanTextBuilder.Append("&nbsp;");
+                                        if (textCharacter.Value == '\t')
+                                        {
+                                            spanTextBuilder.Append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                                        }
+                                        else if (textCharacter.Value == ' ')
+                                        {
+                                            spanTextBuilder.Append("&nbsp;");
+                                        }
+                                        else
+                                        {
+                                            spanTextBuilder.Append(textCharacter.Value);
+                                        }
                                     }
                                     else
                                     {
+                                        <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
+                                            @((MarkupString)spanTextBuilder.ToString())
+                                        </span>
+
+                                        spanTextBuilder.Clear();
+
+                                        currentDecorationByte = textCharacter.DecorationByte;
                                         spanTextBuilder.Append(textCharacter.Value);
                                     }
                                 }
-                                else
-                                {
-                                    <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
-                                        @((MarkupString)spanTextBuilder.ToString())
-                                    </span>
-
-                                    spanTextBuilder.Clear();
-
-                                    currentDecorationByte = textCharacter.DecorationByte;
-                                    spanTextBuilder.Append(textCharacter.Value);
-                                }
                             }
-                        }
 
-                        @* Render out the last <span> *@
-                        @if (spanTextBuilder.Length > 0)
-                        {
-                            <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
-                                @((MarkupString)spanTextBuilder.ToString())
-                            </span>    
-                        }
-                    </div>
+                            @* Render out the last <span> *@
+                            @if (spanTextBuilder.Length > 0)
+                            {
+                                <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
+                                    @((MarkupString)spanTextBuilder.ToString())
+                                </span>
+                            }
+                        </div>
+                    }
                 }
+                
+                <TextEditorCursorDisplay @ref="_textEditorCursorDisplay"
+                                         TextCursor="_cursor"
+                                         TextEditorBase="localTextEditorState"/>
             }
         </div>
     </div>
