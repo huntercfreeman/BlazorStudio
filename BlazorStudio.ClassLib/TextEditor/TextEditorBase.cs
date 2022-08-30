@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
@@ -26,9 +27,25 @@ public record TextEditorBase : IDisposable
     private readonly Func<string, CancellationToken, Task> _onSaveRequestedFuncAsync;
     private readonly Func<EventHandler> _getInstanceOfPhysicalFileWatcherFunc;
 
+    /// <summary>
+    /// The UserInterface should not be immutable it is far too resource intensive and slow.
+    /// <br/><br/>
+    /// Therefore the UserInterface receives mutable <see cref="TextPartition"/>.
+    /// <br/><br/>
+    /// The <see cref="TextEditorBase"/> is the 'all knowing, singular source of truth'
+    /// and can then mutate what is displayed on
+    /// the user interface by modifying an active text partition and then sending out a rerender notification.
+    /// <br/><br/>
+    /// <see cref="_content"/> is a mutable List however all public API that use it cannot mutate the
+    /// data. <see cref="TextCharacter.DecorationByte"/> is mutable but that is used for UserInterface only.
+    /// <br/><br/>
+    /// What matters is that <see cref="_content"/> is not exposed for outside mutation and that
+    /// the underlying characters <see cref="TextCharacter.Value"/> is immutable. 
+    /// </summary>
     private readonly List<TextPartition> _activeTextPartitions = new();
     // Returns the first inclusive character position of the row that may or may not follow (possibly End of File)
     private readonly List<int> _lineEndingPositions = new();
+    private List<IEditBlock> _editBlocks = new();
     
     private EventHandler? _physicalFileWatcher;
 
@@ -146,7 +163,7 @@ public record TextEditorBase : IDisposable
                 TextCharacters = _content
                     .Skip(startOfTextSpanRowInclusive)
                     .Take(endOfTextSpanRowExclusive - startOfTextSpanRowInclusive)
-                    .ToImmutableArray()
+                    .ToList()
             };
             
             textSpanRows.Add(textCharacterSpan);
@@ -155,7 +172,7 @@ public record TextEditorBase : IDisposable
         return new TextPartition(
             TextEditorLink.Empty(), 
             rectangularCoordinates,
-            textSpanRows.ToImmutableArray(),
+            textSpanRows.ToList(),
             SequenceKey.NewSequenceKey());
     }
     
@@ -267,6 +284,8 @@ public record TextEditorBase : IDisposable
     public TextEditorBase PerformTextEditorEditAction(
         TextEditorEditAction textEditorEditAction)
     {
+        var textEditKind = TextEditKind.Other; 
+        
         foreach (var textCursor in textEditorEditAction.ImmutableTextCursors)
         {
             if (KeyboardKeyFacts.IsMetaKey(textEditorEditAction.KeyboardEventArgs.Key) &&
@@ -277,22 +296,62 @@ public record TextEditorBase : IDisposable
             else
             {
                 // TODO: This conditional branch is likely text insertion but I need to look for edge cases
-
+                textEditKind = TextEditKind.Insertion;
+                EnsureUndoPoint(textEditKind);
+                
                 var startOfRow = textCursor.IndexCoordinates.RowIndex.Value > 0
                     ? _lineEndingPositions[textCursor.IndexCoordinates.RowIndex.Value - 1]
                     : 0;
 
-                _content.Insert(
-                    startOfRow + textCursor.IndexCoordinates.ColumnIndex.Value, 
-                    new TextCharacter(
-                        textEditorEditAction.KeyboardEventArgs.Key.First())
+                // TODO: (This code block needs to be done as a complete transaction currently
+                // content can be inserted then UI can ask for partition and have false line endings
+                // and lastly then the line endings would be set correct but after the render.)
+                {
+                    var valueToInsert = textEditorEditAction.KeyboardEventArgs.Key.First();
+                    
+                    var previousEditBlock = _editBlocks.Last();
+                    
+                    if (previousEditBlock is EditBlock<StringBuilder> insertionEditBlock)
                     {
-                        DecorationByte = default
-                    });
+                        insertionEditBlock.TypedValue.Append(valueToInsert);
+                    }
+                    
+                    _content.Insert(
+                        startOfRow + textCursor.IndexCoordinates.ColumnIndex.Value,
+                        new TextCharacter(valueToInsert)
+                        {
+                            DecorationByte = default
+                        });
+
+                    // TODO: (Updating _lineEndingPositions is likely able to done faster than this.
+                    // I imagine the current way with this for loop could possibly get slow with files
+                    // of many lines as each character insertion would run this.)
+                    for (int i = textCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
+                    {
+                        _lineEndingPositions[i]++;
+                    }
+                }
             }
         }
 
         return this;
+    }
+    
+    private void EnsureUndoPoint(TextEditKind textEditKind)
+    {
+        var previousEditBlock = _editBlocks.LastOrDefault();
+        
+        if (previousEditBlock is null ||
+            previousEditBlock.TextEditKind != textEditKind)
+        {
+            if (textEditKind == TextEditKind.Insertion)
+            {
+                _editBlocks.Add(new EditBlock<StringBuilder>(
+                    textEditKind, 
+                    new(), 
+                    GetAllText()));
+            }
+        }
     }
     
     private void ReleaseUnmanagedResources()
