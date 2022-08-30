@@ -55,7 +55,7 @@ public record TextEditorBase : IDisposable
                 // Track line ending position and
                 // increment row index
                 {
-                    _lineEndingPositions.Add(index);
+                    _lineEndingPositions.Add(index + 1);
                     rowIndex++;
                 }
             }
@@ -184,6 +184,18 @@ public record TextEditorBase : IDisposable
                 _content[i].DecorationByte = (byte) decorationKind;
             }
         }
+    }
+    
+    public static int GetLengthOfRow(RowIndex rowIndex, ImmutableArray<int> lineEndingPositions)
+    {
+        var startOfTextSpanRowInclusive = rowIndex.Value == 0
+            ? 0
+            : lineEndingPositions[rowIndex.Value - 1];
+
+        var endOfTextSpanRowExclusive =
+            lineEndingPositions[rowIndex.Value];
+
+        return endOfTextSpanRowExclusive - startOfTextSpanRowInclusive;
     }
     
     private void ReleaseUnmanagedResources()

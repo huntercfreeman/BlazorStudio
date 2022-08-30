@@ -36,11 +36,21 @@
                                     {
                                         if (textCharacter.Value == '\t')
                                         {
-                                            spanTextBuilder.Append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                                            // spanTextBuilder.Append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                                            spanTextBuilder.Append("~~~~");
                                         }
                                         else if (textCharacter.Value == ' ')
                                         {
-                                            spanTextBuilder.Append("&nbsp;");
+                                            // spanTextBuilder.Append("&nbsp;");
+                                            spanTextBuilder.Append("`");
+                                        }
+                                        else if (textCharacter.Value == '\r')
+                                        {
+                                            spanTextBuilder.Append('/');
+                                        }
+                                        else if (textCharacter.Value == '\n')
+                                        {
+                                            spanTextBuilder.Append('\\');
                                         }
                                         else
                                         {

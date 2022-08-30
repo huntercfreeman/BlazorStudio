@@ -5,7 +5,11 @@ namespace BlazorStudio.ClassLib.TextEditor.Cursor;
 
 public class TextCursor
 {
-    public RowIndex RowIndex { get; set; } = new(0);
-    public ColumnIndex ColumnIndex { get; set; } = new(0);
+    /// <summary>
+    /// When changing both <see cref="RowIndex"/> and <see cref="ColumnIndex"/>
+    /// this property being a Tuple helps change coordinates as a 'transaction'.
+    /// </summary>
+    public (RowIndex RowIndex, ColumnIndex ColumnIndex) IndexCoordinates { get; set; }
+        = (new(0), new(0));
     public TextCursorKind TextCursorKind { get; set; } = TextCursorKind.Beam;
 }
