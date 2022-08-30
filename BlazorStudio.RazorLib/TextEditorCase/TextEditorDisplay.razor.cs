@@ -12,6 +12,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
@@ -32,6 +33,7 @@ public partial class TextEditorDisplay : FluxorComponent
     private SequenceKey _previousTextPartitionSequenceKey = SequenceKey.Empty();
     private TextCursor _cursor = new();
     private TextEditorCursorDisplay? _textEditorCursorDisplay;
+    private Virtualize<TextCharacterSpan>? _virtualize;
     
     private string BackgroundColor => GetBackgroundColor();
 
@@ -88,7 +90,7 @@ public partial class TextEditorDisplay : FluxorComponent
         if (_textEditorCursorDisplay is null)
             return;
         
-        var localTextEditorStates = TextEditorStatesSelection.Value;
+        var localTextEditorState = TextEditorStatesSelection.Value;
 
         if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key))
         {
@@ -102,15 +104,14 @@ public partial class TextEditorDisplay : FluxorComponent
                 keyboardEventArgs,
                 CancellationToken.None));
 
-            _textPartition = localTextEditorStates.GetTextPartition(new RectangularCoordinates(
-                TopLeftCorner: (new(0), new(0)),
-                BottomRightCorner: (new(5), new(10))));
-
             _cursor.IndexCoordinates = 
                 (_cursor.IndexCoordinates.RowIndex, 
                 new (_cursor.IndexCoordinates.ColumnIndex.Value + 1));
 
             _cursor.PreferredColumnIndex = _cursor.IndexCoordinates.ColumnIndex;
+
+            if (_virtualize is not null)
+                _virtualize.RefreshDataAsync();
             
             StateHasChanged();
         }
@@ -122,6 +123,23 @@ public partial class TextEditorDisplay : FluxorComponent
         {
             await _textEditorCursorDisplay.FocusAsync();
         }
+    }
+    
+    private async ValueTask<ItemsProviderResult<TextCharacterSpan>> LoadTextCharacterSpans(
+        ItemsProviderRequest request)
+    {
+        var localTextEditorState = TextEditorStatesSelection.Value;
+        
+        var numTextCharacterSpans = Math
+            .Min(
+                request.Count,
+                localTextEditorState.LineEndingPositions.Length - request.StartIndex);
+        
+        _textPartition = localTextEditorState.GetTextPartition(new RectangularCoordinates(
+            TopLeftCorner: (new(request.StartIndex), new(0)),
+            BottomRightCorner: (new(request.StartIndex + numTextCharacterSpans), new(10))));
+        
+        return new ItemsProviderResult<TextCharacterSpan>(_textPartition.TextSpanRows, localTextEditorState.LineEndingPositions.Length);
     }
 
     private async Task ApplyRoslynSyntaxHighlightingAsyncOnClick()
