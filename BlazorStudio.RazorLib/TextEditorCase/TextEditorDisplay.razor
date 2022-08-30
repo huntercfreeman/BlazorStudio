@@ -27,7 +27,7 @@
                             Context="textSpan"
                             @ref="_virtualize">
                     
-                    <div style="white-space: nowrap; background-color: @GetBackgroundColor()">
+                    <div style="white-space: nowrap;">
                         @{
                             var spanTextBuilder = new StringBuilder();
                             var currentDecorationByte = textSpan.TextCharacters
@@ -44,8 +44,8 @@
                                     }
                                     else if (textCharacter.Value == ' ')
                                     {
-                                        // spanTextBuilder.Append("&nbsp;");
-                                        spanTextBuilder.Append("`");
+                                        spanTextBuilder.Append("&nbsp;");
+                                        // spanTextBuilder.Append("`");
                                     }
                                     else if (textCharacter.Value == '\r')
                                     {
