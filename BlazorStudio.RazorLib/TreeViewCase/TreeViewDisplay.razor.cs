@@ -303,8 +303,8 @@ public partial class TreeViewDisplay<T>
 
         switch (customKeyDown.Key)
         {
-            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
+            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
             {
                 if (!IsExpandable(TreeView.Item))
                     return;
@@ -325,8 +325,8 @@ public partial class TreeViewDisplay<T>
 
                 break;
             }
-            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT_KEY:
+            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
             {
                 if (TreeView.IsExpanded)
                 {
@@ -342,8 +342,8 @@ public partial class TreeViewDisplay<T>
 
                 break;
             }
-            case KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP_KEY:
+            case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
             {
                 if (IndexAmongSiblings == 0 &&
                     Parent is not null)
@@ -362,8 +362,8 @@ public partial class TreeViewDisplay<T>
 
                 break;
             }
-            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN_KEY:
+            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
             {
                 var rememberTreeViewChildren = TreeView.Children;
 
@@ -394,7 +394,7 @@ public partial class TreeViewDisplay<T>
 
                 break;
             }
-            case KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE:
+            case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
             {
                 OnEnterKeyDown(new TreeViewKeyboardEventDto<T>(customKeyDown, 
                     TreeView.Item, 
@@ -405,7 +405,7 @@ public partial class TreeViewDisplay<T>
 
                 break;
             }
-            case KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE:
+            case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
             {
                 OnSpaceKeyDown(new TreeViewKeyboardEventDto<T>(customKeyDown, 
                     TreeView.Item, 

@@ -106,7 +106,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
             keyboardEventArgs.ShiftKey,
             keyboardEventArgs.AltKey);
         
-        if (keyDownEventRecord.Code == KeyboardKeyFacts.NewLineCodes.ENTER_CODE)
+        if (keyDownEventRecord.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
             try
             {

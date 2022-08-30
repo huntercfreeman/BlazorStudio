@@ -26,6 +26,7 @@ public record TextEditorBase : IDisposable
     private readonly Func<EventHandler> _getInstanceOfPhysicalFileWatcherFunc;
 
     private readonly List<TextPartition> _activeTextPartitions = new();
+    // Returns the first inclusive character position of the row that may or may not follow (possibly End of File)
     private readonly List<int> _lineEndingPositions = new();
     
     private EventHandler? _physicalFileWatcher;
@@ -39,18 +40,16 @@ public record TextEditorBase : IDisposable
     {
         TextEditorKey = textEditorKey;
 
-        var previousKey = string.Empty;
+        var previousKey = ' ';
 
         var rowIndex = 0;
         
         _content = content.Select((character, index) =>
         {
-            var key = character.ToString();
-
                 // '\r' and '\r\n'
-            if ((KeyboardKeyFacts.NewLineKeys.CARRIAGE_RETURN_KEY == key) ||
+            if ((KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN == character) ||
                 // '\n'
-                (KeyboardKeyFacts.NewLineKeys.NEW_LINE_KEY == key && previousKey != KeyboardKeyFacts.NewLineKeys.CARRIAGE_RETURN_KEY))
+                (KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE == character && previousKey != KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN))
             {
                 // Track line ending position and
                 // increment row index
@@ -60,7 +59,7 @@ public record TextEditorBase : IDisposable
                 }
             }
 
-            previousKey = key;
+            previousKey = character;
             
             return new TextCharacter
             {
@@ -196,6 +195,59 @@ public record TextEditorBase : IDisposable
             lineEndingPositions[rowIndex.Value];
 
         return endOfTextSpanRowExclusive - startOfTextSpanRowInclusive;
+    }
+    
+    public static TextCharacterKind GetTextCharacterKind(TextCharacter textCharacter)
+    {
+        if (KeyboardKeyFacts.IsPunctuationCharacter(textCharacter.Value))
+            return TextCharacterKind.Punctuation;
+        
+        if (KeyboardKeyFacts.IsWhitespaceCharacter(textCharacter.Value))
+            return TextCharacterKind.Whitespace;
+
+        return TextCharacterKind.Plain;
+    }
+    
+    /// <summary>
+    /// Find the closest <see cref="TextCharacter"/> that has a
+    /// <see cref="TextCharacterKind"/> != the passed parameter's <see cref="TextCharacterKind"/> 
+    /// </summary>
+    /// <param name="lookBackwards">The search will go to the left of the passed parameter if true otherwise it will search to the right.</param>
+    public ColumnIndex ClosestNonMatchingCharacterOnSameRowColumnIndex(
+        RowIndex rowIndex, 
+        ColumnIndex columnIndex, 
+        bool lookBackwards)
+    {
+        // Ensure the caller's state is not mutated
+        rowIndex = new RowIndex(rowIndex);
+        columnIndex = new ColumnIndex(columnIndex);
+        
+        void MutateLocalColumnIndex()
+        {
+            if (lookBackwards)
+                columnIndex.Value--;
+            else
+                columnIndex.Value++;
+        }
+
+        var startOfRow = rowIndex.Value > 0
+            ? _lineEndingPositions[rowIndex.Value - 1]
+            : 0;
+        var nextRowStart = _lineEndingPositions[rowIndex.Value];
+
+        // Get the cursor's TextCharacter to start with.
+        var textCharacter = _content[startOfRow + columnIndex.Value];
+        var startingKind = GetTextCharacterKind(textCharacter);
+        
+        while (columnIndex.Value > 0 &&
+               columnIndex.Value < nextRowStart &&
+               GetTextCharacterKind(textCharacter) == startingKind)
+        {
+            MutateLocalColumnIndex();
+            textCharacter = _content[startOfRow + columnIndex.Value];
+        }
+
+        return columnIndex;
     }
     
     private void ReleaseUnmanagedResources()

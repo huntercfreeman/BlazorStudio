@@ -19,43 +19,39 @@ public static class KeyboardKeyFacts
         // }
     }
 
-    public static bool IsWhitespaceKey(KeyDownEventRecord onKeyDownEventArgs)
+    public static bool IsWhitespaceCharacter(char character)
     {
-        switch (onKeyDownEventArgs.Code)
+        switch (character)
         {
-            case "\t":
-            case WhitespaceKeys.TAB_CODE:
-            case "\r":
-            case WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE:
-            case "\n":
-            case WhitespaceKeys.ENTER_CODE:
-            case " ":
-            case WhitespaceKeys.SPACE_CODE:
+            case WhitespaceCharacters.TAB:
+            case WhitespaceCharacters.CARRIAGE_RETURN:
+            case WhitespaceCharacters.NEW_LINE:
+            case WhitespaceCharacters.SPACE:
                 return true;
             default:
                 return false;
         }
     }
     
-    public static bool IsPunctuationKey(KeyDownEventRecord onKeyDownEventArgs)
+    public static bool IsPunctuationCharacter(char character)
     {
-        switch (onKeyDownEventArgs.Key)
+        switch (character)
         {
-            case PunctuationKeys.OpenCurlyBrace:
-            case PunctuationKeys.CloseCurlyBrace:
-            case PunctuationKeys.OpenParenthesis:
-            case PunctuationKeys.CloseParenthesis:
-            case PunctuationKeys.OpenSquareBracket:
-            case PunctuationKeys.CloseSquareBracket:
-            case PunctuationKeys.Period:
-            case PunctuationKeys.Semicolon:
-            case PunctuationKeys.Equal:
-            case PunctuationKeys.DoubleQuote:
-            case PunctuationKeys.SingleQuote:
-            case PunctuationKeys.OpenArrowBracket:
-            case PunctuationKeys.EndArrowBracket:
-            case PunctuationKeys.ForwardSlash:
-            case PunctuationKeys.BackSlash:
+            case PunctuationCharacters.OPEN_CURLY_BRACE:
+            case PunctuationCharacters.CLOSE_CURLY_BRACE:
+            case PunctuationCharacters.OPEN_PARENTHESIS:
+            case PunctuationCharacters.CLOSE_PARENTHESIS:
+            case PunctuationCharacters.OPEN_SQUARE_BRACKET:
+            case PunctuationCharacters.CLOSE_SQUARE_BRACKET:
+            case PunctuationCharacters.PERIOD:
+            case PunctuationCharacters.SEMICOLON:
+            case PunctuationCharacters.EQUAL:
+            case PunctuationCharacters.DOUBLE_QUOTE:
+            case PunctuationCharacters.SINGLE_QUOTE:
+            case PunctuationCharacters.OPEN_ARROW_BRACKET:
+            case PunctuationCharacters.END_ARROW_BRACKET:
+            case PunctuationCharacters.FORWARD_SLASH:
+            case PunctuationCharacters.BACK_SLASH:
                 return true;
             default:
                 return false;
@@ -64,78 +60,64 @@ public static class KeyboardKeyFacts
 
     public static class MetaKeys
     {
-        public const string BACKSPACE_KEY = "Backspace";
-        public const string ESCAPE_KEY = "Escape";
-        public const string DELETE_KEY = "Delete";
-        public const string F10_KEY = "F10";
+        public const string BACKSPACE = "Backspace";
+        public const string ESCAPE = "Escape";
+        public const string DELETE = "Delete";
+        public const string F10 = "F10";
     }
     
-    public static class WhitespaceKeys
+    public static class WhitespaceCharacters
+    {
+        public const char TAB = '\t';
+        public const char CARRIAGE_RETURN = '\r';
+        public const char NEW_LINE = '\n';
+        public const char SPACE = ' ';
+    }
+    
+    public static class WhitespaceCodes
     {
         public const string TAB_CODE = "Tab";
         // TODO: Get CARRIAGE_RETURN_CODE code
         public const string CARRIAGE_RETURN_CODE = "";
         public const string ENTER_CODE = "Enter";
-        public const string CARRIAGE_RETURN_NEW_LINE_CODE = "CarriageReturnNewLine";
         public const string SPACE_CODE = "Space";
     }
     
-    public static class PunctuationKeys
+    public static class PunctuationCharacters
     {
-        public const string OpenCurlyBrace = "{";
-        public const string CloseCurlyBrace = "}";
-        public const string OpenParenthesis = "(";
-        public const string CloseParenthesis = ")";
-        public const string OpenSquareBracket = "[";
-        public const string CloseSquareBracket = "]";
-        public const string Period = ".";
-        public const string Semicolon = ";";
-        public const string Equal = "=";
-        public const string DoubleQuote = "\"";
-        public const string SingleQuote = "'";
-        public const string OpenArrowBracket = "<";
-        public const string EndArrowBracket = ">";
-        public const string ForwardSlash = "/";
-        public const string BackSlash = "\\";
+        public const char OPEN_CURLY_BRACE = '{';
+        public const char CLOSE_CURLY_BRACE = '}';
+        public const char OPEN_PARENTHESIS = '(';
+        public const char CLOSE_PARENTHESIS = ')';
+        public const char OPEN_SQUARE_BRACKET = '[';
+        public const char CLOSE_SQUARE_BRACKET = ']';
+        public const char PERIOD = '.';
+        public const char SEMICOLON = ';';
+        public const char EQUAL = '=';
+        public const char DOUBLE_QUOTE = '\"';
+        public const char SINGLE_QUOTE = '\'';
+        public const char OPEN_ARROW_BRACKET = '<';
+        public const char END_ARROW_BRACKET = '>';
+        public const char FORWARD_SLASH = '/';
+        public const char BACK_SLASH = '\\';
     }
     
-    public static class NewLineCodes
-    {
-        public const string CARRIAGE_RETURN_CODE = WhitespaceKeys.CARRIAGE_RETURN_CODE;
-        public const string ENTER_CODE = WhitespaceKeys.ENTER_CODE;
-        public const string CARRIAGE_RETURN_NEW_LINE_CODE = WhitespaceKeys.CARRIAGE_RETURN_NEW_LINE_CODE;
-
-        public static readonly ImmutableArray<string> ALL_NEW_LINE_CODES = new string[]
-        {
-            CARRIAGE_RETURN_CODE,
-            ENTER_CODE,
-            CARRIAGE_RETURN_NEW_LINE_CODE
-        }.ToImmutableArray();
-    }
-    
-    public static class NewLineKeys
-    {
-        public const string CARRIAGE_RETURN_KEY = "\r";
-        public const string NEW_LINE_KEY = "\n";
-        public const string CARRIAGE_RETURN_NEW_LINE_KEY = "\r\n";
-    }
-
     public static class MovementKeys
     {
-        public const string ARROW_LEFT_KEY = "ArrowLeft";
-        public const string ARROW_DOWN_KEY = "ArrowDown";
-        public const string ARROW_UP_KEY = "ArrowUp";
-        public const string ARROW_RIGHT_KEY = "ArrowRight";
-        public const string HOME_KEY = "Home";
-        public const string END_KEY = "End";
+        public const string ARROW_LEFT = "ArrowLeft";
+        public const string ARROW_DOWN = "ArrowDown";
+        public const string ARROW_UP = "ArrowUp";
+        public const string ARROW_RIGHT = "ArrowRight";
+        public const string HOME = "Home";
+        public const string END = "End";
     }
 
     public static class AlternateMovementKeys
     {
-        public const string ARROW_LEFT_KEY = "h";
-        public const string ARROW_DOWN_KEY = "j";
-        public const string ARROW_UP_KEY = "k";
-        public const string ARROW_RIGHT_KEY = "l";
+        public const string ARROW_LEFT = "h";
+        public const string ARROW_DOWN = "j";
+        public const string ARROW_UP = "k";
+        public const string ARROW_RIGHT = "l";
     }
 
     public static bool CheckIsAlternateContextMenuEvent(KeyDownEventRecord keyDownEventRecord)
@@ -173,12 +155,12 @@ public static class KeyboardKeyFacts
     {
         switch (onKeyDownEventArgs.Key)
         {
-            case MovementKeys.ARROW_LEFT_KEY:
-            case MovementKeys.ARROW_DOWN_KEY:
-            case MovementKeys.ARROW_UP_KEY:
-            case MovementKeys.ARROW_RIGHT_KEY:
-            case MovementKeys.HOME_KEY:
-            case MovementKeys.END_KEY:
+            case MovementKeys.ARROW_LEFT:
+            case MovementKeys.ARROW_DOWN:
+            case MovementKeys.ARROW_UP:
+            case MovementKeys.ARROW_RIGHT:
+            case MovementKeys.HOME:
+            case MovementKeys.END:
                 return true;
             default:
                 return false;
@@ -189,10 +171,10 @@ public static class KeyboardKeyFacts
     {
         switch (onKeyDownEventArgs.Key)
         {
-            case AlternateMovementKeys.ARROW_LEFT_KEY:
-            case AlternateMovementKeys.ARROW_DOWN_KEY:
-            case AlternateMovementKeys.ARROW_UP_KEY:
-            case AlternateMovementKeys.ARROW_RIGHT_KEY:
+            case AlternateMovementKeys.ARROW_LEFT:
+            case AlternateMovementKeys.ARROW_DOWN:
+            case AlternateMovementKeys.ARROW_UP:
+            case AlternateMovementKeys.ARROW_RIGHT:
                 return true;
             default:
                 return false;

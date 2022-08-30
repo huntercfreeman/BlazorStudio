@@ -49,11 +49,11 @@ public partial class CreateNewFileForm : ComponentBase
             keyboardEventArgs.ShiftKey,
             keyboardEventArgs.AltKey);
         
-        if (keyDownEventRecord.Key == KeyboardKeyFacts.MetaKeys.ESCAPE_KEY)
+        if (keyDownEventRecord.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
             DeclineForm();
         }
-        else if (keyDownEventRecord.Code == KeyboardKeyFacts.NewLineCodes.ENTER_CODE)
+        else if (keyDownEventRecord.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
             SubmitForm();
         }
