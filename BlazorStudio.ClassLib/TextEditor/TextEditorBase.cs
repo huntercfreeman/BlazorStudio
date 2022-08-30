@@ -108,6 +108,13 @@ public record TextEditorBase : IDisposable
     /// </summary>
     public TextEditorKey TextEditorKey { get; init; } = TextEditorKey.NewTextEditorKey();
     public ImmutableArray<int> LineEndingPositions => _lineEndingPositions.ToImmutableArray();
+    /// <summary>
+    /// TODO: (I believe doing this 'leaks' privately mutable state.
+    /// As such one would incorrectly be able to alter an <see cref="EditBlock{T}"/>
+    /// from outside the <see cref="TextEditorBase"/>. Therefore an immutable version of
+    /// <see cref="EditBlock{T}"/> needs to be made for public usage.)
+    /// </summary>
+    public ImmutableArray<IEditBlock> EditBlocks => _editBlocks.ToImmutableArray();
     
     /// <summary>
     /// When the physical file has changes saved to it (whether that be from a different process
@@ -284,65 +291,120 @@ public record TextEditorBase : IDisposable
     public TextEditorBase PerformTextEditorEditAction(
         TextEditorEditAction textEditorEditAction)
     {
-        var textEditKind = TextEditKind.Other; 
-        
-        foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
+        if (KeyboardKeyFacts.IsMetaKey(textEditorEditAction.KeyboardEventArgs.Key) &&
+            !KeyboardKeyFacts.IsWhitespaceCode(textEditorEditAction.KeyboardEventArgs.Code))
         {
-            if (KeyboardKeyFacts.IsMetaKey(textEditorEditAction.KeyboardEventArgs.Key) &&
-                !KeyboardKeyFacts.IsWhitespaceCode(textEditorEditAction.KeyboardEventArgs.Code))
+            if (KeyboardKeyFacts.MetaKeys.BACKSPACE == textEditorEditAction.KeyboardEventArgs.Key)
             {
-                // TODO: Backspace and others
+                PerformBackspaces(textEditorEditAction);
             }
-            else
+            else if (KeyboardKeyFacts.MetaKeys.DELETE == textEditorEditAction.KeyboardEventArgs.Key)
             {
-                // TODO: This conditional branch is likely text insertion but I need to look for edge cases
-                textEditKind = TextEditKind.Insertion;
-                EnsureUndoPoint(textEditKind);
-                
-                var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
-                    ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
-                    : 0;
-
-                // TODO: (This code block needs to be done as a complete transaction currently
-                // content can be inserted then UI can ask for partition and have false line endings
-                // and lastly then the line endings would be set correct but after the render.)
-                {
-                    var valueToInsert = textEditorEditAction.KeyboardEventArgs.Key.First();
-                    
-                    var previousEditBlock = _editBlocks.Last();
-                    
-                    if (previousEditBlock is EditBlock<StringBuilder> insertionEditBlock)
-                    {
-                        insertionEditBlock.TypedValue.Append(valueToInsert);
-                    }
-                    
-                    _content.Insert(
-                        startOfRow + cursorTuple.immutableTextCursor.IndexCoordinates.ColumnIndex.Value,
-                        new TextCharacter(valueToInsert)
-                        {
-                            DecorationByte = default
-                        });
-
-                    // TODO: (Updating _lineEndingPositions is likely able to done faster than this.
-                    // I imagine the current way with this for loop could possibly get slow with files
-                    // of many lines as each character insertion would run this.)
-                    for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
-                    {
-                        _lineEndingPositions[i]++;
-                    }
-                    
-                    cursorTuple.textCursor.IndexCoordinates = 
-                        (cursorTuple.textCursor.IndexCoordinates.RowIndex, 
-                            new (cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value + 1));
-
-                    cursorTuple.textCursor.PreferredColumnIndex = cursorTuple.textCursor.IndexCoordinates.ColumnIndex;
-                }
+                PerformDeletions(textEditorEditAction);
             }
+        }
+        else
+        {
+            // TODO: This conditional branch is likely only text insertion but I need to look for edge cases
+            PerformInsertions(textEditorEditAction);
         }
 
         return this;
     }
+
+    private void PerformInsertions(TextEditorEditAction textEditorEditAction)
+    {
+        EnsureUndoPoint(TextEditKind.Insertion);
+        
+        foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
+        {
+            var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
+                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
+                : 0;
+
+            // TODO: (This code block needs to be done as a complete transaction currently
+            // content can be inserted then UI can ask for partition and have false line endings
+            // and lastly then the line endings would be set correct but after the render.)
+            {
+                var valueToInsert = textEditorEditAction.KeyboardEventArgs.Key.First();
+            
+                var previousEditBlock = _editBlocks.Last();
+            
+                if (previousEditBlock is EditBlock<StringBuilder> insertionEditBlock)
+                {
+                    insertionEditBlock.TypedValue.Append(valueToInsert);
+                }
+            
+                _content.Insert(
+                    startOfRow + cursorTuple.immutableTextCursor.IndexCoordinates.ColumnIndex.Value,
+                    new TextCharacter(valueToInsert)
+                    {
+                        DecorationByte = default
+                    });
+
+                // TODO: (Updating _lineEndingPositions is likely able to done faster than this.
+                // I imagine the current way with this for loop could possibly get slow with files
+                // of many lines as each character insertion would run this.)
+                for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
+                {
+                    _lineEndingPositions[i]++;
+                }
+            
+                cursorTuple.textCursor.IndexCoordinates = 
+                    (cursorTuple.textCursor.IndexCoordinates.RowIndex, 
+                        new (cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value + 1));
+
+                cursorTuple.textCursor.PreferredColumnIndex = cursorTuple.textCursor.IndexCoordinates.ColumnIndex;
+            }
+        }
+    }
     
+    private void PerformDeletions(TextEditorEditAction textEditorEditAction)
+    {
+        // TODO: This conditional branch is likely text insertion but I need to look for edge cases
+        EnsureUndoPoint(TextEditKind.Deletion);
+    }
+    
+    private void PerformBackspaces(TextEditorEditAction textEditorEditAction)
+    {
+        // TODO: This conditional branch is likely text insertion but I need to look for edge cases
+        EnsureUndoPoint(TextEditKind.Deletion);
+        
+        foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
+        {
+            var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
+                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
+                : 0;
+
+            {
+                if (cursorTuple.immutableTextCursor.IndexCoordinates.ColumnIndex.Value == 0)
+                {
+                    if (cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value == 0)
+                        continue;
+                    
+                    // Remove new line
+                    var endingPositionOfCurrentLine =
+                        _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value];
+
+                    _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1] =
+                        endingPositionOfCurrentLine;
+                    _lineEndingPositions.RemoveAt(cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value);
+                    
+                    var previousEditBlock = _editBlocks.Last();
+                    
+                    if (previousEditBlock is EditBlock<StringBuilder> deletionEditBlock)
+                    {
+                        deletionEditBlock.TypedValue.Append("Deleted a line");
+                    }
+                }
+                else
+                {
+                    // TODO: Remove TextCharacter(s) on same line
+                }
+            }
+        }
+    }
+
     private void EnsureUndoPoint(TextEditKind textEditKind)
     {
         var previousEditBlock = _editBlocks.LastOrDefault();
@@ -351,6 +413,13 @@ public record TextEditorBase : IDisposable
             previousEditBlock.TextEditKind != textEditKind)
         {
             if (textEditKind == TextEditKind.Insertion)
+            {
+                _editBlocks.Add(new EditBlock<StringBuilder>(
+                    textEditKind, 
+                    new(), 
+                    GetAllText()));
+            }
+            else if (textEditKind == TextEditKind.Deletion)
             {
                 _editBlocks.Add(new EditBlock<StringBuilder>(
                     textEditKind, 
