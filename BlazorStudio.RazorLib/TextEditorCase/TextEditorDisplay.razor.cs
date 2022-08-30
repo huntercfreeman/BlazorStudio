@@ -105,6 +105,12 @@ public partial class TextEditorDisplay : FluxorComponent
             _textPartition = localTextEditorStates.GetTextPartition(new RectangularCoordinates(
                 TopLeftCorner: (new(0), new(0)),
                 BottomRightCorner: (new(5), new(10))));
+
+            _cursor.IndexCoordinates = 
+                (_cursor.IndexCoordinates.RowIndex, 
+                new (_cursor.IndexCoordinates.ColumnIndex.Value + 1));
+
+            _cursor.PreferredColumnIndex = _cursor.IndexCoordinates.ColumnIndex;
             
             StateHasChanged();
         }
