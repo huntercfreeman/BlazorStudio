@@ -20,7 +20,7 @@ public record TextEditorBase : IDisposable
     /// "I don't even think word only partly loads the file, it creates a copy in memory"
     /// I am going to give this a go and <see cref="_content"/> is the copy in memory.
     /// </summary>
-    private readonly ImmutableArray<TextCharacter> _content;
+    private readonly List<TextCharacter> _content;
 
     private readonly IAbsoluteFilePath _absoluteFilePath;
     private readonly Func<string, CancellationToken, Task> _onSaveRequestedFuncAsync;
@@ -62,12 +62,11 @@ public record TextEditorBase : IDisposable
 
             previousKey = character;
             
-            return new TextCharacter
+            return new TextCharacter(character)
             {
-                Value = character,
                 DecorationByte = default
             };   
-        }).ToImmutableArray();
+        }).ToList();
 
         _absoluteFilePath = absoluteFilePath;
         _onSaveRequestedFuncAsync = onSaveRequestedFuncAsync;
@@ -181,7 +180,7 @@ public record TextEditorBase : IDisposable
         {
             for (int i = textSpan.Start; i < textSpan.End; i++)
             {
-                _content[i].DecorationByte = (byte) decorationKind;
+                _content[i].DecorationByte = (byte)decorationKind;
             }
         }
     }
@@ -251,15 +250,49 @@ public record TextEditorBase : IDisposable
         return columnIndex;
     }
     
+    /// <summary>
+    /// Immutability is not needed to prevent Concurrency timing issues.
+    /// <br/><br/>
+    /// This is because the state management library, "Fluxor" is being used
+    /// with the [ReducerMethod] logic which is locked and synchronous.
+    /// <br/><br/>
+    /// That being said to maintain perfect Undo logic in the editor one must
+    /// perform edits and maintain a variable of what the previous edit kind was.
+    /// <br/><br/>
+    /// Many insertions of text should NOT make an immutable version of the TextEditor's <see cref="_contents"/>
+    /// <br/><br/>
+    /// However, many insertions then a 'remove' operation like 'Backspace'
+    /// one should prior to doing a different edit kind take an immutable snapshot of the <see cref="_contents"/>
+    /// </summary>
     public TextEditorBase PerformTextEditorEditAction(
         TextEditorEditAction textEditorEditAction)
     {
         foreach (var textCursor in textEditorEditAction.ImmutableTextCursors)
         {
-            
-            
-            _content            
+            if (KeyboardKeyFacts.IsMetaKey(textEditorEditAction.KeyboardEventArgs.Key) &&
+                !KeyboardKeyFacts.IsWhitespaceCode(textEditorEditAction.KeyboardEventArgs.Code))
+            {
+                // TODO: Backspace and others
+            }
+            else
+            {
+                // TODO: This conditional branch is likely text insertion but I need to look for edge cases
+
+                var startOfRow = textCursor.IndexCoordinates.RowIndex.Value > 0
+                    ? _lineEndingPositions[textCursor.IndexCoordinates.RowIndex.Value - 1]
+                    : 0;
+
+                _content.Insert(
+                    startOfRow + textCursor.IndexCoordinates.ColumnIndex.Value, 
+                    new TextCharacter(
+                        textEditorEditAction.KeyboardEventArgs.Key.First())
+                    {
+                        DecorationByte = default
+                    });
+            }
         }
+
+        return this;
     }
     
     private void ReleaseUnmanagedResources()

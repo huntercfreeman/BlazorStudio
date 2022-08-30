@@ -52,7 +52,7 @@ public partial class TextEditorDisplay : FluxorComponent
 
             _textPartition = localTextEditorStates.GetTextPartition(new RectangularCoordinates(
                 TopLeftCorner: (new(0), new(0)),
-                BottomRightCorner: (new(Int32.MaxValue), new(10))));
+                BottomRightCorner: (new(5), new(10))));
             
             await InvokeAsync(StateHasChanged);
         }
@@ -78,6 +78,44 @@ public partial class TextEditorDisplay : FluxorComponent
         _previousTextPartitionSequenceKey = _textPartition?.SequenceKey ?? SequenceKey.Empty();
 
         return shouldRender;
+    }
+    
+    /// <summary>
+    /// For multi cursor I imagine one would foreach() loop
+    /// </summary>
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (_textEditorCursorDisplay is null)
+            return;
+        
+        var localTextEditorStates = TextEditorStatesSelection.Value;
+
+        if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key))
+        {
+            _textEditorCursorDisplay.MoveCursor(keyboardEventArgs);
+        }
+        else
+        {
+            Dispatcher.Dispatch(new TextEditorEditAction(
+                TextEditorKey,
+                new [] { new ImmutableTextCursor(_cursor) }.ToImmutableArray(),
+                keyboardEventArgs,
+                CancellationToken.None));
+
+            _textPartition = localTextEditorStates.GetTextPartition(new RectangularCoordinates(
+                TopLeftCorner: (new(0), new(0)),
+                BottomRightCorner: (new(5), new(10))));
+            
+            StateHasChanged();
+        }
+    }
+    
+    private async Task HandleOnClick(MouseEventArgs mouseEventArgs)
+    {
+        if (_textEditorCursorDisplay is not null)
+        {
+            await _textEditorCursorDisplay.FocusAsync();
+        }
     }
 
     private async Task ApplyRoslynSyntaxHighlightingAsyncOnClick()
@@ -217,36 +255,6 @@ public partial class TextEditorDisplay : FluxorComponent
                 DecorationKind.AltFlagTwo | DecorationKind.Method,
                 generalSyntaxCollector.XmlComments
                     .Select(xml => xml.Span));
-        }
-    }
-
-    /// <summary>
-    /// For multi cursor I imagine one would foreach() loop
-    /// </summary>
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
-    {
-        if (_textEditorCursorDisplay is null)
-            return;
-
-        if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key))
-        {
-            _textEditorCursorDisplay.MoveCursor(keyboardEventArgs);
-        }
-        else
-        {
-            Dispatcher.Dispatch(new TextEditorEditAction(
-                TextEditorKey,
-                new [] { new ImmutableTextCursor(_cursor) }.ToImmutableArray(),
-                keyboardEventArgs,
-                CancellationToken.None));
-        }
-    }
-    
-    private async Task HandleOnClick(MouseEventArgs mouseEventArgs)
-    {
-        if (_textEditorCursorDisplay is not null)
-        {
-            await _textEditorCursorDisplay.FocusAsync();
         }
     }
 }

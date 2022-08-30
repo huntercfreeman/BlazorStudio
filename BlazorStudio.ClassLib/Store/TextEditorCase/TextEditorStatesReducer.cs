@@ -44,7 +44,7 @@ public class TextEditorStatesReducer
     }
     
     [ReducerMethod]
-    public static TextEditorStates ReduceRequestDisposePlainTextEditorAction(TextEditorStates previousTextEditorStates,
+    public static TextEditorStates ReduceTextEditorEditAction(TextEditorStates previousTextEditorStates,
         TextEditorEditAction textEditorEditAction)
     {
         var textEditor = previousTextEditorStates.TextEditorMap[textEditorEditAction.TextEditorKey];

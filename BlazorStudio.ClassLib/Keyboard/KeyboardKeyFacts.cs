@@ -6,17 +6,15 @@ public static class KeyboardKeyFacts
 {
     public static bool IsMetaKey(KeyDownEventRecord onKeyDownEventArgs)
     {
-        if (onKeyDownEventArgs.Key.Length > 1)
+        return IsMetaKey(onKeyDownEventArgs.Key);
+    }
+    
+    public static bool IsMetaKey(string key)
+    {
+        if (key.Length > 1)
             return true;
 
         return false;
-
-        // TODO: Is a switch needed?
-        // switch (onKeyDownEventArgs.Code)
-        // {
-        // 	default:
-        // 		return false;
-        // }
     }
 
     public static bool IsWhitespaceCharacter(char character)
@@ -73,6 +71,21 @@ public static class KeyboardKeyFacts
         public const char NEW_LINE = '\n';
         public const char SPACE = ' ';
     }
+    
+    public static bool IsWhitespaceCode(string code)
+    {
+        switch (code)
+        {
+            case WhitespaceCodes.TAB_CODE:
+            case WhitespaceCodes.CARRIAGE_RETURN_CODE:
+            case WhitespaceCodes.ENTER_CODE:
+            case WhitespaceCodes.SPACE_CODE:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     
     public static class WhitespaceCodes
     {

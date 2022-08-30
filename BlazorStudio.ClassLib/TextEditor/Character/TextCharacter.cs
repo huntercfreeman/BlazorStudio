@@ -10,8 +10,7 @@ namespace BlazorStudio.ClassLib.TextEditor.Character;
 /// <br/>
 /// They surely are doing it more correct than I am.
 /// </summary>
-public class TextCharacter
+public record TextCharacter(char Value)
 {
-    public char Value { get; set; }   
-    public byte DecorationByte { get; set; }   
+    public byte DecorationByte { get; set; }
 }
