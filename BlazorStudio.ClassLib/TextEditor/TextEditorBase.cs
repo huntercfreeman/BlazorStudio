@@ -394,7 +394,7 @@ public record TextEditorBase : IDisposable
                     
                     if (previousEditBlock is EditBlock<StringBuilder> deletionEditBlock)
                     {
-                        deletionEditBlock.TypedValue.Append("Deleted a line");
+                        deletionEditBlock.TypedValue.Append($"||line number: {cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value + 1}||");
                     }
                 }
                 else
