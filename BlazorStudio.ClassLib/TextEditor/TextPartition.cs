@@ -7,5 +7,5 @@ namespace BlazorStudio.ClassLib.TextEditor;
 public record TextPartition(
     TextEditorLink TextEditorLink, 
     RectangularCoordinates RectangularCoordinates, 
-    ImmutableArray<TextCharacterSpan> TextSpanRows,
+    List<TextCharacterSpan> TextSpanRows,
     SequenceKey SequenceKey);
