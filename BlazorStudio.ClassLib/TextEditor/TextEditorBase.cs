@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Sequence;
+using BlazorStudio.ClassLib.Store.TextEditorCase;
 using BlazorStudio.ClassLib.TextEditor.Character;
 using BlazorStudio.ClassLib.TextEditor.Cursor;
 using BlazorStudio.ClassLib.TextEditor.Enums;
@@ -248,6 +249,17 @@ public record TextEditorBase : IDisposable
         }
 
         return columnIndex;
+    }
+    
+    public TextEditorBase PerformTextEditorEditAction(
+        TextEditorEditAction textEditorEditAction)
+    {
+        foreach (var textCursor in textEditorEditAction.ImmutableTextCursors)
+        {
+            
+            
+            _content            
+        }
     }
     
     private void ReleaseUnmanagedResources()

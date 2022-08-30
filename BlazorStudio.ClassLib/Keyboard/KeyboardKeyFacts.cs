@@ -167,6 +167,22 @@ public static class KeyboardKeyFacts
         }
     }
     
+    public static bool IsMovementKey(string key)
+    {
+        switch (key)
+        {
+            case MovementKeys.ARROW_LEFT:
+            case MovementKeys.ARROW_DOWN:
+            case MovementKeys.ARROW_UP:
+            case MovementKeys.ARROW_RIGHT:
+            case MovementKeys.HOME:
+            case MovementKeys.END:
+                return true;
+            default:
+                return false;
+        }
+    }
+    
     public static bool IsAlternateMovementKey(KeyDownEventRecord onKeyDownEventArgs)
     {
         switch (onKeyDownEventArgs.Key)

@@ -45,6 +45,23 @@ public class TextEditorStatesReducer
     
     [ReducerMethod]
     public static TextEditorStates ReduceRequestDisposePlainTextEditorAction(TextEditorStates previousTextEditorStates,
+        TextEditorEditAction textEditorEditAction)
+    {
+        var textEditor = previousTextEditorStates.TextEditorMap[textEditorEditAction.TextEditorKey];
+
+        var nextTextEditor = textEditor.PerformTextEditorEditAction(textEditorEditAction);
+
+        var nextMap = previousTextEditorStates.TextEditorMap
+            .SetItem(textEditorEditAction.TextEditorKey, nextTextEditor);
+
+        return previousTextEditorStates with
+        {
+            TextEditorMap = nextMap
+        };
+    }
+    
+    [ReducerMethod]
+    public static TextEditorStates ReduceRequestDisposePlainTextEditorAction(TextEditorStates previousTextEditorStates,
         RequestDisposePlainTextEditorAction requestDisposePlainTextEditorAction)
     {
         throw new NotImplementedException();

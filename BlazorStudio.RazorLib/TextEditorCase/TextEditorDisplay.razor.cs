@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.TextEditorCase;
@@ -19,6 +21,8 @@ public partial class TextEditorDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TextEditorStates, TextEditorBase> TextEditorStatesSelection { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TextEditorKey TextEditorKey { get; set; } = null!;
@@ -216,11 +220,25 @@ public partial class TextEditorDisplay : FluxorComponent
         }
     }
 
+    /// <summary>
+    /// For multi cursor I imagine one would foreach() loop
+    /// </summary>
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (_textEditorCursorDisplay is not null)
+        if (_textEditorCursorDisplay is null)
+            return;
+
+        if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key))
         {
             _textEditorCursorDisplay.MoveCursor(keyboardEventArgs);
+        }
+        else
+        {
+            Dispatcher.Dispatch(new TextEditorEditAction(
+                TextEditorKey,
+                new [] { new ImmutableTextCursor(_cursor) }.ToImmutableArray(),
+                keyboardEventArgs,
+                CancellationToken.None));
         }
     }
     
