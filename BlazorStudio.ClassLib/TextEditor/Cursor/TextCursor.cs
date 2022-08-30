@@ -11,5 +11,16 @@ public class TextCursor
     /// </summary>
     public (RowIndex RowIndex, ColumnIndex ColumnIndex) IndexCoordinates { get; set; }
         = (new(0), new(0));
+    /// <summary>
+    /// Store <see cref="ColumnIndex"/> after ArrowLeft or other movements that influence this.
+    /// <br/><br/>
+    /// When moving (ArrowUp or ArrowDown) one might come across a row that has a column length
+    /// not long enough and <see cref="IndexCoordinates"/> will lower the <see cref="ColumnIndex"/>
+    /// to an index within range.
+    /// <br/><br/>
+    /// If one then proceeds to find a row that WOULD have had a column length long enough.
+    /// Then the <see cref="ColumnIndex"/> is restored using the stored <see cref="PreferredColumnIndex"/>.
+    /// </summary>
+    public ColumnIndex PreferredColumnIndex { get; set; } = new(0);
     public TextCursorKind TextCursorKind { get; set; } = TextCursorKind.Beam;
 }

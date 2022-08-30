@@ -37,6 +37,13 @@ public partial class TextEditorCursorDisplay : ComponentBase
                 new ColumnIndex(TextCursor.IndexCoordinates.ColumnIndex));
 
         var localLineEndingPositions = TextEditorBase.LineEndingPositions;
+        var localPreferredColumnIndex = TextCursor.PreferredColumnIndex;
+
+        void UpdatePreferredColumnIndexAndIndexCoordinates(ColumnIndex columnIndex)
+        {
+            localPreferredColumnIndex = columnIndex;
+            localIndexCoordinates.columnIndex = columnIndex;
+        }
         
         switch (keyboardEventArgs.Key)
         {
@@ -44,7 +51,8 @@ public partial class TextEditorCursorDisplay : ComponentBase
             {
                 if (localIndexCoordinates.columnIndex.Value > 0)
                 {
-                    localIndexCoordinates.columnIndex.Value--;
+                    UpdatePreferredColumnIndexAndIndexCoordinates(
+                        new ColumnIndex(localIndexCoordinates.columnIndex.Value - 1));
                 }
                 else if (localIndexCoordinates.rowIndex.Value > 0)
                 {
@@ -53,7 +61,8 @@ public partial class TextEditorCursorDisplay : ComponentBase
                     var lengthOfTextSpanRow = TextEditorBase
                         .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
                     
-                    localIndexCoordinates.columnIndex = new ColumnIndex(lengthOfTextSpanRow - 1);
+                    UpdatePreferredColumnIndexAndIndexCoordinates(
+                        new ColumnIndex(lengthOfTextSpanRow - 1));
                 }
                 
                 break;
@@ -62,8 +71,22 @@ public partial class TextEditorCursorDisplay : ComponentBase
             {
                 if (localIndexCoordinates.rowIndex.Value < localLineEndingPositions.Length - 1)
                 {
+                    var preMoveRowLength = TextEditorBase
+                        .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+                    
                     localIndexCoordinates.rowIndex.Value++;
-                    localIndexCoordinates.columnIndex = new ColumnIndex(0);
+                    
+                    var postMoveRowLength = TextEditorBase
+                        .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+
+                    if (localPreferredColumnIndex.Value >= postMoveRowLength - 1)
+                    {
+                        localIndexCoordinates.columnIndex = new ColumnIndex(postMoveRowLength - 1);
+                    }
+                    else
+                    {
+                        localIndexCoordinates.columnIndex = new ColumnIndex(localPreferredColumnIndex);
+                    }
                 }
 
                 break;
@@ -72,8 +95,22 @@ public partial class TextEditorCursorDisplay : ComponentBase
             {
                 if (localIndexCoordinates.rowIndex.Value > 0)
                 {
+                    var preMoveRowLength = TextEditorBase
+                        .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+                    
                     localIndexCoordinates.rowIndex.Value--;
-                    localIndexCoordinates.columnIndex = new ColumnIndex(0);
+                    
+                    var postMoveRowLength = TextEditorBase
+                        .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+
+                    if (localPreferredColumnIndex.Value >= postMoveRowLength - 1)
+                    {
+                        localIndexCoordinates.columnIndex = new ColumnIndex(postMoveRowLength - 1);
+                    }
+                    else
+                    {
+                        localIndexCoordinates.columnIndex = new ColumnIndex(localPreferredColumnIndex);
+                    }
                 }
 
                 break;
@@ -85,11 +122,14 @@ public partial class TextEditorCursorDisplay : ComponentBase
                 
                 if (localIndexCoordinates.columnIndex.Value < lengthOfTextSpanRow - 1)
                 {
-                    localIndexCoordinates.columnIndex.Value++;
+                    UpdatePreferredColumnIndexAndIndexCoordinates(
+                        new ColumnIndex(localIndexCoordinates.columnIndex.Value + 1));
                 }
                 else if (localIndexCoordinates.rowIndex.Value < localLineEndingPositions.Length - 1)
                 {
-                    localIndexCoordinates.columnIndex = new ColumnIndex(0);
+                    UpdatePreferredColumnIndexAndIndexCoordinates(
+                        new ColumnIndex(0));
+                    
                     localIndexCoordinates.rowIndex.Value++;
                 }
 
@@ -98,6 +138,7 @@ public partial class TextEditorCursorDisplay : ComponentBase
         }
 
         TextCursor.IndexCoordinates = localIndexCoordinates;
+        TextCursor.PreferredColumnIndex = localPreferredColumnIndex;
         
         StateHasChanged();
     }
