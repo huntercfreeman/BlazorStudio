@@ -7,5 +7,10 @@ public class ColumnIndex
         Value = value;
     }
     
+    public ColumnIndex(ColumnIndex columnIndex)
+    {
+        Value = columnIndex.Value;
+    }
+    
     public int Value { get; set; }
 }

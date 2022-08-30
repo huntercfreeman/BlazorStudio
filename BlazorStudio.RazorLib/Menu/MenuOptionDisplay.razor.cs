@@ -98,8 +98,8 @@ public partial class MenuOptionDisplay : FluxorComponent
         
         switch (keyDownEventRecord.Code)
         {
-            case KeyboardKeyFacts.NewLineCodes.ENTER_CODE:
-            case KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE:
+            case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
+            case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
             {
                 DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);
 
@@ -108,14 +108,14 @@ public partial class MenuOptionDisplay : FluxorComponent
 
                 break;
             }
-            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT_KEY:
+            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
                 if (CloseParentSubmenuFuncAsync is not null)
                     await CloseParentSubmenuFuncAsync.Invoke();
                 
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT_KEY:
+            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
             {
                 if (MenuOptionRecord.Children.Any())
                     DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);

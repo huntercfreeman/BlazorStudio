@@ -71,8 +71,8 @@ public partial class MenuDisplay : ComponentBase
         {
             switch (keyDownEventRecord.Key)
             {
-                case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN_KEY:
+                case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
                     if (_activeMenuOptionIndex is null &&
                         _cachedMenuOptionRecords.Length > 0)
                     {
@@ -88,8 +88,8 @@ public partial class MenuDisplay : ComponentBase
                         _activeMenuOptionIndex = 0;
                     }
                     break;
-                case KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP_KEY:
+                case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
                     if (_activeMenuOptionIndex is null &&
                         _cachedMenuOptionRecords.Length > 0)
                     {
@@ -105,13 +105,13 @@ public partial class MenuDisplay : ComponentBase
                         _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
                     }
                     break;
-                case KeyboardKeyFacts.MovementKeys.HOME_KEY:
+                case KeyboardKeyFacts.MovementKeys.HOME:
                     if (_cachedMenuOptionRecords.Length > 0)
                     {
                         _activeMenuOptionIndex = 0;
                     }
                     break;
-                case KeyboardKeyFacts.MovementKeys.END_KEY:
+                case KeyboardKeyFacts.MovementKeys.END:
                     if (_cachedMenuOptionRecords.Length > 0)
                     {
                         _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
@@ -123,7 +123,7 @@ public partial class MenuDisplay : ComponentBase
         {
             switch (keyDownEventRecord.Key)
             {
-                case KeyboardKeyFacts.MetaKeys.ESCAPE_KEY:
+                case KeyboardKeyFacts.MetaKeys.ESCAPE:
                     Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
 
                     if (FocusAfterTarget is not null)

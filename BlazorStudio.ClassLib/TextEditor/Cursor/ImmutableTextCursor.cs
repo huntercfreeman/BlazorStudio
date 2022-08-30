@@ -3,13 +3,20 @@ using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
 
 namespace BlazorStudio.ClassLib.TextEditor.Cursor;
 
-public class TextCursor
+public record ImmutableTextCursor
 {
+    public ImmutableTextCursor(TextCursor textCursor)
+    {
+        IndexCoordinates = textCursor.IndexCoordinates;
+        PreferredColumnIndex = textCursor.PreferredColumnIndex;
+        TextCursorKind = textCursor.TextCursorKind;
+    }
+    
     /// <summary>
     /// When changing both <see cref="RowIndex"/> and <see cref="ColumnIndex"/>
     /// this property being a Tuple helps change coordinates as a 'transaction'.
     /// </summary>
-    public (RowIndex RowIndex, ColumnIndex ColumnIndex) IndexCoordinates { get; set; }
+    public (RowIndex RowIndex, ColumnIndex ColumnIndex) IndexCoordinates { get; init; }
         = (new(0), new(0));
     /// <summary>
     /// Store <see cref="ColumnIndex"/> after ArrowLeft or other movements that influence this.
@@ -21,6 +28,6 @@ public class TextCursor
     /// If one then proceeds to find a row that WOULD have had a column length long enough.
     /// Then the <see cref="ColumnIndex"/> is restored using the stored <see cref="PreferredColumnIndex"/>.
     /// </summary>
-    public ColumnIndex PreferredColumnIndex { get; set; } = new(0);
-    public TextCursorKind TextCursorKind { get; set; } = TextCursorKind.Beam;
+    public ColumnIndex PreferredColumnIndex { get; init; } = new(0);
+    public TextCursorKind TextCursorKind { get; init; } = TextCursorKind.Beam;
 }

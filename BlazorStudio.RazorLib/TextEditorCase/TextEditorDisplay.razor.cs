@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.TextEditorCase;
@@ -10,6 +12,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
@@ -19,6 +22,8 @@ public partial class TextEditorDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TextEditorStates, TextEditorBase> TextEditorStatesSelection { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TextEditorKey TextEditorKey { get; set; } = null!;
@@ -28,6 +33,7 @@ public partial class TextEditorDisplay : FluxorComponent
     private SequenceKey _previousTextPartitionSequenceKey = SequenceKey.Empty();
     private TextCursor _cursor = new();
     private TextEditorCursorDisplay? _textEditorCursorDisplay;
+    private Virtualize<TextCharacterSpan>? _virtualize;
     
     private string BackgroundColor => GetBackgroundColor();
 
@@ -48,7 +54,7 @@ public partial class TextEditorDisplay : FluxorComponent
 
             _textPartition = localTextEditorStates.GetTextPartition(new RectangularCoordinates(
                 TopLeftCorner: (new(0), new(0)),
-                BottomRightCorner: (new(Int32.MaxValue), new(10))));
+                BottomRightCorner: (new(5), new(10))));
             
             await InvokeAsync(StateHasChanged);
         }
@@ -74,6 +80,66 @@ public partial class TextEditorDisplay : FluxorComponent
         _previousTextPartitionSequenceKey = _textPartition?.SequenceKey ?? SequenceKey.Empty();
 
         return shouldRender;
+    }
+    
+    /// <summary>
+    /// For multi cursor I imagine one would foreach() loop
+    /// </summary>
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (_textEditorCursorDisplay is null)
+            return;
+        
+        var localTextEditorState = TextEditorStatesSelection.Value;
+
+        if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key))
+        {
+            _textEditorCursorDisplay.MoveCursor(keyboardEventArgs);
+        }
+        else
+        {
+            Dispatcher.Dispatch(new TextEditorEditAction(
+                TextEditorKey,
+                new [] { new ImmutableTextCursor(_cursor) }.ToImmutableArray(),
+                keyboardEventArgs,
+                CancellationToken.None));
+
+            _cursor.IndexCoordinates = 
+                (_cursor.IndexCoordinates.RowIndex, 
+                new (_cursor.IndexCoordinates.ColumnIndex.Value + 1));
+
+            _cursor.PreferredColumnIndex = _cursor.IndexCoordinates.ColumnIndex;
+
+            if (_virtualize is not null)
+                _virtualize.RefreshDataAsync();
+            
+            StateHasChanged();
+        }
+    }
+    
+    private async Task HandleOnClick(MouseEventArgs mouseEventArgs)
+    {
+        if (_textEditorCursorDisplay is not null)
+        {
+            await _textEditorCursorDisplay.FocusAsync();
+        }
+    }
+    
+    private async ValueTask<ItemsProviderResult<TextCharacterSpan>> LoadTextCharacterSpans(
+        ItemsProviderRequest request)
+    {
+        var localTextEditorState = TextEditorStatesSelection.Value;
+        
+        var numTextCharacterSpans = Math
+            .Min(
+                request.Count,
+                localTextEditorState.LineEndingPositions.Length - request.StartIndex);
+        
+        _textPartition = localTextEditorState.GetTextPartition(new RectangularCoordinates(
+            TopLeftCorner: (new(request.StartIndex), new(0)),
+            BottomRightCorner: (new(request.StartIndex + numTextCharacterSpans), new(10))));
+        
+        return new ItemsProviderResult<TextCharacterSpan>(_textPartition.TextSpanRows, localTextEditorState.LineEndingPositions.Length);
     }
 
     private async Task ApplyRoslynSyntaxHighlightingAsyncOnClick()
@@ -213,22 +279,6 @@ public partial class TextEditorDisplay : FluxorComponent
                 DecorationKind.AltFlagTwo | DecorationKind.Method,
                 generalSyntaxCollector.XmlComments
                     .Select(xml => xml.Span));
-        }
-    }
-
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
-    {
-        if (_textEditorCursorDisplay is not null)
-        {
-            _textEditorCursorDisplay.MoveCursor(keyboardEventArgs);
-        }
-    }
-    
-    private async Task HandleOnClick(MouseEventArgs mouseEventArgs)
-    {
-        if (_textEditorCursorDisplay is not null)
-        {
-            await _textEditorCursorDisplay.FocusAsync();
         }
     }
 }

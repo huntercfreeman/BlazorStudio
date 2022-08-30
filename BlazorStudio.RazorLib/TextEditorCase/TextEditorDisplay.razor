@@ -2,11 +2,13 @@
 @using System.Text
 @using BlazorStudio.ClassLib.Keyboard
 @using BlazorStudio.ClassLib.TextEditor.Enums
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <ShouldRenderBoundary ShouldRenderFunc="ShouldRenderFunc">
     <h3>TextEditorDisplay (@TextEditorKey.Guid)</h3>
-    
+
     <button @onclick="ApplyRoslynSyntaxHighlightingAsyncOnClick"
             class="btn btn-primary">
         Apply Roslyn Syntax Highlighting
@@ -17,61 +19,71 @@
              @onkeydown="HandleOnKeyDown"
              @onkeydown:preventDefault="true"
              @onclick="HandleOnClick">
+            
             @{
                 var localTextEditorState = TextEditorStatesSelection.Value;
-                if (_textPartition is not null)
-                {
 
-                    foreach (var textSpan in _textPartition.TextSpanRows)
-                    {
-                        <div style="background-color: @GetBackgroundColor()">
-                            @{
-                                var spanTextBuilder = new StringBuilder();
-                                var currentDecorationByte = textSpan.TextCharacters
-                                    .First().DecorationByte;
+                <Virtualize ItemsProvider="LoadTextCharacterSpans"
+                            Context="textSpan"
+                            @ref="_virtualize">
+                    
+                    <div style="white-space: nowrap;">
+                        @{
+                            var spanTextBuilder = new StringBuilder();
+                            var currentDecorationByte = textSpan.TextCharacters
+                                .First().DecorationByte;
 
-                                foreach (var textCharacter in textSpan.TextCharacters)
+                            foreach (var textCharacter in textSpan.TextCharacters)
+                            {
+                                if (currentDecorationByte == textCharacter.DecorationByte)
                                 {
-                                    if (currentDecorationByte == textCharacter.DecorationByte)
+                                    if (textCharacter.Value == '\t')
                                     {
-                                        if (textCharacter.Value == '\t')
-                                        {
-                                            spanTextBuilder.Append("&nbsp;&nbsp;&nbsp;&nbsp;");
-                                        }
-                                        else if (textCharacter.Value == ' ')
-                                        {
-                                            spanTextBuilder.Append("&nbsp;");
-                                        }
-                                        else
-                                        {
-                                            spanTextBuilder.Append(textCharacter.Value);
-                                        }
+                                        // spanTextBuilder.Append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                                        spanTextBuilder.Append("~~~~");
+                                    }
+                                    else if (textCharacter.Value == ' ')
+                                    {
+                                        spanTextBuilder.Append("&nbsp;");
+                                        // spanTextBuilder.Append("`");
+                                    }
+                                    else if (textCharacter.Value == '\r')
+                                    {
+                                        spanTextBuilder.Append('/');
+                                    }
+                                    else if (textCharacter.Value == '\n')
+                                    {
+                                        spanTextBuilder.Append('\\');
                                     }
                                     else
                                     {
-                                        <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
-                                            @((MarkupString)spanTextBuilder.ToString())
-                                        </span>
-
-                                        spanTextBuilder.Clear();
-
-                                        currentDecorationByte = textCharacter.DecorationByte;
                                         spanTextBuilder.Append(textCharacter.Value);
                                     }
                                 }
-                            }
+                                else
+                                {
+                                    <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
+                                        @((MarkupString)spanTextBuilder.ToString())
+                                    </span>
 
-                            @* Render out the last <span> *@
-                            @if (spanTextBuilder.Length > 0)
-                            {
-                                <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
-                                    @((MarkupString)spanTextBuilder.ToString())
-                                </span>
+                                    spanTextBuilder.Clear();
+
+                                    currentDecorationByte = textCharacter.DecorationByte;
+                                    spanTextBuilder.Append(textCharacter.Value);
+                                }
                             }
-                        </div>
-                    }
-                }
-                
+                        }
+
+                        @* Render out the last <span> *@
+                        @if (spanTextBuilder.Length > 0)
+                        {
+                            <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
+                                @((MarkupString)spanTextBuilder.ToString())
+                            </span>
+                        }
+                    </div>
+                </Virtualize>
+
                 <TextEditorCursorDisplay @ref="_textEditorCursorDisplay"
                                          TextCursor="_cursor"
                                          TextEditorBase="localTextEditorState"/>

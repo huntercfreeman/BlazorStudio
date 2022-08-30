@@ -44,7 +44,7 @@ public partial class QuickSelectDisplay : ComponentBase
                 _activeEntryIndex = 0;
             }
         }
-        else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceKeys.ENTER_CODE)
+        else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
             if (_activeEntryIndex < localQuickSelectState.QuickSelectItems.Length)
             {

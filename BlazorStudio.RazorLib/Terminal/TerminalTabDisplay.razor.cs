@@ -30,8 +30,8 @@ public partial class TerminalTabDisplay : ComponentBase
     
     private void TerminalTabHandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (KeyboardKeyFacts.NewLineCodes.ENTER_CODE == keyboardEventArgs.Code ||
-            KeyboardKeyFacts.WhitespaceKeys.SPACE_CODE == keyboardEventArgs.Code)
+        if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code ||
+            KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE == keyboardEventArgs.Code)
         {
             DispatchSetActiveTerminalEntryAction();
         }

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.TextEditor;
 using BlazorStudio.ClassLib.TextEditor.Cursor;
@@ -19,54 +20,163 @@ public partial class TextEditorCursorDisplay : ComponentBase
     public double CharacterWidthInPixels { get; set; } = 16;
 
     private ElementReference? _textAreaCursorDisplayElementReference;
-    
-    private string CssStyleString => $"top: {TextCursor.RowIndex.Value * RowHeightInPixels}px;" +
+
+    private string CssStyleString => $"top: {TextCursor.IndexCoordinates.RowIndex.Value * RowHeightInPixels}px;" +
                                      " " +
-                                     $"left: {TextCursor.ColumnIndex.Value * CharacterWidthInPixels}px;";
+                                     $"left: {TextCursor.IndexCoordinates.ColumnIndex.Value * CharacterWidthInPixels}px;";
 
     public void MoveCursor(KeyboardEventArgs keyboardEventArgs)
     {
+        // Do not mutate the TextCursor.IndexCoordinates until
+        // method is finished to ensure both coordinates are updated at the same time.
+        (RowIndex rowIndex, ColumnIndex columnIndex) localIndexCoordinates =
+            (new RowIndex(TextCursor.IndexCoordinates.RowIndex),
+                new ColumnIndex(TextCursor.IndexCoordinates.ColumnIndex));
+
+        var localLineEndingPositions = TextEditorBase.LineEndingPositions;
+        var localPreferredColumnIndex = TextCursor.PreferredColumnIndex;
+
+        void UpdatePreferredColumnIndexAndIndexCoordinates(ColumnIndex columnIndex)
+        {
+            localPreferredColumnIndex = columnIndex;
+            localIndexCoordinates.columnIndex = columnIndex;
+        }
+        
         switch (keyboardEventArgs.Key)
         {
-            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT_KEY:
-                if (TextCursor.ColumnIndex.Value > 0)
+            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+            {
+                if (localIndexCoordinates.columnIndex.Value > 0)
                 {
-                    TextCursor.ColumnIndex.Value--;
-                }
+                    if (keyboardEventArgs.CtrlKey)
+                    {
+                        var columnIndex = TextEditorBase
+                            .ClosestNonMatchingCharacterOnSameRowColumnIndex( 
+                                localIndexCoordinates.rowIndex, 
+                                localIndexCoordinates.columnIndex,
+                                true);
 
-                break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN_KEY:
-                if (TextCursor.RowIndex.Value < TextEditorBase.LineEndingPositions.Length - 1)
+                        UpdatePreferredColumnIndexAndIndexCoordinates(columnIndex);
+                    }
+                    else
+                    {
+                        UpdatePreferredColumnIndexAndIndexCoordinates(
+                            new ColumnIndex(localIndexCoordinates.columnIndex.Value - 1));
+                    }
+                }
+                else if (localIndexCoordinates.rowIndex.Value > 0)
                 {
-                    TextCursor.ColumnIndex.Value = 0;
-                    TextCursor.RowIndex.Value++;
+                    localIndexCoordinates.rowIndex.Value--;
+                
+                    var lengthOfTextSpanRow = TextEditorBase
+                        .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+                
+                    UpdatePreferredColumnIndexAndIndexCoordinates(
+                        new ColumnIndex(lengthOfTextSpanRow - 1));
+                }    
+                
+                break;
+            }
+            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+            {
+                if (keyboardEventArgs.CtrlKey)
+                {
+                    // TODO: CtrlKey
+                }
+                else
+                {
+                    if (localIndexCoordinates.rowIndex.Value < localLineEndingPositions.Length - 1)
+                    {
+                        var preMoveRowLength = TextEditorBase
+                            .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+                    
+                        localIndexCoordinates.rowIndex.Value++;
+                    
+                        var postMoveRowLength = TextEditorBase
+                            .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+
+                        if (localPreferredColumnIndex.Value >= postMoveRowLength - 1)
+                        {
+                            localIndexCoordinates.columnIndex = new ColumnIndex(postMoveRowLength - 1);
+                        }
+                        else
+                        {
+                            localIndexCoordinates.columnIndex = new ColumnIndex(localPreferredColumnIndex);
+                        }
+                    }
                 }
                 
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_UP_KEY:
-                if (TextCursor.RowIndex.Value > 0)
-                {
-                    TextCursor.ColumnIndex.Value = 0;
-                    TextCursor.RowIndex.Value--;
-                }
-
-                break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT_KEY:
-                var startOfTextSpanRowInclusive = TextCursor.RowIndex.Value == 0
-                    ? 0
-                    : TextEditorBase.LineEndingPositions[TextCursor.RowIndex.Value - 1];
-
-                var endOfTextSpanRowExclusive = TextEditorBase.LineEndingPositions[TextCursor.RowIndex.Value];
-
-                var lengthOfTextSpanRow = endOfTextSpanRowExclusive - startOfTextSpanRowInclusive;
+            }
+            case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+            {
                 
-                if (TextCursor.ColumnIndex.Value < lengthOfTextSpanRow - 1)
+                if (keyboardEventArgs.CtrlKey)
                 {
-                    TextCursor.ColumnIndex.Value++;
+                    // TODO: CtrlKey
                 }
+                else
+                {
+                    if (localIndexCoordinates.rowIndex.Value > 0)
+                    {
+                        var preMoveRowLength = TextEditorBase
+                            .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+                    
+                        localIndexCoordinates.rowIndex.Value--;
+                    
+                        var postMoveRowLength = TextEditorBase
+                            .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
 
+                        if (localPreferredColumnIndex.Value >= postMoveRowLength - 1)
+                        {
+                            localIndexCoordinates.columnIndex = new ColumnIndex(postMoveRowLength - 1);
+                        }
+                        else
+                        {
+                            localIndexCoordinates.columnIndex = new ColumnIndex(localPreferredColumnIndex);
+                        }
+                    }
+                }
+                
                 break;
+            }
+            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+            {
+                var lengthOfTextSpanRow = TextEditorBase
+                    .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+                
+                if (localIndexCoordinates.columnIndex.Value < lengthOfTextSpanRow - 1)
+                {
+                    if (keyboardEventArgs.CtrlKey)
+                    {
+                        var columnIndex = TextEditorBase
+                            .ClosestNonMatchingCharacterOnSameRowColumnIndex( 
+                                localIndexCoordinates.rowIndex, 
+                                localIndexCoordinates.columnIndex,
+                                false);
+
+                        UpdatePreferredColumnIndexAndIndexCoordinates(columnIndex);
+                    }
+                    else
+                    {
+                        UpdatePreferredColumnIndexAndIndexCoordinates(
+                            new ColumnIndex(localIndexCoordinates.columnIndex.Value + 1));
+                    }
+                }
+                else if (localIndexCoordinates.rowIndex.Value < localLineEndingPositions.Length - 1)
+                {
+                    UpdatePreferredColumnIndexAndIndexCoordinates(
+                        new ColumnIndex(0));
+                    
+                    localIndexCoordinates.rowIndex.Value++;
+                }
+                
+                break;
+            }
         }
+
+        TextCursor.IndexCoordinates = localIndexCoordinates;
+        TextCursor.PreferredColumnIndex = localPreferredColumnIndex;
         
         StateHasChanged();
     }

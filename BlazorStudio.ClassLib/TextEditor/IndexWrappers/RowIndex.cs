@@ -7,5 +7,10 @@ public class RowIndex
         Value = value;
     }
     
+    public RowIndex(RowIndex rowIndex)
+    {
+        Value = rowIndex.Value;
+    }
+    
     public int Value { get; set; }
 }

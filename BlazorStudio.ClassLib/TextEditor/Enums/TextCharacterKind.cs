@@ -4,6 +4,5 @@ public enum TextCharacterKind
 {
     Punctuation,
     Plain,
-    Whitespace,
-    LineEnding
+    Whitespace
 }
