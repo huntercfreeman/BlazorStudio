@@ -173,6 +173,34 @@ public partial class TextEditorCursorDisplay : ComponentBase
                 
                 break;
             }
+            case KeyboardKeyFacts.MovementKeys.HOME:
+            {
+                if (keyboardEventArgs.CtrlKey)
+                {
+                    // TODO: Home + CtrlKey
+                }
+                else
+                {
+                    UpdatePreferredColumnIndexAndIndexCoordinates(new(0));
+                }
+                
+                break;
+            }
+            case KeyboardKeyFacts.MovementKeys.END:
+            {
+                if (keyboardEventArgs.CtrlKey)
+                {
+                    // TODO: End + CtrlKey
+                }
+                else
+                {
+                    var lineEnding = localLineEndingPositions[localIndexCoordinates.rowIndex.Value];
+                    
+                    UpdatePreferredColumnIndexAndIndexCoordinates(new(lineEnding));
+                }
+                
+                break;
+            }
         }
 
         TextCursor.IndexCoordinates = localIndexCoordinates;
