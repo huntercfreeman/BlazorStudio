@@ -100,15 +100,9 @@ public partial class TextEditorDisplay : FluxorComponent
         {
             Dispatcher.Dispatch(new TextEditorEditAction(
                 TextEditorKey,
-                new [] { new ImmutableTextCursor(_cursor) }.ToImmutableArray(),
+                new [] { (new ImmutableTextCursor(_cursor), _cursor) }.ToImmutableArray(),
                 keyboardEventArgs,
                 CancellationToken.None));
-
-            _cursor.IndexCoordinates = 
-                (_cursor.IndexCoordinates.RowIndex, 
-                new (_cursor.IndexCoordinates.ColumnIndex.Value + 1));
-
-            _cursor.PreferredColumnIndex = _cursor.IndexCoordinates.ColumnIndex;
 
             if (_virtualize is not null)
                 _virtualize.RefreshDataAsync();

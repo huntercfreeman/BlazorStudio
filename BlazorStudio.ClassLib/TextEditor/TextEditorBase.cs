@@ -286,7 +286,7 @@ public record TextEditorBase : IDisposable
     {
         var textEditKind = TextEditKind.Other; 
         
-        foreach (var textCursor in textEditorEditAction.ImmutableTextCursors)
+        foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
         {
             if (KeyboardKeyFacts.IsMetaKey(textEditorEditAction.KeyboardEventArgs.Key) &&
                 !KeyboardKeyFacts.IsWhitespaceCode(textEditorEditAction.KeyboardEventArgs.Code))
@@ -299,8 +299,8 @@ public record TextEditorBase : IDisposable
                 textEditKind = TextEditKind.Insertion;
                 EnsureUndoPoint(textEditKind);
                 
-                var startOfRow = textCursor.IndexCoordinates.RowIndex.Value > 0
-                    ? _lineEndingPositions[textCursor.IndexCoordinates.RowIndex.Value - 1]
+                var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
+                    ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
                     : 0;
 
                 // TODO: (This code block needs to be done as a complete transaction currently
@@ -317,7 +317,7 @@ public record TextEditorBase : IDisposable
                     }
                     
                     _content.Insert(
-                        startOfRow + textCursor.IndexCoordinates.ColumnIndex.Value,
+                        startOfRow + cursorTuple.immutableTextCursor.IndexCoordinates.ColumnIndex.Value,
                         new TextCharacter(valueToInsert)
                         {
                             DecorationByte = default
@@ -326,10 +326,16 @@ public record TextEditorBase : IDisposable
                     // TODO: (Updating _lineEndingPositions is likely able to done faster than this.
                     // I imagine the current way with this for loop could possibly get slow with files
                     // of many lines as each character insertion would run this.)
-                    for (int i = textCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
+                    for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
                     {
                         _lineEndingPositions[i]++;
                     }
+                    
+                    cursorTuple.textCursor.IndexCoordinates = 
+                        (cursorTuple.textCursor.IndexCoordinates.RowIndex, 
+                            new (cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value + 1));
+
+                    cursorTuple.textCursor.PreferredColumnIndex = cursorTuple.textCursor.IndexCoordinates.ColumnIndex;
                 }
             }
         }
