@@ -27,7 +27,7 @@
                             Context="textSpan"
                             @ref="_virtualize">
                     
-                    <div style="background-color: @GetBackgroundColor()">
+                    <div style="white-space: nowrap; background-color: @GetBackgroundColor()">
                         @{
                             var spanTextBuilder = new StringBuilder();
                             var currentDecorationByte = textSpan.TextCharacters
