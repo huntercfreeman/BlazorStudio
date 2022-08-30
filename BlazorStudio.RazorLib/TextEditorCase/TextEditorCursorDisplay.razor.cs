@@ -142,27 +142,33 @@ public partial class TextEditorCursorDisplay : ComponentBase
             }
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
             {
-                if (keyboardEventArgs.CtrlKey)
-                {
-                    // TODO: CtrlKey
-                }
-                else
-                {
-                    var lengthOfTextSpanRow = TextEditorBase
-                        .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+                var lengthOfTextSpanRow = TextEditorBase
+                    .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
                 
-                    if (localIndexCoordinates.columnIndex.Value < lengthOfTextSpanRow - 1)
+                if (localIndexCoordinates.columnIndex.Value < lengthOfTextSpanRow - 1)
+                {
+                    if (keyboardEventArgs.CtrlKey)
+                    {
+                        var columnIndex = TextEditorBase
+                            .ClosestNonMatchingCharacterOnSameRowColumnIndex( 
+                                localIndexCoordinates.rowIndex, 
+                                localIndexCoordinates.columnIndex,
+                                false);
+
+                        UpdatePreferredColumnIndexAndIndexCoordinates(columnIndex);
+                    }
+                    else
                     {
                         UpdatePreferredColumnIndexAndIndexCoordinates(
                             new ColumnIndex(localIndexCoordinates.columnIndex.Value + 1));
                     }
-                    else if (localIndexCoordinates.rowIndex.Value < localLineEndingPositions.Length - 1)
-                    {
-                        UpdatePreferredColumnIndexAndIndexCoordinates(
-                            new ColumnIndex(0));
+                }
+                else if (localIndexCoordinates.rowIndex.Value < localLineEndingPositions.Length - 1)
+                {
+                    UpdatePreferredColumnIndexAndIndexCoordinates(
+                        new ColumnIndex(0));
                     
-                        localIndexCoordinates.rowIndex.Value++;
-                    }
+                    localIndexCoordinates.rowIndex.Value++;
                 }
                 
                 break;

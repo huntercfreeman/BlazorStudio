@@ -239,7 +239,7 @@ public record TextEditorBase : IDisposable
         var textCharacter = _content[startOfRow + columnIndex.Value];
         var startingKind = GetTextCharacterKind(textCharacter);
         
-        while (columnIndex.Value > 0 &&
+        while (columnIndex.Value > -1 &&
                columnIndex.Value < nextRowStart &&
                GetTextCharacterKind(textCharacter) == startingKind)
         {
