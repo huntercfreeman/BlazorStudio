@@ -361,13 +361,11 @@ public record TextEditorBase : IDisposable
     
     private void PerformDeletions(TextEditorEditAction textEditorEditAction)
     {
-        // TODO: This conditional branch is likely text insertion but I need to look for edge cases
         EnsureUndoPoint(TextEditKind.Deletion);
     }
     
     private void PerformBackspaces(TextEditorEditAction textEditorEditAction)
     {
-        // TODO: This conditional branch is likely text insertion but I need to look for edge cases
         EnsureUndoPoint(TextEditKind.Deletion);
         
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)

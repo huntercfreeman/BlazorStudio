@@ -24,7 +24,7 @@
 
                         foreach (var editBlock in localTextEditorState.EditBlocks)
                         {
-                            var message = @editBlock.GetUserInterfaceDisplayMessage();
+                            var message = editBlock.GetUserInterfaceDisplayMessage();
                             <div style="white-space: nowrap;">
                                 @foreach (var character in message)
                                 {

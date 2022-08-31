@@ -194,9 +194,10 @@ public partial class TextEditorCursorDisplay : ComponentBase
                 }
                 else
                 {
-                    var lineEnding = localLineEndingPositions[localIndexCoordinates.rowIndex.Value];
+                    var lengthOfTextSpanRow = TextEditorBase
+                        .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
                     
-                    UpdatePreferredColumnIndexAndIndexCoordinates(new(lineEnding));
+                    UpdatePreferredColumnIndexAndIndexCoordinates(new(lengthOfTextSpanRow - 1));
                 }
                 
                 break;
