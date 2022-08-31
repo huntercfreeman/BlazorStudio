@@ -22,7 +22,6 @@ public partial class TextEditorDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TextEditorStates, TextEditorBase> TextEditorStatesSelection { get; set; } = null!;
-
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -32,6 +31,7 @@ public partial class TextEditorDisplay : FluxorComponent
     private bool _colorFlip;
     private TextPartition? _textPartition;
     private SequenceKey _previousTextPartitionSequenceKey = SequenceKey.Empty();
+    private TextEditorKey _previousTextEditorKey = TextEditorKey.Empty();
     private TextCursor _cursor = new();
     private TextEditorCursorDisplay? _textEditorCursorDisplay;
     private Virtualize<TextCharacterSpan>? _virtualize;
@@ -49,14 +49,12 @@ public partial class TextEditorDisplay : FluxorComponent
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (_previousTextEditorKey != TextEditorStatesSelection.Value.TextEditorKey &&
+            _virtualize is not null)
         {
-            // I don't want the IMMUTABLE state changing due to Blazor using a MUTABLE reference.
-            var localTextEditorStates = TextEditorStatesSelection.Value;
+            await _virtualize.RefreshDataAsync();
 
-            _textPartition = localTextEditorStates.GetTextPartition(new RectangularCoordinates(
-                TopLeftCorner: (new(0), new(0)),
-                BottomRightCorner: (new(5), new(10))));
+            _previousTextEditorKey = TextEditorStatesSelection.Value.TextEditorKey;
 
             await InvokeAsync(StateHasChanged);
         }
@@ -92,8 +90,6 @@ public partial class TextEditorDisplay : FluxorComponent
     {
         if (_textEditorCursorDisplay is null)
             return;
-
-        var localTextEditorState = TextEditorStatesSelection.Value;
 
         if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key))
         {
