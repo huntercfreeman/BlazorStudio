@@ -188,18 +188,18 @@ public partial class TextEditorCursorDisplay : ComponentBase
             }
             case KeyboardKeyFacts.MovementKeys.END:
             {
-                if (keyboardEventArgs.CtrlKey)
-                {
-                    // TODO: End + CtrlKey
-                }
-                else
-                {
-                    var lengthOfTextSpanRow = TextEditorBase
-                        .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
-                    
-                    UpdatePreferredColumnIndexAndIndexCoordinates(new(lengthOfTextSpanRow - 1));
-                }
-                
+                // if (keyboardEventArgs.CtrlKey)
+                // {
+                //     localIndexCoordinates.rowIndex = new(localLineEndingPositions.Length - 1);
+                //     
+                //     UpdatePreferredColumnIndexAndIndexCoordinates(new(lastRowEndingPosition - 1));
+                // }
+                //
+                // var lengthOfTextSpanRow = TextEditorBase
+                //     .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+                //
+                // UpdatePreferredColumnIndexAndIndexCoordinates(new(lengthOfTextSpanRow - 1));
+                //
                 break;
             }
         }
