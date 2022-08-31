@@ -49,9 +49,9 @@
     --pte_token-keyword: #DD9BCF;
     --pte_token-type: #82BBDA;
     --pte_token-method-declaration: #7AC575;
-    --pte_token-parameter-declaration: #BDBD9C;
-    --pte_token-argument-declaration: #BDBD9C;
+    --pte_token-parameter-declaration: #CDCD8E;
+    --pte_token-argument-declaration: #CDCD8E;
     --pte_token-trivia-comment: #808080;
-    --pte_plain-text-editor-text-token-display-string-literal: #BA896F;
+    --pte_plain-text-editor-text-token-display-string-literal: #D19F85;
     --pte_plain-text-editor-selection: #2B4D6E;
 }

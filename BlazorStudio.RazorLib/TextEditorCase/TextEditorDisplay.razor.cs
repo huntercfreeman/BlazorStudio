@@ -7,6 +7,8 @@ using BlazorStudio.ClassLib.TextEditor;
 using BlazorStudio.ClassLib.TextEditor.Cursor;
 using BlazorStudio.ClassLib.TextEditor.Enums;
 using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
+using BlazorStudio.RazorLib.CustomEvents;
+using BlazorStudio.RazorLib.CustomJavaScriptDtos;
 using BlazorStudio.RazorLib.ShouldRender;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -15,6 +17,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.TextEditorCase;
 
@@ -24,20 +27,24 @@ public partial class TextEditorDisplay : FluxorComponent
     private IStateSelection<TextEditorStates, TextEditorBase> TextEditorStatesSelection { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TextEditorKey TextEditorKey { get; set; } = null!;
 
-    private bool _colorFlip;
+    private Guid _textEditorGuid = Guid.NewGuid();
     private TextPartition? _textPartition;
     private SequenceKey _previousTextPartitionSequenceKey = SequenceKey.Empty();
     private TextEditorKey _previousTextEditorKey = TextEditorKey.Empty();
     private TextCursor _cursor = new();
     private TextEditorCursorDisplay? _textEditorCursorDisplay;
     private Virtualize<TextCharacterSpan>? _virtualize;
+    private CustomOnClick? _mostRecentCustomOnClick;
+    private RelativeCoordinates? _mostRecentRelativeCoordinates;
 
-    private string BackgroundColor => GetBackgroundColor();
-
+    private string GetTextEditorElementId => $"bstudio_{_textEditorGuid}";
+    
     protected override void OnInitialized()
     {
         TextEditorStatesSelection
@@ -60,16 +67,6 @@ public partial class TextEditorDisplay : FluxorComponent
         }
 
         await base.OnAfterRenderAsync(firstRender);
-    }
-
-    private string GetBackgroundColor()
-    {
-        var localColorFlip = _colorFlip;
-        _colorFlip = !_colorFlip;
-
-        return localColorFlip
-            ? "var(--bstudio_primary-background-color)"
-            : "var(--bstudio_secondary-background-color)";
     }
 
     private bool ShouldRenderFunc(ShouldRenderBoundary.IsFirstShouldRenderValue firstShouldRender)
@@ -109,13 +106,23 @@ public partial class TextEditorDisplay : FluxorComponent
             StateHasChanged();
         }
     }
-
-    private async Task HandleOnClick(MouseEventArgs mouseEventArgs)
+    
+    private async Task HandleOnCustomClick(CustomOnClick customOnClick)
     {
         if (_textEditorCursorDisplay is not null)
         {
             await _textEditorCursorDisplay.FocusAsync();
         }
+
+        _mostRecentCustomOnClick = customOnClick;
+
+        _mostRecentRelativeCoordinates = await JsRuntime
+            .InvokeAsync<RelativeCoordinates>("blazorStudio.getRelativeClickPosition",
+                GetTextEditorElementId,
+                _mostRecentCustomOnClick.ClientX,
+                _mostRecentCustomOnClick.ClientY);
+        
+        _previousTextPartitionSequenceKey = SequenceKey.Empty();
     }
 
     private async ValueTask<ItemsProviderResult<TextCharacterSpan>> LoadTextCharacterSpans(

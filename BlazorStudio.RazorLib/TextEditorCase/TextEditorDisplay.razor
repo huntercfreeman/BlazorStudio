@@ -3,6 +3,7 @@
 @using BlazorStudio.ClassLib.Keyboard
 @using BlazorStudio.ClassLib.TextEditor.Enums
 @using Microsoft.AspNetCore.Components.Web.Virtualization
+@using BlazorStudio.RazorLib.CustomEvents
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -49,11 +50,40 @@
         </ExpansionDisplay>
     </div>
 
+    @if (_mostRecentCustomOnClick is not null)
+    {
+        <div>
+            _mostRecentCustomOnClick&nbsp;(x, y):
+            <br/>
+            Offset:&nbsp;(<em>@_mostRecentCustomOnClick.OffsetX</em>, <em>@_mostRecentCustomOnClick.OffsetY</em>)
+            <br/>
+            Client:&nbsp;(<em>@_mostRecentCustomOnClick.ClientX</em>, <em>@_mostRecentCustomOnClick.ClientY</em>)
+            <br/>
+            CurrentTargetId:&nbsp;@_mostRecentCustomOnClick.CurrentTargetId
+            <br/>
+            OffsetParentId:&nbsp;@_mostRecentCustomOnClick.OffsetParentId
+            <br/>
+            TargetElementId:&nbsp;@_mostRecentCustomOnClick.TargetElementId
+            <br/>
+        </div>
+    }
+    
+    @if (_mostRecentRelativeCoordinates is not null)
+    {
+        <div>
+            _mostRecentRelativeCoordinates&nbsp;(x, y):
+            <br/>
+            Relative:&nbsp;(<em>@_mostRecentRelativeCoordinates.RelativeX</em>, <em>@_mostRecentRelativeCoordinates.RelativeY</em>)
+            <br/>
+        </div>
+    }
+    
     <div class="pte_plain-text-editor-wrapping">
         <div class="pte_plain-text-editor-display"
+             id="@GetTextEditorElementId"
              @onkeydown="HandleOnKeyDown"
              @onkeydown:preventDefault="true"
-             @onclick="HandleOnClick">
+             @oncustomclick="HandleOnCustomClick">
             
             @{
                 var localTextEditorState = TextEditorStatesSelection.Value;
