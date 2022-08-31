@@ -23,7 +23,6 @@ public record TextEditorBase : IDisposable
     /// </summary>
     private readonly List<TextCharacter> _content;
 
-    private readonly IAbsoluteFilePath _absoluteFilePath;
     private readonly Func<string, CancellationToken, Task> _onSaveRequestedFuncAsync;
     private readonly Func<EventHandler> _getInstanceOfPhysicalFileWatcherFunc;
 
@@ -85,7 +84,7 @@ public record TextEditorBase : IDisposable
             };   
         }).ToList();
 
-        _absoluteFilePath = absoluteFilePath;
+        AbsoluteFilePath = absoluteFilePath;
         _onSaveRequestedFuncAsync = onSaveRequestedFuncAsync;
         _getInstanceOfPhysicalFileWatcherFunc = getInstanceOfPhysicalFileWatcherFuncFunc;
     }
@@ -115,7 +114,8 @@ public record TextEditorBase : IDisposable
     /// <see cref="EditBlock{T}"/> needs to be made for public usage.)
     /// </summary>
     public ImmutableArray<IEditBlock> EditBlocks => _editBlocks.ToImmutableArray();
-    
+    public IAbsoluteFilePath AbsoluteFilePath { get; }
+
     /// <summary>
     /// When the physical file has changes saved to it (whether that be from a different process
     /// or not) a notification is sent.

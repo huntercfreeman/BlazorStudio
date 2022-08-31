@@ -30,10 +30,7 @@ public class TextEditorStatesReducer
                         constructedTextEditor.TextEditorKey);
 
             var nextTextEditorMap =
-                previousTextEditorStates.TextEditorMap
-                    .SetItem(
-                        constructedTextEditor.TextEditorKey,
-                        constructedTextEditor);
+                previousTextEditorStates.TextEditors.Add(constructedTextEditor);
 
             return new TextEditorStates(
                 nextTextEditorMap,
@@ -47,16 +44,17 @@ public class TextEditorStatesReducer
     public static TextEditorStates ReduceTextEditorEditAction(TextEditorStates previousTextEditorStates,
         TextEditorEditAction textEditorEditAction)
     {
-        var textEditor = previousTextEditorStates.TextEditorMap[textEditorEditAction.TextEditorKey];
+        var textEditor = previousTextEditorStates.TextEditors
+            .Single(x => x.TextEditorKey == textEditorEditAction.TextEditorKey);
 
         var nextTextEditor = textEditor.PerformTextEditorEditAction(textEditorEditAction);
 
-        var nextMap = previousTextEditorStates.TextEditorMap
-            .SetItem(textEditorEditAction.TextEditorKey, nextTextEditor);
+        var nextMap = previousTextEditorStates.TextEditors
+            .Replace(textEditor, nextTextEditor);
 
         return previousTextEditorStates with
         {
-            TextEditorMap = nextMap
+            TextEditors = nextMap
         };
     }
     

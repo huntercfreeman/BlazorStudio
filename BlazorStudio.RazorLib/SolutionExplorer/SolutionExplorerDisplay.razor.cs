@@ -31,6 +31,8 @@ using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 using BlazorStudio.ClassLib.Store.SolutionCase;
+using BlazorStudio.ClassLib.Store.TextEditorCase;
+using BlazorStudio.ClassLib.TextEditor;
 using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.SyntaxRootRender;
@@ -335,7 +337,19 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     {
         if (!treeViewKeyboardEventDto.Item.IsDirectory)
         {
-            // TODO: Open plain text editor
+            Task.Run(async () =>
+            {
+                var content = await FileSystemProvider
+                    .ReadFileAsync(treeViewKeyboardEventDto.Item, CancellationToken.None);
+            
+                Dispatcher.Dispatch(
+                    new RequestConstructTextEditorAction(
+                        TextEditorKey.NewTextEditorKey(), 
+                        treeViewKeyboardEventDto.Item,
+                        content,
+                        (_, _) => Task.CompletedTask,
+                        () => null)); 
+            });
         }
         else
         {

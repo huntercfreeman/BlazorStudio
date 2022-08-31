@@ -22,6 +22,7 @@ public partial class TextEditorDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TextEditorStates, TextEditorBase> TextEditorStatesSelection { get; set; } = null!;
+
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -34,14 +35,15 @@ public partial class TextEditorDisplay : FluxorComponent
     private TextCursor _cursor = new();
     private TextEditorCursorDisplay? _textEditorCursorDisplay;
     private Virtualize<TextCharacterSpan>? _virtualize;
-    
+
     private string BackgroundColor => GetBackgroundColor();
 
     protected override void OnInitialized()
     {
         TextEditorStatesSelection
-            .Select(x => x.TextEditorMap[TextEditorKey]);
-        
+            .Select(x =>
+                x.TextEditors.SingleOrDefault(x => x.TextEditorKey == TextEditorKey));
+
         base.OnInitialized();
     }
 
@@ -55,10 +57,10 @@ public partial class TextEditorDisplay : FluxorComponent
             _textPartition = localTextEditorStates.GetTextPartition(new RectangularCoordinates(
                 TopLeftCorner: (new(0), new(0)),
                 BottomRightCorner: (new(5), new(10))));
-            
+
             await InvokeAsync(StateHasChanged);
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 
@@ -71,17 +73,18 @@ public partial class TextEditorDisplay : FluxorComponent
             ? "var(--bstudio_primary-background-color)"
             : "var(--bstudio_secondary-background-color)";
     }
-    
+
     private bool ShouldRenderFunc(ShouldRenderBoundary.IsFirstShouldRenderValue firstShouldRender)
     {
-        var shouldRender = _textPartition is not null &&
-               _previousTextPartitionSequenceKey != _textPartition.SequenceKey;
+        var shouldRender = TextEditorStatesSelection.Value is not null &&
+                           _textPartition is not null &&
+                           _previousTextPartitionSequenceKey != _textPartition.SequenceKey;
 
         _previousTextPartitionSequenceKey = _textPartition?.SequenceKey ?? SequenceKey.Empty();
 
         return shouldRender;
     }
-    
+
     /// <summary>
     /// For multi cursor I imagine one would foreach() loop
     /// </summary>
@@ -89,7 +92,7 @@ public partial class TextEditorDisplay : FluxorComponent
     {
         if (_textEditorCursorDisplay is null)
             return;
-        
+
         var localTextEditorState = TextEditorStatesSelection.Value;
 
         if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key))
@@ -100,17 +103,17 @@ public partial class TextEditorDisplay : FluxorComponent
         {
             Dispatcher.Dispatch(new TextEditorEditAction(
                 TextEditorKey,
-                new [] { (new ImmutableTextCursor(_cursor), _cursor) }.ToImmutableArray(),
+                new[] { (new ImmutableTextCursor(_cursor), _cursor) }.ToImmutableArray(),
                 keyboardEventArgs,
                 CancellationToken.None));
 
             if (_virtualize is not null)
                 _virtualize.RefreshDataAsync();
-            
+
             StateHasChanged();
         }
     }
-    
+
     private async Task HandleOnClick(MouseEventArgs mouseEventArgs)
     {
         if (_textEditorCursorDisplay is not null)
@@ -118,22 +121,23 @@ public partial class TextEditorDisplay : FluxorComponent
             await _textEditorCursorDisplay.FocusAsync();
         }
     }
-    
+
     private async ValueTask<ItemsProviderResult<TextCharacterSpan>> LoadTextCharacterSpans(
         ItemsProviderRequest request)
     {
         var localTextEditorState = TextEditorStatesSelection.Value;
-        
+
         var numTextCharacterSpans = Math
             .Min(
                 request.Count,
                 localTextEditorState.LineEndingPositions.Length - request.StartIndex);
-        
+
         _textPartition = localTextEditorState.GetTextPartition(new RectangularCoordinates(
             TopLeftCorner: (new(request.StartIndex), new(0)),
             BottomRightCorner: (new(request.StartIndex + numTextCharacterSpans), new(10))));
-        
-        return new ItemsProviderResult<TextCharacterSpan>(_textPartition.TextSpanRows, localTextEditorState.LineEndingPositions.Length);
+
+        return new ItemsProviderResult<TextCharacterSpan>(_textPartition.TextSpanRows,
+            localTextEditorState.LineEndingPositions.Length);
     }
 
     private async Task ApplyRoslynSyntaxHighlightingAsyncOnClick()
@@ -152,7 +156,7 @@ public partial class TextEditorDisplay : FluxorComponent
         generalSyntaxCollector.Visit(syntaxNodeRoot);
 
         ApplyDecorations(localTextEditorState, generalSyntaxCollector);
-        
+
         _previousTextPartitionSequenceKey = SequenceKey.Empty();
     }
 
@@ -184,7 +188,7 @@ public partial class TextEditorDisplay : FluxorComponent
 
                         return retType?.Span ?? default;
                     }));
-            
+
             // Parameter declaration Type
             localTextEditorStates.ApplyDecorationRange(
                 DecorationKind.Type,
@@ -198,7 +202,7 @@ public partial class TextEditorDisplay : FluxorComponent
                         {
                             return TextSpan.FromBounds(0, 0);
                         }
-                
+
                         return identifierNameNode.Span;
                     }));
         }
@@ -210,7 +214,7 @@ public partial class TextEditorDisplay : FluxorComponent
                 DecorationKind.Method,
                 generalSyntaxCollector.MethodDeclarations
                     .Select(md => md.Identifier.Span));
-            
+
             // InvocationExpression
             localTextEditorStates.ApplyDecorationRange(
                 DecorationKind.Method,
@@ -233,11 +237,12 @@ public partial class TextEditorDisplay : FluxorComponent
                 generalSyntaxCollector.ParameterDeclarations
                     .Select(pd =>
                     {
-                        var identifierToken = pd.ChildTokens().FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierToken);
-                
+                        var identifierToken =
+                            pd.ChildTokens().FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierToken);
+
                         return identifierToken.Span;
                     }));
-            
+
             // Argument declaration identifier
             localTextEditorStates.ApplyDecorationRange(
                 DecorationKind.AltFlagOne | DecorationKind.Variable,
@@ -268,7 +273,7 @@ public partial class TextEditorDisplay : FluxorComponent
                 DecorationKind.AltFlagTwo | DecorationKind.Method,
                 generalSyntaxCollector.TriviaComments
                     .Select(tc => tc.Span));
-            
+
             localTextEditorStates.ApplyDecorationRange(
                 DecorationKind.AltFlagTwo | DecorationKind.Method,
                 generalSyntaxCollector.XmlComments

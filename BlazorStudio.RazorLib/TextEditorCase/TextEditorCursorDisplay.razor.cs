@@ -87,9 +87,6 @@ public partial class TextEditorCursorDisplay : ComponentBase
                 {
                     if (localIndexCoordinates.rowIndex.Value < localLineEndingPositions.Length - 1)
                     {
-                        var preMoveRowLength = TextEditorBase
-                            .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
-                    
                         localIndexCoordinates.rowIndex.Value++;
                     
                         var postMoveRowLength = TextEditorBase
@@ -119,9 +116,6 @@ public partial class TextEditorCursorDisplay : ComponentBase
                 {
                     if (localIndexCoordinates.rowIndex.Value > 0)
                     {
-                        var preMoveRowLength = TextEditorBase
-                            .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
-                    
                         localIndexCoordinates.rowIndex.Value--;
                     
                         var postMoveRowLength = TextEditorBase
