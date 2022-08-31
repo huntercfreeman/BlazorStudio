@@ -177,29 +177,25 @@ public partial class TextEditorCursorDisplay : ComponentBase
             {
                 if (keyboardEventArgs.CtrlKey)
                 {
-                    // TODO: Home + CtrlKey
+                    localIndexCoordinates.rowIndex = new(0);
                 }
-                else
-                {
-                    UpdatePreferredColumnIndexAndIndexCoordinates(new(0));
-                }
+                
+                UpdatePreferredColumnIndexAndIndexCoordinates(new(0));
                 
                 break;
             }
             case KeyboardKeyFacts.MovementKeys.END:
             {
-                // if (keyboardEventArgs.CtrlKey)
-                // {
-                //     localIndexCoordinates.rowIndex = new(localLineEndingPositions.Length - 1);
-                //     
-                //     UpdatePreferredColumnIndexAndIndexCoordinates(new(lastRowEndingPosition - 1));
-                // }
-                //
-                // var lengthOfTextSpanRow = TextEditorBase
-                //     .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
-                //
-                // UpdatePreferredColumnIndexAndIndexCoordinates(new(lengthOfTextSpanRow - 1));
-                //
+                if (keyboardEventArgs.CtrlKey)
+                {
+                    localIndexCoordinates.rowIndex = new(localLineEndingPositions.Length - 1);
+                }
+                
+                var lengthOfTextSpanRow = TextEditorBase
+                    .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+                
+                UpdatePreferredColumnIndexAndIndexCoordinates(new(lengthOfTextSpanRow - 1));
+                
                 break;
             }
         }
