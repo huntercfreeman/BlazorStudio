@@ -62,6 +62,22 @@ public class TextEditorStatesReducer
     public static TextEditorStates ReduceRequestDisposePlainTextEditorAction(TextEditorStates previousTextEditorStates,
         RequestDisposePlainTextEditorAction requestDisposePlainTextEditorAction)
     {
-        throw new NotImplementedException();
+        var disposeTarget = previousTextEditorStates.TextEditors
+            .FirstOrDefault(x =>
+                x.TextEditorKey == requestDisposePlainTextEditorAction.TextEditorKey);
+
+        if (disposeTarget is null)
+            return previousTextEditorStates;
+        
+        var nextAbsoluteFilePathToActiveTextEditorMap = 
+            previousTextEditorStates.AbsoluteFilePathToActiveTextEditorMap
+                .Remove(new (disposeTarget.AbsoluteFilePath));
+
+        var nextTextEditorMap =
+            previousTextEditorStates.TextEditors.Remove(disposeTarget);
+
+        return new TextEditorStates(
+            nextTextEditorMap,
+            nextAbsoluteFilePathToActiveTextEditorMap);
     }
 }
