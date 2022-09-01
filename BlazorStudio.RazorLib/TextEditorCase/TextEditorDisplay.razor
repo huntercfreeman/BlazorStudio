@@ -3,6 +3,7 @@
 @using BlazorStudio.ClassLib.Keyboard
 @using BlazorStudio.ClassLib.TextEditor.Enums
 @using Microsoft.AspNetCore.Components.Web.Virtualization
+@using BlazorStudio.RazorLib.CustomEvents
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -24,7 +25,7 @@
 
                         foreach (var editBlock in localTextEditorState.EditBlocks)
                         {
-                            var message = @editBlock.GetUserInterfaceDisplayMessage();
+                            var message = editBlock.GetUserInterfaceDisplayMessage();
                             <div style="white-space: nowrap;">
                                 @foreach (var character in message)
                                 {
@@ -49,11 +50,30 @@
         </ExpansionDisplay>
     </div>
 
+    @if (_mostRecentRelativeCoordinates is not null)
+    {
+        <div>
+            _mostRecentRelativeCoordinates&nbsp;(x, y):
+            <br/>
+            Relative:&nbsp;(<em>@_mostRecentRelativeCoordinates.RelativeX</em>, <em>@_mostRecentRelativeCoordinates.RelativeY</em>)
+            <br/>
+        </div>
+    }
+    
     <div class="pte_plain-text-editor-wrapping">
         <div class="pte_plain-text-editor-display"
+             id="@GetTextEditorElementId"
              @onkeydown="HandleOnKeyDown"
              @onkeydown:preventDefault="true"
-             @onclick="HandleOnClick">
+             @oncustomclick="HandleOnCustomClick"> 
+            
+            @* TODO: Measure exactly width of a character and height of a row initially and when font size changes. *@
+            @* <div style="position: absolute; left: 0px; top: 0px; white-space: nowrap;"> *@
+            @*     @for (int i = 0; i < 10; i++) *@
+            @*     { *@
+            @*         <text>abcdefghijklmnopqrstuvwxyz0123456789</text> *@
+            @*     } *@
+            @* </div> *@
             
             @{
                 var localTextEditorState = TextEditorStatesSelection.Value;
@@ -84,11 +104,11 @@
                                     }
                                     else if (textCharacter.Value == '\r')
                                     {
-                                        spanTextBuilder.Append('/');
+                                        // spanTextBuilder.Append('/');
                                     }
                                     else if (textCharacter.Value == '\n')
                                     {
-                                        spanTextBuilder.Append('\\');
+                                        // spanTextBuilder.Append('\\');
                                     }
                                     else
                                     {

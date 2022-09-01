@@ -23,7 +23,6 @@ public record TextEditorBase : IDisposable
     /// </summary>
     private readonly List<TextCharacter> _content;
 
-    private readonly IAbsoluteFilePath _absoluteFilePath;
     private readonly Func<string, CancellationToken, Task> _onSaveRequestedFuncAsync;
     private readonly Func<EventHandler> _getInstanceOfPhysicalFileWatcherFunc;
 
@@ -85,7 +84,7 @@ public record TextEditorBase : IDisposable
             };   
         }).ToList();
 
-        _absoluteFilePath = absoluteFilePath;
+        AbsoluteFilePath = absoluteFilePath;
         _onSaveRequestedFuncAsync = onSaveRequestedFuncAsync;
         _getInstanceOfPhysicalFileWatcherFunc = getInstanceOfPhysicalFileWatcherFuncFunc;
     }
@@ -115,7 +114,8 @@ public record TextEditorBase : IDisposable
     /// <see cref="EditBlock{T}"/> needs to be made for public usage.)
     /// </summary>
     public ImmutableArray<IEditBlock> EditBlocks => _editBlocks.ToImmutableArray();
-    
+    public IAbsoluteFilePath AbsoluteFilePath { get; }
+
     /// <summary>
     /// When the physical file has changes saved to it (whether that be from a different process
     /// or not) a notification is sent.
@@ -211,6 +211,9 @@ public record TextEditorBase : IDisposable
     
     public static int GetLengthOfRow(RowIndex rowIndex, ImmutableArray<int> lineEndingPositions)
     {
+        if (!lineEndingPositions.Any())
+            return 0;
+        
         var startOfTextSpanRowInclusive = rowIndex.Value == 0
             ? 0
             : lineEndingPositions[rowIndex.Value - 1];
@@ -361,13 +364,11 @@ public record TextEditorBase : IDisposable
     
     private void PerformDeletions(TextEditorEditAction textEditorEditAction)
     {
-        // TODO: This conditional branch is likely text insertion but I need to look for edge cases
         EnsureUndoPoint(TextEditKind.Deletion);
     }
     
     private void PerformBackspaces(TextEditorEditAction textEditorEditAction)
     {
-        // TODO: This conditional branch is likely text insertion but I need to look for edge cases
         EnsureUndoPoint(TextEditKind.Deletion);
         
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)

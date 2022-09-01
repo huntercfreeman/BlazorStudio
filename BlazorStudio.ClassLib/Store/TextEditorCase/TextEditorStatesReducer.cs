@@ -30,10 +30,7 @@ public class TextEditorStatesReducer
                         constructedTextEditor.TextEditorKey);
 
             var nextTextEditorMap =
-                previousTextEditorStates.TextEditorMap
-                    .SetItem(
-                        constructedTextEditor.TextEditorKey,
-                        constructedTextEditor);
+                previousTextEditorStates.TextEditors.Add(constructedTextEditor);
 
             return new TextEditorStates(
                 nextTextEditorMap,
@@ -47,16 +44,17 @@ public class TextEditorStatesReducer
     public static TextEditorStates ReduceTextEditorEditAction(TextEditorStates previousTextEditorStates,
         TextEditorEditAction textEditorEditAction)
     {
-        var textEditor = previousTextEditorStates.TextEditorMap[textEditorEditAction.TextEditorKey];
+        var textEditor = previousTextEditorStates.TextEditors
+            .Single(x => x.TextEditorKey == textEditorEditAction.TextEditorKey);
 
         var nextTextEditor = textEditor.PerformTextEditorEditAction(textEditorEditAction);
 
-        var nextMap = previousTextEditorStates.TextEditorMap
-            .SetItem(textEditorEditAction.TextEditorKey, nextTextEditor);
+        var nextMap = previousTextEditorStates.TextEditors
+            .Replace(textEditor, nextTextEditor);
 
         return previousTextEditorStates with
         {
-            TextEditorMap = nextMap
+            TextEditors = nextMap
         };
     }
     
@@ -64,6 +62,22 @@ public class TextEditorStatesReducer
     public static TextEditorStates ReduceRequestDisposePlainTextEditorAction(TextEditorStates previousTextEditorStates,
         RequestDisposePlainTextEditorAction requestDisposePlainTextEditorAction)
     {
-        throw new NotImplementedException();
+        var disposeTarget = previousTextEditorStates.TextEditors
+            .FirstOrDefault(x =>
+                x.TextEditorKey == requestDisposePlainTextEditorAction.TextEditorKey);
+
+        if (disposeTarget is null)
+            return previousTextEditorStates;
+        
+        var nextAbsoluteFilePathToActiveTextEditorMap = 
+            previousTextEditorStates.AbsoluteFilePathToActiveTextEditorMap
+                .Remove(new (disposeTarget.AbsoluteFilePath));
+
+        var nextTextEditorMap =
+            previousTextEditorStates.TextEditors.Remove(disposeTarget);
+
+        return new TextEditorStates(
+            nextTextEditorMap,
+            nextAbsoluteFilePathToActiveTextEditorMap);
     }
 }

@@ -87,9 +87,6 @@ public partial class TextEditorCursorDisplay : ComponentBase
                 {
                     if (localIndexCoordinates.rowIndex.Value < localLineEndingPositions.Length - 1)
                     {
-                        var preMoveRowLength = TextEditorBase
-                            .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
-                    
                         localIndexCoordinates.rowIndex.Value++;
                     
                         var postMoveRowLength = TextEditorBase
@@ -119,9 +116,6 @@ public partial class TextEditorCursorDisplay : ComponentBase
                 {
                     if (localIndexCoordinates.rowIndex.Value > 0)
                     {
-                        var preMoveRowLength = TextEditorBase
-                            .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
-                    
                         localIndexCoordinates.rowIndex.Value--;
                     
                         var postMoveRowLength = TextEditorBase
@@ -177,12 +171,10 @@ public partial class TextEditorCursorDisplay : ComponentBase
             {
                 if (keyboardEventArgs.CtrlKey)
                 {
-                    // TODO: Home + CtrlKey
+                    localIndexCoordinates.rowIndex = new(0);
                 }
-                else
-                {
-                    UpdatePreferredColumnIndexAndIndexCoordinates(new(0));
-                }
+                
+                UpdatePreferredColumnIndexAndIndexCoordinates(new(0));
                 
                 break;
             }
@@ -190,14 +182,13 @@ public partial class TextEditorCursorDisplay : ComponentBase
             {
                 if (keyboardEventArgs.CtrlKey)
                 {
-                    // TODO: End + CtrlKey
+                    localIndexCoordinates.rowIndex = new(localLineEndingPositions.Length - 1);
                 }
-                else
-                {
-                    var lineEnding = localLineEndingPositions[localIndexCoordinates.rowIndex.Value];
-                    
-                    UpdatePreferredColumnIndexAndIndexCoordinates(new(lineEnding));
-                }
+                
+                var lengthOfTextSpanRow = TextEditorBase
+                    .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
+                
+                UpdatePreferredColumnIndexAndIndexCoordinates(new(lengthOfTextSpanRow - 1));
                 
                 break;
             }

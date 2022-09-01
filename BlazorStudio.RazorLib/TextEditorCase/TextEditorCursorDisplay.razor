@@ -2,3 +2,15 @@
           style="width: 1.5px; height: 39px; @CssStyleString"
           @ref="_textAreaCursorDisplayElementReference">
 </textarea>
+
+<div style="position: fixed; left: 15px; top: 15px; width: 600px; padding: 15px; background-color: #18440c;">
+    <div>(RowIndex, ColumnIndex):</div>
+    (@TextCursor.IndexCoordinates.RowIndex.Value, @TextCursor.IndexCoordinates.ColumnIndex.Value)
+    <hr/>
+    <div>PreferredColumnIndex:</div>
+    @TextCursor.PreferredColumnIndex.Value
+    <hr/>
+    <div>TextCursorKind:</div>
+    @TextCursor.TextCursorKind
+    <hr/>
+</div>

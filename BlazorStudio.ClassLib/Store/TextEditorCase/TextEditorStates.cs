@@ -7,11 +7,11 @@ namespace BlazorStudio.ClassLib.Store.TextEditorCase;
 
 [FeatureState]
 public record TextEditorStates(
-    ImmutableDictionary<TextEditorKey, TextEditorBase> TextEditorMap,
+    ImmutableList<TextEditorBase> TextEditors,
     ImmutableDictionary<AbsoluteFilePathStringValue, TextEditorKey> AbsoluteFilePathToActiveTextEditorMap)
 {
     public TextEditorStates() : this(
-        ImmutableDictionary<TextEditorKey, TextEditorBase>.Empty,
+        ImmutableList<TextEditorBase>.Empty,
         ImmutableDictionary<AbsoluteFilePathStringValue, TextEditorKey>.Empty)
     {
         

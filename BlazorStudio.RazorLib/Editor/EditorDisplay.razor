@@ -10,13 +10,25 @@
 
     <div style="padding: 0 5px; height: calc(100% - 2rem - 10px);">
         @{
-            var textEditorStates = TextEditorStatesWrap.Value;
-            var editorState = EditorStateWrap.Value;
+            var localTextEditorStates = TextEditorStatesWrap.Value;
+            var localEditorState = EditorStateWrap.Value;
 
-            if (editorState.TextEditorKey != TextEditorKey.Empty())
+            <div class="bstudio_editor-tabs-listing">
+                @for (int i = 0; i < localTextEditorStates.TextEditors.Count; i++)
+                {
+                    var index = i;
+                    var textEditor = localTextEditorStates.TextEditors[index];
+
+                    <EditorTabDisplay TabIndex="index"
+                                      TextEditor="textEditor" />
+                }
+            </div>
+            
+            if (localEditorState.TextEditorKey != TextEditorKey.Empty())
             {
-                <BlazorStudio.RazorLib.TextEditorCase.TextEditorDisplay TextEditorKey="editorState.TextEditorKey" />
+                <BlazorStudio.RazorLib.TextEditorCase.TextEditorDisplay TextEditorKey="localEditorState.TextEditorKey" />
             }
         }
     </div>
 </ContextBoundary>
+

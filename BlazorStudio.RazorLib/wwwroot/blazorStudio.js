@@ -151,6 +151,19 @@
 
             keymapDotNetObjectReference.invokeMethodAsync('DispatchHandleKeymapEvent', keydownDto);
         });
+    },
+    getRelativeClickPosition: function (elementId, clientX, clientY) {
+        let bounds = document
+            .getElementById(elementId)
+            .getBoundingClientRect();
+        
+        let x = clientX - bounds.left;
+        let y = clientY - bounds.top;
+        
+        return {
+            relativeX: x,
+            relativeY: y
+        };
     }
 };
 
@@ -167,6 +180,20 @@ Blazor.registerCustomEventType('customkeydown', {
             "ctrlWasPressed": e.ctrlKey,
             "shiftWasPressed": e.shiftKey,
             "altWasPressed": e.altKey
+        };
+    }
+});
+
+Blazor.registerCustomEventType('customclick', {
+    browserEventName: 'click',
+    createEventArgs: e => {
+        return {
+            clientX: e.clientX,
+            clientY: e.clientY,
+            offsetX: e.offsetX,
+            offsetY: e.offsetY,
+            targetElementId: e.target.id,
+            currentTargetId: e.currentTarget.id,
         };
     }
 });

@@ -1,40 +1,71 @@
 ﻿using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Store.EditorCase;
+using BlazorStudio.ClassLib.Store.TextEditorCase;
+using BlazorStudio.ClassLib.TextEditor;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Editor;
 
-public partial class EditorTabDisplay : ComponentBase
+public partial class EditorTabDisplay : FluxorComponent
 {
-    [CascadingParameter(Name="ActiveTabIndex")]
-    public int ActiveTabIndex { get; set; }
-
+    [Inject]
+    private IState<EditorState> EditorStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<TextEditorStates> TextEditorStatesWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    
+    [Parameter, EditorRequired]
+    public TextEditorBase TextEditor { get; set; } = null!;
     [Parameter, EditorRequired]
     public int TabIndex { get; set; }
-    /// <summary>
-    /// Do not use EventCallback it will call StateHasChanged implicitly
-    /// causing a second 'StateHasChanged' one from Fluxor one from the EventCallback
-    /// </summary>
-    [Parameter, EditorRequired]
-    public Action<int> SetActiveTabIndexOnClick { get; set; } = null!;
     
-    // TODO: Dispose plain text editor
-    //
-    // [Parameter, EditorRequired]
-    // public Action<PlainTextEditorKey> DisposePlainTextEditorOnClick { get; set; } = null!;
-
-    private string IsActiveCssClass => ActiveTabIndex == TabIndex
+    private string IsActiveCssClass => EditorStateWrap.Value.TextEditorKey == TextEditor.TextEditorKey
         ? "bstudio_active"
         : string.Empty;
 
-    private void FireSetActiveTabIndexOnClick()
+    private void DispatchSetActiveTextEditorKeyAction()
     {
-        SetActiveTabIndexOnClick.Invoke(TabIndex);
+        Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(TextEditor.TextEditorKey));
     }
     
     private void FireDisposePlainTextEditorOnClick()
     {
-        // TODO: Dispose plain text editor
+        var localTextEditorStates = TextEditorStatesWrap.Value;
+        
+        var activeIndex = localTextEditorStates.TextEditors.IndexOf(TextEditor);
+
+        var indexOfNextActiveTextEditor = activeIndex;
+        
+        // If last item in list
+        if (activeIndex >= localTextEditorStates.TextEditors.Count - 1)
+        {
+            indexOfNextActiveTextEditor--;
+        }
+        else
+        {
+            // ++ operation because nothing yet has been removed.
+            // The new active TextEditor is set prior to actually removing the current active TextEditor.
+            indexOfNextActiveTextEditor++;
+        }
+
+
+        // List will be empty after disposing
+        if (localTextEditorStates.TextEditors.Count - 1 == 0)
+        {
+            Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(TextEditorKey.Empty()));
+        }
+        else
+        {
+            var nextActiveTextEditor = localTextEditorStates.TextEditors[indexOfNextActiveTextEditor];
+            
+            Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(nextActiveTextEditor.TextEditorKey));
+        }
+        
+        Dispatcher.Dispatch(new RequestDisposePlainTextEditorAction(TextEditor.TextEditorKey));
     }
     
     private void EditorTabHandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
@@ -42,7 +73,7 @@ public partial class EditorTabDisplay : ComponentBase
         if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code ||
             KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE == keyboardEventArgs.Code)
         {
-            FireSetActiveTabIndexOnClick();
+            DispatchSetActiveTextEditorKeyAction();
         }
     }
 }

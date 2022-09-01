@@ -27,10 +27,13 @@ using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.ContextCase;
+using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 using BlazorStudio.ClassLib.Store.SolutionCase;
+using BlazorStudio.ClassLib.Store.TextEditorCase;
+using BlazorStudio.ClassLib.TextEditor;
 using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.SyntaxRootRender;
@@ -47,6 +50,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
     [Inject]
     private IState<RoslynWorkspaceState> RoslynWorkspaceStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<TextEditorStates> TextEditorStatesWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -331,11 +336,29 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             .Union(childFileAbsolutePaths);
     }
 
-    private void WorkspaceExplorerTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<AbsoluteFilePathDotNet>  treeViewKeyboardEventDto)
+    private void WorkspaceExplorerTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<AbsoluteFilePathDotNet> treeViewKeyboardEventDto)
     {
         if (!treeViewKeyboardEventDto.Item.IsDirectory)
         {
-            // TODO: Open plain text editor
+            _ = Task.Run(async () =>
+            {
+                var content = await FileSystemProvider
+                    .ReadFileAsync(treeViewKeyboardEventDto.Item, CancellationToken.None);
+            
+                Dispatcher.Dispatch(
+                    new RequestConstructTextEditorAction(
+                        TextEditorKey.NewTextEditorKey(), 
+                        treeViewKeyboardEventDto.Item,
+                        content,
+                        (_, _) => Task.CompletedTask,
+                        () => null));
+
+                if (TextEditorStatesWrap.Value.AbsoluteFilePathToActiveTextEditorMap
+                    .TryGetValue(new(treeViewKeyboardEventDto.Item), out var textEditorKey))
+                {
+                    Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(textEditorKey));    
+                }
+            });
         }
         else
         {
@@ -352,7 +375,25 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     {
         if (!treeViewMouseEventDto.Item.IsDirectory)
         {
-            // TODO: Open plain text editor
+            _ = Task.Run(async () =>
+            {
+                var content = await FileSystemProvider
+                    .ReadFileAsync(treeViewMouseEventDto.Item, CancellationToken.None);
+            
+                Dispatcher.Dispatch(
+                    new RequestConstructTextEditorAction(
+                        TextEditorKey.NewTextEditorKey(), 
+                        treeViewMouseEventDto.Item,
+                        content,
+                        (_, _) => Task.CompletedTask,
+                        () => null));
+
+                if (TextEditorStatesWrap.Value.AbsoluteFilePathToActiveTextEditorMap
+                    .TryGetValue(new(treeViewMouseEventDto.Item), out var textEditorKey))
+                {
+                    Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(textEditorKey));    
+                }
+            });
         }
         else
         {
