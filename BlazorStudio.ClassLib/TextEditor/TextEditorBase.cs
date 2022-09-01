@@ -211,6 +211,9 @@ public record TextEditorBase : IDisposable
     
     public static int GetLengthOfRow(RowIndex rowIndex, ImmutableArray<int> lineEndingPositions)
     {
+        if (!lineEndingPositions.Any())
+            return 0;
+        
         var startOfTextSpanRowInclusive = rowIndex.Value == 0
             ? 0
             : lineEndingPositions[rowIndex.Value - 1];
