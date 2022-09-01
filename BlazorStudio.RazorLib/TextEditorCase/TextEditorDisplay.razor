@@ -50,24 +50,6 @@
         </ExpansionDisplay>
     </div>
 
-    @if (_mostRecentCustomOnClick is not null)
-    {
-        <div>
-            _mostRecentCustomOnClick&nbsp;(x, y):
-            <br/>
-            Offset:&nbsp;(<em>@_mostRecentCustomOnClick.OffsetX</em>, <em>@_mostRecentCustomOnClick.OffsetY</em>)
-            <br/>
-            Client:&nbsp;(<em>@_mostRecentCustomOnClick.ClientX</em>, <em>@_mostRecentCustomOnClick.ClientY</em>)
-            <br/>
-            CurrentTargetId:&nbsp;@_mostRecentCustomOnClick.CurrentTargetId
-            <br/>
-            OffsetParentId:&nbsp;@_mostRecentCustomOnClick.OffsetParentId
-            <br/>
-            TargetElementId:&nbsp;@_mostRecentCustomOnClick.TargetElementId
-            <br/>
-        </div>
-    }
-    
     @if (_mostRecentRelativeCoordinates is not null)
     {
         <div>
@@ -83,7 +65,15 @@
              id="@GetTextEditorElementId"
              @onkeydown="HandleOnKeyDown"
              @onkeydown:preventDefault="true"
-             @oncustomclick="HandleOnCustomClick">
+             @oncustomclick="HandleOnCustomClick"> 
+            
+            @* TODO: Measure exactly width of a character and height of a row initially and when font size changes. *@
+            @* <div style="position: absolute; left: 0px; top: 0px; white-space: nowrap;"> *@
+            @*     @for (int i = 0; i < 10; i++) *@
+            @*     { *@
+            @*         <text>abcdefghijklmnopqrstuvwxyz0123456789</text> *@
+            @*     } *@
+            @* </div> *@
             
             @{
                 var localTextEditorState = TextEditorStatesSelection.Value;
@@ -114,11 +104,11 @@
                                     }
                                     else if (textCharacter.Value == '\r')
                                     {
-                                        spanTextBuilder.Append('/');
+                                        // spanTextBuilder.Append('/');
                                     }
                                     else if (textCharacter.Value == '\n')
                                     {
-                                        spanTextBuilder.Append('\\');
+                                        // spanTextBuilder.Append('\\');
                                     }
                                     else
                                     {

@@ -40,8 +40,9 @@ public partial class TextEditorDisplay : FluxorComponent
     private TextCursor _cursor = new();
     private TextEditorCursorDisplay? _textEditorCursorDisplay;
     private Virtualize<TextCharacterSpan>? _virtualize;
-    private CustomOnClick? _mostRecentCustomOnClick;
     private RelativeCoordinates? _mostRecentRelativeCoordinates;
+    private int _temporaryHardCodeRowHeight = 39;
+    private int _temporaryHardCodeCharacterWidth = 16;
 
     private string GetTextEditorElementId => $"bstudio_{_textEditorGuid}";
     
@@ -114,13 +115,20 @@ public partial class TextEditorDisplay : FluxorComponent
             await _textEditorCursorDisplay.FocusAsync();
         }
 
-        _mostRecentCustomOnClick = customOnClick;
-
         _mostRecentRelativeCoordinates = await JsRuntime
             .InvokeAsync<RelativeCoordinates>("blazorStudio.getRelativeClickPosition",
                 GetTextEditorElementId,
-                _mostRecentCustomOnClick.ClientX,
-                _mostRecentCustomOnClick.ClientY);
+                customOnClick.ClientX,
+                customOnClick.ClientY);
+
+        var columnIndexDouble = _mostRecentRelativeCoordinates.RelativeX / _temporaryHardCodeCharacterWidth;
+        var columnIndexRounded = Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
+        
+        var cursorIndexCoordinates = 
+            (new RowIndex((int)_mostRecentRelativeCoordinates.RelativeY / _temporaryHardCodeRowHeight), 
+            new ColumnIndex((int)columnIndexRounded));
+
+        _cursor.IndexCoordinates = cursorIndexCoordinates;
         
         _previousTextPartitionSequenceKey = SequenceKey.Empty();
     }
