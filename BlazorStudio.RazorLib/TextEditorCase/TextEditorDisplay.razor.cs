@@ -110,6 +110,8 @@ public partial class TextEditorDisplay : FluxorComponent
     
     private async Task HandleOnCustomClick(CustomOnClick customOnClick)
     {
+        var localTextEditorState = TextEditorStatesSelection.Value;
+
         if (_textEditorCursorDisplay is not null)
         {
             await _textEditorCursorDisplay.FocusAsync();
@@ -123,11 +125,23 @@ public partial class TextEditorDisplay : FluxorComponent
 
         var columnIndexDouble = _mostRecentRelativeCoordinates.RelativeX / _temporaryHardCodeCharacterWidth;
         var columnIndexRounded = Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
-        
-        var cursorIndexCoordinates = 
-            (new RowIndex((int)_mostRecentRelativeCoordinates.RelativeY / _temporaryHardCodeRowHeight), 
-            new ColumnIndex((int)columnIndexRounded));
 
+        var rowIndex = new RowIndex((int)_mostRecentRelativeCoordinates.RelativeY / _temporaryHardCodeRowHeight);
+
+        if (rowIndex.Value >= localTextEditorState.LineEndingPositions.Length)
+            rowIndex = new(localTextEditorState.LineEndingPositions.Length - 1);
+        
+        var columnIndex = new ColumnIndex((int)columnIndexRounded);
+
+        var rowLength = TextEditorBase
+            .GetLengthOfRow(rowIndex, localTextEditorState.LineEndingPositions);
+        
+        if (columnIndex.Value >= rowLength)
+            columnIndex = new(rowLength - 1);
+        
+        var cursorIndexCoordinates = (rowIndex, columnIndex);
+
+        _cursor.PreferredColumnIndex = columnIndex;
         _cursor.IndexCoordinates = cursorIndexCoordinates;
         
         _previousTextPartitionSequenceKey = SequenceKey.Empty();
