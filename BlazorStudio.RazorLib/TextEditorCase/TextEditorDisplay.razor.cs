@@ -79,6 +79,8 @@ public partial class TextEditorDisplay : FluxorComponent
                 _fontSizeMeasurementTestData.Length * _fontSizeMeasurementMultiplier);
 
             _shouldMeasureFontSize = false;
+            
+            _previousTextPartitionSequenceKey = SequenceKey.Empty();
 
             await InvokeAsync(StateHasChanged);
         }
@@ -89,8 +91,7 @@ public partial class TextEditorDisplay : FluxorComponent
     private bool ShouldRenderFunc(ShouldRenderBoundary.IsFirstShouldRenderValue firstShouldRender)
     {
         var shouldRender = TextEditorStatesSelection.Value is not null &&
-                           _textPartition is not null &&
-                           _previousTextPartitionSequenceKey != _textPartition.SequenceKey;
+                           (_textPartition is null || (_previousTextPartitionSequenceKey != _textPartition.SequenceKey));
 
         _previousTextPartitionSequenceKey = _textPartition?.SequenceKey ?? SequenceKey.Empty();
 

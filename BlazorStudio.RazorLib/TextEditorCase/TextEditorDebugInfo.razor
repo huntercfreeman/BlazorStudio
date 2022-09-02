@@ -1,12 +1,4 @@
 ﻿<div>
-    @if (TextPartition is not null)
-    {
-        foreach (var textSpanRow in TextPartition.TextSpanRows)
-        {
-            <div>@textSpanRow.GetText</div>
-        }
-    }
-    
     <ExpansionDisplay TitleCssClass="bstudio_settings-section-title">
         <TitleRenderFragment>
             Edits&nbsp;Count:&nbsp;<em>@TextEditor.EditBlocks.Length</em>

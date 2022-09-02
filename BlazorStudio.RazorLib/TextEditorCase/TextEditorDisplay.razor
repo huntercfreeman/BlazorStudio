@@ -7,14 +7,6 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@if (_textPartition is not null)
-{
-    foreach (var textSpanRow in _textPartition.TextSpanRows)
-    {
-        <div>@textSpanRow.GetText</div>
-    }
-}
-
 <ShouldRenderBoundary ShouldRenderFunc="ShouldRenderFunc">
     <TextEditorDebugInfo TextEditor="TextEditorStatesSelection.Value"
                          TextPartition="_textPartition"/>
@@ -24,17 +16,6 @@
         Apply Roslyn Syntax Highlighting
     </button>
 
-        @if (_textEditorFontSize is not null)
-        {
-            <div>
-                RowHeight:&nbsp;@_textEditorFontSize.RowHeight
-                
-                <br/>
-                
-                CharacterWidth:&nbsp;@_textEditorFontSize.CharacterWidth
-            </div>
-        }
-    
     <div class="pte_plain-text-editor-wrapping">
         <div class="pte_plain-text-editor-display"
              id="@GetTextEditorElementId"
@@ -51,14 +32,15 @@
                 }
             </div>
 
-            @{
+            @if (_textEditorFontSize is not null) 
+            {
                 var localTextEditorState = TextEditorStatesSelection.Value;
-
+        
                 <Virtualize ItemsProvider="LoadTextCharacterSpans"
                             Context="textSpan"
                             @ref="_virtualize">
 
-                    <div style="white-space: nowrap;">
+                    <div style="white-space: nowrap; height: @(_textEditorFontSize.RowHeight)px;">
                         @if (textSpan.TextCharacters.Any())
                         {
                             var spanTextBuilder = new StringBuilder();
