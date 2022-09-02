@@ -2,12 +2,15 @@ using System.Collections.Immutable;
 using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.TextEditorCase;
 using BlazorStudio.ClassLib.TextEditor.Character;
 using BlazorStudio.ClassLib.TextEditor.Cursor;
 using BlazorStudio.ClassLib.TextEditor.Enums;
 using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
+using BlazorStudio.RazorLib.CustomEvents;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
 namespace BlazorStudio.ClassLib.TextEditor;
@@ -404,7 +407,6 @@ public record TextEditorBase : IDisposable
                 ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
                 : 0;
 
-
             var rowLength = 
                 GetLengthOfRow(cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex, LineEndingPositions);
             
@@ -466,6 +468,10 @@ public record TextEditorBase : IDisposable
                 ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
                 : 0;
 
+            var lengthOfPreviousRow = GetLengthOfRow(
+                new (cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1), 
+                LineEndingPositions);
+            
             var charactersRemoved = 0;
             
             if (cursorTuple.immutableTextCursor.IndexCoordinates.ColumnIndex.Value == 0)
@@ -492,7 +498,7 @@ public record TextEditorBase : IDisposable
                 
                 cursorTuple.textCursor.IndexCoordinates = 
                     (new (cursorTuple.textCursor.IndexCoordinates.RowIndex.Value - 1), 
-                        new (startOfRow - 1));
+                        new (lengthOfPreviousRow));
             }
             else
             {
@@ -568,6 +574,143 @@ public record TextEditorBase : IDisposable
                     new(), 
                     GetAllText()));
             }
+        }
+    }
+
+    public async Task ApplyRoslynSyntaxHighlightingAsync()
+    {
+        // I don't want the IMMUTABLE state changing due to Blazor using a MUTABLE reference.
+        var text = GetAllText();
+
+        var generalSyntaxCollector = new GeneralSyntaxCollector();
+
+        var syntaxTree = CSharpSyntaxTree.ParseText(text);
+
+        var syntaxNodeRoot = await syntaxTree.GetRootAsync();
+
+        generalSyntaxCollector.Visit(syntaxNodeRoot);
+
+        ApplyDecorations(this, generalSyntaxCollector);
+    }
+
+    public static void ApplyDecorations(TextEditorBase localTextEditorStates, GeneralSyntaxCollector generalSyntaxCollector)
+    {
+        // Type decorations
+        {
+            // Property Type
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Type,
+                generalSyntaxCollector.PropertyDeclarations
+                    .Select(pds => pds.Type.Span));
+
+            // Class Declaration
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Type,
+                generalSyntaxCollector.ClassDeclarations
+                    .Select(cd => cd.Identifier.Span));
+
+            // Method return Type
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Type,
+                generalSyntaxCollector.MethodDeclarations
+                    .Select(md =>
+                    {
+                        var retType = md
+                            .ChildNodes()
+                            .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+
+                        return retType?.Span ?? default;
+                    }));
+
+            // Parameter declaration Type
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Type,
+                generalSyntaxCollector.ParameterDeclarations
+                    .Select(pd =>
+                    {
+                        var identifierNameNode = pd.ChildNodes()
+                            .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+
+                        if (identifierNameNode is null)
+                        {
+                            return TextSpan.FromBounds(0, 0);
+                        }
+
+                        return identifierNameNode.Span;
+                    }));
+        }
+
+        // Method decorations
+        {
+            // Method declaration identifier
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Method,
+                generalSyntaxCollector.MethodDeclarations
+                    .Select(md => md.Identifier.Span));
+
+            // InvocationExpression
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Method,
+                generalSyntaxCollector.InvocationExpressions
+                    .Select(md =>
+                    {
+                        var childNodes = md.Expression.ChildNodes();
+
+                        var lastNode = childNodes.LastOrDefault();
+
+                        return lastNode?.Span ?? TextSpan.FromBounds(0, 0);
+                    }));
+        }
+
+        // Local variable decorations
+        {
+            // Parameter declaration identifier
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.AltFlagOne | DecorationKind.Variable,
+                generalSyntaxCollector.ParameterDeclarations
+                    .Select(pd =>
+                    {
+                        var identifierToken =
+                            pd.ChildTokens().FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierToken);
+
+                        return identifierToken.Span;
+                    }));
+
+            // Argument declaration identifier
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.AltFlagOne | DecorationKind.Variable,
+                generalSyntaxCollector.ArgumentDeclarations
+                    .Select(ad => ad.Span));
+        }
+
+        // String literal
+        {
+            // String literal
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.AltFlagOne | DecorationKind.Constant,
+                generalSyntaxCollector.StringLiteralExpressions
+                    .Select(sl => sl.Span));
+        }
+
+        // Keywords
+        {
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.Keyword,
+                generalSyntaxCollector.Keywords
+                    .Select(keyword => keyword.Span));
+        }
+
+        // Comments
+        {
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.AltFlagTwo | DecorationKind.Method,
+                generalSyntaxCollector.TriviaComments
+                    .Select(tc => tc.Span));
+
+            localTextEditorStates.ApplyDecorationRange(
+                DecorationKind.AltFlagTwo | DecorationKind.Method,
+                generalSyntaxCollector.XmlComments
+                    .Select(xml => xml.Span));
         }
     }
     

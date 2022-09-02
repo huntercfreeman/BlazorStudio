@@ -133,6 +133,72 @@ public static class KeyboardKeyFacts
         public const string ARROW_RIGHT = "l";
     }
 
+    public static class LetterKeyCodes
+    {
+        public static readonly KeyboardKeyCode KeyA = new("a", "KeyA");
+        public static readonly KeyboardKeyCode KeyB = new("b", "KeyB");
+        public static readonly KeyboardKeyCode KeyC = new("c", "KeyC");
+        public static readonly KeyboardKeyCode KeyD = new("d", "KeyD");
+        public static readonly KeyboardKeyCode KeyE = new("e", "KeyE");
+        public static readonly KeyboardKeyCode KeyF = new("f", "KeyF");
+        public static readonly KeyboardKeyCode KeyG = new("g", "KeyG");
+        public static readonly KeyboardKeyCode KeyH = new("h", "KeyH");
+        public static readonly KeyboardKeyCode KeyI = new("i", "KeyI");
+        public static readonly KeyboardKeyCode KeyJ = new("j", "KeyJ");
+        public static readonly KeyboardKeyCode KeyK = new("k", "KeyK");
+        public static readonly KeyboardKeyCode KeyL = new("l", "KeyL");
+        public static readonly KeyboardKeyCode KeyM = new("m", "KeyM");
+        public static readonly KeyboardKeyCode KeyN = new("n", "KeyN");
+        public static readonly KeyboardKeyCode KeyO = new("o", "KeyO");
+        public static readonly KeyboardKeyCode KeyP = new("p", "KeyP");
+        public static readonly KeyboardKeyCode KeyQ = new("q", "KeyQ");
+        public static readonly KeyboardKeyCode KeyR = new("r", "KeyR");
+        public static readonly KeyboardKeyCode KeyS = new("s", "KeyS");
+        public static readonly KeyboardKeyCode KeyT = new("t", "KeyT");
+        public static readonly KeyboardKeyCode KeyU = new("u", "KeyU");
+        public static readonly KeyboardKeyCode KeyV = new("v", "KeyV");
+        public static readonly KeyboardKeyCode KeyW = new("w", "KeyW");
+        public static readonly KeyboardKeyCode KeyX = new("x", "KeyX");
+        public static readonly KeyboardKeyCode KeyY = new("y", "KeyY");
+        public static readonly KeyboardKeyCode KeyZ = new("z", "KeyZ");
+    }
+    
+    public static KeyboardKeyCode GetLetterKeyCode(char character)
+    {        
+        var letterKeyCode = character switch
+        {
+            'a' => LetterKeyCodes.KeyA,
+            'b' => LetterKeyCodes.KeyB,
+            'c' => LetterKeyCodes.KeyC,
+            'd' => LetterKeyCodes.KeyD,
+            'e' => LetterKeyCodes.KeyE,
+            'f' => LetterKeyCodes.KeyF,
+            'g' => LetterKeyCodes.KeyG,
+            'h' => LetterKeyCodes.KeyH,
+            'i' => LetterKeyCodes.KeyI,
+            'j' => LetterKeyCodes.KeyJ,
+            'k' => LetterKeyCodes.KeyK,
+            'l' => LetterKeyCodes.KeyL,
+            'm' => LetterKeyCodes.KeyM,
+            'n' => LetterKeyCodes.KeyN,
+            'o' => LetterKeyCodes.KeyO,
+            'p' => LetterKeyCodes.KeyP,
+            'q' => LetterKeyCodes.KeyQ,
+            'r' => LetterKeyCodes.KeyR,
+            's' => LetterKeyCodes.KeyS,
+            't' => LetterKeyCodes.KeyT,
+            'u' => LetterKeyCodes.KeyU,
+            'v' => LetterKeyCodes.KeyV,
+            'w' => LetterKeyCodes.KeyW,
+            'x' => LetterKeyCodes.KeyX,
+            'y' => LetterKeyCodes.KeyY,
+            'z' => LetterKeyCodes.KeyZ,
+            _ => throw new ApplicationException($"Unrecognized character input: '{character}'")
+        };
+
+        return letterKeyCode with { IsLower = char.IsLower(character) };
+    }
+
     public static bool CheckIsAlternateContextMenuEvent(KeyDownEventRecord keyDownEventRecord)
     {
         string keyOne = "F10";
