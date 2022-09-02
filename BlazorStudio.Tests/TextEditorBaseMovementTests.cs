@@ -19,30 +19,19 @@ public class TextEditorBaseMovementTests : TextEditorTestsBase
             new RequestConstructTextEditorAction(
                 _textEditorKey,
                 DiscardTextFileAbsoluteFilePath,
-                string.Empty,
+                HelloWorldInC,
                 (str, token) => Task.CompletedTask,
                 () => null));
-
-        var cursor = new TextCursor();
-        
-        var keyboardEventArgs = HelloWorldInC
-            .Select(c => new KeyboardEventArgs { Key = c.ToString() })
-            .ToList();
-        
-        foreach (var keyboardEventArg in keyboardEventArgs)
-        {
-            Dispatcher.Dispatch(new TextEditorEditAction(
-                _textEditorKey,
-                new[] { (new ImmutableTextCursor(cursor), cursor) }.ToImmutableArray(),
-                keyboardEventArg,
-                CancellationToken.None));
-        }
     }
     
+    // Test data is a C hello world program as of this comment.
     [Theory]
-    // Intent: Start of document move cursor left
-    // Expectation: Does nothing
+    // start of document go left; do nothing
     [InlineData(0, 0, 0, false, 0, 0, 0)]
+    // 1 character deep into the document go left; ends up at start of document
+    [InlineData(0, 1, 1, false, 0, 0, 0)]
+    // start of second row go left; ends up at the end of row index 0
+    [InlineData(1, 0, 0, false, 0, 19, 19)]
     public void ARROW_LEFT_KEY(int startRowIndex, int startColumnIndex, int startPreferredColumnIndex, 
         bool useControlKey, 
         int endRowIndex, int endColumnIndex, int endPreferredColumnIndex)
