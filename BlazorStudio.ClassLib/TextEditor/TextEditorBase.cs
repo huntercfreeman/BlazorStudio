@@ -328,12 +328,8 @@ public record TextEditorBase : IDisposable
                 ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
                 : 0;
 
-            if (KeyboardKeyFacts.IsWhitespaceCode(textEditorEditAction.KeyboardEventArgs.Code))
+            if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == textEditorEditAction.KeyboardEventArgs.Code)
             {
-                switch (textEditorEditAction.KeyboardEventArgs.Code)
-                {
-                    case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                    {
                         var positionOfInsertionIndex = 
                             startOfRow + cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value;
                         
@@ -354,18 +350,13 @@ public record TextEditorBase : IDisposable
                                 new (0));
 
                         cursorTuple.textCursor.PreferredColumnIndex = cursorTuple.textCursor.IndexCoordinates.ColumnIndex;
-                        
-                        break;
-                    }
-                    case KeyboardKeyFacts.WhitespaceCodes.TAB_CODE:
-                        break;
-                    case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                        break;
-                }
             }
             else
             {
                 var valueToInsert = textEditorEditAction.KeyboardEventArgs.Key.First();
+
+                if (KeyboardKeyFacts.IsWhitespaceCode(textEditorEditAction.KeyboardEventArgs.Code))
+                    valueToInsert = KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter(textEditorEditAction.KeyboardEventArgs.Code);
             
                 var previousEditBlock = _editBlocks.Last();
             

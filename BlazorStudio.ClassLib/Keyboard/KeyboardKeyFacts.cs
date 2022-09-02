@@ -209,4 +209,21 @@ public static class KeyboardKeyFacts
                 return false;
         }
     }
+
+    public static char ConvertWhitespaceCodeToCharacter(string code)
+    {
+        switch (code)
+        {
+            case WhitespaceCodes.TAB_CODE:
+                return '\t';
+            case WhitespaceCodes.ENTER_CODE:
+                return '\n';
+            case WhitespaceCodes.SPACE_CODE:
+                return ' ';
+            case WhitespaceCodes.CARRIAGE_RETURN_CODE:
+                return '\r';
+            default: 
+                throw new ApplicationException($"Unrecognized Whitespace code of: {code}");
+        }
+    }
 }
