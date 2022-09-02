@@ -85,9 +85,7 @@ public record TextEditorBase : IDisposable
         }).ToList();
 
         if (!_lineEndingPositions.Any())
-        {
             _lineEndingPositions.Add(_content.Count);
-        }
         
         AbsoluteFilePath = absoluteFilePath;
         _onSaveRequestedFuncAsync = onSaveRequestedFuncAsync;
@@ -330,9 +328,42 @@ public record TextEditorBase : IDisposable
                 ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
                 : 0;
 
-            // TODO: (This code block needs to be done as a complete transaction currently
-            // content can be inserted then UI can ask for partition and have false line endings
-            // and lastly then the line endings would be set correct but after the render.)
+            if (KeyboardKeyFacts.IsWhitespaceCode(textEditorEditAction.KeyboardEventArgs.Code))
+            {
+                switch (textEditorEditAction.KeyboardEventArgs.Code)
+                {
+                    case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
+                    {
+                        var positionOfInsertionIndex = 
+                            startOfRow + cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value;
+                        
+                        _content.Insert(
+                            positionOfInsertionIndex,
+                            new TextCharacter('\n')
+                            {
+                                DecorationByte = default
+                            });
+                        
+                        _lineEndingPositions
+                            .Insert(
+                                cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value,
+                                positionOfInsertionIndex);
+                        
+                        cursorTuple.textCursor.IndexCoordinates = 
+                            (new (cursorTuple.textCursor.IndexCoordinates.RowIndex.Value + 1), 
+                                new (0));
+
+                        cursorTuple.textCursor.PreferredColumnIndex = cursorTuple.textCursor.IndexCoordinates.ColumnIndex;
+                        
+                        break;
+                    }
+                    case KeyboardKeyFacts.WhitespaceCodes.TAB_CODE:
+                        break;
+                    case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
+                        break;
+                }
+            }
+            else
             {
                 var valueToInsert = textEditorEditAction.KeyboardEventArgs.Key.First();
             
@@ -349,20 +380,20 @@ public record TextEditorBase : IDisposable
                     {
                         DecorationByte = default
                     });
-
-                // TODO: (Updating _lineEndingPositions is likely able to done faster than this.
-                // I imagine the current way with this for loop could possibly get slow with files
-                // of many lines as each character insertion would run this.)
-                for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
-                {
-                    _lineEndingPositions[i]++;
-                }
-            
+                
                 cursorTuple.textCursor.IndexCoordinates = 
                     (cursorTuple.textCursor.IndexCoordinates.RowIndex, 
                         new (cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value + 1));
 
                 cursorTuple.textCursor.PreferredColumnIndex = cursorTuple.textCursor.IndexCoordinates.ColumnIndex;
+            }
+            
+            // TODO: (Updating _lineEndingPositions is likely able to done faster than this.
+            // I imagine the current way with this for loop could possibly get slow with files
+            // of many lines as each character insertion would run this.)
+            for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
+            {
+                _lineEndingPositions[i]++;
             }
         }
     }
