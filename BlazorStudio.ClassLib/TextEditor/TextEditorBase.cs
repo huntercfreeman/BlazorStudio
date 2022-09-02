@@ -265,16 +265,22 @@ public record TextEditorBase : IDisposable
             : 0;
         var nextRowStart = _lineEndingPositions[rowIndex.Value];
 
+        var positionIndex = startOfRow + columnIndex.Value;
+
+        // The cursor can be at end of file (out of bounds). Looking into how to better handle this.
+        if (positionIndex >= _content.Count)
+            positionIndex = _content.Count - 1;
+            
         // Get the cursor's TextCharacter to start with.
-        var textCharacter = _content[startOfRow + columnIndex.Value];
+        var textCharacter = _content[positionIndex];
         var startingKind = GetTextCharacterKind(textCharacter);
         
         while (columnIndex.Value > -1 &&
                columnIndex.Value < nextRowStart &&
                GetTextCharacterKind(textCharacter) == startingKind)
         {
-            MutateLocalColumnIndex();
             textCharacter = _content[startOfRow + columnIndex.Value];
+            MutateLocalColumnIndex();
         }
 
         return columnIndex;
@@ -454,6 +460,8 @@ public record TextEditorBase : IDisposable
     private void PerformBackspaces(TextEditorEditAction textEditorEditAction)
     {
         EnsureUndoPoint(TextEditKind.Deletion);
+
+        var charactersRemoved = 0;
         
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
         {
@@ -480,26 +488,48 @@ public record TextEditorBase : IDisposable
                 {
                     deletionEditBlock.TypedValue.Append($"||line number: {cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value + 1}||");
                 }
+
+                charactersRemoved = 1;
             }
             else
             {
-                var backspacePositionIndex = 
-                    startOfRow + cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value - 1;
+                var currentPositionIndex = startOfRow + cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value;
+                
+                var backspacePositionIndex = currentPositionIndex - 1;
+                
+                if (textEditorEditAction.KeyboardEventArgs.CtrlKey)
+                {
+                    var closestNonMatchingCharacterOnSameRowColumnIndex = ClosestNonMatchingCharacterOnSameRowColumnIndex( 
+                            cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex, 
+                            cursorTuple.immutableTextCursor.IndexCoordinates.ColumnIndex,
+                            true);
+
+                    if (closestNonMatchingCharacterOnSameRowColumnIndex.Value < backspacePositionIndex)
+                        backspacePositionIndex = closestNonMatchingCharacterOnSameRowColumnIndex.Value + 1;
+                }
                 
                 var previousEditBlock = _editBlocks.Last();
 
-                var valueToDelete = _content[backspacePositionIndex];
+                charactersRemoved = currentPositionIndex - backspacePositionIndex;
+                
+                var textCharactersToDelete = _content.GetRange(
+                    backspacePositionIndex, 
+                    charactersRemoved);
                 
                 if (previousEditBlock is EditBlock<StringBuilder> deletionEditBlock)
                 {
-                    deletionEditBlock.TypedValue.Append(valueToDelete.Value);
+                    deletionEditBlock.TypedValue
+                        .Append(new string(
+                            textCharactersToDelete
+                                .Select(x => x.Value)
+                                .ToArray()));
                 }
         
                 _content.RemoveAt(backspacePositionIndex);
             
                 cursorTuple.textCursor.IndexCoordinates = 
                     (cursorTuple.textCursor.IndexCoordinates.RowIndex, 
-                        new (cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value - 1));
+                        new (backspacePositionIndex));
 
                 cursorTuple.textCursor.PreferredColumnIndex = cursorTuple.textCursor.IndexCoordinates.ColumnIndex;
             }
@@ -509,7 +539,7 @@ public record TextEditorBase : IDisposable
             // of many lines as each character insertion would run this.)
             for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
             {
-                _lineEndingPositions[i]--;
+                _lineEndingPositions[i] -= charactersRemoved;
             }
         }
     }
