@@ -392,6 +392,63 @@ public record TextEditorBase : IDisposable
     private void PerformDeletions(TextEditorEditAction textEditorEditAction)
     {
         EnsureUndoPoint(TextEditKind.Deletion);
+        
+        foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
+        {
+            var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
+                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
+                : 0;
+
+
+            var rowLength = 
+                GetLengthOfRow(cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex, LineEndingPositions);
+            
+            if (cursorTuple.immutableTextCursor.IndexCoordinates.ColumnIndex.Value == rowLength - 1)
+            {
+                if (cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value == _lineEndingPositions.Count - 1)
+                    continue;
+                
+                // Remove new line
+                var endingPositionOfNextLine =
+                    _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value + 1];
+
+                _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value] =
+                    endingPositionOfNextLine;
+                
+                _lineEndingPositions.RemoveAt(cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value + 1);
+                
+                var previousEditBlock = _editBlocks.Last();
+                
+                if (previousEditBlock is EditBlock<StringBuilder> deletionEditBlock)
+                {
+                    deletionEditBlock.TypedValue.Append($"||line number: {cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value + 2}||");
+                }
+            }
+            else
+            {
+                var deletePositionIndex = 
+                    startOfRow + cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value;
+                
+                var previousEditBlock = _editBlocks.Last();
+
+                var valueToDelete = _content[deletePositionIndex];
+                
+                if (previousEditBlock is EditBlock<StringBuilder> deletionEditBlock)
+                {
+                    deletionEditBlock.TypedValue.Append(valueToDelete.Value);
+                }
+        
+                _content.RemoveAt(deletePositionIndex);
+            }
+            
+            // TODO: (Updating _lineEndingPositions is likely able to done faster than this.
+            // I imagine the current way with this for loop could possibly get slow with files
+            // of many lines as each character insertion would run this.)
+            for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
+            {
+                _lineEndingPositions[i]--;
+            }
+        }
     }
     
     private void PerformBackspaces(TextEditorEditAction textEditorEditAction)
