@@ -7,6 +7,14 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
+<div>
+    (row:&nbsp;@_cursor.IndexCoordinates.RowIndex.Value, col:&nbsp;@_cursor.IndexCoordinates.ColumnIndex.Value)
+    
+    <br/>
+    
+    PrefCol:&nbsp;@_cursor.PreferredColumnIndex.Value ; cursor:&nbsp;@_cursor.TextCursorKind
+</div>
+
 <ShouldRenderBoundary ShouldRenderFunc="ShouldRenderFunc">
     <TextEditorDebugInfo TextEditor="TextEditorStatesSelection.Value"
                          TextPartition="_textPartition"/>

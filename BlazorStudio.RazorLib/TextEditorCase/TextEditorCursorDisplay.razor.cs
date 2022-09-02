@@ -56,6 +56,9 @@ public partial class TextEditorCursorDisplay : ComponentBase
                                 localIndexCoordinates.columnIndex,
                                 true);
 
+                        if (columnIndex.Value == -1)
+                            columnIndex = new(0);
+                            
                         UpdatePreferredColumnIndexAndIndexCoordinates(columnIndex);
                     }
                     else
