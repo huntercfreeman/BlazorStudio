@@ -489,6 +489,10 @@ public record TextEditorBase : IDisposable
                 }
 
                 charactersRemoved = 1;
+                
+                cursorTuple.textCursor.IndexCoordinates = 
+                    (new (cursorTuple.textCursor.IndexCoordinates.RowIndex.Value - 1), 
+                        new (startOfRow - 1));
             }
             else
             {
