@@ -468,6 +468,10 @@ public record TextEditorBase : IDisposable
                 ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
                 : 0;
 
+            var lengthOfPreviousRow = GetLengthOfRow(
+                new (cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1), 
+                LineEndingPositions);
+            
             var charactersRemoved = 0;
             
             if (cursorTuple.immutableTextCursor.IndexCoordinates.ColumnIndex.Value == 0)
@@ -494,7 +498,7 @@ public record TextEditorBase : IDisposable
                 
                 cursorTuple.textCursor.IndexCoordinates = 
                     (new (cursorTuple.textCursor.IndexCoordinates.RowIndex.Value - 1), 
-                        new (startOfRow - 1));
+                        new (lengthOfPreviousRow));
             }
             else
             {

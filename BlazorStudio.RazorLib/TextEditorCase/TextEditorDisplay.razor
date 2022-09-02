@@ -8,6 +8,28 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div>
+    (pos:&nbsp;@GetCursorPosition(_cursor))
+
+    <br/>
+    
+    @{
+        var localTextEditor = TextEditorStatesSelection.Value;
+
+        if (localTextEditor is not null)
+        {
+            <div>lineEndingPositions:</div>
+            
+            <div style="margin-left: 12px; padding-left: 5px; border-left: 1px solid var(--bstudio_primary-border-color)">
+                @foreach (var lineEndingPosition in localTextEditor.LineEndingPositions)
+                {
+                    <div>@lineEndingPosition</div>
+                }
+            </div>
+        }
+    }
+
+    <br/>
+    
     (row:&nbsp;@_cursor.IndexCoordinates.RowIndex.Value, col:&nbsp;@_cursor.IndexCoordinates.ColumnIndex.Value)
     
     <br/>

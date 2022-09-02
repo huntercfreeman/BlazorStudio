@@ -48,8 +48,8 @@ public partial class TextEditorDisplay : FluxorComponent
     private bool _shouldMeasureFontSize = true;
     private TextEditorFontSize? _textEditorFontSize;
     private int _fontSizeMeasurementMultiplier = 6; 
-    private string _fontSizeMeasurementTestData = "abcdefghijklmnopqrstuvwxyz0123456789"; 
-        
+    private string _fontSizeMeasurementTestData = "abcdefghijklmnopqrstuvwxyz0123456789";
+
     private string GetTextEditorElementId => $"bstudio_{_textEditorGuid}";
     private string GetMeasureFontSizeElementId => $"{GetTextEditorElementId}-measure-font-size";
 
@@ -211,6 +211,20 @@ public partial class TextEditorDisplay : FluxorComponent
         await localTextEditor.ApplyRoslynSyntaxHighlightingAsync();
 
         _previousTextPartitionSequenceKey = SequenceKey.Empty();
+    }
+    
+    private int GetCursorPosition(TextCursor passedCursor)
+    {
+        var textEditor = TextEditorStatesSelection.Value;
+        
+        if (textEditor is null || !textEditor.LineEndingPositions.Any())
+            return 0;
+        
+        var startOfTextSpanRowInclusive = passedCursor.IndexCoordinates.RowIndex.Value == 0
+            ? 0
+            : textEditor.LineEndingPositions[passedCursor.IndexCoordinates.RowIndex.Value - 1];
+
+        return startOfTextSpanRowInclusive + passedCursor.IndexCoordinates.ColumnIndex.Value;
     }
 
     protected override void Dispose(bool disposing)
