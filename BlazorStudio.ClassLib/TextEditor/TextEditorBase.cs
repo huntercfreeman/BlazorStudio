@@ -330,11 +330,11 @@ public record TextEditorBase : IDisposable
 
             if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == textEditorEditAction.KeyboardEventArgs.Code)
             {
-                        var positionOfInsertionIndex = 
+                        var insertionPositionIndex = 
                             startOfRow + cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value;
                         
                         _content.Insert(
-                            positionOfInsertionIndex,
+                            insertionPositionIndex,
                             new TextCharacter('\n')
                             {
                                 DecorationByte = default
@@ -343,7 +343,7 @@ public record TextEditorBase : IDisposable
                         _lineEndingPositions
                             .Insert(
                                 cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value,
-                                positionOfInsertionIndex);
+                                insertionPositionIndex);
                         
                         cursorTuple.textCursor.IndexCoordinates = 
                             (new (cursorTuple.textCursor.IndexCoordinates.RowIndex.Value + 1), 
@@ -404,31 +404,55 @@ public record TextEditorBase : IDisposable
                 ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
                 : 0;
 
+            if (cursorTuple.immutableTextCursor.IndexCoordinates.ColumnIndex.Value == 0)
             {
-                if (cursorTuple.immutableTextCursor.IndexCoordinates.ColumnIndex.Value == 0)
-                {
-                    if (cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value == 0)
-                        continue;
-                    
-                    // Remove new line
-                    var endingPositionOfCurrentLine =
-                        _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value];
+                if (cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value == 0)
+                    continue;
+                
+                // Remove new line
+                var endingPositionOfCurrentLine =
+                    _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value];
 
-                    _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1] =
-                        endingPositionOfCurrentLine;
-                    _lineEndingPositions.RemoveAt(cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value);
-                    
-                    var previousEditBlock = _editBlocks.Last();
-                    
-                    if (previousEditBlock is EditBlock<StringBuilder> deletionEditBlock)
-                    {
-                        deletionEditBlock.TypedValue.Append($"||line number: {cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value + 1}||");
-                    }
-                }
-                else
+                _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1] =
+                    endingPositionOfCurrentLine;
+                _lineEndingPositions.RemoveAt(cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value);
+                
+                var previousEditBlock = _editBlocks.Last();
+                
+                if (previousEditBlock is EditBlock<StringBuilder> deletionEditBlock)
                 {
-                    // TODO: Remove TextCharacter(s) on same line
+                    deletionEditBlock.TypedValue.Append($"||line number: {cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value + 1}||");
                 }
+            }
+            else
+            {
+                var backspacePositionIndex = 
+                    startOfRow + cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value - 1;
+                
+                var previousEditBlock = _editBlocks.Last();
+
+                var valueToDelete = _content[backspacePositionIndex];
+                
+                if (previousEditBlock is EditBlock<StringBuilder> deletionEditBlock)
+                {
+                    deletionEditBlock.TypedValue.Append(valueToDelete.Value);
+                }
+        
+                _content.RemoveAt(backspacePositionIndex);
+            
+                cursorTuple.textCursor.IndexCoordinates = 
+                    (cursorTuple.textCursor.IndexCoordinates.RowIndex, 
+                        new (cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value - 1));
+
+                cursorTuple.textCursor.PreferredColumnIndex = cursorTuple.textCursor.IndexCoordinates.ColumnIndex;
+            }
+            
+            // TODO: (Updating _lineEndingPositions is likely able to done faster than this.
+            // I imagine the current way with this for loop could possibly get slow with files
+            // of many lines as each character insertion would run this.)
+            for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
+            {
+                _lineEndingPositions[i]--;
             }
         }
     }
