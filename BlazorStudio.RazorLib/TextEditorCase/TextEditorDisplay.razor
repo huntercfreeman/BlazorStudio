@@ -15,112 +15,113 @@
     PrefCol:&nbsp;@_cursor.PreferredColumnIndex.Value ; cursor:&nbsp;@_cursor.TextCursorKind
 </div>
 
-<ShouldRenderBoundary ShouldRenderFunc="ShouldRenderFunc">
-    <TextEditorDebugInfo TextEditor="TextEditorStatesSelection.Value"
-                         TextPartition="_textPartition"/>
+<div style="height: 100%; font-size: @(GetFontSize);">
+    <ShouldRenderBoundary ShouldRenderFunc="ShouldRenderFunc">
+        <TextEditorDebugInfo TextEditor="TextEditorStatesSelection.Value"
+                             TextPartition="_textPartition"/>
 
-    <button @onclick="ApplyRoslynSyntaxHighlightingAsyncOnClick"
-            class="btn btn-primary">
-        Apply Roslyn Syntax Highlighting
-    </button>
+        <button @onclick="ApplyRoslynSyntaxHighlightingAsyncOnClick"
+                class="btn btn-primary">
+            Apply Roslyn Syntax Highlighting
+        </button>
 
-    <div class="pte_plain-text-editor-wrapping">
-        <div class="pte_plain-text-editor-display"
-             id="@GetTextEditorElementId"
-             style="font-size: 24px;"
-             @onkeydown="HandleOnKeyDown"
-             @onkeydown:preventDefault="true"
-             @oncustomclick="HandleOnCustomClick">
+        <div class="pte_plain-text-editor-wrapping">
+            <div class="pte_plain-text-editor-display pte_unselectable"
+                 id="@GetTextEditorElementId"
+                 @onkeydown="HandleOnKeyDown"
+                 @onkeydown:preventDefault="true"
+                 @oncustomclick="HandleOnCustomClick">
 
-            <div id="@GetMeasureFontSizeElementId" 
-                 class="bstudio_measure-font-size">
-                @for (int i = 0; i < _fontSizeMeasurementMultiplier; i++)
+                <div id="@GetMeasureFontSizeElementId" 
+                     class="bstudio_measure-font-size">
+                    @for (int i = 0; i < _fontSizeMeasurementMultiplier; i++)
+                    {
+                        <text>@_fontSizeMeasurementTestData</text>
+                    }
+                </div>
+
+                @if (_textEditorFontSize is not null) 
                 {
-                    <text>@_fontSizeMeasurementTestData</text>
-                }
-            </div>
+                    var localTextEditorState = TextEditorStatesSelection.Value;
+            
+                    <Virtualize ItemsProvider="LoadTextCharacterSpans"
+                                Context="textSpan"
+                                @ref="_virtualize">
 
-            @if (_textEditorFontSize is not null) 
-            {
-                var localTextEditorState = TextEditorStatesSelection.Value;
-        
-                <Virtualize ItemsProvider="LoadTextCharacterSpans"
-                            Context="textSpan"
-                            @ref="_virtualize">
-
-                    <div style="white-space: nowrap; height: @(_textEditorFontSize.RowHeight)px;">
-                        @if (textSpan.TextCharacters.Any())
-                        {
-                            var spanTextBuilder = new StringBuilder();
-                            var currentDecorationByte = textSpan.TextCharacters
-                                .First().DecorationByte;
-
-                            foreach (var textCharacter in textSpan.TextCharacters)
+                        <div style="white-space: nowrap; height: @(_textEditorFontSize.RowHeight)px;">
+                            @if (textSpan.TextCharacters.Any())
                             {
-                                if (currentDecorationByte == textCharacter.DecorationByte)
+                                var spanTextBuilder = new StringBuilder();
+                                var currentDecorationByte = textSpan.TextCharacters
+                                    .First().DecorationByte;
+
+                                foreach (var textCharacter in textSpan.TextCharacters)
                                 {
-                                    switch (textCharacter.Value)
+                                    if (currentDecorationByte == textCharacter.DecorationByte)
                                     {
-                                        case '\t':
-                                            spanTextBuilder.Append("~~~~");
-                                            break;
-                                        case ' ':
-                                            spanTextBuilder.Append("&nbsp;");
-                                            break;
-                                        case '\r':
-                                            break;
-                                        case '\n':
-                                            break;
-                                        case '<':
-                                            spanTextBuilder.Append("&lt;");
-                                            break;
-                                        case '>':
-                                            spanTextBuilder.Append("&gt;");
-                                            break;                                        
-                                        case '"':
-                                            spanTextBuilder.Append("&quot;");
-                                            break;
-                                        case '\'':
-                                            spanTextBuilder.Append("&#39;");
-                                            break;
-                                        case '&':
-                                            spanTextBuilder.Append("&amp;");
-                                            break;
-                                        default:
-                                            spanTextBuilder.Append(textCharacter.Value);
-                                            break;
+                                        switch (textCharacter.Value)
+                                        {
+                                            case '\t':
+                                                spanTextBuilder.Append("~~~~");
+                                                break;
+                                            case ' ':
+                                                spanTextBuilder.Append("&nbsp;");
+                                                break;
+                                            case '\r':
+                                                break;
+                                            case '\n':
+                                                break;
+                                            case '<':
+                                                spanTextBuilder.Append("&lt;");
+                                                break;
+                                            case '>':
+                                                spanTextBuilder.Append("&gt;");
+                                                break;                                        
+                                            case '"':
+                                                spanTextBuilder.Append("&quot;");
+                                                break;
+                                            case '\'':
+                                                spanTextBuilder.Append("&#39;");
+                                                break;
+                                            case '&':
+                                                spanTextBuilder.Append("&amp;");
+                                                break;
+                                            default:
+                                                spanTextBuilder.Append(textCharacter.Value);
+                                                break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
+                                            @((MarkupString)spanTextBuilder.ToString())
+                                        </span>
+
+                                        spanTextBuilder.Clear();
+
+                                        currentDecorationByte = textCharacter.DecorationByte;
+                                        spanTextBuilder.Append(textCharacter.Value);
                                     }
                                 }
-                                else
+
+                                @* Render out the last <span> *@
+                                if (spanTextBuilder.Length > 0)
                                 {
                                     <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
                                         @((MarkupString)spanTextBuilder.ToString())
                                     </span>
-
-                                    spanTextBuilder.Clear();
-
-                                    currentDecorationByte = textCharacter.DecorationByte;
-                                    spanTextBuilder.Append(textCharacter.Value);
                                 }
                             }
+                        </div>
+                    </Virtualize>
 
-                            @* Render out the last <span> *@
-                            if (spanTextBuilder.Length > 0)
-                            {
-                                <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
-                                    @((MarkupString)spanTextBuilder.ToString())
-                                </span>
-                            }
-                        }
-                    </div>
-                </Virtualize>
-
-                <TextEditorCursorDisplay @ref="_textEditorCursorDisplay"
-                                         TextCursor="_cursor"
-                                         TextEditorBase="localTextEditorState"
-                                         RowHeightInPixels="_textEditorFontSize?.RowHeight ?? 0"
-                                         CharacterWidthInPixels="_textEditorFontSize?.CharacterWidth ?? 0" />
-            }
+                    <TextEditorCursorDisplay @ref="_textEditorCursorDisplay"
+                                             TextCursor="_cursor"
+                                             TextEditorBase="localTextEditorState"
+                                             RowHeightInPixels="_textEditorFontSize?.RowHeight ?? 0"
+                                             CharacterWidthInPixels="_textEditorFontSize?.CharacterWidth ?? 0" />
+                }
+            </div>
         </div>
-    </div>
-</ShouldRenderBoundary>
+    </ShouldRenderBoundary>
+</div>

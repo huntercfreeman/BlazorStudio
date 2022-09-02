@@ -1,5 +1,4 @@
-﻿
-<div class="bstudio_settings-dialog">
+﻿<div class="bstudio_settings-dialog">
     <ExpansionDisplay TitleCssClass="bstudio_settings-section-title">
         <TitleRenderFragment>
             Themes
@@ -28,6 +27,32 @@
     
     <ExpansionDisplay TitleCssClass="bstudio_settings-section-title">
         <TitleRenderFragment>
+            Text Editor Font
+        </TitleRenderFragment>
+        <BodyRenderFragment>
+            <div class="bstudio_settings-section-body">
+                <BlazorStudio.RazorLib.TextEditorCase.TextEditorOptionsSettings />
+            </div>
+        </BodyRenderFragment>
+    </ExpansionDisplay>
+    
+    <hr />
+    
+    <ExpansionDisplay TitleCssClass="bstudio_settings-section-title">
+        <TitleRenderFragment>
+            Global Font
+        </TitleRenderFragment>
+        <BodyRenderFragment>
+            <div class="bstudio_settings-section-body">
+                <BlazorStudio.RazorLib.Font.FontOptionSettings/>
+            </div>
+        </BodyRenderFragment>
+    </ExpansionDisplay>
+
+    <hr />
+    
+    <ExpansionDisplay TitleCssClass="bstudio_settings-section-title">
+        <TitleRenderFragment>
             Transformable
         </TitleRenderFragment>
         <BodyRenderFragment>
@@ -45,24 +70,11 @@
         </TitleRenderFragment>
         <BodyRenderFragment>
             <div class="bstudio_settings-section-body">
-                <BlazorStudio.RazorLib.Icons.IconOptionSettings/>
+                <IconOptionSettings/>
             </div>
         </BodyRenderFragment>
     </ExpansionDisplay>
     
     <hr />
     
-    <ExpansionDisplay TitleCssClass="bstudio_settings-section-title">
-        <TitleRenderFragment>
-            Font
-        </TitleRenderFragment>
-        <BodyRenderFragment>
-            <div class="bstudio_settings-section-body">
-                <BlazorStudio.RazorLib.Font.FontOptionSettings/>
-            </div>
-        </BodyRenderFragment>
-    </ExpansionDisplay>
-    
-    <hr />
-
 </div>

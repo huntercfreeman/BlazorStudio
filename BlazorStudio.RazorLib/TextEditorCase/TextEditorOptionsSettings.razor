@@ -1,0 +1,20 @@
+@using BlazorStudio.ClassLib.UserInterface
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div>
+    <div>
+        Change&nbsp;font size:
+        <input type="number" 
+               @bind="FontSizeInPixels" 
+               @bind:event="oninput"
+               class="bstudio_input bstudio_input-number" />
+    </div>
+    
+    <div>
+        <em>
+            @TextEditorOptionsStateWrap.Value.FontSize.Value<!--
+            -->@TextEditorOptionsStateWrap.Value.FontSize.DimensionUnitKind.ToCssString()<!--
+            -->;
+        </em>
+    </div>
+</div>
