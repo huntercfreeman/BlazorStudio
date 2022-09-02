@@ -148,15 +148,11 @@ public partial class TextEditorDisplay : FluxorComponent
 
         var rowIndex = new RowIndex((int)(_mostRecentRelativeCoordinates.RelativeY / _textEditorFontSize.RowHeight));
 
-        if (rowIndex.Value >= localTextEditorState.LineEndingPositions.Length &&
-            localTextEditorState.LineEndingPositions.Length > 0)
-        {
+        if (rowIndex.Value >= localTextEditorState.LineEndingPositions.Length)
             rowIndex = new(localTextEditorState.LineEndingPositions.Length - 1);
-        }
-        else
-        {
-            rowIndex = new(0);
-        }        
+        
+        if (rowIndex.Value < 0)
+            rowIndex.Value = 0;
         
         var columnIndex = new ColumnIndex((int)columnIndexRounded);
 
