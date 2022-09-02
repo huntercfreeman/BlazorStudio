@@ -252,35 +252,34 @@ public record TextEditorBase : IDisposable
         rowIndex = new RowIndex(rowIndex);
         columnIndex = new ColumnIndex(columnIndex);
         
-        void MutateLocalColumnIndex()
+        var startOfRow = rowIndex.Value > 0
+            ? _lineEndingPositions[rowIndex.Value - 1]
+            : 0;
+        var nextRowStart = _lineEndingPositions[rowIndex.Value];
+        
+        // The cursor can be at end of file (out of bounds). Looking into how to better handle this.
+        if (startOfRow + columnIndex.Value >= _content.Count)
+            columnIndex.Value--;
+        
+        void MutateColumnIndex()
         {
             if (lookBackwards)
                 columnIndex.Value--;
             else
                 columnIndex.Value++;
         }
-
-        var startOfRow = rowIndex.Value > 0
-            ? _lineEndingPositions[rowIndex.Value - 1]
-            : 0;
-        var nextRowStart = _lineEndingPositions[rowIndex.Value];
-
-        var positionIndex = startOfRow + columnIndex.Value;
-
-        // The cursor can be at end of file (out of bounds). Looking into how to better handle this.
-        if (positionIndex >= _content.Count)
-            positionIndex = _content.Count - 1;
             
         // Get the cursor's TextCharacter to start with.
-        var textCharacter = _content[positionIndex];
+        var textCharacter = _content[columnIndex.Value];
         var startingKind = GetTextCharacterKind(textCharacter);
+        MutateColumnIndex();
         
         while (columnIndex.Value > -1 &&
                columnIndex.Value < nextRowStart &&
                GetTextCharacterKind(textCharacter) == startingKind)
         {
-            textCharacter = _content[startOfRow + columnIndex.Value];
-            MutateLocalColumnIndex();
+            textCharacter = _content[columnIndex.Value];
+            MutateColumnIndex();
         }
 
         return columnIndex;

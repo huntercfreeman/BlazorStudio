@@ -53,11 +53,11 @@ public partial class TextEditorCursorDisplay : ComponentBase
                         var columnIndex = TextEditorBase
                             .ClosestNonMatchingCharacterOnSameRowColumnIndex( 
                                 localIndexCoordinates.rowIndex, 
-                                localIndexCoordinates.columnIndex,
+                                new ColumnIndex(localIndexCoordinates.columnIndex.Value),
                                 true);
-
-                        if (columnIndex.Value == -1)
-                            columnIndex = new(0);
+                        
+                        if (columnIndex.Value != localIndexCoordinates.columnIndex.Value)
+                            columnIndex.Value++;
                             
                         UpdatePreferredColumnIndexAndIndexCoordinates(columnIndex);
                     }
