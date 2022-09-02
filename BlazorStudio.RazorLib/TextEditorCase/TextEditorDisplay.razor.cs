@@ -163,15 +163,11 @@ public partial class TextEditorDisplay : FluxorComponent
         var rowLength = TextEditorBase
             .GetLengthOfRow(rowIndex, localTextEditorState.LineEndingPositions);
 
-        if (columnIndex.Value >= rowLength &&
-            rowLength != 0)
-        {
+        if (columnIndex.Value >= rowLength)
             columnIndex = new(rowLength - 1);
-        }
-        else
-        {
-            columnIndex = new(0);
-        }
+
+        if (columnIndex.Value < 0)
+            columnIndex.Value = 0;
         
         var cursorIndexCoordinates = (rowIndex, columnIndex);
 
