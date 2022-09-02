@@ -27,7 +27,6 @@ int main() {
     protected readonly IFileSystemProvider FileSystemProvider;
     protected readonly IState<TextEditorStates> TextEditorStatesWrap;
     
-    
     protected readonly IAbsoluteFilePath HelloWorldInCAbsoluteFilePath = new AbsoluteFilePath(
         "/BlazorStudioTestGround/main.c",
         false);
