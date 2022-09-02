@@ -15,7 +15,46 @@ public class TextEditorTests : TextEditorTestsBase
     private TextEditorKey _textEditorKey = TextEditorKey.NewTextEditorKey();
 
     [Fact]
-    public async Task TEST()
+    public async Task INSERTION()
+    {
+        var expectedContent = HelloWorldInC;
+                
+        Dispatcher.Dispatch(
+            new RequestConstructTextEditorAction(
+                _textEditorKey,
+                DiscardTextFileAbsoluteFilePath,
+                string.Empty,
+                (str, token) => Task.CompletedTask,
+                () => null));
+
+        // Perform Test
+        {
+            var cursor = new TextCursor();
+            
+            var keyboardEventArgs = HelloWorldInC
+                .Select(c => new KeyboardEventArgs { Key = c.ToString() })
+                .ToList();
+            
+            foreach (var keyboardEventArg in keyboardEventArgs)
+            {
+                Dispatcher.Dispatch(new TextEditorEditAction(
+                    _textEditorKey,
+                    new[] { (new ImmutableTextCursor(cursor), cursor) }.ToImmutableArray(),
+                    keyboardEventArg,
+                    CancellationToken.None));
+            }
+        }
+        
+        var textEditor = TextEditorStatesWrap.Value.TextEditors
+            .Single(x => x.TextEditorKey == _textEditorKey);
+        
+        var actual = textEditor.GetAllText();
+        
+        Assert.Equal(expectedContent, actual);
+    }
+    
+    [Fact]
+    public async Task BACKSPACE_KEY()
     {
         var expectedContent = await FileSystemProvider.ReadFileAsync(HelloWorldInCAbsoluteFilePath);
                 
@@ -32,16 +71,10 @@ public class TextEditorTests : TextEditorTestsBase
         
         var cursor = new TextCursor();
 
-        var keyboardKeyCodes = await GenerateKeyboardKeyCodesFromFileAsync(HelloWorldInCAbsoluteFilePath);
+        var keyboardEventArgs = await GenerateKeyboardEventArgsFromFileAsync(HelloWorldInCAbsoluteFilePath);
 
-        foreach (var keyCode in keyboardKeyCodes)
+        foreach (var keyboardEventArg in keyboardEventArgs)
         {
-            var keyboardEventArg = new KeyboardEventArgs
-            {
-                Key = keyCode.IsLower ? keyCode.Key : keyCode.Key.ToUpperInvariant(),
-                Code = keyCode.Code
-            };
-            
             Dispatcher.Dispatch(new TextEditorEditAction(
                 _textEditorKey,
                 new[] { (new ImmutableTextCursor(cursor), cursor) }.ToImmutableArray(),
@@ -52,5 +85,47 @@ public class TextEditorTests : TextEditorTestsBase
         var actual = textEditor.GetAllText();
         
         Assert.Equal(expectedContent, actual);
+    }
+    
+    [Fact]
+    public async Task DELETE_KEY()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public async Task ARROW_LEFT_KEY()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public async Task ARROW_DOWN_KEY()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public async Task ARROW_UP_KEY()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public async Task ARROW_RIGHT_KEY()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public async Task HOME_KEY()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public async Task END_KEY()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -2,6 +2,7 @@
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Renderer;
 using BlazorStudio.ClassLib.Store.TextEditorCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components.Web;
@@ -11,11 +12,21 @@ namespace BlazorStudio.Tests;
 
 public class TextEditorTestsBase
 {
+    protected static readonly string HelloWorldInC = @"#include <stdlib.h>
+#include <stdio.h>
+
+int main() {
+	printf(""Hello World!\n"");
+    return 0;
+}
+";
+    
     protected readonly IServiceProvider ServiceProvider;
     protected readonly IDispatcher Dispatcher;
     protected readonly IStore Store;
     protected readonly IFileSystemProvider FileSystemProvider;
     protected readonly IState<TextEditorStates> TextEditorStatesWrap;
+    
     
     protected readonly IAbsoluteFilePath HelloWorldInCAbsoluteFilePath = new AbsoluteFilePath(
         "/BlazorStudioTestGround/main.c",
@@ -29,6 +40,8 @@ public class TextEditorTestsBase
     {
         var services = new ServiceCollection();
 
+        services.AddScoped<IDefaultErrorRenderer, TestDefaultErrorRenderer>();
+        
         services.AddBlazorStudioClassLibServices();
 
         ServiceProvider = services.BuildServiceProvider();
@@ -46,12 +59,12 @@ public class TextEditorTestsBase
         }
     }
 
-    protected async Task<List<KeyboardKeyCode>> GenerateKeyboardKeyCodesFromFileAsync(IAbsoluteFilePath absoluteFilePath)
+    protected async Task<List<KeyboardEventArgs>> GenerateKeyboardEventArgsFromFileAsync(IAbsoluteFilePath absoluteFilePath)
     {
         var fileContent = await FileSystemProvider.ReadFileAsync(absoluteFilePath, CancellationToken.None);
 
         return fileContent
-            .Select(KeyboardKeyFacts.GetLetterKeyCode)
+            .Select(c => new KeyboardEventArgs { Key = c.ToString() })
             .ToList();
     }
 }
