@@ -51,27 +51,36 @@
                             {
                                 if (currentDecorationByte == textCharacter.DecorationByte)
                                 {
-                                    if (textCharacter.Value == '\t')
+                                    switch (textCharacter.Value)
                                     {
-                                        // spanTextBuilder.Append("&nbsp;&nbsp;&nbsp;&nbsp;");
-                                        spanTextBuilder.Append("~~~~");
-                                    }
-                                    else if (textCharacter.Value == ' ')
-                                    {
-                                        spanTextBuilder.Append("&nbsp;");
-                                        // spanTextBuilder.Append("`");
-                                    }
-                                    else if (textCharacter.Value == '\r')
-                                    {
-                                        // spanTextBuilder.Append('/');
-                                    }
-                                    else if (textCharacter.Value == '\n')
-                                    {
-                                        // spanTextBuilder.Append('\\');
-                                    }
-                                    else
-                                    {
-                                        spanTextBuilder.Append(textCharacter.Value);
+                                        case '\t':
+                                            spanTextBuilder.Append("~~~~");
+                                            break;
+                                        case ' ':
+                                            spanTextBuilder.Append("&nbsp;");
+                                            break;
+                                        case '\r':
+                                            break;
+                                        case '\n':
+                                            break;
+                                        case '<':
+                                            spanTextBuilder.Append("&lt;");
+                                            break;
+                                        case '>':
+                                            spanTextBuilder.Append("&gt;");
+                                            break;                                        
+                                        case '"':
+                                            spanTextBuilder.Append("&quot;");
+                                            break;
+                                        case '\'':
+                                            spanTextBuilder.Append("&#39;");
+                                            break;
+                                        case '&':
+                                            spanTextBuilder.Append("&amp;");
+                                            break;
+                                        default:
+                                            spanTextBuilder.Append(textCharacter.Value);
+                                            break;
                                     }
                                 }
                                 else
