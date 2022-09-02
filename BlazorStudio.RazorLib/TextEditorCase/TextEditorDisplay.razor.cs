@@ -7,6 +7,7 @@ using BlazorStudio.ClassLib.TextEditor;
 using BlazorStudio.ClassLib.TextEditor.Cursor;
 using BlazorStudio.ClassLib.TextEditor.Enums;
 using BlazorStudio.ClassLib.TextEditor.IndexWrappers;
+using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.CustomEvents;
 using BlazorStudio.RazorLib.CustomJavaScriptDtos;
 using BlazorStudio.RazorLib.ShouldRender;
@@ -25,6 +26,8 @@ public partial class TextEditorDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TextEditorStates, TextEditorBase> TextEditorStatesSelection { get; set; } = null!;
+    [Inject] 
+    private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -50,13 +53,23 @@ public partial class TextEditorDisplay : FluxorComponent
     private string GetTextEditorElementId => $"bstudio_{_textEditorGuid}";
     private string GetMeasureFontSizeElementId => $"{GetTextEditorElementId}-measure-font-size";
 
+    private string GetFontSize => $"{TextEditorOptionsStateWrap.Value.FontSize.Value}" +
+                                  $"{TextEditorOptionsStateWrap.Value.FontSize.DimensionUnitKind.ToCssString()}";
+
     protected override void OnInitialized()
     {
         TextEditorStatesSelection
             .Select(x =>
                 x.TextEditors.SingleOrDefault(x => x.TextEditorKey == TextEditorKey));
 
+        TextEditorOptionsStateWrap.StateChanged += TextEditorOptionsStateWrapOnStateChanged;
+        
         base.OnInitialized();
+    }
+
+    private void TextEditorOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
+    {
+        _shouldMeasureFontSize = true;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -138,7 +151,7 @@ public partial class TextEditorDisplay : FluxorComponent
         }
 
         _mostRecentRelativeCoordinates = await JsRuntime
-            .InvokeAsync<RelativeCoordinates>("blazorStudio.getRelativeClickPosition",
+            .InvokeAsync<RelativeCoordinates>("blazorStudio.getRelativePosition",
                 GetTextEditorElementId,
                 customOnClick.ClientX,
                 customOnClick.ClientY);
@@ -329,5 +342,12 @@ public partial class TextEditorDisplay : FluxorComponent
                 generalSyntaxCollector.XmlComments
                     .Select(xml => xml.Span));
         }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        TextEditorOptionsStateWrap.StateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+        
+        base.Dispose(disposing);
     }
 }

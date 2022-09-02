@@ -152,7 +152,7 @@
             keymapDotNetObjectReference.invokeMethodAsync('DispatchHandleKeymapEvent', keydownDto);
         });
     },
-    getRelativeClickPosition: function (elementId, clientX, clientY) {
+    getRelativePosition: function (elementId, clientX, clientY) {
         let bounds = document
             .getElementById(elementId)
             .getBoundingClientRect();
