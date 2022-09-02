@@ -201,4 +201,22 @@ public class TextCursor
         textCursor.IndexCoordinates = localIndexCoordinates;
         textCursor.PreferredColumnIndex = localPreferredColumnIndex;
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+
+        if (obj.GetType() == GetType())
+        {
+            var otherTextCursor = (TextCursor)obj;
+
+            return IndexCoordinates.RowIndex.Value == otherTextCursor.IndexCoordinates.RowIndex.Value &&
+                   IndexCoordinates.ColumnIndex.Value == otherTextCursor.IndexCoordinates.ColumnIndex.Value &&
+                   PreferredColumnIndex.Value == otherTextCursor.PreferredColumnIndex.Value &&
+                   TextCursorKind == otherTextCursor.TextCursorKind;
+        }
+
+        return false;
+    }
 }
