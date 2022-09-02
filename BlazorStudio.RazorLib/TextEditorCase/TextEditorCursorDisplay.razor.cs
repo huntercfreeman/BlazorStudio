@@ -15,9 +15,9 @@ public partial class TextEditorCursorDisplay : ComponentBase
     [Parameter]
     public TextEditorBase TextEditorBase { get; set; } = null!;
     [Parameter]
-    public double RowHeightInPixels { get; set; } = 39;
+    public double RowHeightInPixels { get; set; }
     [Parameter]
-    public double CharacterWidthInPixels { get; set; } = 16;
+    public double CharacterWidthInPixels { get; set; }
 
     private ElementReference? _textAreaCursorDisplayElementReference;
 

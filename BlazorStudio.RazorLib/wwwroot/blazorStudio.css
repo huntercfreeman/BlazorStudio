@@ -802,3 +802,11 @@ em {
         background-color: var(--bstudio_primary-active-background-color);
         box-shadow: var(--bstudio_primary-overlay-box-shadow);
     }
+    
+.bstudio_measure-font-size {
+    position: absolute; 
+    left: 0px;
+    top: 0px;
+    white-space: nowrap;
+    visibility: hidden;
+}

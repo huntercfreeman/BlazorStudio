@@ -164,6 +164,28 @@
             relativeX: x,
             relativeY: y
         };
+    },
+    measureFontSizeByElementId: function (elementId, amountOfCharactersRendered) {
+        let row = document.getElementById(elementId);
+
+        let heightOfARow = row.offsetHeight;
+
+        /*
+            Here I am looking at a test invisible row and getting offsetWidth
+            of the single row's single token.
+            
+            That single token as of this comment contains 768 characters in it
+            as the span width seemingly is not the
+            character width when rendering 1 character only
+         */
+        let widthOfGivenRow = row.offsetWidth;
+
+        let widthOfACharacter = widthOfGivenRow / amountOfCharactersRendered
+
+        return {
+            RowHeight: heightOfARow,
+            CharacterWidth: widthOfACharacter
+        };
     }
 };
 

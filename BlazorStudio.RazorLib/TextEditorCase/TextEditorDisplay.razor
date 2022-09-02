@@ -7,83 +7,60 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
+@if (_textPartition is not null)
+{
+    foreach (var textSpanRow in _textPartition.TextSpanRows)
+    {
+        <div>@textSpanRow.GetText</div>
+    }
+}
+
 <ShouldRenderBoundary ShouldRenderFunc="ShouldRenderFunc">
+    <TextEditorDebugInfo TextEditor="TextEditorStatesSelection.Value"
+                         TextPartition="_textPartition"/>
+
     <button @onclick="ApplyRoslynSyntaxHighlightingAsyncOnClick"
             class="btn btn-primary">
         Apply Roslyn Syntax Highlighting
     </button>
-    
-    <div>
-        <ExpansionDisplay TitleCssClass="bstudio_settings-section-title">
-            <TitleRenderFragment>
-                Edits&nbsp;Count:&nbsp;<em>@TextEditorStatesSelection.Value.EditBlocks.Length</em>
-            </TitleRenderFragment>
-            <BodyRenderFragment>
-                <div style="overflow: auto; height: 5em;">
-                    @{
-                        var localTextEditorState = TextEditorStatesSelection.Value;
 
-                        foreach (var editBlock in localTextEditorState.EditBlocks)
-                        {
-                            var message = editBlock.GetUserInterfaceDisplayMessage();
-                            <div style="white-space: nowrap;">
-                                @foreach (var character in message)
-                                {
-                                    if (character == '\t')
-                                    {
-                                        <text>&nbsp;&nbsp;&nbsp;&nbsp;</text>
-                                    }
-                                    else if (character == ' ')
-                                    {
-                                        <text>&nbsp;</text>
-                                    }
-                                    else
-                                    {
-                                        <text>@character</text>
-                                    }
-                                }
-                            </div>
-                        }
-                    }
-                </div>
-            </BodyRenderFragment>
-        </ExpansionDisplay>
-    </div>
-
-    @if (_mostRecentRelativeCoordinates is not null)
-    {
-        <div>
-            _mostRecentRelativeCoordinates&nbsp;(x, y):
-            <br/>
-            Relative:&nbsp;(<em>@_mostRecentRelativeCoordinates.RelativeX</em>, <em>@_mostRecentRelativeCoordinates.RelativeY</em>)
-            <br/>
-        </div>
-    }
+        @if (_textEditorFontSize is not null)
+        {
+            <div>
+                RowHeight:&nbsp;@_textEditorFontSize.RowHeight
+                
+                <br/>
+                
+                CharacterWidth:&nbsp;@_textEditorFontSize.CharacterWidth
+            </div>
+        }
     
     <div class="pte_plain-text-editor-wrapping">
         <div class="pte_plain-text-editor-display"
              id="@GetTextEditorElementId"
+             style="font-size: 24px;"
              @onkeydown="HandleOnKeyDown"
              @onkeydown:preventDefault="true"
-             @oncustomclick="HandleOnCustomClick"> 
-            
-            @* TODO: Measure exactly width of a character and height of a row initially and when font size changes. *@
-            @* <div style="position: absolute; left: 0px; top: 0px; white-space: nowrap;"> *@
-            @*     @for (int i = 0; i < 10; i++) *@
-            @*     { *@
-            @*         <text>abcdefghijklmnopqrstuvwxyz0123456789</text> *@
-            @*     } *@
-            @* </div> *@
-            
+             @oncustomclick="HandleOnCustomClick">
+
+            <div id="@GetMeasureFontSizeElementId" 
+                 class="bstudio_measure-font-size">
+                @for (int i = 0; i < _fontSizeMeasurementMultiplier; i++)
+                {
+                    <text>@_fontSizeMeasurementTestData</text>
+                }
+            </div>
+
             @{
                 var localTextEditorState = TextEditorStatesSelection.Value;
 
                 <Virtualize ItemsProvider="LoadTextCharacterSpans"
                             Context="textSpan"
                             @ref="_virtualize">
-                    
+
                     <div style="white-space: nowrap;">
-                        @{
+                        @if (textSpan.TextCharacters.Any())
+                        {
                             var spanTextBuilder = new StringBuilder();
                             var currentDecorationByte = textSpan.TextCharacters
                                 .First().DecorationByte;
@@ -127,21 +104,23 @@
                                     spanTextBuilder.Append(textCharacter.Value);
                                 }
                             }
-                        }
 
-                        @* Render out the last <span> *@
-                        @if (spanTextBuilder.Length > 0)
-                        {
-                            <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
-                                @((MarkupString)spanTextBuilder.ToString())
-                            </span>
+                            @* Render out the last <span> *@
+                            if (spanTextBuilder.Length > 0)
+                            {
+                                <span class="@DecorationKindHelper.ToDecorationKindCssStyleString(currentDecorationByte)">
+                                    @((MarkupString)spanTextBuilder.ToString())
+                                </span>
+                            }
                         }
                     </div>
                 </Virtualize>
 
                 <TextEditorCursorDisplay @ref="_textEditorCursorDisplay"
                                          TextCursor="_cursor"
-                                         TextEditorBase="localTextEditorState"/>
+                                         TextEditorBase="localTextEditorState"
+                                         RowHeightInPixels="_textEditorFontSize?.RowHeight ?? 0"
+                                         CharacterWidthInPixels="_textEditorFontSize?.CharacterWidth ?? 0" />
             }
         </div>
     </div>

@@ -84,6 +84,11 @@ public record TextEditorBase : IDisposable
             };   
         }).ToList();
 
+        if (!_lineEndingPositions.Any())
+        {
+            _lineEndingPositions.Add(_content.Count);
+        }
+        
         AbsoluteFilePath = absoluteFilePath;
         _onSaveRequestedFuncAsync = onSaveRequestedFuncAsync;
         _getInstanceOfPhysicalFileWatcherFunc = getInstanceOfPhysicalFileWatcherFuncFunc;

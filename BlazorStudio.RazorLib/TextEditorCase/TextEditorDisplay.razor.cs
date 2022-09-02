@@ -41,11 +41,15 @@ public partial class TextEditorDisplay : FluxorComponent
     private TextEditorCursorDisplay? _textEditorCursorDisplay;
     private Virtualize<TextCharacterSpan>? _virtualize;
     private RelativeCoordinates? _mostRecentRelativeCoordinates;
-    private int _temporaryHardCodeRowHeight = 39;
-    private int _temporaryHardCodeCharacterWidth = 16;
-
+    private int _renderCount;
+    private bool _shouldMeasureFontSize = true;
+    private TextEditorFontSize? _textEditorFontSize;
+    private int _fontSizeMeasurementMultiplier = 6; 
+    private string _fontSizeMeasurementTestData = "abcdefghijklmnopqrstuvwxyz0123456789"; 
+        
     private string GetTextEditorElementId => $"bstudio_{_textEditorGuid}";
-    
+    private string GetMeasureFontSizeElementId => $"{GetTextEditorElementId}-measure-font-size";
+
     protected override void OnInitialized()
     {
         TextEditorStatesSelection
@@ -67,6 +71,18 @@ public partial class TextEditorDisplay : FluxorComponent
             await InvokeAsync(StateHasChanged);
         }
 
+        if (_shouldMeasureFontSize)
+        {
+            _textEditorFontSize = await JsRuntime.InvokeAsync<TextEditorFontSize>(
+                "blazorStudio.measureFontSizeByElementId", 
+                GetMeasureFontSizeElementId,
+                _fontSizeMeasurementTestData.Length * _fontSizeMeasurementMultiplier);
+
+            _shouldMeasureFontSize = false;
+
+            await InvokeAsync(StateHasChanged);
+        }
+        
         await base.OnAfterRenderAsync(firstRender);
     }
 
@@ -110,6 +126,9 @@ public partial class TextEditorDisplay : FluxorComponent
     
     private async Task HandleOnCustomClick(CustomOnClick customOnClick)
     {
+        if (_textEditorFontSize is null)
+            return;
+        
         var localTextEditorState = TextEditorStatesSelection.Value;
 
         if (_textEditorCursorDisplay is not null)
@@ -123,10 +142,10 @@ public partial class TextEditorDisplay : FluxorComponent
                 customOnClick.ClientX,
                 customOnClick.ClientY);
 
-        var columnIndexDouble = _mostRecentRelativeCoordinates.RelativeX / _temporaryHardCodeCharacterWidth;
+        var columnIndexDouble = _mostRecentRelativeCoordinates.RelativeX / _textEditorFontSize.CharacterWidth;
         var columnIndexRounded = Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
 
-        var rowIndex = new RowIndex((int)_mostRecentRelativeCoordinates.RelativeY / _temporaryHardCodeRowHeight);
+        var rowIndex = new RowIndex((int)(_mostRecentRelativeCoordinates.RelativeY / _textEditorFontSize.RowHeight));
 
         if (rowIndex.Value >= localTextEditorState.LineEndingPositions.Length &&
             localTextEditorState.LineEndingPositions.Length > 0)
@@ -166,8 +185,7 @@ public partial class TextEditorDisplay : FluxorComponent
     {
         var localTextEditorState = TextEditorStatesSelection.Value;
 
-        var numTextCharacterSpans = Math
-            .Min(
+        var numTextCharacterSpans = Math.Min(
                 request.Count,
                 localTextEditorState.LineEndingPositions.Length - request.StartIndex);
 
