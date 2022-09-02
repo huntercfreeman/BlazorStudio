@@ -461,14 +461,14 @@ public record TextEditorBase : IDisposable
     {
         EnsureUndoPoint(TextEditKind.Deletion);
 
-        var charactersRemoved = 0;
-        
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
         {
             var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
                 ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
                 : 0;
 
+            var charactersRemoved = 0;
+            
             if (cursorTuple.immutableTextCursor.IndexCoordinates.ColumnIndex.Value == 0)
             {
                 if (cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value == 0)

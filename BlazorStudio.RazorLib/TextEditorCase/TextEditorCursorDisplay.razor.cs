@@ -139,7 +139,7 @@ public partial class TextEditorCursorDisplay : ComponentBase
                 var lengthOfTextSpanRow = TextEditorBase
                     .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
                 
-                if (localIndexCoordinates.columnIndex.Value < lengthOfTextSpanRow - 1)
+                if (localIndexCoordinates.columnIndex.Value < lengthOfTextSpanRow)
                 {
                     if (keyboardEventArgs.CtrlKey)
                     {
@@ -188,7 +188,7 @@ public partial class TextEditorCursorDisplay : ComponentBase
                 var lengthOfTextSpanRow = TextEditorBase
                     .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
                 
-                UpdatePreferredColumnIndexAndIndexCoordinates(new(lengthOfTextSpanRow - 1));
+                UpdatePreferredColumnIndexAndIndexCoordinates(new(lengthOfTextSpanRow));
                 
                 break;
             }
