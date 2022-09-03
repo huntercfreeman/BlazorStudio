@@ -222,7 +222,7 @@ public partial class TextEditorDisplay : FluxorComponent
         
         var startOfTextSpanRowInclusive = passedCursor.IndexCoordinates.RowIndex.Value == 0
             ? 0
-            : textEditor.LineEndingPositions[passedCursor.IndexCoordinates.RowIndex.Value - 1];
+            : textEditor.LineEndingPositions[passedCursor.IndexCoordinates.RowIndex.Value - 1].positionIndex;
 
         return startOfTextSpanRowInclusive + passedCursor.IndexCoordinates.ColumnIndex.Value;
     }

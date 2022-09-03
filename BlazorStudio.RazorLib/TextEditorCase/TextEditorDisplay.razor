@@ -87,11 +87,13 @@
                                                 spanTextBuilder.Append("~~~~");
                                                 break;
                                             case ' ':
-                                                spanTextBuilder.Append("&nbsp;");
+                                                spanTextBuilder.Append(" ");
                                                 break;
                                             case '\r':
+                                                spanTextBuilder.Append("R");
                                                 break;
                                             case '\n':
+                                                spanTextBuilder.Append("N");
                                                 break;
                                             case '<':
                                                 spanTextBuilder.Append("&lt;");

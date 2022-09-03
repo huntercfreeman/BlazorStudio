@@ -45,8 +45,11 @@ public record TextEditorBase : IDisposable
     /// the underlying characters <see cref="TextCharacter.Value"/> is immutable. 
     /// </summary>
     private readonly List<TextPartition> _activeTextPartitions = new();
-    // Returns the first inclusive character position of the row that may or may not follow (possibly End of File)
-    private readonly List<int> _lineEndingPositions = new();
+    /// <summary>
+    /// Returns a tuple that contains the first inclusive character position of the row that may
+    /// or may not follow (possibly End of File). As well it returns the <see cref="LineEndingKind"/>
+    /// </summary>
+    private readonly List<(int positionIndex, LineEndingKind lineEndingKind)> _lineEndingPositions = new();
     private List<IEditBlock> _editBlocks = new();
     
     private EventHandler? _physicalFileWatcher;
@@ -66,15 +69,20 @@ public record TextEditorBase : IDisposable
         
         _content = content.Select((character, index) =>
         {
-                // '\r' and '\r\n'
             if ((KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN == character) ||
-                // '\n'
-                (KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE == character && previousKey != KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN))
+                (KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE == character))
             {
-                // Track line ending position and
-                // increment row index
+                if (previousKey == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN &&
+                    KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE == character)
                 {
-                    _lineEndingPositions.Add(index + 1);
+                    // '\r\n'
+                    var existingLineEnding = _lineEndingPositions[rowIndex - 1]; 
+                    _lineEndingPositions[rowIndex - 1] = (existingLineEnding.positionIndex + 1, LineEndingKind.CarriageReturnNewLine);
+                }
+                else
+                {
+                    // '\r' or '\n'
+                    _lineEndingPositions.Add((index + 1, LineEndingKindHelper.GetLineEndingKind(character)));
                     rowIndex++;
                 }
             }
@@ -88,7 +96,7 @@ public record TextEditorBase : IDisposable
         }).ToList();
 
         if (!_lineEndingPositions.Any())
-            _lineEndingPositions.Add(_content.Count);
+            _lineEndingPositions.Add((_content.Count, LineEndingKind.EndOfFile));
         
         AbsoluteFilePath = absoluteFilePath;
         _onSaveRequestedFuncAsync = onSaveRequestedFuncAsync;
@@ -112,7 +120,7 @@ public record TextEditorBase : IDisposable
     /// Unique identifier for a <see cref="TextEditorBase"/>
     /// </summary>
     public TextEditorKey TextEditorKey { get; init; } = TextEditorKey.NewTextEditorKey();
-    public ImmutableArray<int> LineEndingPositions => _lineEndingPositions.ToImmutableArray();
+    public ImmutableArray<(int positionIndex, LineEndingKind lineEndingKind)> LineEndingPositions => _lineEndingPositions.ToImmutableArray();
     /// <summary>
     /// TODO: (I believe doing this 'leaks' privately mutable state.
     /// As such one would incorrectly be able to alter an <see cref="EditBlock{T}"/>
@@ -165,14 +173,14 @@ public record TextEditorBase : IDisposable
             // on the line ending character's length)
             var startOfTextSpanRowInclusive = i == 0
                 ? 0
-                : _lineEndingPositions[i - 1];
+                : _lineEndingPositions[i - 1].positionIndex;
 
-            var endOfTextSpanRowExclusive = _lineEndingPositions[i];
+            var endOfTextSpanRowExclusive = _lineEndingPositions[i].positionIndex;
 
             var textCharacterSpan = new TextCharacterSpan
             {
                 Start = startOfTextSpanRowInclusive,
-                End = _lineEndingPositions[i],
+                End = _lineEndingPositions[i].positionIndex,
                 TextCharacters = _content
                     .Skip(startOfTextSpanRowInclusive)
                     .Take(endOfTextSpanRowExclusive - startOfTextSpanRowInclusive)
@@ -215,17 +223,17 @@ public record TextEditorBase : IDisposable
         }
     }
     
-    public static int GetLengthOfRow(RowIndex rowIndex, ImmutableArray<int> lineEndingPositions)
+    public static int GetLengthOfRow(RowIndex rowIndex, ImmutableArray<(int positionIndex, LineEndingKind lineEndingKind)> lineEndingPositions)
     {
         if (!lineEndingPositions.Any())
             return 0;
         
         var startOfTextSpanRowInclusive = rowIndex.Value == 0
             ? 0
-            : lineEndingPositions[rowIndex.Value - 1];
+            : lineEndingPositions[rowIndex.Value - 1].positionIndex;
 
         var endOfTextSpanRowExclusive =
-            lineEndingPositions[rowIndex.Value];
+            lineEndingPositions[rowIndex.Value].positionIndex;
 
         return endOfTextSpanRowExclusive - startOfTextSpanRowInclusive;
     }
@@ -256,9 +264,9 @@ public record TextEditorBase : IDisposable
         columnIndex = new ColumnIndex(columnIndex);
         
         var startOfRow = rowIndex.Value > 0
-            ? _lineEndingPositions[rowIndex.Value - 1]
+            ? _lineEndingPositions[rowIndex.Value - 1].positionIndex
             : 0;
-        var nextRowStart = _lineEndingPositions[rowIndex.Value];
+        var nextRowStart = _lineEndingPositions[rowIndex.Value].positionIndex;
         
         // The cursor can be at end of file (out of bounds). Looking into how to better handle this.
         if (startOfRow + columnIndex.Value >= _content.Count)
@@ -333,7 +341,7 @@ public record TextEditorBase : IDisposable
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
         {
             var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
-                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
+                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1].positionIndex
                 : 0;
 
             if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == textEditorEditAction.KeyboardEventArgs.Code)
@@ -351,7 +359,7 @@ public record TextEditorBase : IDisposable
                         _lineEndingPositions
                             .Insert(
                                 cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value,
-                                insertionPositionIndex);
+                                (insertionPositionIndex, LineEndingKind.NewLine));
                         
                         cursorTuple.textCursor.IndexCoordinates = 
                             (new (cursorTuple.textCursor.IndexCoordinates.RowIndex.Value + 1), 
@@ -392,7 +400,8 @@ public record TextEditorBase : IDisposable
             // of many lines as each character insertion would run this.)
             for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
             {
-                _lineEndingPositions[i]++;
+                var previousLineEndingTuple = _lineEndingPositions[i];
+                _lineEndingPositions[i] = (previousLineEndingTuple.positionIndex + 1, previousLineEndingTuple.lineEndingKind);
             }
         }
     }
@@ -404,7 +413,7 @@ public record TextEditorBase : IDisposable
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
         {
             var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
-                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
+                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1].positionIndex
                 : 0;
 
             var rowLength = 
@@ -453,7 +462,8 @@ public record TextEditorBase : IDisposable
             // of many lines as each character insertion would run this.)
             for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
             {
-                _lineEndingPositions[i]--;
+                var previousLineEndingTuple = _lineEndingPositions[i]; 
+                _lineEndingPositions[i] = (previousLineEndingTuple.positionIndex + 1, previousLineEndingTuple.lineEndingKind);
             }
         }
     }
@@ -465,7 +475,7 @@ public record TextEditorBase : IDisposable
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
         {
             var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
-                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1]
+                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1].positionIndex
                 : 0;
 
             var lengthOfPreviousRow = GetLengthOfRow(
@@ -548,7 +558,8 @@ public record TextEditorBase : IDisposable
             // of many lines as each character insertion would run this.)
             for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
             {
-                _lineEndingPositions[i] -= charactersRemoved;
+                var previousLineEndingTuple = _lineEndingPositions[i]; 
+                _lineEndingPositions[i] = (previousLineEndingTuple.positionIndex - charactersRemoved, previousLineEndingTuple.lineEndingKind);
             }
         }
     }
