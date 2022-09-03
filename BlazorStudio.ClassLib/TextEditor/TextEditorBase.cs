@@ -560,7 +560,7 @@ public record TextEditorBase : IDisposable
             
                 cursorTuple.textCursor.IndexCoordinates = 
                     (cursorTuple.textCursor.IndexCoordinates.RowIndex, 
-                        new (backspacePositionIndex));
+                        new (cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value - charactersRemoved));
 
                 cursorTuple.textCursor.PreferredColumnIndex = cursorTuple.textCursor.IndexCoordinates.ColumnIndex;
             }
