@@ -76,7 +76,7 @@ public class TextCursor
                         .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
                 
                     UpdatePreferredColumnIndexAndIndexCoordinates(
-                        new ColumnIndex(lengthOfTextSpanRow - 1));
+                        new ColumnIndex(lengthOfTextSpanRow));
                 }    
                 
                 break;
@@ -96,14 +96,9 @@ public class TextCursor
                         var postMoveRowLength = TextEditorBase
                             .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
 
-                        if (localPreferredColumnIndex.Value >= postMoveRowLength - 1)
-                        {
-                            localIndexCoordinates.columnIndex = new ColumnIndex(postMoveRowLength - 1);
-                        }
-                        else
-                        {
-                            localIndexCoordinates.columnIndex = new ColumnIndex(localPreferredColumnIndex);
-                        }
+                        localIndexCoordinates.columnIndex = localPreferredColumnIndex.Value > postMoveRowLength 
+                            ? new ColumnIndex(postMoveRowLength) 
+                            : new ColumnIndex(localPreferredColumnIndex);
                     }
                 }
                 
@@ -125,14 +120,9 @@ public class TextCursor
                         var postMoveRowLength = TextEditorBase
                             .GetLengthOfRow(localIndexCoordinates.rowIndex, localLineEndingPositions);
 
-                        if (localPreferredColumnIndex.Value >= postMoveRowLength - 1)
-                        {
-                            localIndexCoordinates.columnIndex = new ColumnIndex(postMoveRowLength - 1);
-                        }
-                        else
-                        {
-                            localIndexCoordinates.columnIndex = new ColumnIndex(localPreferredColumnIndex);
-                        }
+                        localIndexCoordinates.columnIndex = localPreferredColumnIndex.Value > postMoveRowLength 
+                            ? new ColumnIndex(postMoveRowLength) 
+                            : new ColumnIndex(localPreferredColumnIndex);
                     }
                 }
                 

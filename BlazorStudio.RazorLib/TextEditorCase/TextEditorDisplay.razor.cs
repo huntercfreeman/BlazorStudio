@@ -172,8 +172,8 @@ public partial class TextEditorDisplay : FluxorComponent
         var rowLength = TextEditorBase
             .GetLengthOfRow(rowIndex, localTextEditorState.LineEndingPositions);
 
-        if (columnIndex.Value >= rowLength)
-            columnIndex = new(rowLength - 1);
+        if (columnIndex.Value > rowLength)
+            columnIndex = new(rowLength);
 
         if (columnIndex.Value < 0)
             columnIndex.Value = 0;
