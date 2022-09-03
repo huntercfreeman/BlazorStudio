@@ -4,21 +4,22 @@
 @using BlazorStudio.ClassLib.TextEditor.Enums
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using BlazorStudio.ClassLib.CustomEvents
+@using BlazorStudio.ClassLib.Html
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div>
-    (pos:&nbsp;@GetCursorPosition(_cursor))
-
-    <br/>
-    
     @{
         var localTextEditor = TextEditorStatesSelection.Value;
 
         if (localTextEditor is not null)
         {
-            <div>lineEndingPositions:</div>
+            <span>(pos:&nbsp;@localTextEditor.GetCursorPosition(new (_cursor)) -> '@localTextEditor.GetCharacterAtCursor(new (_cursor)).EscapeHtml()'</span>
             
+            <br/>
+            
+            <div>lineEndingPositions:</div>
+
             <div style="margin-left: 12px; padding-left: 5px; border-left: 1px solid var(--bstudio_primary-border-color)">
                 @foreach (var lineEndingPosition in localTextEditor.LineEndingPositions)
                 {
@@ -27,13 +28,12 @@
             </div>
         }
     }
+    <br/>
+
+    (row:&nbsp;@_cursor.IndexCoordinates.RowIndex.Value, col:&nbsp;@_cursor.IndexCoordinates.ColumnIndex.Value)
 
     <br/>
-    
-    (row:&nbsp;@_cursor.IndexCoordinates.RowIndex.Value, col:&nbsp;@_cursor.IndexCoordinates.ColumnIndex.Value)
-    
-    <br/>
-    
+
     PrefCol:&nbsp;@_cursor.PreferredColumnIndex.Value ; cursor:&nbsp;@_cursor.TextCursorKind
 </div>
 

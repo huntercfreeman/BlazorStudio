@@ -212,20 +212,6 @@ public partial class TextEditorDisplay : FluxorComponent
 
         _previousTextPartitionSequenceKey = SequenceKey.Empty();
     }
-    
-    private int GetCursorPosition(TextCursor passedCursor)
-    {
-        var textEditor = TextEditorStatesSelection.Value;
-        
-        if (textEditor is null || !textEditor.LineEndingPositions.Any())
-            return 0;
-        
-        var startOfTextSpanRowInclusive = passedCursor.IndexCoordinates.RowIndex.Value == 0
-            ? 0
-            : textEditor.LineEndingPositions[passedCursor.IndexCoordinates.RowIndex.Value - 1].positionIndex;
-
-        return startOfTextSpanRowInclusive + passedCursor.IndexCoordinates.ColumnIndex.Value;
-    }
 
     protected override void Dispose(bool disposing)
     {

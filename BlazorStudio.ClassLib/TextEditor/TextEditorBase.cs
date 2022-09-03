@@ -280,8 +280,10 @@ public record TextEditorBase : IDisposable
             : 0;
         var nextRowStart = _lineEndingPositions[rowIndex.Value].positionIndex;
         
+        int GetPositionIndex() => startOfRow + columnIndex.Value;
+        
         // The cursor can be at end of file (out of bounds). Looking into how to better handle this.
-        if (startOfRow + columnIndex.Value >= _content.Count)
+        if (GetPositionIndex() >= _content.Count)
             columnIndex.Value--;
         
         void MutateColumnIndex()
@@ -291,17 +293,17 @@ public record TextEditorBase : IDisposable
             else
                 columnIndex.Value++;
         }
-            
+
         // Get the cursor's TextCharacter to start with.
-        var textCharacter = _content[columnIndex.Value];
+        var textCharacter = _content[GetPositionIndex()];
         var startingKind = GetTextCharacterKind(textCharacter);
         MutateColumnIndex();
         
         while (columnIndex.Value > -1 &&
-               columnIndex.Value < nextRowStart &&
+               GetPositionIndex() < nextRowStart &&
                GetTextCharacterKind(textCharacter) == startingKind)
         {
-            textCharacter = _content[columnIndex.Value];
+            textCharacter = _content[GetPositionIndex()];
             MutateColumnIndex();
         }
 
@@ -735,6 +737,24 @@ public record TextEditorBase : IDisposable
                 generalSyntaxCollector.XmlComments
                     .Select(xml => xml.Span));
         }
+    }
+    
+    public int GetCursorPosition(ImmutableTextCursor immutableTextCursor)
+    {
+        if (!_lineEndingPositions.Any())
+            return 0;
+        
+        var startOfTextSpanRowInclusive = immutableTextCursor.IndexCoordinates.RowIndex.Value == 0
+            ? 0
+            : _lineEndingPositions[immutableTextCursor.IndexCoordinates.RowIndex.Value - 1].positionIndex;
+
+        return startOfTextSpanRowInclusive + immutableTextCursor.IndexCoordinates.ColumnIndex.Value;
+    }
+
+    public char GetCharacterAtCursor(ImmutableTextCursor immutableTextCursor)
+    {
+        return _content[GetCursorPosition(immutableTextCursor)]
+                .Value;
     }
     
     private void ReleaseUnmanagedResources()

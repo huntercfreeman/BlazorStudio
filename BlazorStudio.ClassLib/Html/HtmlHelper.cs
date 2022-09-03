@@ -31,7 +31,9 @@ public static class HtmlHelper
 			.Replace(">", _rightAngleBracketString)
 			.Replace("\t", _tabString)
 			.Replace(" ", _spaceString)
+			.Replace("\r\n", _newLineString)
 			.Replace("\n", _newLineString)
+			.Replace("\r", _newLineString)
 			.Replace("\"", _doubleQuoteString)
 			.Replace("'", _singleQuoteString);
 	}
