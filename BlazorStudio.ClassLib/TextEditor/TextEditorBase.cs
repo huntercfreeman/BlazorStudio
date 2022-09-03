@@ -223,19 +223,31 @@ public record TextEditorBase : IDisposable
         }
     }
     
-    public static int GetLengthOfRow(RowIndex rowIndex, ImmutableArray<(int positionIndex, LineEndingKind lineEndingKind)> lineEndingPositions)
+    /// <summary>
+    /// Returns the Length of a row however it does not include the line ending characters by default.
+    /// To include line ending characters the parameter <see cref="includeLineEndingCharacters"/> must be true.
+    /// </summary>
+    public static int GetLengthOfRow(
+        RowIndex rowIndex, 
+        ImmutableArray<(int positionIndex, LineEndingKind lineEndingKind)> lineEndingPositions,
+        bool includeLineEndingCharacters = false)
     {
         if (!lineEndingPositions.Any())
             return 0;
         
-        var startOfTextSpanRowInclusive = rowIndex.Value == 0
-            ? 0
-            : lineEndingPositions[rowIndex.Value - 1].positionIndex;
+        (int positionIndex, LineEndingKind lineEndingKind) startOfTextSpanRowTupleInclusive = rowIndex.Value == 0
+            ? (0, LineEndingKind.StartOfFile)
+            : lineEndingPositions[rowIndex.Value - 1];
 
-        var endOfTextSpanRowExclusive =
-            lineEndingPositions[rowIndex.Value].positionIndex;
+        var endOfTextSpanRowTupleExclusive = lineEndingPositions[rowIndex.Value];
 
-        return endOfTextSpanRowExclusive - startOfTextSpanRowInclusive;
+        var lengthOfRowWithLineEndings = endOfTextSpanRowTupleExclusive.positionIndex 
+                                         - startOfTextSpanRowTupleInclusive.positionIndex;
+
+        if (includeLineEndingCharacters)
+            return lengthOfRowWithLineEndings;
+
+        return lengthOfRowWithLineEndings - endOfTextSpanRowTupleExclusive.lineEndingKind.AsCharacters().Length;
     }
     
     public static TextCharacterKind GetTextCharacterKind(TextCharacter textCharacter)
@@ -268,8 +280,10 @@ public record TextEditorBase : IDisposable
             : 0;
         var nextRowStart = _lineEndingPositions[rowIndex.Value].positionIndex;
         
+        int GetPositionIndex() => startOfRow + columnIndex.Value;
+        
         // The cursor can be at end of file (out of bounds). Looking into how to better handle this.
-        if (startOfRow + columnIndex.Value >= _content.Count)
+        if (GetPositionIndex() >= _content.Count)
             columnIndex.Value--;
         
         void MutateColumnIndex()
@@ -279,17 +293,17 @@ public record TextEditorBase : IDisposable
             else
                 columnIndex.Value++;
         }
-            
+
         // Get the cursor's TextCharacter to start with.
-        var textCharacter = _content[columnIndex.Value];
+        var textCharacter = _content[GetPositionIndex()];
         var startingKind = GetTextCharacterKind(textCharacter);
         MutateColumnIndex();
         
         while (columnIndex.Value > -1 &&
-               columnIndex.Value < nextRowStart &&
+               GetPositionIndex() < nextRowStart &&
                GetTextCharacterKind(textCharacter) == startingKind)
         {
-            textCharacter = _content[columnIndex.Value];
+            textCharacter = _content[GetPositionIndex()];
             MutateColumnIndex();
         }
 
@@ -548,7 +562,7 @@ public record TextEditorBase : IDisposable
             
                 cursorTuple.textCursor.IndexCoordinates = 
                     (cursorTuple.textCursor.IndexCoordinates.RowIndex, 
-                        new (backspacePositionIndex));
+                        new (cursorTuple.textCursor.IndexCoordinates.ColumnIndex.Value - charactersRemoved));
 
                 cursorTuple.textCursor.PreferredColumnIndex = cursorTuple.textCursor.IndexCoordinates.ColumnIndex;
             }
@@ -723,6 +737,24 @@ public record TextEditorBase : IDisposable
                 generalSyntaxCollector.XmlComments
                     .Select(xml => xml.Span));
         }
+    }
+    
+    public int GetCursorPosition(ImmutableTextCursor immutableTextCursor)
+    {
+        if (!_lineEndingPositions.Any())
+            return 0;
+        
+        var startOfTextSpanRowInclusive = immutableTextCursor.IndexCoordinates.RowIndex.Value == 0
+            ? 0
+            : _lineEndingPositions[immutableTextCursor.IndexCoordinates.RowIndex.Value - 1].positionIndex;
+
+        return startOfTextSpanRowInclusive + immutableTextCursor.IndexCoordinates.ColumnIndex.Value;
+    }
+
+    public char GetCharacterAtCursor(ImmutableTextCursor immutableTextCursor)
+    {
+        return _content[GetCursorPosition(immutableTextCursor)]
+                .Value;
     }
     
     private void ReleaseUnmanagedResources()
