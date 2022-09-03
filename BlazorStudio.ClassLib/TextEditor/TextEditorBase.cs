@@ -223,19 +223,31 @@ public record TextEditorBase : IDisposable
         }
     }
     
-    public static int GetLengthOfRow(RowIndex rowIndex, ImmutableArray<(int positionIndex, LineEndingKind lineEndingKind)> lineEndingPositions)
+    /// <summary>
+    /// Returns the Length of a row however it does not include the line ending characters by default.
+    /// To include line ending characters the parameter <see cref="includeLineEndingCharacters"/> must be true.
+    /// </summary>
+    public static int GetLengthOfRow(
+        RowIndex rowIndex, 
+        ImmutableArray<(int positionIndex, LineEndingKind lineEndingKind)> lineEndingPositions,
+        bool includeLineEndingCharacters = false)
     {
         if (!lineEndingPositions.Any())
             return 0;
         
-        var startOfTextSpanRowInclusive = rowIndex.Value == 0
-            ? 0
-            : lineEndingPositions[rowIndex.Value - 1].positionIndex;
+        (int positionIndex, LineEndingKind lineEndingKind) startOfTextSpanRowTupleInclusive = rowIndex.Value == 0
+            ? (0, LineEndingKind.StartOfFile)
+            : lineEndingPositions[rowIndex.Value - 1];
 
-        var endOfTextSpanRowExclusive =
-            lineEndingPositions[rowIndex.Value].positionIndex;
+        var endOfTextSpanRowTupleExclusive = lineEndingPositions[rowIndex.Value];
 
-        return endOfTextSpanRowExclusive - startOfTextSpanRowInclusive;
+        var lengthOfRowWithLineEndings = endOfTextSpanRowTupleExclusive.positionIndex 
+                                         - startOfTextSpanRowTupleInclusive.positionIndex;
+
+        if (includeLineEndingCharacters)
+            return lengthOfRowWithLineEndings;
+
+        return lengthOfRowWithLineEndings - endOfTextSpanRowTupleExclusive.lineEndingKind.AsCharacters().Length;
     }
     
     public static TextCharacterKind GetTextCharacterKind(TextCharacter textCharacter)
