@@ -753,8 +753,12 @@ public record TextEditorBase : IDisposable
 
     public char GetCharacterAtCursor(ImmutableTextCursor immutableTextCursor)
     {
-        return _content[GetCursorPosition(immutableTextCursor)]
-                .Value;
+        var cursorPosition = GetCursorPosition(immutableTextCursor);
+        
+        if (_content.Count > cursorPosition)
+            return _content[cursorPosition].Value;    
+
+        return '\\';
     }
     
     private void ReleaseUnmanagedResources()
