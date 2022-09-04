@@ -128,7 +128,16 @@ public partial class MenuDisplay : ComponentBase
 
                     if (FocusAfterTarget is not null)
                     {
-                        await FocusAfterTarget.Value.FocusAsync();
+                        try
+                        {
+                            await FocusAfterTarget.Value.FocusAsync();
+                        }
+                        catch (Microsoft.JSInterop.JSException)
+                        {
+                            // Caused when calling:
+                            // FocusAsync();
+                            // After component is no longer rendered
+                        }
                     }
                     break;                    
             }
