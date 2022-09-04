@@ -28,7 +28,7 @@ public partial class EditorDisplay : FluxorComponent
     public ClassLib.UserInterface.Dimensions Dimensions { get; set; } = null!;
 
     private TextEditorKey _textEditorKey = TextEditorKey.NewTextEditorKey();
-    private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath("/home/hunter/Desktop/main.c", false);
+    private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath("/home/hunter/Desktop/tabTest.c", false);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

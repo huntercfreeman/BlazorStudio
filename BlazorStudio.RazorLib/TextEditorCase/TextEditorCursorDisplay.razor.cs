@@ -23,7 +23,19 @@ public partial class TextEditorCursorDisplay : ComponentBase
 
     private string CssStyleString => $"top: {TextCursor.IndexCoordinates.RowIndex.Value * RowHeightInPixels}px;" +
                                      " " +
-                                     $"left: {TextCursor.IndexCoordinates.ColumnIndex.Value * CharacterWidthInPixels}px;";
+                                     $"left: {GetCssStylingLeft()}px;";
+
+    private string GetCssStylingLeft()
+    {
+        var baseWidth = TextCursor.IndexCoordinates.ColumnIndex.Value * CharacterWidthInPixels;
+        
+        // Tab keys for example can have a width > 1 character and must offset the cursor position accordingly.
+        var tabsOnSameRowBeforeCursor =TextEditorBase.GetTabsCountOnSameRowBeforeCursor(new ImmutableTextCursor(TextCursor));
+        var offsetWidth = tabsOnSameRowBeforeCursor * ((TextEditorBase.TabWidth - 1) * CharacterWidthInPixels);
+        
+        return (baseWidth + offsetWidth)
+            .ToString();
+    }
 
     public void HandleKeyboardEvent(KeyboardEventArgs keyboardEventArgs)
     {
