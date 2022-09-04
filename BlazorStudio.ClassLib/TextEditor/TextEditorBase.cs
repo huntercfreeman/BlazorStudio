@@ -18,6 +18,11 @@ namespace BlazorStudio.ClassLib.TextEditor;
 public record TextEditorBase : IDisposable
 {
     /// <summary>
+    /// TODO: Make this into a option setting the user can pick.
+    /// </summary>
+    public const int TabWidth = 4;
+    
+    /// <summary>
     /// Thank you to "A Crawford" who commented on my youtube video:
     /// https://youtu.be/kjpx_rN8hTQ
     /// <br/>
@@ -50,6 +55,10 @@ public record TextEditorBase : IDisposable
     /// or may not follow (possibly End of File). As well it returns the <see cref="LineEndingKind"/>
     /// </summary>
     private readonly List<(int positionIndex, LineEndingKind lineEndingKind)> _lineEndingPositions = new();
+    /// <summary>
+    /// Returns the integer position index that the Tab '\t' key itself is at.
+    /// </summary>
+    private readonly List<int> _tabKeyPositions = new();
     private List<IEditBlock> _editBlocks = new();
     
     private EventHandler? _physicalFileWatcher;
@@ -87,6 +96,9 @@ public record TextEditorBase : IDisposable
                 }
             }
 
+            if (KeyboardKeyFacts.WhitespaceCharacters.TAB == character)
+                _tabKeyPositions.Add(index);
+
             previousKey = character;
             
             return new TextCharacter(character)
@@ -121,6 +133,7 @@ public record TextEditorBase : IDisposable
     /// </summary>
     public TextEditorKey TextEditorKey { get; init; } = TextEditorKey.NewTextEditorKey();
     public ImmutableArray<(int positionIndex, LineEndingKind lineEndingKind)> LineEndingPositions => _lineEndingPositions.ToImmutableArray();
+    public ImmutableArray<int> TabKeyPositions => _tabKeyPositions.ToImmutableArray();
     /// <summary>
     /// TODO: (I believe doing this 'leaks' privately mutable state.
     /// As such one would incorrectly be able to alter an <see cref="EditBlock{T}"/>
@@ -275,10 +288,10 @@ public record TextEditorBase : IDisposable
         rowIndex = new RowIndex(rowIndex);
         columnIndex = new ColumnIndex(columnIndex);
         
-        var startOfRow = rowIndex.Value > 0
-            ? _lineEndingPositions[rowIndex.Value - 1].positionIndex
-            : 0;
         var nextRowStart = _lineEndingPositions[rowIndex.Value].positionIndex;
+
+        var startOfRow = GetStartOfRowTuple(rowIndex)
+            .positionIndex;
         
         int GetPositionIndex() => startOfRow + columnIndex.Value;
         
@@ -354,10 +367,13 @@ public record TextEditorBase : IDisposable
         
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
         {
-            var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
-                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1].positionIndex
-                : 0;
+            var startOfRow = GetStartOfRowTuple(cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex)
+                .positionIndex;
 
+            var cursorPosition = GetCursorPosition(cursorTuple.immutableTextCursor);
+
+            var wasTabKey = false;
+            
             if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == textEditorEditAction.KeyboardEventArgs.Code)
             {
                         var insertionPositionIndex = 
@@ -401,6 +417,29 @@ public record TextEditorBase : IDisposable
                     {
                         DecorationByte = default
                     });
+
+                if (KeyboardKeyFacts.WhitespaceCharacters.TAB == valueToInsert)
+                {
+                    wasTabKey = true;
+                    
+                    var index = _tabKeyPositions
+                        .FindIndex(x =>
+                            x >= cursorPosition);
+
+                    if (index == -1)
+                    {
+                        _tabKeyPositions.Add(cursorPosition);
+                    }
+                    else
+                    {
+                        for (int i = index; i < _tabKeyPositions.Count; i++)
+                        {
+                            _tabKeyPositions[i]++;
+                        }
+                        
+                        _tabKeyPositions.Insert(index, cursorPosition);
+                    }
+                }
                 
                 cursorTuple.textCursor.IndexCoordinates = 
                     (cursorTuple.textCursor.IndexCoordinates.RowIndex, 
@@ -417,6 +456,20 @@ public record TextEditorBase : IDisposable
                 var previousLineEndingTuple = _lineEndingPositions[i];
                 _lineEndingPositions[i] = (previousLineEndingTuple.positionIndex + 1, previousLineEndingTuple.lineEndingKind);
             }
+
+            if (!wasTabKey)
+            {
+                var firstIndexOfTabPositionNeedingChange = _tabKeyPositions
+                    .FindIndex(x => x >= cursorPosition);
+
+                if (firstIndexOfTabPositionNeedingChange != -1)
+                {
+                    for (int i = firstIndexOfTabPositionNeedingChange; i < _tabKeyPositions.Count; i++)
+                    {
+                        _tabKeyPositions[i]++;
+                    }
+                }
+            }
         }
     }
     
@@ -426,9 +479,8 @@ public record TextEditorBase : IDisposable
         
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
         {
-            var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
-                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1].positionIndex
-                : 0;
+            var startOfRow = GetStartOfRowTuple(cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex)
+                .positionIndex;
 
             var rowLength = 
                 GetLengthOfRow(cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex, LineEndingPositions);
@@ -477,7 +529,20 @@ public record TextEditorBase : IDisposable
             for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
             {
                 var previousLineEndingTuple = _lineEndingPositions[i]; 
-                _lineEndingPositions[i] = (previousLineEndingTuple.positionIndex + 1, previousLineEndingTuple.lineEndingKind);
+                _lineEndingPositions[i] = (previousLineEndingTuple.positionIndex - 1, previousLineEndingTuple.lineEndingKind);
+            }
+            
+            var cursorPosition = GetCursorPosition(cursorTuple.immutableTextCursor);
+
+            var firstIndexOfTabPositionNeedingChange = _tabKeyPositions
+                .FindIndex(x => x >= cursorPosition);
+            
+            if (firstIndexOfTabPositionNeedingChange != -1)
+            {
+                for (int i = firstIndexOfTabPositionNeedingChange; i < _tabKeyPositions.Count; i++)
+                {
+                    _tabKeyPositions[i]--;
+                }
             }
         }
     }
@@ -488,9 +553,8 @@ public record TextEditorBase : IDisposable
 
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
         {
-            var startOfRow = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value > 0
-                ? _lineEndingPositions[cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1].positionIndex
-                : 0;
+            var startOfRow = GetStartOfRowTuple(cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex)
+                .positionIndex;
 
             var lengthOfPreviousRow = GetLengthOfRow(
                 new (cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value - 1), 
@@ -574,6 +638,19 @@ public record TextEditorBase : IDisposable
             {
                 var previousLineEndingTuple = _lineEndingPositions[i]; 
                 _lineEndingPositions[i] = (previousLineEndingTuple.positionIndex - charactersRemoved, previousLineEndingTuple.lineEndingKind);
+            }
+            
+            var cursorPosition = GetCursorPosition(cursorTuple.immutableTextCursor);
+
+            var firstIndexOfTabPositionNeedingChange = _tabKeyPositions
+                .FindIndex(x => x >= cursorPosition);
+            
+            if (firstIndexOfTabPositionNeedingChange != -1)
+            {
+                for (int i = firstIndexOfTabPositionNeedingChange; i < _tabKeyPositions.Count; i++)
+                {
+                    _tabKeyPositions[i] -= charactersRemoved;
+                }
             }
         }
     }
@@ -753,8 +830,38 @@ public record TextEditorBase : IDisposable
 
     public char GetCharacterAtCursor(ImmutableTextCursor immutableTextCursor)
     {
-        return _content[GetCursorPosition(immutableTextCursor)]
-                .Value;
+        var cursorPosition = GetCursorPosition(immutableTextCursor);
+        
+        if (_content.Count > cursorPosition)
+            return _content[cursorPosition].Value;    
+
+        return '\\';
+    }
+    
+    public int GetTabsCountOnSameRowBeforeCursor(ImmutableTextCursor immutableTextCursor)
+    {
+        return GetTabsCountOnSameRowBeforeCursor(
+            immutableTextCursor.IndexCoordinates.RowIndex,
+            immutableTextCursor.IndexCoordinates.ColumnIndex);
+    }
+    
+    public int GetTabsCountOnSameRowBeforeCursor(RowIndex rowIndex, ColumnIndex columnIndex)
+    {
+        var startOfRow = GetStartOfRowTuple(rowIndex)
+            .positionIndex;
+
+        var tabs = _tabKeyPositions
+            .SkipWhile(positionIndex => positionIndex < startOfRow)
+            .TakeWhile(positionIndex => positionIndex < startOfRow + columnIndex.Value);
+
+        return tabs.Count();
+    }
+
+    public (int positionIndex, LineEndingKind lineEndingKind) GetStartOfRowTuple(RowIndex rowIndex)
+    {
+        return rowIndex.Value > 0
+            ? _lineEndingPositions[rowIndex.Value - 1]
+            : (0, LineEndingKind.StartOfFile);
     }
     
     private void ReleaseUnmanagedResources()
