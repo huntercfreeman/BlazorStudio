@@ -370,6 +370,10 @@ public record TextEditorBase : IDisposable
             var startOfRow = GetStartOfRowTuple(cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex)
                 .positionIndex;
 
+            var cursorPosition = GetCursorPosition(cursorTuple.immutableTextCursor);
+
+            var wasTabKey = false;
+            
             if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == textEditorEditAction.KeyboardEventArgs.Code)
             {
                         var insertionPositionIndex = 
@@ -413,6 +417,29 @@ public record TextEditorBase : IDisposable
                     {
                         DecorationByte = default
                     });
+
+                if (KeyboardKeyFacts.WhitespaceCharacters.TAB == valueToInsert)
+                {
+                    wasTabKey = true;
+                    
+                    var index = _tabKeyPositions
+                        .FindIndex(x =>
+                            x >= cursorPosition);
+
+                    if (index == -1)
+                    {
+                        _tabKeyPositions.Add(cursorPosition);
+                    }
+                    else
+                    {
+                        for (int i = index; i < _tabKeyPositions.Count; i++)
+                        {
+                            _tabKeyPositions[i]++;
+                        }
+                        
+                        _tabKeyPositions.Insert(index, cursorPosition);
+                    }
+                }
                 
                 cursorTuple.textCursor.IndexCoordinates = 
                     (cursorTuple.textCursor.IndexCoordinates.RowIndex, 
@@ -428,6 +455,20 @@ public record TextEditorBase : IDisposable
             {
                 var previousLineEndingTuple = _lineEndingPositions[i];
                 _lineEndingPositions[i] = (previousLineEndingTuple.positionIndex + 1, previousLineEndingTuple.lineEndingKind);
+            }
+
+            if (!wasTabKey)
+            {
+                var firstIndexOfTabPositionNeedingChange = _tabKeyPositions
+                    .FindIndex(x => x >= cursorPosition);
+
+                if (firstIndexOfTabPositionNeedingChange != -1)
+                {
+                    for (int i = firstIndexOfTabPositionNeedingChange; i < _tabKeyPositions.Count; i++)
+                    {
+                        _tabKeyPositions[i]++;
+                    }
+                }
             }
         }
     }
@@ -488,7 +529,20 @@ public record TextEditorBase : IDisposable
             for (int i = cursorTuple.immutableTextCursor.IndexCoordinates.RowIndex.Value; i < _lineEndingPositions.Count; i++)
             {
                 var previousLineEndingTuple = _lineEndingPositions[i]; 
-                _lineEndingPositions[i] = (previousLineEndingTuple.positionIndex + 1, previousLineEndingTuple.lineEndingKind);
+                _lineEndingPositions[i] = (previousLineEndingTuple.positionIndex - 1, previousLineEndingTuple.lineEndingKind);
+            }
+            
+            var cursorPosition = GetCursorPosition(cursorTuple.immutableTextCursor);
+
+            var firstIndexOfTabPositionNeedingChange = _tabKeyPositions
+                .FindIndex(x => x >= cursorPosition);
+            
+            if (firstIndexOfTabPositionNeedingChange != -1)
+            {
+                for (int i = firstIndexOfTabPositionNeedingChange; i < _tabKeyPositions.Count; i++)
+                {
+                    _tabKeyPositions[i]--;
+                }
             }
         }
     }
@@ -584,6 +638,19 @@ public record TextEditorBase : IDisposable
             {
                 var previousLineEndingTuple = _lineEndingPositions[i]; 
                 _lineEndingPositions[i] = (previousLineEndingTuple.positionIndex - charactersRemoved, previousLineEndingTuple.lineEndingKind);
+            }
+            
+            var cursorPosition = GetCursorPosition(cursorTuple.immutableTextCursor);
+
+            var firstIndexOfTabPositionNeedingChange = _tabKeyPositions
+                .FindIndex(x => x >= cursorPosition);
+            
+            if (firstIndexOfTabPositionNeedingChange != -1)
+            {
+                for (int i = firstIndexOfTabPositionNeedingChange; i < _tabKeyPositions.Count; i++)
+                {
+                    _tabKeyPositions[i] -= charactersRemoved;
+                }
             }
         }
     }
