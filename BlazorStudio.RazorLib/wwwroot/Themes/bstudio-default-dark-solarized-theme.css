@@ -46,12 +46,12 @@
     --pte_active-line-number-font-color: rgb(207, 124, 13);
     --pte_hover-font-color: rgb(42, 122, 211);
     --pte_active-border-color: rgb(42, 122, 211);
-    --pte_token-keyword: #DD9BCF;
-    --pte_token-type: #82BBDA;
+    --pte_token-keyword: #D7D77C;
+    --pte_token-type: #64CEB0;
     --pte_token-method-declaration: #5BC9E5;
     --pte_token-parameter-declaration: #D8DEE9;
     --pte_token-argument-declaration: #D8DEE9;
     --pte_token-trivia-comment: #616E88;
     --pte_plain-text-editor-text-token-display-string-literal: #CEA083;
-    --pte_plain-text-editor-selection: #68505E;
+    --pte_plain-text-editor-selection: #606060;
 }
