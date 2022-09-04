@@ -93,16 +93,18 @@
                                         switch (textCharacter.Value)
                                         {
                                             case '\t':
-                                                spanTextBuilder.Append("~~~~");
+                                                spanTextBuilder.Append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                                                // spanTextBuilder.Append("~~~~");
                                                 break;
                                             case ' ':
-                                                spanTextBuilder.Append("`");
+                                                spanTextBuilder.Append("&nbsp;");
+                                                // spanTextBuilder.Append("`");
                                                 break;
                                             case '\r':
-                                                spanTextBuilder.Append("R");
+                                                // spanTextBuilder.Append("R");
                                                 break;
                                             case '\n':
-                                                spanTextBuilder.Append("N");
+                                                // spanTextBuilder.Append("N");
                                                 break;
                                             case '<':
                                                 spanTextBuilder.Append("&lt;");
