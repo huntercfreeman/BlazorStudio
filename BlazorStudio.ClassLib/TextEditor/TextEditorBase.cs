@@ -773,12 +773,19 @@ public record TextEditorBase : IDisposable
     
     public int GetTabsCountOnSameRowBeforeCursor(ImmutableTextCursor immutableTextCursor)
     {
-        var startOfRow = GetStartOfRowTuple(immutableTextCursor.IndexCoordinates.RowIndex)
+        return GetTabsCountOnSameRowBeforeCursor(
+            immutableTextCursor.IndexCoordinates.RowIndex,
+            immutableTextCursor.IndexCoordinates.ColumnIndex);
+    }
+    
+    public int GetTabsCountOnSameRowBeforeCursor(RowIndex rowIndex, ColumnIndex columnIndex)
+    {
+        var startOfRow = GetStartOfRowTuple(rowIndex)
             .positionIndex;
 
         var tabs = _tabKeyPositions
             .SkipWhile(positionIndex => positionIndex < startOfRow)
-            .TakeWhile(positionIndex => positionIndex < startOfRow + immutableTextCursor.IndexCoordinates.ColumnIndex.Value);
+            .TakeWhile(positionIndex => positionIndex < startOfRow + columnIndex.Value);
 
         return tabs.Count();
     }

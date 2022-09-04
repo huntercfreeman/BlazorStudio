@@ -173,7 +173,19 @@ public partial class TextEditorDisplay : FluxorComponent
             .GetLengthOfRow(rowIndex, localTextEditorState.LineEndingPositions);
 
         if (columnIndex.Value > rowLength)
+        {
             columnIndex = new(rowLength);
+        }
+        else if (columnIndex.Value >= 0)
+        {
+            // Tab keys for example can have a width > 1 character and must offset the cursor position accordingly.
+            var tabsOnSameRowBeforeCursor = localTextEditorState
+                .GetTabsCountOnSameRowBeforeCursor(rowIndex, columnIndex);
+            
+            var offsetColumn = tabsOnSameRowBeforeCursor * (TextEditorBase.TabWidth - 1);
+
+            columnIndex.Value -= offsetColumn;
+        }
 
         if (columnIndex.Value < 0)
             columnIndex.Value = 0;
