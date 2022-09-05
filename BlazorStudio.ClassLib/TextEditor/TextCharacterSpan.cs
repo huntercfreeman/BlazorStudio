@@ -19,6 +19,11 @@ public class TextCharacterSpan
     /// <see cref="End"/> is exclusive
     /// </summary>
     public int End { get; set; }
+    /// <summary>
+    /// If this <see cref="TextCharacterSpan" /> represents the content of a
+    /// single row that row's index is included as <see cref="RowIndex"/>.
+    /// </summary>
+    public int? RowIndex { get; set; }
     public List<TextCharacter> TextCharacters { get; set; } = new();
     public string GetText => new string(TextCharacters
         .Select(x => x.Value)

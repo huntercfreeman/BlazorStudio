@@ -10,9 +10,6 @@
 
 <div style="height: 100%; font-size: @(GetFontSize);">
     <ShouldRenderBoundary ShouldRenderFunc="ShouldRenderFunc">
-        @* <TextEditorDebugInfo TextEditor="TextEditorStatesSelection.Value" *@
-        @*                      TextPartition="_textPartition"/> *@
-
         <button @onclick="ApplyRoslynSyntaxHighlightingAsyncOnClick"
                 class="btn btn-primary">
             Apply Roslyn Syntax Highlighting
@@ -40,8 +37,8 @@
                     <Virtualize ItemsProvider="LoadTextCharacterSpans"
                                 Context="textSpan"
                                 @ref="_virtualize">
-
-                        <div style="white-space: nowrap; height: @(_textEditorFontSize.RowHeight)px;">
+                        
+                        <div style="white-space: nowrap; position: absolute; @GetTextSpanDimensions(textSpan, _textEditorFontSize)">
                             @if (textSpan.TextCharacters.Any())
                             {
                                 var spanTextBuilder = new StringBuilder();
@@ -56,24 +53,20 @@
                                         {
                                             case '\t':
                                                 spanTextBuilder.Append("&nbsp;&nbsp;&nbsp;&nbsp;");
-                                                // spanTextBuilder.Append("~~~~");
                                                 break;
                                             case ' ':
                                                 spanTextBuilder.Append("&nbsp;");
-                                                // spanTextBuilder.Append("`");
                                                 break;
                                             case '\r':
-                                                // spanTextBuilder.Append("R");
                                                 break;
                                             case '\n':
-                                                // spanTextBuilder.Append("N");
                                                 break;
                                             case '<':
                                                 spanTextBuilder.Append("&lt;");
                                                 break;
                                             case '>':
                                                 spanTextBuilder.Append("&gt;");
-                                                break;                                        
+                                                break;
                                             case '"':
                                                 spanTextBuilder.Append("&quot;");
                                                 break;
@@ -122,45 +115,3 @@
         </div>
     </ShouldRenderBoundary>
 </div>
-
-
-@* Below commented markup is used for debugging and uncommented as needed. *@
-@**@
-@**@
-@* <div> *@
-@*     @{ *@
-@*         var localTextEditor = TextEditorStatesSelection.Value; *@
-@* *@
-@*         if (localTextEditor is not null) *@
-@*         { *@
-@*             <span>(pos:&nbsp;@localTextEditor.GetCursorPosition(new (_cursor)) -> '@localTextEditor.GetCharacterAtCursor(new (_cursor)).EscapeHtml()'</span> *@
-@*              *@
-@*             <br/> *@
-@*              *@
-@*             <div>lineEndingPositions:</div> *@
-@* *@
-@*             <div style="margin-left: 12px; padding-left: 5px; border-left: 1px solid var(--bstudio_primary-border-color)"> *@
-@*                 @foreach (var lineEndingPosition in localTextEditor.LineEndingPositions) *@
-@*                 { *@
-@*                     <span><em>@lineEndingPosition</em>,&nbsp;</span> *@
-@*                 } *@
-@*             </div> *@
-@*              *@
-@*             <div>tabEndingPositions:</div> *@
-@* *@
-@*             <div style="margin-left: 12px; padding-left: 5px; border-left: 1px solid var(--bstudio_primary-border-color)"> *@
-@*                 @foreach (var tabKeyPosition in localTextEditor.TabKeyPositions) *@
-@*                 { *@
-@*                     <span><em>@tabKeyPosition</em>,&nbsp;</span> *@
-@*                 } *@
-@*             </div> *@
-@*         } *@
-@*     } *@
-@*     <br/> *@
-@* *@
-@*     (row:&nbsp;@_cursor.IndexCoordinates.RowIndex.Value, col:&nbsp;@_cursor.IndexCoordinates.ColumnIndex.Value) *@
-@* *@
-@*     <br/> *@
-@* *@
-@*     PrefCol:&nbsp;@_cursor.PreferredColumnIndex.Value ; cursor:&nbsp;@_cursor.TextCursorKind *@
-@* </div> *@

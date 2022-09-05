@@ -193,6 +193,7 @@ public record TextEditorBase : IDisposable
             {
                 Start = startOfTextSpanRowInclusive,
                 End = _lineEndingPositions[i].positionIndex,
+                RowIndex = i,
                 TextCharacters = _content
                     .Skip(startOfTextSpanRowInclusive)
                     .Take(endOfTextSpanRowExclusive - startOfTextSpanRowInclusive)

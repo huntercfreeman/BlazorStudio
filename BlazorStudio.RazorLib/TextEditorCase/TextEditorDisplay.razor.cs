@@ -233,4 +233,17 @@ public partial class TextEditorDisplay : FluxorComponent
         
         base.Dispose(disposing);
     }
+
+    private string GetTextSpanDimensions(TextCharacterSpan textSpan, TextEditorFontSize textEditorFontSize)
+    {
+        var heightInPixels = textEditorFontSize.RowHeight;
+        
+        var topInPixels = textSpan.RowIndex * textEditorFontSize.RowHeight;
+
+        return $"height: {heightInPixels}px; top: {topInPixels}px;";
+
+        //width:0;height: @()px;left: 0; top: @()px;
+    }
 }
+
+
