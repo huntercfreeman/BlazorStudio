@@ -21,6 +21,11 @@ public record TextEditorBase : IDisposable
     /// TODO: Make this into a option setting the user can pick.
     /// </summary>
     public const int TabWidth = 4;
+    /// <summary>
+    /// TODO: Make this into a option setting the user can pick.
+    /// Without margin left the line numbers are touching the file's rendered content
+    /// </summary>
+    public const int FileContentMarginLeftSeparateFromLineNumbers = 2;
     
     /// <summary>
     /// Thank you to "A Crawford" who commented on my youtube video:

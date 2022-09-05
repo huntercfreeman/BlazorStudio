@@ -810,3 +810,10 @@ em {
     white-space: nowrap;
     visibility: hidden;
 }
+
+.bstudio_text-editor-display-gutter {
+    white-space: nowrap; 
+    position: absolute;
+    background-color: var(--bstudio_text-editor-gutter-background-color);
+    color: var(--bstudio_text-editor-line-number-font-color);
+}

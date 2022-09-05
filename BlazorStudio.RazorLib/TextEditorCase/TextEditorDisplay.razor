@@ -38,9 +38,9 @@
                                 Context="textSpan"
                                 @ref="_virtualize">
                         
-                        <div style="white-space: nowrap; position: absolute; @GetLineNumberDimensions(textSpan, _textEditorFontSize, localTextEditorState)">
+                        <div class="bstudio_text-editor-display-gutter" style="@GetLineNumberDimensions(textSpan, _textEditorFontSize, localTextEditorState)">
                             @textSpan.RowIndex
-                        </div>
+                        </div> 
                         
                         <div style="white-space: nowrap; position: absolute; @GetTextSpanDimensions(textSpan, _textEditorFontSize, localTextEditorState)">
                             @if (textSpan.TextCharacters.Any())

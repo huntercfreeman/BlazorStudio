@@ -85,6 +85,11 @@
     animation-iteration-count: infinite
 }
 
+.pte_caret-row {
+    position: absolute;
+    outline: 1.5px solid var(--bstudio_caret-row-outline-color);
+}
+
 .pte_plain-text-editor-row-display {
     display: flex;
     white-space: nowrap;

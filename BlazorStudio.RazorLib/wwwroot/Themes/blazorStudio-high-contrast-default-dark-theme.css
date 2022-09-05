@@ -39,6 +39,8 @@
     --bstudio_icon-ts-font-color: #37b38b;
     --bstudio_icon-start-without-debugging-font-color: #37b38b;
     --bstudio_inactive-tab-background-color: rgb(57 67 78);
+    --bstudio_text-editor-gutter-background-color: #2d2f34;
+    --bstudio_text-editor-line-number-font-color: #DCDCDC;
     --pte_primary-cursor-color: #ffffff;
     --pte_secondary-cursor-color: transparent;
     --pte_active-row: rgb(207, 124, 13);

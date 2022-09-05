@@ -38,7 +38,9 @@ public partial class TextEditorCursorDisplay : ComponentBase
         
         var offsetLineNumbers = mostDigitsInALineNumber * CharacterWidthInPixels;
         
-        return (baseWidth + offsetWidth + offsetLineNumbers)
+        var marginLeft = TextEditorBase.FileContentMarginLeftSeparateFromLineNumbers * CharacterWidthInPixels;
+        
+        return (baseWidth + offsetWidth + offsetLineNumbers + marginLeft)
             .ToString();
     }
 
