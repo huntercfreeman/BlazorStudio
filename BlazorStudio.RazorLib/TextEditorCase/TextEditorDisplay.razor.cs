@@ -184,10 +184,13 @@ public partial class TextEditorDisplay : FluxorComponent
 
         columnIndex.Value -= offsetTabsColumn;
         
+        var mostDigitsInALineNumber = localTextEditorState.LineEndingPositions.Length
+            .ToString().Length;
+        
+        columnIndex.Value -= mostDigitsInALineNumber;
+        
         if (columnIndex.Value > rowLength)
-        {
             columnIndex = new(rowLength);
-        }
 
         if (columnIndex.Value < 0)
             columnIndex.Value = 0;
