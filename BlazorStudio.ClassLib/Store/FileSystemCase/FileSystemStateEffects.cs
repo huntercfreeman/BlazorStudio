@@ -63,7 +63,8 @@ public class FileSystemStateEffects
                         NotificationKey.NewNotificationKey(), 
                         $"No changes to write out: {writeToFileSystemAction.AbsoluteFilePath.GetAbsoluteFilePathString()}",
                         _defaultErrorRenderer.GetType(),
-                        null)));
+                        null,
+                        TimeSpan.FromSeconds(3))));
                     
                     return;
                 }
@@ -97,7 +98,8 @@ public class FileSystemStateEffects
                 NotificationKey.NewNotificationKey(), 
                 $"Saved file: {writeToFileSystemAction.AbsoluteFilePath.GetAbsoluteFilePathString()}",
                 _defaultInformationRenderer.GetType(),
-                null)));
+                null,
+                TimeSpan.FromSeconds(3))));
         }
         finally
         {

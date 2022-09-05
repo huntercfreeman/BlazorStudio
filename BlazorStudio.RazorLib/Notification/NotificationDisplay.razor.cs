@@ -12,8 +12,31 @@ public partial class NotificationDisplay : ComponentBase
     [Parameter, EditorRequired]
     public NotificationRecord NotificationRecord { get; set; } = null!;
 
-    private void DismissOnClick()
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (NotificationRecord.AutomaticDisposalTimeSpan is not null)
+            {
+                Task.Run(async () =>
+                {
+                    await Task.Delay(NotificationRecord.AutomaticDisposalTimeSpan.Value);
+
+                    Dismiss();
+                });
+            }
+        }
+        
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void Dismiss()
     {
         Dispatcher.Dispatch(new DisposeNotificationAction(NotificationRecord));
+    }
+    
+    private void DismissOnClick()
+    {
+        Dismiss();
     }
 }
