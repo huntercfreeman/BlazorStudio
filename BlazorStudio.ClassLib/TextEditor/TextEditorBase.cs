@@ -107,8 +107,7 @@ public record TextEditorBase : IDisposable
             };   
         }).ToList();
 
-        if (!_lineEndingPositions.Any())
-            _lineEndingPositions.Add((_content.Count, LineEndingKind.EndOfFile));
+        _lineEndingPositions.Add((_content.Count, LineEndingKind.EndOfFile));
         
         AbsoluteFilePath = absoluteFilePath;
         _onSaveRequestedFuncAsync = onSaveRequestedFuncAsync;
