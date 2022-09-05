@@ -10,14 +10,20 @@ namespace BlazorStudio.ClassLib.Store.FileSystemCase;
 public class FileSystemStateEffects
 {
     private readonly IFileSystemProvider _fileSystemProvider;
+    private readonly IDefaultInformationRenderer _defaultInformationRenderer;
+    private readonly IDefaultErrorRenderer _defaultErrorRenderer;
 
     private readonly Dictionary<AbsoluteFilePathStringValue, (Task writeTask, string content)>
         _trackFileSystemWritesMap = new();
     private readonly SemaphoreSlim _trackFileSystemWritesMapSemaphoreSlim = new(1, 1);
 
-    public FileSystemStateEffects(IFileSystemProvider fileSystemProvider)
+    public FileSystemStateEffects(IFileSystemProvider fileSystemProvider,
+        IDefaultInformationRenderer defaultInformationRenderer,
+        IDefaultErrorRenderer defaultErrorRenderer)
     {
         _fileSystemProvider = fileSystemProvider;
+        _defaultInformationRenderer = defaultInformationRenderer;
+        _defaultErrorRenderer = defaultErrorRenderer;
     }    
 
     /// <summary>
@@ -52,9 +58,17 @@ public class FileSystemStateEffects
             if (_trackFileSystemWritesMap.TryGetValue(absoluteFilePathStringValue, out var previousWriteTask))
             {
                 if (previousWriteTask.content == writeToFileSystemAction.Content)
-                    await previousWriteTask.writeTask;
-                else
+                {
+                    dispatcher.Dispatch(new RegisterNotificationAction( new NotificationRecord(
+                        NotificationKey.NewNotificationKey(), 
+                        $"No changes to write out: {writeToFileSystemAction.AbsoluteFilePath.GetAbsoluteFilePathString()}",
+                        _defaultErrorRenderer.GetType(),
+                        null)));
+                    
                     return;
+                }
+                
+                await previousWriteTask.writeTask;
             }
 
             var writeTask = Task.Run(async () =>
@@ -79,11 +93,11 @@ public class FileSystemStateEffects
                     (writeTask, writeToFileSystemAction.Content));
             }
             
-            dispatcher.Dispatch(new NotificationRecord(
+            dispatcher.Dispatch(new RegisterNotificationAction( new NotificationRecord(
                 NotificationKey.NewNotificationKey(), 
                 $"Saved file: {writeToFileSystemAction.AbsoluteFilePath.GetAbsoluteFilePathString()}",
-                typeof(IDefaultInformationRenderer),
-                null));
+                _defaultInformationRenderer.GetType(),
+                null)));
         }
         finally
         {
