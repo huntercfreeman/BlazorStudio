@@ -184,10 +184,15 @@ public partial class TextEditorDisplay : FluxorComponent
 
         columnIndex.Value -= offsetTabsColumn;
         
+        var mostDigitsInALineNumber = localTextEditorState.LineEndingPositions.Length
+            .ToString().Length;
+        
+        columnIndex.Value -= mostDigitsInALineNumber;
+        
+        columnIndex.Value -= TextEditorBase.FileContentMarginLeftSeparateFromLineNumbers;
+        
         if (columnIndex.Value > rowLength)
-        {
             columnIndex = new(rowLength);
-        }
 
         if (columnIndex.Value < 0)
             columnIndex.Value = 0;
@@ -227,6 +232,48 @@ public partial class TextEditorDisplay : FluxorComponent
         _previousTextPartitionSequenceKey = SequenceKey.Empty();
     }
 
+    private string GetTextSpanDimensions(
+        TextCharacterSpan textSpan, 
+        TextEditorFontSize textEditorFontSize,
+        TextEditorBase localTextEditorState)
+    {
+        var mostDigitsInALineNumber = localTextEditorState.LineEndingPositions.Length
+            .ToString().Length;
+
+        var marginLeft = TextEditorBase.FileContentMarginLeftSeparateFromLineNumbers * textEditorFontSize.CharacterWidth;
+
+        var lineNumbersWidth = (mostDigitsInALineNumber) * textEditorFontSize.CharacterWidth;
+        
+        var heightInPixels = textEditorFontSize.RowHeight;
+        
+        var topInPixels = textSpan.RowIndex * textEditorFontSize.RowHeight;
+
+        return $"min-width: calc(100% - {lineNumbersWidth}px); height: {heightInPixels}px; left: {lineNumbersWidth + marginLeft}px; top: {topInPixels}px;";
+    }
+
+    private string GetLineNumberDimensions(
+        TextCharacterSpan textSpan,
+        TextEditorFontSize textEditorFontSize,
+        TextEditorBase localTextEditorState)
+    {
+        var mostDigitsInALineNumber = localTextEditorState.LineEndingPositions.Length
+            .ToString().Length;
+
+        var padding = TextEditorBase.FileContentMarginLeftSeparateFromLineNumbers * textEditorFontSize.CharacterWidth;
+        
+        var paddingLeft = padding * .25;
+        var paddingRight = padding * .75;
+
+        var width = (mostDigitsInALineNumber * textEditorFontSize.CharacterWidth) 
+                    + paddingRight;
+        
+        var heightInPixels = textEditorFontSize.RowHeight;
+        
+        var topInPixels = textSpan.RowIndex * textEditorFontSize.RowHeight;
+
+        return $"padding-left: {paddingLeft}px; padding-right: {paddingRight}px; width: {width}px; height: {heightInPixels}px; left: 0; top: {topInPixels}px;";
+    }
+    
     protected override void Dispose(bool disposing)
     {
         TextEditorOptionsStateWrap.StateChanged -= TextEditorOptionsStateWrapOnStateChanged;
@@ -234,3 +281,5 @@ public partial class TextEditorDisplay : FluxorComponent
         base.Dispose(disposing);
     }
 }
+
+

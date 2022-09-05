@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Commands;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.CommandCase.Focus;
+using BlazorStudio.ClassLib.Store.TextEditorCase;
 
 namespace BlazorStudio.ClassLib.Contexts;
 
@@ -44,6 +45,10 @@ public static class ContextFacts
             {
                 new KeyDownEventRecord("n", "KeyN", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Nuget Package Manager Display", "set-focus_nuget-package-manager-display", (_) => new FocusNugetPackageManagerDisplayAction())
+            },
+            {
+                new KeyDownEventRecord("s", "KeyS", true, false, false),
+                new CommandRecord(CommandKey.NewCommandKey(), "Save Active TextEditor", "save-active-text-editor", (_) => new RequestSaveTextEditorAction())
             },
         }.ToImmutableDictionary()));
     public static readonly ContextRecord SolutionExplorerContext = new ContextRecord(

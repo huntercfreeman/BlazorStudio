@@ -21,6 +21,11 @@ public record TextEditorBase : IDisposable
     /// TODO: Make this into a option setting the user can pick.
     /// </summary>
     public const int TabWidth = 4;
+    /// <summary>
+    /// TODO: Make this into a option setting the user can pick.
+    /// Without margin left the line numbers are touching the file's rendered content
+    /// </summary>
+    public const int FileContentMarginLeftSeparateFromLineNumbers = 2;
     
     /// <summary>
     /// Thank you to "A Crawford" who commented on my youtube video:
@@ -107,8 +112,7 @@ public record TextEditorBase : IDisposable
             };   
         }).ToList();
 
-        if (!_lineEndingPositions.Any())
-            _lineEndingPositions.Add((_content.Count, LineEndingKind.EndOfFile));
+        _lineEndingPositions.Add((_content.Count, LineEndingKind.EndOfFile));
         
         AbsoluteFilePath = absoluteFilePath;
         _onSaveRequestedFuncAsync = onSaveRequestedFuncAsync;
@@ -194,6 +198,7 @@ public record TextEditorBase : IDisposable
             {
                 Start = startOfTextSpanRowInclusive,
                 End = _lineEndingPositions[i].positionIndex,
+                RowIndex = i,
                 TextCharacters = _content
                     .Skip(startOfTextSpanRowInclusive)
                     .Take(endOfTextSpanRowExclusive - startOfTextSpanRowInclusive)
@@ -363,6 +368,17 @@ public record TextEditorBase : IDisposable
 
     private void PerformInsertions(TextEditorEditAction textEditorEditAction)
     {
+        if (textEditorEditAction.KeyboardEventArgs.CtrlKey || 
+            textEditorEditAction.KeyboardEventArgs.AltKey)
+        {
+            // This is here temporarily.
+            // I imagine CtrlKey / AltKey would be used by some to type special characters.
+            // I think the spanish accent marks are typed with alt for example.
+            //
+            // I am working on 'Ctrl + S' to save as of this comment though and am putting this here for now.
+            return;
+        }
+        
         EnsureUndoPoint(TextEditKind.Insertion);
         
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
@@ -862,6 +878,11 @@ public record TextEditorBase : IDisposable
         return rowIndex.Value > 0
             ? _lineEndingPositions[rowIndex.Value - 1]
             : (0, LineEndingKind.StartOfFile);
+    }
+    
+    public void ClearEditBlocks()
+    {
+        _editBlocks.Clear();
     }
     
     private void ReleaseUnmanagedResources()

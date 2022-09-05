@@ -6,7 +6,8 @@
 
         foreach (var notification in notificationStates.List)
         {
-            <NotificationDisplay NotificationRecord="notification" />
+            <NotificationDisplay @key="notification.NotificationKey" 
+                                 NotificationRecord="notification" />
         }
     }
 </div>

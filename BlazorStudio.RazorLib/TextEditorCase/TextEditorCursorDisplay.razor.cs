@@ -32,8 +32,15 @@ public partial class TextEditorCursorDisplay : ComponentBase
         // Tab keys for example can have a width > 1 character and must offset the cursor position accordingly.
         var tabsOnSameRowBeforeCursor =TextEditorBase.GetTabsCountOnSameRowBeforeCursor(new ImmutableTextCursor(TextCursor));
         var offsetWidth = tabsOnSameRowBeforeCursor * ((TextEditorBase.TabWidth - 1) * CharacterWidthInPixels);
+
+        var mostDigitsInALineNumber = TextEditorBase.LineEndingPositions.Length
+            .ToString().Length;
         
-        return (baseWidth + offsetWidth)
+        var offsetLineNumbers = mostDigitsInALineNumber * CharacterWidthInPixels;
+        
+        var marginLeft = TextEditorBase.FileContentMarginLeftSeparateFromLineNumbers * CharacterWidthInPixels;
+        
+        return (baseWidth + offsetWidth + offsetLineNumbers + marginLeft)
             .ToString();
     }
 

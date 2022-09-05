@@ -3,4 +3,5 @@
 public record NotificationRecord(NotificationKey NotificationKey,
     string Title,
     Type Type,
-    Dictionary<string, object?>? Parameters);
+    Dictionary<string, object?>? Parameters,
+    TimeSpan? AutomaticDisposalTimeSpan = null);
