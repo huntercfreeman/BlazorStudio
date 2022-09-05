@@ -45,6 +45,10 @@ public static class ContextFacts
                 new KeyDownEventRecord("n", "KeyN", false, false, true),
                 new CommandRecord(CommandKey.NewCommandKey(), "Focus -> Nuget Package Manager Display", "set-focus_nuget-package-manager-display", (_) => new FocusNugetPackageManagerDisplayAction())
             },
+            {
+                new KeyDownEventRecord("s", "KeyS", true, false, false),
+                new CommandRecord(CommandKey.NewCommandKey(), "Save Active TextEditor", "save-active-text-editor", (_) => new FocusNugetPackageManagerDisplayAction())
+            },
         }.ToImmutableDictionary()));
     public static readonly ContextRecord SolutionExplorerContext = new ContextRecord(
         ContextKey.NewContextKey(), 

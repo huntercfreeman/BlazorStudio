@@ -2,7 +2,7 @@
     --bstudio_primary-background-color: #1E1E1E;
     --bstudio_secondary-background-color: #2d2f34;
     --bstudio_tertiary-background-color: #071c57;
-    --bstudio_title-background-color: #1a5237;
+    --bstudio_title-background-color: #004542;
     --bstudio_header-footer-background-color: #292929;
     --bstudio_primary-font-color: #DCDCDC;
     --bstudio_secondary-font-color: #d1d2ca;
@@ -47,8 +47,8 @@
     --pte_hover-font-color: rgb(42, 122, 211);
     --pte_active-border-color: rgb(42, 122, 211);
     --pte_token-keyword: #569CD6;
-    --pte_token-type: #76C7B7;
-    --pte_token-method-declaration: #E0A5E0;
+    --pte_token-type: #6BBD77;
+    --pte_token-method-declaration: #DF9FDF;
     --pte_token-parameter-declaration: #A3D1E9;
     --pte_token-argument-declaration: #A3D1E9;
     --pte_token-trivia-comment: #848484;

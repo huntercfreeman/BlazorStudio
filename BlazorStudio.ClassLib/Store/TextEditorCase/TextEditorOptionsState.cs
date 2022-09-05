@@ -9,7 +9,7 @@ public record TextEditorOptionsState(DimensionUnit FontSize)
     public TextEditorOptionsState() : this(new DimensionUnit()
     {
         DimensionUnitKind = DimensionUnitKind.Pixels,
-        Value = 24
+        Value = 21
     })
     {
         if (OperatingSystem.IsWindows())
