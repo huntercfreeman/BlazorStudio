@@ -1,6 +1,8 @@
 using System.Collections.Concurrent;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Renderer;
+using BlazorStudio.ClassLib.Store.NotificationCase;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.FileSystemCase;
@@ -64,10 +66,24 @@ public class FileSystemStateEffects
                     false,
                     CancellationToken.None);
             });
+
+            if (previousWriteTask != default)
+            {
+                _trackFileSystemWritesMap[absoluteFilePathStringValue] = 
+                    (writeTask, writeToFileSystemAction.Content);
+            }
+            else
+            {
+                _trackFileSystemWritesMap.Add(
+                    absoluteFilePathStringValue, 
+                    (writeTask, writeToFileSystemAction.Content));
+            }
             
-            _trackFileSystemWritesMap.Add(
-                absoluteFilePathStringValue, 
-                (writeTask, writeToFileSystemAction.Content));
+            dispatcher.Dispatch(new NotificationRecord(
+                NotificationKey.NewNotificationKey(), 
+                $"Saved file: {writeToFileSystemAction.AbsoluteFilePath.GetAbsoluteFilePathString()}",
+                typeof(IDefaultInformationRenderer),
+                null));
         }
         finally
         {

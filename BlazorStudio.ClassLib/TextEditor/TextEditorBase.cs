@@ -363,6 +363,17 @@ public record TextEditorBase : IDisposable
 
     private void PerformInsertions(TextEditorEditAction textEditorEditAction)
     {
+        if (textEditorEditAction.KeyboardEventArgs.CtrlKey || 
+            textEditorEditAction.KeyboardEventArgs.AltKey)
+        {
+            // This is here temporarily.
+            // I imagine CtrlKey / AltKey would be used by some to type special characters.
+            // I think the spanish accent marks are typed with alt for example.
+            //
+            // I am working on 'Ctrl + S' to save as of this comment though and am putting this here for now.
+            return;
+        }
+        
         EnsureUndoPoint(TextEditKind.Insertion);
         
         foreach (var cursorTuple in textEditorEditAction.TextCursorTuples)
