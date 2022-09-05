@@ -864,6 +864,11 @@ public record TextEditorBase : IDisposable
             : (0, LineEndingKind.StartOfFile);
     }
     
+    public void ClearEditBlocks()
+    {
+        _editBlocks.Clear();
+    }
+    
     private void ReleaseUnmanagedResources()
     {
         if (_physicalFileWatcher is not null)
