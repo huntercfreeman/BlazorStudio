@@ -234,15 +234,38 @@ public partial class TextEditorDisplay : FluxorComponent
         base.Dispose(disposing);
     }
 
-    private string GetTextSpanDimensions(TextCharacterSpan textSpan, TextEditorFontSize textEditorFontSize)
+    private string GetTextSpanDimensions(
+        TextCharacterSpan textSpan, 
+        TextEditorFontSize textEditorFontSize,
+        TextEditorBase localTextEditorState)
     {
+        var mostDigitsInALineNumber = localTextEditorState.LineEndingPositions.Length
+            .ToString().Length;
+
+        var lineNumbersWidth = mostDigitsInALineNumber * textEditorFontSize.CharacterWidth;
+        
         var heightInPixels = textEditorFontSize.RowHeight;
         
         var topInPixels = textSpan.RowIndex * textEditorFontSize.RowHeight;
 
-        return $"height: {heightInPixels}px; top: {topInPixels}px;";
+        return $"min-width: calc(100% - {lineNumbersWidth}px); height: {heightInPixels}px; left: {lineNumbersWidth}px; top: {topInPixels}px;";
+    }
 
-        //width:0;height: @()px;left: 0; top: @()px;
+    private string GetLineNumberDimensions(
+        TextCharacterSpan textSpan,
+        TextEditorFontSize textEditorFontSize,
+        TextEditorBase localTextEditorState)
+    {
+        var mostDigitsInALineNumber = localTextEditorState.LineEndingPositions.Length
+            .ToString().Length;
+
+        var width = mostDigitsInALineNumber * textEditorFontSize.CharacterWidth;
+        
+        var heightInPixels = textEditorFontSize.RowHeight;
+        
+        var topInPixels = textSpan.RowIndex * textEditorFontSize.RowHeight;
+
+        return $"width: {width}px; height: {heightInPixels}px; left: 0; top: {topInPixels}px;";
     }
 }
 

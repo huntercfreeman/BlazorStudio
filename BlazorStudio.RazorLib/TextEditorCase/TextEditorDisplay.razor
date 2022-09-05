@@ -38,7 +38,11 @@
                                 Context="textSpan"
                                 @ref="_virtualize">
                         
-                        <div style="white-space: nowrap; position: absolute; @GetTextSpanDimensions(textSpan, _textEditorFontSize)">
+                        <div style="white-space: nowrap; position: absolute; @GetLineNumberDimensions(textSpan, _textEditorFontSize, localTextEditorState)">
+                            @textSpan.RowIndex
+                        </div>
+                        
+                        <div style="white-space: nowrap; position: absolute; @GetTextSpanDimensions(textSpan, _textEditorFontSize, localTextEditorState)">
                             @if (textSpan.TextCharacters.Any())
                             {
                                 var spanTextBuilder = new StringBuilder();
