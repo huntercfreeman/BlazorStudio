@@ -1,0 +1,37 @@
+public class MusicBandsTable : BlazorComponent
+{
+    # Inject
+    {
+        private IMusicBandsRepository MusicBandsRepository;
+    }
+    
+    
+        private List<MusicBand> _musicBands;
+                
+        # constructor for SomeOtherFile
+        {
+            _musicBands = new()
+            {
+                new MusicBand
+                {
+                    Name = "Krewella",
+                    Genre = "Electronic",
+                    Songs = ""
+                }
+            };
+        }
+        public IEnumerable<T> Items;
+        public RenderFragment<T> ItemRenderFragment;
+    }
+    
+    # .razor
+    {
+        <VirtualizeCoordinateSystem>
+        </VirtualizeCoordinateSystem>
+    }
+    
+    # Example Usage of Component
+    {
+        See the text file: 'SomeOtherFile.txt'
+    }
+}
