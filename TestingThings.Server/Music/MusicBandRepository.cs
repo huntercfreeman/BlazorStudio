@@ -76,33 +76,18 @@ public class MusicBandRepository : IMusicBandRepository
                 {
                     new MusicSong("Avril Lavigne - Complicated (Akidaraz Bootleg)", "EDM", "https://youtu.be/wxg36yym3H4")
                 }.ToImmutableArray()));
-        
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Avril Lavigne",
-            Genre = "Pop",
-            Songs = new[] 
-            {
-                new MusicSong
+
+        _musicBands.Add(
+            new MusicBand(
+                "Avril Lavigne",
+                "Pop",
+                MusicBandKey.NewMusicBandKey(),
+                new[]
                 {
-                    SongName = "When You're Gone";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/0G3_kG5FFfQ";
-                },
-                new MusicSong
-                {
-                    SongName = "I'm With You";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/dGR65RWwzg8";
-                },
-                new MusicSong
-                {
-                    SongName = "Sk8er Boi";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/TIy3n2b7V9k";
-                }
-            }.ToImmutableArray()
-        });
+                    new MusicSong("When You're Gone", "Pop", "https://youtu.be/0G3_kG5FFfQ"),
+                    new MusicSong("I'm With You", "Pop", "https://youtu.be/dGR65RWwzg8"),
+                    new MusicSong("Sk8er Boi", "Pop", "https://youtu.be/TIy3n2b7V9k")
+                }.ToImmutableArray()));
         
         _musicBands.Add(new MusicBand
         {
@@ -110,24 +95,9 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Alternative/Indie",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Bulimic";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/IY7dgz1dC_E";
-                },
-                new MusicSong
-                {
-                    SongName = "Noise and Kisses";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/p4_60Zj7uaQ";
-                },
-                new MusicSong
-                {
-                    SongName = "On My Own";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/jdPeR3jr6ek";
-                }
+                new MusicSong("Bulimic", "Alternative/Indie", "https://youtu.be/IY7dgz1dC_E"),
+                new MusicSong("Noise and Kisses", "Alternative/Indie", "https://youtu.be/p4_60Zj7uaQ"),
+                new MusicSong("On My Own", "Alternative/Indie", "https://youtu.be/jdPeR3jr6ek")
             }.ToImmutableArray()
         });
         
@@ -137,24 +107,9 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Alternative/Indie",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "How To Disappear Completely";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/nZq_jeYsbTs";
-                },
-                new MusicSong
-                {
-                    SongName = "No Surprises";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/u5CVsCnxyXg";
-                },
-                new MusicSong
-                {
-                    SongName = "Weird Fishes/Arpeggi";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/pbEGdDOhIXg";
-                }
+                new MusicSong("How To Disappear Completely", "Alternative/Indie", "https://youtu.be/nZq_jeYsbTs"),
+                new MusicSong("No Surprises", "Alternative/Indie", "https://youtu.be/u5CVsCnxyXg"),
+                new MusicSong("Weird Fishes/Arpeggi", "Alternative/Indie", "https://youtu.be/pbEGdDOhIXg")
             }.ToImmutableArray()
         });
         
@@ -164,24 +119,9 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Alternative/Indie",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Brick By Boring Brick";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/A63VwWz1ij0";
-                },
-                new MusicSong
-                {
-                    SongName = "The Only Exception";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/-J7J_IWUhls";
-                },
-                new MusicSong
-                {
-                    SongName = "Emergency";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/mgJ8BZi3vTA";
-                }
+                new MusicSong("Brick By Boring Brick", "Alternative/Indie", "https://youtu.be/A63VwWz1ij0"),
+                new MusicSong("The Only Exception", "Alternative/Indie", "https://youtu.be/-J7J_IWUhls"),
+                new MusicSong("Emergency", "Alternative/Indie", "https://youtu.be/mgJ8BZi3vTA")
             }.ToImmutableArray()
         });
         
@@ -191,18 +131,8 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Alternative Rock",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Desert Song";
-                    Genre = "Alternative Rock";
-                    UrlToSong = "https://youtu.be/NxQVElXpTVg";
-                },
-                new MusicSong
-                {
-                    SongName = "Early Sunsets Over Monroeville";
-                    Genre = "Alternative Rock";
-                    UrlToSong = "https://youtu.be/fOLfblOB2e8";
-                }
+                new MusicSong("Desert Song", "Alternative Rock", "https://youtu.be/NxQVElXpTVg"),
+                new MusicSong("Early Sunsets Over Monroeville", "Alternative Rock", "https://youtu.be/fOLfblOB2e8")
             }.ToImmutableArray()
         });
         
@@ -212,18 +142,8 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Alternative/Indie",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Pieces";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/By7ctqcWxyM";
-                },
-                new MusicSong
-                {
-                    SongName = "With Me";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/g8z-qP34-1Y";
-                }
+                new MusicSong("Pieces", "Alternative/Indie", "https://youtu.be/By7ctqcWxyM"),
+                new MusicSong("With Me", "Alternative/Indie", "https://youtu.be/g8z-qP34-1Y")
             }.ToImmutableArray()
         });
         
@@ -233,24 +153,9 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Pop Punk",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Not Now";
-                    Genre = "Pop Punk";
-                    UrlToSong = "https://youtu.be/HvcOuExmeJg";
-                },
-                new MusicSong
-                {
-                    SongName = "Down";
-                    Genre = "Pop Punk";
-                    UrlToSong = "https://youtu.be/XrTZT49u0kM";
-                },
-                new MusicSong
-                {
-                    SongName = "Adam's Song";
-                    Genre = "Pop Punk";
-                    UrlToSong = "https://youtu.be/2MRdtXWcgIw";
-                }
+                new MusicSong("Not Now", "Pop Punk", "https://youtu.be/HvcOuExmeJg"),
+                new MusicSong("Down", "Pop Punk", "https://youtu.be/XrTZT49u0kM"),
+                new MusicSong("Adam's Song", "Pop Punk", "https://youtu.be/2MRdtXWcgIw")
             }.ToImmutableArray()
         });
         
@@ -260,18 +165,8 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Alternative Rock",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "In The End";
-                    Genre = "Alternative Rock";
-                    UrlToSong = "https://youtu.be/eVTXPUF4Oz4";
-                },
-                new MusicSong
-                {
-                    SongName = "Waiting For The End";
-                    Genre = "Alternative Rock";
-                    UrlToSong = "https://youtu.be/5qF_qbaWt3Q";
-                }
+                new MusicSong("In The End", "Alternative Rock", "https://youtu.be/eVTXPUF4Oz4"),
+                new MusicSong("Waiting For The End", "Alternative Rock", "https://youtu.be/5qF_qbaWt3Q")
             }.ToImmutableArray()
         });
         
@@ -281,18 +176,8 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "R3hab & NERVO & Ummet Ozcan - Revolution";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/TWwIztjs29Y";
-                },
-                new MusicSong
-                {
-                    SongName = "We're All No One ft. Afrojack, Steve Aoki";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/pyeClGsiT4U";
-                }
+                new MusicSong("R3hab & NERVO & Ummet Ozcan - Revolution", "EDM", "https://youtu.be/TWwIztjs29Y"),
+                new MusicSong("We're All No One ft. Afrojack, Steve Aoki", "EDM", "https://youtu.be/pyeClGsiT4U")
             }.ToImmutableArray()
         });
         
@@ -302,18 +187,8 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Kept";
-                    Genre = "EDM";
-                    UrlToSong = "https://crystalcastles.bandcamp.com/track/kept";
-                },
-                new MusicSong
-                {
-                    SongName = "Untrust Us";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/tZu3EUVJ8-4";
-                }
+                new MusicSong("Kept", "EDM", "https://crystalcastles.bandcamp.com/track/kept"),
+                new MusicSong("Untrust Us", "EDM", "https://youtu.be/tZu3EUVJ8-4")
             }.ToImmutableArray()
         });
         
@@ -323,12 +198,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Pop",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Pieces Of Me";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/WJCsyLUCSXI";
-                }
+                new MusicSong("Pieces Of Me", "Pop", "https://youtu.be/WJCsyLUCSXI")
             }.ToImmutableArray()
         });
         
@@ -338,12 +208,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Pop",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "A Thousand Miles";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/Cwkej79U3ek";
-                }
+                new MusicSong("A Thousand Miles", "Pop", "https://youtu.be/Cwkej79U3ek")
             }.ToImmutableArray()
         });
         
@@ -353,12 +218,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Pop",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Run Away With Me";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/TeccAtqd5K8";
-                }
+                new MusicSong("Run Away With Me", "Pop", "https://youtu.be/TeccAtqd5K8")
             }.ToImmutableArray()
         });
         
@@ -368,12 +228,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Pop",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "I'm Like A Bird";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/roPQ_M3yJTA";
-                }
+                new MusicSong("I'm Like A Bird", "Pop", "https://youtu.be/roPQ_M3yJTA")
             }.ToImmutableArray()
         });
         
@@ -383,12 +238,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Pop",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Mr. Jones";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/-oqAU5VxFWs";
-                }
+                new MusicSong("Mr. Jones", "Pop", "https://youtu.be/-oqAU5VxFWs")
             }.ToImmutableArray()
         });
         
@@ -398,12 +248,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Alternative/Indie",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Could Have Been Me";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/ARhk9K_mviE";
-                }
+                new MusicSong("Could Have Been Me", "Alternative/Indie", "https://youtu.be/ARhk9K_mviE")
             }.ToImmutableArray()
         });
         
@@ -413,18 +258,8 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Alternative/Indie",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Our Own House";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/Iets6iLm3QY";
-                },
-                new MusicSong
-                {
-                    SongName = "Reflections";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/fBrOwiHO-5w";
-                }
+                new MusicSong("Our Own House", "Alternative/Indie", "https://youtu.be/Iets6iLm3QY"),
+                new MusicSong("Reflections", "Alternative/Indie", "https://youtu.be/fBrOwiHO-5w")
             }.ToImmutableArray()
         });
         
@@ -434,12 +269,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Pop",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "If I Lose Myself";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/TGx0rApSk6w";
-                }
+                new MusicSong("If I Lose Myself", "Pop", "https://youtu.be/TGx0rApSk6w")
             }.ToImmutableArray()
         });
         
@@ -449,30 +279,10 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "Alternative/Indie",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Doing The Right Thing";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/bU5F-DvGLkA";
-                },
-                new MusicSong
-                {
-                    SongName = "Run";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/psiILfa-G1c";
-                },
-                new MusicSong
-                {
-                    SongName = "Youth";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/VYC29lbq8SY";
-                },
-                new MusicSong
-                {
-                    SongName = "Switzerland";
-                    Genre = "Alternative/Indie";
-                    UrlToSong = "https://youtu.be/BDm0qtQWA_o";
-                }
+                new MusicSong("Doing The Right Thing", "Alternative/Indie", "https://youtu.be/bU5F-DvGLkA"),
+                new MusicSong("Run", "Alternative/Indie", "https://youtu.be/psiILfa-G1c"),
+                new MusicSong("Youth", "Alternative/Indie", "https://youtu.be/VYC29lbq8SY"),
+                new MusicSong("Switzerland", "Alternative/Indie", "https://youtu.be/BDm0qtQWA_o")
             }.ToImmutableArray()
         });
         
@@ -482,12 +292,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Driving Blind featuring Bright Lights";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/Ghjb_wU9-GY";
-                }
+                new MusicSong("Driving Blind featuring Bright Lights", "EDM", "https://youtu.be/Ghjb_wU9-GY")
             }.ToImmutableArray()
         });
         
@@ -497,12 +302,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "feat. Matthew Koma - Dare You";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/clRjbYa4UWQ";
-                }
+                new MusicSong("feat. Matthew Koma - Dare You", "EDM", "https://youtu.be/clRjbYa4UWQ")
             }.ToImmutableArray()
         });
         
@@ -512,12 +312,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Together";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/iSn5bpEfuO8";
-                }
+                new MusicSong("Together", "EDM", "https://youtu.be/iSn5bpEfuO8")
             }.ToImmutableArray()
         });
         
@@ -527,12 +322,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Invincible";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/Yb5j4GheNTk";
-                }
+                new MusicSong("Invincible", "EDM", "https://youtu.be/Yb5j4GheNTk")
             }.ToImmutableArray()
         });
         
@@ -542,12 +332,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Beautiful Now ft. Jon Bellion";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/n1a7o44WxNo";
-                }
+                new MusicSong("Beautiful Now ft. Jon Bellion", "EDM", "https://youtu.be/n1a7o44WxNo")
             }.ToImmutableArray()
         });
         
@@ -557,12 +342,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Ten Feet Tall ft. Wrabel";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/bltr_Dsk5EY";
-                }
+                new MusicSong("Ten Feet Tall ft. Wrabel", "EDM", "https://youtu.be/bltr_Dsk5EY")
             }.ToImmutableArray()
         });
         
@@ -572,12 +352,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Listen To Your Heart";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/wZEtCpIzU3E";
-                }
+                new MusicSong("Listen To Your Heart", "EDM", "https://youtu.be/wZEtCpIzU3E")
             }.ToImmutableArray()
         });
         
@@ -587,12 +362,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Canon In D (Jatimatic Hardstyle Bootleg)";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/KBMO_4Nj4HQ";
-                }
+                new MusicSong("Canon In D (Jatimatic Hardstyle Bootleg)", "EDM", "https://youtu.be/KBMO_4Nj4HQ")
             }.ToImmutableArray()
         });
         
@@ -602,12 +372,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Somebody Like Me (Mark With a K RMX)";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/b6NCaD9LjrI";
-                }
+                new MusicSong("Somebody Like Me (Mark With a K RMX)", "EDM", "https://youtu.be/b6NCaD9LjrI")
             }.ToImmutableArray()
         });
         
@@ -617,12 +382,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "Ievan Polkka (Theo Gobensen Hardstyle Remix)";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/f23SOgDxx6o";
-                }
+                new MusicSong("Ievan Polkka (Theo Gobensen Hardstyle Remix)", "EDM", "https://youtu.be/f23SOgDxx6o")
             }.ToImmutableArray()
         });
         
@@ -632,24 +392,9 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "DotA";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/qTsaS1Tm-Ic";
-                },
-                new MusicSong
-                {
-                    SongName = "All I Ever Wanted";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/P3CxhBIrBho";
-                },
-                new MusicSong
-                {
-                    SongName = "Now You're Gone";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/IgFwiCApH7E";
-                }
+                new MusicSong("DotA", "EDM", "https://youtu.be/qTsaS1Tm-Ic"),
+                new MusicSong("All I Ever Wanted", "EDM", "https://youtu.be/P3CxhBIrBho"),
+                new MusicSong("Now You're Gone", "EDM", "https://youtu.be/IgFwiCApH7E")
             }.ToImmutableArray()
         });
         
@@ -659,12 +404,7 @@ public class MusicBandRepository : IMusicBandRepository
             Genre = "EDM",
             Songs = new[] 
             {
-                new MusicSong
-                {
-                    SongName = "feat. Jack Miz - Let Go Tonight";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/yDJ5DjmSbQY";
-                }
+                new MusicSong("feat. Jack Miz - Let Go Tonight", "EDM", "https://youtu.be/yDJ5DjmSbQY")
             }.ToImmutableArray()
         });
     }
