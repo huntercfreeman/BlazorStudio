@@ -43,15 +43,11 @@ window.virtualizeCoordinateSystem = {
 
                 let parentElement = currentEntry.target.parentElement;
 
-                let scrollPosition = {
-                    scrollLeft: parentElement.scrollLeft,
-                    scrollTop: parentElement.scrollTop
-                };
-
                 virtualizeCoordinateSystemDotNetObjectReference
                     .invokeMethodAsync(
-                        "OnIntersectionObserverThresholdChanged", 
-                        scrollPosition);
+                        "OnIntersectionObserverThresholdChanged",
+                        parentElement.scrollLeft,
+                        parentElement.scrollTop);
                 return;
             }
         }
