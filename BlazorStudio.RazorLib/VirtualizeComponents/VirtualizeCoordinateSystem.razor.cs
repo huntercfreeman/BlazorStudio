@@ -20,7 +20,10 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
 
     private VirtualizeCoordinateSystemResult<T>? _virtualizeCoordinateSystemResult;
 
-    private VirtualizeCoordinateSystemScrollPosition _mostRecentVirtualizeCoordinateSystemScrollPosition = null!;
+    private VirtualizeCoordinateSystemScrollPosition _mostRecentVirtualizeCoordinateSystemScrollPosition  = new(
+        0, 
+        0, 
+        CancellationToken.None);
 
     private VirtualizeCoordinateSystemBoundary _virtualizeCoordinateSystemBoundaryLeft = null!;
     private VirtualizeCoordinateSystemBoundary _virtualizeCoordinateSystemBoundaryBottom = null!;
@@ -39,11 +42,6 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
                 _virtualizeCoordinateSystemBoundaryRight.VirtualizeCoordinateSystemBoundaryElementReference,
                 DotNetObjectReference.Create(this),
                 _intersectionObserverMapKey);
-
-            _mostRecentVirtualizeCoordinateSystemScrollPosition = new(
-                0, 
-                0, 
-                _cancellationTokenSource.Token);
             
             ReloadItems();
         }
