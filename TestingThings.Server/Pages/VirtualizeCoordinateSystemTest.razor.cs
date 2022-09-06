@@ -13,8 +13,10 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
     private int _repeatTheDataCount;
     private DateTime _onInitializedDateTime;
     private DateTime _onAfterRenderFirstRenderDateTime;
-    private int _totalWidth = 500;
-    private int _totalHeight = 500;
+    private int _totalWidth = 5000;
+    private int _totalHeight = 5000;
+    private int _scrollViewportWidth = 800;
+    private int _scrollViewportHeight = 600;
     private VirtualizeCoordinateSystemScrollPosition? _virtualizeCoordinateSystemScrollPosition;
     private VirtualizeCoordinateSystemBoundaryDimensions _leftBoundaryDimension = new();
     private VirtualizeCoordinateSystemBoundaryDimensions _bottomBoundaryDimensions = new();
@@ -68,27 +70,38 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
         _virtualizeCoordinateSystemScrollPosition = virtualizeCoordinateSystemScrollPosition;
 
         InvokeAsync(StateHasChanged);
-        
-        var totalWidth = 5000;
-        var totalHeight = 5000;
-        
+
+        _totalWidth = 5000;
+        _totalHeight = 5000;
+
         var contentWidth = 0;
         var contentHeight = 0;
         var contentLeftOffset = virtualizeCoordinateSystemScrollPosition.ScrollLeft;
         var contentTopOffset = virtualizeCoordinateSystemScrollPosition.ScrollTop;
 
+        // Validate minimum dimensions
+        {
+            contentWidth = contentWidth > _scrollViewportWidth
+                ? contentWidth
+                : _scrollViewportWidth;
+            
+            contentHeight = contentHeight > _scrollViewportHeight
+                ? contentHeight
+                : _scrollViewportHeight;
+        }
+        
         _leftBoundaryDimension = new VirtualizeCoordinateSystemBoundaryDimensions
         {
             Width = contentLeftOffset,
-            Height = totalHeight,
+            Height = _totalHeight,
             Left = 0,
             Top = 0
         };
         
         _bottomBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
         {
-            Width = totalWidth,
-            Height = totalHeight - (contentTopOffset + contentHeight),
+            Width = _totalWidth,
+            Height = _totalHeight - (contentTopOffset + contentHeight),
             Left = 0,
             Top = contentTopOffset + contentHeight 
         };
@@ -103,11 +116,11 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
         
         _rightBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
         {
-            Width = totalWidth - (contentLeftOffset + contentWidth),
-            Height = totalHeight,
+            Width = _totalWidth - (contentLeftOffset + contentWidth),
+            Height = _totalHeight,
             Left = contentLeftOffset + contentWidth,
             Top = 0
-        } ;
+        };
 
         _itemsToRender = Array
             .Empty<VirtualizeCoordinateSystemEntry<MusicBand>>()
