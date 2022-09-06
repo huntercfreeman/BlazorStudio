@@ -13,8 +13,16 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
     private int _repeatTheDataCount;
     private DateTime _onInitializedDateTime;
     private DateTime _onAfterRenderFirstRenderDateTime;
-    private int _totalWidth = 500;
-    private int _totalHeight = 500;
+    private int _totalWidth = 5000;
+    private int _totalHeight = 5000;
+    private int _scrollViewportWidth = 800;
+    private int _scrollViewportHeight = 600;
+    private VirtualizeCoordinateSystemScrollPosition? _virtualizeCoordinateSystemScrollPosition;
+    private VirtualizeCoordinateSystemBoundaryDimensions _leftBoundaryDimension = new();
+    private VirtualizeCoordinateSystemBoundaryDimensions _bottomBoundaryDimensions = new();
+    private VirtualizeCoordinateSystemBoundaryDimensions _topBoundaryDimensions = new();
+    private VirtualizeCoordinateSystemBoundaryDimensions _rightBoundaryDimensions = new();
+    private ImmutableArray<VirtualizeCoordinateSystemEntry<MusicBand>> _itemsToRender = ImmutableArray<VirtualizeCoordinateSystemEntry<MusicBand>>.Empty;
 
     private TimeSpan TimeToFirstRender => _onAfterRenderFirstRenderDateTime.Subtract(_onInitializedDateTime);
     
@@ -59,45 +67,72 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
     private VirtualizeCoordinateSystemResult<MusicBand> ItemsProviderFunc(
         VirtualizeCoordinateSystemScrollPosition virtualizeCoordinateSystemScrollPosition)
     {
-        var totalWidth = 500;
-        var totalHeight = 500;
-        
-        var contentWidth = 100;
-        var contentHeight = 100;
-        var contentLeftOffset = 100;
-        var contentTopOffset = 100;
-        
-        return new()
+        _virtualizeCoordinateSystemScrollPosition = virtualizeCoordinateSystemScrollPosition;
+
+        InvokeAsync(StateHasChanged);
+
+        _totalWidth = 5000;
+        _totalHeight = 5000;
+
+        var contentWidth = 0;
+        var contentHeight = 0;
+        var contentLeftOffset = virtualizeCoordinateSystemScrollPosition.ScrollLeft;
+        var contentTopOffset = virtualizeCoordinateSystemScrollPosition.ScrollTop;
+
+        // Validate minimum dimensions
         {
-            ItemsToRender = Array.Empty<VirtualizeCoordinateSystemEntry<MusicBand>>().ToImmutableArray(),
-            LeftBoundaryDimensions = new()
-            {
-                Width = contentLeftOffset,
-                Height = totalHeight,
-                Left = 0,
-                Top = 0
-            },
-            BottomBoundaryDimensions = 
-            {
-                Width = totalWidth,
-                Height = totalHeight - (contentTopOffset + contentHeight),
-                Left = 0,
-                Top = contentTopOffset + contentHeight 
-            },
-            TopBoundaryDimensions = 
-            {
-                Width = contentWidth,
-                Height = virtualizeCoordinateSystemScrollPosition.ScrollTop,
-                Left = 0,
-                Top = 0
-            },
-            RightBoundaryDimensions = 
-            {
-                Width = totalWidth - (contentLeftOffset + contentWidth),
-                Height = totalHeight,
-                Left = contentLeftOffset + contentWidth,
-                Top = 0
-            } 
+            contentWidth = contentWidth > _scrollViewportWidth
+                ? contentWidth
+                : _scrollViewportWidth;
+            
+            contentHeight = contentHeight > _scrollViewportHeight
+                ? contentHeight
+                : _scrollViewportHeight;
+        }
+        
+        _leftBoundaryDimension = new VirtualizeCoordinateSystemBoundaryDimensions
+        {
+            Width = contentLeftOffset,
+            Height = _totalHeight,
+            Left = 0,
+            Top = 0
+        };
+        
+        _bottomBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
+        {
+            Width = _totalWidth,
+            Height = _totalHeight - (contentTopOffset + contentHeight),
+            Left = 0,
+            Top = contentTopOffset + contentHeight 
+        };
+        
+        _topBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
+        {
+            Width = contentWidth,
+            Height = virtualizeCoordinateSystemScrollPosition.ScrollTop,
+            Left = 0,
+            Top = 0
+        };
+        
+        _rightBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
+        {
+            Width = _totalWidth - (contentLeftOffset + contentWidth),
+            Height = _totalHeight,
+            Left = contentLeftOffset + contentWidth,
+            Top = 0
+        };
+
+        _itemsToRender = Array
+            .Empty<VirtualizeCoordinateSystemEntry<MusicBand>>()
+            .ToImmutableArray();
+        
+        return new VirtualizeCoordinateSystemResult<MusicBand>()
+        {
+            ItemsToRender = _itemsToRender, 
+            LeftBoundaryDimensions = _leftBoundaryDimension,
+            BottomBoundaryDimensions = _bottomBoundaryDimensions,
+            TopBoundaryDimensions = _topBoundaryDimensions,
+            RightBoundaryDimensions = _rightBoundaryDimensions 
         };
     }
 }

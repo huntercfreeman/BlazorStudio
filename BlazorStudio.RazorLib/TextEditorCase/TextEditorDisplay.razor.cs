@@ -11,6 +11,7 @@ using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.CustomEvents;
 using BlazorStudio.RazorLib.CustomJavaScriptDtos;
 using BlazorStudio.RazorLib.ShouldRender;
+using BlazorStudio.RazorLib.VirtualizeComponents;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -45,10 +46,12 @@ public partial class TextEditorDisplay : FluxorComponent
     private Virtualize<TextCharacterSpan>? _virtualize;
     private RelativeCoordinates? _mostRecentRelativeCoordinates;
     private int _renderCount;
-    private bool _shouldMeasureFontSize = true;
+    private bool _shouldMeasureDimensions = true;
     private TextEditorFontSize? _textEditorFontSize;
     private int _fontSizeMeasurementMultiplier = 6; 
     private string _fontSizeMeasurementTestData = "abcdefghijklmnopqrstuvwxyz0123456789";
+    private HtmlElementMeasuredDimensions _textEditorElementMeasuredDimensions;
+    private VirtualizeCoordinateSystem<TextCharacterSpan>? _virtualizeCoordinateSystem;
 
     private string GetTextEditorElementId => $"bstudio_{_textEditorGuid}";
     private string GetMeasureFontSizeElementId => $"{GetTextEditorElementId}-measure-font-size";
@@ -69,29 +72,33 @@ public partial class TextEditorDisplay : FluxorComponent
 
     private void TextEditorOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        _shouldMeasureFontSize = true;
+        _shouldMeasureDimensions = true;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (_previousTextEditorKey != TextEditorStatesSelection.Value.TextEditorKey &&
-            _virtualize is not null)
+            _virtualizeCoordinateSystem is not null)
         {
-            await _virtualize.RefreshDataAsync();
+            _virtualizeCoordinateSystem.ReloadItems();
 
             _previousTextEditorKey = TextEditorStatesSelection.Value.TextEditorKey;
 
             await InvokeAsync(StateHasChanged);
         }
 
-        if (_shouldMeasureFontSize)
+        if (_shouldMeasureDimensions)
         {
             _textEditorFontSize = await JsRuntime.InvokeAsync<TextEditorFontSize>(
                 "blazorStudio.measureFontSizeByElementId", 
                 GetMeasureFontSizeElementId,
                 _fontSizeMeasurementTestData.Length * _fontSizeMeasurementMultiplier);
+            
+            _textEditorElementMeasuredDimensions = await JsRuntime.InvokeAsync<HtmlElementMeasuredDimensions>(
+                "blazorStudio.measureDimensionsByElementId", 
+                GetTextEditorElementId);
 
-            _shouldMeasureFontSize = false;
+            _shouldMeasureDimensions = false;
             
             _previousTextPartitionSequenceKey = SequenceKey.Empty();
 
@@ -131,8 +138,8 @@ public partial class TextEditorDisplay : FluxorComponent
                 keyboardEventArgs,
                 CancellationToken.None));
 
-            if (_virtualize is not null)
-                _virtualize.RefreshDataAsync();
+            if (_virtualizeCoordinateSystem is not null)
+                _virtualizeCoordinateSystem.ReloadItems();
 
             StateHasChanged();
         }
@@ -220,6 +227,100 @@ public partial class TextEditorDisplay : FluxorComponent
 
         return new ItemsProviderResult<TextCharacterSpan>(_textPartition.TextSpanRows,
             localTextEditorState.LineEndingPositions.Length);
+    }
+    
+    private VirtualizeCoordinateSystemResult<TextCharacterSpan> ItemsProviderFunc(VirtualizeCoordinateSystemScrollPosition scrollPosition)
+    {
+        var localTextEditorState = TextEditorStatesSelection.Value;
+        var localTextEditorFontSize = _textEditorFontSize;
+
+        if (localTextEditorFontSize is null)
+            throw new ApplicationException($"{nameof(localTextEditorFontSize)} was null.");
+
+        var startingIndex = (int)(scrollPosition.ScrollTop / localTextEditorFontSize.RowHeight);
+        
+        var count = (int)(Math.Ceiling(_textEditorElementMeasuredDimensions.Height / localTextEditorFontSize.RowHeight));
+        
+        var numTextCharacterSpans = Math.Min(
+            count,
+            localTextEditorState.LineEndingPositions.Length - startingIndex);
+
+        _textPartition = localTextEditorState.GetTextPartition(new RectangularCoordinates(
+            TopLeftCorner: (new(startingIndex), new(0)),
+            BottomRightCorner: (new(startingIndex + numTextCharacterSpans), new(10))));
+
+        var totalHeight = localTextEditorState.LineEndingPositions.Length * localTextEditorFontSize.RowHeight;
+        var totalWidth = 750d;
+
+        var contentWidth = totalWidth;
+        var contentHeight = _textPartition.TextSpanRows.Count * localTextEditorFontSize.RowHeight;
+        var contentLeftOffset = 0;
+        var contentTopOffset = startingIndex * localTextEditorFontSize.RowHeight;
+
+        // Validate minimum dimensions
+        {
+            contentWidth = contentWidth > _textEditorElementMeasuredDimensions.Width
+                ? contentWidth
+                : _textEditorElementMeasuredDimensions.Width;
+            
+            contentHeight = contentHeight > _textEditorElementMeasuredDimensions.Height
+                ? contentHeight
+                : _textEditorElementMeasuredDimensions.Height;
+        }
+        
+        var leftBoundaryDimension = new VirtualizeCoordinateSystemBoundaryDimensions
+        {
+            Width = contentLeftOffset,
+            Height = totalHeight,
+            Left = 0,
+            Top = 0
+        };
+        
+        var bottomBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
+        {
+            Width = totalWidth,
+            Height = totalHeight - (contentTopOffset + contentHeight),
+            Left = 0,
+            Top = contentTopOffset + contentHeight 
+        };
+        
+        var topBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
+        {
+            Width = contentWidth,
+            Height = scrollPosition.ScrollTop,
+            Left = 0,
+            Top = 0
+        };
+        
+        var rightBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
+        {
+            Width = totalWidth - (contentLeftOffset + contentWidth),
+            Height = totalHeight,
+            Left = contentLeftOffset + contentWidth,
+            Top = 0
+        };
+
+        var itemsToRender = _textPartition.TextSpanRows
+            .Select((span, index) =>
+                new VirtualizeCoordinateSystemEntry<TextCharacterSpan>()
+                {
+                    Width = 750d,
+                    Height = localTextEditorFontSize.RowHeight,
+                    Left = 0,
+                    Top = localTextEditorFontSize.RowHeight * index + startingIndex,
+                    Index = index + startingIndex,
+                    Item = span
+                })
+            .ToImmutableArray();
+        
+        return new VirtualizeCoordinateSystemResult<TextCharacterSpan>()
+        {
+            ItemsToRender = itemsToRender, 
+            LeftBoundaryDimensions = leftBoundaryDimension,
+            BottomBoundaryDimensions = bottomBoundaryDimensions,
+            TopBoundaryDimensions = topBoundaryDimensions,
+            RightBoundaryDimensions = rightBoundaryDimensions 
+        };
     }
 
     private async Task ApplyRoslynSyntaxHighlightingAsyncOnClick()

@@ -186,6 +186,14 @@
             RowHeight: heightOfARow,
             CharacterWidth: widthOfACharacter
         };
+    },
+    measureDimensionsByElementId: function (elementId) {
+        let element = document.getElementById(elementId);
+
+        return  {
+            Width: element.offsetWidth,
+            Height: element.offsetHeight
+        };
     }
 };
 

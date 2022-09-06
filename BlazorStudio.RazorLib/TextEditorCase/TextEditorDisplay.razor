@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using BlazorStudio.ClassLib.CustomEvents
 @using BlazorStudio.ClassLib.Html
+@using BlazorStudio.RazorLib.VirtualizeComponents
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -33,24 +34,23 @@
                 @if (_textEditorFontSize is not null) 
                 {
                     var localTextEditorState = TextEditorStatesSelection.Value;
-            
-                    <Virtualize ItemsProvider="LoadTextCharacterSpans"
-                                ItemSize="(float)_textEditorFontSize.RowHeight"
-                                Context="textSpan"
-                                @ref="_virtualize">
-                        
-                        <div class="bstudio_text-editor-display-gutter" style="@GetLineNumberDimensions(textSpan, _textEditorFontSize, localTextEditorState)">
-                            @textSpan.RowIndex
+                    
+                    <VirtualizeCoordinateSystem ItemsProviderFunc="ItemsProviderFunc"
+                                                Context="textSpan"
+                                                @ref="_virtualizeCoordinateSystem">
+
+                        <div class="bstudio_text-editor-display-gutter" style="@GetLineNumberDimensions(textSpan.Item, _textEditorFontSize, localTextEditorState)">
+                            @textSpan.Index
                         </div> 
                         
-                        <div style="white-space: nowrap; position: absolute; @GetTextSpanDimensions(textSpan, _textEditorFontSize, localTextEditorState)">
-                            @if (textSpan.TextCharacters.Any())
+                        <div style="white-space: nowrap; position: absolute; @GetTextSpanDimensions(textSpan.Item, _textEditorFontSize, localTextEditorState)">
+                            @if (textSpan.Item.TextCharacters.Any())
                             {
                                 var spanTextBuilder = new StringBuilder();
-                                var currentDecorationByte = textSpan.TextCharacters
+                                var currentDecorationByte = textSpan.Item.TextCharacters
                                     .First().DecorationByte;
 
-                                foreach (var textCharacter in textSpan.TextCharacters)
+                                foreach (var textCharacter in textSpan.Item.TextCharacters)
                                 {
                                     if (currentDecorationByte == textCharacter.DecorationByte)
                                     {
@@ -108,7 +108,7 @@
                                 }
                             }
                         </div>
-                    </Virtualize>
+                    </VirtualizeCoordinateSystem>
 
                     <TextEditorCursorDisplay @ref="_textEditorCursorDisplay"
                                              TextCursor="_cursor"

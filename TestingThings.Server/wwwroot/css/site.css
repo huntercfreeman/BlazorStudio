@@ -62,3 +62,19 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.bstudio_Left {
+    background-color: #5151dd;
+}
+
+.bstudio_Bottom {
+    background-color: #de6767;
+}
+
+.bstudio_Top {
+    background-color: #098f09;
+}
+
+.bstudio_Right {
+    background-color: mediumpurple;
+}
