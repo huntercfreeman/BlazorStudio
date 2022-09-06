@@ -9,24 +9,5 @@ Welcome to your new app.
 <SurveyPrompt Title="How is Blazor working for you?"/>
 
 <div>
-    Time to first render:
-    
-    <br/>
-    
-    @(TimeToFirstRender.TotalMilliseconds)ms
-    
-    <br/>
-
-    or
-
-    <br/>
-
-    @(TimeToFirstRender.TotalSeconds)seconds 
+    This Project is to test Virtualization techniques
 </div>
-
-<input type="number" @bind="RepeatTheDataCount" @bind:event="oninput" />
-
-@foreach (var musicBand in MusicBandRepository.GetMusicBands(RepeatTheDataCount))
-{
-    <MusicBandDisplay MusicBand="musicBand" />
-}

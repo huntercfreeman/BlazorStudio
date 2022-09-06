@@ -1,0 +1,24 @@
+@page "/coordinateSystem"
+
+<PageTitle>coordinateSystem</PageTitle>
+
+<div>
+    Time to first render:
+    
+    <br/>
+    
+    @($"{TimeToFirstRender.TotalMilliseconds:N0}")ms
+    
+    <hr/>
+</div>
+
+<input type="number" @bind="RepeatTheDataCount" @bind:event="oninput" />
+
+<div style="width: @(_totalWidth)px; height: @(_totalHeight)px; overflow-y:scroll; position: relative;" tabindex="-1">
+    <VirtualizeCoordinateSystem ItemsProviderFunc="ItemsProviderFunc"
+                                Context="virtualizeMusicBand">
+        <div style="width: @virtualizeMusicBand.Width; height: @virtualizeMusicBand.Height; top: @virtualizeMusicBand.Top; left: @virtualizeMusicBand.Left;">
+            <MusicBandDisplay MusicBand="virtualizeMusicBand.Item" />
+        </div>
+    </VirtualizeCoordinateSystem>
+</div>

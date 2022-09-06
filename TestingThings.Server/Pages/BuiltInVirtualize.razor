@@ -1,0 +1,22 @@
+@page "/builtInVirtualize"
+
+<PageTitle>builtInVirtualize</PageTitle>
+
+<div>
+    Time to first render:
+    
+    <br/>
+    
+    @($"{TimeToFirstRender.TotalMilliseconds:N0}")ms
+    
+    <hr/>
+</div>
+
+<input type="number" @bind="RepeatTheDataCount" @bind:event="oninput" />
+
+<div style="height:500px; overflow-y:scroll" tabindex="-1">
+    <Virtualize Items="MusicBandRepository.GetMusicBands(RepeatTheDataCount)"
+                Context="musicBand">
+        <MusicBandDisplay MusicBand="musicBand" />
+    </Virtualize>
+</div>
