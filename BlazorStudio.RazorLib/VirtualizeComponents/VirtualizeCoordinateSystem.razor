@@ -1,5 +1,13 @@
-<h3>VirtualizeCoordinateSystem</h3>
+@typeparam T
 
-@code {
-    
-}
+<VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryLeft"
+                                    VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Left" />
+<VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryBottom"
+                                    VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Bottom" />
+<VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryTop"
+                                    VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Top" />
+<VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryRight"
+                                    VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Right" />
+
+<VirtualizeCoordinateSystemContent ItemsToRender="_itemsToRender" 
+                                   ChildContent="ChildContent" />
