@@ -259,6 +259,17 @@ public class MusicBandRepository : IMusicBandRepository
         {
             new MusicSong("feat. Jack Miz - Let Go Tonight", "EDM", "https://youtu.be/yDJ5DjmSbQY")
         }.ToImmutableArray()));
+        
+        _musicBands.Add(new MusicBand("Scary Kids Scaring Kids", "Alternative/Indie", MusicBandKey.NewMusicBandKey(), new[]
+        {
+            new MusicSong("A Pistol To My Temple", "Alternative/Indie", "https://youtu.be/HIJs6Sz1G3s"),
+            new MusicSong("Degenerates", "Alternative/Indie", "https://youtu.be/xP1GgM9_3tA")
+        }.ToImmutableArray()));
+        
+        _musicBands.Add(new MusicBand("Chiodos", "Alternative/Indie", MusicBandKey.NewMusicBandKey(), new[]
+        {
+            new MusicSong("Baby, You Wouldn't Last A Minute On The Creek", "Alternative/Indie", "https://youtu.be/bg1dF4TpI0k")
+        }.ToImmutableArray()));
     }
 
     public int PersistedRepeatTheDataCount { get; private set; } = 400;
