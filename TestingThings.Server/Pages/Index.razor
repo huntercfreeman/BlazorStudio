@@ -7,3 +7,8 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?"/>
+
+@foreach (var musicBand in MusicBandRepository.GetMusicBands())
+{
+    <MusicBandDisplay MusicBand="musicBand" />
+}
