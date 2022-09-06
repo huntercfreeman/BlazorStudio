@@ -89,323 +89,173 @@ public class MusicBandRepository : IMusicBandRepository
                     new MusicSong("Sk8er Boi", "Pop", "https://youtu.be/TIy3n2b7V9k")
                 }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "The Used",
-            Genre = "Alternative/Indie",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("The Used", "Alternative/Indie",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Bulimic", "Alternative/Indie", "https://youtu.be/IY7dgz1dC_E"),
                 new MusicSong("Noise and Kisses", "Alternative/Indie", "https://youtu.be/p4_60Zj7uaQ"),
                 new MusicSong("On My Own", "Alternative/Indie", "https://youtu.be/jdPeR3jr6ek")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Radiohead",
-            Genre = "Alternative/Indie",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Radiohead", "Alternative/Indie",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("How To Disappear Completely", "Alternative/Indie", "https://youtu.be/nZq_jeYsbTs"),
                 new MusicSong("No Surprises", "Alternative/Indie", "https://youtu.be/u5CVsCnxyXg"),
                 new MusicSong("Weird Fishes/Arpeggi", "Alternative/Indie", "https://youtu.be/pbEGdDOhIXg")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Paramore",
-            Genre = "Alternative/Indie",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Paramore", "Alternative/Indie",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Brick By Boring Brick", "Alternative/Indie", "https://youtu.be/A63VwWz1ij0"),
                 new MusicSong("The Only Exception", "Alternative/Indie", "https://youtu.be/-J7J_IWUhls"),
                 new MusicSong("Emergency", "Alternative/Indie", "https://youtu.be/mgJ8BZi3vTA")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "My Chemical Romance",
-            Genre = "Alternative Rock",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("My Chemical Romance", "Alternative Rock",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Desert Song", "Alternative Rock", "https://youtu.be/NxQVElXpTVg"),
                 new MusicSong("Early Sunsets Over Monroeville", "Alternative Rock", "https://youtu.be/fOLfblOB2e8")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Sum 41",
-            Genre = "Alternative/Indie",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Sum 41", "Alternative/Indie",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Pieces", "Alternative/Indie", "https://youtu.be/By7ctqcWxyM"),
                 new MusicSong("With Me", "Alternative/Indie", "https://youtu.be/g8z-qP34-1Y")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "blink-182",
-            Genre = "Pop Punk",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("blink-182", "Pop Punk",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Not Now", "Pop Punk", "https://youtu.be/HvcOuExmeJg"),
                 new MusicSong("Down", "Pop Punk", "https://youtu.be/XrTZT49u0kM"),
                 new MusicSong("Adam's Song", "Pop Punk", "https://youtu.be/2MRdtXWcgIw")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Linkin Park",
-            Genre = "Alternative Rock",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Linkin Park", "Alternative Rock",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("In The End", "Alternative Rock", "https://youtu.be/eVTXPUF4Oz4"),
                 new MusicSong("Waiting For The End", "Alternative Rock", "https://youtu.be/5qF_qbaWt3Q")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "NERVO",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("NERVO", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("R3hab & NERVO & Ummet Ozcan - Revolution", "EDM", "https://youtu.be/TWwIztjs29Y"),
                 new MusicSong("We're All No One ft. Afrojack, Steve Aoki", "EDM", "https://youtu.be/pyeClGsiT4U")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Crystal Castles",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Crystal Castles", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Kept", "EDM", "https://crystalcastles.bandcamp.com/track/kept"),
                 new MusicSong("Untrust Us", "EDM", "https://youtu.be/tZu3EUVJ8-4")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Ashlee Simpson",
-            Genre = "Pop",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Ashlee Simpson", "Pop",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Pieces Of Me", "Pop", "https://youtu.be/WJCsyLUCSXI")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Vanessa Carlton",
-            Genre = "Pop",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Vanessa Carlton", "Pop",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("A Thousand Miles", "Pop", "https://youtu.be/Cwkej79U3ek")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Carly Rae Jepsen",
-            Genre = "Pop",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Carly Rae Jepsen", "Pop",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Run Away With Me", "Pop", "https://youtu.be/TeccAtqd5K8")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Nelly Furtado",
-            Genre = "Pop",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Nelly Furtado", "Pop",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("I'm Like A Bird", "Pop", "https://youtu.be/roPQ_M3yJTA")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Counting Crows",
-            Genre = "Pop",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Counting Crows", "Pop",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Mr. Jones", "Pop", "https://youtu.be/-oqAU5VxFWs")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "The Struts",
-            Genre = "Alternative/Indie",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("The Struts", "Alternative/Indie",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Could Have Been Me", "Alternative/Indie", "https://youtu.be/ARhk9K_mviE")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "MisterWives",
-            Genre = "Alternative/Indie",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("MisterWives", "Alternative/Indie",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Our Own House", "Alternative/Indie", "https://youtu.be/Iets6iLm3QY"),
                 new MusicSong("Reflections", "Alternative/Indie", "https://youtu.be/fBrOwiHO-5w")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "OneRepublic",
-            Genre = "Pop",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("OneRepublic", "Pop",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("If I Lose Myself", "Pop", "https://youtu.be/TGx0rApSk6w")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Daughter",
-            Genre = "Alternative/Indie",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Daughter", "Alternative/Indie",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Doing The Right Thing", "Alternative/Indie", "https://youtu.be/bU5F-DvGLkA"),
                 new MusicSong("Run", "Alternative/Indie", "https://youtu.be/psiILfa-G1c"),
                 new MusicSong("Youth", "Alternative/Indie", "https://youtu.be/VYC29lbq8SY"),
                 new MusicSong("Switzerland", "Alternative/Indie", "https://youtu.be/BDm0qtQWA_o")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Jack Novak",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Jack Novak", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Driving Blind featuring Bright Lights", "EDM", "https://youtu.be/Ghjb_wU9-GY")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Hardwell",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Hardwell", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("feat. Matthew Koma - Dare You", "EDM", "https://youtu.be/clRjbYa4UWQ")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Yall",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Yall", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Together", "EDM", "https://youtu.be/iSn5bpEfuO8")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Borgeous",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Borgeous", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Invincible", "EDM", "https://youtu.be/Yb5j4GheNTk")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Zedd",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Zedd", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Beautiful Now ft. Jon Bellion", "EDM", "https://youtu.be/n1a7o44WxNo")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Afrojack",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Afrojack", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Ten Feet Tall ft. Wrabel", "EDM", "https://youtu.be/bltr_Dsk5EY")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "The Prophet",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("The Prophet", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Listen To Your Heart", "EDM", "https://youtu.be/wZEtCpIzU3E")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Johann Pachelbel",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Johann Pachelbel", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Canon In D (Jatimatic Hardstyle Bootleg)", "EDM", "https://youtu.be/KBMO_4Nj4HQ")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Xillions",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Xillions", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Somebody Like Me (Mark With a K RMX)", "EDM", "https://youtu.be/b6NCaD9LjrI")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Hatsune Miku",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Hatsune Miku", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("Ievan Polkka (Theo Gobensen Hardstyle Remix)", "EDM", "https://youtu.be/f23SOgDxx6o")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Basshunter",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Basshunter", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("DotA", "EDM", "https://youtu.be/qTsaS1Tm-Ic"),
                 new MusicSong("All I Ever Wanted", "EDM", "https://youtu.be/P3CxhBIrBho"),
                 new MusicSong("Now You're Gone", "EDM", "https://youtu.be/IgFwiCApH7E")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
         
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Sandro Silva",
-            Genre = "EDM",
-            Songs = new[] 
+        _musicBands.Add(new MusicBand("Sandro Silva", "EDM",MusicBandKey.NewMusicBandKey(), new[] 
             {
                 new MusicSong("feat. Jack Miz - Let Go Tonight", "EDM", "https://youtu.be/yDJ5DjmSbQY")
-            }.ToImmutableArray()
-        });
+            }.ToImmutableArray()));
     }
 }
