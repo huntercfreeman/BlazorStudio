@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using BlazorStudio.ClassLib.CustomEvents
 @using BlazorStudio.ClassLib.Html
+@using BlazorStudio.RazorLib.VirtualizeComponents
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -33,7 +34,16 @@
                 @if (_textEditorFontSize is not null) 
                 {
                     var localTextEditorState = TextEditorStatesSelection.Value;
-            
+                    
+                    <VirtualizeCoordinateSystem ItemsProviderFunc="ItemsProviderFunc"
+                                                Context="textSpan">
+
+
+                        @* <div style="width: @virtualizeMusicBand.Width; height: @virtualizeMusicBand.Height; top: @virtualizeMusicBand.Top; left: @virtualizeMusicBand.Left;"> *@
+                        @*     <MusicBandDisplay MusicBand="virtualizeMusicBand.Item" /> *@
+                        @* </div> *@
+                    </VirtualizeCoordinateSystem>
+                    
                     <Virtualize ItemsProvider="LoadTextCharacterSpans"
                                 ItemSize="(float)_textEditorFontSize.RowHeight"
                                 Context="textSpan"
