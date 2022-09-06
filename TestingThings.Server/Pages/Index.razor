@@ -8,7 +8,9 @@ Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?"/>
 
-@foreach (var musicBand in MusicBandRepository.GetMusicBands())
+<input type="number" @bind="RepeatTheDataCount" @bind:event="oninput" />
+
+@foreach (var musicBand in MusicBandRepository.GetMusicBands(RepeatTheDataCount))
 {
     <MusicBandDisplay MusicBand="musicBand" />
 }

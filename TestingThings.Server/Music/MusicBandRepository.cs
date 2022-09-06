@@ -5,7 +5,7 @@ namespace TestingThings.Server.Music;
 public class MusicBandRepository : IMusicBandRepository
 {
     private List<MusicBand> _musicBands = new();
-
+    
     public MusicBandRepository()
     {
         _musicBands.Add(
@@ -260,8 +260,30 @@ public class MusicBandRepository : IMusicBandRepository
             new MusicSong("feat. Jack Miz - Let Go Tonight", "EDM", "https://youtu.be/yDJ5DjmSbQY")
         }.ToImmutableArray()));
     }
+
+    public int PersistedRepeatTheDataCount { get; private set; }
     
-    public ImmutableArray<MusicBand> GetMusicBands() => _musicBands.ToImmutableArray();
+    public event EventHandler OnPersistedRepeatTheDataCountChanged;
+
+    public void MutatePersistedRepeatTheDataCount(int repeatTheDataCount)
+    {
+        PersistedRepeatTheDataCount = repeatTheDataCount;
+
+        OnPersistedRepeatTheDataCountChanged?.Invoke(this, EventArgs.Empty);
+    }
+    
+    public ImmutableArray<MusicBand> GetMusicBands(int repeatTheDataCount = 0)
+    {
+        var result = new List<MusicBand>();
+
+        for (int i = -1; i < repeatTheDataCount; i++)
+        {
+            result.AddRange(_musicBands);
+        }
+        
+        return result.ToImmutableArray();
+    }
+
     public void AddMusicBand(MusicBand musicBand)
     {
         throw new NotImplementedException();
