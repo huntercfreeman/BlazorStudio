@@ -23,7 +23,7 @@
 {
     <div>
         (ScrollLeft, ScrollTop):<br/>
-        (@_virtualizeCoordinateSystemScrollPosition.ScrollLeft, @_virtualizeCoordinateSystemScrollPosition.ScrollTop)
+        (@($"{_virtualizeCoordinateSystemScrollPosition.ScrollLeft:N2}"), @($"{_virtualizeCoordinateSystemScrollPosition.ScrollTop:N2}"))
     </div>
 
     <hr/>
@@ -82,7 +82,7 @@ else
 
 <hr/>
 
-<div style="width: @(_totalWidth)px; height: @(_totalHeight)px; overflow-y:scroll; position: relative;" tabindex="-1">
+<div style="width: 800px; height: 600px; overflow:auto; position: relative;" tabindex="-1">
     <VirtualizeCoordinateSystem ItemsProviderFunc="ItemsProviderFunc"
                                 Context="virtualizeMusicBand">
 

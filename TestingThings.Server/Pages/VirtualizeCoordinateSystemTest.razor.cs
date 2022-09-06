@@ -69,13 +69,13 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
 
         InvokeAsync(StateHasChanged);
         
-        var totalWidth = 500;
-        var totalHeight = 500;
+        var totalWidth = 5000;
+        var totalHeight = 5000;
         
-        var contentWidth = 100;
-        var contentHeight = 100;
-        var contentLeftOffset = 100;
-        var contentTopOffset = 100;
+        var contentWidth = 0;
+        var contentHeight = 0;
+        var contentLeftOffset = virtualizeCoordinateSystemScrollPosition.ScrollLeft;
+        var contentTopOffset = virtualizeCoordinateSystemScrollPosition.ScrollTop;
 
         _leftBoundaryDimension = new VirtualizeCoordinateSystemBoundaryDimensions
         {
