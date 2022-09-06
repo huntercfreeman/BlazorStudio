@@ -16,6 +16,11 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
     private int _totalWidth = 500;
     private int _totalHeight = 500;
     private VirtualizeCoordinateSystemScrollPosition? _virtualizeCoordinateSystemScrollPosition;
+    private VirtualizeCoordinateSystemBoundaryDimensions _leftBoundaryDimension = new();
+    private VirtualizeCoordinateSystemBoundaryDimensions _bottomBoundaryDimensions = new();
+    private VirtualizeCoordinateSystemBoundaryDimensions _topBoundaryDimensions = new();
+    private VirtualizeCoordinateSystemBoundaryDimensions _rightBoundaryDimensions = new();
+    private ImmutableArray<VirtualizeCoordinateSystemEntry<MusicBand>> _itemsToRender = ImmutableArray<VirtualizeCoordinateSystemEntry<MusicBand>>.Empty;
 
     private TimeSpan TimeToFirstRender => _onAfterRenderFirstRenderDateTime.Subtract(_onInitializedDateTime);
     
@@ -72,7 +77,7 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
         var contentLeftOffset = 100;
         var contentTopOffset = 100;
 
-        var leftBoundaryDimension = new VirtualizeCoordinateSystemBoundaryDimensions
+        _leftBoundaryDimension = new VirtualizeCoordinateSystemBoundaryDimensions
         {
             Width = contentLeftOffset,
             Height = totalHeight,
@@ -80,7 +85,7 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
             Top = 0
         };
         
-        var bottomBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
+        _bottomBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
         {
             Width = totalWidth,
             Height = totalHeight - (contentTopOffset + contentHeight),
@@ -88,7 +93,7 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
             Top = contentTopOffset + contentHeight 
         };
         
-        var topBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
+        _topBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
         {
             Width = contentWidth,
             Height = virtualizeCoordinateSystemScrollPosition.ScrollTop,
@@ -96,7 +101,7 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
             Top = 0
         };
         
-        var rightBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
+        _rightBoundaryDimensions = new VirtualizeCoordinateSystemBoundaryDimensions
         {
             Width = totalWidth - (contentLeftOffset + contentWidth),
             Height = totalHeight,
@@ -104,17 +109,17 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
             Top = 0
         } ;
 
-        var itemsToRender = Array
+        _itemsToRender = Array
             .Empty<VirtualizeCoordinateSystemEntry<MusicBand>>()
             .ToImmutableArray();
         
         return new VirtualizeCoordinateSystemResult<MusicBand>()
         {
-            ItemsToRender = itemsToRender, 
-            LeftBoundaryDimensions = leftBoundaryDimension,
-            BottomBoundaryDimensions = bottomBoundaryDimensions,
-            TopBoundaryDimensions = topBoundaryDimensions,
-            RightBoundaryDimensions = rightBoundaryDimensions 
+            ItemsToRender = _itemsToRender, 
+            LeftBoundaryDimensions = _leftBoundaryDimension,
+            BottomBoundaryDimensions = _bottomBoundaryDimensions,
+            TopBoundaryDimensions = _topBoundaryDimensions,
+            RightBoundaryDimensions = _rightBoundaryDimensions 
         };
     }
 }

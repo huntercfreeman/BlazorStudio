@@ -4,20 +4,68 @@
 
 <div>
     Time to first render:
-    
+
     <br/>
-    
+
     @($"{TimeToFirstRender.TotalMilliseconds:N0}")ms
-    
+
     <hr/>
 </div>
 
-<input type="number" @bind="RepeatTheDataCount" @bind:event="oninput" />
+<div>
+    RepeatTheDataCount:<br/>
+    <input type="number" @bind="RepeatTheDataCount" @bind:event="oninput"/>
+</div>
+
+<hr/>
 
 @if (_virtualizeCoordinateSystemScrollPosition is not null)
 {
     <div>
+        (ScrollLeft, ScrollTop):<br/>
         (@_virtualizeCoordinateSystemScrollPosition.ScrollLeft, @_virtualizeCoordinateSystemScrollPosition.ScrollTop)
+    </div>
+
+    <hr/>
+    
+    <div>Boundary Dimensions</div>
+    
+    <table style="border: 1px solid;">
+        <thead>
+        <tr style="border: 1px solid;">
+            <th style="border: 1px solid; padding: 5px;">
+                Kind
+            </th>
+            <th style="border: 1px solid; padding: 5px;">
+                Width
+            </th>
+            <th style="border: 1px solid; padding: 5px;">
+                Height
+            </th>
+            <th style="border: 1px solid; padding: 5px;">
+                Left
+            </th>
+            <th style="border: 1px solid; padding: 5px;">
+                Top
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+            <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Left"
+                                                               VirtualizeCoordinateSystemBoundaryDimensions="_leftBoundaryDimension"/>
+            <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Bottom"
+                                                               VirtualizeCoordinateSystemBoundaryDimensions="_bottomBoundaryDimensions"/>
+            <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Top"
+                                                               VirtualizeCoordinateSystemBoundaryDimensions="_topBoundaryDimensions"/>
+            <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Right"
+                                                               VirtualizeCoordinateSystemBoundaryDimensions="_rightBoundaryDimensions"/>
+        </tbody>
+    </table>
+
+    <hr/>
+    
+    <div>
+        _itemsToRender.Count:&nbsp;@(_itemsToRender.Length)
     </div>
 }
 else
@@ -25,13 +73,14 @@ else
     <div>_virtualizeCoordinateSystemScrollPosition is null</div>
 }
 
+
 <hr/>
 
 <div style="width: @(_totalWidth)px; height: @(_totalHeight)px; overflow-y:scroll; position: relative;" tabindex="-1">
     <VirtualizeCoordinateSystem ItemsProviderFunc="ItemsProviderFunc"
                                 Context="virtualizeMusicBand">
-        
-        
+
+
         @* <div style="width: @virtualizeMusicBand.Width; height: @virtualizeMusicBand.Height; top: @virtualizeMusicBand.Top; left: @virtualizeMusicBand.Left;"> *@
         @*     <MusicBandDisplay MusicBand="virtualizeMusicBand.Item" /> *@
         @* </div> *@
