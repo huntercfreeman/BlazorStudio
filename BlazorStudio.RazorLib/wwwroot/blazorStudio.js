@@ -191,8 +191,8 @@
         let element = document.getElementById(elementId);
 
         return  {
-            ElementWidth: element.offsetWidth,
-            ElementHeight: element.offsetHeight
+            Width: element.offsetWidth,
+            Height: element.offsetHeight
         };
     }
 };
