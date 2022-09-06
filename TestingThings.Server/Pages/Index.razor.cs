@@ -9,6 +9,10 @@ public partial class Index : ComponentBase
     private IMusicBandRepository MusicBandRepository { get; set; } = null!;
 
     private int _repeatTheDataCount;
+    private DateTime _onInitializedDateTime;
+    private DateTime _onAfterRenderFirstRenderDateTime;
+
+    private TimeSpan TimeToFirstRender => _onAfterRenderFirstRenderDateTime.Subtract(_onInitializedDateTime);
     
     private int RepeatTheDataCount
     {
@@ -31,7 +35,20 @@ public partial class Index : ComponentBase
     protected override void OnInitialized()
     {
         _repeatTheDataCount = MusicBandRepository.PersistedRepeatTheDataCount;
+
+        _onInitializedDateTime = DateTime.UtcNow;
         
         base.OnInitialized();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _onAfterRenderFirstRenderDateTime = DateTime.UtcNow;
+            StateHasChanged();
+        }
+        
+        base.OnAfterRender(firstRender);
     }
 }
