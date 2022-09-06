@@ -16,12 +16,14 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public int OverscanCount { get; set; } = 3;
 
+    private Guid _intersectionObserverMapKey = Guid.NewGuid();
+    
     private CancellationTokenSource _cancellationTokenSource = new();
     
     private ImmutableArray<VirtualizeCoordinateSystemEntry<T>> _itemsToRender = 
         ImmutableArray<VirtualizeCoordinateSystemEntry<T>>.Empty;
 
-    private VirtualizeCoordinateSystemScrollPosition _mostRecentVirtualizeCoordinateSystemScrollPosition;
+    private VirtualizeCoordinateSystemScrollPosition _mostRecentVirtualizeCoordinateSystemScrollPosition = null!;
 
     private VirtualizeCoordinateSystemBoundary _virtualizeCoordinateSystemBoundaryLeft = null!;
     private VirtualizeCoordinateSystemBoundary _virtualizeCoordinateSystemBoundaryBottom = null!;
@@ -37,7 +39,9 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
                 _virtualizeCoordinateSystemBoundaryLeft.VirtualizeCoordinateSystemBoundaryElementReference,
                 _virtualizeCoordinateSystemBoundaryBottom.VirtualizeCoordinateSystemBoundaryElementReference,
                 _virtualizeCoordinateSystemBoundaryTop.VirtualizeCoordinateSystemBoundaryElementReference,
-                _virtualizeCoordinateSystemBoundaryRight.VirtualizeCoordinateSystemBoundaryElementReference);
+                _virtualizeCoordinateSystemBoundaryRight.VirtualizeCoordinateSystemBoundaryElementReference,
+                DotNetObjectReference.Create(this),
+                _intersectionObserverMapKey);
 
             _mostRecentVirtualizeCoordinateSystemScrollPosition = new(
                 0, 
@@ -81,5 +85,12 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     public void Dispose()
     {
         _cancellationTokenSource.Cancel();
+
+        Task.Run(async () =>
+        {
+            await JsRuntime.InvokeVoidAsync(
+                "virtualizeCoordinateSystem.disposeVirtualizeIntersectionObserver",
+                _intersectionObserverMapKey);    
+        });
     }
 }
