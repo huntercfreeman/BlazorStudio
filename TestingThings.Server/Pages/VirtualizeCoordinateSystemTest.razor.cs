@@ -1,3 +1,4 @@
+using BlazorStudio.RazorLib.VirtualizeComponents;
 using Microsoft.AspNetCore.Components;
 using TestingThings.Server.Music;
 
@@ -50,5 +51,11 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
         }
         
         base.OnAfterRender(firstRender);
+    }
+
+    private IEnumerable<VirtualizeCoordinateSystemEntry<MusicBand>> ItemsProviderFunc(
+        VirtualizeCoordinateSystemScrollPosition virtualizeCoordinateSystemScrollPosition)
+    {
+        return Array.Empty<VirtualizeCoordinateSystemEntry<MusicBand>>();
     }
 }

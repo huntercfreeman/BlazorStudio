@@ -13,8 +13,6 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     public RenderFragment<VirtualizeCoordinateSystemEntry<T>> ChildContent { get; set; } = null!;
     [Parameter, EditorRequired]
     public Func<VirtualizeCoordinateSystemScrollPosition, IEnumerable<VirtualizeCoordinateSystemEntry<T>>> ItemsProviderFunc { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public int OverscanCount { get; set; } = 3;
 
     private Guid _intersectionObserverMapKey = Guid.NewGuid();
     

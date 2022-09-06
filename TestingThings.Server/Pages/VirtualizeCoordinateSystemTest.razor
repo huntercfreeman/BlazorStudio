@@ -14,9 +14,11 @@
 
 <input type="number" @bind="RepeatTheDataCount" @bind:event="oninput" />
 
-<div style="height:500px; overflow-y:scroll" tabindex="-1">
-    <VirtualizeCoordinateSystem Items="MusicBandRepository.GetMusicBands(RepeatTheDataCount)"
-                                Context="musicBand">
-        <MusicBandDisplay MusicBand="musicBand" />
+<div style="height:500px; overflow-y:scroll; position: relative;" tabindex="-1">
+    <VirtualizeCoordinateSystem ItemsProviderFunc="ItemsProviderFunc"
+                                Context="virtualizeMusicBand">
+        <div style="width: @virtualizeMusicBand.Width; height: @virtualizeMusicBand.Height; top: @virtualizeMusicBand.Top; left: @virtualizeMusicBand.Left;">
+            <MusicBandDisplay MusicBand="virtualizeMusicBand.Item" />
+        </div>
     </VirtualizeCoordinateSystem>
 </div>
