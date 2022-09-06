@@ -686,5 +686,47 @@ public interface MusicBandsRepository : IMusicBandsRepository
                 }
             }.ToImmutableArray()
         });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Basshunter",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "DotA";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/qTsaS1Tm-Ic";
+                },
+                new MusicSong
+                {
+                    SongName = "All I Ever Wanted";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/P3CxhBIrBho";
+                },
+                new MusicSong
+                {
+                    SongName = "Now You're Gone";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/IgFwiCApH7E";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Sandro Silva",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "feat. Jack Miz - Let Go Tonight";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/yDJ5DjmSbQY";
+                }
+            }.ToImmutableArray()
+        });
     }
 }
