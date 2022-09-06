@@ -13,15 +13,9 @@ Welcome to your new app.
     
     <br/>
     
-    @(TimeToFirstRender.TotalMilliseconds)ms
+    @($"{TimeToFirstRender.TotalMilliseconds:N0}")ms
     
-    <br/>
-
-    or
-
-    <br/>
-
-    @(TimeToFirstRender.TotalSeconds)seconds 
+    <hr/>
 </div>
 
 <input type="number" @bind="RepeatTheDataCount" @bind:event="oninput" />
