@@ -26,90 +26,56 @@ public class MusicBandRepository : IMusicBandRepository
             new MusicBand(
                 "Porter Robinson",
                 "EDM",
+                MusicBandKey.NewMusicBandKey(), 
                 new[]
                 {
                     new MusicSong("Musician", "EDM", "https://youtu.be/q-74HTjRbuY"),,
                     new MusicSong("Mirror", "EDM", "https://youtu.be/PkiIPzG37vQ"),,
                     new MusicSong("Get your Wish", "EDM", "https://youtu.be/4SZEDBFPpgw"),
                 }.ToImmutableArray()));
-        
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Sefa",
-            Genre = "EDM",
-            Songs = new[] 
-            {
-                new MusicSong
+
+        _musicBands.Add(
+            new MusicBand(
+                "Sefa",
+                "EDM",
+                MusicBandKey.NewMusicBandKey(), 
+                new[]
                 {
-                    SongName = "Evil Activities - Nobody Said It Was Easy (Sefa Remix)";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/4rIW1Xz63Wc";
-                },
-                new MusicSong
+                    new MusicSong("Evil Activities - Nobody Said It Was Easy (Sefa Remix)", "EDM", "https://youtu.be/4rIW1Xz63Wc"),
+                    new MusicSong("Crawling", "EDM", "https://youtu.be/mJEaNIK8vj4"),
+                    new MusicSong("Schopenhauer", "EDM", "https://youtu.be/82EjuxJjtRU")
+                }.ToImmutableArray()));
+
+        _musicBands.Add(
+            new MusicBand(
+                "Azept",
+                "EDM",
+                MusicBandKey.NewMusicBandKey(),
+                new[]
                 {
-                    SongName = "Crawling";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/mJEaNIK8vj4";
-                },
-                new MusicSong
+                    new MusicSong("Europe - The Final Countdown (Azept Hardstyle Bootleg)", "EDM", "https://youtu.be/DsaHrjjz-hU"),
+                    new MusicSong("Sia - Chandelier (Azept Hardstyle Bootleg)", "EDM", "https://youtu.be/41m9uJeD_nw")
+                }.ToImmutableArray()));
+
+        _musicBands.Add(
+            new MusicBand(
+                "Re-vamp",
+                "EDM",
+                MusicBandKey.NewMusicBandKey(),
+                new[]
                 {
-                    SongName = "Schopenhauer";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/82EjuxJjtRU";
-                }
-            }.ToImmutableArray()
-        });
-        
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Azept",
-            Genre = "EDM",
-            Songs = new[] 
-            {
-                new MusicSong
+                    new MusicSong("Lady Gaga & Bradley Cooper - Shallow (Re-vamp bootleg)", "EDM", "https://youtu.be/64wom1cMWxk")
+                }.ToImmutableArray()));
+
+        _musicBands.Add(
+            new MusicBand(
+                "Akidaraz",
+                "EDM",
+                MusicBandKey.NewMusicBandKey(),
+                new[]
                 {
-                    SongName = "Europe - The Final Countdown (Azept Hardstyle Bootleg)";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/DsaHrjjz-hU";
-                },
-                new MusicSong
-                {
-                    SongName = "Sia - Chandelier (Azept Hardstyle Bootleg)";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/41m9uJeD_nw";
-                }
-            }.ToImmutableArray()
-        });
-        
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Re-vamp",
-            Genre = "EDM",
-            Songs = new[] 
-            {
-                new MusicSong
-                {
-                    SongName = "Lady Gaga & Bradley Cooper - Shallow (Re-vamp bootleg)";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/64wom1cMWxk";
-                }
-            }.ToImmutableArray()
-        });
-        
-        _musicBands.Add(new MusicBand
-        {
-            BandName = "Akidaraz",
-            Genre = "EDM",
-            Songs = new[] 
-            {
-                new MusicSong
-                {
-                    SongName = "Avril Lavigne - Complicated (Akidaraz Bootleg)";
-                    Genre = "EDM";
-                    UrlToSong = "https://youtu.be/wxg36yym3H4";
-                }
-            }.ToImmutableArray()
-        });
+                    new MusicSong("Avril Lavigne - Complicated (Akidaraz Bootleg)", "EDM", "https://youtu.be/wxg36yym3H4")
+                }.ToImmutableArray()));
         
         _musicBands.Add(new MusicBand
         {
