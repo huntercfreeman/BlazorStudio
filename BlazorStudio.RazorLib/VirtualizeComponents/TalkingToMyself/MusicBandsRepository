@@ -380,21 +380,309 @@ public interface MusicBandsRepository : IMusicBandsRepository
         
         _musicBands.Add(new MusicBand
         {
-            BandName = "Crystal Castles",
+            BandName = "Ashlee Simpson",
+            Genre = "Pop",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Pieces Of Me";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/WJCsyLUCSXI";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Vanessa Carlton",
+            Genre = "Pop",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "A Thousand Miles";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/Cwkej79U3ek";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Carly Rae Jepsen",
+            Genre = "Pop",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Run Away With Me";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/TeccAtqd5K8";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Nelly Furtado",
+            Genre = "Pop",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "I'm Like A Bird";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/roPQ_M3yJTA";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Counting Crows",
+            Genre = "Pop",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Mr. Jones";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/-oqAU5VxFWs";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "The Struts",
+            Genre = "Alternative/Indie",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Could Have Been Me";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/ARhk9K_mviE";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "MisterWives",
+            Genre = "Alternative/Indie",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Our Own House";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/Iets6iLm3QY";
+                },
+                new MusicSong
+                {
+                    SongName = "Reflections";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/fBrOwiHO-5w";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "OneRepublic",
+            Genre = "Pop",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "If I Lose Myself";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/TGx0rApSk6w";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Daughter",
+            Genre = "Alternative/Indie",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Doing The Right Thing";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/bU5F-DvGLkA";
+                },
+                new MusicSong
+                {
+                    SongName = "Run";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/psiILfa-G1c";
+                },
+                new MusicSong
+                {
+                    SongName = "Youth";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/VYC29lbq8SY";
+                },
+                new MusicSong
+                {
+                    SongName = "Switzerland";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/BDm0qtQWA_o";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Jack Novak",
             Genre = "EDM",
             Songs = new[] 
             {
                 new MusicSong
                 {
-                    SongName = "Kept";
+                    SongName = "Driving Blind featuring Bright Lights";
                     Genre = "EDM";
-                    UrlToSong = "https://crystalcastles.bandcamp.com/track/kept";
-                },
+                    UrlToSong = "https://youtu.be/Ghjb_wU9-GY";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Hardwell",
+            Genre = "EDM",
+            Songs = new[] 
+            {
                 new MusicSong
                 {
-                    SongName = "Untrust Us";
+                    SongName = "feat. Matthew Koma - Dare You";
                     Genre = "EDM";
-                    UrlToSong = "https://youtu.be/tZu3EUVJ8-4";
+                    UrlToSong = "https://youtu.be/clRjbYa4UWQ";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Yall",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Together";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/iSn5bpEfuO8";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Borgeous",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Invincible";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/Yb5j4GheNTk";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Zedd",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Beautiful Now ft. Jon Bellion";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/n1a7o44WxNo";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Afrojack",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Ten Feet Tall ft. Wrabel";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/bltr_Dsk5EY";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "The Prophet",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Listen To Your Heart";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/wZEtCpIzU3E";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Johann Pachelbel",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Canon In D (Jatimatic Hardstyle Bootleg)";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/KBMO_4Nj4HQ";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Xillions",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Somebody Like Me (Mark With a K RMX)";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/b6NCaD9LjrI";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Hatsune Miku",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Ievan Polkka (Theo Gobensen Hardstyle Remix)";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/f23SOgDxx6o";
                 }
             }.ToImmutableArray()
         });
