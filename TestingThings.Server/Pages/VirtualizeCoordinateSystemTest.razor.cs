@@ -13,6 +13,8 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
     private int _repeatTheDataCount;
     private DateTime _onInitializedDateTime;
     private DateTime _onAfterRenderFirstRenderDateTime;
+    private int _totalWidth = 500;
+    private int _totalHeight = 500;
 
     private TimeSpan TimeToFirstRender => _onAfterRenderFirstRenderDateTime.Subtract(_onInitializedDateTime);
     
@@ -57,36 +59,44 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
     private VirtualizeCoordinateSystemResult<MusicBand> ItemsProviderFunc(
         VirtualizeCoordinateSystemScrollPosition virtualizeCoordinateSystemScrollPosition)
     {
+        var totalWidth = 500;
+        var totalHeight = 500;
+        
+        var contentWidth = 100;
+        var contentHeight = 100;
+        var contentLeftOffset = 100;
+        var contentTopOffset = 100;
+        
         return new()
         {
             ItemsToRender = Array.Empty<VirtualizeCoordinateSystemEntry<MusicBand>>().ToImmutableArray(),
             LeftBoundaryDimensions = new()
             {
-                Width = ,
-                Height = ,
-                Left = ,
-                Top = 
+                Width = contentLeftOffset,
+                Height = totalHeight,
+                Left = 0,
+                Top = 0
             },
             BottomBoundaryDimensions = 
             {
-                Width = ,
-                Height = ,
-                Left = ,
-                Top = 
+                Width = totalWidth,
+                Height = totalHeight - (contentTopOffset + contentHeight),
+                Left = 0,
+                Top = contentTopOffset + contentHeight 
             },
             TopBoundaryDimensions = 
             {
-                Width = ,
-                Height = ,
-                Left = ,
-                Top = 
+                Width = contentWidth,
+                Height = virtualizeCoordinateSystemScrollPosition.ScrollTop,
+                Left = 0,
+                Top = 0
             },
             RightBoundaryDimensions = 
             {
-                Width = ,
-                Height = ,
-                Left = ,
-                Top = 
+                Width = totalWidth - (contentLeftOffset + contentWidth),
+                Height = totalHeight,
+                Left = contentLeftOffset + contentWidth,
+                Top = 0
             } 
         };
     }
