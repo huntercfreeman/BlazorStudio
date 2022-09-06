@@ -9,4 +9,6 @@ public partial class DebugVirtualizeCoordinateSystemBoundaryDimensions : Compone
     public VirtualizeCoordinateSystemBoundaryDimensions VirtualizeCoordinateSystemBoundaryDimensions { get; set; }
     [Parameter, EditorRequired]
     public string Kind { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public string Color { get; set; } = null!;
 }

@@ -27,14 +27,17 @@
     </div>
 
     <hr/>
-    
+
     <div>Boundary Dimensions</div>
-    
+
     <table style="border: 1px solid;">
         <thead>
         <tr style="border: 1px solid;">
             <th style="border: 1px solid; padding: 5px;">
                 Kind
+            </th>
+            <th style="border: 1px solid; padding: 5px;">
+                Color
             </th>
             <th style="border: 1px solid; padding: 5px;">
                 Width
@@ -51,19 +54,23 @@
         </tr>
         </thead>
         <tbody>
-            <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Left"
-                                                               VirtualizeCoordinateSystemBoundaryDimensions="_leftBoundaryDimension"/>
-            <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Bottom"
-                                                               VirtualizeCoordinateSystemBoundaryDimensions="_bottomBoundaryDimensions"/>
-            <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Top"
-                                                               VirtualizeCoordinateSystemBoundaryDimensions="_topBoundaryDimensions"/>
-            <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Right"
-                                                               VirtualizeCoordinateSystemBoundaryDimensions="_rightBoundaryDimensions"/>
+        <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Left"
+                                                           Color="bstudio_Left"
+                                                           VirtualizeCoordinateSystemBoundaryDimensions="_leftBoundaryDimension"/>
+        <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Bottom"
+                                                           Color="bstudio_Bottom"
+                                                           VirtualizeCoordinateSystemBoundaryDimensions="_bottomBoundaryDimensions"/>
+        <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Top"
+                                                           Color="bstudio_Top"
+                                                           VirtualizeCoordinateSystemBoundaryDimensions="_topBoundaryDimensions"/>
+        <DebugVirtualizeCoordinateSystemBoundaryDimensions Kind="Right"
+                                                           Color="bstudio_Right"
+                                                           VirtualizeCoordinateSystemBoundaryDimensions="_rightBoundaryDimensions"/>
         </tbody>
     </table>
 
     <hr/>
-    
+
     <div>
         _itemsToRender.Count:&nbsp;@(_itemsToRender.Length)
     </div>
@@ -72,7 +79,6 @@ else
 {
     <div>_virtualizeCoordinateSystemScrollPosition is null</div>
 }
-
 
 <hr/>
 
