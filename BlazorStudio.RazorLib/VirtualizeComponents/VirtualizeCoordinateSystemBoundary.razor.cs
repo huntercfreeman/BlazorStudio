@@ -9,6 +9,8 @@ public partial class VirtualizeCoordinateSystemBoundary : ComponentBase
     public VirtualizeCoordinateSystemBoundaryKind VirtualizeCoordinateSystemBoundaryKind { get; set; }
     [Parameter, EditorRequired]
     public VirtualizeCoordinateSystemBoundaryDimensions? VirtualizeCoordinateSystemBoundaryDimensions { get; set; }
+    [Parameter, EditorRequired]
+    public Guid IntersectionObserverMapKey { get; set; }
 
     private ElementReference? _virtualizeCoordinateSystemBoundaryElementReference;
 

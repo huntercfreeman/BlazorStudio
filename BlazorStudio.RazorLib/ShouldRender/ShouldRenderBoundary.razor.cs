@@ -13,6 +13,7 @@ public partial class ShouldRenderBoundary : ComponentBase
     
     protected override bool ShouldRender()
     {
+        return true;
         var shouldRender = ShouldRenderFunc.Invoke(_isFirstShouldRenderValue);
 
         _isFirstShouldRenderValue = new IsFirstShouldRenderValue(false);
