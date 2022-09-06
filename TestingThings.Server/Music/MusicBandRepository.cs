@@ -261,7 +261,7 @@ public class MusicBandRepository : IMusicBandRepository
         }.ToImmutableArray()));
     }
 
-    public int PersistedRepeatTheDataCount { get; private set; } = 500;
+    public int PersistedRepeatTheDataCount { get; private set; } = 400;
     
     public event EventHandler OnPersistedRepeatTheDataCountChanged;
 
