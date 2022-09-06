@@ -33,17 +33,15 @@
 
                 @if (_textEditorFontSize is not null) 
                 {
-                    var localTextEditorState = TextEditorStatesSelection.Value;
-                    
                     <VirtualizeCoordinateSystem ItemsProviderFunc="ItemsProviderFunc"
                                                 Context="textSpan"
                                                 @ref="_virtualizeCoordinateSystem">
 
-                        <div class="bstudio_text-editor-display-gutter" style="@GetLineNumberDimensions(textSpan.Item, _textEditorFontSize, localTextEditorState)">
+                        <div class="bstudio_text-editor-display-gutter" style="@GetLineNumberDimensions(textSpan.Item, _textEditorFontSize, TextEditorStatesSelection.Value)">
                             @textSpan.Index
                         </div> 
                         
-                        <div style="white-space: nowrap; position: absolute; @GetTextSpanDimensions(textSpan.Item, _textEditorFontSize, localTextEditorState)">
+                        <div style="white-space: nowrap; position: absolute; @GetTextSpanDimensions(textSpan.Item, _textEditorFontSize, TextEditorStatesSelection.Value)">
                             @if (textSpan.Item.TextCharacters.Any())
                             {
                                 var spanTextBuilder = new StringBuilder();
@@ -112,7 +110,7 @@
 
                     <TextEditorCursorDisplay @ref="_textEditorCursorDisplay"
                                              TextCursor="_cursor"
-                                             TextEditorBase="localTextEditorState"
+                                             TextEditorBase="TextEditorStatesSelection.Value"
                                              RowHeightInPixels="_textEditorFontSize?.RowHeight ?? 0"
                                              CharacterWidthInPixels="_textEditorFontSize?.CharacterWidth ?? 0" />
                 }

@@ -817,3 +817,19 @@ em {
     background-color: var(--bstudio_text-editor-gutter-background-color);
     color: var(--bstudio_text-editor-line-number-font-color);
 }
+
+.bstudio_Left {
+    background-color: #5151dd;
+}
+
+.bstudio_Bottom {
+    background-color: #de6767;
+}
+
+.bstudio_Top {
+    background-color: #098f09;
+}
+
+.bstudio_Right {
+    background-color: mediumpurple;
+}

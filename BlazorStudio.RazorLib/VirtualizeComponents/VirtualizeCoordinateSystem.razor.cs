@@ -52,18 +52,23 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     [JSInvokable]
     public void OnIntersectionObserverThresholdChanged(double scrollLeft, double scrollTop)
     {
+        Console.WriteLine($"scrollLeft: {scrollLeft} | scrollTop: {scrollTop}");
+        
         _mostRecentVirtualizeCoordinateSystemScrollPosition = new(
             scrollLeft,
             scrollTop,
             CancelAndReturnNewToken());
 
         ReloadItems();
+        
     }
 
     public void ReloadItems()
     {
         _virtualizeCoordinateSystemResult = ItemsProviderFunc
             .Invoke(_mostRecentVirtualizeCoordinateSystemScrollPosition);
+        
+        InvokeAsync(StateHasChanged);
     }
     
     private CancellationToken CancelAndReturnNewToken()
