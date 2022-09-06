@@ -1,13 +1,18 @@
 @typeparam T
 
-<VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryLeft"
-                                    VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Left" />
-<VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryBottom"
-                                    VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Bottom" />
-<VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryTop"
-                                    VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Top" />
-<VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryRight"
-                                    VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Right" />
+@if (_virtualizeCoordinateSystemResult is not null)
+{
+    <VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryLeft"
+                                        VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Left" 
+                                        VirtualizeCoordinateSystemBoundaryDimensions="" />
+    <VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryBottom"
+                                        VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Bottom" />
+    <VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryTop"
+                                        VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Top" />
+    <VirtualizeCoordinateSystemBoundary @ref="_virtualizeCoordinateSystemBoundaryRight"
+                                        VirtualizeCoordinateSystemBoundaryKind="VirtualizeCoordinateSystemBoundaryKind.Right" />
 
-<VirtualizeCoordinateSystemContent ItemsToRender="_itemsToRender" 
-                                   ChildContent="ChildContent" />
+    <VirtualizeCoordinateSystemContent ItemsToRender="_virtualizeCoordinateSystemResult.ItemsToRender" 
+                                       ChildContent="ChildContent" />
+}
+

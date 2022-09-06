@@ -12,14 +12,13 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public RenderFragment<VirtualizeCoordinateSystemEntry<T>> ChildContent { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Func<VirtualizeCoordinateSystemScrollPosition, IEnumerable<VirtualizeCoordinateSystemEntry<T>>> ItemsProviderFunc { get; set; } = null!;
+    public Func<VirtualizeCoordinateSystemScrollPosition, VirtualizeCoordinateSystemResult<T>> ItemsProviderFunc { get; set; } = null!;
 
     private Guid _intersectionObserverMapKey = Guid.NewGuid();
     
     private CancellationTokenSource _cancellationTokenSource = new();
-    
-    private ImmutableArray<VirtualizeCoordinateSystemEntry<T>> _itemsToRender = 
-        ImmutableArray<VirtualizeCoordinateSystemEntry<T>>.Empty;
+
+    private VirtualizeCoordinateSystemResult<T>? _virtualizeCoordinateSystemResult;
 
     private VirtualizeCoordinateSystemScrollPosition _mostRecentVirtualizeCoordinateSystemScrollPosition = null!;
 
@@ -59,17 +58,14 @@ public partial class VirtualizeCoordinateSystem<T> : ComponentBase, IDisposable
             scrollLeft,
             scrollTop,
             CancelAndReturnNewToken());
-        
-        _itemsToRender = ItemsProviderFunc
-            .Invoke(_mostRecentVirtualizeCoordinateSystemScrollPosition)
-            .ToImmutableArray();
+
+        ReloadItems();
     }
 
     public void ReloadItems()
     {
-        _itemsToRender = ItemsProviderFunc
-            .Invoke(_mostRecentVirtualizeCoordinateSystemScrollPosition)
-            .ToImmutableArray();
+        _virtualizeCoordinateSystemResult = ItemsProviderFunc
+            .Invoke(_mostRecentVirtualizeCoordinateSystemScrollPosition);
     }
     
     private CancellationToken CancelAndReturnNewToken()
