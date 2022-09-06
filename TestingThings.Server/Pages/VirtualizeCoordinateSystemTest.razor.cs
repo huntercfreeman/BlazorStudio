@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using BlazorStudio.RazorLib.VirtualizeComponents;
 using Microsoft.AspNetCore.Components;
 using TestingThings.Server.Music;
@@ -53,9 +54,40 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
         base.OnAfterRender(firstRender);
     }
 
-    private IEnumerable<VirtualizeCoordinateSystemEntry<MusicBand>> ItemsProviderFunc(
+    private VirtualizeCoordinateSystemResult<MusicBand> ItemsProviderFunc(
         VirtualizeCoordinateSystemScrollPosition virtualizeCoordinateSystemScrollPosition)
     {
-        return Array.Empty<VirtualizeCoordinateSystemEntry<MusicBand>>();
+        return new()
+        {
+            ItemsToRender = Array.Empty<VirtualizeCoordinateSystemEntry<MusicBand>>().ToImmutableArray(),
+            LeftBoundaryDimensions = new()
+            {
+                Width = ,
+                Height = ,
+                Left = ,
+                Top = 
+            },
+            BottomBoundaryDimensions = 
+            {
+                Width = ,
+                Height = ,
+                Left = ,
+                Top = 
+            },
+            TopBoundaryDimensions = 
+            {
+                Width = ,
+                Height = ,
+                Left = ,
+                Top = 
+            },
+            RightBoundaryDimensions = 
+            {
+                Width = ,
+                Height = ,
+                Left = ,
+                Top = 
+            } 
+        };
     }
 }
