@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorStudio.Photino", "Bla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Photino.Blazor", "Photino.Blazor\Photino.Blazor.csproj", "{84896F88-B2AB-4633-861E-B4F1B5299D80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Experiments.Server", "Experiments.Server\Experiments.Server.csproj", "{7D6EE6B1-5CCC-402F-8408-8C787703649B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,10 +53,6 @@ Global
 		{84896F88-B2AB-4633-861E-B4F1B5299D80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84896F88-B2AB-4633-861E-B4F1B5299D80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84896F88-B2AB-4633-861E-B4F1B5299D80}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7D6EE6B1-5CCC-402F-8408-8C787703649B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D6EE6B1-5CCC-402F-8408-8C787703649B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D6EE6B1-5CCC-402F-8408-8C787703649B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D6EE6B1-5CCC-402F-8408-8C787703649B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,7 +60,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{3F915C2F-8B4D-4C25-B29D-E608BEC3DE8B} = {9E885BE5-B6D9-4CB4-A4AC-764EA2BFA9E4}
 		{D5A0214B-3787-40AA-A4E5-1EEA300C87EE} = {9E885BE5-B6D9-4CB4-A4AC-764EA2BFA9E4}
-		{7D6EE6B1-5CCC-402F-8408-8C787703649B} = {9E885BE5-B6D9-4CB4-A4AC-764EA2BFA9E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF5C7044-00A3-49F9-8ACD-E80E6B3A3B99}
