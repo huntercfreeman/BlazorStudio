@@ -41,7 +41,8 @@ window.virtualizeCoordinateSystem = {
         let intersectionObserver = new IntersectionObserver(
             (entries) =>
                 this.handleThresholdChange(entries,
-                    virtualizeCoordinateSystemDotNetObjectReference),
+                    virtualizeCoordinateSystemDotNetObjectReference,
+                    intersectionObserverMapKey),
             options);
 
         let intersectionRatioMap = new Map();
@@ -70,7 +71,16 @@ window.virtualizeCoordinateSystem = {
 
         intersectionObserverWrap.intersectionObserver.disconnect();
     },
-    handleThresholdChange: function (entries, virtualizeCoordinateSystemDotNetObjectReference) {
+    handleThresholdChange: function (entries, virtualizeCoordinateSystemDotNetObjectReference, intersectionObserverMapKey) {
+        let intersectionObserverWrap = this.intersectionObserverMap.get(intersectionObserverMapKey);
+
+        for (let i = 0; i < entries.length; i++) {
+            let currentEntry = entries[i];
+
+            intersectionObserverWrap.intersectionRatioMap
+                .set(currentEntry.target.id, currentEntry.intersectionRatio);
+        }
+        
         for (let i = 0; i < entries.length; i++) {
             let currentEntry = entries[i];
             
