@@ -21,10 +21,10 @@ public partial class VirtualizeCoordinateSystemBoundary : ComponentBase
     {
         var styleBuilder = new StringBuilder();
 
-        styleBuilder.Append($" width: {VirtualizeCoordinateSystemBoundaryDimensions?.Width ?? 0};");
-        styleBuilder.Append($" height: {VirtualizeCoordinateSystemBoundaryDimensions?.Height ?? 0};");
-        styleBuilder.Append($" left: {VirtualizeCoordinateSystemBoundaryDimensions?.Left ?? 0};");
-        styleBuilder.Append($" top: {VirtualizeCoordinateSystemBoundaryDimensions?.Top ?? 0};");
+        styleBuilder.Append($" width: {VirtualizeCoordinateSystemBoundaryDimensions?.Width ?? 0}px;");
+        styleBuilder.Append($" height: {VirtualizeCoordinateSystemBoundaryDimensions?.Height ?? 0}px;");
+        styleBuilder.Append($" left: {VirtualizeCoordinateSystemBoundaryDimensions?.Left ?? 0}px;");
+        styleBuilder.Append($" top: {VirtualizeCoordinateSystemBoundaryDimensions?.Top ?? 0}px;");
 
         return styleBuilder.ToString();
     }
