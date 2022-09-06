@@ -141,7 +141,7 @@ public interface MusicBandsRepository : IMusicBandsRepository
         _musicBands.Add(new MusicBand
         {
             BandName = "Avril Lavigne",
-            Genre = "EDM",
+            Genre = "Pop",
             Songs = new[] 
             {
                 new MusicSong
@@ -168,26 +168,233 @@ public interface MusicBandsRepository : IMusicBandsRepository
         _musicBands.Add(new MusicBand
         {
             BandName = "The Used",
+            Genre = "Alternative/Indie",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Bulimic";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/IY7dgz1dC_E";
+                },
+                new MusicSong
+                {
+                    SongName = "Noise and Kisses";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/p4_60Zj7uaQ";
+                },
+                new MusicSong
+                {
+                    SongName = "On My Own";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/jdPeR3jr6ek";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Radiohead",
+            Genre = "Alternative/Indie",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "How To Disappear Completely";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/nZq_jeYsbTs";
+                },
+                new MusicSong
+                {
+                    SongName = "No Surprises";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/u5CVsCnxyXg";
+                },
+                new MusicSong
+                {
+                    SongName = "Weird Fishes/Arpeggi";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/pbEGdDOhIXg";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Paramore",
+            Genre = "Alternative/Indie",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Brick By Boring Brick";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/A63VwWz1ij0";
+                },
+                new MusicSong
+                {
+                    SongName = "The Only Exception";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/-J7J_IWUhls";
+                },
+                new MusicSong
+                {
+                    SongName = "Emergency";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/mgJ8BZi3vTA";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "My Chemical Romance",
+            Genre = "Alternative Rock",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Desert Song";
+                    Genre = "Alternative Rock";
+                    UrlToSong = "https://youtu.be/NxQVElXpTVg";
+                },
+                new MusicSong
+                {
+                    SongName = "Early Sunsets Over Monroeville";
+                    Genre = "Alternative Rock";
+                    UrlToSong = "https://youtu.be/fOLfblOB2e8";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Sum 41",
+            Genre = "Alternative/Indie",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Pieces";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/By7ctqcWxyM";
+                },
+                new MusicSong
+                {
+                    SongName = "With Me";
+                    Genre = "Alternative/Indie";
+                    UrlToSong = "https://youtu.be/g8z-qP34-1Y";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "blink-182",
+            Genre = "Pop Punk",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Not Now";
+                    Genre = "Pop Punk";
+                    UrlToSong = "https://youtu.be/HvcOuExmeJg";
+                },
+                new MusicSong
+                {
+                    SongName = "Down";
+                    Genre = "Pop Punk";
+                    UrlToSong = "https://youtu.be/XrTZT49u0kM";
+                },
+                new MusicSong
+                {
+                    SongName = "Adam's Song";
+                    Genre = "Pop Punk";
+                    UrlToSong = "https://youtu.be/2MRdtXWcgIw";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Linkin Park",
+            Genre = "Alternative Rock",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "In The End";
+                    Genre = "Alternative Rock";
+                    UrlToSong = "https://youtu.be/eVTXPUF4Oz4";
+                },
+                new MusicSong
+                {
+                    SongName = "Waiting For The End";
+                    Genre = "Alternative Rock";
+                    UrlToSong = "https://youtu.be/5qF_qbaWt3Q";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "NERVO",
             Genre = "EDM",
             Songs = new[] 
             {
                 new MusicSong
                 {
-                    SongName = "When You're Gone";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/0G3_kG5FFfQ";
+                    SongName = "R3hab & NERVO & Ummet Ozcan - Revolution";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/TWwIztjs29Y";
                 },
                 new MusicSong
                 {
-                    SongName = "I'm With You";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/dGR65RWwzg8";
+                    SongName = "We're All No One ft. Afrojack, Steve Aoki";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/pyeClGsiT4U";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Crystal Castles",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Kept";
+                    Genre = "EDM";
+                    UrlToSong = "https://crystalcastles.bandcamp.com/track/kept";
                 },
                 new MusicSong
                 {
-                    SongName = "Sk8er Boi";
-                    Genre = "Pop";
-                    UrlToSong = "https://youtu.be/TIy3n2b7V9k";
+                    SongName = "Untrust Us";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/tZu3EUVJ8-4";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Crystal Castles",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Kept";
+                    Genre = "EDM";
+                    UrlToSong = "https://crystalcastles.bandcamp.com/track/kept";
+                },
+                new MusicSong
+                {
+                    SongName = "Untrust Us";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/tZu3EUVJ8-4";
                 }
             }.ToImmutableArray()
         });
