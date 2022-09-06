@@ -36,7 +36,8 @@
                     var localTextEditorState = TextEditorStatesSelection.Value;
                     
                     <VirtualizeCoordinateSystem ItemsProviderFunc="ItemsProviderFunc"
-                                                Context="textSpan">
+                                                Context="textSpan"
+                                                @ref="_virtualizeCoordinateSystem">
 
 
                         @* <div style="width: @virtualizeMusicBand.Width; height: @virtualizeMusicBand.Height; top: @virtualizeMusicBand.Top; left: @virtualizeMusicBand.Left;"> *@

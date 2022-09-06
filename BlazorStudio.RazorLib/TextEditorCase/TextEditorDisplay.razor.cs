@@ -51,6 +51,7 @@ public partial class TextEditorDisplay : FluxorComponent
     private int _fontSizeMeasurementMultiplier = 6; 
     private string _fontSizeMeasurementTestData = "abcdefghijklmnopqrstuvwxyz0123456789";
     private HtmlElementMeasuredDimensions _textEditorElementMeasuredDimensions;
+    private VirtualizeCoordinateSystem<TextCharacterSpan>? _virtualizeCoordinateSystem;
 
     private string GetTextEditorElementId => $"bstudio_{_textEditorGuid}";
     private string GetMeasureFontSizeElementId => $"{GetTextEditorElementId}-measure-font-size";
@@ -77,9 +78,9 @@ public partial class TextEditorDisplay : FluxorComponent
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (_previousTextEditorKey != TextEditorStatesSelection.Value.TextEditorKey &&
-            _virtualize is not null)
+            _virtualizeCoordinateSystem is not null)
         {
-            await _virtualize.RefreshDataAsync();
+            _virtualizeCoordinateSystem.ReloadItems();
 
             _previousTextEditorKey = TextEditorStatesSelection.Value.TextEditorKey;
 
@@ -137,8 +138,8 @@ public partial class TextEditorDisplay : FluxorComponent
                 keyboardEventArgs,
                 CancellationToken.None));
 
-            if (_virtualize is not null)
-                _virtualize.RefreshDataAsync();
+            if (_virtualizeCoordinateSystem is not null)
+                _virtualizeCoordinateSystem.ReloadItems();
 
             StateHasChanged();
         }
