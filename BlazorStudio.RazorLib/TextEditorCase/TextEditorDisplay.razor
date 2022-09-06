@@ -35,6 +35,7 @@
                     var localTextEditorState = TextEditorStatesSelection.Value;
             
                     <Virtualize ItemsProvider="LoadTextCharacterSpans"
+                                ItemSize="(float)_textEditorFontSize.RowHeight"
                                 Context="textSpan"
                                 @ref="_virtualize">
                         
