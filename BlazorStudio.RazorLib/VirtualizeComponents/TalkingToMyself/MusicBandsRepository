@@ -1,0 +1,195 @@
+public interface MusicBandsRepository : IMusicBandsRepository
+{
+    private List<MusicBand> _musicBands = new();
+
+    public ImmutableArray<MusicBand> GetMusicBands() => _musicBands;
+    
+    # Constructor
+    {
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Krewella",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Alive";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/J-gYJBsln-w";
+                },
+                new MusicSong
+                {
+                    SongName = "Greenlights";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/s2dgChEZA4M";
+                },
+                new MusicSong
+                {
+                    SongName = "Killin' It";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/EZ9-1WD-rBA";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Porter Robinson",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Musician";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/q-74HTjRbuY";
+                },
+                new MusicSong
+                {
+                    SongName = "Mirror";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/PkiIPzG37vQ";
+                },
+                new MusicSong
+                {
+                    SongName = "Get your Wish";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/4SZEDBFPpgw";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Sefa",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Evil Activities - Nobody Said It Was Easy (Sefa Remix)";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/4rIW1Xz63Wc";
+                },
+                new MusicSong
+                {
+                    SongName = "Crawling";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/mJEaNIK8vj4";
+                },
+                new MusicSong
+                {
+                    SongName = "Schopenhauer";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/82EjuxJjtRU";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Azept",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Europe - The Final Countdown (Azept Hardstyle Bootleg)";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/DsaHrjjz-hU";
+                },
+                new MusicSong
+                {
+                    SongName = "Sia - Chandelier (Azept Hardstyle Bootleg)";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/41m9uJeD_nw";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Re-vamp",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Lady Gaga & Bradley Cooper - Shallow (Re-vamp bootleg)";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/64wom1cMWxk";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Akidaraz",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "Avril Lavigne - Complicated (Akidaraz Bootleg)";
+                    Genre = "EDM";
+                    UrlToSong = "https://youtu.be/wxg36yym3H4";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "Avril Lavigne",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "When You're Gone";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/0G3_kG5FFfQ";
+                },
+                new MusicSong
+                {
+                    SongName = "I'm With You";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/dGR65RWwzg8";
+                },
+                new MusicSong
+                {
+                    SongName = "Sk8er Boi";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/TIy3n2b7V9k";
+                }
+            }.ToImmutableArray()
+        });
+        
+        _musicBands.Add(new MusicBand
+        {
+            BandName = "The Used",
+            Genre = "EDM",
+            Songs = new[] 
+            {
+                new MusicSong
+                {
+                    SongName = "When You're Gone";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/0G3_kG5FFfQ";
+                },
+                new MusicSong
+                {
+                    SongName = "I'm With You";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/dGR65RWwzg8";
+                },
+                new MusicSong
+                {
+                    SongName = "Sk8er Boi";
+                    Genre = "Pop";
+                    UrlToSong = "https://youtu.be/TIy3n2b7V9k";
+                }
+            }.ToImmutableArray()
+        });
+    }
+}

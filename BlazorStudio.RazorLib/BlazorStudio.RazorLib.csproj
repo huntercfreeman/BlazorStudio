@@ -57,6 +57,9 @@
     <_ContentIncludedByDefault Remove="PlainTextEditorCase\PlainTextEditorRowDisplay.razor" />
     <_ContentIncludedByDefault Remove="PlainTextEditorCase\PlainTextEditorSpawn.razor" />
     <_ContentIncludedByDefault Remove="PlainTextEditorCase\TextTokenDisplay.razor" />
+    <_ContentIncludedByDefault Remove="VirtualizeComponentExperiments\MeasureDimensionsForVirtualization.razor" />
+    <_ContentIncludedByDefault Remove="VirtualizeComponentExperiments\VirtualizeBoundaryDisplay.razor" />
+    <_ContentIncludedByDefault Remove="VirtualizeComponentExperiments\VirtualizeCoordinateSystemExperimental.razor" />
   </ItemGroup>
 
   <ItemGroup>
