@@ -2,14 +2,12 @@
 
 <PageTitle>coordinateSystem</PageTitle>
 
-<div>
+<div style="background-color: lightgray;">
     Time to first render:
 
     <br/>
 
     @($"{TimeToFirstRender.TotalMilliseconds:N0}")ms
-
-    <hr/>
 </div>
 
 <div>
@@ -17,16 +15,12 @@
     <input type="number" @bind="RepeatTheDataCount" @bind:event="oninput"/>
 </div>
 
-<hr/>
-
 @if (_virtualizeCoordinateSystemScrollPosition is not null)
 {
-    <div>
+    <div style="background-color: lightgray;">
         (ScrollLeft, ScrollTop):<br/>
         (@($"{_virtualizeCoordinateSystemScrollPosition.ScrollLeft:N2}"), @($"{_virtualizeCoordinateSystemScrollPosition.ScrollTop:N2}"))
     </div>
-
-    <hr/>
 
     <div>Boundary Dimensions</div>
 
@@ -69,9 +63,7 @@
         </tbody>
     </table>
 
-    <hr/>
-
-    <div>
+    <div style="background-color: lightgray;">
         _itemsToRender.Count:&nbsp;@(_itemsToRender.Length)
     </div>
 }
