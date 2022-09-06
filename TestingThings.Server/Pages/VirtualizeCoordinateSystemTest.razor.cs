@@ -15,6 +15,7 @@ public partial class VirtualizeCoordinateSystemTest : ComponentBase
     private DateTime _onAfterRenderFirstRenderDateTime;
     private int _totalWidth = 500;
     private int _totalHeight = 500;
+    private VirtualizeCoordinateSystemScrollPosition? _virtualizeCoordinateSystemScrollPosition;
 
     private TimeSpan TimeToFirstRender => _onAfterRenderFirstRenderDateTime.Subtract(_onInitializedDateTime);
     
