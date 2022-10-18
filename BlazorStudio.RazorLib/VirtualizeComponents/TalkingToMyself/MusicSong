@@ -1,9 +1,0 @@
-public class MusicSong
-{
-    public readonly string SongName;
-    
-    // Bands can have a band level general genre that 
-    // describes them and a per song genre.
-    public readonly string Genre;
-    public string UrlToSong;
-}

@@ -65,6 +65,9 @@
     <_ContentIncludedByDefault Remove="TextEditorCase\TextEditorDebugInfo.razor" />
     <_ContentIncludedByDefault Remove="TextEditorCase\TextEditorDisplay.razor" />
     <_ContentIncludedByDefault Remove="TextEditorCase\TextEditorOptionsSettings.razor" />
+    <_ContentIncludedByDefault Remove="VirtualizeComponents\VirtualizeCoordinateSystem.razor" />
+    <_ContentIncludedByDefault Remove="VirtualizeComponents\VirtualizeCoordinateSystemBoundary.razor" />
+    <_ContentIncludedByDefault Remove="VirtualizeComponents\VirtualizeCoordinateSystemContent.razor" />
   </ItemGroup>
 
   <ItemGroup>

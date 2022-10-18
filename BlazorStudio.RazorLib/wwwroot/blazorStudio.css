@@ -832,3 +832,7 @@ em {
 .bte_text-editor-context-menu {
     box-shadow: 0 0 4px var(--bte_primary-overlay-box-shadow-color) !important;
 }
+
+.bte_gutter {
+    background-color: var(--bstudio_title-background-color) !important;
+}
