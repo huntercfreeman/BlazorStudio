@@ -15,8 +15,11 @@ public static class BlazorStudioClassLibExtensions
         Func<IServiceProvider, IClipboardProvider> clipboardProviderDefaultFactory)
     {
         return services
-            .AddTextEditorRazorLibServices(options => 
-                options.InitializeFluxor = false)
+            .AddTextEditorRazorLibServices(options =>
+            {
+                options.InitializeFluxor = false;
+                options.ClipboardProviderFactory = clipboardProviderDefaultFactory;
+            })
             .AddFluxor(options => options
                 .ScanAssemblies(
                     typeof(BlazorStudioClassLibExtensions).Assembly,

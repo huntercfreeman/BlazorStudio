@@ -1,9 +1,10 @@
-using BlazorStudio.ClassLib.Clipboard;
 using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.Clipboard;
 
-public class ClipboardProvider : IClipboardProvider
+public class ClipboardProvider :
+    BlazorStudio.ClassLib.Clipboard.IClipboardProvider,
+    BlazorTextEditor.RazorLib.Clipboard.IClipboardProvider
 {
     private readonly IJSRuntime _jsRuntime;
 
