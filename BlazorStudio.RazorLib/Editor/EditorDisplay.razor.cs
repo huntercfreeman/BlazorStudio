@@ -15,6 +15,7 @@ using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Editor;
 
@@ -39,6 +40,8 @@ public partial class EditorDisplay : FluxorComponent
     private TextEditorKey _testTextEditorKey = TextEditorKey.NewTextEditorKey();
     private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath("/home/hunter/Documents/TestData/PlainTextEditorStates.Effect.cs", false);
 
+    private readonly SemaphoreSlim _handleAfterOnKeyDownSemaphoreSlim = new(1, 1);
+    
     private TextEditorBase? TestTextEditor => TextEditorService.TextEditorStates.TextEditorList
         .FirstOrDefault(x => x.Key == _testTextEditorKey);
     
@@ -102,6 +105,38 @@ public partial class EditorDisplay : FluxorComponent
                 DefaultErrorRenderer.GetType(),
                 null,
                 TimeSpan.FromSeconds(3))));
+        }
+    }
+    
+    private async Task HandleAfterOnKeyDownAsync((
+        TextEditorBase textEditor, 
+        ImmutableTextEditorCursor immutablePrimaryCursor, 
+        KeyboardEventArgs keyboardEventArgs) tuple)
+    {
+        var success = await _handleAfterOnKeyDownSemaphoreSlim
+            .WaitAsync(TimeSpan.Zero);
+
+        if (!success)
+            return;
+        
+        try
+        {
+            var columnIndexOfCharacterWithDifferingKind = tuple.textEditor
+                .GetColumnIndexOfCharacterWithDifferingKind(
+                    tuple.immutablePrimaryCursor.RowIndex,
+                    tuple.immutablePrimaryCursor.ColumnIndex,
+                    true);
+
+            // word: meaning any contiguous section of RichCharacters of the same kind
+            var startOfWord = columnIndexOfCharacterWithDifferingKind + 1;
+
+            var wordText = tuple.textEditor.GetTextRange(
+                startOfWord,
+                tuple.immutablePrimaryCursor.ColumnIndex);
+        }
+        finally
+        {
+            _handleAfterOnKeyDownSemaphoreSlim.Release();
         }
     }
     

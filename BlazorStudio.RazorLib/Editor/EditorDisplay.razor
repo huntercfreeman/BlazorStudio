@@ -30,11 +30,16 @@
             {
                 <TextEditorDisplay TextEditorKey="activeTextEditor"
                                    StyleCssString="width: 100%; height: 100%;"
-                                   OnSaveRequested="HandleOnSaveRequested">
+                                   OnSaveRequested="HandleOnSaveRequested"
+                                   AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync">
                     
                     <OnContextMenuRenderFragment>
                         <TextEditorContextMenu />
                     </OnContextMenuRenderFragment>
+                    
+                    <AutoCompleteMenuRenderFragment>
+                        <TextEditorAutoCompleteMenu />
+                    </AutoCompleteMenuRenderFragment>
                 </TextEditorDisplay>
             }
         }

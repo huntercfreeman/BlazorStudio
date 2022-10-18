@@ -1,30 +1,28 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Keyboard;
-using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
-using BlazorStudio.RazorLib.Forms;
 using BlazorTextEditor.RazorLib.HelperComponents;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Editor;
 
-public partial class TextEditorContextMenu : ComponentBase
+public partial class TextEditorAutoCompleteMenu : ComponentBase
 {
     [CascadingParameter(Name="SetShouldDisplayMenuAsync")]
     public Func<TextEditorMenuKind, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
     
-    private ElementReference? _textEditorContextMenuElementReference;
+    private ElementReference? _textEditorAutoCompleteMenuElementReference;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (_textEditorContextMenuElementReference is not null)
+            if (_textEditorAutoCompleteMenuElementReference is not null)
             {
                 try
                 {
-                    await _textEditorContextMenuElementReference.Value
+                    await _textEditorAutoCompleteMenuElementReference.Value
                         .FocusAsync();
                 }
                 catch (Microsoft.JSInterop.JSException)
@@ -52,7 +50,7 @@ public partial class TextEditorContextMenu : ComponentBase
         List<MenuOptionRecord> menuOptionRecords = new();
         
         var copy = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
-            "Copy",
+            "AutoComplete 1",
             ImmutableList<MenuOptionRecord>.Empty,
             () => SelectMenuOption(CopyMenuOption),
             MenuOptionKind.Update);
@@ -60,7 +58,7 @@ public partial class TextEditorContextMenu : ComponentBase
         menuOptionRecords.Add(copy);
         
         var paste = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
-            "Paste",
+            "AutoComplete 2",
             ImmutableList<MenuOptionRecord>.Empty,
             () => SelectMenuOption(PasteMenuOption),
             MenuOptionKind.Update);
