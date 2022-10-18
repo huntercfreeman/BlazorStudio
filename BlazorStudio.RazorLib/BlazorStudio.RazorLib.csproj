@@ -17,11 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fluxor.Blazor.Web" Version="5.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.7" />
+    <PackageReference Include="Fluxor.Blazor.Web" Version="5.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Blazor.Text.Editor\BlazorTextEditor.RazorLib\BlazorTextEditor.RazorLib.csproj" />
     <ProjectReference Include="..\BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj" />
   </ItemGroup>
 
@@ -60,6 +61,10 @@
     <_ContentIncludedByDefault Remove="VirtualizeComponentExperiments\MeasureDimensionsForVirtualization.razor" />
     <_ContentIncludedByDefault Remove="VirtualizeComponentExperiments\VirtualizeBoundaryDisplay.razor" />
     <_ContentIncludedByDefault Remove="VirtualizeComponentExperiments\VirtualizeCoordinateSystemExperimental.razor" />
+    <_ContentIncludedByDefault Remove="TextEditorCase\TextEditorCursorDisplay.razor" />
+    <_ContentIncludedByDefault Remove="TextEditorCase\TextEditorDebugInfo.razor" />
+    <_ContentIncludedByDefault Remove="TextEditorCase\TextEditorDisplay.razor" />
+    <_ContentIncludedByDefault Remove="TextEditorCase\TextEditorOptionsSettings.razor" />
   </ItemGroup>
 
   <ItemGroup>

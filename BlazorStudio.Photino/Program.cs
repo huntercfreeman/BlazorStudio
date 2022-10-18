@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 using BlazorStudio.RazorLib;
+using BlazorTextEditor.RazorLib;
 
 namespace BlazorStudio.Photino
 {
@@ -17,10 +18,10 @@ namespace BlazorStudio.Photino
             // register root component
             appBuilder.RootComponents.Add<App>("app");
 
-            appBuilder.Services.AddBlazorStudioRazorLibServices();
-            
             appBuilder.Services.AddHttpClient();
 
+            appBuilder.Services.AddBlazorStudioRazorLibServices();
+            
             var app = appBuilder.Build();
 
             // customize window
