@@ -351,6 +351,8 @@
 
 .bstudio_editor-tabs-listing {
     display: flex;
+    height: 2rem;
+    margin-bottom: 10px;
 }
 
 .bstudio_editor-tab-display {

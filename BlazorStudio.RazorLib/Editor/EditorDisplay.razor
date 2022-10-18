@@ -29,7 +29,7 @@
             if (activeTextEditor != TextEditorKey.Empty)
             {
                 <TextEditorDisplay TextEditorKey="activeTextEditor"
-                                   StyleCssString="width: 100%; height: 100%;"
+                                   StyleCssString="width: 100%; height: calc(100% - 2rem - 10px);"
                                    OnSaveRequested="HandleOnSaveRequested"
                                    AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync">
                     
