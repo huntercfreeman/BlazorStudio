@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
+using BlazorStudio.ClassLib.SyntaxHighlighting;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.ContextCase;
 using BlazorTextEditor.RazorLib;
@@ -45,13 +46,17 @@ public partial class EditorDisplay : FluxorComponent
         if (firstRender)
         {
             var content = await FileSystemProvider.ReadFileAsync(_absoluteFilePath);
-                
-            TextEditorService.RegisterTextEditor(
-                new TextEditorBase(
-                    string.Empty,
-                    null,
-                    null,
-                    _testTextEditorKey));
+
+            var textEditor = new TextEditorBase(
+                content,
+                new TextEditorCSharpLexer(),
+                new TextEditorCSharpDecorationMapper(),
+                _testTextEditorKey);
+
+            await textEditor.ApplySyntaxHighlightingAsync();
+            
+            TextEditorService
+                .RegisterTextEditor(textEditor);
         }
         
         await base.OnAfterRenderAsync(firstRender);
