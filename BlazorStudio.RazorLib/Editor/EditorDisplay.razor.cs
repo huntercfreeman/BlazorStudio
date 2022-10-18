@@ -43,7 +43,8 @@ public partial class EditorDisplay : FluxorComponent
     private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath("/home/hunter/Documents/TestData/PlainTextEditorStates.Effect.cs", false);
 
     private readonly SemaphoreSlim _handleAfterOnKeyDownSemaphoreSlim = new(1, 1);
-    
+    private string _autoCompleteWordText = string.Empty;
+
     private TextEditorBase? TestTextEditor => TextEditorService.TextEditorStates.TextEditorList
         .FirstOrDefault(x => x.Key == _testTextEditorKey);
     
@@ -137,11 +138,17 @@ public partial class EditorDisplay : FluxorComponent
                     true);
 
             // word: meaning any contiguous section of RichCharacters of the same kind
-            var startOfWord = columnIndexOfCharacterWithDifferingKind + 1;
+            var startOfWord = columnIndexOfCharacterWithDifferingKind == -1
+                ? columnIndexOfCharacterWithDifferingKind + 1
+                : columnIndexOfCharacterWithDifferingKind;
 
-            var wordText = textEditor.GetTextRange(
-                startOfWord,
-                immutablePrimaryCursor.ColumnIndex);
+            var positionIndex = textEditor.GetPositionIndex(
+                immutablePrimaryCursor.RowIndex,
+                startOfWord);
+            
+            _autoCompleteWordText = textEditor.GetTextRange(
+                positionIndex,
+                immutablePrimaryCursor.ColumnIndex - startOfWord);
 
             await setTextEditorMenuKind.Invoke(TextEditorMenuKind.AutoCompleteMenu);
         }

@@ -11,6 +11,9 @@ public partial class TextEditorAutoCompleteMenu : ComponentBase
 {
     [CascadingParameter(Name="SetShouldDisplayMenuAsync")]
     public Func<TextEditorMenuKind, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public string AutoCompleteWordText { get; set; } = string.Empty;
     
     private ElementReference? _textEditorAutoCompleteMenuElementReference;
 
@@ -27,7 +30,7 @@ public partial class TextEditorAutoCompleteMenu : ComponentBase
         List<MenuOptionRecord> menuOptionRecords = new();
         
         var copy = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
-            "AutoComplete 1",
+            AutoCompleteWordText,
             ImmutableList<MenuOptionRecord>.Empty,
             () => SelectMenuOption(CopyMenuOption),
             MenuOptionKind.Update);
