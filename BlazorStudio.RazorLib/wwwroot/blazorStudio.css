@@ -818,18 +818,17 @@ em {
     color: var(--bstudio_text-editor-line-number-font-color);
 }
 
-.bstudio_Left {
-    background-color: #5151dd;
+.bstudio_text-editor-context-menu {
 }
 
-.bstudio_Bottom {
-    background-color: #de6767;
+.bte_text-editor-cursor {
+    width: 4px !important;
 }
 
-.bstudio_Top {
-    background-color: #098f09;
+.bte_text-editor-caret-row {
+    border: 3px solid var(--bte_text-editor-caret-row-border-color) !important;
 }
 
-.bstudio_Right {
-    background-color: mediumpurple;
+.bte_text-editor-context-menu {
+    box-shadow: 0 0 4px var(--bte_primary-overlay-box-shadow-color) !important;
 }
