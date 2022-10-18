@@ -4,12 +4,17 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
+using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
+using BlazorStudio.ClassLib.Store.TextEditorResourceCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
+using BlazorStudio.ClassLib.SyntaxHighlighting;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.TreeViewCase;
+using BlazorTextEditor.RazorLib;
+using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -25,7 +30,11 @@ public partial class FolderExplorer : FluxorComponent
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
+    private IState<TextEditorResourceState> TextEditorResourceStateWrap { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
@@ -141,7 +150,29 @@ public partial class FolderExplorer : FluxorComponent
     {
         if (!treeViewKeyboardEventDto.Item.IsDirectory)
         {
-            // TODO: Open plain text editor
+            _ = Task.Run(async () =>
+            {
+                var content = await FileSystemProvider
+                    .ReadFileAsync(
+                        treeViewKeyboardEventDto.Item);
+            
+                var textEditor = new TextEditorBase(
+                    content,
+                    null,
+                    null);
+            
+                Dispatcher.Dispatch(new SetTextEditorResourceStateAction(
+                    textEditor.Key,
+                    treeViewKeyboardEventDto.Item));
+                
+                await textEditor.ApplySyntaxHighlightingAsync();
+            
+                TextEditorService
+                    .RegisterTextEditor(textEditor);
+            
+                Dispatcher.Dispatch(
+                    new SetActiveTextEditorKeyAction(textEditor.Key));
+            });
         }
         else
         {
@@ -158,7 +189,29 @@ public partial class FolderExplorer : FluxorComponent
     {
         if (!treeViewMouseEventDto.Item.IsDirectory)
         {
-            // TODO: Open plain text editor
+            _ = Task.Run(async () =>
+            {
+                var content = await FileSystemProvider
+                    .ReadFileAsync(
+                        treeViewMouseEventDto.Item);
+            
+                var textEditor = new TextEditorBase(
+                    content,
+                    null,
+                    null);
+            
+                Dispatcher.Dispatch(new SetTextEditorResourceStateAction(
+                    textEditor.Key,
+                    treeViewMouseEventDto.Item));
+                
+                await textEditor.ApplySyntaxHighlightingAsync();
+            
+                TextEditorService
+                    .RegisterTextEditor(textEditor);
+            
+                Dispatcher.Dispatch(
+                    new SetActiveTextEditorKeyAction(textEditor.Key));
+            });
         }
         else
         {

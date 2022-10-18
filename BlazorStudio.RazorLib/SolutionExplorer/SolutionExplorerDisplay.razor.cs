@@ -383,26 +383,29 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     {
         if (!treeViewMouseEventDto.Item.IsDirectory)
         {
-            // TODO: OLD
-            // _ = Task.Run(async () =>
-            // {
-            //     var content = await FileSystemProvider
-            //         .ReadFileAsync(treeViewMouseEventDto.Item, CancellationToken.None);
-            //
-            //     Dispatcher.Dispatch(
-            //         new RequestConstructTextEditorAction(
-            //             TextEditorKey.NewTextEditorKey(), 
-            //             treeViewMouseEventDto.Item,
-            //             content,
-            //             (_, _) => Task.CompletedTask,
-            //             () => null));
-            //
-            //     if (TextEditorStatesWrap.Value.AbsoluteFilePathToActiveTextEditorMap
-            //         .TryGetValue(new(treeViewMouseEventDto.Item), out var textEditorKey))
-            //     {
-            //         Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(textEditorKey));    
-            //     }
-            // });
+            _ = Task.Run(async () =>
+            {
+                var content = await FileSystemProvider
+                    .ReadFileAsync(
+                        treeViewMouseEventDto.Item);
+            
+                var textEditor = new TextEditorBase(
+                    content,
+                    new TextEditorCSharpLexer(),
+                    new TextEditorCSharpDecorationMapper());
+            
+                Dispatcher.Dispatch(new SetTextEditorResourceStateAction(
+                    textEditor.Key,
+                    treeViewMouseEventDto.Item));
+                
+                await textEditor.ApplySyntaxHighlightingAsync();
+            
+                TextEditorService
+                    .RegisterTextEditor(textEditor);
+            
+                Dispatcher.Dispatch(
+                    new SetActiveTextEditorKeyAction(textEditor.Key));
+            });
         }
         else
         {
