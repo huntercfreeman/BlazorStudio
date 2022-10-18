@@ -22,6 +22,10 @@ public partial class MenuDisplay : ComponentBase
     public bool ShouldCategorizeByMenuOptionKind { get; set; }
     [Parameter]
     public ElementReference? FocusAfterTarget { get; set; }
+    [Parameter]
+    public Func<KeyboardEventArgs, Task>? AfterOnKeyDownAsync { get; set; }
+    [Parameter]
+    public bool FocusOnAfterFirstRender { get; set; } = true;
 
     private MenuOptionRecord[] _cachedMenuOptionRecords = Array.Empty<MenuOptionRecord>();
     private ElementReference _menuDisplayElementReference;
@@ -38,7 +42,8 @@ public partial class MenuDisplay : ComponentBase
     {
         if (firstRender)
         {
-            await _menuDisplayElementReference.FocusAsync();
+            if (FocusOnAfterFirstRender)
+                await _menuDisplayElementReference.FocusAsync();
         }
         
         await base.OnAfterRenderAsync(firstRender);
@@ -142,5 +147,8 @@ public partial class MenuDisplay : ComponentBase
                     break;                    
             }
         }
+
+        if (AfterOnKeyDownAsync is not null)
+            await AfterOnKeyDownAsync.Invoke(keyboardEventArgs);
     }
 }

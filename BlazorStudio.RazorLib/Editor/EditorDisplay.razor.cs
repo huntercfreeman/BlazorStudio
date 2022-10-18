@@ -11,6 +11,8 @@ using BlazorStudio.ClassLib.SyntaxHighlighting;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.ContextCase;
 using BlazorTextEditor.RazorLib;
+using BlazorTextEditor.RazorLib.HelperComponents;
+using BlazorTextEditor.RazorLib.Keyboard;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -108,11 +110,18 @@ public partial class EditorDisplay : FluxorComponent
         }
     }
     
-    private async Task HandleAfterOnKeyDownAsync((
+    private async Task HandleAfterOnKeyDownAsync(
         TextEditorBase textEditor, 
         ImmutableTextEditorCursor immutablePrimaryCursor, 
-        KeyboardEventArgs keyboardEventArgs) tuple)
+        KeyboardEventArgs keyboardEventArgs,
+        Func<TextEditorMenuKind, Task> setTextEditorMenuKind)
     {
+        if (!keyboardEventArgs.CtrlKey ||
+            keyboardEventArgs.Code != KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE)
+        {
+            return;
+        }
+        
         var success = await _handleAfterOnKeyDownSemaphoreSlim
             .WaitAsync(TimeSpan.Zero);
 
@@ -121,18 +130,20 @@ public partial class EditorDisplay : FluxorComponent
         
         try
         {
-            var columnIndexOfCharacterWithDifferingKind = tuple.textEditor
+            var columnIndexOfCharacterWithDifferingKind = textEditor
                 .GetColumnIndexOfCharacterWithDifferingKind(
-                    tuple.immutablePrimaryCursor.RowIndex,
-                    tuple.immutablePrimaryCursor.ColumnIndex,
+                    immutablePrimaryCursor.RowIndex,
+                    immutablePrimaryCursor.ColumnIndex,
                     true);
 
             // word: meaning any contiguous section of RichCharacters of the same kind
             var startOfWord = columnIndexOfCharacterWithDifferingKind + 1;
 
-            var wordText = tuple.textEditor.GetTextRange(
+            var wordText = textEditor.GetTextRange(
                 startOfWord,
-                tuple.immutablePrimaryCursor.ColumnIndex);
+                immutablePrimaryCursor.ColumnIndex);
+
+            await setTextEditorMenuKind.Invoke(TextEditorMenuKind.AutoCompleteMenu);
         }
         finally
         {
