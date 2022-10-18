@@ -1,8 +1,12 @@
 ﻿using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Renderer;
 using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
+using BlazorStudio.ClassLib.Store.FileSystemCase;
+using BlazorStudio.ClassLib.Store.NotificationCase;
+using BlazorStudio.ClassLib.Store.TextEditorResourceCase;
 using BlazorStudio.ClassLib.SyntaxHighlighting;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.ContextCase;
@@ -19,7 +23,11 @@ public partial class EditorDisplay : FluxorComponent
     [Inject]
     private IState<EditorState> EditorStateWrap { get; set; } = null!;
     [Inject]
+    private IState<TextEditorResourceState> TextEditorResourceStateWrap { get; set; } = null!;
+    [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IDefaultErrorRenderer DefaultErrorRenderer { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -70,6 +78,31 @@ public partial class EditorDisplay : FluxorComponent
     private void TextEditorServiceOnOnTextEditorStatesChanged(object? sender, EventArgs e)
     {
         InvokeAsync(StateHasChanged);
+    }
+    
+    private void HandleOnSaveRequested(TextEditorBase textEditor)
+    {
+        var content = textEditor.GetAllText();
+        
+        var textEditorResourceState = TextEditorResourceStateWrap.Value;
+
+        if (textEditorResourceState.ResourceMap
+            .TryGetValue(textEditor.Key, out var relatedResource))
+        {
+            Dispatcher.Dispatch(
+                new WriteToFileSystemAction(
+                    relatedResource,
+                    content));
+        }
+        else
+        {
+            Dispatcher.Dispatch(new RegisterNotificationAction(new NotificationRecord(
+                NotificationKey.NewNotificationKey(), 
+                $"Could not find resource file",
+                DefaultErrorRenderer.GetType(),
+                null,
+                TimeSpan.FromSeconds(3))));
+        }
     }
     
     protected override void Dispose(bool disposing)
