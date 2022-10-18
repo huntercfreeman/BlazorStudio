@@ -42,7 +42,8 @@ public partial class EditorDisplay : FluxorComponent
     private TextEditorKey _testTextEditorKey = TextEditorKey.NewTextEditorKey();
     private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath("/home/hunter/Documents/TestData/PlainTextEditorStates.Effect.cs", false);
 
-    private readonly SemaphoreSlim _handleAfterOnKeyDownSemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _afterOnKeyDownAutoCompleteSemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _afterOnKeyDownSyntaxHighlightingSemaphoreSlim = new(1, 1);
     private string _autoCompleteWordText = string.Empty;
 
     private TextEditorBase? TestTextEditor => TextEditorService.TextEditorStates.TextEditorList
@@ -117,44 +118,66 @@ public partial class EditorDisplay : FluxorComponent
         KeyboardEventArgs keyboardEventArgs,
         Func<TextEditorMenuKind, Task> setTextEditorMenuKind)
     {
-        if (!keyboardEventArgs.CtrlKey ||
-            keyboardEventArgs.Code != KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE)
+        if (keyboardEventArgs.Key == ";" || 
+            KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code))
         {
-            return;
-        }
-        
-        var success = await _handleAfterOnKeyDownSemaphoreSlim
-            .WaitAsync(TimeSpan.Zero);
-
-        if (!success)
-            return;
-        
-        try
-        {
-            var columnIndexOfCharacterWithDifferingKind = textEditor
-                .GetColumnIndexOfCharacterWithDifferingKind(
-                    immutablePrimaryCursor.RowIndex,
-                    immutablePrimaryCursor.ColumnIndex,
-                    true);
-
-            // word: meaning any contiguous section of RichCharacters of the same kind
-            var startOfWord = columnIndexOfCharacterWithDifferingKind == -1
-                ? columnIndexOfCharacterWithDifferingKind + 1
-                : columnIndexOfCharacterWithDifferingKind;
-
-            var positionIndex = textEditor.GetPositionIndex(
-                immutablePrimaryCursor.RowIndex,
-                startOfWord);
+            // Syntax Highlighting
             
-            _autoCompleteWordText = textEditor.GetTextRange(
-                positionIndex,
-                immutablePrimaryCursor.ColumnIndex - startOfWord);
+            var success = await _afterOnKeyDownSyntaxHighlightingSemaphoreSlim
+                .WaitAsync(TimeSpan.Zero);
 
-            await setTextEditorMenuKind.Invoke(TextEditorMenuKind.AutoCompleteMenu);
+            if (!success)
+                return;
+        
+            try
+            {
+                await textEditor.ApplySyntaxHighlightingAsync();
+            }
+            finally
+            {
+                _afterOnKeyDownSyntaxHighlightingSemaphoreSlim.Release();
+            }
+            
+            return;
         }
-        finally
+        else if (keyboardEventArgs.CtrlKey &&
+            keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE)
         {
-            _handleAfterOnKeyDownSemaphoreSlim.Release();
+            // AutoComplete
+            
+            var success = await _afterOnKeyDownAutoCompleteSemaphoreSlim
+                .WaitAsync(TimeSpan.Zero);
+
+            if (!success)
+                return;
+        
+            try
+            {
+                var columnIndexOfCharacterWithDifferingKind = textEditor
+                    .GetColumnIndexOfCharacterWithDifferingKind(
+                        immutablePrimaryCursor.RowIndex,
+                        immutablePrimaryCursor.ColumnIndex,
+                        true);
+
+                // word: meaning any contiguous section of RichCharacters of the same kind
+                var startOfWord = columnIndexOfCharacterWithDifferingKind == -1
+                    ? columnIndexOfCharacterWithDifferingKind + 1
+                    : columnIndexOfCharacterWithDifferingKind;
+
+                var positionIndex = textEditor.GetPositionIndex(
+                    immutablePrimaryCursor.RowIndex,
+                    startOfWord);
+            
+                _autoCompleteWordText = textEditor.GetTextRange(
+                    positionIndex,
+                    immutablePrimaryCursor.ColumnIndex - startOfWord);
+
+                await setTextEditorMenuKind.Invoke(TextEditorMenuKind.AutoCompleteMenu);
+            }
+            finally
+            {
+                _afterOnKeyDownAutoCompleteSemaphoreSlim.Release();
+            }
         }
     }
     
