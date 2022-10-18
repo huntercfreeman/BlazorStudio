@@ -1,6 +1,0 @@
-public interface IMusicBandsRepository
-{
-    public ImmutableArray<MusicBand> GetMusicBands();
-    public void AddMusicBand(MusicBand musicBand);
-    public void RemoveMusicBand(MusicBandKey musicBandKey);
-}

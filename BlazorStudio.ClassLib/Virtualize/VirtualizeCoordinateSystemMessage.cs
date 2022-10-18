@@ -1,4 +1,0 @@
-﻿namespace BlazorStudio.ClassLib.Virtualize;
-
-public record VirtualizeCoordinateSystemMessage(VirtualizeCoordinateSystemRequest? VirtualizeCoordinateSystemRequest,
-    IVirtualizeCoordinateSystemResult? VirtualizeCoordinateSystemResult);

@@ -1,4 +1,4 @@
-﻿using BlazorStudio.ClassLib.TextEditor;
+﻿using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.EditorCase;
@@ -10,7 +10,7 @@ namespace BlazorStudio.ClassLib.Store.EditorCase;
 [FeatureState]
 public record EditorState(TextEditorKey TextEditorKey)
 {
-    public EditorState() : this(TextEditorKey.Empty())
+    public EditorState() : this(TextEditorKey.Empty)
     {
 
     }

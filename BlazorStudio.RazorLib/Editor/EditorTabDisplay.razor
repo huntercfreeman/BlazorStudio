@@ -2,23 +2,29 @@
 
 <div class="bstudio_editor-tab-display @IsActiveCssClass"
      @onclick="DispatchSetActiveTextEditorKeyAction">
-    @if (TextEditor.AbsoluteFilePath is not null)
-    {
-        <text>@TextEditor.AbsoluteFilePath.FilenameWithExtension</text>
+    
+    @{
+        var textEditorResourceState = TextEditorResourceStateWrap.Value;
 
-        if (TextEditor.EditBlocks.Any())
+        if (textEditorResourceState.ResourceMap
+            .TryGetValue(TextEditor.Key, out var relatedResource))
         {
-            <span style="margin-left: 7px;">*</span>
+            <text>@relatedResource.FilenameWithExtension</text>
+
+            if (TextEditor.EditBlocks.Any())
+            {
+                <span style="margin-left: 7px;">*</span>
+            }    
+        }
+        else
+        {
+            <text>(not named)</text>
         }
     }
-    else
-    {
-        <text>AbsoluteFilePathNull</text>
-    }
-    
+
     <div class="bstudio_editor-tab-close-display"
          @onclick:stopPropagation="true"
          @onclick="FireDisposePlainTextEditorOnClick">
-        <IconClose />
+        <IconClose/>
     </div>
 </div>

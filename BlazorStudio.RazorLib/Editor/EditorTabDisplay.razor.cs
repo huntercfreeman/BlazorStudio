@@ -1,7 +1,8 @@
 ﻿using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.EditorCase;
-using BlazorStudio.ClassLib.Store.TextEditorCase;
-using BlazorStudio.ClassLib.TextEditor;
+using BlazorStudio.ClassLib.Store.TextEditorResourceCase;
+using BlazorTextEditor.RazorLib;
+using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -14,34 +15,37 @@ public partial class EditorTabDisplay : FluxorComponent
     [Inject]
     private IState<EditorState> EditorStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorStates> TextEditorStatesWrap { get; set; } = null!;
+    private IState<TextEditorResourceState> TextEditorResourceStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public TextEditorBase TextEditor { get; set; } = null!;
     [Parameter, EditorRequired]
     public int TabIndex { get; set; }
     
-    private string IsActiveCssClass => EditorStateWrap.Value.TextEditorKey == TextEditor.TextEditorKey
+    private string IsActiveCssClass => EditorStateWrap.Value.TextEditorKey == TextEditor.Key
         ? "bstudio_active"
         : string.Empty;
 
     private void DispatchSetActiveTextEditorKeyAction()
     {
-        Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(TextEditor.TextEditorKey));
+        Dispatcher.Dispatch(
+            new SetActiveTextEditorKeyAction(TextEditor.Key));
     }
     
     private void FireDisposePlainTextEditorOnClick()
     {
-        var localTextEditorStates = TextEditorStatesWrap.Value;
+        var localTextEditors = TextEditorService.TextEditorStates.TextEditorList;
         
-        var activeIndex = localTextEditorStates.TextEditors.IndexOf(TextEditor);
-
+        var activeIndex = localTextEditors.IndexOf(TextEditor);
+        
         var indexOfNextActiveTextEditor = activeIndex;
         
         // If last item in list
-        if (activeIndex >= localTextEditorStates.TextEditors.Count - 1)
+        if (activeIndex >= localTextEditors.Count - 1)
         {
             indexOfNextActiveTextEditor--;
         }
@@ -51,21 +55,20 @@ public partial class EditorTabDisplay : FluxorComponent
             // The new active TextEditor is set prior to actually removing the current active TextEditor.
             indexOfNextActiveTextEditor++;
         }
-
-
+        
         // List will be empty after disposing
-        if (localTextEditorStates.TextEditors.Count - 1 == 0)
+        if (localTextEditors.Count - 1 == 0)
         {
-            Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(TextEditorKey.Empty()));
+            Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(TextEditorKey.Empty));
         }
         else
         {
-            var nextActiveTextEditor = localTextEditorStates.TextEditors[indexOfNextActiveTextEditor];
+            var nextActiveTextEditor = localTextEditors[indexOfNextActiveTextEditor];
             
-            Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(nextActiveTextEditor.TextEditorKey));
+            Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(nextActiveTextEditor.Key));
         }
         
-        Dispatcher.Dispatch(new RequestDisposePlainTextEditorAction(TextEditor.TextEditorKey));
+        TextEditorService.DisposeTextEditor(TextEditor.Key);
     }
     
     private void EditorTabHandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

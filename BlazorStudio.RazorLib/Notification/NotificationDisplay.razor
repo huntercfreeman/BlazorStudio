@@ -2,14 +2,6 @@
     <div>
         <div>@NotificationRecord.Title</div>
 
-        @if (NotificationRecord.AutomaticDisposalTimeSpan is not null)
-        {
-            <text>
-                @NotificationRecord.AutomaticDisposalTimeSpan.Value.TotalSeconds seconds auto-close
-                <br/>
-            </text>
-        }
-
         <button class="btn btn-primary"
                 @onclick="DismissOnClick">
             Dismiss

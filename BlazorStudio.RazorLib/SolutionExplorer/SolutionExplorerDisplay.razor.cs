@@ -32,11 +32,13 @@ using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 using BlazorStudio.ClassLib.Store.SolutionCase;
-using BlazorStudio.ClassLib.Store.TextEditorCase;
-using BlazorStudio.ClassLib.TextEditor;
+using BlazorStudio.ClassLib.Store.TextEditorResourceCase;
+using BlazorStudio.ClassLib.SyntaxHighlighting;
 using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.SyntaxRootRender;
+using BlazorTextEditor.RazorLib;
+using BlazorTextEditor.RazorLib.TextEditor;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
@@ -51,11 +53,13 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
     [Inject]
     private IState<RoslynWorkspaceState> RoslynWorkspaceStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorStates> TextEditorStatesWrap { get; set; } = null!;
+    private IState<TextEditorResourceState> TextEditorResourceStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
@@ -336,28 +340,32 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
             .Union(childFileAbsolutePaths);
     }
 
-    private void WorkspaceExplorerTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<AbsoluteFilePathDotNet> treeViewKeyboardEventDto)
+    private void SolutionExplorerTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<AbsoluteFilePathDotNet> treeViewKeyboardEventDto)
     {
         if (!treeViewKeyboardEventDto.Item.IsDirectory)
         {
             _ = Task.Run(async () =>
             {
                 var content = await FileSystemProvider
-                    .ReadFileAsync(treeViewKeyboardEventDto.Item, CancellationToken.None);
+                    .ReadFileAsync(
+                        treeViewKeyboardEventDto.Item);
+            
+                var textEditor = new TextEditorBase(
+                    content,
+                    new TextEditorCSharpLexer(),
+                    new TextEditorCSharpDecorationMapper());
+            
+                Dispatcher.Dispatch(new SetTextEditorResourceStateAction(
+                    textEditor.Key,
+                    treeViewKeyboardEventDto.Item));
+                
+                await textEditor.ApplySyntaxHighlightingAsync();
+            
+                TextEditorService
+                    .RegisterTextEditor(textEditor);
             
                 Dispatcher.Dispatch(
-                    new RequestConstructTextEditorAction(
-                        TextEditorKey.NewTextEditorKey(), 
-                        treeViewKeyboardEventDto.Item,
-                        content,
-                        (_, _) => Task.CompletedTask,
-                        () => null));
-
-                if (TextEditorStatesWrap.Value.AbsoluteFilePathToActiveTextEditorMap
-                    .TryGetValue(new(treeViewKeyboardEventDto.Item), out var textEditorKey))
-                {
-                    Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(textEditorKey));    
-                }
+                    new SetActiveTextEditorKeyAction(textEditor.Key));
             });
         }
         else
@@ -366,33 +374,37 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
         }
     }
 
-    private void WorkspaceExplorerTreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<AbsoluteFilePathDotNet> treeViewKeyboardEventDto)
+    private void SolutionExplorerTreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<AbsoluteFilePathDotNet> treeViewKeyboardEventDto)
     {
         treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
     }
 
-    private void WorkspaceExplorerTreeViewOnDoubleClick(TreeViewMouseEventDto<AbsoluteFilePathDotNet> treeViewMouseEventDto)
+    private void SolutionExplorerTreeViewOnDoubleClick(TreeViewMouseEventDto<AbsoluteFilePathDotNet> treeViewMouseEventDto)
     {
         if (!treeViewMouseEventDto.Item.IsDirectory)
         {
             _ = Task.Run(async () =>
             {
                 var content = await FileSystemProvider
-                    .ReadFileAsync(treeViewMouseEventDto.Item, CancellationToken.None);
+                    .ReadFileAsync(
+                        treeViewMouseEventDto.Item);
+            
+                var textEditor = new TextEditorBase(
+                    content,
+                    new TextEditorCSharpLexer(),
+                    new TextEditorCSharpDecorationMapper());
+            
+                Dispatcher.Dispatch(new SetTextEditorResourceStateAction(
+                    textEditor.Key,
+                    treeViewMouseEventDto.Item));
+                
+                await textEditor.ApplySyntaxHighlightingAsync();
+            
+                TextEditorService
+                    .RegisterTextEditor(textEditor);
             
                 Dispatcher.Dispatch(
-                    new RequestConstructTextEditorAction(
-                        TextEditorKey.NewTextEditorKey(), 
-                        treeViewMouseEventDto.Item,
-                        content,
-                        (_, _) => Task.CompletedTask,
-                        () => null));
-
-                if (TextEditorStatesWrap.Value.AbsoluteFilePathToActiveTextEditorMap
-                    .TryGetValue(new(treeViewMouseEventDto.Item), out var textEditorKey))
-                {
-                    Dispatcher.Dispatch(new SetActiveTextEditorKeyAction(textEditorKey));    
-                }
+                    new SetActiveTextEditorKeyAction(textEditor.Key));
             });
         }
         else

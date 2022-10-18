@@ -1,9 +1,0 @@
-public class MusicBandKey
-{
-    public Guid Guid;
-
-    public static MusicBandKey NewMusicBandKey()
-    {
-        return new(Guid.NewGuid());
-    }
-}

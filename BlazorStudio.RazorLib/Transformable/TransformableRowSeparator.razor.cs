@@ -22,7 +22,7 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
 
     private Func<MouseEventArgs, Task>? _dragStateEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
-    private SemaphoreSlim _transformableRowSeparatorSemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _transformableRowSeparatorSemaphoreSlim = new(1, 1);
 
     protected override void OnInitialized()
     {

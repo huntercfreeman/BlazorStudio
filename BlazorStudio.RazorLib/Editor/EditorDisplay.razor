@@ -1,34 +1,52 @@
 ﻿@using BlazorStudio.ClassLib.Contexts
-@using BlazorStudio.ClassLib.TextEditor
+@using BlazorTextEditor.RazorLib
+@using BlazorTextEditor.RazorLib.TextEditor
+
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <ContextBoundary CssClassString="bstudio_editor-display bstudio_focus-display-large"
                  CssStyleString="@Dimensions.DimensionsCssString"
                  ContextKey="ContextFacts.EditorDisplayContext.ContextKey">
 
-    <h5 class="bstudio_large-title" style="padding: 5px;">Editor Display</h5>
+    <h5 class="bstudio_large-title" 
+        style="padding: 5px; cursor: pointer;"
+        @onclick="_ => _textEditorShouldRemeasureFlag = !_textEditorShouldRemeasureFlag">
+        Editor Display (Double-Click here to re-measure)
+    </h5>
 
-    <div style="padding: 0 5px; height: calc(100% - 2rem - 10px);">
+    <div style="padding: 0 5px; height: 100%;">
         @{
-            var localTextEditorStates = TextEditorStatesWrap.Value;
-            var localEditorState = EditorStateWrap.Value;
+            var textEditorList = TextEditorService.TextEditorStates.TextEditorList;
+            var activeTextEditor = EditorStateWrap.Value.TextEditorKey;
 
             <div class="bstudio_editor-tabs-listing">
-                @for (int i = 0; i < localTextEditorStates.TextEditors.Count; i++)
+                @for (int i = 0; i < textEditorList.Count; i++)
                 {
                     var index = i;
-                    var textEditor = localTextEditorStates.TextEditors[index];
+                    var textEditor = textEditorList[index];
 
                     <EditorTabDisplay TabIndex="index"
-                                      TextEditor="textEditor" />
+                                      TextEditor="textEditor"/>
                 }
             </div>
-            
-            if (localEditorState.TextEditorKey != TextEditorKey.Empty())
+
+            if (activeTextEditor != TextEditorKey.Empty)
             {
-                <BlazorStudio.RazorLib.TextEditorCase.TextEditorDisplay TextEditorKey="localEditorState.TextEditorKey" />
+                <TextEditorDisplay TextEditorKey="activeTextEditor"
+                                   StyleCssString="width: 100%; height: calc(100% - 2rem - 10px);"
+                                   OnSaveRequested="HandleOnSaveRequested"
+                                   AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync"
+                                   ShouldRemeasureFlag="_textEditorShouldRemeasureFlag">
+                    
+                    <OnContextMenuRenderFragment>
+                        <TextEditorContextMenu />
+                    </OnContextMenuRenderFragment>
+                    
+                    <AutoCompleteMenuRenderFragment>
+                        <TextEditorAutoCompleteMenu AutoCompleteWordText="@_autoCompleteWordText" />
+                    </AutoCompleteMenuRenderFragment>
+                </TextEditorDisplay>
             }
         }
     </div>
 </ContextBoundary>
-

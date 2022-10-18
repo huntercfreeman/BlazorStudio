@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fluxor" Version="5.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.7" />
+    <PackageReference Include="Fluxor" Version="5.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.4.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.2.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.2.0" />
@@ -22,6 +22,10 @@
     <Folder Include="Store\CSharpKeywords\" />
     <Folder Include="Store\StartupProject\" />
     <Folder Include="Store\SolutionExplorerCase\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Blazor.Text.Editor\BlazorTextEditor.RazorLib\BlazorTextEditor.RazorLib.csproj" />
   </ItemGroup>
 
 </Project>

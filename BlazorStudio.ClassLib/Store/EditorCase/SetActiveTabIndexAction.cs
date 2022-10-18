@@ -1,4 +1,4 @@
-﻿using BlazorStudio.ClassLib.TextEditor;
+﻿using BlazorTextEditor.RazorLib.TextEditor;
 
 namespace BlazorStudio.ClassLib.Store.EditorCase;
 

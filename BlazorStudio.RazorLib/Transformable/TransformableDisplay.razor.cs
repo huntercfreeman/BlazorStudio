@@ -26,7 +26,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     private MouseEventArgs? _previousDragMouseEventArgs;
 
     private int _resizeEventCounter;
-    private SemaphoreSlim _transformableDisplaySemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _transformableDisplaySemaphoreSlim = new(1, 1);
 
     // Cardinal Resize Handles
     private Dimensions _northResizeHandleDimensions = new();
