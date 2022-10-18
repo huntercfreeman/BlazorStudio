@@ -2,6 +2,7 @@
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.NugetPackageManager;
 using BlazorTextEditor.RazorLib;
+using BlazorTextEditor.RazorLib.Clipboard;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +10,9 @@ namespace BlazorStudio.ClassLib;
 
 public static class BlazorStudioClassLibExtensions
 {
-    public static IServiceCollection AddBlazorStudioClassLibServices(this IServiceCollection services)
+    public static IServiceCollection AddBlazorStudioClassLibServices(
+        this IServiceCollection services,
+        Func<IServiceProvider, IClipboardProvider> clipboardProviderDefaultFactory)
     {
         return services
             .AddTextEditorRazorLibServices(options => 
