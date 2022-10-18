@@ -550,7 +550,7 @@ em {
 }
 
 .bstudio_terminal-display {
-    
+    height: 100%;
 }
 
 .bstudio_terminal-body {
@@ -837,4 +837,5 @@ em {
 
 .bte_gutter {
     background-color: var(--bstudio_title-background-color) !important;
+    justify-content: end;
 }
