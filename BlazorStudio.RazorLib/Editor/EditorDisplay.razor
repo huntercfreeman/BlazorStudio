@@ -1,5 +1,6 @@
 ﻿@using BlazorStudio.ClassLib.Contexts
 @using BlazorTextEditor.RazorLib
+@using BlazorTextEditor.RazorLib.TextEditor
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -9,39 +10,27 @@
 
     <h5 class="bstudio_large-title" style="padding: 5px;">Editor Display</h5>
 
-    
-    @{
-        var localTestTextEditor = TestTextEditor;
+    <div style="padding: 0 5px; height: 100%;">
+        @{
+            var textEditorList = TextEditorService.TextEditorStates.TextEditorList;
+            var activeTextEditor = EditorStateWrap.Value.TextEditorKey;
 
-        if (localTestTextEditor is not null)
-        {
-            <TextEditorDisplay TextEditorKey="_testTextEditorKey"
-                               StyleCssString="width: 100%; height: 100%;" />       
+            <div class="bstudio_editor-tabs-listing">
+                @for (int i = 0; i < textEditorList.Count; i++)
+                {
+                    var index = i;
+                    var textEditor = textEditorList[index];
+
+                    <EditorTabDisplay TabIndex="index"
+                                      TextEditor="textEditor"/>
+                }
+            </div>
+
+            if (activeTextEditor != TextEditorKey.Empty)
+            {
+                <TextEditorDisplay TextEditorKey="activeTextEditor"
+                                   StyleCssString="width: 100%; height: 100%;"/>
+            }
         }
-    }
-    
-    @* TODO: OLD *@
-    @* <div style="padding: 0 5px; height: calc(100% - 2rem - 10px);"> *@
-    @*     @{ *@
-    @*         var localTextEditorStates = TextEditorStatesWrap.Value; *@
-    @*         var localEditorState = EditorStateWrap.Value; *@
-    @* *@
-    @*         <div class="bstudio_editor-tabs-listing"> *@
-    @*             @for (int i = 0; i < localTextEditorStates.TextEditors.Count; i++) *@
-    @*             { *@
-    @*                 var index = i; *@
-    @*                 var textEditor = localTextEditorStates.TextEditors[index]; *@
-    @* *@
-    @*                 <EditorTabDisplay TabIndex="index" *@
-    @*                                   TextEditor="textEditor" /> *@
-    @*             } *@
-    @*         </div> *@
-    @*          *@
-    @*         if (localEditorState.TextEditorKey != TextEditorKey.Empty()) *@
-    @*         { *@
-    @*             <BlazorStudio.RazorLib.TextEditorCase.TextEditorDisplay TextEditorKey="localEditorState.TextEditorKey" /> *@
-    @*         } *@
-    @*     } *@
-    @* </div> *@
+    </div>
 </ContextBoundary>
-

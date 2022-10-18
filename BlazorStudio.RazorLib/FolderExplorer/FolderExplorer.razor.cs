@@ -137,7 +137,7 @@ public partial class FolderExplorer : FluxorComponent
             .Union(childFileAbsolutePaths);
     }
 
-    private void WorkspaceExplorerTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<IAbsoluteFilePath> treeViewKeyboardEventDto)
+    private void FolderExplorerTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<IAbsoluteFilePath> treeViewKeyboardEventDto)
     {
         if (!treeViewKeyboardEventDto.Item.IsDirectory)
         {
@@ -149,12 +149,12 @@ public partial class FolderExplorer : FluxorComponent
         }
     }
 
-    private void WorkspaceExplorerTreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<IAbsoluteFilePath> treeViewKeyboardEventDto)
+    private void FolderExplorerTreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<IAbsoluteFilePath> treeViewKeyboardEventDto)
     {
         treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
     }
 
-    private void WorkspaceExplorerTreeViewOnDoubleClick(TreeViewMouseEventDto<IAbsoluteFilePath> treeViewMouseEventDto)
+    private void FolderExplorerTreeViewOnDoubleClick(TreeViewMouseEventDto<IAbsoluteFilePath> treeViewMouseEventDto)
     {
         if (!treeViewMouseEventDto.Item.IsDirectory)
         {
