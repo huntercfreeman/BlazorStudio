@@ -118,29 +118,7 @@ public partial class EditorDisplay : FluxorComponent
         KeyboardEventArgs keyboardEventArgs,
         Func<TextEditorMenuKind, Task> setTextEditorMenuKind)
     {
-        if (keyboardEventArgs.Key == ";" || 
-            KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code))
-        {
-            // Syntax Highlighting
-            
-            var success = await _afterOnKeyDownSyntaxHighlightingSemaphoreSlim
-                .WaitAsync(TimeSpan.Zero);
-
-            if (!success)
-                return;
-        
-            try
-            {
-                await textEditor.ApplySyntaxHighlightingAsync();
-            }
-            finally
-            {
-                _afterOnKeyDownSyntaxHighlightingSemaphoreSlim.Release();
-            }
-            
-            return;
-        }
-        else if (keyboardEventArgs.CtrlKey &&
+        if (keyboardEventArgs.CtrlKey &&
             keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE)
         {
             // AutoComplete
@@ -178,6 +156,28 @@ public partial class EditorDisplay : FluxorComponent
             {
                 _afterOnKeyDownAutoCompleteSemaphoreSlim.Release();
             }
+        }
+        else if (keyboardEventArgs.Key == ";" || 
+            KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code))
+        {
+            // Syntax Highlighting
+            
+            var success = await _afterOnKeyDownSyntaxHighlightingSemaphoreSlim
+                .WaitAsync(TimeSpan.Zero);
+
+            if (!success)
+                return;
+        
+            try
+            {
+                await textEditor.ApplySyntaxHighlightingAsync();
+            }
+            finally
+            {
+                _afterOnKeyDownSyntaxHighlightingSemaphoreSlim.Release();
+            }
+            
+            return;
         }
     }
     
