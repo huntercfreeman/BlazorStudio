@@ -45,6 +45,9 @@ public partial class EditorDisplay : FluxorComponent
     private readonly SemaphoreSlim _afterOnKeyDownAutoCompleteSemaphoreSlim = new(1, 1);
     private readonly SemaphoreSlim _afterOnKeyDownSyntaxHighlightingSemaphoreSlim = new(1, 1);
     private string _autoCompleteWordText = string.Empty;
+    private string _previousDimensionsCssString = string.Empty;
+
+    private bool _textEditorShouldRemeasureFlag;
 
     private TextEditorBase? TestTextEditor => TextEditorService.TextEditorStates.TextEditorList
         .FirstOrDefault(x => x.Key == _testTextEditorKey);
@@ -60,6 +63,8 @@ public partial class EditorDisplay : FluxorComponent
     {
         if (firstRender)
         {
+            _previousDimensionsCssString = Dimensions.DimensionsCssString;
+            
             // Example usage:
             // --------------
             var content = await FileSystemProvider.ReadFileAsync(_absoluteFilePath);
@@ -78,7 +83,7 @@ public partial class EditorDisplay : FluxorComponent
             Dispatcher.Dispatch(
                 new SetActiveTextEditorKeyAction(_testTextEditorKey));
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 

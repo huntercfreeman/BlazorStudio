@@ -8,7 +8,11 @@
                  CssStyleString="@Dimensions.DimensionsCssString"
                  ContextKey="ContextFacts.EditorDisplayContext.ContextKey">
 
-    <h5 class="bstudio_large-title" style="padding: 5px;">Editor Display</h5>
+    <h5 class="bstudio_large-title" 
+        style="padding: 5px; cursor: pointer;"
+        @onclick="_ => _textEditorShouldRemeasureFlag = !_textEditorShouldRemeasureFlag">
+        Editor Display (Double-Click here to re-measure)
+    </h5>
 
     <div style="padding: 0 5px; height: 100%;">
         @{
@@ -31,7 +35,8 @@
                 <TextEditorDisplay TextEditorKey="activeTextEditor"
                                    StyleCssString="width: 100%; height: calc(100% - 2rem - 10px);"
                                    OnSaveRequested="HandleOnSaveRequested"
-                                   AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync">
+                                   AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync"
+                                   ShouldRemeasureFlag="_textEditorShouldRemeasureFlag">
                     
                     <OnContextMenuRenderFragment>
                         <TextEditorContextMenu />
