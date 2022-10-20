@@ -122,7 +122,9 @@ public static class HtmlSyntaxTree
 
                 textEditorDiagnostics.Add(new TextEditorDiagnostic(
                     DiagnosticLevel.Error,
-                    "",
+                    $"The {nameof(TagNameSyntax)} of:" +
+                    $" '{captureTagNameBuilder}'" +
+                    $" is not valid.",
                     new TextEditorTextSpan(
                         stringWalker.Position - captureLoopIndex,
                         stringWalker.Position,
