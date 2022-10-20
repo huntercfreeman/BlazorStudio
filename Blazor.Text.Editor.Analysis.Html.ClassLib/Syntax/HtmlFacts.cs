@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Blazor.Text.Editor.Analysis.Shared;
 
 namespace Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
 
@@ -24,7 +25,10 @@ public static class HtmlFacts
         "\n"
     }.ToImmutableArray();
     
-    public static readonly ImmutableArray<string> END_OF_TAG_NAME_DELIMITERS = Array.Empty<string>()
+    public static readonly ImmutableArray<string> END_OF_TAG_NAME_DELIMITERS = new string[]
+        {
+            ParserFacts.END_OF_FILE.ToString()
+        }
         .Union(TAG_CLOSING_OPTIONS)
         .ToImmutableArray();
 }

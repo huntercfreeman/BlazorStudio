@@ -11,5 +11,6 @@ public enum HtmlDecorationKind
     HtmlCode,
     InjectedLanguageFragment,
     TagName,
-    Tag
+    Tag,
+    Error
 }

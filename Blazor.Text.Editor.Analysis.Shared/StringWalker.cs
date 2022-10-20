@@ -19,39 +19,40 @@ namespace Blazor.Text.Editor.Analysis.Shared;
 /// </summary>
 public class StringWalker
 {
-    private int _position;
     private readonly string _content;
     
     public StringWalker(string content)
     {
         _content = content;
     }
+    
+    public int Position { get; private set; }
 
     public char Consume()
     {
-        if (_position >= _content.Length)
+        if (Position >= _content.Length)
             return ParserFacts.END_OF_FILE;
         
-        return _content[_position++];
+        return _content[Position++];
     }
     
     public char Peek(int offset)
     {
-        if (_position + offset >= _content.Length)
+        if (Position + offset >= _content.Length)
             return ParserFacts.END_OF_FILE;
         
-        return _content[_position + offset];
+        return _content[Position + offset];
     }
     
     /// <summary>
-    /// Will not allow <see cref="_position"/> to go less than 0
+    /// Will not allow <see cref="Position"/> to go less than 0
     /// </summary>
     public char Backtrack()
     {
-        if (_position == 0)
+        if (Position == 0)
             return ParserFacts.END_OF_FILE;
         
-        _position--;
+        Position--;
 
         return Peek(0);
     }
@@ -96,7 +97,7 @@ public class StringWalker
         
         for (int i = 0; i < length; i++)
         {
-            if (_position == 0)
+            if (Position == 0)
             {
                 backtrackBuilder.Append(ParserFacts.END_OF_FILE);
                 return backtrackBuilder.ToString();
@@ -111,7 +112,7 @@ public class StringWalker
     }
     
     /// <summary>
-    /// Func&lt;string, char, bool&gt; predicate is to be
+    /// Func&lt;StringBuilder, char, int, bool&gt; predicate is to be
     /// a Func that takes the cumulative substring
     /// up to that consume iteration, and the most recently
     /// consumed character.
@@ -124,10 +125,11 @@ public class StringWalker
     /// then the <see cref="ParserFacts.END_OF_FILE"/> character
     /// will be the final character of the returned string.
     /// </summary>
-    public string DoConsumeWhile(Func<StringBuilder, char, bool> predicate)
+    public string DoConsumeWhile(Func<StringBuilder, char, int, bool> predicate)
     {
         var consumeBuilder = new StringBuilder();
         char mostRecentlyConsumedCharacter;
+        int loopIndex = 0;
         
         do
         {
@@ -136,13 +138,13 @@ public class StringWalker
             if (mostRecentlyConsumedCharacter == ParserFacts.END_OF_FILE)
                 break;
             
-        } while (predicate(consumeBuilder, mostRecentlyConsumedCharacter));
+        } while (predicate(consumeBuilder, mostRecentlyConsumedCharacter, loopIndex++));
         
         return consumeBuilder.ToString();
     }
     
     /// <summary>
-    /// Func&lt;string, char, bool&gt; predicate is to be
+    /// Func&lt;StringBuilder, char, int, bool&gt; predicate is to be
     /// a Func that takes the cumulative substring
     /// up to that peek iteration, and the most recently
     /// peeked character.
@@ -155,12 +157,13 @@ public class StringWalker
     /// then the <see cref="ParserFacts.END_OF_FILE"/> character
     /// will be the final character of the returned string.
     /// </summary>
-    public string DoPeekWhile(Func<StringBuilder, char, bool> predicate, int offset)
+    public string DoPeekWhile(Func<StringBuilder, char, int, bool> predicate, int offset)
     {
         var peekBuilder = new StringBuilder();
         char mostRecentlyPeekedCharacter;
         int peekIteration = 0;
-        
+        int loopIndex = 0;
+
         do
         {
             mostRecentlyPeekedCharacter = Peek(offset + peekIteration);
@@ -168,13 +171,13 @@ public class StringWalker
             if (mostRecentlyPeekedCharacter == ParserFacts.END_OF_FILE)
                 break;
             
-        } while (predicate(peekBuilder, mostRecentlyPeekedCharacter));
+        } while (predicate(peekBuilder, mostRecentlyPeekedCharacter, loopIndex++));
         
         return peekBuilder.ToString();
     }
     
     /// <summary>
-    /// Func&lt;string, char, bool&gt; predicate is to be
+    /// Func&lt;StringBuilder, char, int, bool&gt; predicate is to be
     /// a Func that takes the cumulative substring
     /// up to that backtrack iteration, and the most recently
     /// backtracked to character.
@@ -193,15 +196,16 @@ public class StringWalker
     /// most recent character - one is to return a boolean
     /// value that indicates if the while loop should terminate.
     /// <br/><br/>
-    /// If the the <see cref="_position"/> would end up going out of bounds
+    /// If the the <see cref="Position"/> would end up going out of bounds
     /// of the string then the <see cref="ParserFacts.END_OF_FILE"/> character
     /// will be the first character of the returned string.
     /// </summary>
-    public string DoBacktrackWhile(Func<StringBuilder, char, bool> predicate)
+    public string DoBacktrackWhile(Func<StringBuilder, char, int, bool> predicate)
     {
         var backtrackBuilder = new StringBuilder();
         char mostRecentlyBacktrackedCharacter;
-        
+        int loopIndex = 0;
+
         do
         {
             mostRecentlyBacktrackedCharacter = Backtrack();
@@ -213,7 +217,7 @@ public class StringWalker
                 return backtrackBuilder.ToString();
             }
             
-        } while (predicate(backtrackBuilder, mostRecentlyBacktrackedCharacter));
+        } while (predicate(backtrackBuilder, mostRecentlyBacktrackedCharacter, loopIndex++));
         
         return backtrackBuilder.ToString();
     }
