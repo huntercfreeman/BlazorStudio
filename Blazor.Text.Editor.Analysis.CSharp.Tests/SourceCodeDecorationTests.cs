@@ -1,3 +1,6 @@
+using Blazor.Text.Editor.Analysis.CSharp.ClassLib;
+using BlazorTextEditor.RazorLib.TextEditor;
+
 namespace Blazor.Text.Editor.Analysis.CSharp.Tests;
 
 /// <summary>
@@ -17,37 +20,112 @@ namespace Blazor.Text.Editor.Analysis.CSharp.Tests;
 public class SourceCodeDecorationTests
 {
     [Fact]
-    public void DecorateNone()
+    public async Task DecorateHelloWorld()
     {
+        // https://www.programiz.com/csharp-programming/hello-world
+
+        var testTextSpans = new List<TestTextSpan>
+        {
+            new TestTextSpan(
+                "// Hello World! program",
+                0,
+                DecorationKind.Comment),
+            new TestTextSpan(
+                "namespace",
+                25,
+                DecorationKind.Keyword),
+            new TestTextSpan(
+                "HelloWorld",
+                35,
+                DecorationKind.None),
+            new TestTextSpan(
+                "class",
+                54,
+                DecorationKind.Keyword),
+            new TestTextSpan(
+                "Hello",
+                60,
+                DecorationKind.Type),
+            new TestTextSpan(
+                "static",
+                86,
+                DecorationKind.Keyword),
+            new TestTextSpan(
+                "void",
+                93,
+                DecorationKind.Keyword),
+            new TestTextSpan(
+                "Main",
+                98,
+                DecorationKind.Method),
+            new TestTextSpan(
+                "string",
+                103,
+                DecorationKind.Keyword),
+            new TestTextSpan(
+                "args",
+                112,
+                DecorationKind.Parameter),
+            new TestTextSpan(
+                "System.Console",
+                142,
+                DecorationKind.None),
+            new TestTextSpan(
+                "WriteLine",
+                157,
+                DecorationKind.Method),
+            new TestTextSpan(
+                "\"Hello World!\"",
+                167,
+                DecorationKind.StringLiteral)
+        };
+
+        var input = @"// Hello World! program
+namespace HelloWorld
+{
+    class Hello {         
+        static void Main(string[] args)
+        {
+            System.Console.WriteLine(""Hello World!"");
+        }
     }
-    
-    [Fact]
-    public void DecorateMethod()
-    {
+}";
+
+        var lexer = new TextEditorCSharpLexer();
+        var decorationMapper = new TextEditorCSharpDecorationMapper();
+
+        var textEditor = new TextEditorBase(
+            input,
+            lexer,
+            decorationMapper);
+
+        await textEditor.ApplySyntaxHighlightingAsync();
+
+        var richCharacters = textEditor.GetAllRichCharacters();
+
+        foreach (var testTextSpan in testTextSpans)
+        {
+            var textTextSpanRichCharacters = richCharacters
+                .Skip(testTextSpan.StartingIndex)
+                .Take(testTextSpan.Content.Length)
+                .ToArray();
+
+            Assert.True(textTextSpanRichCharacters
+                .All(x =>
+                    ((DecorationKind)x.DecorationByte) == testTextSpan.DecorationKind));
+
+            var stringifiedTestTextSpan = new string(textTextSpanRichCharacters
+                .Select(x => x.Value)
+                .ToArray());
+
+            Assert.Equal(
+                testTextSpan.Content,
+                stringifiedTestTextSpan);
+        }
     }
-    
-    [Fact]
-    public void DecorateType()
-    {
-    }
-    
-    [Fact]
-    public void DecorateParameter()
-    {
-    }
-    
-    [Fact]
-    public void DecorateStringLiteral()
-    {
-    }
-    
-    [Fact]
-    public void DecorateKeyword()
-    {
-    }
-    
-    [Fact]
-    public void DecorateComment()
-    {
-    }
+
+    private record TestTextSpan(
+        string Content,
+        int StartingIndex,
+        DecorationKind DecorationKind);
 }
