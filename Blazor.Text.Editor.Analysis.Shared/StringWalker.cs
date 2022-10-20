@@ -124,7 +124,7 @@ public class StringWalker
     /// then the <see cref="ParserFacts.END_OF_FILE"/> character
     /// will be the final character of the returned string.
     /// </summary>
-    public string DoConsumeUntil(Func<StringBuilder, char, bool> predicate)
+    public string DoConsumeWhile(Func<StringBuilder, char, bool> predicate)
     {
         var consumeBuilder = new StringBuilder();
         char mostRecentlyConsumedCharacter;
@@ -155,7 +155,7 @@ public class StringWalker
     /// then the <see cref="ParserFacts.END_OF_FILE"/> character
     /// will be the final character of the returned string.
     /// </summary>
-    public string DoPeekUntil(Func<StringBuilder, char, bool> predicate, int offset)
+    public string DoPeekWhile(Func<StringBuilder, char, bool> predicate, int offset)
     {
         var peekBuilder = new StringBuilder();
         char mostRecentlyPeekedCharacter;
@@ -197,7 +197,7 @@ public class StringWalker
     /// of the string then the <see cref="ParserFacts.END_OF_FILE"/> character
     /// will be the first character of the returned string.
     /// </summary>
-    public string DoBacktrackUntil(Func<StringBuilder, char, bool> predicate)
+    public string DoBacktrackWhile(Func<StringBuilder, char, bool> predicate)
     {
         var backtrackBuilder = new StringBuilder();
         char mostRecentlyBacktrackedCharacter;

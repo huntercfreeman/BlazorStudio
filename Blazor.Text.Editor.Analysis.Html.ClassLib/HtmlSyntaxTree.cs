@@ -88,9 +88,19 @@ public static class HtmlSyntaxTree
         /// </summary>
         private static TagNameSyntax ParseTagName(StringWalker stringWalker)
         {
-            var tagNameBuilder = new StringBuilder();
+            var tagName = stringWalker.DoConsumeWhile(
+                (builder, currentCharacter) =>
+                {
+                    if (HtmlFacts.END_OF_TAG_NAME_DELIMITERS
+                        .Contains(currentCharacter.ToString()))
+                    {
+                        return false;
+                    }
+                    
+                    return true;
+                });
 
-            stringWalker.ConsumeUntil();
+            return new TagNameSyntax(tagName);
         }
     }
 }
