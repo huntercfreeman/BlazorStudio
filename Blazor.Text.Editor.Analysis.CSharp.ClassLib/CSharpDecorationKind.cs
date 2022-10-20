@@ -1,6 +1,6 @@
 ﻿namespace Blazor.Text.Editor.Analysis.CSharp.ClassLib;
 
-public enum DecorationKind
+public enum CSharpDecorationKind
 {
     None,
     Method,

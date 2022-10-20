@@ -1,11 +1,9 @@
 ﻿using System.Collections.Immutable;
 using BlazorTextEditor.RazorLib.Lexing;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Text;
 
-namespace Blazor.Text.Editor.Analysis.CSharp.ClassLib;
+namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
 
-public class TextEditorCSharpLexer : ILexer
+public class TextEditorHtmlLexer : ILexer
 {
     public async Task<ImmutableArray<TextEditorTextSpan>> Lex(string content)
     {
@@ -21,7 +19,7 @@ public class TextEditorCSharpLexer : ILexer
         
         // Type decorations
         {
-            var decorationByte = (byte)CSharpDecorationKind.Type;
+            var decorationByte = (byte)HtmlDecorationKind.Type;
             
             // Property Type
             textEditorTextSpans.AddRange(generalSyntaxCollector.PropertyDeclarationSyntaxes
@@ -80,7 +78,7 @@ public class TextEditorCSharpLexer : ILexer
 
         // Method decorations
         {
-            var decorationByte = (byte)CSharpDecorationKind.Method;
+            var decorationByte = (byte)HtmlDecorationKind.Method;
 
             // Method declaration identifier
             textEditorTextSpans.AddRange(generalSyntaxCollector.MethodDeclarationSyntaxes
@@ -110,7 +108,7 @@ public class TextEditorCSharpLexer : ILexer
 
         // Local variable decorations
         {
-            var decorationByte = (byte)CSharpDecorationKind.Parameter;
+            var decorationByte = (byte)HtmlDecorationKind.Parameter;
             
             // Parameter declaration identifier
             textEditorTextSpans.AddRange(generalSyntaxCollector.ParameterSyntaxes
@@ -139,7 +137,7 @@ public class TextEditorCSharpLexer : ILexer
 
         // String literal
         {
-            var decorationByte = (byte)CSharpDecorationKind.StringLiteral;
+            var decorationByte = (byte)HtmlDecorationKind.StringLiteral;
 
             // String literal
             textEditorTextSpans.AddRange(generalSyntaxCollector.StringLiteralExpressionSyntaxes
@@ -153,7 +151,7 @@ public class TextEditorCSharpLexer : ILexer
 
         // Keywords
         {
-            var decorationByte = (byte)CSharpDecorationKind.Keyword;
+            var decorationByte = (byte)HtmlDecorationKind.Keyword;
 
             // Keywords
             textEditorTextSpans.AddRange(generalSyntaxCollector.KeywordSyntaxTokens
@@ -176,7 +174,7 @@ public class TextEditorCSharpLexer : ILexer
 
         // Comments
         {
-            var decorationByte = (byte)CSharpDecorationKind.Comment;
+            var decorationByte = (byte)HtmlDecorationKind.Comment;
 
             // Default comments
             textEditorTextSpans.AddRange(generalSyntaxCollector.SyntaxTrivias

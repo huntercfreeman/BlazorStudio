@@ -30,8 +30,8 @@ public class IndividualDecorationTests
         var richCharacters = textEditor.GetAllRichCharacters();
         
         Assert.Equal(
-            DecorationKind.None, 
-            (DecorationKind)richCharacters.First().DecorationByte);
+            CSharpDecorationKind.None, 
+            (CSharpDecorationKind)richCharacters.First().DecorationByte);
     }
     
     [Fact]
@@ -65,7 +65,7 @@ public class IndividualDecorationTests
 
         Assert.True(methodIdentifierRichCharacters
             .All(x => 
-                ((DecorationKind)x.DecorationByte) == DecorationKind.Method));
+                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Method));
 
         var stringifiedMethodIdentifier = new string(methodIdentifierRichCharacters
             .Select(x => x.Value)
@@ -104,7 +104,7 @@ public class IndividualDecorationTests
 
         Assert.True(typeIdentifierRichCharacters
             .All(x => 
-                ((DecorationKind)x.DecorationByte) == DecorationKind.Type));
+                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Type));
 
         var stringifiedTypeIdentifier = new string(typeIdentifierRichCharacters
             .Select(x => x.Value)
@@ -146,7 +146,7 @@ public class IndividualDecorationTests
 
         Assert.True(parameterIdentifierRichCharacters
             .All(x => 
-                ((DecorationKind)x.DecorationByte) == DecorationKind.Parameter));
+                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Parameter));
 
         var stringifiedParameter = new string(parameterIdentifierRichCharacters
             .Select(x => x.Value)
@@ -189,7 +189,7 @@ public class IndividualDecorationTests
 
         Assert.True(stringLiteralRichCharacters
             .All(x => 
-                ((DecorationKind)x.DecorationByte) == DecorationKind.StringLiteral));
+                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.StringLiteral));
 
         var stringifiedStringLiteral = new string(stringLiteralRichCharacters
             .Select(x => x.Value)
@@ -231,7 +231,7 @@ public class IndividualDecorationTests
 
         Assert.True(keywordRichCharacters
             .All(x => 
-                ((DecorationKind)x.DecorationByte) == DecorationKind.Keyword));
+                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Keyword));
 
         var stringifiedKeyword = new string(keywordRichCharacters
             .Select(x => x.Value)
@@ -274,7 +274,7 @@ public class MyClass
 
         Assert.True(commentRichCharacters
             .All(x => 
-                ((DecorationKind)x.DecorationByte) == DecorationKind.Comment));
+                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Comment));
 
         var stringifiedComment = new string(commentRichCharacters
             .Select(x => x.Value)
@@ -321,7 +321,7 @@ public class MyClass
 
         Assert.True(commentRichCharacters
             .All(x => 
-                ((DecorationKind)x.DecorationByte) == DecorationKind.Comment));
+                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Comment));
 
         var stringifiedComment = new string(commentRichCharacters
             .Select(x => x.Value)

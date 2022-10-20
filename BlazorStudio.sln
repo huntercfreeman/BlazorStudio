@@ -53,6 +53,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BlazorStudio", "BlazorStudi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Photino", "Photino", "{F03546A9-628B-4485-8293-04CD90F32D66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Text.Editor.Analysis.Shared", "Blazor.Text.Editor.Analysis.Shared\Blazor.Text.Editor.Analysis.Shared.csproj", "{32F4DAC7-8C1F-4093-AA02-1D8BBC96142F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,10 @@ Global
 		{D0CACF71-CF3B-4CC7-933F-1908F123CD28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0CACF71-CF3B-4CC7-933F-1908F123CD28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0CACF71-CF3B-4CC7-933F-1908F123CD28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32F4DAC7-8C1F-4093-AA02-1D8BBC96142F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32F4DAC7-8C1F-4093-AA02-1D8BBC96142F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32F4DAC7-8C1F-4093-AA02-1D8BBC96142F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32F4DAC7-8C1F-4093-AA02-1D8BBC96142F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -148,6 +154,7 @@ Global
 		{1C9FBAEC-12DE-488A-9A8F-2DC5377FC9E8} = {F9E1080F-281E-4776-BEB0-9DD3165B6B2A}
 		{94EB1E96-1529-4B1F-86C9-7C85EA59C59A} = {F9E1080F-281E-4776-BEB0-9DD3165B6B2A}
 		{84896F88-B2AB-4633-861E-B4F1B5299D80} = {F03546A9-628B-4485-8293-04CD90F32D66}
+		{32F4DAC7-8C1F-4093-AA02-1D8BBC96142F} = {597C6845-884C-4022-8C05-343AA8D0ED05}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF5C7044-00A3-49F9-8ACD-E80E6B3A3B99}
