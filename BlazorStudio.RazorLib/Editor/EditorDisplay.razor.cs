@@ -67,21 +67,21 @@ public partial class EditorDisplay : FluxorComponent
             
             // Example usage:
             // --------------
-            var content = await FileSystemProvider.ReadFileAsync(_absoluteFilePath);
-            
-            var textEditor = new TextEditorBase(
-                content,
-                new TextEditorCSharpLexer(),
-                new TextEditorCSharpDecorationMapper(),
-                _testTextEditorKey);
-            
-            await textEditor.ApplySyntaxHighlightingAsync();
-            
-            TextEditorService
-                .RegisterTextEditor(textEditor);
-            
-            Dispatcher.Dispatch(
-                new SetActiveTextEditorKeyAction(_testTextEditorKey));
+            // var content = await FileSystemProvider.ReadFileAsync(_absoluteFilePath);
+            //
+            // var textEditor = new TextEditorBase(
+            //     content,
+            //     new TextEditorCSharpLexer(),
+            //     new TextEditorCSharpDecorationMapper(),
+            //     _testTextEditorKey);
+            //
+            // await textEditor.ApplySyntaxHighlightingAsync();
+            //
+            // TextEditorService
+            //     .RegisterTextEditor(textEditor);
+            //
+            // Dispatcher.Dispatch(
+            //     new SetActiveTextEditorKeyAction(_testTextEditorKey));
         }
 
         await base.OnAfterRenderAsync(firstRender);
