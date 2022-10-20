@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Text;
 using Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
 using Blazor.Text.Editor.Analysis.Shared;
 
@@ -43,21 +44,23 @@ public static class HtmlSyntaxTree
         /// <summary>
         /// Invocation of this method requires the
         /// stringWalker to have <see cref="StringWalker.Peek" />
-        /// of 0 to be equal to
+        /// of 0 be equal to
         /// <see cref="HtmlFacts.TAG_OPENING_CHARACTER"/>
         /// </summary>
         public static TagSyntax ParseTag(StringWalker stringWalker)
         {
             var tagBuilder = new TagSyntax.TagSyntaxBuilder();
 
-            // tagOpeningCharacter
+            // HtmlFacts.TAG_OPENING_CHARACTER
             _ = stringWalker.Consume();
 
-            // <!DOCTYPE html>
+            // Example: <!DOCTYPE html>
             if (stringWalker.Peek(0) == HtmlFacts.SPECIAL_HTML_TAG_CHARACTER)
             {
-
-                var name = parseTagName;
+                // HtmlFacts.SPECIAL_HTML_TAG_CHARACTER
+                stringWalker.Consume();
+                
+                tagBuilder.TagNameSyntax = ParseTagName(stringWalker);
 
             }
             
@@ -75,6 +78,19 @@ public static class HtmlSyntaxTree
 </html>
          */
             
+        }
+
+        /// <summary>
+        /// Invocation of this method requires the
+        /// stringWalker to have <see cref="StringWalker.Peek" />
+        /// of 0 be equal to the first
+        /// character that is part of the tag's name
+        /// </summary>
+        private static TagNameSyntax ParseTagName(StringWalker stringWalker)
+        {
+            var tagNameBuilder = new StringBuilder();
+
+            stringWalker.ConsumeUntil();
         }
     }
 }
