@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Blazor.Text.Editor\BlazorTextEditor.RazorLib\BlazorTextEditor.RazorLib.csproj" />
+      <ProjectReference Include="..\Blazor.Text.Editor.Analysis.Shared\Blazor.Text.Editor.Analysis.Shared.csproj" />
     </ItemGroup>
 
 </Project>

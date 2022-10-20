@@ -2,5 +2,10 @@
 
 public class TagNameSyntax
 {
-    
+    public TagNameSyntax(string value)
+    {
+        Value = value;
+    }
+
+    public string Value { get; }
 }
