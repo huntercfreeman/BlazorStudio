@@ -8,13 +8,13 @@ public static class HtmlFacts
     public const char TAG_OPENING_CHARACTER = '<';
     public const char SPECIAL_HTML_TAG_CHARACTER = '!';
     
-    public const string TAG_CLOSING_OPTION_ONE = ">";
-    public const string TAG_CLOSING_OPTION_TWO = "/>";
+    public const string OPEN_TAG_ENDING_CHILD_CONTENT = ">";
+    public const string OPEN_TAG_ENDING_SELF_CLOSING = "/>";
     
     public static readonly ImmutableArray<string> TAG_CLOSING_OPTIONS = new []
     {
-        TAG_CLOSING_OPTION_ONE,
-        TAG_CLOSING_OPTION_TWO
+        OPEN_TAG_ENDING_CHILD_CONTENT,
+        OPEN_TAG_ENDING_SELF_CLOSING
     }.ToImmutableArray();
     
     public static readonly ImmutableArray<string> HTML_WHITESPACE = new []

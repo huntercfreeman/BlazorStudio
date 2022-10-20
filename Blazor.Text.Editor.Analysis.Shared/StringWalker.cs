@@ -221,4 +221,13 @@ public class StringWalker
         
         return backtrackBuilder.ToString();
     }
+    
+    public bool CheckForSubstring(string substring)
+    {
+        var peekedSubstring = PeekRange(
+            0, 
+            substring.Length);
+        
+        return peekedSubstring == substring;
+    }
 }

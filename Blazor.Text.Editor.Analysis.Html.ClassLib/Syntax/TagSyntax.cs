@@ -8,6 +8,7 @@ public class TagSyntax
         TagNameSyntax tagNameSyntax,
         ImmutableArray<AttributeTupleSyntax> attributeTupleSyntaxes, 
         ImmutableArray<TagSyntax> childTagSyntaxes,
+        TagKind tagKind,
         bool hasSpecialHtmlCharacter = false)
     {
         ChildTagSyntaxes = childTagSyntaxes;
@@ -19,6 +20,7 @@ public class TagSyntax
     public TagNameSyntax TagNameSyntax { get; }
     public ImmutableArray<AttributeTupleSyntax> AttributeTupleSyntaxes { get; }
     public ImmutableArray<TagSyntax> ChildTagSyntaxes { get; }
+    public TagKind TagKind { get; }
     public bool HasSpecialHtmlCharacter { get; }
 
     public class TagSyntaxBuilder
@@ -26,6 +28,7 @@ public class TagSyntax
         public TagNameSyntax TagNameSyntax { get; set; }
         public List<AttributeTupleSyntax> AttributeTupleSyntaxes = new();
         public List<TagSyntax> ChildTagSyntaxes = new();
+        public TagKind TagKind { get; set; }
         public bool HasSpecialHtmlCharacter { get; set; }
 
         public TagSyntax Build()
@@ -34,6 +37,7 @@ public class TagSyntax
                 TagNameSyntax,
                 AttributeTupleSyntaxes.ToImmutableArray(),
                 ChildTagSyntaxes.ToImmutableArray(),
+                TagKind,
                 HasSpecialHtmlCharacter);
         }
     }

@@ -69,19 +69,73 @@ public static class HtmlSyntaxTree
                 stringWalker,
                 textEditorDiagnostics);
 
-            /*
-         *
-<!DOCTYPE html>
-<html>
-    <head>
-        <!-- head definitions go here -->
-    </head>
-    <body>
-        <!-- the content goes here -->
-    </body>
-</html>
-         */
+            // Get all html attributes
+            // break when see End Of File or
+            // closing of the tag
+            while (true)
+            {
+                var captureLoopIndex = 0;
             
+                // Skip all the whitespace before
+                // the next non-whitespace character
+                var skippedWhitespace = stringWalker.DoConsumeWhile(
+                    (builder, currentCharacter, loopIndex) =>
+                    {
+                        captureLoopIndex = loopIndex;
+                        
+                        if (HtmlFacts.HTML_WHITESPACE
+                            .Contains(currentCharacter.ToString()))
+                        {
+                            return true;
+                        }
+                    
+                        return false;
+                    });
+
+                // Eager consumption results in the
+                // need to Backtrack() by 1 character
+                var backtrackCharacter = stringWalker.Backtrack();
+
+                // End Of File is unexpected at this point so return a diagnostic.
+                if (skippedWhitespace.EndsWith(ParserFacts.END_OF_FILE))
+                {
+                    textEditorDiagnostics.Add(new TextEditorDiagnostic(
+                        DiagnosticLevel.Error,
+                        $"'End of file' was unexpected." +
+                        $" Wanted an ['attribute' OR 'closing tag'].",
+                        new TextEditorTextSpan(
+                            stringWalker.Position - captureLoopIndex,
+                            stringWalker.Position,
+                            (byte)HtmlDecorationKind.Error)));
+
+                    return tagBuilder.Build();
+                }
+                else if (stringWalker.CheckForSubstring(HtmlFacts.OPEN_TAG_ENDING_CHILD_CONTENT))
+                {
+                    // Ending of opening tag
+                    tagBuilder.TagKind = TagKind.Opening;
+                }
+                else if (stringWalker.CheckForSubstring(HtmlFacts.OPEN_TAG_ENDING_SELF_CLOSING))
+                {
+                    // Ending of self-closing tag
+                    tagBuilder.TagKind = TagKind.SelfClosing;
+                    
+                    return tagBuilder.Build(); 
+                }
+                else
+                {
+                    // Attribute
+                }
+            }
+
+            /*
+             *
+             * <div class="bstudio_navbar">
+             *     <div>Navbar</div>
+             * </div>
+            */
+            
+            return tagBuilder.Build();
         }
 
         /// <summary>
@@ -94,14 +148,12 @@ public static class HtmlSyntaxTree
             StringWalker stringWalker,
             List<TextEditorDiagnostic> textEditorDiagnostics)
         {
-            int captureLoopIndex = 0;
-            var captureTagNameBuilder = new StringBuilder();
+            var captureLoopIndex = 0;
             
             var tagName = stringWalker.DoConsumeWhile(
                 (builder, currentCharacter, loopIndex) =>
                 {
                     captureLoopIndex = loopIndex;
-                    captureTagNameBuilder = builder;
                         
                     if (HtmlFacts.END_OF_TAG_NAME_DELIMITERS
                         .Contains(currentCharacter.ToString()))
@@ -123,14 +175,14 @@ public static class HtmlSyntaxTree
                 textEditorDiagnostics.Add(new TextEditorDiagnostic(
                     DiagnosticLevel.Error,
                     $"The {nameof(TagNameSyntax)} of:" +
-                    $" '{captureTagNameBuilder}'" +
+                    $" '{tagName}'" +
                     $" is not valid.",
                     new TextEditorTextSpan(
                         stringWalker.Position - captureLoopIndex,
                         stringWalker.Position,
                         (byte)HtmlDecorationKind.Error)));
                 
-                return new TagNameSyntax(captureTagNameBuilder.ToString());
+                return new TagNameSyntax(tagName);
             }
 
             // The file was valid at this step and a TagName was read
