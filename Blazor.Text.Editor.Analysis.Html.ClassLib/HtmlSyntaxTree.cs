@@ -74,14 +74,14 @@ public static class HtmlSyntaxTree
             // closing of the tag
             while (true)
             {
-                var captureLoopIndex = 0;
+                var captureLoopIteration = 0;
             
                 // Skip all the whitespace before
                 // the next non-whitespace character
                 var skippedWhitespace = stringWalker.DoConsumeWhile(
-                    (builder, currentCharacter, loopIndex) =>
+                    (builder, currentCharacter, loopIteration) =>
                     {
-                        captureLoopIndex = loopIndex;
+                        captureLoopIteration = loopIteration;
                         
                         if (HtmlFacts.HTML_WHITESPACE
                             .Contains(currentCharacter.ToString()))
@@ -104,7 +104,7 @@ public static class HtmlSyntaxTree
                         $"'End of file' was unexpected." +
                         $" Wanted an ['attribute' OR 'closing tag'].",
                         new TextEditorTextSpan(
-                            stringWalker.Position - captureLoopIndex,
+                            stringWalker.Position - captureLoopIteration,
                             stringWalker.Position,
                             (byte)HtmlDecorationKind.Error)));
 
@@ -114,6 +114,11 @@ public static class HtmlSyntaxTree
                 {
                     // Ending of opening tag
                     tagBuilder.TagKind = TagKind.Opening;
+
+                    // TODO: ParseTagChildContent
+                    // ParseTagChildContent(tagBuilder.ChildTagSyntaxes);
+                    
+                    // TODO: ParseClosingTag
                 }
                 else if (stringWalker.CheckForSubstring(HtmlFacts.OPEN_TAG_ENDING_SELF_CLOSING))
                 {
@@ -148,12 +153,12 @@ public static class HtmlSyntaxTree
             StringWalker stringWalker,
             List<TextEditorDiagnostic> textEditorDiagnostics)
         {
-            var captureLoopIndex = 0;
+            var captureLoopIteration = 0;
             
             var tagName = stringWalker.DoConsumeWhile(
-                (builder, currentCharacter, loopIndex) =>
+                (builder, currentCharacter, loopIteration) =>
                 {
-                    captureLoopIndex = loopIndex;
+                    captureLoopIteration = loopIteration;
                         
                     if (HtmlFacts.END_OF_TAG_NAME_DELIMITERS
                         .Contains(currentCharacter.ToString()))
@@ -166,7 +171,7 @@ public static class HtmlSyntaxTree
 
             // The do while loop immediately
             // failed on the first loop
-            if (captureLoopIndex == 0)
+            if (captureLoopIteration == 0)
             {
                 // Therefore fabricate a TagNameSyntax
                 // with the invalid text as its tag name and report a diagnostic
@@ -178,7 +183,7 @@ public static class HtmlSyntaxTree
                     $" '{tagName}'" +
                     $" is not valid.",
                     new TextEditorTextSpan(
-                        stringWalker.Position - captureLoopIndex,
+                        stringWalker.Position - captureLoopIteration,
                         stringWalker.Position,
                         (byte)HtmlDecorationKind.Error)));
                 
@@ -188,5 +193,17 @@ public static class HtmlSyntaxTree
             // The file was valid at this step and a TagName was read
             return new TagNameSyntax(tagName);
         }
+    }
+    
+    private static void ParseTagChildContent(
+        List<TagSyntax> tagBuilderChildTagSyntaxes,
+        StringWalker stringWalker)
+    {
+        throw new NotImplementedException();
+        // var textContent = stringWalker.DoConsumeWhile(
+        //     (builder, currentCharacter, loopIteration) =>
+        //     {
+        //         
+        //     });
     }
 }

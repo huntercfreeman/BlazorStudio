@@ -129,7 +129,7 @@ public class StringWalker
     {
         var consumeBuilder = new StringBuilder();
         char mostRecentlyConsumedCharacter;
-        int loopIndex = 0;
+        int loopIteration = 0;
         
         do
         {
@@ -138,7 +138,7 @@ public class StringWalker
             if (mostRecentlyConsumedCharacter == ParserFacts.END_OF_FILE)
                 break;
             
-        } while (predicate(consumeBuilder, mostRecentlyConsumedCharacter, loopIndex++));
+        } while (predicate(consumeBuilder, mostRecentlyConsumedCharacter, loopIteration++));
         
         return consumeBuilder.ToString();
     }
@@ -162,7 +162,7 @@ public class StringWalker
         var peekBuilder = new StringBuilder();
         char mostRecentlyPeekedCharacter;
         int peekIteration = 0;
-        int loopIndex = 0;
+        int loopIteration = 0;
 
         do
         {
@@ -171,7 +171,7 @@ public class StringWalker
             if (mostRecentlyPeekedCharacter == ParserFacts.END_OF_FILE)
                 break;
             
-        } while (predicate(peekBuilder, mostRecentlyPeekedCharacter, loopIndex++));
+        } while (predicate(peekBuilder, mostRecentlyPeekedCharacter, loopIteration++));
         
         return peekBuilder.ToString();
     }
@@ -204,7 +204,7 @@ public class StringWalker
     {
         var backtrackBuilder = new StringBuilder();
         char mostRecentlyBacktrackedCharacter;
-        int loopIndex = 0;
+        int loopIteration = 0;
 
         do
         {
@@ -217,7 +217,7 @@ public class StringWalker
                 return backtrackBuilder.ToString();
             }
             
-        } while (predicate(backtrackBuilder, mostRecentlyBacktrackedCharacter, loopIndex++));
+        } while (predicate(backtrackBuilder, mostRecentlyBacktrackedCharacter, loopIteration++));
         
         return backtrackBuilder.ToString();
     }
