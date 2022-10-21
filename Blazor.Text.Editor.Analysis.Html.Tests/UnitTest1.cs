@@ -55,4 +55,24 @@ public class UnitTest1
         var textEditorTextSpans = 
             await lexer.Lex(content);
     }
+    
+    [Fact]
+    public async Task Test4()
+    {
+        var content =
+            File.ReadAllText(
+                @"C:\Users\hunte\source\BlazorCrudApp\BlazorCrudApp.WebAssembly\Client\Shared\MainLayout.razor");
+        
+        /*
+         * Expected:
+         *     -TextNode = 'some text'
+         *     -TagDiv
+         *         -TextNode = 'Apple Sauce' 
+         */
+
+        var lexer = new TextEditorHtmlLexer();
+
+        var textEditorTextSpans = 
+            await lexer.Lex(content);
+    }
 }

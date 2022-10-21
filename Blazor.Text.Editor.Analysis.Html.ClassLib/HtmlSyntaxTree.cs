@@ -183,7 +183,7 @@ public static class HtmlSyntaxTree
             {
                 // Eager consumption results in the
                 // need to Backtrack() by 1 character
-                var backtrackCharacter = stringWalker.Backtrack();
+                _ = stringWalker.Backtrack();
                 
                 // Remove ending '>' character
                 tagName = tagName

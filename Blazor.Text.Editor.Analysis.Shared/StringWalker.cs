@@ -135,8 +135,6 @@ public class StringWalker
         {
             mostRecentlyConsumedCharacter = Consume();
 
-            consumeBuilder.Append(mostRecentlyConsumedCharacter);
-
             if (mostRecentlyConsumedCharacter == ParserFacts.END_OF_FILE)
             {
                 // Allow caller to perform an action when ParserFacts.END_OF_FILE is found.
@@ -145,7 +143,9 @@ public class StringWalker
                 // But as well, after the caller performs the action break with do while loop.
                 break;
             }
-            
+
+            consumeBuilder.Append(mostRecentlyConsumedCharacter);
+
         } while (predicate(consumeBuilder, mostRecentlyConsumedCharacter, loopIteration++));
         
         return consumeBuilder.ToString();
