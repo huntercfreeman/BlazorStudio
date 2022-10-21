@@ -14,7 +14,12 @@ public static class HtmlSyntaxTree
 
         var rootTagSyntaxBuilder = new TagSyntax.TagSyntaxBuilder
         {
-            TagNameSyntax = new TagNameSyntax("document")
+            TagNameSyntax = new TagNameSyntax(
+                "document", 
+                new TextEditorTextSpan(
+                    0,
+                    0,
+                    (byte)HtmlDecorationKind.None))
         };
 
         var textEditorDiagnostics = new List<TextEditorDiagnostic>();
@@ -164,6 +169,8 @@ public static class HtmlSyntaxTree
         {
             var captureLoopIteration = 0;
 
+            var startingPositionIndex = stringWalker.Position;
+            
             var tagName = stringWalker.DoConsumeWhile(
                 (builder, currentCharacter, loopIteration) =>
                 {
@@ -177,6 +184,8 @@ public static class HtmlSyntaxTree
 
                     return true;
                 });
+            
+            var endingPositionIndex = stringWalker.Position;
 
             // The do while loop immediately
             // failed on the first loop
@@ -196,11 +205,21 @@ public static class HtmlSyntaxTree
                         stringWalker.Position,
                         (byte)HtmlDecorationKind.Error)));
 
-                return new TagNameSyntax(tagName);
+                return new TagNameSyntax(
+                    tagName,
+                    new TextEditorTextSpan(
+                        startingPositionIndex,
+                        endingPositionIndex,
+                        (byte)HtmlDecorationKind.TagName));
             }
 
             // The file was valid at this step and a TagName was read
-            return new TagNameSyntax(tagName);
+            return new TagNameSyntax(
+                tagName,
+                new TextEditorTextSpan(
+                    startingPositionIndex,
+                    endingPositionIndex,
+                    (byte)HtmlDecorationKind.TagName));
         }
 
         public static List<TagSyntax> ParseTagChildContent(
