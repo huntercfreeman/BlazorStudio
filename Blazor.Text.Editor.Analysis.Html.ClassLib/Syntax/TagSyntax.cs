@@ -5,7 +5,7 @@ namespace Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
 public class TagSyntax
 {
     public TagSyntax(
-        TagNameSyntax tagNameSyntax,
+        TagNameSyntax? tagNameSyntax,
         ImmutableArray<AttributeTupleSyntax> attributeTupleSyntaxes, 
         ImmutableArray<TagSyntax> childTagSyntaxes,
         TagKind tagKind,
@@ -17,7 +17,7 @@ public class TagSyntax
         TagNameSyntax = tagNameSyntax;
     }
     
-    public TagNameSyntax TagNameSyntax { get; }
+    public TagNameSyntax? TagNameSyntax { get; }
     public ImmutableArray<AttributeTupleSyntax> AttributeTupleSyntaxes { get; }
     public ImmutableArray<TagSyntax> ChildTagSyntaxes { get; }
     public TagKind TagKind { get; }
@@ -25,7 +25,7 @@ public class TagSyntax
 
     public class TagSyntaxBuilder
     {
-        public TagNameSyntax TagNameSyntax { get; set; }
+        public TagNameSyntax? TagNameSyntax { get; set; }
         public List<AttributeTupleSyntax> AttributeTupleSyntaxes { get; set; } = new();
         public List<TagSyntax> ChildTagSyntaxes { get; set; } = new();
         public TagKind TagKind { get; set; }

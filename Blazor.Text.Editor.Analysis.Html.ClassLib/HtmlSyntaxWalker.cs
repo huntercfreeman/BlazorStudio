@@ -14,7 +14,7 @@ public class HtmlSyntaxWalker
     public List<TagNameSyntax> TagNameSyntaxes { get; } = new();
     public List<TagSyntax> TagSyntaxes { get; } = new();
 
-    public void Visit()
+    public void Visit(TagSyntax syntaxNodeRoot)
     {
         
     }

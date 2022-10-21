@@ -11,12 +11,16 @@ public class TextEditorHtmlDecorationMapper : IDecorationMapper
         return decoration switch
         {
             HtmlDecorationKind.None => string.Empty,
-            HtmlDecorationKind.Method => "bte_method",
-            HtmlDecorationKind.Type => "bte_type",
-            HtmlDecorationKind.Parameter => "bte_parameter",
-            HtmlDecorationKind.StringLiteral => "bte_string-literal",
-            HtmlDecorationKind.Keyword => "bte_keyword",
+            HtmlDecorationKind.AttributeName => "bte_attribute-name",
+            HtmlDecorationKind.AttributeValue => "bte_attribute-value",
             HtmlDecorationKind.Comment => "bte_comment",
+            HtmlDecorationKind.CustomTagName => "bte_custom-tag-name",
+            HtmlDecorationKind.EntityReference => "bte_entity-reference",
+            HtmlDecorationKind.HtmlCode => "bte_html-code",
+            HtmlDecorationKind.InjectedLanguageFragment => "bte_injected-language-fragment",
+            HtmlDecorationKind.TagName => "bte_tag-name",
+            HtmlDecorationKind.Tag => "bte_tag",
+            HtmlDecorationKind.Error => "bte_error",
             _ => throw new ApplicationException(
                 $"The {nameof(HtmlDecorationKind)}: {decoration} was not recognized.")
         };

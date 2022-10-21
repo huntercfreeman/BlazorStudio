@@ -10,7 +10,7 @@ public class TagTextSyntax : TagSyntax
         string value,
         bool hasSpecialHtmlCharacter = false) 
         : base(
-            new("TextNode"), 
+            null, 
             attributeTupleSyntaxes, 
             childTagSyntaxes, 
             TagKind.Text,
