@@ -16,7 +16,8 @@ public class HtmlSyntaxWalker
 
     public void Visit(TagSyntax syntaxNodeRoot)
     {
-        // TODO: Make this method recursive
+        // TODO: Make this method primitively recursive
+        // to avoid stack overflow
         
         var currentNode = syntaxNodeRoot;
 

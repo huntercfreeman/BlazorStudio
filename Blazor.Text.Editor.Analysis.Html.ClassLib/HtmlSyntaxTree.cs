@@ -116,6 +116,10 @@ public static class HtmlSyntaxTree
                     // Ending of opening tag
                     tagBuilder.TagKind = TagKind.Opening;
 
+                    // Skip the '>' character to set stringWalker at the first
+                    // character of the child content
+                    _ = stringWalker.Consume();
+                    
                     tagBuilder.ChildTagSyntaxes = ParseTagChildContent(
                         stringWalker,
                         textEditorDiagnostics);
@@ -137,20 +141,15 @@ public static class HtmlSyntaxTree
 
                     return tagBuilder.Build();
                 }
+                else if (stringWalker.CheckForSubstring(HtmlFacts.START_CLOSE_TAG_WITH_CHILD_CONTENT))
+                {
+                    return tagBuilder.Build(); 
+                }
                 else
                 {
                     // Attribute
                 }
             }
-
-            /*
-             *
-             * <div class="bstudio_navbar">
-             *     <div>Navbar</div>
-             * </div>
-            */
-
-            return tagBuilder.Build();
         }
 
         /// <summary>
@@ -180,6 +179,16 @@ public static class HtmlSyntaxTree
 
                     return true;
                 });
+
+            {
+                // Eager consumption results in the
+                // need to Backtrack() by 1 character
+                var backtrackCharacter = stringWalker.Backtrack();
+                
+                // Remove ending '>' character
+                tagName = tagName
+                    .Substring(0, tagName.Length - 1);
+            }
             
             var endingPositionIndex = stringWalker.Position;
 
@@ -270,6 +279,8 @@ public static class HtmlSyntaxTree
                     else if (HtmlFacts.START_OPEN_TAG == currentCharacter)
                     {
                         AddCurrentTagTextSyntax();
+
+                        stringWalker.Backtrack();
 
                         tagSyntaxes.Add(
                             ParseTag(
