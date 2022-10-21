@@ -43,7 +43,7 @@ using BlazorTextEditor.RazorLib.TextEditor;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
-public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
+public partial class SolutionExplorerDisplay : FluxorComponent
 {
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;

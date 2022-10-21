@@ -16,7 +16,15 @@ public class HtmlSyntaxWalker
 
     public void Visit(TagSyntax syntaxNodeRoot)
     {
+        // TODO: Make this method recursive
         
+        var currentNode = syntaxNodeRoot;
+
+        foreach (var child in currentNode.ChildTagSyntaxes)
+        {
+            if (child.TagNameSyntax is not null)
+                VisitTagNameSyntax(child.TagNameSyntax);            
+        }
     }
     
     public void VisitAttributeNameSyntax(AttributeNameSyntax attributeNameSyntax)

@@ -24,14 +24,10 @@ public static class HtmlSyntaxTree
 
         var textEditorDiagnostics = new List<TextEditorDiagnostic>();
 
-        if (stringWalker.Peek(0) == HtmlFacts.START_OPEN_TAG)
-        {
-            rootTagSyntaxBuilder.ChildTagSyntaxes.Add(
-                HtmlSyntaxTreeStateMachine
-                    .ParseTag(
-                        stringWalker,
-                        textEditorDiagnostics));
-        }
+        rootTagSyntaxBuilder.ChildTagSyntaxes = HtmlSyntaxTreeStateMachine
+                .ParseTagChildContent(
+                    stringWalker,
+                    textEditorDiagnostics);
 
         var htmlSyntaxUnitBuilder = new HtmlSyntaxUnit.HtmlSyntaxUnitBuilder
         {
@@ -261,7 +257,8 @@ public static class HtmlSyntaxTree
                     //         and treat the text found as the value of
                     //         an HTML TextNode
 
-                    if (stringWalker.CheckForSubstring(HtmlFacts.START_CLOSE_TAG_WITH_CHILD_CONTENT))
+                    if (stringWalker.CheckForSubstring(HtmlFacts.START_CLOSE_TAG_WITH_CHILD_CONTENT) ||
+                        ParserFacts.END_OF_FILE == currentCharacter)
                     {
                         // End of tag's child content
                         // so stop do while loop
