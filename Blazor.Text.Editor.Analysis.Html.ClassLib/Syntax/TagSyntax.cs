@@ -26,8 +26,8 @@ public class TagSyntax
     public class TagSyntaxBuilder
     {
         public TagNameSyntax TagNameSyntax { get; set; }
-        public List<AttributeTupleSyntax> AttributeTupleSyntaxes = new();
-        public List<TagSyntax> ChildTagSyntaxes = new();
+        public List<AttributeTupleSyntax> AttributeTupleSyntaxes { get; set; } = new();
+        public List<TagSyntax> ChildTagSyntaxes { get; set; } = new();
         public TagKind TagKind { get; set; }
         public bool HasSpecialHtmlCharacter { get; set; }
 

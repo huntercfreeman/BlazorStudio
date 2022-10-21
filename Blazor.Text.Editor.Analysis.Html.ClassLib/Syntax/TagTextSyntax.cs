@@ -5,13 +5,12 @@ namespace Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
 public class TagTextSyntax : TagSyntax
 {
     public TagTextSyntax(
-        TagNameSyntax tagNameSyntax,
         ImmutableArray<AttributeTupleSyntax> attributeTupleSyntaxes,
         ImmutableArray<TagSyntax> childTagSyntaxes,
         string value,
         bool hasSpecialHtmlCharacter = false) 
         : base(
-            tagNameSyntax, 
+            new("TextNode"), 
             attributeTupleSyntaxes, 
             childTagSyntaxes, 
             TagKind.Text,
