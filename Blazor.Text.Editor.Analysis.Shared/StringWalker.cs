@@ -43,6 +43,9 @@ public class StringWalker
     /// to the <see cref="StringWalker"/>'s constructor.
     /// </summary>
     public int Position { get; private set; }
+
+    public char CurrentCharacter => Peek(0);
+    public char NextCharacter => Peek(1);
     
     /// <summary>
     /// If <see cref="Position"/> is within bounds of the <see cref="_content"/>.
@@ -204,6 +207,15 @@ public class StringWalker
         return backtrackBuilder.ToString();
     }
     
+    /// <summary>
+    /// Form a substring of the <see cref="_content"/> that starts
+    /// inclusively at the index <see cref="Position"/> and has a maximum
+    /// length of <see cref="substring"/>.Length.
+    /// <br/><br/>
+    /// This method uses <see cref="PeekRange"/> internally and therefore
+    /// will return a string that ends with <see cref="ParserFacts.END_OF_FILE"/>
+    /// if an index out of bounds read was performed on <see cref="_content"/>
+    /// </summary>
     public bool CheckForSubstring(string substring)
     {
         var peekedSubstring = PeekRange(
