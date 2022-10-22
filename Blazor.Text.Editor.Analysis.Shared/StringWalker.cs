@@ -44,7 +44,13 @@ public class StringWalker
     /// </summary>
     public int Position { get; private set; }
 
+    /// <summary>
+    /// Returns <see cref="Peek"/> invoked with the value of zero
+    /// </summary>
     public char CurrentCharacter => Peek(0);
+    /// <summary>
+    /// Returns <see cref="Peek"/> invoked with the value of one
+    /// </summary>
     public char NextCharacter => Peek(1);
     
     /// <summary>
