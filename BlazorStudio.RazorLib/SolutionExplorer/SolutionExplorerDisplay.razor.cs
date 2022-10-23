@@ -422,7 +422,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                         new TextEditorCSharpDecorationMapper());
                 }
                 else if (treeViewMouseEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.HTML ||
-                         treeViewMouseEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP)
+                         treeViewMouseEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP ||
+                         treeViewMouseEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT ||
+                         treeViewMouseEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.XML)
                 {
                     textEditor = new TextEditorBase(
                         content,
