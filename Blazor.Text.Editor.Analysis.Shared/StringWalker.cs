@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Immutable;
+using System.Text;
 using BlazorTextEditor.RazorLib.Lexing;
 using BlazorTextEditor.RazorLib.TextEditor;
 
@@ -42,7 +43,7 @@ public class StringWalker
     /// The character index within the <see cref="_content"/> provided
     /// to the <see cref="StringWalker"/>'s constructor.
     /// </summary>
-    public int Position { get; private set; }
+    public int PositionIndex { get; private set; }
 
     /// <summary>
     /// Returns <see cref="Peek"/> invoked with the value of zero
@@ -54,52 +55,52 @@ public class StringWalker
     public char NextCharacter => Peek(1);
     
     /// <summary>
-    /// If <see cref="Position"/> is within bounds of the <see cref="_content"/>.
+    /// If <see cref="PositionIndex"/> is within bounds of the <see cref="_content"/>.
     /// <br/><br/>
     /// Then the character within the string <see cref="_content"/> at index
-    /// of <see cref="Position"/> is returned and <see cref="Position"/> is incremented
+    /// of <see cref="PositionIndex"/> is returned and <see cref="PositionIndex"/> is incremented
     /// by one.
     /// <br/><br/>
     /// Otherwise, <see cref="ParserFacts.END_OF_FILE"/> is returned and
-    /// the value of <see cref="Position"/> is unchanged.
+    /// the value of <see cref="PositionIndex"/> is unchanged.
     /// </summary>
     public char Consume()
     {
-        if (Position >= _content.Length)
+        if (PositionIndex >= _content.Length)
             return ParserFacts.END_OF_FILE;
         
-        return _content[Position++];
+        return _content[PositionIndex++];
     }
     
     /// <summary>
-    /// If (<see cref="Position"/> + <see cref="offset"/>)
+    /// If (<see cref="PositionIndex"/> + <see cref="offset"/>)
     /// is within bounds of the <see cref="_content"/>.
     /// <br/><br/>
     /// Then the character within the string <see cref="_content"/> at index
-    /// of (<see cref="Position"/> + <see cref="offset"/>) is returned and
-    /// <see cref="Position"/> is unchanged.
+    /// of (<see cref="PositionIndex"/> + <see cref="offset"/>) is returned and
+    /// <see cref="PositionIndex"/> is unchanged.
     /// <br/><br/>
     /// Otherwise, <see cref="ParserFacts.END_OF_FILE"/> is returned and
-    /// the value of <see cref="Position"/> is unchanged.
+    /// the value of <see cref="PositionIndex"/> is unchanged.
     /// </summary>
     public char Peek(int offset)
     {
-        if (Position + offset >= _content.Length)
+        if (PositionIndex + offset >= _content.Length)
             return ParserFacts.END_OF_FILE;
         
-        return _content[Position + offset];
+        return _content[PositionIndex + offset];
     }
     
     /// <summary>
-    /// If <see cref="Position"/> being decremented by 1 would result
-    /// in <see cref="Position"/> being less than 0.
+    /// If <see cref="PositionIndex"/> being decremented by 1 would result
+    /// in <see cref="PositionIndex"/> being less than 0.
     /// <br/><br/>
     /// Then <see cref="ParserFacts.END_OF_FILE"/> will be returned
-    /// and <see cref="Position"/> will be left unchanged.
+    /// and <see cref="PositionIndex"/> will be left unchanged.
     /// <br/><br/>
-    /// Otherwise, <see cref="Position"/> will be decremented by one
+    /// Otherwise, <see cref="PositionIndex"/> will be decremented by one
     /// and the character within the string <see cref="_content"/> at index
-    /// of <see cref="Position"/> is returned.
+    /// of <see cref="PositionIndex"/> is returned.
     /// </summary>
     /// <returns>
     /// The character one would get
@@ -108,10 +109,10 @@ public class StringWalker
     /// </returns>
     public char Backtrack()
     {
-        if (Position == 0)
+        if (PositionIndex == 0)
             return ParserFacts.END_OF_FILE;
         
-        Position--;
+        PositionIndex--;
 
         return Peek(0);
     }
@@ -199,7 +200,7 @@ public class StringWalker
         
         for (int i = 0; i < length; i++)
         {
-            if (Position == 0)
+            if (PositionIndex == 0)
             {
                 backtrackBuilder.Append(ParserFacts.END_OF_FILE);
                 return backtrackBuilder.ToString();
@@ -215,7 +216,7 @@ public class StringWalker
     
     /// <summary>
     /// Form a substring of the <see cref="_content"/> that starts
-    /// inclusively at the index <see cref="Position"/> and has a maximum
+    /// inclusively at the index <see cref="PositionIndex"/> and has a maximum
     /// length of <see cref="substring"/>.Length.
     /// <br/><br/>
     /// This method uses <see cref="PeekRange"/> internally and therefore
@@ -229,5 +230,25 @@ public class StringWalker
             substring.Length);
         
         return peekedSubstring == substring;
+    }
+    
+    public bool CheckForSubstringRange(ImmutableArray<string> substrings)
+    {
+        foreach (var substring in substrings)
+        {
+            if (CheckForSubstring(substring))
+                return true;
+        }
+
+        return false;
+    }
+
+    public void WhileNotEndOfFile(Func<bool> shouldBreakFunc)
+    {
+        while (CurrentCharacter != ParserFacts.END_OF_FILE)
+        {
+            if (shouldBreakFunc.Invoke())
+                break;
+        }
     }
 }

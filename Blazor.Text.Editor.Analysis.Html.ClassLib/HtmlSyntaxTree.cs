@@ -22,20 +22,18 @@ public static class HtmlSyntaxTree
                     (byte)HtmlDecorationKind.None))
         };
 
-        var textEditorDiagnostics = new List<TextEditorDiagnostic>();
+        var textEditorHtmlDiagnosticBag = new TextEditorHtmlDiagnosticBag();
 
         rootTagSyntaxBuilder.ChildTagSyntaxes = HtmlSyntaxTreeStateMachine
                 .ParseTagChildContent(
                     stringWalker,
-                    textEditorDiagnostics);
+                    textEditorHtmlDiagnosticBag);
 
         var htmlSyntaxUnitBuilder = new HtmlSyntaxUnit.HtmlSyntaxUnitBuilder
         {
-            RootTagSyntax = rootTagSyntaxBuilder.Build()
+            RootTagSyntax = rootTagSyntaxBuilder.Build(),
+            TextEditorHtmlDiagnosticBag = textEditorHtmlDiagnosticBag
         };
-
-        htmlSyntaxUnitBuilder.TextEditorDiagnostics
-            .AddRange(textEditorDiagnostics);
 
         return htmlSyntaxUnitBuilder.Build();
     }
@@ -50,8 +48,10 @@ public static class HtmlSyntaxTree
         /// </summary>
         public static TagSyntax ParseTag(
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> textEditorDiagnostics)
+            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
         {
+            var startingPositionIndex = stringWalker.PositionIndex;
+            
             var tagBuilder = new TagSyntax.TagSyntaxBuilder();
 
             // HtmlFacts.TAG_OPENING_CHARACTER
@@ -68,50 +68,40 @@ public static class HtmlSyntaxTree
 
             tagBuilder.TagNameSyntax = ParseTagName(
                 stringWalker,
-                textEditorDiagnostics);
+                textEditorHtmlDiagnosticBag);
 
             // Get all html attributes
             // break when see End Of File or
             // closing of the tag
             while (true)
             {
-                var captureLoopIteration = 0;
-
-                // Skip all the whitespace before
-                // the next non-whitespace character
-                var skippedWhitespace = stringWalker.DoConsumeWhile(
-                    (builder, currentCharacter, loopIteration) =>
-                    {
-                        captureLoopIteration = loopIteration;
-
-                        if (HtmlFacts.HTML_WHITESPACE
-                            .Contains(currentCharacter.ToString()))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    });
-
-                // Eager consumption results in the
-                // need to Backtrack() by 1 character
-                var backtrackCharacter = stringWalker.Backtrack();
-
-                // End Of File is unexpected at this point so return a diagnostic.
-                if (skippedWhitespace.EndsWith(ParserFacts.END_OF_FILE))
+                // Skip Whitespace
+                stringWalker.WhileNotEndOfFile(() =>
                 {
-                    textEditorDiagnostics.Add(new TextEditorDiagnostic(
-                        DiagnosticLevel.Error,
-                        $"'End of file' was unexpected." +
-                        $" Wanted an ['attribute' OR 'closing tag'].",
+                    var consumedCharacter = stringWalker.Consume();
+                    
+                    if (HtmlFacts.HTML_WHITESPACE.Contains(
+                            consumedCharacter.ToString()))
+                    {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                // End Of File is unexpected at this point so report a diagnostic.
+                if (stringWalker.CurrentCharacter == ParserFacts.END_OF_FILE)
+                {
+                    textEditorHtmlDiagnosticBag.ReportEndOfFileUnexpected(
                         new TextEditorTextSpan(
-                            stringWalker.Position - captureLoopIteration,
-                            stringWalker.Position,
-                            (byte)HtmlDecorationKind.Error)));
+                            startingPositionIndex,
+                            stringWalker.PositionIndex,
+                            (byte)HtmlDecorationKind.Error));
 
                     return tagBuilder.Build();
                 }
-                else if (stringWalker.CheckForSubstring(HtmlFacts.END_OPEN_TAG_WITH_CHILD_CONTENT))
+                
+                if (stringWalker.CheckForSubstring(HtmlFacts.END_OPEN_TAG_WITH_CHILD_CONTENT))
                 {
                     // Ending of opening tag
                     tagBuilder.TagKind = TagKind.Opening;
@@ -122,7 +112,7 @@ public static class HtmlSyntaxTree
                     
                     tagBuilder.ChildTagSyntaxes = ParseTagChildContent(
                         stringWalker,
-                        textEditorDiagnostics);
+                        textEditorHtmlDiagnosticBag);
 
                     // At the closing tag now so check that the closing tag
                     // name matches the opening tag.
@@ -160,76 +150,64 @@ public static class HtmlSyntaxTree
         /// </summary>
         public static TagNameSyntax ParseTagName(
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> textEditorDiagnostics)
+            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
         {
-            var captureLoopIteration = 0;
+            var startingPositionIndex = stringWalker.PositionIndex;
 
-            var startingPositionIndex = stringWalker.Position;
+            var tagNameBuilder = new StringBuilder();
             
-            var tagName = stringWalker.DoConsumeWhile(
-                (builder, currentCharacter, loopIteration) =>
+            stringWalker.WhileNotEndOfFile(() =>
+            {
+                if (stringWalker.CheckForSubstringRange(
+                        HtmlFacts.END_TAG_NAME_DELIMITERS))
                 {
-                    captureLoopIteration = loopIteration;
-
-                    if (HtmlFacts.END_TAG_NAME_DELIMITERS
-                        .Contains(currentCharacter.ToString()))
-                    {
-                        return false;
-                    }
-
                     return true;
-                });
+                }
 
-            {
-                // Eager consumption results in the
-                // need to Backtrack() by 1 character
-                _ = stringWalker.Backtrack();
+                tagNameBuilder.Append(stringWalker.CurrentCharacter);
                 
-                // Remove ending '>' character
-                tagName = tagName
-                    .Substring(0, tagName.Length - 1);
-            }
-            
-            var endingPositionIndex = stringWalker.Position;
+                return false;
+            });
 
-            // The do while loop immediately
-            // failed on the first loop
-            if (captureLoopIteration == 0)
+            var tagName = tagNameBuilder.ToString();
+
+            if (tagNameBuilder.Length == 0)
             {
-                // Therefore fabricate a TagNameSyntax
-                // with the invalid text as its tag name and report a diagnostic
-                // so the rest of the file can still be parsed.
-
-                textEditorDiagnostics.Add(new TextEditorDiagnostic(
-                    DiagnosticLevel.Error,
-                    $"The {nameof(TagNameSyntax)} of:" +
-                    $" '{tagName}'" +
-                    $" is not valid.",
-                    new TextEditorTextSpan(
-                        stringWalker.Position - captureLoopIteration,
-                        stringWalker.Position,
-                        (byte)HtmlDecorationKind.Error)));
-
-                return new TagNameSyntax(
-                    tagName,
-                    new TextEditorTextSpan(
-                        startingPositionIndex,
-                        endingPositionIndex,
-                        (byte)HtmlDecorationKind.TagName));
+                if (stringWalker.CurrentCharacter == ParserFacts.END_OF_FILE)
+                {
+                    textEditorHtmlDiagnosticBag.ReportEndOfFileUnexpected(
+                        new TextEditorTextSpan(
+                            startingPositionIndex,
+                            stringWalker.PositionIndex,
+                            (byte)HtmlDecorationKind.Error));
+                }
+                else
+                {
+                    // Report a diagnostic for the missing 'tag name'
+                    textEditorHtmlDiagnosticBag.ReportTagNameMissing(
+                        new TextEditorTextSpan(
+                            startingPositionIndex,
+                            stringWalker.PositionIndex,
+                            (byte)HtmlDecorationKind.Error));
+                    
+                    // Fabricate a value for the string variable: 'tagName' so the
+                    // rest of the file can still be parsed.
+                    tagName = 
+                        $"__{nameof(textEditorHtmlDiagnosticBag.ReportTagNameMissing)}__";
+                }
             }
 
-            // The file was valid at this step and a TagName was read
             return new TagNameSyntax(
                 tagName,
                 new TextEditorTextSpan(
                     startingPositionIndex,
-                    endingPositionIndex,
+                    stringWalker.PositionIndex,
                     (byte)HtmlDecorationKind.TagName));
         }
 
         public static List<TagSyntax> ParseTagChildContent(
             StringWalker stringWalker,
-            List<TextEditorDiagnostic> textEditorDiagnostics)
+            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
         {
             List<TagSyntax> tagSyntaxes = new();
 
@@ -285,7 +263,7 @@ public static class HtmlSyntaxTree
                         tagSyntaxes.Add(
                             ParseTag(
                                 stringWalker,
-                                textEditorDiagnostics));
+                                textEditorHtmlDiagnosticBag));
                     }
 
                     return true;

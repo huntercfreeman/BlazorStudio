@@ -8,25 +8,25 @@ public class HtmlSyntaxUnit
 {
     public HtmlSyntaxUnit(
         TagSyntax rootTagSyntax,
-        ImmutableArray<TextEditorDiagnostic> textEditorDiagnostics)
+        TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
     {
-        TextEditorDiagnostics = textEditorDiagnostics;
+        TextEditorHtmlDiagnosticBag = textEditorHtmlDiagnosticBag;
         RootTagSyntax = rootTagSyntax;
     }
 
     public TagSyntax RootTagSyntax { get; }
-    public ImmutableArray<TextEditorDiagnostic> TextEditorDiagnostics { get; }
+    public TextEditorHtmlDiagnosticBag TextEditorHtmlDiagnosticBag { get; }
 
     public class HtmlSyntaxUnitBuilder
     {
         public TagSyntax RootTagSyntax { get; set; }
-        public List<TextEditorDiagnostic> TextEditorDiagnostics { get; } = new();
+        public TextEditorHtmlDiagnosticBag TextEditorHtmlDiagnosticBag { get; set; }
 
         public HtmlSyntaxUnit Build()
         {
             return new HtmlSyntaxUnit(
                 RootTagSyntax,
-                TextEditorDiagnostics.ToImmutableArray());
+                TextEditorHtmlDiagnosticBag);
         }
     }
 }
