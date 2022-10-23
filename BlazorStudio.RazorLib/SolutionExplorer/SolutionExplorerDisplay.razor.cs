@@ -361,7 +361,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                         new TextEditorCSharpDecorationMapper());
                 }
                 else if (treeViewKeyboardEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.HTML ||
-                         treeViewKeyboardEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP)
+                         treeViewKeyboardEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP ||
+                         treeViewKeyboardEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT ||
+                         treeViewKeyboardEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.XML)
                 {
                     textEditor = new TextEditorBase(
                         content,
