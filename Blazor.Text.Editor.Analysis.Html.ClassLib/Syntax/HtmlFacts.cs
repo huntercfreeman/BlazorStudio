@@ -5,13 +5,14 @@ namespace Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
 
 public static class HtmlFacts
 {
-    public const char OPEN_TAG_BEGINNING = '<';
     public const char SPECIAL_HTML_TAG = '!';
+    
+    public const char OPEN_TAG_BEGINNING = '<';
     
     public const string OPEN_TAG_WITH_CHILD_CONTENT_ENDING = ">";
     public const string OPEN_TAG_SELF_CLOSING_ENDING = "/>";
     
-    public const string START_CLOSE_TAG_WITH_CHILD_CONTENT = "</";
+    public const string CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING = "</";
     
     public static readonly ImmutableArray<string> OPEN_TAG_ENDING_OPTIONS = new []
     {

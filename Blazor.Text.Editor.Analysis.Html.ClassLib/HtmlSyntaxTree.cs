@@ -131,7 +131,7 @@ public static class HtmlSyntaxTree
 
                     return tagBuilder.Build();
                 }
-                else if (stringWalker.CheckForSubstring(HtmlFacts.START_CLOSE_TAG_WITH_CHILD_CONTENT))
+                else if (stringWalker.CheckForSubstring(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING))
                 {
                     return tagBuilder.Build(); 
                 }
@@ -215,14 +215,48 @@ public static class HtmlSyntaxTree
             
             var textNodeBuilder = new StringBuilder();
 
+            // Make a TagTextSyntax - HTML TextNode
+            // if there was anything in the current builder
+            void AddTextNode()
+            {
+                if (textNodeBuilder.Length <= 0) 
+                    return;
+                
+                var tagTextSyntax = new TagTextSyntax(
+                    ImmutableArray<AttributeTupleSyntax>.Empty,
+                    ImmutableArray<TagSyntax>.Empty, 
+                    textNodeBuilder.ToString());
+
+                tagSyntaxes.Add(tagTextSyntax);
+                textNodeBuilder.Clear();
+            }
+            
             stringWalker.WhileNotEndOfFile(() =>
             {
-                if (stringWalker.CheckForSubstring(HtmlFacts.START_CLOSE_TAG_WITH_CHILD_CONTENT))
+                if (stringWalker.CheckForSubstring(
+                        HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING))
                 {
-                    
+                    return true;
                 }
-                
-                textNodeBuilder.Append(stringWalker.CurrentCharacter);
+                else if (stringWalker.CurrentCharacter == 
+                         HtmlFacts.OPEN_TAG_BEGINNING)
+                {
+                    // If there is text in textNodeBuilder
+                    // add a new TextNode to the List of TagSyntax
+                    AddTextNode();
+                    
+                    tagSyntaxes.Add(
+                        ParseTag(
+                            stringWalker,
+                            textEditorHtmlDiagnosticBag));
+                    
+                    return false;
+                }
+                else
+                {
+                    textNodeBuilder.Append(stringWalker.CurrentCharacter);
+                    return false;
+                }
             });
             
             if (stringWalker.CurrentCharacter == ParserFacts.END_OF_FILE)
@@ -234,63 +268,9 @@ public static class HtmlSyntaxTree
                         (byte)HtmlDecorationKind.Error));
             }
             
-            _ = stringWalker.DoConsumeWhile(
-                (builder, currentCharacter, loopIteration) =>
-                {
-                    // Make a TagTextSyntax - HTML TextNode
-                    // if there was anything in the current builder
-                    void AddCurrentTagTextSyntax()
-                    {
-                        if (builder.Length > 0)
-                        {
-                            var tagTextSyntax = new TagTextSyntax(
-                                ImmutableArray<AttributeTupleSyntax>.Empty,
-                                ImmutableArray<TagSyntax>.Empty, 
-                                builder.ToString());
-
-                            tagSyntaxes.Add(tagTextSyntax);
-                            builder.Clear();
-                        }
-                    }
-                    
-                    // While we do not see:
-                    //     -The closing tag of the parent HTML element
-                    //     -The end of the file
-                    // if (currentCharacter is the start of an HTML tag opening):
-                    //     -If builder.Length > 0 then create a TagTextSyntax with
-                    //         the value of builder.ToString() and add it to the List
-                    //         of TagSyntax that will be returned from this method.
-                    //     -ParseTag() and Add the result to the List of TagSyntax
-                    //         that will be returned from this method.
-                    // else:
-                    //     -Append to StringBuilder all the text found
-                    //         and treat the text found as the value of
-                    //         an HTML TextNode
-
-                    if (stringWalker.CheckForSubstring(HtmlFacts.START_CLOSE_TAG_WITH_CHILD_CONTENT) ||
-                        ParserFacts.END_OF_FILE == currentCharacter)
-                    {
-                        // End of tag's child content
-                        // so stop do while loop
-                        
-                        AddCurrentTagTextSyntax();
-                        
-                        return false;
-                    }
-                    else if (HtmlFacts.OPEN_TAG_BEGINNING == currentCharacter)
-                    {
-                        AddCurrentTagTextSyntax();
-
-                        stringWalker.Backtrack();
-
-                        tagSyntaxes.Add(
-                            ParseTag(
-                                stringWalker,
-                                textEditorHtmlDiagnosticBag));
-                    }
-
-                    return true;
-                });
+            // If there is text in textNodeBuilder
+            // add a new TextNode to the List of TagSyntax
+            AddTextNode();
 
             return tagSyntaxes;
         }
