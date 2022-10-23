@@ -44,7 +44,7 @@ public static class HtmlSyntaxTree
         /// Invocation of this method requires the
         /// stringWalker to have <see cref="StringWalker.Peek" />
         /// of 0 be equal to
-        /// <see cref="HtmlFacts.START_OPEN_TAG"/>
+        /// <see cref="HtmlFacts.OPEN_TAG_BEGINNING"/>
         /// </summary>
         public static TagSyntax ParseTag(
             StringWalker stringWalker,
@@ -80,7 +80,7 @@ public static class HtmlSyntaxTree
                 {
                     var consumedCharacter = stringWalker.Consume();
                     
-                    if (HtmlFacts.HTML_WHITESPACE.Contains(
+                    if (HtmlFacts.WHITESPACE.Contains(
                             consumedCharacter.ToString()))
                     {
                         return false;
@@ -101,7 +101,7 @@ public static class HtmlSyntaxTree
                     return tagBuilder.Build();
                 }
                 
-                if (stringWalker.CheckForSubstring(HtmlFacts.END_OPEN_TAG_WITH_CHILD_CONTENT))
+                if (stringWalker.CheckForSubstring(HtmlFacts.OPEN_TAG_WITH_CHILD_CONTENT_ENDING))
                 {
                     // Ending of opening tag
                     tagBuilder.TagKind = TagKind.Opening;
@@ -124,7 +124,7 @@ public static class HtmlSyntaxTree
                     
                     // TODO: check that the closing tag name matches the opening tag
                 }
-                else if (stringWalker.CheckForSubstring(HtmlFacts.END_OPEN_TAG_SELF_CLOSING))
+                else if (stringWalker.CheckForSubstring(HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING))
                 {
                     // Ending of self-closing tag
                     tagBuilder.TagKind = TagKind.SelfClosing;
@@ -159,7 +159,7 @@ public static class HtmlSyntaxTree
             stringWalker.WhileNotEndOfFile(() =>
             {
                 if (stringWalker.CheckForSubstringRange(
-                        HtmlFacts.END_TAG_NAME_DELIMITERS))
+                        HtmlFacts.TAG_NAME_STOP_DELIMITERS))
                 {
                     return true;
                 }
@@ -209,8 +209,31 @@ public static class HtmlSyntaxTree
             StringWalker stringWalker,
             TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
         {
+            var startingPositionIndex = stringWalker.PositionIndex;
+            
             List<TagSyntax> tagSyntaxes = new();
+            
+            var textNodeBuilder = new StringBuilder();
 
+            stringWalker.WhileNotEndOfFile(() =>
+            {
+                if (stringWalker.CheckForSubstring(HtmlFacts.START_CLOSE_TAG_WITH_CHILD_CONTENT))
+                {
+                    
+                }
+                
+                textNodeBuilder.Append(stringWalker.CurrentCharacter);
+            });
+            
+            if (stringWalker.CurrentCharacter == ParserFacts.END_OF_FILE)
+            {
+                textEditorHtmlDiagnosticBag.ReportEndOfFileUnexpected(
+                    new TextEditorTextSpan(
+                        startingPositionIndex,
+                        stringWalker.PositionIndex,
+                        (byte)HtmlDecorationKind.Error));
+            }
+            
             _ = stringWalker.DoConsumeWhile(
                 (builder, currentCharacter, loopIteration) =>
                 {
@@ -254,7 +277,7 @@ public static class HtmlSyntaxTree
                         
                         return false;
                     }
-                    else if (HtmlFacts.START_OPEN_TAG == currentCharacter)
+                    else if (HtmlFacts.OPEN_TAG_BEGINNING == currentCharacter)
                     {
                         AddCurrentTagTextSyntax();
 
