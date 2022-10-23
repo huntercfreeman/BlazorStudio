@@ -1,5 +1,4 @@
-﻿using Blazor.Text.Editor.Analysis.Shared;
-using BlazorTextEditor.RazorLib.Lexing;
+﻿using BlazorTextEditor.RazorLib.Lexing;
 
 namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
 
