@@ -3,7 +3,11 @@ using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.RazorLib.Forms;
+using BlazorTextEditor.RazorLib;
+using BlazorTextEditor.RazorLib.Clipboard;
 using BlazorTextEditor.RazorLib.HelperComponents;
+using BlazorTextEditor.RazorLib.Store.TextEditorCase;
+using BlazorTextEditor.RazorLib.TextEditor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -11,8 +15,18 @@ namespace BlazorStudio.RazorLib.Editor;
 
 public partial class TextEditorContextMenu : ComponentBase
 {
+    [Inject]
+    private IClipboardProvider ClipboardProvider { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+    
     [CascadingParameter(Name="SetShouldDisplayMenuAsync")]
     public Func<TextEditorMenuKind, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
+    
+    [Parameter, EditorRequired]
+    public TextEditorDisplay TextEditorDisplay { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public TextEditorBase TextEditor { get; set; } = null!;
     
     private ElementReference? _textEditorContextMenuElementReference;
 
@@ -90,11 +104,53 @@ public partial class TextEditorContextMenu : ComponentBase
     
     private async Task CopyMenuOption()
     {
-        
+        var result = TextEditorDisplay.PrimaryCursor
+            .GetSelectedText(TextEditor);
+                
+        if (result is not null)
+            await ClipboardProvider.SetClipboard(result);
     }
     
     private async Task PasteMenuOption()
     {
+        var clipboard = await ClipboardProvider.ReadClipboard();
+
+        var previousCharacterWasCarriageReturn = false;
         
+        foreach (var character in clipboard)
+        {
+            if (previousCharacterWasCarriageReturn &&
+                character == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
+            {
+                previousCharacterWasCarriageReturn = false;
+                continue;
+            }
+            
+            var code = character switch
+            {
+                '\r' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
+                '\n' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
+                '\t' => KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
+                ' ' => KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
+                _ => character.ToString()
+            };
+ 
+            TextEditorService.EditTextEditor(new EditTextEditorBaseAction(TextEditorDisplay.TextEditorKey,
+                new (ImmutableTextEditorCursor, TextEditorCursor)[]
+                {
+                    (new ImmutableTextEditorCursor(TextEditorDisplay.PrimaryCursor), TextEditorDisplay.PrimaryCursor)
+                }.ToImmutableArray(),
+                new KeyboardEventArgs
+                {
+                    Code = code,
+                    Key = character.ToString()
+                },
+                CancellationToken.None));
+
+            previousCharacterWasCarriageReturn = KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN
+                                                 == character;
+        }
+
+        TextEditorDisplay.ReloadVirtualizationDisplay();
     }
 }

@@ -32,6 +32,10 @@
 
             if (activeTextEditorKey != TextEditorKey.Empty)
             {
+                var activeTextEditor =
+                    TextEditorService.TextEditorStates.TextEditorList
+                        .FirstOrDefault();
+                
                 <TextEditorDisplay @ref="_textEditorDisplay" 
                                    TextEditorKey="activeTextEditorKey"
                                    StyleCssString="width: 100%; height: calc(100% - 2rem - 1.8rem - 10px);"
@@ -40,17 +44,14 @@
                                    ShouldRemeasureFlag="_textEditorShouldRemeasureFlag">
                     
                     <OnContextMenuRenderFragment>
-                        <TextEditorContextMenu />
+                        <TextEditorContextMenu TextEditor="activeTextEditor" 
+                                               TextEditorDisplay="_textEditorDisplay" />
                     </OnContextMenuRenderFragment>
                     
                     <AutoCompleteMenuRenderFragment>
                         <TextEditorAutoCompleteMenu AutoCompleteWordText="@_autoCompleteWordText" />
                     </AutoCompleteMenuRenderFragment>
                 </TextEditorDisplay>
-
-                var activeTextEditor =
-                    TextEditorService.TextEditorStates.TextEditorList
-                        .FirstOrDefault();
                 
                 <TextEditorFooter TextEditor="activeTextEditor" 
                                   TextEditorDisplay="_textEditorDisplay" />
