@@ -1,23 +1,28 @@
 using Blazor.Text.Editor.Analysis.Html.ClassLib;
+using Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
 
 namespace Blazor.Text.Editor.Analysis.Html.Tests;
 
-public class UnitTest1
+public class ParserTests
 {
     [Fact]
-    public async Task Test1()
+    public async Task TagTextSyntax()
     {
         var content = @"some text";
+
+        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
         
-        /*
-         * Expected:
-         *     -TextNode = 'some text'
-         */
+        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
 
-        var lexer = new TextEditorHtmlLexer();
+        Assert.Single(syntaxNodeRoot.ChildTagSyntaxes);
 
-        var textEditorTextSpans = 
-            await lexer.Lex(content);
+        var childTagSyntax = syntaxNodeRoot.ChildTagSyntaxes.Single();
+        
+        Assert.IsType<TagTextSyntax>(childTagSyntax);
+        
+        Assert.Equal(
+            content, 
+            ((TagTextSyntax)childTagSyntax).Value);
     }
     
     [Fact]

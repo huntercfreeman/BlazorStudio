@@ -7,9 +7,9 @@ public class TextEditorHtmlLexer : ILexer
 {
     public async Task<ImmutableArray<TextEditorTextSpan>> Lex(string content)
     {
-        var syntaxTree = HtmlSyntaxTree.ParseText(content);
+        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
 
-        var syntaxNodeRoot = syntaxTree.RootTagSyntax;
+        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
 
         var htmlSyntaxWalker = new HtmlSyntaxWalker();
 

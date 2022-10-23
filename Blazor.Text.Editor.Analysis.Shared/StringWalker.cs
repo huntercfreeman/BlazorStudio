@@ -249,6 +249,8 @@ public class StringWalker
         {
             if (shouldBreakFunc.Invoke())
                 break;
+
+            _ = Consume();
         }
     }
 }
