@@ -13,6 +13,7 @@ public static class HtmlFacts
     public const string OPEN_TAG_SELF_CLOSING_ENDING = "/>";
     
     public const string CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING = "</";
+    public const string CLOSE_TAG_WITH_CHILD_CONTENT_ENDING = ">";
     
     public static readonly ImmutableArray<string> OPEN_TAG_ENDING_OPTIONS = new []
     {

@@ -26,20 +26,15 @@ public class ParserTests
     }
     
     [Fact]
-    public async Task Test2()
+    public async Task TagWithChildContentOfText()
     {
-        var content = @"<div>Apple Sauce</div>";
+        var textNodeContent = "Apple Sauce"; 
         
-        /*
-         * Expected:
-         *     -TagDiv
-         *         -TextNode = 'Apple Sauce' 
-         */
+        var content = $@"<div>{textNodeContent}</div>";
 
-        var lexer = new TextEditorHtmlLexer();
-
-        var textEditorTextSpans = 
-            await lexer.Lex(content);
+        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
+        
+        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
     }
     
     [Fact]

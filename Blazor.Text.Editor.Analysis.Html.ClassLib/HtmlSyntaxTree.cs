@@ -133,6 +133,41 @@ public static class HtmlSyntaxTree
                 }
                 else if (stringWalker.CheckForSubstring(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING))
                 {
+                    _ = stringWalker.ConsumeRange(
+                        HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING
+                            .Length);
+
+                    var closeTagNameBuilder = new StringBuilder();
+                    
+                    stringWalker.WhileNotEndOfFile(() =>
+                    {
+                        if (stringWalker.CheckForSubstring(
+                                HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING))
+                        {
+                            _ = stringWalker.ConsumeRange(
+                                    HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING
+                                        .Length);
+                            
+                            return true;
+                        }
+
+                        closeTagNameBuilder.Append(stringWalker.CurrentCharacter);
+                        return false;
+                    });
+
+                    var closeTagName = closeTagNameBuilder.ToString();
+                    
+                    if (closeTagName != tagBuilder.TagNameSyntax.Value)
+                    {
+                        textEditorHtmlDiagnosticBag.ReportOpenTagWithUnMatchedCloseTag(
+                            tagBuilder.TagNameSyntax.Value,
+                            closeTagName,
+                            new TextEditorTextSpan(
+                                startingPositionIndex,
+                                stringWalker.PositionIndex,
+                                (byte)HtmlDecorationKind.Error));
+                    }
+                    
                     return tagBuilder.Build(); 
                 }
                 else
