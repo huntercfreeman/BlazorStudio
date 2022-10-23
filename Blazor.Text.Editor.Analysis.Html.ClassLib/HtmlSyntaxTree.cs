@@ -14,7 +14,7 @@ public static class HtmlSyntaxTree
 
         var rootTagSyntaxBuilder = new TagSyntax.TagSyntaxBuilder
         {
-            TagNameSyntax = new TagNameSyntax(
+            OpenTagNameSyntax = new TagNameSyntax(
                 "document", 
                 new TextEditorTextSpan(
                     0,
@@ -66,7 +66,7 @@ public static class HtmlSyntaxTree
                 tagBuilder.HasSpecialHtmlCharacter = true;
             }
 
-            tagBuilder.TagNameSyntax = ParseTagName(
+            tagBuilder.OpenTagNameSyntax = ParseTagName(
                 stringWalker,
                 textEditorHtmlDiagnosticBag);
 
@@ -142,6 +142,8 @@ public static class HtmlSyntaxTree
                         HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING
                             .Length);
 
+                    var closeTagNameStartingPositionIndex = stringWalker.PositionIndex;
+
                     var closeTagNameBuilder = new StringBuilder();
                     
                     stringWalker.WhileNotEndOfFile(() =>
@@ -149,6 +151,13 @@ public static class HtmlSyntaxTree
                         if (stringWalker.CheckForSubstring(
                                 HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING))
                         {
+                            tagBuilder.CloseTagNameSyntax = new TagNameSyntax(
+                                closeTagNameBuilder.ToString(),
+                                new TextEditorTextSpan(
+                                    closeTagNameStartingPositionIndex,
+                                    stringWalker.PositionIndex,
+                                    (byte)HtmlDecorationKind.TagName));
+                            
                             _ = stringWalker.ConsumeRange(
                                     HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING
                                         .Length);
@@ -160,15 +169,20 @@ public static class HtmlSyntaxTree
                         return false;
                     });
 
-                    var closeTagName = closeTagNameBuilder.ToString();
+                    if (tagBuilder.CloseTagNameSyntax is null)
+                    {
+                        // TODO: Not sure if this can happen but I am getting a warning
+                        // about this and aim to get to this when I find time.
+                        throw new NotImplementedException();
+                    }
                     
-                    if (closeTagName != tagBuilder.TagNameSyntax.Value)
+                    if (tagBuilder.OpenTagNameSyntax.Value != tagBuilder.CloseTagNameSyntax.Value)
                     {
                         textEditorHtmlDiagnosticBag.ReportOpenTagWithUnMatchedCloseTag(
-                            tagBuilder.TagNameSyntax.Value,
-                            closeTagName,
+                            tagBuilder.OpenTagNameSyntax.Value,
+                            tagBuilder.CloseTagNameSyntax.Value,
                             new TextEditorTextSpan(
-                                startingPositionIndex,
+                                closeTagNameStartingPositionIndex,
                                 stringWalker.PositionIndex,
                                 (byte)HtmlDecorationKind.Error));
                     }

@@ -11,6 +11,7 @@ public class TagTextSyntax : TagSyntax
         bool hasSpecialHtmlCharacter = false) 
         : base(
             null, 
+            null,
             attributeTupleSyntaxes, 
             childTagSyntaxes, 
             TagKind.Text,

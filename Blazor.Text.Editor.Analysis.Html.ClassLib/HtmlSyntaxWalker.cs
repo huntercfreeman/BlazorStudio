@@ -14,18 +14,18 @@ public class HtmlSyntaxWalker
     public List<TagNameSyntax> TagNameSyntaxes { get; } = new();
     public List<TagSyntax> TagSyntaxes { get; } = new();
 
-    public void Visit(TagSyntax syntaxNodeRoot)
+    public void Visit(TagSyntax syntaxNode)
     {
-        // TODO: Make this method primitively recursive
-        // to avoid stack overflow
-        
-        var currentNode = syntaxNodeRoot;
-
-        foreach (var child in currentNode.ChildTagSyntaxes)
+        foreach (var child in syntaxNode.ChildTagSyntaxes)
         {
-            if (child.TagNameSyntax is not null)
-                VisitTagNameSyntax(child.TagNameSyntax);            
+            Visit(child);
         }
+        
+        if (syntaxNode.OpenTagNameSyntax is not null)
+            VisitTagNameSyntax(syntaxNode.OpenTagNameSyntax);
+            
+        if (syntaxNode.CloseTagNameSyntax is not null)
+            VisitTagNameSyntax(syntaxNode.CloseTagNameSyntax);
     }
     
     public void VisitAttributeNameSyntax(AttributeNameSyntax attributeNameSyntax)

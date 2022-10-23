@@ -5,7 +5,8 @@ namespace Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
 public class TagSyntax
 {
     public TagSyntax(
-        TagNameSyntax? tagNameSyntax,
+        TagNameSyntax? openTagNameSyntax,
+        TagNameSyntax? closeTagNameSyntax,
         ImmutableArray<AttributeTupleSyntax> attributeTupleSyntaxes, 
         ImmutableArray<TagSyntax> childTagSyntaxes,
         TagKind tagKind,
@@ -14,10 +15,12 @@ public class TagSyntax
         ChildTagSyntaxes = childTagSyntaxes;
         HasSpecialHtmlCharacter = hasSpecialHtmlCharacter;
         AttributeTupleSyntaxes = attributeTupleSyntaxes;
-        TagNameSyntax = tagNameSyntax;
+        OpenTagNameSyntax = openTagNameSyntax;
+        CloseTagNameSyntax = closeTagNameSyntax;
     }
     
-    public TagNameSyntax? TagNameSyntax { get; }
+    public TagNameSyntax? OpenTagNameSyntax { get; }
+    public TagNameSyntax? CloseTagNameSyntax { get; }
     public ImmutableArray<AttributeTupleSyntax> AttributeTupleSyntaxes { get; }
     public ImmutableArray<TagSyntax> ChildTagSyntaxes { get; }
     public TagKind TagKind { get; }
@@ -25,7 +28,8 @@ public class TagSyntax
 
     public class TagSyntaxBuilder
     {
-        public TagNameSyntax? TagNameSyntax { get; set; }
+        public TagNameSyntax? OpenTagNameSyntax { get; set; }
+        public TagNameSyntax? CloseTagNameSyntax { get; set; }
         public List<AttributeTupleSyntax> AttributeTupleSyntaxes { get; set; } = new();
         public List<TagSyntax> ChildTagSyntaxes { get; set; } = new();
         public TagKind TagKind { get; set; }
@@ -34,7 +38,8 @@ public class TagSyntax
         public TagSyntax Build()
         {
             return new TagSyntax(
-                TagNameSyntax,
+                OpenTagNameSyntax,
+                CloseTagNameSyntax,
                 AttributeTupleSyntaxes.ToImmutableArray(),
                 ChildTagSyntaxes.ToImmutableArray(),
                 TagKind,
