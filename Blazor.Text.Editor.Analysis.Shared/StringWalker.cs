@@ -53,7 +53,7 @@ public class StringWalker
     /// Returns <see cref="Peek"/> invoked with the value of one
     /// </summary>
     public char NextCharacter => Peek(1);
-    
+
     /// <summary>
     /// If <see cref="PositionIndex"/> is within bounds of the <see cref="_content"/>.
     /// <br/><br/>
@@ -83,8 +83,12 @@ public class StringWalker
     /// Otherwise, <see cref="ParserFacts.END_OF_FILE"/> is returned and
     /// the value of <see cref="PositionIndex"/> is unchanged.
     /// </summary>
+    /// <param name="offset">Must be > -1</param>
     public char Peek(int offset)
     {
+        if (offset <= -1)
+            throw new ApplicationException($"{nameof(offset)} must be > -1");
+        
         if (PositionIndex + offset >= _content.Length)
             return ParserFacts.END_OF_FILE;
         
