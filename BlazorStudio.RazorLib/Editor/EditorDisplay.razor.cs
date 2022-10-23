@@ -40,7 +40,9 @@ public partial class EditorDisplay : FluxorComponent
     public ClassLib.UserInterface.Dimensions Dimensions { get; set; } = null!;
 
     private TextEditorKey _testTextEditorKey = TextEditorKey.NewTextEditorKey();
-    private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath("/home/hunter/Documents/TestData/PlainTextEditorStates.Effect.cs", false);
+    private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath(
+        "C:\\Users\\hunte\\RiderProjects\\BlazorStudio\\BlazorStudio.RazorLib\\Editor\\EditorDisplay.razor.cs",
+        false);
 
     private readonly SemaphoreSlim _afterOnKeyDownAutoCompleteSemaphoreSlim = new(1, 1);
     private readonly SemaphoreSlim _afterOnKeyDownSyntaxHighlightingSemaphoreSlim = new(1, 1);
@@ -67,21 +69,21 @@ public partial class EditorDisplay : FluxorComponent
             
             // Example usage:
             // --------------
-            // var content = await FileSystemProvider.ReadFileAsync(_absoluteFilePath);
-            //
-            // var textEditor = new TextEditorBase(
-            //     content,
-            //     new TextEditorCSharpLexer(),
-            //     new TextEditorCSharpDecorationMapper(),
-            //     _testTextEditorKey);
-            //
-            // await textEditor.ApplySyntaxHighlightingAsync();
-            //
-            // TextEditorService
-            //     .RegisterTextEditor(textEditor);
-            //
-            // Dispatcher.Dispatch(
-            //     new SetActiveTextEditorKeyAction(_testTextEditorKey));
+            var content = await FileSystemProvider.ReadFileAsync(_absoluteFilePath);
+            
+            var textEditor = new TextEditorBase(
+                content,
+                new TextEditorCSharpLexer(),
+                new TextEditorCSharpDecorationMapper(),
+                _testTextEditorKey);
+            
+            await textEditor.ApplySyntaxHighlightingAsync();
+            
+            TextEditorService
+                .RegisterTextEditor(textEditor);
+            
+            Dispatcher.Dispatch(
+                new SetActiveTextEditorKeyAction(_testTextEditorKey));
         }
 
         await base.OnAfterRenderAsync(firstRender);
