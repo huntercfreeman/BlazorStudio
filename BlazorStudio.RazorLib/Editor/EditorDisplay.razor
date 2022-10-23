@@ -32,8 +32,9 @@
 
             if (activeTextEditorKey != TextEditorKey.Empty)
             {
-                <TextEditorDisplay TextEditorKey="activeTextEditorKey"
-                                   StyleCssString="width: 100%; height: calc(100% - 2rem - 10px);"
+                <TextEditorDisplay @ref="_textEditorDisplay" 
+                                   TextEditorKey="activeTextEditorKey"
+                                   StyleCssString="width: 100%; height: calc(100% - 2rem - 1.8rem - 10px);"
                                    OnSaveRequested="HandleOnSaveRequested"
                                    AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync"
                                    ShouldRemeasureFlag="_textEditorShouldRemeasureFlag">
@@ -46,6 +47,13 @@
                         <TextEditorAutoCompleteMenu AutoCompleteWordText="@_autoCompleteWordText" />
                     </AutoCompleteMenuRenderFragment>
                 </TextEditorDisplay>
+
+                var activeTextEditor =
+                    TextEditorService.TextEditorStates.TextEditorList
+                        .FirstOrDefault();
+                
+                <TextEditorFooter TextEditor="activeTextEditor" 
+                                  TextEditorDisplay="_textEditorDisplay" />
             }
         }
     </div>

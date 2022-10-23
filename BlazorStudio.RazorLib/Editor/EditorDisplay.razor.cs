@@ -51,6 +51,7 @@ public partial class EditorDisplay : FluxorComponent
     private string _previousDimensionsCssString = string.Empty;
 
     private bool _textEditorShouldRemeasureFlag;
+    private TextEditorDisplay? _textEditorDisplay;
 
     private TextEditorBase? TestTextEditor => TextEditorService.TextEditorStates.TextEditorList
         .FirstOrDefault(x => x.Key == _testTextEditorKey);
