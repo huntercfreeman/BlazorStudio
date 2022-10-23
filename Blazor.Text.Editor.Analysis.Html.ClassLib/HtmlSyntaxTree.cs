@@ -131,6 +131,10 @@ public static class HtmlSyntaxTree
                 }
                 else if (stringWalker.CheckForSubstring(HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING))
                 {
+                    _ = stringWalker.ConsumeRange(
+                        HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING
+                            .Length);
+                    
                     // Ending of self-closing tag
                     tagBuilder.TagKind = TagKind.SelfClosing;
 
@@ -192,6 +196,9 @@ public static class HtmlSyntaxTree
                 else
                 {
                     // Attribute
+                    
+                    // TODO: Parse attributes - until then Consume to avoid infinite loop
+                    _ = stringWalker.Consume();
                 }
             }
         }

@@ -38,6 +38,17 @@ public class ParserTests
     }
     
     [Fact]
+    public async Task ErroneousInfiniteLoopInThisTestCase()
+    {
+        var content = File.ReadAllText(
+            @"C:\Users\hunte\source\BlazorCrudApp\BlazorCrudApp.WebAssembly\Client\Shared\MainLayout.razor");
+
+        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
+        
+        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+    }
+    
+    [Fact]
     public async Task Test3()
     {
         var content = @"some text
