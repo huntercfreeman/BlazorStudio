@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.Contexts;
+﻿using Blazor.Text.Editor.Analysis.Html.ClassLib;
+using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Renderer;
@@ -41,7 +42,7 @@ public partial class EditorDisplay : FluxorComponent
 
     private TextEditorKey _testTextEditorKey = TextEditorKey.NewTextEditorKey();
     private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath(
-        "C:\\Users\\hunte\\RiderProjects\\BlazorStudio\\BlazorStudio.RazorLib\\Editor\\EditorDisplay.razor.cs",
+        @"C:\Users\hunte\source\BlazorCrudApp\BlazorCrudApp.WebAssembly\Client\Shared\MainLayout.razor",
         false);
 
     private readonly SemaphoreSlim _afterOnKeyDownAutoCompleteSemaphoreSlim = new(1, 1);
@@ -50,6 +51,7 @@ public partial class EditorDisplay : FluxorComponent
     private string _previousDimensionsCssString = string.Empty;
 
     private bool _textEditorShouldRemeasureFlag;
+    private TextEditorDisplay? _textEditorDisplay;
 
     private TextEditorBase? TestTextEditor => TextEditorService.TextEditorStates.TextEditorList
         .FirstOrDefault(x => x.Key == _testTextEditorKey);
@@ -73,8 +75,8 @@ public partial class EditorDisplay : FluxorComponent
             
             var textEditor = new TextEditorBase(
                 content,
-                new TextEditorCSharpLexer(),
-                new TextEditorCSharpDecorationMapper(),
+                new TextEditorHtmlLexer(),
+                new TextEditorHtmlDecorationMapper(),
                 _testTextEditorKey);
             
             await textEditor.ApplySyntaxHighlightingAsync();
@@ -96,6 +98,8 @@ public partial class EditorDisplay : FluxorComponent
     
     private void HandleOnSaveRequested(TextEditorBase textEditor)
     {
+        textEditor.ClearEditBlocks();
+        
         var content = textEditor.GetAllText();
         
         var textEditorResourceState = TextEditorResourceStateWrap.Value;
@@ -126,7 +130,11 @@ public partial class EditorDisplay : FluxorComponent
         Func<TextEditorMenuKind, Task> setTextEditorMenuKind)
     {
         if (keyboardEventArgs.CtrlKey &&
-            keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE)
+            keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||
+            // My recording software blocks Ctrl + Space keybind I need
+            // to find time to look into how to fix this but for now I added Alt + a
+            keyboardEventArgs.AltKey &&
+            keyboardEventArgs.Key == "a")
         {
             // AutoComplete
             

@@ -17,7 +17,7 @@
     <div style="padding: 0 5px; height: 100%;">
         @{
             var textEditorList = TextEditorService.TextEditorStates.TextEditorList;
-            var activeTextEditor = EditorStateWrap.Value.TextEditorKey;
+            var activeTextEditorKey = EditorStateWrap.Value.TextEditorKey;
 
             <div class="bstudio_editor-tabs-listing">
                 @for (int i = 0; i < textEditorList.Count; i++)
@@ -30,22 +30,32 @@
                 }
             </div>
 
-            if (activeTextEditor != TextEditorKey.Empty)
+            if (activeTextEditorKey != TextEditorKey.Empty)
             {
-                <TextEditorDisplay TextEditorKey="activeTextEditor"
-                                   StyleCssString="width: 100%; height: calc(100% - 2rem - 10px);"
+                var activeTextEditor =
+                    TextEditorService.TextEditorStates.TextEditorList
+                        .FirstOrDefault();
+                
+                <TextEditorDisplay @ref="_textEditorDisplay" 
+                                   TextEditorKey="activeTextEditorKey"
+                                   StyleCssString="width: 100%; height: calc(100% - 2rem - 1.8rem - 10px);"
                                    OnSaveRequested="HandleOnSaveRequested"
                                    AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync"
-                                   ShouldRemeasureFlag="_textEditorShouldRemeasureFlag">
+                                   ShouldRemeasureFlag="_textEditorShouldRemeasureFlag"
+                                   TabIndex="0">
                     
                     <OnContextMenuRenderFragment>
-                        <TextEditorContextMenu />
+                        <TextEditorContextMenu TextEditor="activeTextEditor" 
+                                               TextEditorDisplay="_textEditorDisplay" />
                     </OnContextMenuRenderFragment>
                     
                     <AutoCompleteMenuRenderFragment>
                         <TextEditorAutoCompleteMenu AutoCompleteWordText="@_autoCompleteWordText" />
                     </AutoCompleteMenuRenderFragment>
                 </TextEditorDisplay>
+                
+                <TextEditorFooter TextEditor="activeTextEditor" 
+                                  TextEditorDisplay="_textEditorDisplay" />
             }
         }
     </div>

@@ -4,6 +4,13 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Product>Blazor Text Editor Lexer for C#</Product>
+        <Description>An ILexer implementation for the nuget package named, 'Blazor.Text.Editor', used for C# syntax highlighting.</Description>
+        <PackageId>Blazor.Text.Editor.Lexer.CSharp</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Hunter Freeman</Authors>
+        <Company />
+        <PackageTags>DotNet CSharp Blazor RazorComponents</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
