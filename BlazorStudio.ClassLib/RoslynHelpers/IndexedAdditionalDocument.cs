@@ -13,5 +13,4 @@ public class IndexedAdditionalDocument
     
     public TextDocument TextDocument { get; set; }
     public AbsoluteFilePathDotNet AbsoluteFilePathDotNet { get; set; }
-    public GeneralSyntaxCollector GeneralSyntaxCollector { get; set; }
 }

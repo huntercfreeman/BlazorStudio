@@ -23,6 +23,7 @@ using BlazorStudio.ClassLib.Store.TerminalCase;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
+using Blazor.Text.Editor.Analysis.Html.ClassLib;
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.RoslynHelpers;
 using BlazorStudio.ClassLib.Sequence;
@@ -42,7 +43,7 @@ using BlazorTextEditor.RazorLib.TextEditor;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
-public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
+public partial class SolutionExplorerDisplay : FluxorComponent
 {
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
@@ -349,11 +350,31 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                 var content = await FileSystemProvider
                     .ReadFileAsync(
                         treeViewKeyboardEventDto.Item);
-            
-                var textEditor = new TextEditorBase(
-                    content,
-                    new TextEditorCSharpLexer(),
-                    new TextEditorCSharpDecorationMapper());
+
+                TextEditorBase textEditor;
+                
+                if (treeViewKeyboardEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_CLASS)
+                {
+                    textEditor = new TextEditorBase(
+                        content,
+                        new TextEditorCSharpLexer(),
+                        new TextEditorCSharpDecorationMapper());
+                }
+                else if (treeViewKeyboardEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.HTML ||
+                         treeViewKeyboardEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP)
+                {
+                    textEditor = new TextEditorBase(
+                        content,
+                        new TextEditorHtmlLexer(),
+                        new TextEditorHtmlDecorationMapper());
+                }
+                else
+                {
+                    textEditor = new TextEditorBase(
+                        content,
+                        new TextEditorCSharpLexer(),
+                        new TextEditorCSharpDecorationMapper());
+                }
             
                 Dispatcher.Dispatch(new SetTextEditorResourceStateAction(
                     textEditor.Key,
@@ -389,10 +410,30 @@ public partial class SolutionExplorerDisplay : FluxorComponent, IDisposable
                     .ReadFileAsync(
                         treeViewMouseEventDto.Item);
             
-                var textEditor = new TextEditorBase(
-                    content,
-                    new TextEditorCSharpLexer(),
-                    new TextEditorCSharpDecorationMapper());
+                TextEditorBase textEditor;
+                
+                if (treeViewMouseEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_CLASS)
+                {
+                    textEditor = new TextEditorBase(
+                        content,
+                        new TextEditorCSharpLexer(),
+                        new TextEditorCSharpDecorationMapper());
+                }
+                else if (treeViewMouseEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.HTML ||
+                         treeViewMouseEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP)
+                {
+                    textEditor = new TextEditorBase(
+                        content,
+                        new TextEditorHtmlLexer(),
+                        new TextEditorHtmlDecorationMapper());
+                }
+                else
+                {
+                    textEditor = new TextEditorBase(
+                        content,
+                        new TextEditorCSharpLexer(),
+                        new TextEditorCSharpDecorationMapper());
+                }
             
                 Dispatcher.Dispatch(new SetTextEditorResourceStateAction(
                     textEditor.Key,

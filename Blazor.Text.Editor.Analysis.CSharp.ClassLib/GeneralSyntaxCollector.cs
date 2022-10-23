@@ -1,33 +1,34 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 
-namespace BlazorStudio.ClassLib.RoslynHelpers;
+namespace Blazor.Text.Editor.Analysis.CSharp.ClassLib;
 
 public class GeneralSyntaxCollector : CSharpSyntaxWalker
 {
     public GeneralSyntaxCollector()
         : base(SyntaxWalkerDepth.Trivia)
     {
-        
     }
     
-    public List<PropertyDeclarationSyntax> PropertyDeclarations { get; } = new();
-    public List<ClassDeclarationSyntax> ClassDeclarations { get; } = new();
-    public List<MethodDeclarationSyntax> MethodDeclarations { get; } = new();
-    public List<InvocationExpressionSyntax> InvocationExpressions { get; } = new();
-    public List<ArgumentSyntax> ArgumentDeclarations { get; } = new();
-    public List<ParameterSyntax> ParameterDeclarations { get; } = new();
-    public List<LiteralExpressionSyntax> StringLiteralExpressions { get; } = new();
-    public List<SyntaxTrivia> TriviaComments { get; } = new();
-    public List<SyntaxToken> Keywords { get; } = new();
-    public List<XmlCommentSyntax> XmlComments { get; } = new();
+    public List<PropertyDeclarationSyntax> PropertyDeclarationSyntaxes { get; } = new();
+    public List<ClassDeclarationSyntax> ClassDeclarationSyntaxes { get; } = new();
+    public List<MethodDeclarationSyntax> MethodDeclarationSyntaxes { get; } = new();
+    public List<InvocationExpressionSyntax> InvocationExpressionSyntaxes { get; } = new();
+    public List<ArgumentSyntax> ArgumentSyntaxes { get; } = new();
+    public List<ParameterSyntax> ParameterSyntaxes { get; } = new();
+    public List<LiteralExpressionSyntax> StringLiteralExpressionSyntaxes { get; } = new();
+    public List<SyntaxTrivia> SyntaxTrivias { get; } = new();
+    public List<SyntaxToken> KeywordSyntaxTokens { get; } = new();
+    public List<TextSpan> VarTextSpans { get; } = new();
+    public List<XmlCommentSyntax> XmlCommentSyntaxes { get; } = new();
 
     public override void VisitToken(SyntaxToken token)
     {
         if (token.Kind().ToString().EndsWith("Keyword"))
         {
-            Keywords.Add(token);
+            KeywordSyntaxTokens.Add(token);
         }
         
         base.VisitToken(token);
@@ -35,28 +36,28 @@ public class GeneralSyntaxCollector : CSharpSyntaxWalker
 
     public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
     {        
-        PropertyDeclarations.Add(node);
+        PropertyDeclarationSyntaxes.Add(node);
         
         base.VisitPropertyDeclaration(node);
     }
 
     public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
     {
-        MethodDeclarations.Add(node);
+        MethodDeclarationSyntaxes.Add(node);
         
         base.VisitMethodDeclaration(node);
     }
 
     public override void VisitArgument(ArgumentSyntax node)
     {
-        ArgumentDeclarations.Add(node);
+        ArgumentSyntaxes.Add(node);
         
         base.VisitArgument(node);
     }
 
     public override void VisitParameter(ParameterSyntax node)
     {
-        ParameterDeclarations.Add(node);
+        ParameterSyntaxes.Add(node);
         
         base.VisitParameter(node);
     }
@@ -65,7 +66,7 @@ public class GeneralSyntaxCollector : CSharpSyntaxWalker
     {
         if (node.IsKind(SyntaxKind.StringLiteralExpression))
         {
-            StringLiteralExpressions.Add(node);
+            StringLiteralExpressionSyntaxes.Add(node);
         }
         
         base.VisitLiteralExpression(node);
@@ -73,21 +74,21 @@ public class GeneralSyntaxCollector : CSharpSyntaxWalker
 
     public override void VisitClassDeclaration(ClassDeclarationSyntax node)
     {
-        ClassDeclarations.Add(node);
+        ClassDeclarationSyntaxes.Add(node);
         
         base.VisitClassDeclaration(node);
     }
 
     public override void VisitInvocationExpression(InvocationExpressionSyntax node)
     {
-        InvocationExpressions.Add(node);
+        InvocationExpressionSyntaxes.Add(node);
         
         base.VisitInvocationExpression(node);
     }
 
     public override void VisitXmlComment(XmlCommentSyntax node)
     {
-        XmlComments.Add(node);
+        XmlCommentSyntaxes.Add(node);
         
         base.VisitXmlComment(node);
     }
@@ -99,14 +100,19 @@ public class GeneralSyntaxCollector : CSharpSyntaxWalker
             trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) ||
             trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
         {
-            TriviaComments.Add(trivia);
+            SyntaxTrivias.Add(trivia);
         }
         
         base.VisitTrivia(trivia);
     }
 
-    public override void VisitVarPattern(VarPatternSyntax node)
+    public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
     {
-        base.VisitVarPattern(node);
+        if (node.Declaration.Type.IsVar)
+        {
+            VarTextSpans.Add(node.Declaration.Type.Span);
+        }
+        
+        base.VisitLocalDeclarationStatement(node);
     }
 }
