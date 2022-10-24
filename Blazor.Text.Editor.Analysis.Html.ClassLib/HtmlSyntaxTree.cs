@@ -7,7 +7,9 @@ namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
 
 public static class HtmlSyntaxTree
 {
-    public static HtmlSyntaxUnit ParseText(string content)
+    public static HtmlSyntaxUnit ParseText(
+        string content,
+        InjectedLanguageDefinition? injectedLanguageDefinition = null)
     {
         var stringWalker = new StringWalker(content);
 
