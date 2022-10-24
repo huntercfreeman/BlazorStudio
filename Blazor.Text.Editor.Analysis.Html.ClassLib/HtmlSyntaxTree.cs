@@ -364,64 +364,31 @@ public static class HtmlSyntaxTree
             TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
             InjectedLanguageDefinition injectedLanguageDefinition)
         {
-            var startingPositionIndex = stringWalker.PositionIndex;
+            var injectedLanguageFragmentSyntaxes = new List<TagSyntax>();
+            
+            var injectedLanguageFragmentSyntaxStartingPositionIndex = stringWalker.PositionIndex;
 
-            var injectedLanguageFragmentSyntax = new InjectedLanguageFragmentSyntax(
-                ImmutableArray<TagSyntax>.Empty, 
-                string.Empty,
-                new TextEditorTextSpan(
-                    startingPositionIndex,
-                    stringWalker.PositionIndex + 1,
-                    (byte)HtmlDecorationKind.InjectedLanguageFragment));
+            // Track text span of the "@" sign (example in .razor files)
+            injectedLanguageFragmentSyntaxes.Add(
+                new InjectedLanguageFragmentSyntax(
+                    ImmutableArray<TagSyntax>.Empty,
+                    string.Empty,
+                    new TextEditorTextSpan(
+                        injectedLanguageFragmentSyntaxStartingPositionIndex,
+                        stringWalker.PositionIndex + 1,
+                        (byte)HtmlDecorationKind.InjectedLanguageFragment)));
 
             // Skip the "@" to give a .razor file example
             _ = stringWalker.Consume();
-            
-            stringWalker.WhileNotEndOfFile(() =>
-            {
-                // Try find matching code block opening syntax
-                foreach (var codeBlock in injectedLanguageDefinition.InjectedLanguageCodeBlocks)
-                {
-                    if (stringWalker.CheckForSubstring(codeBlock.CodeBlockOpening))
-                    {
-                        // While !EOF continue checking for the respective closing syntax
-                        // for the previously matched code block opening syntax.
-                        stringWalker.WhileNotEndOfFile(() =>
-                            stringWalker.CheckForSubstring(codeBlock.CodeBlockClosing));
 
-                        return true;
-                    }
-                }
+            injectedLanguageFragmentSyntaxes.AddRange(
+                injectedLanguageDefinition.ParseInjectedLanguageFunc
+                    .Invoke(
+                        stringWalker,
+                        textEditorHtmlDiagnosticBag,
+                        injectedLanguageDefinition));
 
-                return true;
-            });
-
-            var expressionBuilder = new StringBuilder();
-
-            stringWalker.WhileNotEndOfFile(() =>
-            {
-                // There was no matching code block opening syntax.
-                // Therefore assume an expression syntax and allow the
-                // InjectedLanguageDefinition access to a continually appended to
-                // StringBuilder so the InjectedLanguageDefinition can determine
-                // when expression ends.
-                //
-                // (Perhaps it matches a known variable name).
-                //
-                // (Perhaps there is an unmatched variable name however
-                // there is a non valid character in the variable name therefore
-                // match what was expected to allow for parsing the remainder of the file).
-
-                expressionBuilder.Append(stringWalker.CurrentCharacter);
-                
-                return injectedLanguageDefinition.DetermineClosingFunc
-                    .Invoke(expressionBuilder.ToString());
-            });
-
-            return new List<TagSyntax>
-            {
-                injectedLanguageFragmentSyntax
-            };
+            return injectedLanguageFragmentSyntaxes;
         }
     }
 }

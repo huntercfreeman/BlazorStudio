@@ -38,22 +38,8 @@ public static class RazorInjectedLanguageFacts
                         CodeBlockClosing = "}"
                     }
                 },
-                DetermineClosingFunc = runningString =>
-                {
-                    /*
-                     * If the dictionary of C# variables finds
-                     * a variable with the identifier of $"{runningString}"
-                     * then return true we found a match
-                     *
-                     * But what about method calls is that allowed?
-                     */
-                            
-                    if (true)
-                    {
-                                
-                    }
-                            
-                    return true;
-                }
+                ParseInjectedLanguageFunc = 
+                    ParserInjectedLanguageFragmentCSharp
+                        .ParseInjectedLanguageFragment
             };
 }

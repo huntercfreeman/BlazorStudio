@@ -1,3 +1,5 @@
+using Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
+
 namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
 
 public class InjectedLanguageDefinition
@@ -21,5 +23,5 @@ public class InjectedLanguageDefinition
     /// It is 4:16 AM and I am very tired but leaving this comment
     /// for myself for the future.
     /// </summary>
-    public Func<string, bool> DetermineClosingFunc { get; set; }
+    public Func<StringWalker, TextEditorHtmlDiagnosticBag, InjectedLanguageDefinition, List<TagSyntax>> ParseInjectedLanguageFunc { get; set; }
 }
