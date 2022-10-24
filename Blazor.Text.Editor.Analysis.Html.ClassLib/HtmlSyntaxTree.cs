@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
 using Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
-using Blazor.Text.Editor.Analysis.Shared;
 using BlazorTextEditor.RazorLib.Lexing;
 
 namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
