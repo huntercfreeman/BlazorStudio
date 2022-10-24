@@ -24,8 +24,8 @@ public static class ParserInjectedLanguageFragmentCSharp
             // Try find matching code block opening syntax
             foreach (var codeBlock in injectedLanguageDefinition.InjectedLanguageCodeBlocks)
             {
-                if (stringWalker.CheckForSubstring
-                        (codeBlock.CodeBlockOpening))
+                if (stringWalker.CheckForSubstring(
+                        codeBlock.CodeBlockOpening))
                 {
                     foundCodeBlock = true;
                     
@@ -43,23 +43,56 @@ public static class ParserInjectedLanguageFragmentCSharp
                                 codeBlock.CodeBlockOpening.Length,
                                 (byte)HtmlDecorationKind.InjectedLanguageFragment)));
 
+                    _ = stringWalker
+                        .ConsumeRange(codeBlock.CodeBlockOpening.Length);
+
+                    // > 0 means more opening brackets than closings
+                    // once 0 is met then we've found the closing bracket
+                    // start findMatchCounter = 1 because we're starting
+                    // at the opening of the injected language code block
+                    // and want to find the closing bracket of that given code block.
+                    var findMatchCounter = 1;
+                    
                     // While !EOF continue checking for the respective closing syntax
                     // for the previously matched code block opening syntax.
                     stringWalker.WhileNotEndOfFile(() =>
-                        stringWalker.CheckForSubstring(codeBlock.CodeBlockClosing));
+                    {
+                        if (stringWalker.CheckForSubstring(
+                                codeBlock.CodeBlockOpening) ||
+                            // this or is hacky but @code{ ... } is messing things up
+                            // and I am going to do this short term and come back.
+                            stringWalker.CheckForSubstring("{"))
+                        {
+                            findMatchCounter++;
+                        }
+                        else if (stringWalker.CheckForSubstring(
+                                     codeBlock.CodeBlockClosing))
+                        {
+                            findMatchCounter--;
+                        }
 
-                    // Track text span of the "}" character (example in .razor files)
-                    // also will track the ending ")" character given it is the
-                    // end of a code block.
-                    injectedLanguageFragmentSyntaxes.Add(
-                        new InjectedLanguageFragmentSyntax(
-                            ImmutableArray<TagSyntax>.Empty,
-                            string.Empty,
-                            new TextEditorTextSpan(
-                                stringWalker.PositionIndex,
-                                stringWalker.PositionIndex +
-                                codeBlock.CodeBlockClosing.Length,
-                                (byte)HtmlDecorationKind.InjectedLanguageFragment)));
+                        if (findMatchCounter == 0)
+                        {
+                            // Track text span of the "}" character (example in .razor files)
+                            // also will track the ending ")" character given it is the
+                            // end of a code block.
+                            injectedLanguageFragmentSyntaxes.Add(
+                                new InjectedLanguageFragmentSyntax(
+                                    ImmutableArray<TagSyntax>.Empty,
+                                    string.Empty,
+                                    new TextEditorTextSpan(
+                                        stringWalker.PositionIndex,
+                                        stringWalker.PositionIndex +
+                                        codeBlock.CodeBlockClosing.Length,
+                                        (byte)HtmlDecorationKind.InjectedLanguageFragment)));
+                            
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    });
 
                     return true;
                 }
