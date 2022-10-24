@@ -5,5 +5,6 @@ public enum TagKind
     Opening,
     Closing,
     SelfClosing,
-    Text
+    Text,
+    InjectedLanguageCodeBlock
 }

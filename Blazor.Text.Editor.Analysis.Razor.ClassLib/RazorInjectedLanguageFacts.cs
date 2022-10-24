@@ -8,34 +8,36 @@ public static class RazorInjectedLanguageFacts
         RazorInjectedLanguageDefinition = 
             new InjectedLanguageDefinition
             {
-                InjectedLanguageCodeBlockTag = new []
+                InjectedLanguageCodeBlockTag = "@",
+                InjectedLanguageCodeBlockTagEscaped = "@@",
+                InjectedLanguageCodeBlocks = new []
                 {
-                    new InjectedLanguageCodeBlockTag
+                    new InjectedLanguageCodeBlock
                     {
                         CodeBlockTag = "@",
                         CodeBlockOpening = "{",
                         CodeBlockClosing = "}"
                     },
-                    new InjectedLanguageCodeBlockTag
+                    new InjectedLanguageCodeBlock
                     {
                         CodeBlockTag = "@",
                         CodeBlockOpening = "(",
                         CodeBlockClosing = ")"
                     },
-                    new InjectedLanguageCodeBlockTag
+                    new InjectedLanguageCodeBlock
                     {
                         CodeBlockTag = "@",
                         // @if (myExpression) { <div>true</div> }
                         CodeBlockOpening = "TODO: any control keyword (like for, if, or switch)",
                         CodeBlockClosing = "}"
                     },
-                    new InjectedLanguageCodeBlockTag
+                    new InjectedLanguageCodeBlock
                     {
                         CodeBlockTag = "@",
                         CodeBlockOpening = "code{",
                         CodeBlockClosing = "}"
                     },
-                    new InjectedLanguageCodeBlockTag
+                    new InjectedLanguageCodeBlock
                     {
                         CodeBlockTag = "@",
                         DetermineClosingFunc = runningString =>

@@ -28,7 +28,8 @@ public static class HtmlSyntaxTree
         rootTagSyntaxBuilder.ChildTagSyntaxes = HtmlSyntaxTreeStateMachine
                 .ParseTagChildContent(
                     stringWalker,
-                    textEditorHtmlDiagnosticBag);
+                    textEditorHtmlDiagnosticBag,
+                    injectedLanguageDefinition);
 
         var htmlSyntaxUnitBuilder = new HtmlSyntaxUnit.HtmlSyntaxUnitBuilder
         {
@@ -49,7 +50,8 @@ public static class HtmlSyntaxTree
         /// </summary>
         public static TagSyntax ParseTag(
             StringWalker stringWalker,
-            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
+            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
+            InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
             
@@ -69,7 +71,8 @@ public static class HtmlSyntaxTree
 
             tagBuilder.OpenTagNameSyntax = ParseTagName(
                 stringWalker,
-                textEditorHtmlDiagnosticBag);
+                textEditorHtmlDiagnosticBag,
+                injectedLanguageDefinition);
 
             // Get all html attributes
             // break when see End Of File or
@@ -118,7 +121,8 @@ public static class HtmlSyntaxTree
                     
                     tagBuilder.ChildTagSyntaxes = ParseTagChildContent(
                         stringWalker,
-                        textEditorHtmlDiagnosticBag);
+                        textEditorHtmlDiagnosticBag,
+                        injectedLanguageDefinition);
 
                     // At the closing tag now so check that the closing tag
                     // name matches the opening tag.
@@ -212,7 +216,8 @@ public static class HtmlSyntaxTree
         /// </summary>
         public static TagNameSyntax ParseTagName(
             StringWalker stringWalker,
-            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
+            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
+            InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -269,7 +274,8 @@ public static class HtmlSyntaxTree
 
         public static List<TagSyntax> ParseTagChildContent(
             StringWalker stringWalker,
-            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
+            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
+            InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
             
@@ -310,7 +316,23 @@ public static class HtmlSyntaxTree
                     tagSyntaxes.Add(
                         ParseTag(
                             stringWalker,
-                            textEditorHtmlDiagnosticBag));
+                            textEditorHtmlDiagnosticBag,
+                            injectedLanguageDefinition));
+                    
+                    return false;
+                }
+                else if (injectedLanguageDefinition is not null && stringWalker
+                         .CheckForInjectedLanguageCodeBlockTag(injectedLanguageDefinition))
+                {
+                    // If there is text in textNodeBuilder
+                    // add a new TextNode to the List of TagSyntax
+                    AddTextNode();
+                    
+                    tagSyntaxes.AddRange(
+                        ParseInjectedLanguageCodeBlock(
+                            stringWalker,
+                            textEditorHtmlDiagnosticBag,
+                            injectedLanguageDefinition));
                     
                     return false;
                 }
@@ -335,6 +357,71 @@ public static class HtmlSyntaxTree
             AddTextNode();
 
             return tagSyntaxes;
+        }
+        
+        public static List<TagSyntax> ParseInjectedLanguageCodeBlock(
+            StringWalker stringWalker,
+            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
+            InjectedLanguageDefinition injectedLanguageDefinition)
+        {
+            var startingPositionIndex = stringWalker.PositionIndex;
+
+            var injectedLanguageFragmentSyntax = new InjectedLanguageFragmentSyntax(
+                ImmutableArray<TagSyntax>.Empty, 
+                string.Empty,
+                new TextEditorTextSpan(
+                    startingPositionIndex,
+                    stringWalker.PositionIndex + 1,
+                    (byte)HtmlDecorationKind.InjectedLanguageFragment));
+
+            // Skip the "@" to give a .razor file example
+            _ = stringWalker.Consume();
+            
+            stringWalker.WhileNotEndOfFile(() =>
+            {
+                // Try find matching code block opening syntax
+                foreach (var codeBlock in injectedLanguageDefinition.InjectedLanguageCodeBlocks)
+                {
+                    if (stringWalker.CheckForSubstring(codeBlock.CodeBlockOpening))
+                    {
+                        // While !EOF continue checking for the respective closing syntax
+                        // for the previously matched code block opening syntax.
+                        stringWalker.WhileNotEndOfFile(() =>
+                            stringWalker.CheckForSubstring(codeBlock.CodeBlockClosing));
+
+                        return true;
+                    }
+                }
+
+                return true;
+            });
+
+            var expressionBuilder = new StringBuilder();
+
+            stringWalker.WhileNotEndOfFile(() =>
+            {
+                // There was no matching code block opening syntax.
+                // Therefore assume an expression syntax and allow the
+                // InjectedLanguageDefinition access to a continually appended to
+                // StringBuilder so the InjectedLanguageDefinition can determine
+                // when expression ends.
+                //
+                // (Perhaps it matches a known variable name).
+                //
+                // (Perhaps there is an unmatched variable name however
+                // there is a non valid character in the variable name therefore
+                // match what was expected to allow for parsing the remainder of the file).
+
+                expressionBuilder.Append(stringWalker.CurrentCharacter);
+                
+                return injectedLanguageDefinition.DetermineClosingFunc
+                    .Invoke(expressionBuilder.ToString());
+            });
+
+            return new List<TagSyntax>
+            {
+                injectedLanguageFragmentSyntax
+            };
         }
     }
 }
