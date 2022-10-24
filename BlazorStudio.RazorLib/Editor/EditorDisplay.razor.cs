@@ -1,4 +1,5 @@
 ﻿using Blazor.Text.Editor.Analysis.Html.ClassLib;
+using Blazor.Text.Editor.Analysis.Razor.ClassLib;
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -75,7 +76,7 @@ public partial class EditorDisplay : FluxorComponent
             
             var textEditor = new TextEditorBase(
                 content,
-                new TextEditorHtmlLexer(),
+                new TextEditorRazorLexer(),
                 new TextEditorHtmlDecorationMapper(),
                 _testTextEditorKey);
             

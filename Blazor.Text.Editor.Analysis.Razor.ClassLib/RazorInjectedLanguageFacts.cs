@@ -36,28 +36,24 @@ public static class RazorInjectedLanguageFacts
                         CodeBlockTag = "@",
                         CodeBlockOpening = "code{",
                         CodeBlockClosing = "}"
-                    },
-                    new InjectedLanguageCodeBlock
-                    {
-                        CodeBlockTag = "@",
-                        DetermineClosingFunc = runningString =>
-                        {
-                            /*
-                             * If the dictionary of C# variables finds
-                             * a variable with the identifier of $"{runningString}"
-                             * then return true we found a match
-                             *
-                             * But what about method calls is that allowed?
-                             */
-                            
-                            if (true)
-                            {
-                                
-                            }
-                            
-                            return true;
-                        }
                     }
+                },
+                DetermineClosingFunc = runningString =>
+                {
+                    /*
+                     * If the dictionary of C# variables finds
+                     * a variable with the identifier of $"{runningString}"
+                     * then return true we found a match
+                     *
+                     * But what about method calls is that allowed?
+                     */
+                            
+                    if (true)
+                    {
+                                
+                    }
+                            
+                    return true;
                 }
             };
 }
