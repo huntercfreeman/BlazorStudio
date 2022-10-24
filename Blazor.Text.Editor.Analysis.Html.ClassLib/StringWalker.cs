@@ -271,4 +271,11 @@ public class StringWalker
         return CheckForSubstring(injectedLanguageDefinition.InjectedLanguageCodeBlockTag) &&
                !CheckForSubstring(injectedLanguageDefinition.InjectedLanguageCodeBlockTagEscaped);
     }
+
+    public string GetText(TextEditorTextSpan lexedTokenTextSpan)
+    {
+        return _content.Substring(
+            lexedTokenTextSpan.StartingIndexInclusive, 
+            lexedTokenTextSpan.EndingIndexExclusive - lexedTokenTextSpan.StartingIndexInclusive);
+    }
 }

@@ -12,5 +12,14 @@ public enum HtmlDecorationKind
     InjectedLanguageFragment,
     TagName,
     Tag,
-    Error
+    Error,
+    InjectedLanguageCodeBlock,
+    InjectedLanguageCodeBlockTag,
+    InjectedLanguageKeyword,
+    InjectedLanguageTagHelperAttribute,
+    InjectedLanguageTagHelperElement,
+    InjectedLanguageMethod,
+    InjectedLanguageVariable,
+    InjectedLanguageType,
+    InjectedLanguageStringLiteral
 }

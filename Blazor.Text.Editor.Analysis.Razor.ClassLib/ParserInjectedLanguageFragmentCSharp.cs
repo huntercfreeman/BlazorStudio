@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Text;
+using Blazor.Text.Editor.Analysis.CSharp.ClassLib;
 using Blazor.Text.Editor.Analysis.Html.ClassLib;
 using Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
 using BlazorTextEditor.RazorLib.Lexing;
@@ -46,6 +47,10 @@ public static class ParserInjectedLanguageFragmentCSharp
                     _ = stringWalker
                         .ConsumeRange(codeBlock.CodeBlockOpening.Length);
 
+                    var injectedLanguageOffsetPositionIndex = stringWalker.PositionIndex;
+
+                    var injectedLanguageBuilder = new StringBuilder();
+                    
                     // > 0 means more opening brackets than closings
                     // once 0 is met then we've found the closing bracket
                     // start findMatchCounter = 1 because we're starting
@@ -57,6 +62,8 @@ public static class ParserInjectedLanguageFragmentCSharp
                     // for the previously matched code block opening syntax.
                     stringWalker.WhileNotEndOfFile(() =>
                     {
+                        injectedLanguageBuilder.Append(stringWalker.CurrentCharacter);
+                        
                         if (stringWalker.CheckForSubstring(
                                 codeBlock.CodeBlockOpening) ||
                             // this or is hacky but @code{ ... } is messing things up
@@ -93,6 +100,128 @@ public static class ParserInjectedLanguageFragmentCSharp
                             return false;
                         }
                     });
+
+                    var lexer = new TextEditorCSharpLexer();
+
+                    var classTemplateOpening = "public class Aaa{";
+
+                    var injectedLanguageString = classTemplateOpening +
+                                                 injectedLanguageBuilder.ToString();
+                    
+                    var lexedInjectedLanguage = lexer.Lex(
+                            injectedLanguageString)
+                        .Result;
+
+                    foreach (var lexedTokenTextSpan in lexedInjectedLanguage)
+                    {
+                        var startingIndexInclusive = lexedTokenTextSpan.StartingIndexInclusive +
+                                                 injectedLanguageOffsetPositionIndex -
+                                                 classTemplateOpening.Length;
+                        
+                        var endingIndexExclusive = lexedTokenTextSpan.EndingIndexExclusive +
+                                               injectedLanguageOffsetPositionIndex -
+                                               classTemplateOpening.Length;
+
+                        // startingIndexInclusive < 0 means it was part of the class
+                        // template that was prepended so roslyn would recognize methods
+                        if (lexedTokenTextSpan.StartingIndexInclusive - classTemplateOpening.Length
+                                < 0)
+                            continue;
+                        
+                        var cSharpDecorationKind = (CSharpDecorationKind)lexedTokenTextSpan.DecorationByte;
+
+                        switch (cSharpDecorationKind)
+                        {
+                            case CSharpDecorationKind.None:
+                                break;
+                            case CSharpDecorationKind.Method:
+                                var razorMethodTextSpan = lexedTokenTextSpan with
+                                {
+                                    DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageMethod,
+                                    StartingIndexInclusive = startingIndexInclusive,
+                                    EndingIndexExclusive = endingIndexExclusive
+                                };
+
+                                injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentSyntax(
+                                    ImmutableArray<TagSyntax>.Empty,
+                                    stringWalker.GetText(razorMethodTextSpan),
+                                    razorMethodTextSpan));
+                                
+                                break;
+                            case CSharpDecorationKind.Type:
+                                var razorTypeTextSpan = lexedTokenTextSpan with
+                                {
+                                    DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType,
+                                    StartingIndexInclusive = startingIndexInclusive,
+                                    EndingIndexExclusive = endingIndexExclusive
+                                };
+
+                                injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentSyntax(
+                                    ImmutableArray<TagSyntax>.Empty,
+                                    stringWalker.GetText(razorTypeTextSpan),
+                                    razorTypeTextSpan));
+                                
+                                break;
+                            case CSharpDecorationKind.Parameter:
+                                var razorVariableTextSpan = lexedTokenTextSpan with
+                                {
+                                    DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageVariable,
+                                    StartingIndexInclusive = startingIndexInclusive,
+                                    EndingIndexExclusive = endingIndexExclusive
+                                };
+
+                                injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentSyntax(
+                                    ImmutableArray<TagSyntax>.Empty,
+                                    stringWalker.GetText(razorVariableTextSpan),
+                                    razorVariableTextSpan));
+                                
+                                break;
+                            case CSharpDecorationKind.StringLiteral:
+                                var razorStringLiteralTextSpan = lexedTokenTextSpan with
+                                {
+                                    DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageStringLiteral,
+                                    StartingIndexInclusive = startingIndexInclusive,
+                                    EndingIndexExclusive = endingIndexExclusive
+                                };
+
+                                injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentSyntax(
+                                    ImmutableArray<TagSyntax>.Empty,
+                                    stringWalker.GetText(razorStringLiteralTextSpan),
+                                    razorStringLiteralTextSpan));
+                                
+                                break;
+                            case CSharpDecorationKind.Keyword:
+                                var razorKeywordTextSpan = lexedTokenTextSpan with
+                                {
+                                    DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageKeyword,
+                                    StartingIndexInclusive = startingIndexInclusive,
+                                    EndingIndexExclusive = endingIndexExclusive
+                                };
+
+                                injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentSyntax(
+                                    ImmutableArray<TagSyntax>.Empty,
+                                    stringWalker.GetText(razorKeywordTextSpan),
+                                    razorKeywordTextSpan));
+                                
+                                break;
+                            case CSharpDecorationKind.Comment:
+                                var razorCommentTextSpan = lexedTokenTextSpan with
+                                {
+                                    DecorationByte = (byte)HtmlDecorationKind.Comment,
+                                    StartingIndexInclusive = startingIndexInclusive,
+                                    EndingIndexExclusive = endingIndexExclusive
+                                };
+
+                                injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentSyntax(
+                                    ImmutableArray<TagSyntax>.Empty,
+                                    stringWalker.GetText(razorCommentTextSpan),
+                                    razorCommentTextSpan));
+                                
+                                break;
+                            default:
+                                break;
+                        }
+                    }
 
                     return true;
                 }
