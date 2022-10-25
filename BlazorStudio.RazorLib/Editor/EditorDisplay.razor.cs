@@ -43,7 +43,7 @@ public partial class EditorDisplay : FluxorComponent
 
     private TextEditorKey _testTextEditorKey = TextEditorKey.NewTextEditorKey();
     private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath(
-        @"/home/hunter/Documents/TestData/blazorCounter.razor",
+        @"C:\Users\hunte\source\Razor\Razor.ServerSide\Pages\Counter.razor",
         false);
 
     private readonly SemaphoreSlim _afterOnKeyDownAutoCompleteSemaphoreSlim = new(1, 1);
