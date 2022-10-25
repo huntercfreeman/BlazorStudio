@@ -1,4 +1,3 @@
-using Blazor.Text.Editor.Analysis.Html.ClassLib;
 using Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxActors;
 using Blazor.Text.Editor.Analysis.Razor.ClassLib;
 
@@ -7,7 +6,7 @@ namespace Blazor.Text.Editor.Analysis.Razor.Tests;
 public class ParserTests
 {
     [Fact]
-    public async Task TagTextSyntax()
+    public Task TagTextSyntax()
     {
         var content = @"<div class=""bstudio_counter"">
 	<button class=""btn btn-primary""
@@ -35,5 +34,6 @@ public class ParserTests
 	        RazorInjectedLanguageFacts.RazorInjectedLanguageDefinition);
         
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+        return Task.CompletedTask;
     }
 }

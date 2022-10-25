@@ -7,7 +7,7 @@ namespace Blazor.Text.Editor.Analysis.Html.Tests;
 public class ParserTests
 {
     [Fact]
-    public async Task TagTextSyntax()
+    public Task TagTextSyntax()
     {
         var content = @"some text";
 
@@ -24,10 +24,11 @@ public class ParserTests
         Assert.Equal(
             content, 
             ((TagTextSyntax)childTagSyntax).Value);
+        return Task.CompletedTask;
     }
     
     [Fact]
-    public async Task TagWithChildContentOfText()
+    public Task TagWithChildContentOfText()
     {
         var textNodeContent = "Apple Sauce"; 
         
@@ -36,10 +37,11 @@ public class ParserTests
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
         
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+        return Task.CompletedTask;
     }
     
     [Fact]
-    public async Task ErroneousInfiniteLoopInThisTestCase()
+    public Task ErroneousInfiniteLoopInThisTestCase()
     {
         var content = File.ReadAllText(
             @"C:\Users\hunte\source\BlazorCrudApp\BlazorCrudApp.WebAssembly\Client\Shared\MainLayout.razor");
@@ -47,6 +49,7 @@ public class ParserTests
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
         
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+        return Task.CompletedTask;
     }
     
     [Fact]

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BlazorTextEditor.RazorLib.Lexing;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
@@ -47,7 +48,8 @@ public class TextEditorCSharpLexer : ILexer
                 {
                     var retType = mds
                         .ChildNodes()
-                        .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+                        .FirstOrDefault(x => 
+                            x.IsKind(SyntaxKind.IdentifierName));
 
                     return retType?.Span ?? default;
                 })
@@ -61,8 +63,10 @@ public class TextEditorCSharpLexer : ILexer
             textEditorTextSpans.AddRange(generalSyntaxCollector.ParameterSyntaxes
                 .Select(ps =>
                 {
-                    var identifierNameNode = ps.ChildNodes()
-                        .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+                    var identifierNameNode = ps
+                        .ChildNodes()
+                        .FirstOrDefault(x =>
+                            x.IsKind(SyntaxKind.IdentifierName));
 
                     if (identifierNameNode is null)
                     {
@@ -113,11 +117,14 @@ public class TextEditorCSharpLexer : ILexer
             var decorationByte = (byte)DecorationKind.Parameter;
             
             // Parameter declaration identifier
-            textEditorTextSpans.AddRange(generalSyntaxCollector.ParameterSyntaxes
+            textEditorTextSpans
+                .AddRange(generalSyntaxCollector.ParameterSyntaxes
                 .Select(ps =>
                 {
                     var identifierToken =
-                        ps.ChildTokens().FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierToken);
+                        ps.ChildTokens()
+                            .FirstOrDefault(x => 
+                                x.IsKind(SyntaxKind.IdentifierToken));
 
                     return identifierToken.Span;
                 })

@@ -76,7 +76,7 @@ public partial class TransformableColumnSeparator : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerEastResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerEastResizeHandle(MouseEventArgs mouseEventArgs)
     {
         var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
@@ -111,6 +111,7 @@ public partial class TransformableColumnSeparator : ComponentBase, IDisposable
         }
 
         rightWidthPixelOffset.Value -= deltaX;
+        return Task.CompletedTask;
     }
 
     public void Dispose()

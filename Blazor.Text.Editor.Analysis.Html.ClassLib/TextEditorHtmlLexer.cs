@@ -6,7 +6,7 @@ namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
 
 public class TextEditorHtmlLexer : ILexer
 {
-    public async Task<ImmutableArray<TextEditorTextSpan>> Lex(string content)
+    public Task<ImmutableArray<TextEditorTextSpan>> Lex(string content)
     {
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
 
@@ -30,6 +30,6 @@ public class TextEditorHtmlLexer : ILexer
                 .Select(ilfs => ilfs.TextEditorTextSpan));
         }
 
-        return textEditorTextSpans.ToImmutableArray();
+        return Task.FromResult(textEditorTextSpans.ToImmutableArray());
     }
 }

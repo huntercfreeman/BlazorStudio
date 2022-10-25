@@ -66,13 +66,13 @@ public partial class TextEditorAutoCompleteMenu : ComponentBase
         });
     }
     
-    private async Task CopyMenuOption()
+    private Task CopyMenuOption()
     {
-        
+        return Task.CompletedTask;
     }
     
-    private async Task PasteMenuOption()
+    private Task PasteMenuOption()
     {
-        
+        return Task.CompletedTask;
     }
 }

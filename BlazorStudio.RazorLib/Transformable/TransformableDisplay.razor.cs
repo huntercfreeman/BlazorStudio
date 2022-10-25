@@ -493,7 +493,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerNorthResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerNorthResizeHandle(MouseEventArgs mouseEventArgs)
     {
         _resizeEventCounter++;
 
@@ -532,6 +532,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         }
 
         topPixelOffset.Value += deltaY;
+        return Task.CompletedTask;
     }
 
     private void SubscribeToDragEventWithEastResizeHandle()
@@ -540,7 +541,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerEastResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerEastResizeHandle(MouseEventArgs mouseEventArgs)
     {
         var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
@@ -559,6 +560,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
         widthPixelOffset.Value += deltaX;
+        return Task.CompletedTask;
     }
 
     private void SubscribeToDragEventWithSouthResizeHandle()
@@ -567,7 +569,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerSouthResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerSouthResizeHandle(MouseEventArgs mouseEventArgs)
     {
         var heightPixelOffset = Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
@@ -586,6 +588,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
 
         heightPixelOffset.Value += deltaY;
+        return Task.CompletedTask;
     }
 
     private void SubscribeToDragEventWithWestResizeHandle()
@@ -594,7 +597,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerWestResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerWestResizeHandle(MouseEventArgs mouseEventArgs)
     {
         var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
@@ -629,6 +632,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         }
 
         leftPixelOffset.Value += deltaX;
+        return Task.CompletedTask;
     }
 
     private void SubscribeToDragEventWithNorthEastResizeHandle()
@@ -637,7 +641,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerNorthEastResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerNorthEastResizeHandle(MouseEventArgs mouseEventArgs)
     {
         var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
@@ -690,6 +694,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         }
 
         topPixelOffset.Value += deltaY;
+        return Task.CompletedTask;
     }
 
     private void SubscribeToDragEventWithSouthEastResizeHandle()
@@ -698,7 +703,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerSouthEastResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerSouthEastResizeHandle(MouseEventArgs mouseEventArgs)
     {
         var heightPixelOffset = Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
@@ -735,6 +740,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
         widthPixelOffset.Value += deltaX;
+        return Task.CompletedTask;
     }
 
     private void SubscribeToDragEventWithSouthWestResizeHandle()
@@ -743,7 +749,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerSouthWestResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerSouthWestResizeHandle(MouseEventArgs mouseEventArgs)
     {
         var heightPixelOffset = Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
@@ -796,6 +802,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         }
 
         leftPixelOffset.Value += deltaX;
+        return Task.CompletedTask;
     }
 
     private void SubscribeToDragEventWithNorthWestResizeHandle()
@@ -804,7 +811,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerNorthWestResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerNorthWestResizeHandle(MouseEventArgs mouseEventArgs)
     {
         var heightPixelOffset = Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
@@ -873,6 +880,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         }
 
         leftPixelOffset.Value += deltaX;
+        return Task.CompletedTask;
     }
 
     public void SubscribeToDragEventWithMoveHandle()
@@ -881,7 +889,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerMoveHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerMoveHandle(MouseEventArgs mouseEventArgs)
     {
         var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
 
@@ -918,6 +926,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         }
 
         leftPixelOffset.Value += deltaX;
+        return Task.CompletedTask;
     }
 
     public void Dispose()

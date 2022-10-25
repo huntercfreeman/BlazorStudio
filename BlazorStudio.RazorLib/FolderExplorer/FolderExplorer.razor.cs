@@ -123,11 +123,11 @@ public partial class FolderExplorer : FluxorComponent
         }
     }
 
-    private async Task<IEnumerable<IAbsoluteFilePath>> LoadAbsoluteFilePathChildrenAsync(IAbsoluteFilePath absoluteFilePath)
+    private Task<IEnumerable<IAbsoluteFilePath>> LoadAbsoluteFilePathChildrenAsync(IAbsoluteFilePath absoluteFilePath)
     {
         if (!absoluteFilePath.IsDirectory)
         {
-            return Array.Empty<IAbsoluteFilePath>();
+            return Task.FromResult<IEnumerable<IAbsoluteFilePath>>(Array.Empty<IAbsoluteFilePath>());
         }
 
         var childDirectoryAbsolutePaths = Directory
@@ -142,8 +142,8 @@ public partial class FolderExplorer : FluxorComponent
             .Select(x => (IAbsoluteFilePath)new AbsoluteFilePath(x, false))
             .ToList();
 
-        return childDirectoryAbsolutePaths
-            .Union(childFileAbsolutePaths);
+        return Task.FromResult(childDirectoryAbsolutePaths
+            .Union(childFileAbsolutePaths));
     }
 
     private void FolderExplorerTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<IAbsoluteFilePath> treeViewKeyboardEventDto)

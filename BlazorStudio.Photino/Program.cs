@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 using BlazorStudio.RazorLib;
-using BlazorTextEditor.RazorLib;
 
 namespace BlazorStudio.Photino
 {

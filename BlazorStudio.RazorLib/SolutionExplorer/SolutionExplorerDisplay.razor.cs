@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
 using Blazor.Text.Editor.Analysis.Html.ClassLib;
+using Blazor.Text.Editor.Analysis.Html.ClassLib.Decoration;
 using Blazor.Text.Editor.Analysis.Razor.ClassLib;
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.RoslynHelpers;
@@ -256,13 +257,13 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         
     }
 
-    private async Task<IEnumerable<AbsoluteFilePathDotNet>> LoadAbsoluteFilePathChildrenAsync(AbsoluteFilePathDotNet absoluteFilePathDotNet)
+    private Task<IEnumerable<AbsoluteFilePathDotNet>> LoadAbsoluteFilePathChildrenAsync(AbsoluteFilePathDotNet absoluteFilePathDotNet)
     {
         if (absoluteFilePathDotNet.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
         {
             var indexedProjects = SolutionStateWrap.Value.ProjectIdToProjectMap.Values;
 
-            return indexedProjects.Select(x => x.AbsoluteFilePathDotNet);
+            return Task.FromResult(indexedProjects.Select(x => x.AbsoluteFilePathDotNet));
         }
         
         if (absoluteFilePathDotNet.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
@@ -316,14 +317,14 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     .Select(x => new AbsoluteFilePathDotNet(x, false, absoluteFilePathDotNet.ProjectId))
                     .ToList();
 
-                return projectChildDirectoryAbsolutePaths
-                    .Union(projectChildFileAbsolutePaths);
+                return Task.FromResult(projectChildDirectoryAbsolutePaths
+                    .Union(projectChildFileAbsolutePaths));
             }
         }
 
         if (!absoluteFilePathDotNet.IsDirectory)
         {
-            return Array.Empty<AbsoluteFilePathDotNet>();
+            return Task.FromResult<IEnumerable<AbsoluteFilePathDotNet>>(Array.Empty<AbsoluteFilePathDotNet>());
         }
 
         var childDirectoryAbsolutePaths = Directory
@@ -338,8 +339,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             .Select(x => new AbsoluteFilePathDotNet(x, false, absoluteFilePathDotNet.ProjectId))
             .ToList();
 
-        return childDirectoryAbsolutePaths
-            .Union(childFileAbsolutePaths);
+        return Task.FromResult(childDirectoryAbsolutePaths
+            .Union(childFileAbsolutePaths));
     }
 
     private void SolutionExplorerTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<AbsoluteFilePathDotNet> treeViewKeyboardEventDto)

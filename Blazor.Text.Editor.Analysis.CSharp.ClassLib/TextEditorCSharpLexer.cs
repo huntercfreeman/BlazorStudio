@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using BlazorTextEditor.RazorLib.Lexing;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
@@ -47,7 +48,7 @@ public class TextEditorCSharpLexer : ILexer
                 {
                     var retType = mds
                         .ChildNodes()
-                        .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+                        .FirstOrDefault(x => x.IsKind(SyntaxKind.IdentifierName));
 
                     return retType?.Span ?? default;
                 })
@@ -62,7 +63,7 @@ public class TextEditorCSharpLexer : ILexer
                 .Select(ps =>
                 {
                     var identifierNameNode = ps.ChildNodes()
-                        .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+                        .FirstOrDefault(x => x.IsKind(SyntaxKind.IdentifierName));
 
                     if (identifierNameNode is null)
                     {
@@ -117,7 +118,9 @@ public class TextEditorCSharpLexer : ILexer
                 .Select(ps =>
                 {
                     var identifierToken =
-                        ps.ChildTokens().FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierToken);
+                        ps.ChildTokens()
+                            .FirstOrDefault(x =>
+                                x.IsKind(SyntaxKind.IdentifierToken));
 
                     return identifierToken.Span;
                 })

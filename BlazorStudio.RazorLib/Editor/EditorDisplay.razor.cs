@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Blazor.Text.Editor.Analysis.Html.ClassLib;
+using Blazor.Text.Editor.Analysis.Html.ClassLib.Decoration;
 using Blazor.Text.Editor.Analysis.Razor.ClassLib;
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.FileSystem.Classes;

@@ -1,6 +1,7 @@
-﻿using Blazor.Text.Editor.Analysis.Shared;
+﻿using Blazor.Text.Editor.Analysis.Html.ClassLib.InjectLanguage;
+using Blazor.Text.Editor.Analysis.Shared;
 
-namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
+namespace Blazor.Text.Editor.Analysis.Html.ClassLib.ExtensionMethods;
 
 public static class StringWalkerExtensions
 {

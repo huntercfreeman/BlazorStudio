@@ -44,8 +44,9 @@
                                         null,
                                         workspaceState.FolderAbsoluteFilePath,
                                         null,
-                                        null,
-                                        async () => WorkspaceStateWrap_StateChanged(null, EventArgs.Empty),
+                                        null, () => { WorkspaceStateWrap_StateChanged(null, EventArgs.Empty);
+                                                        return Task.CompletedTask;
+                                        },
                                         null,
                                         default);
 

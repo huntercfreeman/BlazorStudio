@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using Blazor.Text.Editor.Analysis.Html.ClassLib;
 using Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxActors;
 using BlazorTextEditor.RazorLib.Lexing;
 
@@ -7,7 +6,7 @@ namespace Blazor.Text.Editor.Analysis.Razor.ClassLib;
 
 public class TextEditorRazorLexer : ILexer
 {
-    public async Task<ImmutableArray<TextEditorTextSpan>> Lex(string content)
+    public Task<ImmutableArray<TextEditorTextSpan>> Lex(string content)
     {
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             content,
@@ -33,6 +32,6 @@ public class TextEditorRazorLexer : ILexer
                 .Select(ilfs => ilfs.TextEditorTextSpan));
         }
 
-        return textEditorTextSpans.ToImmutableArray();
+        return Task.FromResult(textEditorTextSpans.ToImmutableArray());
     }
 }

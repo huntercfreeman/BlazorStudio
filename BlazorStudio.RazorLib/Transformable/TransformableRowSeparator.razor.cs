@@ -76,7 +76,7 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerNorthResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerNorthResizeHandle(MouseEventArgs mouseEventArgs)
     {
         var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
 
@@ -111,6 +111,7 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
         }
 
         bottomHeightPixelOffset.Value -= deltaY;
+        return Task.CompletedTask;
     }
 
     public void Dispose()

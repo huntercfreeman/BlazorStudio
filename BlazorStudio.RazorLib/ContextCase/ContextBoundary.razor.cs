@@ -21,13 +21,13 @@ public partial class ContextBoundary : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public ContextKey ContextKey { get; set; } = null!;
     [Parameter, EditorRequired]
-    public string CssClassString { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public string CssStyleString { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public int TabIndex { get; set; } = -1;
-    [Parameter, EditorRequired]
     public RenderFragment ChildContent { get; set; } = null!;
+    [Parameter]
+    public string CssClassString { get; set; } = null!;
+    [Parameter]
+    public string CssStyleString { get; set; } = null!;
+    [Parameter]
+    public int TabIndex { get; set; } = -1;
     /// <summary>
     /// <see cref="IsIsland"/> set to true means the Blazor component
     /// will only rerender due to FluxorComponent state [Inject]

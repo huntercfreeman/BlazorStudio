@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace BlazorStudio.ClassLib.Keyboard;
 
 public static class KeyboardKeyFacts

@@ -1,6 +1,6 @@
 ﻿using BlazorTextEditor.RazorLib.Decoration;
 
-namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
+namespace Blazor.Text.Editor.Analysis.Html.ClassLib.Decoration;
 
 public class TextEditorHtmlDecorationMapper : IDecorationMapper
 {
