@@ -1,4 +1,5 @@
-﻿using BlazorTextEditor.RazorLib.TextEditor;
+﻿using BlazorTextEditor.RazorLib.MoveThese;
+using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.EditorCase;

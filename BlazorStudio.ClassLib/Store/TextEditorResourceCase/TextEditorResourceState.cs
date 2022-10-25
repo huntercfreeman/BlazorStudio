@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorTextEditor.RazorLib.MoveThese;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 

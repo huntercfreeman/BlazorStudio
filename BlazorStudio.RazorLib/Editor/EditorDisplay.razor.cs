@@ -15,6 +15,7 @@ using BlazorStudio.RazorLib.ContextCase;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.HelperComponents;
 using BlazorTextEditor.RazorLib.Keyboard;
+using BlazorTextEditor.RazorLib.MoveThese;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
