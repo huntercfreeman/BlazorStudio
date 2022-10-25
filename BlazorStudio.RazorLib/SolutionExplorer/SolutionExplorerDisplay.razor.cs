@@ -359,7 +359,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     textEditor = new TextEditorBase(
                         content,
                         new TextEditorCSharpLexer(),
-                        new TextEditorCSharpDecorationMapper());
+                        new TextEditorCSharpDecorationMapper(),
+                        null);
                 }
                 else if (treeViewKeyboardEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.HTML ||
                          treeViewKeyboardEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT ||
@@ -368,21 +369,24 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     textEditor = new TextEditorBase(
                         content,
                         new TextEditorHtmlLexer(),
-                        new TextEditorHtmlDecorationMapper());
+                        new TextEditorHtmlDecorationMapper(),
+                        null);
                 }
                 else if (treeViewKeyboardEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP)
                 {
                     textEditor = new TextEditorBase(
                         content,
                         new TextEditorRazorLexer(),
-                        new TextEditorHtmlDecorationMapper());
+                        new TextEditorHtmlDecorationMapper(),
+                        null);
                 }
                 else
                 {
                     textEditor = new TextEditorBase(
                         content,
                         new TextEditorCSharpLexer(),
-                        new TextEditorCSharpDecorationMapper());
+                        new TextEditorCSharpDecorationMapper(),
+                        null);
                 }
             
                 Dispatcher.Dispatch(new SetTextEditorResourceStateAction(
@@ -426,7 +430,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     textEditor = new TextEditorBase(
                         content,
                         new TextEditorCSharpLexer(),
-                        new TextEditorCSharpDecorationMapper());
+                        new TextEditorCSharpDecorationMapper(),
+                        null);
                 }
                 else if (treeViewMouseEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.HTML ||
                          treeViewMouseEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT ||
@@ -435,21 +440,24 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     textEditor = new TextEditorBase(
                         content,
                         new TextEditorHtmlLexer(),
-                        new TextEditorHtmlDecorationMapper());
+                        new TextEditorHtmlDecorationMapper(),
+                        null);
                 }
                 else if (treeViewMouseEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP)
                 {
                     textEditor = new TextEditorBase(
                         content,
                         new TextEditorRazorLexer(),
-                        new TextEditorHtmlDecorationMapper());
+                        new TextEditorHtmlDecorationMapper(),
+                        null);
                 }
                 else
                 {
                     textEditor = new TextEditorBase(
                         content,
                         new TextEditorCSharpLexer(),
-                        new TextEditorCSharpDecorationMapper());
+                        new TextEditorCSharpDecorationMapper(),
+                        null);
                 }
             
                 Dispatcher.Dispatch(new SetTextEditorResourceStateAction(

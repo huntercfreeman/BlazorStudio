@@ -105,15 +105,20 @@ public partial class TextEditorContextMenu : ComponentBase
     
     private async Task CopyMenuOption()
     {
-        var result = TextEditorDisplay.PrimaryCursor
-            .GetSelectedText(TextEditor);
+        var selectedText = TextEditorSelectionHelper
+            .GetSelectedText(
+                TextEditorDisplay.PrimaryCursor.TextEditorSelection,
+                TextEditor);
                 
-        if (result is not null)
-            await ClipboardProvider.SetClipboard(result);
+        if (selectedText is not null)
+            await ClipboardProvider.SetClipboard(selectedText);
     }
     
     private async Task PasteMenuOption()
     {
+        var primaryCursorSnapshot = new TextEditorCursorSnapshot(
+            TextEditorDisplay.PrimaryCursor);
+        
         var clipboard = await ClipboardProvider.ReadClipboard();
 
         var previousCharacterWasCarriageReturn = false;
@@ -136,20 +141,23 @@ public partial class TextEditorContextMenu : ComponentBase
                 _ => character.ToString()
             };
  
-            TextEditorService.EditTextEditor(new EditTextEditorBaseAction(TextEditorDisplay.TextEditorKey,
-                new (ImmutableTextEditorCursor, TextEditorCursor)[]
-                {
-                    (new ImmutableTextEditorCursor(TextEditorDisplay.PrimaryCursor), TextEditorDisplay.PrimaryCursor)
-                }.ToImmutableArray(),
-                new KeyboardEventArgs
-                {
-                    Code = code,
-                    Key = character.ToString()
-                },
-                CancellationToken.None));
+            TextEditorService.EditTextEditor(
+                new EditTextEditorBaseAction(
+                    TextEditorDisplay.TextEditorKey,
+                    new TextEditorCursorSnapshot[]
+                    {
+                        primaryCursorSnapshot
+                    }.ToImmutableArray(),
+                    new KeyboardEventArgs
+                    {
+                        Code = code,
+                        Key = character.ToString()
+                    },
+                    CancellationToken.None));
 
-            previousCharacterWasCarriageReturn = KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN
-                                                 == character;
+            previousCharacterWasCarriageReturn = 
+                KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN == 
+                character;
         }
 
         TextEditorDisplay.ReloadVirtualizationDisplay();
