@@ -1,4 +1,4 @@
-﻿namespace Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
+﻿namespace Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxItems;
 
 public enum TagKind
 {

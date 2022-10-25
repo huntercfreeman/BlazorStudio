@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Blazor.Text.Editor.Analysis.Html.ClassLib;
+using Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxActors;
 using BlazorTextEditor.RazorLib.Lexing;
 
 namespace Blazor.Text.Editor.Analysis.Razor.ClassLib;

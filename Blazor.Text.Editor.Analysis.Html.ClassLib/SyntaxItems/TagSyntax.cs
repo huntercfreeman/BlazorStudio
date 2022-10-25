@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
+namespace Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxItems;
 
 public class TagSyntax
 {

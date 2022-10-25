@@ -1,4 +1,5 @@
-using Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
+using Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxItems;
+using Blazor.Text.Editor.Analysis.Shared;
 
 namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
 

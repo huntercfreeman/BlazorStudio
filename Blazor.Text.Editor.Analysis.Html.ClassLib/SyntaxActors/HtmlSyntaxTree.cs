@@ -1,9 +1,11 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
-using Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
+using Blazor.Text.Editor.Analysis.Html.ClassLib.Facts;
+using Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxItems;
+using Blazor.Text.Editor.Analysis.Shared;
 using BlazorTextEditor.RazorLib.Lexing;
 
-namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
+namespace Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxActors;
 
 public static class HtmlSyntaxTree
 {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using BlazorTextEditor.RazorLib.Lexing;
 
-namespace Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
+namespace Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxItems;
 
 public class InjectedLanguageFragmentSyntax : TagSyntax
 {

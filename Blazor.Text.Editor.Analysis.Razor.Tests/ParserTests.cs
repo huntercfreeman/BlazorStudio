@@ -1,5 +1,5 @@
 using Blazor.Text.Editor.Analysis.Html.ClassLib;
-using Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
+using Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxActors;
 using Blazor.Text.Editor.Analysis.Razor.ClassLib;
 
 namespace Blazor.Text.Editor.Analysis.Razor.Tests;

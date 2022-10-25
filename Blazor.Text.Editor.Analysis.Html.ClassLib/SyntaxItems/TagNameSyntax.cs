@@ -1,6 +1,6 @@
 ﻿using BlazorTextEditor.RazorLib.Lexing;
 
-namespace Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
+namespace Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxItems;
 
 public class TagNameSyntax
 {

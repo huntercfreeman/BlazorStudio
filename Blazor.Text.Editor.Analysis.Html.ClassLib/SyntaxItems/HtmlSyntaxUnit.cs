@@ -1,7 +1,4 @@
-﻿using System.Collections.Immutable;
-using Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
-
-namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
+﻿namespace Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxItems;
 
 public class HtmlSyntaxUnit
 {

@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using System.Text;
 using Blazor.Text.Editor.Analysis.CSharp.ClassLib;
 using Blazor.Text.Editor.Analysis.Html.ClassLib;
-using Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
+using Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxItems;
 using BlazorTextEditor.RazorLib.Lexing;
 
 namespace Blazor.Text.Editor.Analysis.Razor.ClassLib;
