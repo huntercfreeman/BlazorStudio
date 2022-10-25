@@ -136,7 +136,5 @@ public partial class TextEditorContextMenu : ComponentBase
                 TextEditorService,
                 TextEditorDisplay.ReloadVirtualizationDisplay,
                 TextEditorDisplay.OnSaveRequested));
-
-        TextEditorDisplay.ReloadVirtualizationDisplay();
     }
 }
