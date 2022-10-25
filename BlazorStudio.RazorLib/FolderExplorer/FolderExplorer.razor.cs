@@ -159,6 +159,7 @@ public partial class FolderExplorer : FluxorComponent
                 var textEditor = new TextEditorBase(
                     content,
                     null,
+                    null,
                     null);
             
                 Dispatcher.Dispatch(new SetTextEditorResourceStateAction(
@@ -197,6 +198,7 @@ public partial class FolderExplorer : FluxorComponent
             
                 var textEditor = new TextEditorBase(
                     content,
+                    null,
                     null,
                     null);
             

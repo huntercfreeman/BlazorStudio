@@ -1,4 +1,6 @@
-﻿using Blazor.Text.Editor.Analysis.Html.ClassLib;
+﻿using System.Collections.Immutable;
+using Blazor.Text.Editor.Analysis.Html.ClassLib;
+using Blazor.Text.Editor.Analysis.Razor.ClassLib;
 using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -12,8 +14,10 @@ using BlazorStudio.ClassLib.SyntaxHighlighting;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.ContextCase;
 using BlazorTextEditor.RazorLib;
+using BlazorTextEditor.RazorLib.Cursor;
 using BlazorTextEditor.RazorLib.HelperComponents;
 using BlazorTextEditor.RazorLib.Keyboard;
+using BlazorTextEditor.RazorLib.Keymap;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -42,7 +46,7 @@ public partial class EditorDisplay : FluxorComponent
 
     private TextEditorKey _testTextEditorKey = TextEditorKey.NewTextEditorKey();
     private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath(
-        @"C:\Users\hunte\source\BlazorCrudApp\BlazorCrudApp.WebAssembly\Client\Shared\MainLayout.razor",
+        @"C:\Users\hunte\source\Razor\Razor.ServerSide\Pages\Counter.razor",
         false);
 
     private readonly SemaphoreSlim _afterOnKeyDownAutoCompleteSemaphoreSlim = new(1, 1);
@@ -75,8 +79,9 @@ public partial class EditorDisplay : FluxorComponent
             
             var textEditor = new TextEditorBase(
                 content,
-                new TextEditorHtmlLexer(),
+                new TextEditorRazorLexer(),
                 new TextEditorHtmlDecorationMapper(),
+                null,
                 _testTextEditorKey);
             
             await textEditor.ApplySyntaxHighlightingAsync();
@@ -125,10 +130,14 @@ public partial class EditorDisplay : FluxorComponent
     
     private async Task HandleAfterOnKeyDownAsync(
         TextEditorBase textEditor, 
-        ImmutableTextEditorCursor immutablePrimaryCursor, 
+        ImmutableArray<TextEditorCursorSnapshot> cursorSnapshots, 
         KeyboardEventArgs keyboardEventArgs,
         Func<TextEditorMenuKind, Task> setTextEditorMenuKind)
     {
+        var primaryCursorSnapshot = cursorSnapshots
+            .First(x => 
+                x.UserCursor.IsPrimaryCursor);
+        
         if (keyboardEventArgs.CtrlKey &&
             keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||
             // My recording software blocks Ctrl + Space keybind I need
@@ -148,8 +157,8 @@ public partial class EditorDisplay : FluxorComponent
             {
                 var columnIndexOfCharacterWithDifferingKind = textEditor
                     .GetColumnIndexOfCharacterWithDifferingKind(
-                        immutablePrimaryCursor.RowIndex,
-                        immutablePrimaryCursor.ColumnIndex,
+                        primaryCursorSnapshot.ImmutableCursor.RowIndex,
+                        primaryCursorSnapshot.ImmutableCursor.ColumnIndex,
                         true);
 
                 // word: meaning any contiguous section of RichCharacters of the same kind
@@ -158,12 +167,12 @@ public partial class EditorDisplay : FluxorComponent
                     : columnIndexOfCharacterWithDifferingKind;
 
                 var positionIndex = textEditor.GetPositionIndex(
-                    immutablePrimaryCursor.RowIndex,
+                    primaryCursorSnapshot.ImmutableCursor.RowIndex,
                     startOfWord);
             
                 _autoCompleteWordText = textEditor.GetTextRange(
                     positionIndex,
-                    immutablePrimaryCursor.ColumnIndex - startOfWord);
+                    primaryCursorSnapshot.ImmutableCursor.ColumnIndex - startOfWord);
 
                 await setTextEditorMenuKind.Invoke(TextEditorMenuKind.AutoCompleteMenu);
             }

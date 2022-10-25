@@ -1,13 +1,16 @@
 ﻿using System.Collections.Immutable;
+using Blazor.Text.Editor.Analysis.Html.ClassLib;
 using BlazorTextEditor.RazorLib.Lexing;
 
-namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
+namespace Blazor.Text.Editor.Analysis.Razor.ClassLib;
 
-public class TextEditorHtmlLexer : ILexer
+public class TextEditorRazorLexer : ILexer
 {
     public async Task<ImmutableArray<TextEditorTextSpan>> Lex(string content)
     {
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
+        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+            content,
+            RazorInjectedLanguageFacts.RazorInjectedLanguageDefinition);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
 

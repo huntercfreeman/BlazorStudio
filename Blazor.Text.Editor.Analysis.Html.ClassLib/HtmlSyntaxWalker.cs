@@ -26,6 +26,10 @@ public class HtmlSyntaxWalker
             
         if (syntaxNode.CloseTagNameSyntax is not null)
             VisitTagNameSyntax(syntaxNode.CloseTagNameSyntax);
+        
+        if (syntaxNode.TagKind == TagKind.InjectedLanguageCodeBlock)
+            VisitInjectedLanguageFragmentSyntax(
+                (InjectedLanguageFragmentSyntax)syntaxNode);
     }
     
     public void VisitAttributeNameSyntax(AttributeNameSyntax attributeNameSyntax)

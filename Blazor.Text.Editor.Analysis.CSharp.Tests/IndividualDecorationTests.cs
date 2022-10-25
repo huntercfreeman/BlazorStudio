@@ -23,7 +23,8 @@ public class IndividualDecorationTests
         var textEditor = new TextEditorBase(
             input,
             lexer,
-            decorationMapper);
+            decorationMapper,
+            null);
 
         await textEditor.ApplySyntaxHighlightingAsync();
 
@@ -52,7 +53,8 @@ public class IndividualDecorationTests
         var textEditor = new TextEditorBase(
             input,
             lexer,
-            decorationMapper);
+            decorationMapper,
+            null);
 
         await textEditor.ApplySyntaxHighlightingAsync();
 
@@ -91,7 +93,8 @@ public class IndividualDecorationTests
         var textEditor = new TextEditorBase(
             input,
             lexer,
-            decorationMapper);
+            decorationMapper,
+            null);
 
         await textEditor.ApplySyntaxHighlightingAsync();
 
@@ -133,7 +136,8 @@ public class IndividualDecorationTests
         var textEditor = new TextEditorBase(
             input,
             lexer,
-            decorationMapper);
+            decorationMapper,
+            null);
 
         await textEditor.ApplySyntaxHighlightingAsync();
 
@@ -176,7 +180,8 @@ public class IndividualDecorationTests
         var textEditor = new TextEditorBase(
             input,
             lexer,
-            decorationMapper);
+            decorationMapper,
+            null);
 
         await textEditor.ApplySyntaxHighlightingAsync();
 
@@ -218,7 +223,8 @@ public class IndividualDecorationTests
         var textEditor = new TextEditorBase(
             input,
             lexer,
-            decorationMapper);
+            decorationMapper,
+            null);
 
         await textEditor.ApplySyntaxHighlightingAsync();
 
@@ -261,7 +267,8 @@ public class MyClass
         var textEditor = new TextEditorBase(
             input,
             lexer,
-            decorationMapper);
+            decorationMapper,
+            null);
 
         await textEditor.ApplySyntaxHighlightingAsync();
 
@@ -308,7 +315,8 @@ public class MyClass
         var textEditor = new TextEditorBase(
             input,
             lexer,
-            decorationMapper);
+            decorationMapper,
+            null);
 
         await textEditor.ApplySyntaxHighlightingAsync();
 

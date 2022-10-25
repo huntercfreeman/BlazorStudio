@@ -5,6 +5,8 @@ using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.RazorLib.Forms;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Clipboard;
+using BlazorTextEditor.RazorLib.Commands;
+using BlazorTextEditor.RazorLib.Cursor;
 using BlazorTextEditor.RazorLib.HelperComponents;
 using BlazorTextEditor.RazorLib.Store.TextEditorCase;
 using BlazorTextEditor.RazorLib.TextEditor;
@@ -104,53 +106,35 @@ public partial class TextEditorContextMenu : ComponentBase
     
     private async Task CopyMenuOption()
     {
-        var result = TextEditorDisplay.PrimaryCursor
-            .GetSelectedText(TextEditor);
-                
-        if (result is not null)
-            await ClipboardProvider.SetClipboard(result);
+        var cursorSnapshots = new TextEditorCursorSnapshot[]
+        {
+            new TextEditorCursorSnapshot(TextEditorDisplay.PrimaryCursor)
+        }.ToImmutableArray();
+        
+        await TextEditorCommandFacts.Copy.DoAsyncFunc
+            .Invoke(new TextEditorCommandParameter(
+                TextEditor,
+                cursorSnapshots,
+                ClipboardProvider,
+                TextEditorService,
+                TextEditorDisplay.ReloadVirtualizationDisplay,
+                TextEditorDisplay.OnSaveRequested));
     }
     
     private async Task PasteMenuOption()
     {
-        var clipboard = await ClipboardProvider.ReadClipboard();
-
-        var previousCharacterWasCarriageReturn = false;
-        
-        foreach (var character in clipboard)
+        var cursorSnapshots = new TextEditorCursorSnapshot[]
         {
-            if (previousCharacterWasCarriageReturn &&
-                character == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
-            {
-                previousCharacterWasCarriageReturn = false;
-                continue;
-            }
-            
-            var code = character switch
-            {
-                '\r' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
-                '\n' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
-                '\t' => KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
-                ' ' => KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
-                _ => character.ToString()
-            };
- 
-            TextEditorService.EditTextEditor(new EditTextEditorBaseAction(TextEditorDisplay.TextEditorKey,
-                new (ImmutableTextEditorCursor, TextEditorCursor)[]
-                {
-                    (new ImmutableTextEditorCursor(TextEditorDisplay.PrimaryCursor), TextEditorDisplay.PrimaryCursor)
-                }.ToImmutableArray(),
-                new KeyboardEventArgs
-                {
-                    Code = code,
-                    Key = character.ToString()
-                },
-                CancellationToken.None));
-
-            previousCharacterWasCarriageReturn = KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN
-                                                 == character;
-        }
-
-        TextEditorDisplay.ReloadVirtualizationDisplay();
+            new TextEditorCursorSnapshot(TextEditorDisplay.PrimaryCursor)
+        }.ToImmutableArray();
+        
+        await TextEditorCommandFacts.Paste.DoAsyncFunc
+            .Invoke(new TextEditorCommandParameter(
+                TextEditor,
+                cursorSnapshots,
+                ClipboardProvider,
+                TextEditorService,
+                TextEditorDisplay.ReloadVirtualizationDisplay,
+                TextEditorDisplay.OnSaveRequested));
     }
 }

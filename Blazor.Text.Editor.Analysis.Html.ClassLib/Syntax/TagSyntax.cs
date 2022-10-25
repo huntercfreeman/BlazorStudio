@@ -17,6 +17,7 @@ public class TagSyntax
         AttributeTupleSyntaxes = attributeTupleSyntaxes;
         OpenTagNameSyntax = openTagNameSyntax;
         CloseTagNameSyntax = closeTagNameSyntax;
+        TagKind = tagKind;
     }
     
     public TagNameSyntax? OpenTagNameSyntax { get; }

@@ -97,7 +97,8 @@ namespace HelloWorld
         var textEditor = new TextEditorBase(
             input,
             lexer,
-            decorationMapper);
+            decorationMapper,
+            null);
 
         await textEditor.ApplySyntaxHighlightingAsync();
 

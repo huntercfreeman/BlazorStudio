@@ -7,7 +7,9 @@ namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
 
 public static class HtmlSyntaxTree
 {
-    public static HtmlSyntaxUnit ParseText(string content)
+    public static HtmlSyntaxUnit ParseText(
+        string content,
+        InjectedLanguageDefinition? injectedLanguageDefinition = null)
     {
         var stringWalker = new StringWalker(content);
 
@@ -26,7 +28,8 @@ public static class HtmlSyntaxTree
         rootTagSyntaxBuilder.ChildTagSyntaxes = HtmlSyntaxTreeStateMachine
                 .ParseTagChildContent(
                     stringWalker,
-                    textEditorHtmlDiagnosticBag);
+                    textEditorHtmlDiagnosticBag,
+                    injectedLanguageDefinition);
 
         var htmlSyntaxUnitBuilder = new HtmlSyntaxUnit.HtmlSyntaxUnitBuilder
         {
@@ -47,7 +50,8 @@ public static class HtmlSyntaxTree
         /// </summary>
         public static TagSyntax ParseTag(
             StringWalker stringWalker,
-            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
+            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
+            InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
             
@@ -67,7 +71,8 @@ public static class HtmlSyntaxTree
 
             tagBuilder.OpenTagNameSyntax = ParseTagName(
                 stringWalker,
-                textEditorHtmlDiagnosticBag);
+                textEditorHtmlDiagnosticBag,
+                injectedLanguageDefinition);
 
             // Get all html attributes
             // break when see End Of File or
@@ -116,7 +121,8 @@ public static class HtmlSyntaxTree
                     
                     tagBuilder.ChildTagSyntaxes = ParseTagChildContent(
                         stringWalker,
-                        textEditorHtmlDiagnosticBag);
+                        textEditorHtmlDiagnosticBag,
+                        injectedLanguageDefinition);
 
                     // At the closing tag now so check that the closing tag
                     // name matches the opening tag.
@@ -210,7 +216,8 @@ public static class HtmlSyntaxTree
         /// </summary>
         public static TagNameSyntax ParseTagName(
             StringWalker stringWalker,
-            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
+            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
+            InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -267,7 +274,8 @@ public static class HtmlSyntaxTree
 
         public static List<TagSyntax> ParseTagChildContent(
             StringWalker stringWalker,
-            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
+            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
+            InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
             
@@ -308,7 +316,23 @@ public static class HtmlSyntaxTree
                     tagSyntaxes.Add(
                         ParseTag(
                             stringWalker,
-                            textEditorHtmlDiagnosticBag));
+                            textEditorHtmlDiagnosticBag,
+                            injectedLanguageDefinition));
+                    
+                    return false;
+                }
+                else if (injectedLanguageDefinition is not null && stringWalker
+                         .CheckForInjectedLanguageCodeBlockTag(injectedLanguageDefinition))
+                {
+                    // If there is text in textNodeBuilder
+                    // add a new TextNode to the List of TagSyntax
+                    AddTextNode();
+                    
+                    tagSyntaxes.AddRange(
+                        ParseInjectedLanguageCodeBlock(
+                            stringWalker,
+                            textEditorHtmlDiagnosticBag,
+                            injectedLanguageDefinition));
                     
                     return false;
                 }
@@ -333,6 +357,38 @@ public static class HtmlSyntaxTree
             AddTextNode();
 
             return tagSyntaxes;
+        }
+        
+        public static List<TagSyntax> ParseInjectedLanguageCodeBlock(
+            StringWalker stringWalker,
+            TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
+            InjectedLanguageDefinition injectedLanguageDefinition)
+        {
+            var injectedLanguageFragmentSyntaxes = new List<TagSyntax>();
+            
+            var injectedLanguageFragmentSyntaxStartingPositionIndex = stringWalker.PositionIndex;
+
+            // Track text span of the "@" sign (example in .razor files)
+            injectedLanguageFragmentSyntaxes.Add(
+                new InjectedLanguageFragmentSyntax(
+                    ImmutableArray<TagSyntax>.Empty,
+                    string.Empty,
+                    new TextEditorTextSpan(
+                        injectedLanguageFragmentSyntaxStartingPositionIndex,
+                        stringWalker.PositionIndex + 1,
+                        (byte)HtmlDecorationKind.InjectedLanguageFragment)));
+
+            // Skip the "@" to give a .razor file example
+            _ = stringWalker.Consume();
+
+            injectedLanguageFragmentSyntaxes.AddRange(
+                injectedLanguageDefinition.ParseInjectedLanguageFunc
+                    .Invoke(
+                        stringWalker,
+                        textEditorHtmlDiagnosticBag,
+                        injectedLanguageDefinition));
+
+            return injectedLanguageFragmentSyntaxes;
         }
     }
 }

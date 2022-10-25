@@ -55,6 +55,14 @@ public class StringWalker
     public char NextCharacter => Peek(1);
 
     /// <summary>
+    /// Starting with <see cref="Peek"/> evaluated at 0
+    /// return that and the rest of the <see cref="_content"/>
+    /// <br/><br/>
+    /// <see cref="CurrentSubstring"/> => _content.Substring(PositionIndex);
+    /// </summary>
+    public string CurrentSubstring => _content.Substring(PositionIndex);
+
+    /// <summary>
     /// If <see cref="PositionIndex"/> is within bounds of the <see cref="_content"/>.
     /// <br/><br/>
     /// Then the character within the string <see cref="_content"/> at index
@@ -256,5 +264,18 @@ public class StringWalker
 
             _ = Consume();
         }
+    }
+    
+    public bool CheckForInjectedLanguageCodeBlockTag(InjectedLanguageDefinition injectedLanguageDefinition)
+    {
+        return CheckForSubstring(injectedLanguageDefinition.InjectedLanguageCodeBlockTag) &&
+               !CheckForSubstring(injectedLanguageDefinition.InjectedLanguageCodeBlockTagEscaped);
+    }
+
+    public string GetText(TextEditorTextSpan lexedTokenTextSpan)
+    {
+        return _content.Substring(
+            lexedTokenTextSpan.StartingIndexInclusive, 
+            lexedTokenTextSpan.EndingIndexExclusive - lexedTokenTextSpan.StartingIndexInclusive);
     }
 }
