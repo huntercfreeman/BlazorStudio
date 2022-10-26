@@ -27,10 +27,8 @@ public static class TerminalOutputParser
                 {
                     break;
                 }
-                else
-                {
-                    httpBuilder.Append(currentCharacter);
-                }
+
+                httpBuilder.Append(currentCharacter);
             }
 
             var aTag = $"<a href=\"{httpBuilder}\" target=\"_blank\">{httpBuilder}</a>";

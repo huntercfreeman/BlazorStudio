@@ -65,11 +65,9 @@ namespace Photino.Blazor
                 headers.TryGetValue("Content-Type", out contentType);
                 return content;
             }
-            else
-            {
-                contentType = default;
-                return null;
-            }
+
+            contentType = default;
+            return null;
         }
 
         protected override void NavigateCore(Uri absoluteUri)

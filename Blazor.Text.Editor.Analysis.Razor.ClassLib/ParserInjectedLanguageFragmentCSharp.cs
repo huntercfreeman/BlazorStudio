@@ -98,10 +98,8 @@ public static class ParserInjectedLanguageFragmentCSharp
                             
                             return true;
                         }
-                        else
-                        {
-                            return false;
-                        }
+
+                        return false;
                     });
 
                     var lexer = new TextEditorCSharpLexer();

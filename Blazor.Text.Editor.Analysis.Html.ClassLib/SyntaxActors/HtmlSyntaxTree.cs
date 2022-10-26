@@ -311,8 +311,9 @@ public static class HtmlSyntaxTree
                 {
                     return true;
                 }
-                else if (stringWalker.CurrentCharacter == 
-                         HtmlFacts.OPEN_TAG_BEGINNING)
+
+                if (stringWalker.CurrentCharacter == 
+                    HtmlFacts.OPEN_TAG_BEGINNING)
                 {
                     // If there is text in textNodeBuilder
                     // add a new TextNode to the List of TagSyntax
@@ -326,8 +327,8 @@ public static class HtmlSyntaxTree
                     
                     return false;
                 }
-                else if (injectedLanguageDefinition is not null && stringWalker
-                         .CheckForInjectedLanguageCodeBlockTag(injectedLanguageDefinition))
+                if (injectedLanguageDefinition is not null && stringWalker
+                        .CheckForInjectedLanguageCodeBlockTag(injectedLanguageDefinition))
                 {
                     // If there is text in textNodeBuilder
                     // add a new TextNode to the List of TagSyntax
@@ -341,11 +342,8 @@ public static class HtmlSyntaxTree
                     
                     return false;
                 }
-                else
-                {
-                    textNodeBuilder.Append(stringWalker.CurrentCharacter);
-                    return false;
-                }
+                textNodeBuilder.Append(stringWalker.CurrentCharacter);
+                return false;
             });
             
             if (stringWalker.CurrentCharacter == ParserFacts.END_OF_FILE)

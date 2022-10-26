@@ -187,7 +187,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 {
                     {
                         nameof(InputFileDialog.IsValidSelectionOverrideFunc),
-                        AddProjectReferenceInputIsValidOverride
+                        new Func<ImmutableArray<IAbsoluteFilePath>, bool>(
+                            AddProjectReferenceInputIsValidOverride)
                     },
                     {
                         nameof(InputFileDialog.InvalidSelectionTextOverride),
@@ -195,7 +196,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     },
                     {
                         nameof(InputFileDialog.ConfirmOnClickOverrideAction),
-                        AddProjectReferenceConfirmOnClickOverrideAction
+                        new Action<ImmutableArray<IAbsoluteFilePath>>(
+                            AddProjectReferenceConfirmOnClickOverrideAction)
                     }
                 }
             );

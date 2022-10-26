@@ -83,15 +83,15 @@ public partial class SyntaxNodeTreeView : ComponentBase
 
         var parentKind = syntaxWrap.Parent?.SyntaxTreeViewWrapperKind;
         
-        if (syntaxNode.Kind() == SyntaxKind.IdentifierName)
+        if (syntaxNode.IsKind(SyntaxKind.IdentifierName))
         {
             if (TryGetNode(syntaxWrap.Parent, out var parentNode))
             {
-                if (parentNode.Kind() == SyntaxKind.SimpleMemberAccessExpression)
+                if (parentNode.IsKind(SyntaxKind.SimpleMemberAccessExpression))
                 {
                     if (TryGetNode(syntaxWrap.Parent.Parent, out var parentsParentNode))
                     {
-                        if (parentsParentNode.Kind() == SyntaxKind.InvocationExpression)
+                        if (parentsParentNode.IsKind(SyntaxKind.InvocationExpression))
                         {
                             return "pte_plain-text-editor-text-token-display-method-declaration";
                         }
@@ -112,7 +112,7 @@ public partial class SyntaxNodeTreeView : ComponentBase
             return "pte_plain-text-editor-text-token-display-keyword";
         }
         
-        if (syntaxToken.Kind() == SyntaxKind.IdentifierToken)
+        if (syntaxToken.IsKind(SyntaxKind.IdentifierToken))
         {
             return HandleIdentifierTokenSyntaxHighlighting(syntaxWrap);
         }
@@ -132,11 +132,12 @@ public partial class SyntaxNodeTreeView : ComponentBase
             {
                 var syntaxNode = (SyntaxNode) syntaxWrap.Parent.Item;
 
-                if (syntaxNode.Kind() == SyntaxKind.MethodDeclaration)
+                if (syntaxNode.IsKind(SyntaxKind.MethodDeclaration))
                 {
                     return "pte_plain-text-editor-text-token-display-method-declaration";
                 }
-                else if(syntaxNode.Kind() == SyntaxKind.ClassDeclaration)
+
+                if(syntaxNode.IsKind(SyntaxKind.ClassDeclaration))
                 {
                     return "pte_plain-text-editor-text-token-display-class-declaration";
                 }
@@ -153,11 +154,9 @@ public partial class SyntaxNodeTreeView : ComponentBase
             syntaxNode = (SyntaxNode) syntaxWrap.Item;
             return true;
         }
-        else
-        {
-            syntaxNode = null;
-            return false;
-        }
+
+        syntaxNode = null;
+        return false;
     }
     
     private int _preFontSize = 15;

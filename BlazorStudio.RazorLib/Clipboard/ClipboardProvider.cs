@@ -20,7 +20,7 @@ public class ClipboardProvider :
             return await _jsRuntime.InvokeAsync<string>(
                 "plainTextEditor.readClipboard");
         }
-        catch (TaskCanceledException e)
+        catch (TaskCanceledException)
         {
             return string.Empty;
         }
@@ -34,7 +34,7 @@ public class ClipboardProvider :
                 "plainTextEditor.setClipboard",
                 value);
         }
-        catch (TaskCanceledException e)
+        catch (TaskCanceledException)
         {
         }
     }

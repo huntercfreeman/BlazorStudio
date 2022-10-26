@@ -41,10 +41,8 @@ public class TreeViewWrapStatesReducer
 
             return new TreeViewWrapStates(nextTreeViewWrapStatesMap);
         }
-        else
-        {
-            return previousTreeViewWrapStates;
-        }
+
+        return previousTreeViewWrapStates;
     }
     
     [ReducerMethod]
@@ -60,9 +58,7 @@ public class TreeViewWrapStatesReducer
 
             return previousTreeViewWrapStates;
         }
-        else
-        {
-            return previousTreeViewWrapStates;
-        }
+
+        return previousTreeViewWrapStates;
     }
 }

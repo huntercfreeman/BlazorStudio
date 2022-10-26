@@ -227,16 +227,14 @@ public partial class TreeViewDisplay<T>
         {
             return RecursivelySetArrowDown(treeViewDisplay.Parent);
         }
-        else if (treeViewDisplay.IndexAmongSiblings == siblingsAndSelf.Length - 1 &&
+
+        if (treeViewDisplay.IndexAmongSiblings == siblingsAndSelf.Length - 1 &&
             treeViewDisplay.Parent is null)
         {
             return false;
         }
-        else
-        {
-            Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[treeViewDisplay.IndexAmongSiblings + 1]));
-            return true;
-        }
+        Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey, siblingsAndSelf[treeViewDisplay.IndexAmongSiblings + 1]));
+        return true;
     }
     
     private void RecursivelySetArrowUp(ITreeView treeView)
