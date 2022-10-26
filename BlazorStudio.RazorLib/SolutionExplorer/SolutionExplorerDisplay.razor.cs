@@ -163,8 +163,10 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
                         if (visualStudioInstance.MSBuildPath.EndsWith(Path.DirectorySeparatorChar) ||
                             visualStudioInstance.MSBuildPath.EndsWith(Path.AltDirectorySeparatorChar))
+                        {
                             noTrailingSlashMSBuildPath =
                                 noTrailingSlashMSBuildPath.Substring(0, noTrailingSlashMSBuildPath.Length - 1);
+                        }
 
                         var msBuildAbsoluteFilePath = new AbsoluteFilePath(noTrailingSlashMSBuildPath, true);
 

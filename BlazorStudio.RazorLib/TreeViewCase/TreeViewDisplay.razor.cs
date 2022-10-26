@@ -358,8 +358,10 @@ public partial class TreeViewDisplay<T>
                 else
                 {
                     if (IndexAmongSiblings < siblingsAndSelf.Length - 1)
+                    {
                         Dispatcher.Dispatch(new SetActiveTreeViewAction(TreeViewWrapKey,
                             siblingsAndSelf[IndexAmongSiblings + 1]));
+                    }
                 }
 
                 break;

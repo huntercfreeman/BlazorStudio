@@ -20,7 +20,7 @@ public partial class DragDisplay : FluxorComponent
 
     private SetDragStateAction ConstructClearDragStateAction()
     {
-        return new(false, null);
+        return new SetDragStateAction(false, null);
     }
 
     private void DispatchNotifyMouseEventOnMouseMove(MouseEventArgs mouseEventArgs)
