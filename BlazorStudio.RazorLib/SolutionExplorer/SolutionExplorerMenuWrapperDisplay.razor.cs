@@ -149,14 +149,14 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
                 void OnEnd(Process finishedProcess)
                 {
-                    var localMSBuildWorkspace = RoslynWorkspaceStateWrap.Value.MSBuildWorkspace;
+                    var localMsBuildWorkspace = RoslynWorkspaceStateWrap.Value.MsBuildWorkspace;
 
-                    if (localMSBuildWorkspace is not null)
+                    if (localMsBuildWorkspace is not null)
                     {
-                        localMSBuildWorkspace.CloseSolution();
+                        localMsBuildWorkspace.CloseSolution();
 
                         Dispatcher.Dispatch(new SetSolutionExplorerAction(
-                            SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath, SequenceKey.NewSequenceKey()));
+                            localSolutionExplorerState.SolutionAbsoluteFilePath, SequenceKey.NewSequenceKey()));
                     }
                 }
 
@@ -352,8 +352,6 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 var solutionState = SolutionStateWrap.Value;
 
                 var project = SolutionStateWrap.Value.ProjectIdToProjectMap[absoluteFilePathDotNet.ProjectId];
-
-                var namespaceString = project.Project.DefaultNamespace;
 
                 if (newFile.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_CLASS)
                 {

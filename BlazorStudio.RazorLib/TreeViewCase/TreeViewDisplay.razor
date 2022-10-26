@@ -85,6 +85,7 @@
                     <CascadingValue Name="Depth" Value="Depth + 1">
                         @for (var i = 0; i < TreeView.Children.Length; i++)
                         {
+                            // ReSharper disable once UnusedVariable
                             var index = i;
                             var child = (TreeView<T>)TreeView.Children[i];
 

@@ -79,7 +79,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         var localSelectedProjectToModify = _selectedProjectToModify;
 
         if (localSelectedProjectToModify is null ||
-            !localSolutionState.ProjectIdToProjectMap.TryGetValue(localSelectedProjectToModify.Id, out var project))
+            !localSolutionState.ProjectIdToProjectMap.ContainsKey(localSelectedProjectToModify.Id))
         {
             if (localSolutionState.ProjectIdToProjectMap.Any())
             {

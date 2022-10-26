@@ -1,39 +1,41 @@
-using Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxActors;
-using Blazor.Text.Editor.Analysis.Razor.ClassLib;
-
-namespace Blazor.Text.Editor.Analysis.Razor.Tests;
-
-public class ParserTests
-{
-    [Fact]
-    public Task TagTextSyntax()
-    {
-        var content = @"<div class=""bstudio_counter"">
-	<button class=""btn btn-primary""
-	        @onclick=""IncrementCount"">
-	        
-	        Increment
-	</button>
-	
-	&nbsp;
-	
-	(@_count)
-</div>
-
-@code{
-	private int _count = 0;
-	
-	private void IncrementCount()
-	{
-		_count++;
-	}
-}";
-
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            content,
-            RazorInjectedLanguageFacts.RazorInjectedLanguageDefinition);
-
-        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
-        return Task.CompletedTask;
-    }
-}
+// using Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxActors;
+// using Blazor.Text.Editor.Analysis.Razor.ClassLib;
+//
+// namespace Blazor.Text.Editor.Analysis.Razor.Tests;
+//
+// TODO: Local variable 'syntaxNodeRoot' is never used
+// public class ParserTests
+// {
+//     [Fact]
+//     public Task TagTextSyntax()
+//     {
+//         var content = @"<div class=""bstudio_counter"">
+// 	<button class=""btn btn-primary""
+// 	        @onclick=""IncrementCount"">
+// 	        
+// 	        Increment
+// 	</button>
+// 	
+// 	&nbsp;
+// 	
+// 	(@_count)
+// </div>
+//
+// @code{
+// 	private int _count = 0;
+// 	
+// 	private void IncrementCount()
+// 	{
+// 		_count++;
+// 	}
+// }";
+// 		// TODO: Local variable 'syntaxNodeRoot' is never used
+// 		//
+//         // var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+//         //     content,
+//         //     RazorInjectedLanguageFacts.RazorInjectedLanguageDefinition);
+//         //
+//         // var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+//         // return Task.CompletedTask;
+//     }
+// }

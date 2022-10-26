@@ -62,7 +62,7 @@ public class PhotinoWebViewManager : WebViewManager
         var hasFileExtension = localPath.LastIndexOf('.') > localPath.LastIndexOf('/');
 
         if (url.StartsWith(AppBaseUri, StringComparison.Ordinal)
-            && TryGetResponseContent(url, !hasFileExtension, out var statusCode, out var statusMessage, out var content,
+            && TryGetResponseContent(url, !hasFileExtension, out _, out _, out var content,
                 out var headers))
         {
             headers.TryGetValue("Content-Type", out contentType);

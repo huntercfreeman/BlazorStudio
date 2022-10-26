@@ -8,7 +8,7 @@ namespace Photino.Blazor;
 
 public class PhotinoHttpHandler : DelegatingHandler
 {
-    private readonly PhotinoBlazorApp app;
+    private readonly PhotinoBlazorApp _app;
 
     //use this constructor if a handler is registered in DI to inject dependencies
     public PhotinoHttpHandler(PhotinoBlazorApp app) : this(app, null)
@@ -19,7 +19,7 @@ public class PhotinoHttpHandler : DelegatingHandler
     //Otherwise, use DelegatingHandler.InnerHandler public property to set the next handler.
     public PhotinoHttpHandler(PhotinoBlazorApp app, HttpMessageHandler innerHandler)
     {
-        this.app = app;
+        this._app = app;
 
         //the last (inner) handler in the pipeline should be a "real" handler.
         //To make a HTTP request, create a HttpClientHandler instance.
@@ -29,7 +29,7 @@ public class PhotinoHttpHandler : DelegatingHandler
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
-        var content = app.HandleWebRequest(null, null, request.RequestUri.AbsoluteUri, out var contentType);
+        var content = _app.HandleWebRequest(null, null, request.RequestUri.AbsoluteUri, out var contentType);
         if (content != null)
         {
             var response = new HttpResponseMessage(HttpStatusCode.OK);

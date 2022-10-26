@@ -4,7 +4,7 @@
         Select an MSBuild version from the TreeView.<br/>
         Optionally absolute file path string may be provided in this input field if needed<br/>
 
-        <input class="bstudio_input" @bind="_providedAbsoluteFilePathToMSBuildVersion"/><br/>
+        <input class="bstudio_input" @bind="_providedAbsoluteFilePathToMsBuildVersion"/><br/>
     </div>
 
     @if (!VisualStudioInstances.Any())
@@ -12,10 +12,10 @@
         <div>Could not find any MSBuild versions installed</div>
     }
 
-    <em>Selected:&nbsp;@_providedAbsoluteFilePathToMSBuildVersion</em>
+    <em>Selected:&nbsp;@_providedAbsoluteFilePathToMsBuildVersion</em>
 
     <TreeViewWrapDisplay ShouldDispose="false"
-                         TreeViewWrapKey="_selectMSBuildTreeViewKey"
+                         TreeViewWrapKey="_selectMsBuildTreeViewKey"
                          RootItems="VisualStudioInstances"
                          GetChildrenFunc="LoadVisualStudioInstancesChildren"
                          OnEnterKeyDown="ThemeTreeViewOnEnterKeyDown"

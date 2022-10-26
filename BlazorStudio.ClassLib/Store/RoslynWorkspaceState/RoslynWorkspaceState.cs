@@ -12,7 +12,7 @@ namespace BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 ///     left a very interesting idea that I used for BlazorStudio.
 /// </summary>
 [FeatureState]
-public record RoslynWorkspaceState(MSBuildWorkspace? MSBuildWorkspace,
+public record RoslynWorkspaceState(MSBuildWorkspace? MsBuildWorkspace,
     VisualStudioInstance? VisualStudioInstance,
     IAbsoluteFilePath? MsBuildAbsoluteFilePath)
 {

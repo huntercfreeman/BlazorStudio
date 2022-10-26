@@ -7,12 +7,12 @@ using Microsoft.Build.Locator;
 
 namespace BlazorStudio.RazorLib.Forms;
 
-public partial class SelectMSBuildForm : ComponentBase
+public partial class SelectMsBuildForm : ComponentBase
 {
-    private string _providedAbsoluteFilePathToMSBuildVersion = string.Empty;
+    private string _providedAbsoluteFilePathToMsBuildVersion = string.Empty;
     private VisualStudioInstance _selectedVisualStudioInstance;
 
-    private readonly TreeViewWrapKey _selectMSBuildTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+    private readonly TreeViewWrapKey _selectMsBuildTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -36,16 +36,16 @@ public partial class SelectMSBuildForm : ComponentBase
 
     private void ThemeTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<VisualStudioInstance> treeViewKeyboardEventDto)
     {
-        _providedAbsoluteFilePathToMSBuildVersion = treeViewKeyboardEventDto.Item.MSBuildPath;
+        _providedAbsoluteFilePathToMsBuildVersion = treeViewKeyboardEventDto.Item.MSBuildPath;
     }
 
     private void ThemeTreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<VisualStudioInstance> treeViewKeyboardEventDto)
     {
-        _providedAbsoluteFilePathToMSBuildVersion = treeViewKeyboardEventDto.Item.MSBuildPath;
+        _providedAbsoluteFilePathToMsBuildVersion = treeViewKeyboardEventDto.Item.MSBuildPath;
     }
 
     private void ThemeTreeViewOnDoubleClick(TreeViewMouseEventDto<VisualStudioInstance> treeViewMouseEventDto)
     {
-        _providedAbsoluteFilePathToMSBuildVersion = treeViewMouseEventDto.Item.MSBuildPath;
+        _providedAbsoluteFilePathToMsBuildVersion = treeViewMouseEventDto.Item.MSBuildPath;
     }
 }

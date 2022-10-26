@@ -27,67 +27,71 @@ public class ParserTests
         return Task.CompletedTask;
     }
 
-    [Fact]
-    public Task TagWithChildContentOfText()
-    {
-        var textNodeContent = "Apple Sauce";
+    // TODO: Lacks Asserts
+    // [Fact]
+    // public Task TagWithChildContentOfText()
+    // {
+    //     var textNodeContent = "Apple Sauce";
+    //
+    //     var content = $@"<div>{textNodeContent}</div>";
+    //
+    //     var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
+    //
+    //     var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+    //     return Task.CompletedTask;
+    // }
 
-        var content = $@"<div>{textNodeContent}</div>";
+    // TODO: Lacks Asserts
+    // [Fact]
+    // public Task ErroneousInfiniteLoopInThisTestCase()
+    // {
+    //     var content = File.ReadAllText(
+    //         @"C:\Users\hunte\source\BlazorCrudApp\BlazorCrudApp.WebAssembly\Client\Shared\MainLayout.razor");
+    //
+    //     var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
+    //
+    //     var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+    //     return Task.CompletedTask;
+    // }
 
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
+    // TODO: Lacks Asserts
+//     [Fact]
+//     public async Task Test3()
+//     {
+//         var content = @"some text
+// <div>Apple Sauce</div>";
+//
+//         /*
+//          * Expected:
+//          *     -TextNode = 'some text'
+//          *     -TagDiv
+//          *         -TextNode = 'Apple Sauce' 
+//          */
+//
+//         var lexer = new TextEditorHtmlLexer();
+//
+//         var textEditorTextSpans =
+//             await lexer.Lex(content);
+//     }
 
-        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
-        return Task.CompletedTask;
-    }
-
-    [Fact]
-    public Task ErroneousInfiniteLoopInThisTestCase()
-    {
-        var content = File.ReadAllText(
-            @"C:\Users\hunte\source\BlazorCrudApp\BlazorCrudApp.WebAssembly\Client\Shared\MainLayout.razor");
-
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
-
-        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
-        return Task.CompletedTask;
-    }
-
-    [Fact]
-    public async Task Test3()
-    {
-        var content = @"some text
-<div>Apple Sauce</div>";
-
-        /*
-         * Expected:
-         *     -TextNode = 'some text'
-         *     -TagDiv
-         *         -TextNode = 'Apple Sauce' 
-         */
-
-        var lexer = new TextEditorHtmlLexer();
-
-        var textEditorTextSpans =
-            await lexer.Lex(content);
-    }
-
-    [Fact]
-    public async Task Test4()
-    {
-        var content =
-            File.ReadAllText(
-                @"C:\Users\hunte\source\BlazorCrudApp\BlazorCrudApp.WebAssembly\Client\Shared\MainLayout.razor");
-
-        /*
-         * Expected:
-         *     -TextNode = 'some text'
-         *     -TagDiv
-         *         -TextNode = 'Apple Sauce' 
-         */
-
-        var lexer = new TextEditorHtmlLexer();
-
-        var textEditorTextSpans =
-            await lexer.Lex(content);
-    }
+    // TODO: Lacks Asserts
+    // [Fact]
+    // public async Task Test4()
+    // {
+    //     var content =
+    //         File.ReadAllText(
+    //             @"C:\Users\hunte\source\BlazorCrudApp\BlazorCrudApp.WebAssembly\Client\Shared\MainLayout.razor");
+    //
+    //     /*
+    //      * Expected:
+    //      *     -TextNode = 'some text'
+    //      *     -TagDiv
+    //      *         -TextNode = 'Apple Sauce' 
+    //      */
+    //
+    //     var lexer = new TextEditorHtmlLexer();
+    //
+    //     var textEditorTextSpans =
+    //         await lexer.Lex(content);
+    // }
 }

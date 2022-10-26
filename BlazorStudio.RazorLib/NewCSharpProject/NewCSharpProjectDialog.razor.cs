@@ -29,8 +29,8 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     // I cannot get 'dotnet new list' to run when I use Ubuntu OS
     // Therefore I am executing the deprecated version.
-    private readonly string getCSharpProjectTemplatesCommand = "dotnet new --list";
-    private IAbsoluteFilePath? InputFileDialogSelection;
+    private readonly string _getCSharpProjectTemplatesCommand = "dotnet new --list";
+    private IAbsoluteFilePath? _inputFileDialogSelection;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -134,7 +134,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
             Dispatcher
                 .Dispatch(new EnqueueProcessOnTerminalEntryAction(
                     TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
-                    getCSharpProjectTemplatesCommand,
+                    _getCSharpProjectTemplatesCommand,
                     null,
                     OnStart,
                     OnEnd,
@@ -152,8 +152,8 @@ public partial class NewCSharpProjectDialog : ComponentBase
         if (_disableExecuteButton ||
             _finishedCreatingProject ||
             _selectCSharpProjectTemplate is null ||
-            InputFileDialogSelection is null ||
-            !InputFileDialogSelection.IsDirectory)
+            _inputFileDialogSelection is null ||
+            !_inputFileDialogSelection.IsDirectory)
             return;
 
         _disableExecuteButton = true;
@@ -170,10 +170,10 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
             InvokeAsync(StateHasChanged);
 
-            if (InputFileDialogSelection.IsDirectory)
+            if (_inputFileDialogSelection.IsDirectory)
             {
                 var createdProjectContainingDirectory = new AbsoluteFilePath(
-                    InputFileDialogSelection.GetAbsoluteFilePathString() + _projectName,
+                    _inputFileDialogSelection.GetAbsoluteFilePathString() + _projectName,
                     true);
 
                 Dispatcher.Dispatch(new SetFolderExplorerAction(createdProjectContainingDirectory));
@@ -199,7 +199,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
             .Dispatch(new EnqueueProcessOnTerminalEntryAction(
                 TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
                 InterpolatedCommand,
-                InputFileDialogSelection,
+                _inputFileDialogSelection,
                 OnStart,
                 OnEnd,
                 null,
@@ -216,7 +216,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
         if (tupleArgument.absoluteFilePath.IsDirectory)
         {
-            InputFileDialogSelection = tupleArgument.absoluteFilePath;
+            _inputFileDialogSelection = tupleArgument.absoluteFilePath;
             InvokeAsync(StateHasChanged);
         }
     }
@@ -229,7 +229,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
         if (treeViewContextMenuEventDto.Item.IsDirectory)
         {
-            InputFileDialogSelection = treeViewContextMenuEventDto.Item;
+            _inputFileDialogSelection = treeViewContextMenuEventDto.Item;
             InvokeAsync(StateHasChanged);
         }
     }

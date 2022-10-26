@@ -21,8 +21,8 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
     private string _solutionName = string.Empty;
     private bool _startingCreatingSolution;
-    private readonly string dotnetNewSlnCommand = "dotnet new sln";
-    private IAbsoluteFilePath? InputFileDialogSelection;
+    private readonly string _dotnetNewSlnCommand = "dotnet new sln";
+    private IAbsoluteFilePath? _inputFileDialogSelection;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -35,7 +35,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
     private string AbsoluteFilePathString => GetAbsoluteFilePathString();
 
-    private string InterpolatedCommand => $"{dotnetNewSlnCommand} -o {_solutionName}";
+    private string InterpolatedCommand => $"{_dotnetNewSlnCommand} -o {_solutionName}";
 
     private void InputFileDialogOnEnterKeyDownOverride(
         (IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
@@ -45,7 +45,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
         if (tupleArgument.absoluteFilePath.IsDirectory)
         {
-            InputFileDialogSelection = tupleArgument.absoluteFilePath;
+            _inputFileDialogSelection = tupleArgument.absoluteFilePath;
             InvokeAsync(StateHasChanged);
         }
     }
@@ -58,7 +58,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
         if (treeViewContextMenuEventDto.Item.IsDirectory)
         {
-            InputFileDialogSelection = treeViewContextMenuEventDto.Item;
+            _inputFileDialogSelection = treeViewContextMenuEventDto.Item;
             InvokeAsync(StateHasChanged);
         }
     }
@@ -67,11 +67,11 @@ public partial class NewDotNetSolutionDialog : ComponentBase
     {
         var builder = new StringBuilder();
 
-        if (InputFileDialogSelection is null ||
-            !InputFileDialogSelection.IsDirectory)
+        if (_inputFileDialogSelection is null ||
+            !_inputFileDialogSelection.IsDirectory)
             builder.Append($"{{pick a directory}}{Path.DirectorySeparatorChar}");
         else
-            builder.Append(InputFileDialogSelection.GetAbsoluteFilePathString());
+            builder.Append(_inputFileDialogSelection.GetAbsoluteFilePathString());
 
         return builder.ToString();
     }
@@ -97,7 +97,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
             InvokeAsync(StateHasChanged);
 
             var createdSolutionContainingDirectory = new AbsoluteFilePathDotNet(
-                InputFileDialogSelection.GetAbsoluteFilePathString() + _solutionName, true, null);
+                _inputFileDialogSelection.GetAbsoluteFilePathString() + _solutionName, true, null);
 
             var createdSolutionFile = new AbsoluteFilePathDotNet(
                 createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + '.' +
@@ -113,7 +113,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
             .Dispatch(new EnqueueProcessOnTerminalEntryAction(
                 TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
                 InterpolatedCommand,
-                InputFileDialogSelection,
+                _inputFileDialogSelection,
                 OnStart,
                 OnEnd,
                 null,

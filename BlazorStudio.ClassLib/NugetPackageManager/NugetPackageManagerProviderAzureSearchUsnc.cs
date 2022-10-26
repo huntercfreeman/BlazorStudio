@@ -14,7 +14,7 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
         _httpClient = httpClient;
     }
 
-    public string ProviderWebsiteUrlNoFormatting { get; } = "https://azuresearch-usnc.nuget.org/";
+    public string ProviderWebsiteUrlNoFormatting => "https://azuresearch-usnc.nuget.org/";
 
     public async Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
         string queryValue,
@@ -31,9 +31,6 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
         CancellationToken cancellationToken = default)
     {
         var query = nugetPackageManagerQuery.Query;
-
-        var response = await _httpClient.PostAsync(query, null);
-        var debugging = await response.Content.ReadAsStringAsync();
 
         var nugetPackages = await _httpClient
             .GetFromJsonAsync<NugetResponse>(

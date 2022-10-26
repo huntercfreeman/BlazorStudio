@@ -52,20 +52,20 @@ public class PhotinoBlazorAppBuilder
 
 public class RootComponentList : IEnumerable<(Type, string)>
 {
-    private readonly List<(Type componentType, string domElementSelector)> components = new();
+    private readonly List<(Type componentType, string domElementSelector)> _components = new();
 
     public IEnumerator<(Type, string)> GetEnumerator()
     {
-        return components.GetEnumerator();
+        return _components.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return components.GetEnumerator();
+        return _components.GetEnumerator();
     }
 
     public void Add<TComponent>(string selector) where TComponent : IComponent
     {
-        components.Add((typeof(TComponent), selector));
+        _components.Add((typeof(TComponent), selector));
     }
 }

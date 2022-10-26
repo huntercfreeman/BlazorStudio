@@ -149,16 +149,16 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
                         var workspace = MSBuildWorkspace.Create();
 
-                        var noTrailingSlashMSBuildPath = visualStudioInstance.MSBuildPath;
+                        var noTrailingSlashMsBuildPath = visualStudioInstance.MSBuildPath;
 
                         if (visualStudioInstance.MSBuildPath.EndsWith(Path.DirectorySeparatorChar) ||
                             visualStudioInstance.MSBuildPath.EndsWith(Path.AltDirectorySeparatorChar))
                         {
-                            noTrailingSlashMSBuildPath =
-                                noTrailingSlashMSBuildPath.Substring(0, noTrailingSlashMSBuildPath.Length - 1);
+                            noTrailingSlashMsBuildPath =
+                                noTrailingSlashMsBuildPath.Substring(0, noTrailingSlashMsBuildPath.Length - 1);
                         }
 
-                        var msBuildAbsoluteFilePath = new AbsoluteFilePath(noTrailingSlashMSBuildPath, true);
+                        var msBuildAbsoluteFilePath = new AbsoluteFilePath(noTrailingSlashMsBuildPath, true);
 
                         var solution = await workspace
                             .OpenSolutionAsync(solutionExplorerState.SolutionAbsoluteFilePath
@@ -505,11 +505,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 var roslynWorkspaceState = RoslynWorkspaceStateWrap.Value;
                 var solutionState = SolutionStateWrap.Value;
 
-                if (roslynWorkspaceState.MSBuildWorkspace is null ||
+                if (roslynWorkspaceState.MsBuildWorkspace is null ||
                     solutionState.Solution is null)
                     return;
 
-                var mSBuildProjectLoader = new MSBuildProjectLoader(roslynWorkspaceState.MSBuildWorkspace);
+                var mSBuildProjectLoader = new MSBuildProjectLoader(roslynWorkspaceState.MsBuildWorkspace);
 
                 var projectInfo =
                     await mSBuildProjectLoader.LoadProjectInfoAsync(absoluteFilePathDotNet.GetAbsoluteFilePathString());

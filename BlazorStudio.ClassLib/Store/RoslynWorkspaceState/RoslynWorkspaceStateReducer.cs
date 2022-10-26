@@ -9,7 +9,7 @@ public class RoslynWorkspaceStateReducer
         RoslynWorkspaceState previousRoslynWorkspaceState,
         SetRoslynWorkspaceStateAction setRoslynWorkspaceStateAction)
     {
-        return new RoslynWorkspaceState(setRoslynWorkspaceStateAction.MSBuildWorkspace,
+        return new RoslynWorkspaceState(setRoslynWorkspaceStateAction.MsBuildWorkspace,
             setRoslynWorkspaceStateAction.VisualStudioInstance,
             setRoslynWorkspaceStateAction.MsBuildAbsoluteFilePath);
     }
