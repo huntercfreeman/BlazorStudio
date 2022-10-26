@@ -30,7 +30,7 @@ public class StringWalker
     /// to the <see cref="StringWalker"/>'s constructor. 
     /// </summary>
     private readonly string _content;
-    
+
     /// <param name="content">
     /// The string that one, in a sense, wishes to step character by character through.
     /// </param>
@@ -38,7 +38,7 @@ public class StringWalker
     {
         _content = content;
     }
-    
+
     /// <summary>
     /// The character index within the <see cref="_content"/> provided
     /// to the <see cref="StringWalker"/>'s constructor.
@@ -76,10 +76,10 @@ public class StringWalker
     {
         if (PositionIndex >= _content.Length)
             return ParserFacts.END_OF_FILE;
-        
+
         return _content[PositionIndex++];
     }
-    
+
     /// <summary>
     /// If (<see cref="PositionIndex"/> + <see cref="offset"/>)
     /// is within bounds of the <see cref="_content"/>.
@@ -96,13 +96,13 @@ public class StringWalker
     {
         if (offset <= -1)
             throw new ApplicationException($"{nameof(offset)} must be > -1");
-        
+
         if (PositionIndex + offset >= _content.Length)
             return ParserFacts.END_OF_FILE;
-        
+
         return _content[PositionIndex + offset];
     }
-    
+
     /// <summary>
     /// If <see cref="PositionIndex"/> being decremented by 1 would result
     /// in <see cref="PositionIndex"/> being less than 0.
@@ -123,12 +123,12 @@ public class StringWalker
     {
         if (PositionIndex == 0)
             return ParserFacts.END_OF_FILE;
-        
+
         PositionIndex--;
 
         return Peek(0);
     }
-    
+
     /// <summary>
     /// Iterates a counter from 0 until the counter is equal to <see cref="length"/>.
     /// <br/><br/>
@@ -147,10 +147,10 @@ public class StringWalker
     {
         var consumeBuilder = new StringBuilder();
 
-        for (int i = 0; i < length; i++)
+        for (var i = 0; i < length; i++)
         {
-            var currentCharacter = Consume(); 
-            
+            var currentCharacter = Consume();
+
             consumeBuilder.Append(currentCharacter);
 
             if (currentCharacter == ParserFacts.END_OF_FILE)
@@ -159,7 +159,7 @@ public class StringWalker
 
         return consumeBuilder.ToString();
     }
-    
+
     /// <summary>
     /// Iterates a counter from 0 until the counter is equal to <see cref="length"/>.
     /// <br/><br/>
@@ -179,10 +179,10 @@ public class StringWalker
     {
         var peekBuilder = new StringBuilder();
 
-        for (int i = 0; i < length; i++)
+        for (var i = 0; i < length; i++)
         {
-            var currentCharacter = Peek(offset + i); 
-            
+            var currentCharacter = Peek(offset + i);
+
             peekBuilder.Append(currentCharacter);
 
             if (currentCharacter == ParserFacts.END_OF_FILE)
@@ -191,7 +191,7 @@ public class StringWalker
 
         return peekBuilder.ToString();
     }
-    
+
     /// <summary>
     /// Iterates a counter from 0 until the counter is equal to <see cref="length"/>.
     /// <br/><br/>
@@ -209,23 +209,23 @@ public class StringWalker
     public string BacktrackRange(int length)
     {
         var backtrackBuilder = new StringBuilder();
-        
-        for (int i = 0; i < length; i++)
+
+        for (var i = 0; i < length; i++)
         {
             if (PositionIndex == 0)
             {
                 backtrackBuilder.Append(ParserFacts.END_OF_FILE);
                 return backtrackBuilder.ToString();
             }
-            
+
             Backtrack();
-            
+
             backtrackBuilder.Append(Peek(0));
         }
 
         return backtrackBuilder.ToString();
     }
-    
+
     /// <summary>
     /// Form a substring of the <see cref="_content"/> that starts
     /// inclusively at the index <see cref="PositionIndex"/> and has a maximum
@@ -238,12 +238,12 @@ public class StringWalker
     public bool CheckForSubstring(string substring)
     {
         var peekedSubstring = PeekRange(
-            0, 
+            0,
             substring.Length);
-        
+
         return peekedSubstring == substring;
     }
-    
+
     public bool CheckForSubstringRange(ImmutableArray<string> substrings)
     {
         foreach (var substring in substrings)
@@ -269,7 +269,7 @@ public class StringWalker
     public string GetText(TextEditorTextSpan textEditorTextSpan)
     {
         return _content.Substring(
-            textEditorTextSpan.StartingIndexInclusive, 
+            textEditorTextSpan.StartingIndexInclusive,
             textEditorTextSpan.EndingIndexExclusive - textEditorTextSpan.StartingIndexInclusive);
     }
 }

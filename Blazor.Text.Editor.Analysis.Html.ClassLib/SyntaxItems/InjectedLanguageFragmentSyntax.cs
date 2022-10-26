@@ -9,12 +9,12 @@ public class InjectedLanguageFragmentSyntax : TagSyntax
         ImmutableArray<TagSyntax> childTagSyntaxes,
         string value,
         TextEditorTextSpan textEditorTextSpan,
-        bool hasSpecialHtmlCharacter = false) 
+        bool hasSpecialHtmlCharacter = false)
         : base(
-            null, 
             null,
-            ImmutableArray<AttributeTupleSyntax>.Empty, 
-            childTagSyntaxes, 
+            null,
+            ImmutableArray<AttributeTupleSyntax>.Empty,
+            childTagSyntaxes,
             TagKind.InjectedLanguageCodeBlock,
             hasSpecialHtmlCharacter)
     {

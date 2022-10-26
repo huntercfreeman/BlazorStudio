@@ -7,6 +7,5 @@ public record TerminalSettingsState(bool ShowTerminalOnProcessStarted)
 {
     private TerminalSettingsState() : this(true)
     {
-
     }
 }

@@ -28,7 +28,8 @@ public partial class InputFileDialog : ComponentBase
     [Parameter]
     public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)>? OnSpaceKeyDownOverride { get; set; }
     [Parameter]
-    public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)>? OnDoubleClickOverride { get; set; }
+    public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)>?
+        OnDoubleClickOverride { get; set; }
     [Parameter]
     public Action<TreeViewContextMenuEventDto<IAbsoluteFilePath>>? ChooseContextMenuOption { get; set; }
     [Parameter]
@@ -39,7 +40,7 @@ public partial class InputFileDialog : ComponentBase
     public string? InvalidSelectionTextOverride { get; set; }
     [Parameter]
     public Action<ImmutableArray<IAbsoluteFilePath>>? ConfirmOnClickOverrideAction { get; set; }
-    
+
     private bool _isInitialized;
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
@@ -57,7 +58,7 @@ public partial class InputFileDialog : ComponentBase
             //     new AbsoluteFilePath(
             //         System.IO.Path.DirectorySeparatorChar.ToString(),
             //         true);
-            
+
             var rootAbsoluteFilePath =
                 new AbsoluteFilePath(
                     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
@@ -80,9 +81,7 @@ public partial class InputFileDialog : ComponentBase
     private Task<IEnumerable<IAbsoluteFilePath>> LoadAbsoluteFilePathChildrenAsync(IAbsoluteFilePath absoluteFilePath)
     {
         if (!absoluteFilePath.IsDirectory)
-        {
             return Task.FromResult<IEnumerable<IAbsoluteFilePath>>(Array.Empty<IAbsoluteFilePath>());
-        }
 
         var childDirectoryAbsolutePaths = Directory
             .GetDirectories(absoluteFilePath.GetAbsoluteFilePathString())
@@ -123,17 +122,15 @@ public partial class InputFileDialog : ComponentBase
             return;
         }
 
-        if (treeViewKeyboardEventDto.Item.IsDirectory)
-        {
-            treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
-        }
+        if (treeViewKeyboardEventDto.Item.IsDirectory) treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
     }
-    
+
     private void InputFileTreeViewOnDoubleClick(TreeViewMouseEventDto<IAbsoluteFilePath> treeViewMouseEventDto)
     {
         if (OnDoubleClickOverride is not null)
         {
-            OnDoubleClickOverride.Invoke((treeViewMouseEventDto.Item, treeViewMouseEventDto.ToggleIsExpanded, treeViewMouseEventDto.MouseEventArgs));
+            OnDoubleClickOverride.Invoke((treeViewMouseEventDto.Item, treeViewMouseEventDto.ToggleIsExpanded,
+                treeViewMouseEventDto.MouseEventArgs));
             return;
         }
 
@@ -144,20 +141,18 @@ public partial class InputFileDialog : ComponentBase
     {
         return absoluteFilePath.IsDirectory;
     }
-    
+
     private void ConfirmOnClick(ImmutableArray<IAbsoluteFilePath> absoluteFilePaths)
     {
         if (ConfirmOnClickOverrideAction is not null)
-        {
             ConfirmOnClickOverrideAction.Invoke(absoluteFilePaths);
-        }
         else if (absoluteFilePaths.Any())
         {
             Dispatcher.Dispatch(new SetFolderExplorerAction(absoluteFilePaths[0]));
             Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
         }
     }
-    
+
     private void CancelOnClick()
     {
         Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
@@ -167,7 +162,7 @@ public partial class InputFileDialog : ComponentBase
         TreeViewContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
         List<MenuOptionRecord> menuOptionRecords = new();
-        
+
         if (ChooseContextMenuOption is not null)
         {
             var setActiveSelection = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
@@ -175,10 +170,10 @@ public partial class InputFileDialog : ComponentBase
                 ImmutableList<MenuOptionRecord>.Empty,
                 () => ChooseContextMenuOption(contextMenuEventDto),
                 MenuOptionKind.Update);
-                
+
             menuOptionRecords.Add(setActiveSelection);
         }
-        
+
         var createNewEmptyFile = MenuOptionFacts.File
             .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
                 new Dictionary<string, object?>()
@@ -189,10 +184,10 @@ public partial class InputFileDialog : ComponentBase
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
-                        (string str1, string str2, bool _) => 
+                        (string str1, string str2, bool _) =>
                             CreateNewFileFormOnAfterSubmitForm(
-                                str1, 
-                                str2, 
+                                str1,
+                                str2,
                                 contextMenuEventDto)
                     },
                     {
@@ -205,7 +200,7 @@ public partial class InputFileDialog : ComponentBase
                         })
                     },
                 });
-        
+
         var createNewDirectory = MenuOptionFacts.File
             .ConstructCreateNewDirectory(typeof(CreateNewDirectoryForm),
                 new Dictionary<string, object?>()
@@ -216,10 +211,10 @@ public partial class InputFileDialog : ComponentBase
                     },
                     {
                         nameof(CreateNewDirectoryForm.OnAfterSubmitForm),
-                        (string str1, string str2) => 
+                        (string str1, string str2) =>
                             CreateNewDirectoryFormOnAfterSubmitForm(
-                                str1, 
-                                str2, 
+                                str1,
+                                str2,
                                 contextMenuEventDto)
                     },
                     {
@@ -241,24 +236,24 @@ public partial class InputFileDialog : ComponentBase
 
         return menuOptionRecords.Any()
             ? menuOptionRecords
-            : new []
+            : new[]
             {
                 new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
                     "No Context Menu Options for this item",
-                    ImmutableList<MenuOptionRecord>.Empty, 
+                    ImmutableList<MenuOptionRecord>.Empty,
                     null,
-                    MenuOptionKind.Read)
+                    MenuOptionKind.Read),
             };
     }
-    
-    private void CreateNewFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString, 
+
+    private void CreateNewFileFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
         string fileName,
         TreeViewContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
             {
                 await File
-                    .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName, 
+                    .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName,
                         string.Empty);
 
                 await contextMenuEventDto.RefreshContextMenuTarget.Invoke();
@@ -271,7 +266,7 @@ public partial class InputFileDialog : ComponentBase
             TimeSpan.FromSeconds(10));
     }
 
-    private void CreateNewDirectoryFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString, 
+    private void CreateNewDirectoryFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
         string directoryName,
         TreeViewContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {

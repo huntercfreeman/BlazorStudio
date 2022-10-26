@@ -14,7 +14,7 @@ public partial class InputFileDialogEntryPoint : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private DialogRecord _inputFileDialog = new DialogRecord(
+    private DialogRecord _inputFileDialog = new(
         DialogKey.NewDialogKey(),
         "Input File",
         typeof(InputFileDialog),

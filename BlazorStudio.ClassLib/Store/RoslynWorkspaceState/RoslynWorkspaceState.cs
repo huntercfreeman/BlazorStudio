@@ -16,10 +16,9 @@ public record RoslynWorkspaceState(MSBuildWorkspace? MSBuildWorkspace,
     VisualStudioInstance? VisualStudioInstance,
     IAbsoluteFilePath? MsBuildAbsoluteFilePath)
 {
-    public RoslynWorkspaceState() : this(default(MSBuildWorkspace),
-        default(VisualStudioInstance),
-        default(IAbsoluteFilePath))
+    public RoslynWorkspaceState() : this(default,
+        default,
+        default)
     {
-        
     }
 }

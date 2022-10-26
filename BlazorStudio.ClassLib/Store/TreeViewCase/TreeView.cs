@@ -13,6 +13,6 @@ public class TreeView<T> : ITreeView
     public T Item { get; init; }
     public Type ItemType => typeof(T);
     public bool IsExpanded { get; set; }
-    public ITreeView[] Children { get; set; } 
+    public ITreeView[] Children { get; set; }
         = Array.Empty<ITreeView>();
 }

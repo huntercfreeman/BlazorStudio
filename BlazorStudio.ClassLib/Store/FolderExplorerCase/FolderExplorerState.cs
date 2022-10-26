@@ -8,6 +8,5 @@ public record FolderExplorerState(IAbsoluteFilePath? FolderAbsoluteFilePath)
 {
     public FolderExplorerState() : this(default(IAbsoluteFilePath?))
     {
-
     }
 }

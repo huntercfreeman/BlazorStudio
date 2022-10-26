@@ -6,9 +6,8 @@ namespace BlazorStudio.ClassLib.Store.TreeViewCase;
 [FeatureState]
 public record TreeViewWrapStates(ImmutableDictionary<TreeViewWrapKey, ITreeViewWrap> Map)
 {
-    private TreeViewWrapStates() 
+    private TreeViewWrapStates()
         : this(new Dictionary<TreeViewWrapKey, ITreeViewWrap>().ToImmutableDictionary())
     {
-
     }
 }

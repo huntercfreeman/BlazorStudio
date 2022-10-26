@@ -13,7 +13,7 @@ public static partial class ThemeFacts
 
             public static ImmutableArray<ThemeKey> AllHighContrastDarkThemeKeys = new ThemeKey[]
             {
-                BstudioHighContrastDarkTheme
+                BstudioHighContrastDarkTheme,
             }.ToImmutableArray();
         }
     }

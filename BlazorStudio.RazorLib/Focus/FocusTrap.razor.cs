@@ -11,14 +11,11 @@ namespace BlazorStudio.RazorLib.Focus;
 public partial class FocusTrap : ComponentBase
 {
     private ElementReference _focusTrapElementReference;
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            await FocusAsync();
-        }
-        
+        if (firstRender) await FocusAsync();
+
         await base.OnAfterRenderAsync(firstRender);
     }
 

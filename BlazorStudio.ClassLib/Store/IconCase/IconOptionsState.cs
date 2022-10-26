@@ -9,7 +9,7 @@ public record IconOptionsState(DimensionUnit IconSize)
     public IconOptionsState() : this(new DimensionUnit()
     {
         DimensionUnitKind = DimensionUnitKind.Pixels,
-        Value = 24
+        Value = 24,
     })
     {
         if (OperatingSystem.IsWindows())
@@ -18,7 +18,7 @@ public record IconOptionsState(DimensionUnit IconSize)
             IconSize = new DimensionUnit()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 18
+                Value = 18,
             };
         }
     }

@@ -11,18 +11,16 @@ public partial class CreateNewDirectoryForm : ComponentBase
     public IAbsoluteFilePath ParentDirectory { get; set; } = null!;
     [Parameter]
     public Action<string, string> OnAfterSubmitForm { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Action OnAfterCancelForm { get; set; } = null!;
 
-    private string _directoryName = String.Empty;
+    private string _directoryName = string.Empty;
     private ElementReference _inputElementReference;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            await _inputElementReference.FocusAsync();
-        }
+        if (firstRender) await _inputElementReference.FocusAsync();
 
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -31,7 +29,7 @@ public partial class CreateNewDirectoryForm : ComponentBase
     {
         OnAfterSubmitForm(ParentDirectory.GetAbsoluteFilePathString(), _directoryName);
     }
-    
+
     private void DeclineForm()
     {
         OnAfterCancelForm.Invoke();
@@ -45,14 +43,9 @@ public partial class CreateNewDirectoryForm : ComponentBase
             keyboardEventArgs.CtrlKey,
             keyboardEventArgs.ShiftKey,
             keyboardEventArgs.AltKey);
-        
+
         if (keyDownEventRecord.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
-        {
             DeclineForm();
-        }
-        else if (keyDownEventRecord.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
-        {
-            SubmitForm();
-        }
+        else if (keyDownEventRecord.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE) SubmitForm();
     }
 }

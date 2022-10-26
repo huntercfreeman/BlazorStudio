@@ -52,10 +52,10 @@
     cursor: pointer;
 }
 
-    .bstudio_toolbar-display-file-dropdown:hover {
-        background-color: var(--bstudio_primary-hover-background-color);
-        color: var(--bstudio_primary-hover-font-color);
-    }
+.bstudio_toolbar-display-file-dropdown:hover {
+    background-color: var(--bstudio_primary-hover-background-color);
+    color: var(--bstudio_primary-hover-font-color);
+}
 
 .bstudio_body-display {
     overflow: auto;
@@ -71,19 +71,19 @@
     padding-bottom: 6px;
 }
 
-    .bstudio_tree-view-display-title:hover {
-        background-color: var(--bstudio_primary-hover-background-color);
-        color: var(--bstudio_primary-hover-font-color);
-    }
-    
-    .bstudio_tree-view-display-title.bstudio_active {
-        background-color: var(--bstudio_primary-active-unfocused-background-color);
-        color: var(--bstudio_primary-active-font-color);
-    }
+.bstudio_tree-view-display-title:hover {
+    background-color: var(--bstudio_primary-hover-background-color);
+    color: var(--bstudio_primary-hover-font-color);
+}
 
-        .bstudio_tree-view-display-title.bstudio_active:focus {
-            background-color: var(--bstudio_primary-active-background-color);
-        }
+.bstudio_tree-view-display-title.bstudio_active {
+    background-color: var(--bstudio_primary-active-unfocused-background-color);
+    color: var(--bstudio_primary-active-font-color);
+}
+
+.bstudio_tree-view-display-title.bstudio_active:focus {
+    background-color: var(--bstudio_primary-active-background-color);
+}
 
 .bstudio_tree-view-display-body {
     position: relative;
@@ -136,10 +136,10 @@
     cursor: pointer;
 }
 
-    .bstudio_dialog-display-tool-bar-control-buttons-item:hover {
-        background-color: var(--bstudio_primary-hover-background-color);
-        color: var(--bstudio_primary-hover-font-color);
-    }
+.bstudio_dialog-display-tool-bar-control-buttons-item:hover {
+    background-color: var(--bstudio_primary-hover-background-color);
+    color: var(--bstudio_primary-hover-font-color);
+}
 
 .bstudio_dialog-task-bar {
     display: flex;
@@ -155,10 +155,10 @@
     align-items: center;
 }
 
-    .bstudio_dialog-task-bar-entry:hover {
-        background-color: var(--bstudio_secondary-hover-background-color);
-        color: var(--bstudio_secondary-hover-font-color);
-    }
+.bstudio_dialog-task-bar-entry:hover {
+    background-color: var(--bstudio_secondary-hover-background-color);
+    color: var(--bstudio_secondary-hover-font-color);
+}
 
 .bstudio_dialog-task-bar-entry-datum {
     display: inline-flex;
@@ -167,10 +167,10 @@
     cursor: pointer;
 }
 
-    .bstudio_dialog-task-bar-entry-datum:hover {
-        background-color: var(--bstudio_primary-hover-background-color);
-        color: var(--bstudio_primary-hover-font-color);
-    }
+.bstudio_dialog-task-bar-entry-datum:hover {
+    background-color: var(--bstudio_primary-hover-background-color);
+    color: var(--bstudio_primary-hover-font-color);
+}
 
 .bstudio_transformable-resize-handle-display {
     position: absolute;
@@ -281,10 +281,10 @@
     padding: 5px;
 }
 
-    .bstudio_task-model-display-cancel-button.bstudio_active {
-        cursor: pointer;
-        background-color: var(--bstudio_task-model-display-cancel-button-background-color);
-    }
+.bstudio_task-model-display-cancel-button.bstudio_active {
+    cursor: pointer;
+    background-color: var(--bstudio_task-model-display-cancel-button-background-color);
+}
 
 .bstudio_out-of-bounds-click-display {
     position: fixed;
@@ -309,10 +309,10 @@
     cursor: pointer;
 }
 
-    .bstudio_menu-option-display.bstudio_sub-menu-is-open {
-        background-color: var(--bstudio_primary-hover-background-color);
-        color: var(--bstudio_primary-hover-font-color);
-    }
+.bstudio_menu-option-display.bstudio_sub-menu-is-open {
+    background-color: var(--bstudio_primary-hover-background-color);
+    color: var(--bstudio_primary-hover-font-color);
+}
 
 .bstudio_menu-option-display:hover {
     background-color: var(--bstudio_primary-hover-background-color);
@@ -365,16 +365,16 @@
     cursor: pointer;
 }
 
-    .bstudio_editor-tab-display:hover {
-        background-color: var(--bstudio_primary-hover-background-color);
-        color: var(--bstudio_primary-hover-font-color);
-    }
+.bstudio_editor-tab-display:hover {
+    background-color: var(--bstudio_primary-hover-background-color);
+    color: var(--bstudio_primary-hover-font-color);
+}
 
-    .bstudio_editor-tab-display.bstudio_active {
-        color: var(--bstudio_primary-active-font-color);
-        background-color: var(--bstudio_primary-active-background-color);
-        box-shadow: var(--bstudio_primary-overlay-box-shadow);
-    }
+.bstudio_editor-tab-display.bstudio_active {
+    color: var(--bstudio_primary-active-font-color);
+    background-color: var(--bstudio_primary-active-background-color);
+    box-shadow: var(--bstudio_primary-overlay-box-shadow);
+}
 
 .bstudio_editor-tab-close-display {
     display: inline-flex;
@@ -385,10 +385,10 @@
     background-color: var(--bstudio_secondary-background-color);
 }
 
-    .bstudio_editor-tab-close-display:hover {
-        background-color: var(--bstudio_tertiary-hover-background-color);
-        color: var(--bstudio_tertiary-hover-font-color);
-    }
+.bstudio_editor-tab-close-display:hover {
+    background-color: var(--bstudio_tertiary-hover-background-color);
+    color: var(--bstudio_tertiary-hover-font-color);
+}
 
 .bstudio_workspace-explorer {
     width: 100%;
@@ -404,7 +404,7 @@
 }
 
 .bstudio_workspace-explorer-new-file {
-    
+
 }
 
 .bstudio_workspace-explorer-tree-view-body {
@@ -481,9 +481,9 @@ em {
     margin-bottom: 8px;
 }
 
-    .bstudio_select-element:focus {
-        border: solid 8px var(--bstudio_primary-emphasis-font-color);
-    }
+.bstudio_select-element:focus {
+    border: solid 8px var(--bstudio_primary-emphasis-font-color);
+}
 
 .bstudio_input {
     background-color: var(--bstudio_secondary-background-color);
@@ -491,10 +491,10 @@ em {
     padding: 2px 3px;
 }
 
-    .bstudio_input:focus {
-        outline: solid 2px var(--bstudio_primary-emphasis-font-color);
-        box-shadow: 0 0 21px var(--bstudio_primary-emphasis-font-color);
-    }
+.bstudio_input:focus {
+    outline: solid 2px var(--bstudio_primary-emphasis-font-color);
+    box-shadow: 0 0 21px var(--bstudio_primary-emphasis-font-color);
+}
 
 .bstudio_input-checkbox {
     width: .8em;
@@ -567,16 +567,16 @@ em {
     cursor: pointer;
 }
 
-    .bstudio_terminal-tab-display:hover {
-        background-color: var(--bstudio_primary-hover-background-color);
-        color: var(--bstudio_primary-hover-font-color);
-    }
+.bstudio_terminal-tab-display:hover {
+    background-color: var(--bstudio_primary-hover-background-color);
+    color: var(--bstudio_primary-hover-font-color);
+}
 
-    .bstudio_terminal-tab-display.bstudio_active {
-        color: var(--bstudio_primary-active-font-color);
-        background-color: var(--bstudio_primary-active-background-color);
-        box-shadow: var(--bstudio_primary-overlay-box-shadow);
-    }
+.bstudio_terminal-tab-display.bstudio_active {
+    color: var(--bstudio_primary-active-font-color);
+    background-color: var(--bstudio_primary-active-background-color);
+    box-shadow: var(--bstudio_primary-overlay-box-shadow);
+}
 
 .bstudio_terminal-tab-close-display {
     display: inline-flex;
@@ -587,10 +587,10 @@ em {
     background-color: var(--bstudio_secondary-background-color);
 }
 
-    .bstudio_terminal-tab-close-display:hover {
-        background-color: var(--bstudio_tertiary-hover-background-color);
-        color: var(--bstudio_tertiary-hover-font-color);
-    }
+.bstudio_terminal-tab-close-display:hover {
+    background-color: var(--bstudio_tertiary-hover-background-color);
+    color: var(--bstudio_tertiary-hover-font-color);
+}
 
 .lds-dual-ring {
     width: 2em;
@@ -600,17 +600,17 @@ em {
     align-items: center;
 }
 
-    .lds-dual-ring:after {
-        content: " ";
-        display: block;
-        width: 1em;
-        height: 1em;
-        margin: .2em;
-        border-radius: 50%;
-        border: .15em solid var(--bstudio_primary-font-color);
-        border-color: var(--bstudio_primary-font-color) transparent var(--bstudio_primary-font-color) transparent;
-        animation: lds-dual-ring 1.2s linear infinite;
-    }
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 1em;
+    height: 1em;
+    margin: .2em;
+    border-radius: 50%;
+    border: .15em solid var(--bstudio_primary-font-color);
+    border-color: var(--bstudio_primary-font-color) transparent var(--bstudio_primary-font-color) transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
 
 @keyframes lds-dual-ring {
     0% {
@@ -716,10 +716,10 @@ em {
     background-color: #c8be2c;
 }
 
-    .btn-warning:hover {
-        background-color: #dac60a;
-    }
-    
+.btn-warning:hover {
+    background-color: #dac60a;
+}
+
 .bstudio_expansion-display-title {
     cursor: pointer;
 }
@@ -737,9 +737,9 @@ em {
     background-color: var(--bstudio_danger-primary-background-color);
 }
 
-    .bstudio_close-button:hover {
-        background-color: var(--bstudio_danger-secondary-background-color);
-    }
+.bstudio_close-button:hover {
+    background-color: var(--bstudio_danger-secondary-background-color);
+}
 
 .bstudio_large-title {
     background-color: var(--bstudio_title-background-color);
@@ -793,20 +793,20 @@ em {
     background-color: var(--bstudio_secondary-background-color);
     cursor: pointer;
 }
-    
-    .bstudio_footer-window-tab-entry-display:hover {
-        background-color: var(--bstudio_primary-hover-background-color);
-        color: var(--bstudio_primary-hover-font-color);
-    }
 
-    .bstudio_footer-window-tab-entry-display.bstudio_active {
-        color: var(--bstudio_primary-active-font-color);
-        background-color: var(--bstudio_primary-active-background-color);
-        box-shadow: var(--bstudio_primary-overlay-box-shadow);
-    }
-    
+.bstudio_footer-window-tab-entry-display:hover {
+    background-color: var(--bstudio_primary-hover-background-color);
+    color: var(--bstudio_primary-hover-font-color);
+}
+
+.bstudio_footer-window-tab-entry-display.bstudio_active {
+    color: var(--bstudio_primary-active-font-color);
+    background-color: var(--bstudio_primary-active-background-color);
+    box-shadow: var(--bstudio_primary-overlay-box-shadow);
+}
+
 .bstudio_measure-font-size {
-    position: absolute; 
+    position: absolute;
     left: 0px;
     top: 0px;
     white-space: nowrap;
@@ -814,7 +814,7 @@ em {
 }
 
 .bstudio_text-editor-display-gutter {
-    white-space: nowrap; 
+    white-space: nowrap;
     position: absolute;
     background-color: var(--bstudio_text-editor-gutter-background-color);
     color: var(--bstudio_text-editor-line-number-font-color);

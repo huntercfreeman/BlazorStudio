@@ -30,9 +30,9 @@ public class ParserTests
 }";
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-	        content,
-	        RazorInjectedLanguageFacts.RazorInjectedLanguageDefinition);
-        
+            content,
+            RazorInjectedLanguageFacts.RazorInjectedLanguageDefinition);
+
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
         return Task.CompletedTask;
     }

@@ -24,7 +24,7 @@ public class TreeViewWrapStatesReducer
 
         return new TreeViewWrapStates(nextMap);
     }
-    
+
     [ReducerMethod]
     public static TreeViewWrapStates ReduceSetActiveTreeViewAction(TreeViewWrapStates previousTreeViewWrapStates,
         SetActiveTreeViewAction setActiveTreeViewAction)
@@ -44,7 +44,7 @@ public class TreeViewWrapStatesReducer
 
         return previousTreeViewWrapStates;
     }
-    
+
     [ReducerMethod]
     public static TreeViewWrapStates ReduceAddTreeViewRootsAction(TreeViewWrapStates previousTreeViewWrapStates,
         AddTreeViewRootsAction addTreeViewRootsAction)

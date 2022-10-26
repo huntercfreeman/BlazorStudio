@@ -13,7 +13,7 @@
     {
         var rootTreeViews = TreeViewWrapStateSelection.Value.RootTreeViews.ToArray();
         var activeItems = TreeViewWrapStateSelection.Value.ActiveTreeViews
-            .Select(x => (T) x.ItemUntyped)
+            .Select(x => (T)x.ItemUntyped)
             .ToImmutableArray();
 
         if (HeaderRenderFragment is not null)
@@ -35,12 +35,12 @@
                                                 <CascadingValue Name="IsExpandable" Value="IsExpandable">
                                                     <CascadingValue Value="TreeViewWrapKey">
                                                         <div class="@BodyCssClassAttribute">
-                                                            @for (int i = 0; i < rootTreeViews.Length; i++)
+                                                            @for (var i = 0; i < rootTreeViews.Length; i++)
                                                             {
-                                                                int index = i;
-                                                                var child = (TreeView<T>) rootTreeViews[i];
+                                                                var index = i;
+                                                                var child = (TreeView<T>)rootTreeViews[i];
 
-                                                                <TreeViewDisplay @key="child.Key" 
+                                                                <TreeViewDisplay @key="child.Key"
                                                                                  TreeView="child"
                                                                                  GetSiblingsAndSelfFunc="() => rootTreeViews"
                                                                                  IndexAmongSiblings="index"

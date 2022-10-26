@@ -8,6 +8,6 @@ public class FontOptionsReducer
     public static FontOptionsState ReduceSetFontOptionsStateAction(FontOptionsState previousFontOptionsState,
         SetFontOptionsStateAction setFontOptionsStateAction)
     {
-        return new(setFontOptionsStateAction.FontSize);
+        return new FontOptionsState(setFontOptionsStateAction.FontSize);
     }
 }

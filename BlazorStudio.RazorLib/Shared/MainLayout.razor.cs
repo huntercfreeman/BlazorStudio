@@ -20,8 +20,9 @@ public partial class MainLayout : FluxorLayout
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
 
-    private string CssClassString => $"bstudio_main-layout bstudio_focus-display-extra-large {UnselectableCssClassString}";
-    
+    private string CssClassString =>
+        $"bstudio_main-layout bstudio_focus-display-extra-large {UnselectableCssClassString}";
+
     private string UnselectableCssClassString => DragStateWrap.Value.IsDisplayed
         ? "pte_unselectable"
         : string.Empty;

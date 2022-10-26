@@ -22,7 +22,7 @@ public class TerminalStateEffects
 
         foreach (var terminalEntry in localTerminalStateWrap.TerminalEntries)
         {
-            _terminalEffects.Add(terminalEntry.TerminalEntryKey, 
+            _terminalEffects.Add(terminalEntry.TerminalEntryKey,
                 new TerminalEntryEffects(terminalStateWrap, _terminalSettingsStateWrap, terminalEntry));
         }
     }
@@ -35,10 +35,7 @@ public class TerminalStateEffects
         {
             await _executeHandleEffectSemaphoreSlim.WaitAsync();
 
-            if (_handleEffectQueue.TryDequeue(out var fifoHandleEffect))
-            {
-                await fifoHandleEffect!.Invoke();
-            }
+            if (_handleEffectQueue.TryDequeue(out var fifoHandleEffect)) await fifoHandleEffect!.Invoke();
         }
         finally
         {
@@ -47,7 +44,8 @@ public class TerminalStateEffects
     }
 
     [EffectMethod]
-    public async Task HandleEnqueueProcessOnTerminalEntryAction(EnqueueProcessOnTerminalEntryAction enqueueProcessOnTerminalEntryAction,
+    public async Task HandleEnqueueProcessOnTerminalEntryAction(
+        EnqueueProcessOnTerminalEntryAction enqueueProcessOnTerminalEntryAction,
         IDispatcher dispatcher)
     {
         await QueueHandleEffectAsync(async () =>

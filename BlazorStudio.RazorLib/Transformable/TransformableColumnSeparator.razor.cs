@@ -13,11 +13,14 @@ public partial class TransformableColumnSeparator : ComponentBase, IDisposable
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Dimensions LeftDimensions { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Dimensions RightDimensions { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Func<Task> ReRenderFunc { get; set; } = null!;
 
     private Func<MouseEventArgs, Task>? _dragStateEventHandler;
@@ -45,17 +48,14 @@ public partial class TransformableColumnSeparator : ComponentBase, IDisposable
 
             if (!success)
                 return;
-        
+
             try
             {
                 var mouseEventArgs = DragStateWrap.Value.MouseEventArgs;
 
                 if (_dragStateEventHandler is not null)
                 {
-                    if (_previousDragMouseEventArgs is not null)
-                    {
-                        await _dragStateEventHandler(mouseEventArgs);
-                    }
+                    if (_previousDragMouseEventArgs is not null) await _dragStateEventHandler(mouseEventArgs);
 
                     _previousDragMouseEventArgs = mouseEventArgs;
 
@@ -80,15 +80,16 @@ public partial class TransformableColumnSeparator : ComponentBase, IDisposable
     {
         var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
-        var leftWidthPixelOffset = LeftDimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var leftWidthPixelOffset =
+            LeftDimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (leftWidthPixelOffset is null)
         {
-            leftWidthPixelOffset = new()
+            leftWidthPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             LeftDimensions.WidthCalc.Add(leftWidthPixelOffset);
@@ -96,15 +97,16 @@ public partial class TransformableColumnSeparator : ComponentBase, IDisposable
 
         leftWidthPixelOffset.Value += deltaX;
 
-        var rightWidthPixelOffset = RightDimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var rightWidthPixelOffset =
+            RightDimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (rightWidthPixelOffset is null)
         {
-            rightWidthPixelOffset = new()
+            rightWidthPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             RightDimensions.WidthCalc.Add(rightWidthPixelOffset);

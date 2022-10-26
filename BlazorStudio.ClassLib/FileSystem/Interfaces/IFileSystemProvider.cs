@@ -8,6 +8,9 @@ namespace BlazorStudio.ClassLib.FileSystem.Interfaces;
 /// </summary>
 public interface IFileSystemProvider
 {
-    public Task WriteFileAsync(IAbsoluteFilePath absoluteFilePath, string content, bool overwrite, bool create, CancellationToken cancellationToken = default);
-    public Task<string> ReadFileAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default);
+    public Task WriteFileAsync(IAbsoluteFilePath absoluteFilePath, string content, bool overwrite, bool create,
+        CancellationToken cancellationToken = default);
+
+    public Task<string> ReadFileAsync(IAbsoluteFilePath absoluteFilePath,
+        CancellationToken cancellationToken = default);
 }

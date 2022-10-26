@@ -4,9 +4,11 @@ namespace BlazorStudio.RazorLib.Expansion;
 
 public partial class ExpansionDisplay : ComponentBase
 {
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public RenderFragment TitleRenderFragment { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public RenderFragment BodyRenderFragment { get; set; } = null!;
     [Parameter]
     public bool OnClickShouldToggleIsExpanded { get; set; } = true;

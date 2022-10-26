@@ -5,41 +5,41 @@ namespace Blazor.Text.Editor.Analysis.Razor.ClassLib;
 public static class RazorInjectedLanguageFacts
 {
     public static readonly InjectedLanguageDefinition
-        RazorInjectedLanguageDefinition = 
-            new InjectedLanguageDefinition
+        RazorInjectedLanguageDefinition =
+            new()
             {
                 InjectedLanguageCodeBlockTag = "@",
                 InjectedLanguageCodeBlockTagEscaped = "@@",
-                InjectedLanguageCodeBlocks = new []
+                InjectedLanguageCodeBlocks = new[]
                 {
                     new InjectedLanguageCodeBlock
                     {
                         CodeBlockTag = "@",
                         CodeBlockOpening = "{",
-                        CodeBlockClosing = "}"
+                        CodeBlockClosing = "}",
                     },
                     new InjectedLanguageCodeBlock
                     {
                         CodeBlockTag = "@",
                         CodeBlockOpening = "(",
-                        CodeBlockClosing = ")"
+                        CodeBlockClosing = ")",
                     },
                     new InjectedLanguageCodeBlock
                     {
                         CodeBlockTag = "@",
                         // @if (myExpression) { <div>true</div> }
                         CodeBlockOpening = "TODO: any control keyword (like for, if, or switch)",
-                        CodeBlockClosing = "}"
+                        CodeBlockClosing = "}",
                     },
                     new InjectedLanguageCodeBlock
                     {
                         CodeBlockTag = "@",
                         CodeBlockOpening = "code{",
-                        CodeBlockClosing = "}"
-                    }
+                        CodeBlockClosing = "}",
+                    },
                 },
-                ParseInjectedLanguageFunc = 
+                ParseInjectedLanguageFunc =
                     ParserInjectedLanguageFragmentCSharp
-                        .ParseInjectedLanguageFragment
+                        .ParseInjectedLanguageFragment,
             };
 }

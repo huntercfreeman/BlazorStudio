@@ -12,11 +12,14 @@ public partial class SyntaxNodeTreeViewDialogEntryPoint : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public SyntaxNode? SyntaxNode { get; set; }
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Func<Task<SyntaxNode>>? GetSyntaxNodeFuncAsync { get; set; }
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public string? TitleOverride { get; set; }
 
     private DialogRecord? _syntaxNodeTreeViewDialog;
@@ -26,19 +29,15 @@ public partial class SyntaxNodeTreeViewDialogEntryPoint : ComponentBase
         SyntaxNode targetSyntaxNode;
 
         if (SyntaxNode is not null)
-        {
             targetSyntaxNode = SyntaxNode;
-        }
         else if (GetSyntaxNodeFuncAsync is not null)
-        {
             targetSyntaxNode = await GetSyntaxNodeFuncAsync();
-        }
         else
         {
             throw new ApplicationException($"Must provide either: {nameof(SyntaxNode)} parameter," +
                                            $" or {nameof(GetSyntaxNodeFuncAsync)} parameter.");
         }
-        
+
         _syntaxNodeTreeViewDialog = new DialogRecord(
             DialogKey.NewDialogKey(),
             TitleOverride ?? "SyntaxNode TreeView",
@@ -48,10 +47,10 @@ public partial class SyntaxNodeTreeViewDialogEntryPoint : ComponentBase
                 {
                     nameof(SyntaxNodeTreeView.SyntaxNode),
                     targetSyntaxNode
-                }
+                },
             }
         );
-        
+
         if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _syntaxNodeTreeViewDialog.DialogKey))
             Dispatcher.Dispatch(new RegisterDialogAction(_syntaxNodeTreeViewDialog));
     }

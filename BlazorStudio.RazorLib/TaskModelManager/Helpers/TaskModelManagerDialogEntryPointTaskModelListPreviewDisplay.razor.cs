@@ -23,8 +23,10 @@ public partial class TaskModelManagerDialogEntryPointTaskModelListPreviewDisplay
     {
         _taskModelCache = GetTaskModelsFunc().ToImmutableArray();
 
-        TaskModelManagerService.OnTasksStateHasChangedEventHandler += TaskModelManagerServiceStateHasChangedEventHandler;
-        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler += TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTasksStateHasChangedEventHandler +=
+            TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler +=
+            TaskModelManagerServiceStateHasChangedEventHandler;
 
         base.OnInitialized();
     }
@@ -48,7 +50,9 @@ public partial class TaskModelManagerDialogEntryPointTaskModelListPreviewDisplay
 
     public void Dispose()
     {
-        TaskModelManagerService.OnTasksStateHasChangedEventHandler -= TaskModelManagerServiceStateHasChangedEventHandler;
-        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler -= TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTasksStateHasChangedEventHandler -=
+            TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler -=
+            TaskModelManagerServiceStateHasChangedEventHandler;
     }
 }

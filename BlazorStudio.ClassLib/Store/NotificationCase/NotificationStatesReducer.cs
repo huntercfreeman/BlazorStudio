@@ -25,6 +25,7 @@ public class NotificationStatesReducer
         ReplaceNotificationAction replaceNotificationAction)
     {
         return new NotificationStates(previousNotificationStates.List
-            .Replace(replaceNotificationAction.PreviousNotificationRecord, replaceNotificationAction.NextNotificationRecord));
+            .Replace(replaceNotificationAction.PreviousNotificationRecord,
+                replaceNotificationAction.NextNotificationRecord));
     }
 }

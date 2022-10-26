@@ -15,9 +15,13 @@ public partial class NugetPackageManagerMenuWrapperDisplay : ComponentBase
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    
+
     [Parameter]
-    public TreeViewContextMenuEventDto<NugetPackageManagerDisplay.NugetPackageManagerTreeViewEntry> ContextMenuEventDto { get; set; } = null!;
+    public TreeViewContextMenuEventDto<NugetPackageManagerDisplay.NugetPackageManagerTreeViewEntry> ContextMenuEventDto
+    {
+        get;
+        set;
+    } = null!;
     [Parameter]
     public Project SelectProjectToModify { get; set; } = null!;
 
@@ -26,7 +30,7 @@ public partial class NugetPackageManagerMenuWrapperDisplay : ComponentBase
     {
         var menuOptionRecords = new List<MenuOptionRecord>();
 
-        if (contextMenuEventDto.Item.NugetPackageManagerTreeViewEntryKind == 
+        if (contextMenuEventDto.Item.NugetPackageManagerTreeViewEntryKind ==
             NugetPackageManagerDisplay.NugetPackageManagerTreeViewEntryKind.NugetPackage)
         {
             var nugetPackageRecord = (NugetPackageRecord)contextMenuEventDto.Item.Item;
@@ -42,7 +46,7 @@ public partial class NugetPackageManagerMenuWrapperDisplay : ComponentBase
                     () => AddNugetReference(nugetPackageRecord, versionRecord),
                     MenuOptionKind.Read))
                 .ToImmutableList();
-            
+
             var referenceNugetPackageForm = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
                 "Add Reference",
                 childrenMenu,
@@ -51,7 +55,7 @@ public partial class NugetPackageManagerMenuWrapperDisplay : ComponentBase
 
             menuOptionRecords.Add(referenceNugetPackageForm);
         }
-        
+
         return menuOptionRecords.Any()
             ? menuOptionRecords
             : new[]
@@ -60,21 +64,22 @@ public partial class NugetPackageManagerMenuWrapperDisplay : ComponentBase
                     "No Context Menu Options for this item",
                     ImmutableList<MenuOptionRecord>.Empty,
                     null,
-                    MenuOptionKind.Read)
+                    MenuOptionKind.Read),
             };
     }
 
     private string FormatDotNetAddNugetPackageReferenceToProject(NugetPackageRecord nugetPackageRecord,
         NugetPackageVersionRecord versionRecord)
     {
-        return $"dotnet add \"{SelectProjectToModify.FilePath}\" package \"{nugetPackageRecord.Id}\" --version {versionRecord.Version}";
+        return
+            $"dotnet add \"{SelectProjectToModify.FilePath}\" package \"{nugetPackageRecord.Id}\" --version {versionRecord.Version}";
     }
 
-    private void AddNugetReference(NugetPackageRecord nugetPackageRecord, 
+    private void AddNugetReference(NugetPackageRecord nugetPackageRecord,
         NugetPackageVersionRecord versionRecord)
     {
         var output = string.Empty;
-        
+
         void OnStart()
         {
         }
@@ -90,7 +95,7 @@ public partial class NugetPackageManagerMenuWrapperDisplay : ComponentBase
                 null,
                 OnStart,
                 OnEnd,
-            null,
+                null,
                 null,
                 (data) => output = data,
                 CancellationToken.None));

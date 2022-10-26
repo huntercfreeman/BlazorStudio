@@ -12,6 +12,5 @@ public record EditorState(TextEditorKey TextEditorKey)
 {
     public EditorState() : this(TextEditorKey.Empty)
     {
-
     }
 }

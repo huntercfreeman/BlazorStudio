@@ -11,11 +11,11 @@ public partial class SelectMSBuildForm : ComponentBase
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    
+
     [CascadingParameter]
     public NotificationRecord NotificationRecord { get; set; } = null!;
-    
-    [Parameter] 
+
+    [Parameter]
     public VisualStudioInstance[] VisualStudioInstances { get; set; } = null!;
 
     private TreeViewWrapKey _selectMSBuildTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
@@ -24,11 +24,8 @@ public partial class SelectMSBuildForm : ComponentBase
 
     protected override void OnParametersSet()
     {
-        if (VisualStudioInstances.Any())
-        {
-            _selectedVisualStudioInstance = VisualStudioInstances[0];
-        }
-        
+        if (VisualStudioInstances.Any()) _selectedVisualStudioInstance = VisualStudioInstances[0];
+
         base.OnParametersSet();
     }
 

@@ -21,15 +21,15 @@ window.plainTextEditor = {
 
         cursorElementReference
             .scrollIntoView({
-                behavior: "auto", 
-                block: "nearest", 
+                behavior: "auto",
+                block: "nearest",
                 inline: "nearest"
             });
     },
     initializeIntersectionObserverForCursorOffscreen: function (
         editorElementId,
         cursorElementId) {
-        
+
         if (!cursorElementId) {
             return;
         }
@@ -51,9 +51,9 @@ window.plainTextEditor = {
             intersectionObserver: intersectionObserver,
             intersectionRatio: 1
         });
-        
+
         let cursorElementReference = document.getElementById(cursorElementId);
-        
+
         intersectionObserver.observe(cursorElementReference);
     },
     disposeIntersectionObserverForCursorOffscreen: function (cursorElementId) {
@@ -66,10 +66,10 @@ window.plainTextEditor = {
     handleThresholdChange: function (entries, intersectionObserverMap) {
         for (let i = 0; i < entries.length; i++) {
             let currentEntry = entries[i];
-            
+
             let previousState = intersectionObserverMap
                 .get(currentEntry.target.id);
-            
+
             intersectionObserverMap.set(currentEntry.target.id, {
                 intersectionObserver: previousState.intersectionObserver,
                 intersectionRatio: currentEntry.intersectionRatio
@@ -85,7 +85,7 @@ window.plainTextEditor = {
         let row = document.getElementById(widthAndHeightTestId);
 
         let heightOfARow = row.offsetHeight;
-        
+
         // TODO: I feel like this is not a good way to find the width of character.
         /*
             Here I am looking at a test invisible row and getting offsetWidth
@@ -98,9 +98,9 @@ window.plainTextEditor = {
         let widthOfTestToken = row.children[1].offsetWidth;
 
         let amountOfCharactersRendered = 768;
-        
+
         let widthOfACharacter = widthOfTestToken / amountOfCharactersRendered
-        
+
         /*
             -Plain text editor html element
                 -Virtualization html element
@@ -110,10 +110,10 @@ window.plainTextEditor = {
                 WidthOfEditor -> row.parent.parent.width
                 HEightOfEditor -> row.parent.parent.height
          */
-        
+
         let widthOfEditor = row.parentElement.parentElement.offsetWidth;
         let heightOfEditor = row.parentElement.parentElement.offsetHeight;
-        
+
         return {
             HeightOfARow: heightOfARow,
             WidthOfACharacter: widthOfACharacter,
@@ -126,7 +126,7 @@ window.plainTextEditor = {
         // the "clipboard-read" feature.
 
         try {
-            return await navigator.permissions.query({ name: "clipboard-read" }).then(async (result) => {
+            return await navigator.permissions.query({name: "clipboard-read"}).then(async (result) => {
                 // If permission to read the clipboard is granted or if the user will
                 // be prompted to allow it, we proceed.
 
@@ -134,13 +134,11 @@ window.plainTextEditor = {
                     return await navigator.clipboard.readText().then((data) => {
                         return data;
                     });
-                }
-                else {
+                } else {
                     return "";
                 }
             });
-        }
-        catch (e) {
+        } catch (e) {
             return "";
         }
     },
@@ -156,8 +154,7 @@ window.plainTextEditor = {
             // Internet Explorer-specific code path to prevent textarea being shown while dialog is visible.
             return window.clipboardData.setData("Text", text);
 
-        }
-        else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+        } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
             var textarea = document.createElement("textarea");
             textarea.textContent = value;
             textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in Microsoft Edge.
@@ -165,12 +162,10 @@ window.plainTextEditor = {
             textarea.select();
             try {
                 return document.execCommand("copy");  // Security exception may be thrown by some browsers.
-            }
-            catch (ex) {
+            } catch (ex) {
                 console.warn("Copy to clipboard failed.", ex);
                 return false;
-            }
-            finally {
+            } finally {
                 document.body.removeChild(textarea);
             }
         }

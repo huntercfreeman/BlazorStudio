@@ -18,23 +18,21 @@ public partial class DragDisplay : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    private SetDragStateAction ConstructClearDragStateAction() => 
-        new(false, null);
+    private SetDragStateAction ConstructClearDragStateAction()
+    {
+        return new(false, null);
+    }
 
     private void DispatchNotifyMouseEventOnMouseMove(MouseEventArgs mouseEventArgs)
     {
         // Buttons is a bit flag
         // '& 1' gets if left mouse button is held 
         if ((mouseEventArgs.Buttons & 1) != 1)
-        {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
-        }
         else
-        {
             Dispatcher.Dispatch(new SetDragStateAction(true, mouseEventArgs));
-        }
     }
-    
+
     private void DispatchHideOnMouseUp()
     {
         Dispatcher.Dispatch(ConstructClearDragStateAction());

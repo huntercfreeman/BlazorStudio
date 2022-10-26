@@ -11,23 +11,16 @@ public record CSharpKeywords(ImmutableList<string> Keywords)
         // TODO: Do not hardcode the C# keyword paths
         var myUbuntuOsLocation = "/home/hunter/Repos/BlazorStudio/allCSharpKeywords.json";
         var myWindowsOsLocation = "C:\\Users\\hunte\\source\\BlazorStudio\\allCSharpKeywords.json";
-        
+
         string jsonKeywords;
 
         if (File.Exists(myUbuntuOsLocation))
-        {
             jsonKeywords = File.ReadAllText(myUbuntuOsLocation);
-        }
         else
-        {
             jsonKeywords = File.ReadAllText(myWindowsOsLocation);
-        }
 
         var listOfKeywords = System.Text.Json.JsonSerializer.Deserialize<List<string>>(jsonKeywords);
-        
-        if (listOfKeywords is not null)
-        {
-            Keywords = listOfKeywords.ToImmutableList();
-        }
+
+        if (listOfKeywords is not null) Keywords = listOfKeywords.ToImmutableList();
     }
 }

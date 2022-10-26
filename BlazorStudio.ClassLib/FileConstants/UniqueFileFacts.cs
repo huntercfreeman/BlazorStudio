@@ -19,7 +19,7 @@ public static class UniqueFileFacts
         return extensionNoPeriod switch
         {
             ExtensionNoPeriodFacts.C_SHARP_PROJECT => new[] { Properties, WwwRoot }.ToImmutableArray(),
-            _ => ImmutableArray<string>.Empty 
+            _ => ImmutableArray<string>.Empty,
         };
     }
 }

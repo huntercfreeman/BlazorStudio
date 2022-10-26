@@ -26,8 +26,10 @@ public partial class TaskModelListDisplay : ComponentBase, IDisposable
     {
         _taskModelCache = GetTaskModelsFunc().ToImmutableArray();
 
-        TaskModelManagerService.OnTasksStateHasChangedEventHandler += TaskModelManagerServiceStateHasChangedEventHandler;
-        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler += TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTasksStateHasChangedEventHandler +=
+            TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler +=
+            TaskModelManagerServiceStateHasChangedEventHandler;
 
         base.OnInitialized();
     }
@@ -42,7 +44,7 @@ public partial class TaskModelListDisplay : ComponentBase, IDisposable
     {
         _isExpanded = !_isExpanded;
 
-        if(_isExpanded)
+        if (_isExpanded)
             _taskModelCache = GetTaskModelsFunc().ToImmutableArray();
 
         StateHasChanged();
@@ -50,7 +52,9 @@ public partial class TaskModelListDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TaskModelManagerService.OnTasksStateHasChangedEventHandler -= TaskModelManagerServiceStateHasChangedEventHandler;
-        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler -= TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTasksStateHasChangedEventHandler -=
+            TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler -=
+            TaskModelManagerServiceStateHasChangedEventHandler;
     }
 }

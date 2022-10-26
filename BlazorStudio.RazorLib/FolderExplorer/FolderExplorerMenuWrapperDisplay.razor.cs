@@ -91,10 +91,13 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
                     },
                 });
 
-        var absoluteFilePathDotNet = new AbsoluteFilePathDotNet(contextMenuEventDto.Item.GetAbsoluteFilePathString(), false, null);
-        
+        var absoluteFilePathDotNet =
+            new AbsoluteFilePathDotNet(contextMenuEventDto.Item.GetAbsoluteFilePathString(), false, null);
+
         var setActiveSolution = MenuOptionFacts.DotNet
-            .SetActiveSolution(() => Dispatcher.Dispatch(new SetSolutionExplorerAction(absoluteFilePathDotNet, SequenceKey.NewSequenceKey())));
+            .SetActiveSolution(() =>
+                Dispatcher.Dispatch(new SetSolutionExplorerAction(absoluteFilePathDotNet,
+                    SequenceKey.NewSequenceKey())));
 
         List<MenuOptionRecord> menuOptionRecords = new();
 
@@ -107,9 +110,7 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
         menuOptionRecords.Add(createDeleteFile);
 
         if (contextMenuEventDto.Item.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-        {
             menuOptionRecords.Add(setActiveSolution);
-        }
 
         return menuOptionRecords.Any()
             ? menuOptionRecords
@@ -119,7 +120,7 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
                     "No Context Menu Options for this item",
                     ImmutableList<MenuOptionRecord>.Empty,
                     null,
-                    MenuOptionKind.Read)
+                    MenuOptionKind.Read),
             };
     }
 
@@ -147,35 +148,35 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
         string directoryName)
     {
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
-        {
-            Directory.CreateDirectory(parentDirectoryAbsoluteFilePathString + directoryName);
+            {
+                Directory.CreateDirectory(parentDirectoryAbsoluteFilePathString + directoryName);
 
-            await ContextMenuEventDto.RefreshContextMenuTarget.Invoke();
+                await ContextMenuEventDto.RefreshContextMenuTarget.Invoke();
 
-            Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
-        },
+                Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+            },
             $"{nameof(CreateNewDirectoryFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));
     }
-    
+
     private void DeleteFileFormOnAfterSubmitForm(IAbsoluteFilePath absoluteFilePath)
     {
         _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
-        {
-            if (absoluteFilePath.IsDirectory)
             {
-                Directory.Delete(absoluteFilePath.GetAbsoluteFilePathString(), true);
-                await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
-            }
-            else
-            {
-                File.Delete(absoluteFilePath.GetAbsoluteFilePathString());
-                await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
-            }
+                if (absoluteFilePath.IsDirectory)
+                {
+                    Directory.Delete(absoluteFilePath.GetAbsoluteFilePathString(), true);
+                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
+                }
+                else
+                {
+                    File.Delete(absoluteFilePath.GetAbsoluteFilePathString());
+                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
+                }
 
-            Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
-        },
+                Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+            },
             $"{nameof(DeleteFileFormOnAfterSubmitForm)}",
             false,
             TimeSpan.FromSeconds(10));

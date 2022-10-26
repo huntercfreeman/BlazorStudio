@@ -6,5 +6,5 @@ public enum TagKind
     Closing,
     SelfClosing,
     Text,
-    InjectedLanguageCodeBlock
+    InjectedLanguageCodeBlock,
 }

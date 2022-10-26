@@ -5,5 +5,5 @@ public enum DimensionUnitOperationKind
     Add,
     Subtract,
     Multiply,
-    Divide
+    Divide,
 }

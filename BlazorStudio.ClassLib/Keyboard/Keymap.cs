@@ -24,6 +24,5 @@ public record Keymap(ImmutableDictionary<KeyDownEventRecord, CommandRecord> Map)
 {
     public Keymap() : this(ImmutableDictionary<KeyDownEventRecord, CommandRecord>.Empty)
     {
-        
     }
 }

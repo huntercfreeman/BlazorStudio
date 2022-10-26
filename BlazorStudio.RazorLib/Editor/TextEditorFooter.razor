@@ -7,13 +7,13 @@
         <div class="bstudio_text-editor-footer-entry">
             .txt
         </div>
-        
+
         <div class="bstudio_text-editor-footer-entry">
             length:@($"{TextEditor.DocumentLength}")
             &nbsp;
             lines:@($"{TextEditor.RowCount}")
         </div>
-        
+
         if (TextEditorDisplay is not null)
         {
             <div class="bstudio_text-editor-footer-entry">
@@ -22,7 +22,7 @@
                 Col:@($"{TextEditorDisplay.PrimaryCursor.IndexCoordinates.columnIndex}")
             </div>
         }
-        
+
         <div class="bstudio_text-editor-footer-entry">
             @if (TextEditor.OnlyRowEndingKind is null)
             {
@@ -32,7 +32,7 @@
             {
                 <text>has:@TextEditor.OnlyRowEndingKind.Value.AsFriendlyName() </text>
             }
-            
+
             use:
             <select @onchange="SelectRowEndingKindOnChange">
                 @foreach (var rowEndingKind in RowEndingKind.Linefeed.GetRowEndingsUserAllowedToUse())

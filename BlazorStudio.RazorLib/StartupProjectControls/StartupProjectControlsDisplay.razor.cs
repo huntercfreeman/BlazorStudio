@@ -28,10 +28,10 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
-    private IState<ContextState> ContextStateWrap { get; set; } = null!;    
+    private IState<ContextState> ContextStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    
+
     private CancellationTokenSource _cancellationTokenSource = new();
     private bool _isEnqueuedToRun;
     private bool _isRunning;
@@ -40,7 +40,7 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
 
     private void DispatchEnqueueProcessOnTerminalEntryAction()
     {
-        _outputBuilder = new();
+        _outputBuilder = new StringBuilder();
 
         var localStartupProjectState = StartupProjectStateWrap.Value;
 
@@ -67,12 +67,12 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
                     var notification = new NotificationRecord(NotificationKey.NewNotificationKey(),
                         "Detected: 'Failed to bind to address'",
                         typeof(FailedToBindNotification),
-                        new()
+                        new Dictionary<string, object?>
                         {
                             {
                                 nameof(FailedToBindNotification.ProjectAbsoluteFilePath),
                                 localStartupProjectState.ProjectAbsoluteFilePath
-                            }
+                            },
                         });
 
                     Dispatcher.Dispatch(new RegisterNotificationAction(notification));
@@ -82,12 +82,12 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
                     var notification = new NotificationRecord(NotificationKey.NewNotificationKey(),
                         "Detected: 'ProcessFrameworkReferences task failed'",
                         typeof(ProcessFrameworkReferencesTaskFailedNotification),
-                        new()
+                        new Dictionary<string, object?>
                         {
                             {
                                 nameof(ProcessFrameworkReferencesTaskFailedNotification.ProjectAbsoluteFilePath),
                                 localStartupProjectState.ProjectAbsoluteFilePath
-                            }
+                            },
                         });
 
                     Dispatcher.Dispatch(new RegisterNotificationAction(notification));
@@ -98,7 +98,8 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
                 InvokeAsync(StateHasChanged);
             }
 
-            var containingDirectoryOfProject = (IAbsoluteFilePath) (StartupProjectStateWrap.Value.ProjectAbsoluteFilePath.Directories.Last());
+            var containingDirectoryOfProject =
+                (IAbsoluteFilePath)StartupProjectStateWrap.Value.ProjectAbsoluteFilePath.Directories.Last();
 
             _enqueueProcessOnTerminalEntryAction = new EnqueueProcessOnTerminalEntryAction(
                 TerminalStateFacts.ProgramTerminalEntry.TerminalEntryKey,
@@ -127,7 +128,7 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
     public CancellationToken CancelTokenSourceAndGetNewToken()
     {
         _cancellationTokenSource.Cancel();
-        _cancellationTokenSource = new();
+        _cancellationTokenSource = new CancellationTokenSource();
 
         return _cancellationTokenSource.Token;
     }
@@ -137,9 +138,7 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
         _cancellationTokenSource?.Cancel();
 
         if (_enqueueProcessOnTerminalEntryAction is not null)
-        {
             _enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler();
-        }
 
         base.Dispose(disposing);
     }

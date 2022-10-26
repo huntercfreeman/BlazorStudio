@@ -21,25 +21,25 @@ public static class HtmlSyntaxTree
         var rootTagSyntaxBuilder = new TagSyntax.TagSyntaxBuilder
         {
             OpenTagNameSyntax = new TagNameSyntax(
-                "document", 
+                "document",
                 new TextEditorTextSpan(
                     0,
                     0,
-                    (byte)HtmlDecorationKind.None))
+                    (byte)HtmlDecorationKind.None)),
         };
 
         var textEditorHtmlDiagnosticBag = new TextEditorHtmlDiagnosticBag();
 
         rootTagSyntaxBuilder.ChildTagSyntaxes = HtmlSyntaxTreeStateMachine
-                .ParseTagChildContent(
-                    stringWalker,
-                    textEditorHtmlDiagnosticBag,
-                    injectedLanguageDefinition);
+            .ParseTagChildContent(
+                stringWalker,
+                textEditorHtmlDiagnosticBag,
+                injectedLanguageDefinition);
 
         var htmlSyntaxUnitBuilder = new HtmlSyntaxUnit.HtmlSyntaxUnitBuilder
         {
             RootTagSyntax = rootTagSyntaxBuilder.Build(),
-            TextEditorHtmlDiagnosticBag = textEditorHtmlDiagnosticBag
+            TextEditorHtmlDiagnosticBag = textEditorHtmlDiagnosticBag,
         };
 
         return htmlSyntaxUnitBuilder.Build();
@@ -59,7 +59,7 @@ public static class HtmlSyntaxTree
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
-            
+
             var tagBuilder = new TagSyntax.TagSyntaxBuilder();
 
             // HtmlFacts.TAG_OPENING_CHARACTER
@@ -88,12 +88,10 @@ public static class HtmlSyntaxTree
                 stringWalker.WhileNotEndOfFile(() =>
                 {
                     var consumedCharacter = stringWalker.Consume();
-                    
+
                     if (HtmlFacts.WHITESPACE.Contains(
                             consumedCharacter.ToString()))
-                    {
                         return false;
-                    }
 
                     return true;
                 });
@@ -109,12 +107,12 @@ public static class HtmlSyntaxTree
 
                     return tagBuilder.Build();
                 }
-                
+
                 // Eager Skipping of Whitespace
                 // results in the StringWalker going
                 // 1 PositionIndex further than is wanted
                 _ = stringWalker.Backtrack();
-                
+
                 if (stringWalker.CheckForSubstring(HtmlFacts.OPEN_TAG_WITH_CHILD_CONTENT_ENDING))
                 {
                     // Ending of opening tag
@@ -123,7 +121,7 @@ public static class HtmlSyntaxTree
                     // Skip the '>' character to set stringWalker at the first
                     // character of the child content
                     _ = stringWalker.Consume();
-                    
+
                     tagBuilder.ChildTagSyntaxes = ParseTagChildContent(
                         stringWalker,
                         textEditorHtmlDiagnosticBag,
@@ -136,7 +134,7 @@ public static class HtmlSyntaxTree
                     //     <div>
                     // Should have a matching closing tag of
                     //     </div>
-                    
+
                     // TODO: check that the closing tag name matches the opening tag
                 }
                 else if (stringWalker.CheckForSubstring(HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING))
@@ -144,7 +142,7 @@ public static class HtmlSyntaxTree
                     _ = stringWalker.ConsumeRange(
                         HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING
                             .Length);
-                    
+
                     // Ending of self-closing tag
                     tagBuilder.TagKind = TagKind.SelfClosing;
 
@@ -159,7 +157,7 @@ public static class HtmlSyntaxTree
                     var closeTagNameStartingPositionIndex = stringWalker.PositionIndex;
 
                     var closeTagNameBuilder = new StringBuilder();
-                    
+
                     stringWalker.WhileNotEndOfFile(() =>
                     {
                         if (stringWalker.CheckForSubstring(
@@ -171,11 +169,11 @@ public static class HtmlSyntaxTree
                                     closeTagNameStartingPositionIndex,
                                     stringWalker.PositionIndex,
                                     (byte)HtmlDecorationKind.TagName));
-                            
+
                             _ = stringWalker.ConsumeRange(
-                                    HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING
-                                        .Length);
-                            
+                                HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING
+                                    .Length);
+
                             return true;
                         }
 
@@ -189,7 +187,7 @@ public static class HtmlSyntaxTree
                         // about this and aim to get to this when I find time.
                         throw new NotImplementedException();
                     }
-                    
+
                     if (tagBuilder.OpenTagNameSyntax.Value != tagBuilder.CloseTagNameSyntax.Value)
                     {
                         textEditorHtmlDiagnosticBag.ReportOpenTagWithUnMatchedCloseTag(
@@ -200,13 +198,13 @@ public static class HtmlSyntaxTree
                                 stringWalker.PositionIndex,
                                 (byte)HtmlDecorationKind.Error));
                     }
-                    
-                    return tagBuilder.Build(); 
+
+                    return tagBuilder.Build();
                 }
                 else
                 {
                     // Attribute
-                    
+
                     // TODO: Parse attributes - until then Consume to avoid infinite loop
                     _ = stringWalker.Consume();
                 }
@@ -227,17 +225,15 @@ public static class HtmlSyntaxTree
             var startingPositionIndex = stringWalker.PositionIndex;
 
             var tagNameBuilder = new StringBuilder();
-            
+
             stringWalker.WhileNotEndOfFile(() =>
             {
                 if (stringWalker.CheckForSubstringRange(
                         HtmlFacts.TAG_NAME_STOP_DELIMITERS))
-                {
                     return true;
-                }
 
                 tagNameBuilder.Append(stringWalker.CurrentCharacter);
-                
+
                 return false;
             });
 
@@ -261,10 +257,10 @@ public static class HtmlSyntaxTree
                             startingPositionIndex,
                             stringWalker.PositionIndex,
                             (byte)HtmlDecorationKind.Error));
-                    
+
                     // Fabricate a value for the string variable: 'tagName' so the
                     // rest of the file can still be parsed.
-                    tagName = 
+                    tagName =
                         $"__{nameof(textEditorHtmlDiagnosticBag.ReportTagNameMissing)}__";
                 }
             }
@@ -283,69 +279,69 @@ public static class HtmlSyntaxTree
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
-            
+
             List<TagSyntax> tagSyntaxes = new();
-            
+
             var textNodeBuilder = new StringBuilder();
 
             // Make a TagTextSyntax - HTML TextNode
             // if there was anything in the current builder
             void AddTextNode()
             {
-                if (textNodeBuilder.Length <= 0) 
+                if (textNodeBuilder.Length <= 0)
                     return;
-                
+
                 var tagTextSyntax = new TagTextSyntax(
                     ImmutableArray<AttributeTupleSyntax>.Empty,
-                    ImmutableArray<TagSyntax>.Empty, 
+                    ImmutableArray<TagSyntax>.Empty,
                     textNodeBuilder.ToString());
 
                 tagSyntaxes.Add(tagTextSyntax);
                 textNodeBuilder.Clear();
             }
-            
+
             stringWalker.WhileNotEndOfFile(() =>
             {
                 if (stringWalker.CheckForSubstring(
                         HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING))
-                {
                     return true;
-                }
 
-                if (stringWalker.CurrentCharacter == 
+                if (stringWalker.CurrentCharacter ==
                     HtmlFacts.OPEN_TAG_BEGINNING)
                 {
                     // If there is text in textNodeBuilder
                     // add a new TextNode to the List of TagSyntax
                     AddTextNode();
-                    
+
                     tagSyntaxes.Add(
                         ParseTag(
                             stringWalker,
                             textEditorHtmlDiagnosticBag,
                             injectedLanguageDefinition));
-                    
+
                     return false;
                 }
+
                 if (injectedLanguageDefinition is not null && stringWalker
                         .CheckForInjectedLanguageCodeBlockTag(injectedLanguageDefinition))
                 {
                     // If there is text in textNodeBuilder
                     // add a new TextNode to the List of TagSyntax
                     AddTextNode();
-                    
+
                     tagSyntaxes.AddRange(
                         ParseInjectedLanguageCodeBlock(
                             stringWalker,
                             textEditorHtmlDiagnosticBag,
                             injectedLanguageDefinition));
-                    
+
                     return false;
                 }
+
                 textNodeBuilder.Append(stringWalker.CurrentCharacter);
                 return false;
             });
-            
+
             if (stringWalker.CurrentCharacter == ParserFacts.END_OF_FILE)
             {
                 textEditorHtmlDiagnosticBag.ReportEndOfFileUnexpected(
@@ -354,21 +350,21 @@ public static class HtmlSyntaxTree
                         stringWalker.PositionIndex,
                         (byte)HtmlDecorationKind.Error));
             }
-            
+
             // If there is text in textNodeBuilder
             // add a new TextNode to the List of TagSyntax
             AddTextNode();
 
             return tagSyntaxes;
         }
-        
+
         public static List<TagSyntax> ParseInjectedLanguageCodeBlock(
             StringWalker stringWalker,
             TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
             InjectedLanguageDefinition injectedLanguageDefinition)
         {
             var injectedLanguageFragmentSyntaxes = new List<TagSyntax>();
-            
+
             var injectedLanguageFragmentSyntaxStartingPositionIndex = stringWalker.PositionIndex;
 
             // Track text span of the "@" sign (example in .razor files)

@@ -12,10 +12,10 @@ public partial class MenuDisplay : ComponentBase
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    
+
     [CascadingParameter]
     public DropdownKey DropdownKey { get; set; } = null!;
-    
+
     [Parameter]
     public IEnumerable<MenuOptionRecord> MenuOptionRecords { get; set; } = null!;
     [Parameter]
@@ -45,7 +45,7 @@ public partial class MenuDisplay : ComponentBase
             if (FocusOnAfterFirstRender)
                 await _menuDisplayElementReference.FocusAsync();
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 
@@ -54,14 +54,14 @@ public partial class MenuDisplay : ComponentBase
         _cachedMenuOptionRecords = MenuOptionRecords
             .ToArray();
     }
-    
+
     public async Task ReloadParametersAsync()
     {
         ReloadParameters();
 
         await InvokeAsync(StateHasChanged);
     }
-    
+
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         var keyDownEventRecord = new KeyDownEventRecord(
@@ -70,7 +70,7 @@ public partial class MenuDisplay : ComponentBase
             keyboardEventArgs.CtrlKey,
             keyboardEventArgs.ShiftKey,
             keyboardEventArgs.AltKey);
-        
+
         if (KeyboardKeyFacts.IsMovementKey(keyDownEventRecord) ||
             KeyboardKeyFacts.IsAlternateMovementKey(keyDownEventRecord))
         {
@@ -80,47 +80,36 @@ public partial class MenuDisplay : ComponentBase
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
                     if (_activeMenuOptionIndex is null &&
                         _cachedMenuOptionRecords.Length > 0)
-                    {
                         _activeMenuOptionIndex = 0;
-                    }
                     else if (_activeMenuOptionIndex < _cachedMenuOptionRecords.Length - 1)
-                    {
                         _activeMenuOptionIndex++;
-                    }
                     else if (_cachedMenuOptionRecords.Length > 0)
                     {
                         // Wrap around
                         _activeMenuOptionIndex = 0;
                     }
+
                     break;
                 case KeyboardKeyFacts.MovementKeys.ARROW_UP:
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
                     if (_activeMenuOptionIndex is null &&
                         _cachedMenuOptionRecords.Length > 0)
-                    {
                         _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
-                    }
                     else if (_activeMenuOptionIndex > 0)
-                    {
                         _activeMenuOptionIndex--;
-                    }
                     else if (_cachedMenuOptionRecords.Length > 0)
                     {
                         // Wrap around
                         _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
                     }
+
                     break;
                 case KeyboardKeyFacts.MovementKeys.HOME:
-                    if (_cachedMenuOptionRecords.Length > 0)
-                    {
-                        _activeMenuOptionIndex = 0;
-                    }
+                    if (_cachedMenuOptionRecords.Length > 0) _activeMenuOptionIndex = 0;
                     break;
                 case KeyboardKeyFacts.MovementKeys.END:
                     if (_cachedMenuOptionRecords.Length > 0)
-                    {
                         _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
-                    }
                     break;
             }
         }
@@ -144,7 +133,8 @@ public partial class MenuDisplay : ComponentBase
                             // After component is no longer rendered
                         }
                     }
-                    break;                    
+
+                    break;
             }
         }
 

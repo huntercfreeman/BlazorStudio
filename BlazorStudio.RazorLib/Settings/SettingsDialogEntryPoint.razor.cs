@@ -11,7 +11,7 @@ public partial class SettingsDialogEntryPoint : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private readonly DialogRecord _settingsDialog = new DialogRecord(
+    private readonly DialogRecord _settingsDialog = new(
         DialogKey.NewDialogKey(),
         "Settings",
         typeof(SettingsDialog),

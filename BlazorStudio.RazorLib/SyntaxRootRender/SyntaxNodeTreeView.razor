@@ -1,18 +1,20 @@
 ﻿@using Microsoft.CodeAnalysis
 @using Microsoft.CodeAnalysis.CSharp
 <div class="bstudio_syntax-node-tree-view">
-    <h5><em>@@SyntaxNode.ToFullString()</em></h5>
+    <h5>
+        <em>@@SyntaxNode.ToFullString()</em>
+    </h5>
 
     <ExpansionDisplay>
         <TitleRenderFragment>
             Change&nbsp;font size:<em>@(_preFontSize)px;</em>
         </TitleRenderFragment>
-        
+
         <BodyRenderFragment>
             <input type="number"
-                               @bind="_preFontSize"
-                               @bind:event="oninput"
-                               class="bstudio_input bstudio_input-number"/>
+                   @bind="_preFontSize"
+                   @bind:event="oninput"
+                   class="bstudio_input bstudio_input-number"/>
         </BodyRenderFragment>
     </ExpansionDisplay>
 
@@ -36,14 +38,14 @@
                              OnSpaceKeyDown="ThemeTreeViewOnSpaceKeyDown"
                              OnDoubleClick="SyntaxTreeViewOnDoubleClick"
                              IsExpandable="syntaxWrap => syntaxWrap.SyntaxTreeViewWrapperKind == SyntaxTreeViewWrapperKind.SyntaxNode">
-            
+
             <ItemRenderFragment Context="syntaxWrap">
                 @{
                     switch (syntaxWrap.SyntaxTreeViewWrapperKind)
                     {
                         case SyntaxTreeViewWrapperKind.SyntaxNode:
-                            var syntaxNode = (SyntaxNode) syntaxWrap.Item;
-                        
+                            var syntaxNode = (SyntaxNode)syntaxWrap.Item;
+
                             <span title="@syntaxNode.ToFullString()" style="height: 100%; display: inline-flex;">
                                 <span>
                                     @syntaxNode.Kind()
@@ -53,11 +55,11 @@
                                     @syntaxNode.ToFullString()
                                 </span>
                             </span>
-                            
+
                             break;
                         case SyntaxTreeViewWrapperKind.SyntaxToken:
-                            var syntaxToken = (SyntaxToken) syntaxWrap.Item;
-                            
+                            var syntaxToken = (SyntaxToken)syntaxWrap.Item;
+
                             <span title="@syntaxToken.ToFullString()" style="height: 100%; display: inline-flex;">
                                 <span>
                                     @syntaxToken.Kind()
@@ -67,7 +69,7 @@
                                     @syntaxToken.ToFullString()
                                 </span>
                             </span>
-                            
+
                             break;
                     }
                 }

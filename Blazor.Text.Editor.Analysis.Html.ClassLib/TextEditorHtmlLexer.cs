@@ -15,15 +15,15 @@ public class TextEditorHtmlLexer : ILexer
         var htmlSyntaxWalker = new HtmlSyntaxWalker();
 
         htmlSyntaxWalker.Visit(syntaxNodeRoot);
-        
+
         List<TextEditorTextSpan> textEditorTextSpans = new();
-        
+
         // Tag Names
         {
             textEditorTextSpans.AddRange(htmlSyntaxWalker.TagNameSyntaxes
                 .Select(tns => tns.TextEditorTextSpan));
         }
-        
+
         // InjectedLanguageFragmentSyntaxes
         {
             textEditorTextSpans.AddRange(htmlSyntaxWalker.InjectedLanguageFragmentSyntaxes

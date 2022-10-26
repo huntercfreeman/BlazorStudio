@@ -9,26 +9,25 @@ namespace BlazorStudio.RazorLib.Editor;
 
 public partial class TextEditorAutoCompleteMenu : ComponentBase
 {
-    [CascadingParameter(Name="SetShouldDisplayMenuAsync")]
+    [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
     public Func<TextEditorMenuKind, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public string AutoCompleteWordText { get; set; } = string.Empty;
-    
+
     private ElementReference? _textEditorAutoCompleteMenuElementReference;
 
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-        {
             await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None);
-        }
     }
-    
+
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords()
     {
         List<MenuOptionRecord> menuOptionRecords = new();
-        
+
         var copy = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
             AutoCompleteWordText,
             ImmutableList<MenuOptionRecord>.Empty,
@@ -36,24 +35,24 @@ public partial class TextEditorAutoCompleteMenu : ComponentBase
             MenuOptionKind.Update);
 
         menuOptionRecords.Add(copy);
-        
+
         var paste = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
             "AutoComplete 2",
             ImmutableList<MenuOptionRecord>.Empty,
             () => SelectMenuOption(PasteMenuOption),
             MenuOptionKind.Update);
-                
+
         menuOptionRecords.Add(paste);
 
         return menuOptionRecords.Any()
             ? menuOptionRecords
-            : new []
+            : new[]
             {
                 new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
                     "No Context Menu Options for this item",
-                    ImmutableList<MenuOptionRecord>.Empty, 
+                    ImmutableList<MenuOptionRecord>.Empty,
                     null,
-                    MenuOptionKind.Read)
+                    MenuOptionKind.Read),
             };
     }
 
@@ -65,12 +64,12 @@ public partial class TextEditorAutoCompleteMenu : ComponentBase
             await menuOptionAction();
         });
     }
-    
+
     private Task CopyMenuOption()
     {
         return Task.CompletedTask;
     }
-    
+
     private Task PasteMenuOption()
     {
         return Task.CompletedTask;

@@ -30,7 +30,7 @@ public partial class DropdownDisplay : FluxorComponent, IDisposable
         DropdownKind.Vertical => "position: relative;",
         DropdownKind.Horizontal => "position: relative; display: inline;",
         DropdownKind.Unset => string.Empty,
-        _ => throw new ApplicationException($"The {nameof(DropdownKind)}: '{DropdownKind}' was not recognized.")
+        _ => throw new ApplicationException($"The {nameof(DropdownKind)}: '{DropdownKind}' was not recognized."),
     };
 
     private void ClickedOutOfBoundsOnClick(MouseEventArgs mouseEventArgs)

@@ -7,10 +7,12 @@ public partial class QuickSelectDisplayEntry : ComponentBase
 {
     [CascadingParameter]
     public int ActiveEntryIndex { get; set; }
-    
-    [Parameter, EditorRequired]
+
+    [Parameter]
+    [EditorRequired]
     public IQuickSelectItem QuickSelectItem { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public int EntryIndex { get; set; }
 
     private string ActiveEntryCssClass => ActiveEntryIndex == EntryIndex

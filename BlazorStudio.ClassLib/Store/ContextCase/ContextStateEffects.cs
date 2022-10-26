@@ -10,13 +10,13 @@ public class ContextStateEffects
     {
         _contextStateWrap = contextStateWrap;
     }
-    
+
     [EffectMethod]
     public Task HandleKeymapEventAction(KeymapEventAction keymapEventAction,
         IDispatcher dispatcher)
     {
         var activeContextRecords = _contextStateWrap.Value.ActiveContextRecords;
-        
+
         foreach (var contextRecord in activeContextRecords)
         {
             if (contextRecord.Keymap.Map.TryGetValue(keymapEventAction.KeyDownEventRecord, out var command))
@@ -27,7 +27,7 @@ public class ContextStateEffects
                 break;
             }
         }
-        
+
         return Task.CompletedTask;
     }
 }

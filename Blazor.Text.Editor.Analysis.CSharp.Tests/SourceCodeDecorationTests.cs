@@ -26,58 +26,58 @@ public class SourceCodeDecorationTests
 
         var testTextSpans = new List<TestTextSpan>
         {
-            new TestTextSpan(
+            new(
                 "// Hello World! program",
                 0,
                 CSharpDecorationKind.Comment),
-            new TestTextSpan(
+            new(
                 "namespace",
                 25,
                 CSharpDecorationKind.Keyword),
-            new TestTextSpan(
+            new(
                 "HelloWorld",
                 35,
                 CSharpDecorationKind.None),
-            new TestTextSpan(
+            new(
                 "class",
                 54,
                 CSharpDecorationKind.Keyword),
-            new TestTextSpan(
+            new(
                 "Hello",
                 60,
                 CSharpDecorationKind.Type),
-            new TestTextSpan(
+            new(
                 "static",
                 86,
                 CSharpDecorationKind.Keyword),
-            new TestTextSpan(
+            new(
                 "void",
                 93,
                 CSharpDecorationKind.Keyword),
-            new TestTextSpan(
+            new(
                 "Main",
                 98,
                 CSharpDecorationKind.Method),
-            new TestTextSpan(
+            new(
                 "string",
                 103,
                 CSharpDecorationKind.Keyword),
-            new TestTextSpan(
+            new(
                 "args",
                 112,
                 CSharpDecorationKind.Parameter),
-            new TestTextSpan(
+            new(
                 "System.Console",
                 142,
                 CSharpDecorationKind.None),
-            new TestTextSpan(
+            new(
                 "WriteLine",
                 157,
                 CSharpDecorationKind.Method),
-            new TestTextSpan(
+            new(
                 "\"Hello World!\"",
                 167,
-                CSharpDecorationKind.StringLiteral)
+                CSharpDecorationKind.StringLiteral),
         };
 
         var input = @"// Hello World! program
@@ -113,7 +113,7 @@ namespace HelloWorld
 
             Assert.True(textTextSpanRichCharacters
                 .All(x =>
-                    ((CSharpDecorationKind)x.DecorationByte) == testTextSpan.CSharpDecorationKind));
+                    (CSharpDecorationKind)x.DecorationByte == testTextSpan.CSharpDecorationKind));
 
             var stringifiedTestTextSpan = new string(textTextSpanRichCharacters
                 .Select(x => x.Value)

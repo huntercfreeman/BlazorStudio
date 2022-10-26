@@ -13,11 +13,14 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Dimensions TopDimensions { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Dimensions BottomDimensions { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Func<Task> ReRenderFunc { get; set; } = null!;
 
     private Func<MouseEventArgs, Task>? _dragStateEventHandler;
@@ -45,17 +48,14 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
 
             if (!success)
                 return;
-        
+
             try
             {
                 var mouseEventArgs = DragStateWrap.Value.MouseEventArgs;
 
                 if (_dragStateEventHandler is not null)
                 {
-                    if (_previousDragMouseEventArgs is not null)
-                    {
-                        await _dragStateEventHandler(mouseEventArgs);
-                    }
+                    if (_previousDragMouseEventArgs is not null) await _dragStateEventHandler(mouseEventArgs);
 
                     _previousDragMouseEventArgs = mouseEventArgs;
 
@@ -80,31 +80,33 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
     {
         var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
 
-        var topHeightPixelOffset = TopDimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var topHeightPixelOffset =
+            TopDimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (topHeightPixelOffset is null)
         {
-            topHeightPixelOffset = new()
+            topHeightPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             TopDimensions.HeightCalc.Add(topHeightPixelOffset);
         }
 
         topHeightPixelOffset.Value += deltaY;
-        
-        var bottomHeightPixelOffset = BottomDimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+
+        var bottomHeightPixelOffset =
+            BottomDimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (bottomHeightPixelOffset is null)
         {
-            bottomHeightPixelOffset = new()
+            bottomHeightPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             BottomDimensions.HeightCalc.Add(bottomHeightPixelOffset);

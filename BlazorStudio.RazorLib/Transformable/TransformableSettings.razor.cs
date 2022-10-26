@@ -8,9 +8,9 @@ namespace BlazorStudio.RazorLib.Transformable;
 
 public partial class TransformableSettings : FluxorComponent
 {
-    [Inject] 
+    [Inject]
     private IState<TransformableOptionsState> TransformableOptionsStateWrap { get; set; } = null!;
-    [Inject] 
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private int _resizeHandleSizeInPixels;
@@ -24,14 +24,14 @@ public partial class TransformableSettings : FluxorComponent
             Dispatcher.Dispatch(new SetTransformableOptionsAction(new DimensionUnit()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = _resizeHandleSizeInPixels
+                Value = _resizeHandleSizeInPixels,
             }));
         }
     }
 
     protected override void OnParametersSet()
     {
-        _resizeHandleSizeInPixels = (int) TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value;
+        _resizeHandleSizeInPixels = (int)TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value;
 
         base.OnParametersSet();
     }

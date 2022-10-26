@@ -1,8 +1,8 @@
 ﻿@using BlazorStudio.ClassLib.FileSystem.Interfaces
 <div class="bstudio_input-file-dialog">
-        @if (_isInitialized)
-        {
-            <TreeViewWrapDisplay ShouldDispose="false"
+    @if (_isInitialized)
+    {
+        <TreeViewWrapDisplay ShouldDispose="false"
                              TreeViewWrapKey="_inputFileTreeViewKey"
                              T="IAbsoluteFilePath"
                              RootItems="_rootAbsoluteFilePaths"
@@ -15,83 +15,83 @@
                              StyleString="height: 100%;"
                              BodyCssClassAttribute="@BodyCssClassString">
 
-                <ItemRenderFragment>
-                    <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
-                        @absoluteFilePath.FilenameWithExtension
-                    </span>
-                </ItemRenderFragment>
-                
-                <OnContextMenuRenderFragment Context="contextMenuEventDto">
-                    
-                    <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
+            <ItemRenderFragment>
+                <span title="@absoluteFilePath.GetAbsoluteFilePathString()">
+                    @absoluteFilePath.FilenameWithExtension
+                </span>
+            </ItemRenderFragment>
 
-                    <MenuDisplay MenuOptionRecords="GetMenuOptionRecords(contextMenuEventDto)"
-                                 ShouldCategorizeByMenuOptionKind="true"
-                                 FocusAfterTarget="contextMenuEventDto.FocusAfterTarget" />
+            <OnContextMenuRenderFragment Context="contextMenuEventDto">
 
-                </OnContextMenuRenderFragment>
+                <em>@contextMenuEventDto.Item.FilenameWithExtension</em>
 
-                <HeaderRenderFragment Context="activeItems">
-                    <div class="bstudio_input-file-dialog-header">
+                <MenuDisplay MenuOptionRecords="GetMenuOptionRecords(contextMenuEventDto)"
+                             ShouldCategorizeByMenuOptionKind="true"
+                             FocusAfterTarget="contextMenuEventDto.FocusAfterTarget"/>
+
+            </OnContextMenuRenderFragment>
+
+            <HeaderRenderFragment Context="activeItems">
+                <div class="bstudio_input-file-dialog-header">
+                    @foreach (var activeItem in activeItems)
+                    {
+                        @activeItem.GetAbsoluteFilePathString()
+                    }
+                </div>
+            </HeaderRenderFragment>
+
+            <FooterRenderFragment Context="activeItems">
+                @if (ShowFooter)
+                {
+                    <div class="bstudio_input-file-tree-view-footer">
                         @foreach (var activeItem in activeItems)
                         {
-                            @activeItem.GetAbsoluteFilePathString()
+                            <div style="white-space: nowrap; overflow-x: auto;">@activeItem.FilenameWithExtension</div>
                         }
-                    </div>
-                </HeaderRenderFragment>
-                
-                <FooterRenderFragment Context="activeItems">
-                    @if (ShowFooter)
-                    {
-                        <div class="bstudio_input-file-tree-view-footer">
-                            @foreach (var activeItem in activeItems)
-                            {
-                                <div style="white-space: nowrap; overflow-x: auto;">@activeItem.FilenameWithExtension</div>
-                            }
 
-                            <div class="bstudio_input-file-dialog-control-buttons">
-                                
-                                @{
-                                    var isValidSelection = activeItems[0].IsDirectory;
+                        <div class="bstudio_input-file-dialog-control-buttons">
 
-                                    if (IsValidSelectionOverrideFunc is not null)
-                                    {
-                                        isValidSelection = IsValidSelectionOverrideFunc.Invoke(activeItems);
-                                    }
+                            @{
+                                var isValidSelection = activeItems[0].IsDirectory;
 
-                                    if (isValidSelection)
-                                    {
-                                        <button class="btn btn-primary" @onclick="() => ConfirmOnClick(activeItems)">
-                                            Confirm
-                                            <span class="pte_unselectable" style="visibility: hidden;">a Directory</span>
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button disabled class="btn btn-primary">
-                                            @if (InvalidSelectionTextOverride is not null)
-                                            {
-                                                <text>@InvalidSelectionTextOverride</text>
-                                            }
-                                            else
-                                            {
-                                                <text>Choose a Directory</text>
-                                            }
-                                        </button>
-                                    }
+                                if (IsValidSelectionOverrideFunc is not null)
+                                {
+                                    isValidSelection = IsValidSelectionOverrideFunc.Invoke(activeItems);
                                 }
 
-                                <button class="btn btn-warning" style="margin-left: 6px;" @onclick="CancelOnClick">
-                                    Cancel
-                                </button>
-                            </div>
+                                if (isValidSelection)
+                                {
+                                    <button class="btn btn-primary" @onclick="() => ConfirmOnClick(activeItems)">
+                                        Confirm
+                                        <span class="pte_unselectable" style="visibility: hidden;">a Directory</span>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button disabled class="btn btn-primary">
+                                        @if (InvalidSelectionTextOverride is not null)
+                                        {
+                                            <text>@InvalidSelectionTextOverride</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Choose a Directory</text>
+                                        }
+                                    </button>
+                                }
+                            }
+
+                            <button class="btn btn-warning" style="margin-left: 6px;" @onclick="CancelOnClick">
+                                Cancel
+                            </button>
                         </div>
-                    }
-                </FooterRenderFragment>
-            </TreeViewWrapDisplay>
-        }
-        else
-        {
-            <div>Loading...</div>
-        }
-    </div>
+                    </div>
+                }
+            </FooterRenderFragment>
+        </TreeViewWrapDisplay>
+    }
+    else
+    {
+        <div>Loading...</div>
+    }
+</div>

@@ -6,6 +6,7 @@ namespace BlazorStudio.RazorLib.Terminal;
 
 public partial class TerminalTabs : ComponentBase
 {
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public ImmutableList<TerminalEntry> TerminalEntries { get; set; } = null!;
 }

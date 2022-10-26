@@ -6,7 +6,7 @@ public static class KeyboardKeyFacts
     {
         return IsMetaKey(onKeyDownEventArgs.Key);
     }
-    
+
     public static bool IsMetaKey(string key)
     {
         if (key.Length > 1)
@@ -28,7 +28,7 @@ public static class KeyboardKeyFacts
                 return false;
         }
     }
-    
+
     public static bool IsPunctuationCharacter(char character)
     {
         switch (character)
@@ -61,7 +61,7 @@ public static class KeyboardKeyFacts
         public const string DELETE = "Delete";
         public const string F10 = "F10";
     }
-    
+
     public static class WhitespaceCharacters
     {
         public const char TAB = '\t';
@@ -69,7 +69,7 @@ public static class KeyboardKeyFacts
         public const char NEW_LINE = '\n';
         public const char SPACE = ' ';
     }
-    
+
     public static bool IsWhitespaceCode(string code)
     {
         switch (code)
@@ -84,16 +84,16 @@ public static class KeyboardKeyFacts
         }
     }
 
-    
     public static class WhitespaceCodes
     {
         public const string TAB_CODE = "Tab";
+
         // TODO: Get CARRIAGE_RETURN_CODE code
         public const string CARRIAGE_RETURN_CODE = "";
         public const string ENTER_CODE = "Enter";
         public const string SPACE_CODE = "Space";
     }
-    
+
     public static class PunctuationCharacters
     {
         public const char OPEN_CURLY_BRACE = '{';
@@ -112,7 +112,7 @@ public static class KeyboardKeyFacts
         public const char FORWARD_SLASH = '/';
         public const char BACK_SLASH = '\\';
     }
-    
+
     public static class MovementKeys
     {
         public const string ARROW_LEFT = "ArrowLeft";
@@ -160,9 +160,9 @@ public static class KeyboardKeyFacts
         public static readonly KeyboardKeyCode KeyY = new("y", "KeyY");
         public static readonly KeyboardKeyCode KeyZ = new("z", "KeyZ");
     }
-    
+
     public static KeyboardKeyCode GetLetterKeyCode(char character)
-    {        
+    {
         var letterKeyCode = character switch
         {
             'a' => LetterKeyCodes.KeyA,
@@ -191,7 +191,7 @@ public static class KeyboardKeyFacts
             'x' => LetterKeyCodes.KeyX,
             'y' => LetterKeyCodes.KeyY,
             'z' => LetterKeyCodes.KeyZ,
-            _ => throw new ApplicationException($"Unrecognized character input: '{character}'")
+            _ => throw new ApplicationException($"Unrecognized character input: '{character}'"),
         };
 
         return letterKeyCode with { IsLower = char.IsLower(character) };
@@ -199,30 +199,31 @@ public static class KeyboardKeyFacts
 
     public static bool CheckIsAlternateContextMenuEvent(KeyDownEventRecord keyDownEventRecord)
     {
-        string keyOne = "F10";
-        string keyTwo = "f10";
+        var keyOne = "F10";
+        var keyTwo = "f10";
 
         return (keyDownEventRecord.Key == keyOne || keyDownEventRecord.Key == keyTwo)
                && keyDownEventRecord.ShiftWasPressed;
     }
-    
-    public static bool CheckIsAlternateContextMenuEvent(string key, string code, bool shiftWasPressed, bool altWasPressed)
-    {
-        string keyOne = "F10";
-        string keyTwo = "f10";
 
-        var wasShiftF10 = (key == keyOne || key == keyTwo)  
+    public static bool CheckIsAlternateContextMenuEvent(string key, string code, bool shiftWasPressed,
+        bool altWasPressed)
+    {
+        var keyOne = "F10";
+        var keyTwo = "f10";
+
+        var wasShiftF10 = (key == keyOne || key == keyTwo)
                           && shiftWasPressed;
-        
-        var wasAltPeriod = (key == ".")
-                          && altWasPressed;
+
+        var wasAltPeriod = key == "."
+                           && altWasPressed;
 
         return wasShiftF10 || wasAltPeriod;
     }
-    
+
     public static bool CheckIsContextMenuEvent(string key, string code, bool shiftWasPressed, bool altWasPressed)
     {
-        string keyOne = "ContextMenu";
+        var keyOne = "ContextMenu";
 
         return key == keyOne ||
                CheckIsAlternateContextMenuEvent(key, code, shiftWasPressed, altWasPressed);
@@ -243,7 +244,7 @@ public static class KeyboardKeyFacts
                 return false;
         }
     }
-    
+
     public static bool IsMovementKey(string key)
     {
         switch (key)
@@ -259,7 +260,7 @@ public static class KeyboardKeyFacts
                 return false;
         }
     }
-    
+
     public static bool IsAlternateMovementKey(KeyDownEventRecord onKeyDownEventArgs)
     {
         switch (onKeyDownEventArgs.Key)
@@ -286,7 +287,7 @@ public static class KeyboardKeyFacts
                 return ' ';
             case WhitespaceCodes.CARRIAGE_RETURN_CODE:
                 return '\r';
-            default: 
+            default:
                 throw new ApplicationException($"Unrecognized Whitespace code of: {code}");
         }
     }

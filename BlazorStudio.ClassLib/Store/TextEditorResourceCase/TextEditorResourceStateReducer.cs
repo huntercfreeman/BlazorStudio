@@ -11,9 +11,7 @@ public class TextEditorResourceStateReducer
     {
         if (inTextEditorResourceState.ResourceMap
             .ContainsKey(setTextEditorResourceStateAction.TextEditorKey))
-        {
             return inTextEditorResourceState;
-        }
 
         var nextMap =
             inTextEditorResourceState.ResourceMap
@@ -23,7 +21,7 @@ public class TextEditorResourceStateReducer
 
         return inTextEditorResourceState with
         {
-            ResourceMap = nextMap
+            ResourceMap = nextMap,
         };
     }
 }

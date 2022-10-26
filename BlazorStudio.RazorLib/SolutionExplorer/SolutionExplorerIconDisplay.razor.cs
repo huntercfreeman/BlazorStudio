@@ -5,6 +5,7 @@ namespace BlazorStudio.RazorLib.SolutionExplorer;
 
 public partial class SolutionExplorerIconDisplay : ComponentBase
 {
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public IAbsoluteFilePath AbsoluteFilePath { get; set; } = null!;
 }

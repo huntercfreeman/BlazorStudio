@@ -5,7 +5,7 @@ namespace Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxItems;
 public class TagNameSyntax
 {
     public TagNameSyntax(
-        string value, 
+        string value,
         TextEditorTextSpan textEditorTextSpan)
     {
         Value = value;

@@ -5,10 +5,11 @@ namespace BlazorStudio.RazorLib.Shared;
 
 public partial class ExplorersDisplay : ComponentBase
 {
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Dimensions ExplorersDimensions { get; set; } = null!;
 
-    private Dimensions _solutionExplorerDimensions = new Dimensions
+    private Dimensions _solutionExplorerDimensions = new()
     {
         DimensionsPositionKind = DimensionsPositionKind.Static,
         WidthCalc = new List<DimensionUnit>
@@ -16,25 +17,25 @@ public partial class ExplorersDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 100
-            }
+                Value = 100,
+            },
         },
         HeightCalc = new List<DimensionUnit>
         {
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 50
+                Value = 50,
             },
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -2.5
+                Value = -2.5,
             },
-        }
+        },
     };
 
-    private Dimensions _folderExplorerDimensions = new Dimensions
+    private Dimensions _folderExplorerDimensions = new()
     {
         DimensionsPositionKind = DimensionsPositionKind.Static,
         WidthCalc = new List<DimensionUnit>
@@ -42,22 +43,22 @@ public partial class ExplorersDisplay : ComponentBase
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 100
-            }
+                Value = 100,
+            },
         },
         HeightCalc = new List<DimensionUnit>
         {
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 50
+                Value = 50,
             },
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -2.5
+                Value = -2.5,
             },
-        }
+        },
     };
 
     private async Task ReRender()

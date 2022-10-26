@@ -8,5 +8,5 @@ public enum DecorationKind
     Parameter,
     StringLiteral,
     Keyword,
-    Comment
+    Comment,
 }

@@ -17,22 +17,29 @@ public static class TaskModelManagerService
 
     public static ImmutableArray<ITaskModel> ActiveTaskModels { get; private set; } = ImmutableArray<ITaskModel>.Empty;
     public static ImmutableArray<ITaskModel> FailedTaskModels { get; private set; } = ImmutableArray<ITaskModel>.Empty;
-    public static ImmutableArray<ITaskModel> SuccessfulTaskModels { get; private set; } = ImmutableArray<ITaskModel>.Empty;
-    public static ImmutableArray<ITaskModel> SeeminglyUnresponsiveTaskModels { get; private set; } = ImmutableArray<ITaskModel>.Empty;
+    public static ImmutableArray<ITaskModel> SuccessfulTaskModels { get; private set; } =
+        ImmutableArray<ITaskModel>.Empty;
+    public static ImmutableArray<ITaskModel> SeeminglyUnresponsiveTaskModels { get; private set; } =
+        ImmutableArray<ITaskModel>.Empty;
 
     public static event EventHandler<EventArgs?>? OnTasksStateHasChangedEventHandler;
     public static event EventHandler<EventArgs?>? OnTaskSeemsUnresponsiveEventHandler;
 
-    public static async Task<ITaskModel> EnqueueTaskModelAsync(Func<CancellationToken, Task> taskFunc, string taskTitle, bool isBackgroundTask, TimeSpan lifetimeUntilSeemsUnresponsive, Func<Exception, RichErrorModel?>? richErrorModelOverrideFunc = null)
+    public static async Task<ITaskModel> EnqueueTaskModelAsync(Func<CancellationToken, Task> taskFunc, string taskTitle,
+        bool isBackgroundTask, TimeSpan lifetimeUntilSeemsUnresponsive,
+        Func<Exception, RichErrorModel?>? richErrorModelOverrideFunc = null)
     {
-        return await FireAndForgetAsync(taskFunc, taskTitle, isBackgroundTask, lifetimeUntilSeemsUnresponsive, richErrorModelOverrideFunc);
+        return await FireAndForgetAsync(taskFunc, taskTitle, isBackgroundTask, lifetimeUntilSeemsUnresponsive,
+            richErrorModelOverrideFunc);
     }
 
-    private static async Task<ITaskModel> FireAndForgetAsync(Func<CancellationToken, Task> taskFunc, string taskTitle, bool isBackgroundTask, TimeSpan lifetimeUntilSeemsUnresponsive, Func<Exception, RichErrorModel?>? richErrorModelOverrideFunc = null)
+    private static async Task<ITaskModel> FireAndForgetAsync(Func<CancellationToken, Task> taskFunc, string taskTitle,
+        bool isBackgroundTask, TimeSpan lifetimeUntilSeemsUnresponsive,
+        Func<Exception, RichErrorModel?>? richErrorModelOverrideFunc = null)
     {
         CancellationTokenSource cancellationTokenSource = new();
 
-        CancellationToken cancellationToken = cancellationTokenSource.Token;
+        var cancellationToken = cancellationTokenSource.Token;
 
         var taskModelKey = new TaskModelKey(Guid.NewGuid(), taskTitle);
 
@@ -54,13 +61,13 @@ public static class TaskModelManagerService
                 await Task.WhenAny(new Task[]
                 {
                     task,
-                    unresponsiveTask
+                    unresponsiveTask,
                 });
 
                 if (!task.IsCompleted)
                 {
                     await AddToSeeminglyUnresponsiveTaskModelsDictionary(taskModel.Key, taskModel);
-                    
+
                     await RemoveFromActiveTaskModelsDictionary(taskModel.Key);
 
                     await task.ContinueWith(async (previousTask) =>
@@ -69,16 +76,10 @@ public static class TaskModelManagerService
                     });
                 }
                 else if (task.Exception is not null)
-                {
                     await HandleException(task.Exception, taskModel, richErrorModelOverrideFunc);
-                }
                 else
                 {
-                    if (SuccessfulTaskModelsDictionary.Count >= 99)
-                    {
-                        await ClearSuccessfulTaskModels();
-                        
-                    }
+                    if (SuccessfulTaskModelsDictionary.Count >= 99) await ClearSuccessfulTaskModels();
 
                     await AddToSuccessfulTaskModelsDictionary(taskModel.Key, taskModel);
                 }
@@ -99,10 +100,7 @@ public static class TaskModelManagerService
         // If in the instant between starting the task and Adding taskModel to
         // the dictionary the task completed and therefore was removed THEN
         // added therefore the taskModel must be removed
-        if (taskModel.Task.IsCompleted)
-        {
-            await RemoveFromActiveTaskModelsDictionary(taskModel.Key);
-        }
+        if (taskModel.Task.IsCompleted) await RemoveFromActiveTaskModelsDictionary(taskModel.Key);
 
         return taskModel;
     }
@@ -113,10 +111,7 @@ public static class TaskModelManagerService
     {
         RichErrorModel? richErrorModel = null;
 
-        if (richErrorModelOverrideFunc is not null)
-        {
-            richErrorModel = richErrorModelOverrideFunc(e);
-        }
+        if (richErrorModelOverrideFunc is not null) richErrorModel = richErrorModelOverrideFunc(e);
 
         richErrorModel ??= new RichErrorModel(
             e.Message,
@@ -149,7 +144,8 @@ public static class TaskModelManagerService
         }
     }
 
-    private static async Task AddToSeeminglyUnresponsiveTaskModelsDictionary(TaskModelKey taskModelKey, TaskModel taskModel)
+    private static async Task AddToSeeminglyUnresponsiveTaskModelsDictionary(TaskModelKey taskModelKey,
+        TaskModel taskModel)
     {
         try
         {
@@ -224,7 +220,7 @@ public static class TaskModelManagerService
             ActiveTaskModelsDictionarySemaphoreSlim.Release();
         }
     }
-    
+
     private static async Task RemoveFromSeeminglyUnresponsiveTaskModelsDictionary(TaskModelKey taskModelKey)
     {
         try
@@ -249,7 +245,7 @@ public static class TaskModelManagerService
         try
         {
             await ActiveTaskModelsDictionarySemaphoreSlim.WaitAsync();
-            
+
             ActiveTaskModelsDictionary.Clear();
 
             FailedTaskModelsDictionary.Clear();
@@ -324,7 +320,8 @@ public static class TaskModelManagerService
 
     private class TaskModel : ITaskModel
     {
-        public TaskModel(TaskModelKey key, TimeSpan lifetimeUntilSeemsUnresponsive, CancellationTokenSource cancellationTokenSource, bool isBackgroundTask)
+        public TaskModel(TaskModelKey key, TimeSpan lifetimeUntilSeemsUnresponsive,
+            CancellationTokenSource cancellationTokenSource, bool isBackgroundTask)
         {
             Key = key;
             LifetimeUntilSeemsUnresponsive = lifetimeUntilSeemsUnresponsive;

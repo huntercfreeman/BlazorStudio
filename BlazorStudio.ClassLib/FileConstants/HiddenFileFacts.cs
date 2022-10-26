@@ -19,7 +19,7 @@ public static class HiddenFileFacts
         return extensionNoPeriod switch
         {
             ExtensionNoPeriodFacts.C_SHARP_PROJECT => new[] { Bin, Obj }.ToImmutableArray(),
-            _ => ImmutableArray<string>.Empty 
+            _ => ImmutableArray<string>.Empty,
         };
     }
 }

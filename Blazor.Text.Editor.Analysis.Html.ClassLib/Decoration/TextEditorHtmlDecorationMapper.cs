@@ -31,7 +31,7 @@ public class TextEditorHtmlDecorationMapper : IDecorationMapper
             HtmlDecorationKind.InjectedLanguageType => "bte_type",
             HtmlDecorationKind.InjectedLanguageStringLiteral => "bte_string-literal",
             _ => throw new ApplicationException(
-                $"The {nameof(HtmlDecorationKind)}: {decoration} was not recognized.")
+                $"The {nameof(HtmlDecorationKind)}: {decoration} was not recognized."),
         };
     }
 }

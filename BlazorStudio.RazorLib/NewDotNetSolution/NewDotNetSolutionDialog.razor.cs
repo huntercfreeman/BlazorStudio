@@ -37,7 +37,8 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
     private string InterpolatedCommand => $"{dotnetNewSlnCommand} -o {_solutionName}";
 
-    private void InputFileDialogOnEnterKeyDownOverride((IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
+    private void InputFileDialogOnEnterKeyDownOverride(
+        (IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
     {
         if (_disableExecuteButton || _finishedCreatingSolution)
             return;
@@ -48,8 +49,9 @@ public partial class NewDotNetSolutionDialog : ComponentBase
             InvokeAsync(StateHasChanged);
         }
     }
-    
-    private void InputFileDialogChooseContextMenuOption(TreeViewContextMenuEventDto<IAbsoluteFilePath> treeViewContextMenuEventDto)
+
+    private void InputFileDialogChooseContextMenuOption(
+        TreeViewContextMenuEventDto<IAbsoluteFilePath> treeViewContextMenuEventDto)
     {
         if (_disableExecuteButton || _finishedCreatingSolution)
             return;
@@ -60,24 +62,20 @@ public partial class NewDotNetSolutionDialog : ComponentBase
             InvokeAsync(StateHasChanged);
         }
     }
-    
+
     private string GetAbsoluteFilePathString()
     {
         var builder = new StringBuilder();
 
-        if (InputFileDialogSelection is null || 
+        if (InputFileDialogSelection is null ||
             !InputFileDialogSelection.IsDirectory)
-        {
             builder.Append($"{{pick a directory}}{Path.DirectorySeparatorChar}");
-        }
         else
-        {
             builder.Append(InputFileDialogSelection.GetAbsoluteFilePathString());
-        }
 
         return builder.ToString();
     }
-    
+
     private void DispatchTerminalNewSolutionOnClick()
     {
         void OnStart()
@@ -100,9 +98,10 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
             var createdSolutionContainingDirectory = new AbsoluteFilePathDotNet(
                 InputFileDialogSelection.GetAbsoluteFilePathString() + _solutionName, true, null);
-            
+
             var createdSolutionFile = new AbsoluteFilePathDotNet(
-                createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + '.' + ExtensionNoPeriodFacts.DOT_NET_SOLUTION, false, null);
+                createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + '.' +
+                ExtensionNoPeriodFacts.DOT_NET_SOLUTION, false, null);
 
             Dispatcher.Dispatch(new SetFolderExplorerAction(createdSolutionContainingDirectory));
             Dispatcher.Dispatch(new SetSolutionExplorerAction(createdSolutionFile, SequenceKey.NewSequenceKey()));

@@ -7,6 +7,5 @@ public record ThemeState(ThemeKey ThemeKey)
 {
     public ThemeState() : this(ThemeFacts.HighContrast.Dark.BstudioHighContrastDarkTheme)
     {
-
     }
 }

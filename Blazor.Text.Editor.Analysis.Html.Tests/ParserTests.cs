@@ -12,34 +12,34 @@ public class ParserTests
         var content = @"some text";
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
-        
+
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
 
         Assert.Single(syntaxNodeRoot.ChildTagSyntaxes);
 
         var childTagSyntax = syntaxNodeRoot.ChildTagSyntaxes.Single();
-        
+
         Assert.IsType<TagTextSyntax>(childTagSyntax);
-        
+
         Assert.Equal(
-            content, 
+            content,
             ((TagTextSyntax)childTagSyntax).Value);
         return Task.CompletedTask;
     }
-    
+
     [Fact]
     public Task TagWithChildContentOfText()
     {
-        var textNodeContent = "Apple Sauce"; 
-        
+        var textNodeContent = "Apple Sauce";
+
         var content = $@"<div>{textNodeContent}</div>";
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
-        
+
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
         return Task.CompletedTask;
     }
-    
+
     [Fact]
     public Task ErroneousInfiniteLoopInThisTestCase()
     {
@@ -47,17 +47,17 @@ public class ParserTests
             @"C:\Users\hunte\source\BlazorCrudApp\BlazorCrudApp.WebAssembly\Client\Shared\MainLayout.razor");
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
-        
+
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
         return Task.CompletedTask;
     }
-    
+
     [Fact]
     public async Task Test3()
     {
         var content = @"some text
 <div>Apple Sauce</div>";
-        
+
         /*
          * Expected:
          *     -TextNode = 'some text'
@@ -67,17 +67,17 @@ public class ParserTests
 
         var lexer = new TextEditorHtmlLexer();
 
-        var textEditorTextSpans = 
+        var textEditorTextSpans =
             await lexer.Lex(content);
     }
-    
+
     [Fact]
     public async Task Test4()
     {
         var content =
             File.ReadAllText(
                 @"C:\Users\hunte\source\BlazorCrudApp\BlazorCrudApp.WebAssembly\Client\Shared\MainLayout.razor");
-        
+
         /*
          * Expected:
          *     -TextNode = 'some text'
@@ -87,7 +87,7 @@ public class ParserTests
 
         var lexer = new TextEditorHtmlLexer();
 
-        var textEditorTextSpans = 
+        var textEditorTextSpans =
             await lexer.Lex(content);
     }
 }

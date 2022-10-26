@@ -46,7 +46,7 @@
         <ShouldRenderBoundary ShouldRenderFunc="(_) => false">
             <CascadingValue Value="DialogRecord">
                 <DynamicComponent Type="DialogRecord.Type"
-                                  Parameters="DialogRecord.Parameters ?? new()"/>
+                                  Parameters="DialogRecord.Parameters ?? new Dictionary<string, object?>()"/>
             </CascadingValue>
         </ShouldRenderBoundary>
     </div>

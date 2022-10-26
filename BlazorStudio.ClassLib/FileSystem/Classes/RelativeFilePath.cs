@@ -9,7 +9,7 @@ public class RelativeFilePath : IRelativeFilePath
     private readonly StringBuilder _tokenBuilder = new();
 
     public RelativeFilePath(List<IFilePath> directories,
-        string fileNameNoExtension, 
+        string fileNameNoExtension,
         string extensionNoPeriod,
         bool isDirectory)
     {
@@ -27,7 +27,7 @@ public class RelativeFilePath : IRelativeFilePath
         {
             while (_position < relativeFilePathString.Length)
             {
-                char currentCharacter = relativeFilePathString[_position++];
+                var currentCharacter = relativeFilePathString[_position++];
 
                 /*
                  * System.IO.Path.DirectorySeparatorChar is not a constant character
@@ -35,17 +35,15 @@ public class RelativeFilePath : IRelativeFilePath
                  */
                 if (currentCharacter == Path.DirectorySeparatorChar ||
                     currentCharacter == Path.AltDirectorySeparatorChar)
-                {
                     break;
-                }
             }
         }
-        
+
         IsDirectory = isDirectory;
-        
+
         while (_position < relativeFilePathString.Length)
         {
-            char currentCharacter = relativeFilePathString[_position++];
+            var currentCharacter = relativeFilePathString[_position++];
 
             /*
              * System.IO.Path.DirectorySeparatorChar is not a constant character
@@ -53,13 +51,9 @@ public class RelativeFilePath : IRelativeFilePath
              */
             if (currentCharacter == Path.DirectorySeparatorChar ||
                 currentCharacter == Path.AltDirectorySeparatorChar)
-            {
                 ConsumeTokenAsDirectory();
-            }
             else
-            {
                 _tokenBuilder.Append(currentCharacter);
-            }
         }
 
         var fileNameWithExtension = _tokenBuilder.ToString();
@@ -80,10 +74,7 @@ public class RelativeFilePath : IRelativeFilePath
         {
             StringBuilder fileNameBuilder = new();
 
-            foreach (var split in splitFileName.SkipLast(1))
-            {
-                fileNameBuilder.Append($"{split}.");
-            }
+            foreach (var split in splitFileName.SkipLast(1)) fileNameBuilder.Append($"{split}.");
 
             fileNameBuilder.Remove(fileNameBuilder.Length - 1, 1);
 
@@ -94,7 +85,7 @@ public class RelativeFilePath : IRelativeFilePath
 
     public void ConsumeTokenAsDirectory()
     {
-        IFilePath directoryFilePath = (IFilePath)new RelativeFilePath(new List<IFilePath>(Directories),
+        var directoryFilePath = (IFilePath)new RelativeFilePath(new List<IFilePath>(Directories),
             _tokenBuilder.ToString(),
             Path.DirectorySeparatorChar.ToString(),
             true);
@@ -108,10 +99,7 @@ public class RelativeFilePath : IRelativeFilePath
     {
         StringBuilder absoluteFilePathStringBuilder = new();
 
-        if (Directories.Any())
-        {
-            absoluteFilePathStringBuilder.Append(Directories.Select(d => d.FilenameWithExtension));
-        }
+        if (Directories.Any()) absoluteFilePathStringBuilder.Append(Directories.Select(d => d.FilenameWithExtension));
 
         absoluteFilePathStringBuilder.Append(FilenameWithExtension);
 
@@ -123,5 +111,8 @@ public class RelativeFilePath : IRelativeFilePath
     public List<IFilePath> Directories { get; } = new();
     public string FileNameNoExtension { get; protected set; }
     public string ExtensionNoPeriod { get; protected set; }
-    public string FilenameWithExtension => FileNameNoExtension + (IsDirectory ? Path.DirectorySeparatorChar.ToString() : $".{ExtensionNoPeriod}");
+    public string FilenameWithExtension => FileNameNoExtension +
+                                           (IsDirectory
+                                               ? Path.DirectorySeparatorChar.ToString()
+                                               : $".{ExtensionNoPeriod}");
 }

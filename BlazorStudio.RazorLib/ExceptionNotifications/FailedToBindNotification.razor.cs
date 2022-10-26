@@ -9,6 +9,7 @@ public partial class FailedToBindNotification : ComponentBase
     [CascadingParameter]
     public NotificationRecord NotificationRecord { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public IAbsoluteFilePath ProjectAbsoluteFilePath { get; set; } = null!;
 }

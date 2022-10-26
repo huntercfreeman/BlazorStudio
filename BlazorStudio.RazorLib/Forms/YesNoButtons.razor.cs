@@ -17,12 +17,9 @@ public partial class YesNoButtons : ComponentBase
     {
         if (firstRender)
         {
-            if (AutoFocusNoButton)
-            {
-                await _noButtonElementReference.FocusAsync();
-            }
+            if (AutoFocusNoButton) await _noButtonElementReference.FocusAsync();
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 }

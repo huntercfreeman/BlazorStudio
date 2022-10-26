@@ -54,8 +54,10 @@
                                         null,
                                         solutionExplorerState.SolutionAbsoluteFilePath,
                                         null,
-                                        null, () => { SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty);
-                                                        return Task.CompletedTask;
+                                        null, () =>
+                                        {
+                                            SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty);
+                                            return Task.CompletedTask;
                                         },
                                         null,
                                         default);

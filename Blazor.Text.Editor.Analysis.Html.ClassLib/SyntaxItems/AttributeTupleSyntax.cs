@@ -3,7 +3,7 @@
 public class AttributeTupleSyntax
 {
     public AttributeTupleSyntax(
-        AttributeNameSyntax attributeNameSyntax, 
+        AttributeNameSyntax attributeNameSyntax,
         AttributeValueSyntax attributeValueSyntax)
     {
         AttributeNameSyntax = attributeNameSyntax;

@@ -27,26 +27,26 @@
                     Active Solution:<br/>
                     <em>@localSolutionExplorerState.SolutionAbsoluteFilePath.FilenameWithExtension</em>
                 </div>
-                
+
                 <hr/>
-                
+
                 <input type="checkbox"
-                       class="bstudio_input bstudio_input-checkbox" 
-                       @onkeydown:stopPropagation="true" 
+                       class="bstudio_input bstudio_input-checkbox"
+                       @onkeydown:stopPropagation="true"
                        @bind="_includePrerelease"/>
-                                                               
+
                 <text>&nbsp;Include Prerelease?</text>
-                       
+
                 <br/>
-                
+
                 <div>
-                    <input class="bstudio_input bstudio_input-text" 
+                    <input class="bstudio_input bstudio_input-text"
                            @bind="_nugetQuery"
                            @bind:event="oninput"
                            @onkeydown="HandleOnKeyDown"
-                           @onkeydown:stopPropagation="true" />
+                           @onkeydown:stopPropagation="true"/>
                 </div>
-                
+
                 <div>
                     Query:<br/>
                     <em style="margin-left: 15px; border-left: 1px solid var(--bstudio_primary-border-color)">
@@ -55,10 +55,10 @@
                 </div>
 
                 <hr/>
-                
+
                 <div>
                     Pick Project to modify:<br/>
-                    
+
                     @* 
                         I cannot get this <select/> element to have nearly any 
                         CSS applied therefore I am just leaving it background-color: white;
@@ -71,12 +71,12 @@
                             var projects = SolutionStateWrapper.Value.ProjectIdToProjectMap.Values
                                 .Select(x => x.Project)
                                 .ToList();
-                            
-                            for (int i = 0; i < projects.Count; i++)
+
+                            for (var i = 0; i < projects.Count; i++)
                             {
                                 var index = i;
                                 var project = projects[index];
-                                
+
                                 <option value="@project.Id.Id.ToString()"
                                         selected="@(_selectedProjectToModify is not null && _selectedProjectToModify.Id == project.Id)">
                                     @project.Name
@@ -85,12 +85,12 @@
                         }
                     </select>
                     <br/>
-                    
+
                     Selected&nbsp;Project:&nbsp;<em>@(_selectedProjectToModify?.Name ?? "not yet selected")</em>
                 </div>
 
                 <hr/>
-                
+
                 if (_nugetPackages.Any())
                 {
                     <TreeViewWrapDisplay @ref="_nugetPackagesTreeViewWrapDisplay"
@@ -102,15 +102,15 @@
                                          OnSpaceKeyDown="ThemeTreeViewOnSpaceKeyDown"
                                          OnDoubleClick="ThemeTreeViewOnDoubleClick"
                                          IsExpandable="nugetPackageManagerTreeViewEntry => nugetPackageManagerTreeViewEntry.IsExpandable">
-    
+
                         <ItemRenderFragment Context="nugetPackageManagerTreeViewEntry">
                             @nugetPackageManagerTreeViewEntry.MarkupStringTitleDisplay
                         </ItemRenderFragment>
-                        
+
                         <OnContextMenuRenderFragment Context="contextMenuEventDto">
-                            
+
                             <NugetPackageManagerMenuWrapperDisplay ContextMenuEventDto="contextMenuEventDto"
-                                                                   SelectProjectToModify="_selectedProjectToModify" />
+                                                                   SelectProjectToModify="_selectedProjectToModify"/>
 
                         </OnContextMenuRenderFragment>
                     </TreeViewWrapDisplay>
@@ -119,12 +119,12 @@
                 {
                     var localActiveQuery = _activeQueryForNugetPackages;
                     var localJsonExceptionFromQueryingNuget = _jsonExceptionFromQueryingNuget;
-                    
+
                     if (localActiveQuery is not null)
                     {
                         <div>
                             Querying&nbsp;<IconLoader/><br/>
-                            
+
                             <em style="margin-left: 15px; border-left: 1px solid var(--bstudio_primary-border-color)">
                                 @localActiveQuery
                             </em>
@@ -144,7 +144,7 @@
                             <div>No results</div>
                         }
                     }
-                    
+
                     <div style="margin-top: 100px;" class="bstudio_nuget-package-manager-display-spacer"></div>
                 }
             }

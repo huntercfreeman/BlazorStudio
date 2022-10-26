@@ -21,5 +21,5 @@ public enum HtmlDecorationKind
     InjectedLanguageMethod,
     InjectedLanguageVariable,
     InjectedLanguageType,
-    InjectedLanguageStringLiteral
+    InjectedLanguageStringLiteral,
 }

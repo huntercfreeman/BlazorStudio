@@ -14,9 +14,7 @@ public partial class StoreInitializerWrap : ComponentBase, IDisposable
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
-        {
             JsRuntime.InvokeVoidAsync("blazorStudio.initializeVirtualizeCoordinateSystemIntersectionObserver");
-        }
 
         return base.OnAfterRenderAsync(firstRender);
     }

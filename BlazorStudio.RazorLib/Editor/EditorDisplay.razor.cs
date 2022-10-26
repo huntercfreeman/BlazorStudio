@@ -42,10 +42,12 @@ public partial class EditorDisplay : FluxorComponent
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
-    [Parameter, EditorRequired]
-    public ClassLib.UserInterface.Dimensions Dimensions { get; set; } = null!;
+    [Parameter]
+    [EditorRequired]
+    public Dimensions Dimensions { get; set; } = null!;
 
     private TextEditorKey _testTextEditorKey = TextEditorKey.NewTextEditorKey();
+
     private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath(
         @"C:\Users\hunte\source\Razor\Razor.ServerSide\Pages\Counter.razor",
         false);
@@ -60,11 +62,11 @@ public partial class EditorDisplay : FluxorComponent
 
     private TextEditorBase? TestTextEditor => TextEditorService.TextEditorStates.TextEditorList
         .FirstOrDefault(x => x.Key == _testTextEditorKey);
-    
+
     protected override Task OnInitializedAsync()
     {
         TextEditorService.OnTextEditorStatesChanged += TextEditorServiceOnOnTextEditorStatesChanged;
-        
+
         return base.OnInitializedAsync();
     }
 
@@ -73,23 +75,23 @@ public partial class EditorDisplay : FluxorComponent
         if (firstRender)
         {
             _previousDimensionsCssString = Dimensions.DimensionsCssString;
-            
+
             // Example usage:
             // --------------
             var content = await FileSystemProvider.ReadFileAsync(_absoluteFilePath);
-            
+
             var textEditor = new TextEditorBase(
                 content,
                 new TextEditorRazorLexer(),
                 new TextEditorHtmlDecorationMapper(),
                 null,
                 _testTextEditorKey);
-            
+
             await textEditor.ApplySyntaxHighlightingAsync();
-            
+
             TextEditorService
                 .RegisterTextEditor(textEditor);
-            
+
             Dispatcher.Dispatch(
                 new SetActiveTextEditorKeyAction(_testTextEditorKey));
         }
@@ -101,13 +103,13 @@ public partial class EditorDisplay : FluxorComponent
     {
         InvokeAsync(StateHasChanged);
     }
-    
+
     private void HandleOnSaveRequested(TextEditorBase textEditor)
     {
         textEditor.ClearEditBlocks();
-        
+
         var content = textEditor.GetAllText();
-        
+
         var textEditorResourceState = TextEditorResourceStateWrap.Value;
 
         if (textEditorResourceState.ResourceMap
@@ -121,39 +123,39 @@ public partial class EditorDisplay : FluxorComponent
         else
         {
             Dispatcher.Dispatch(new RegisterNotificationAction(new NotificationRecord(
-                NotificationKey.NewNotificationKey(), 
+                NotificationKey.NewNotificationKey(),
                 $"Could not find resource file",
                 DefaultErrorRenderer.GetType(),
                 null,
                 TimeSpan.FromSeconds(3))));
         }
     }
-    
+
     private async Task HandleAfterOnKeyDownAsync(
-        TextEditorBase textEditor, 
-        ImmutableArray<TextEditorCursorSnapshot> cursorSnapshots, 
+        TextEditorBase textEditor,
+        ImmutableArray<TextEditorCursorSnapshot> cursorSnapshots,
         KeyboardEventArgs keyboardEventArgs,
         Func<TextEditorMenuKind, Task> setTextEditorMenuKind)
     {
         var primaryCursorSnapshot = cursorSnapshots
-            .First(x => 
+            .First(x =>
                 x.UserCursor.IsPrimaryCursor);
-        
-        if (keyboardEventArgs.CtrlKey &&
-            keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||
+
+        if ((keyboardEventArgs.CtrlKey &&
+             keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE) ||
             // My recording software blocks Ctrl + Space keybind I need
             // to find time to look into how to fix this but for now I added Alt + a
-            keyboardEventArgs.AltKey &&
-            keyboardEventArgs.Key == "a")
+            (keyboardEventArgs.AltKey &&
+             keyboardEventArgs.Key == "a"))
         {
             // AutoComplete
-            
+
             var success = await _afterOnKeyDownAutoCompleteSemaphoreSlim
                 .WaitAsync(TimeSpan.Zero);
 
             if (!success)
                 return;
-        
+
             try
             {
                 var columnIndexOfCharacterWithDifferingKind = textEditor
@@ -170,7 +172,7 @@ public partial class EditorDisplay : FluxorComponent
                 var positionIndex = textEditor.GetPositionIndex(
                     primaryCursorSnapshot.ImmutableCursor.RowIndex,
                     startOfWord);
-            
+
                 _autoCompleteWordText = textEditor.GetTextRange(
                     positionIndex,
                     primaryCursorSnapshot.ImmutableCursor.ColumnIndex - startOfWord);
@@ -182,17 +184,17 @@ public partial class EditorDisplay : FluxorComponent
                 _afterOnKeyDownAutoCompleteSemaphoreSlim.Release();
             }
         }
-        else if (keyboardEventArgs.Key == ";" || 
-            KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code))
+        else if (keyboardEventArgs.Key == ";" ||
+                 KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code))
         {
             // Syntax Highlighting
-            
+
             var success = await _afterOnKeyDownSyntaxHighlightingSemaphoreSlim
                 .WaitAsync(TimeSpan.Zero);
 
             if (!success)
                 return;
-        
+
             try
             {
                 await textEditor.ApplySyntaxHighlightingAsync();
@@ -201,15 +203,15 @@ public partial class EditorDisplay : FluxorComponent
             {
                 _afterOnKeyDownSyntaxHighlightingSemaphoreSlim.Release();
             }
-            
+
             return;
         }
     }
-    
+
     protected override void Dispose(bool disposing)
     {
         TextEditorService.OnTextEditorStatesChanged -= TextEditorServiceOnOnTextEditorStatesChanged;
-    
+
         base.Dispose(disposing);
     }
 }

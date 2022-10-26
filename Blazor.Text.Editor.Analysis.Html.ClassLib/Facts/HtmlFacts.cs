@@ -6,32 +6,32 @@ namespace Blazor.Text.Editor.Analysis.Html.ClassLib.Facts;
 public static class HtmlFacts
 {
     public const char SPECIAL_HTML_TAG = '!';
-    
+
     public const char OPEN_TAG_BEGINNING = '<';
-    
+
     public const string OPEN_TAG_WITH_CHILD_CONTENT_ENDING = ">";
     public const string OPEN_TAG_SELF_CLOSING_ENDING = "/>";
-    
+
     public const string CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING = "</";
     public const string CLOSE_TAG_WITH_CHILD_CONTENT_ENDING = ">";
-    
-    public static readonly ImmutableArray<string> OPEN_TAG_ENDING_OPTIONS = new []
+
+    public static readonly ImmutableArray<string> OPEN_TAG_ENDING_OPTIONS = new[]
     {
         OPEN_TAG_WITH_CHILD_CONTENT_ENDING,
-        OPEN_TAG_SELF_CLOSING_ENDING
+        OPEN_TAG_SELF_CLOSING_ENDING,
     }.ToImmutableArray();
-    
-    public static readonly ImmutableArray<string> WHITESPACE = new []
+
+    public static readonly ImmutableArray<string> WHITESPACE = new[]
     {
         " ",
         "\t",
         "\r",
-        "\n"
+        "\n",
     }.ToImmutableArray();
-    
-    public static readonly ImmutableArray<string> TAG_NAME_STOP_DELIMITERS = new []
+
+    public static readonly ImmutableArray<string> TAG_NAME_STOP_DELIMITERS = new[]
         {
-            ParserFacts.END_OF_FILE.ToString()
+            ParserFacts.END_OF_FILE.ToString(),
         }
         .Union(WHITESPACE)
         .Union(OPEN_TAG_ENDING_OPTIONS)

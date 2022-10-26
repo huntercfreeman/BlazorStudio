@@ -2,24 +2,24 @@
 
 <div class="bstudio_editor-tab-display @IsActiveCssClass"
      @onclick="DispatchSetActiveTextEditorKeyAction">
-    
+
     @{
         var textEditorResourceState = TextEditorResourceStateWrap.Value;
 
         if (textEditorResourceState.ResourceMap
             .TryGetValue(TextEditor.Key, out var relatedResource))
         {
-            <text>@relatedResource.FilenameWithExtension</text>  
+            <text>@relatedResource.FilenameWithExtension</text>
         }
         else
         {
             <text>(not named)</text>
         }
-        
+
         if (TextEditor.EditBlocks.Any())
         {
             <span style="margin-left: 7px;">*</span>
-        }  
+        }
     }
 
     <div class="bstudio_editor-tab-close-display"

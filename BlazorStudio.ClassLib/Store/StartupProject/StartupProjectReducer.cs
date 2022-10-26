@@ -8,6 +8,6 @@ public class StartupProjectReducer
     public static StartupProjectState ReduceSetStartupProjectAction(StartupProjectState previousStartupProjectState,
         SetStartupProjectAction setStartupProjectAction)
     {
-        return new(setStartupProjectAction.ProjectAbsoluteFilePath);
+        return new StartupProjectState(setStartupProjectAction.ProjectAbsoluteFilePath);
     }
 }

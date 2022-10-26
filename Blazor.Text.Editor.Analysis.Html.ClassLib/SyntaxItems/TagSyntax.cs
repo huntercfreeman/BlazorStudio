@@ -7,7 +7,7 @@ public class TagSyntax
     public TagSyntax(
         TagNameSyntax? openTagNameSyntax,
         TagNameSyntax? closeTagNameSyntax,
-        ImmutableArray<AttributeTupleSyntax> attributeTupleSyntaxes, 
+        ImmutableArray<AttributeTupleSyntax> attributeTupleSyntaxes,
         ImmutableArray<TagSyntax> childTagSyntaxes,
         TagKind tagKind,
         bool hasSpecialHtmlCharacter = false)
@@ -19,7 +19,7 @@ public class TagSyntax
         CloseTagNameSyntax = closeTagNameSyntax;
         TagKind = tagKind;
     }
-    
+
     public TagNameSyntax? OpenTagNameSyntax { get; }
     public TagNameSyntax? CloseTagNameSyntax { get; }
     public ImmutableArray<AttributeTupleSyntax> AttributeTupleSyntaxes { get; }

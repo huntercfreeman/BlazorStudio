@@ -5,7 +5,7 @@ namespace BlazorStudio.ClassLib.UserInterface;
 
 public static class DimensionUnitHelper
 {
-    public static void AppendToStyleString(StringBuilder builder, 
+    public static void AppendToStyleString(StringBuilder builder,
         IEnumerable<DimensionUnit> dimensionUnitCalc,
         string styleAttribute)
     {
@@ -34,9 +34,7 @@ public static class DimensionUnitHelper
                                $"{dimensionUnit.DimensionUnitKind.ToCssString()}");
 
                 if (index != immutableDimensionUnitCalc.Length - 1)
-                {
                     builder.Append($"{Dimensions.STYLE_STRING_WHITESPACE}");
-                }
             }
 
             builder.Append($"){Dimensions.STYLE_STRING_DELIMITER}{Dimensions.STYLE_STRING_WHITESPACE}");

@@ -24,5 +24,6 @@ public class InjectedLanguageDefinition
     /// It is 4:16 AM and I am very tired but leaving this comment
     /// for myself for the future.
     /// </summary>
-    public Func<StringWalker, TextEditorHtmlDiagnosticBag, InjectedLanguageDefinition, List<TagSyntax>> ParseInjectedLanguageFunc { get; set; }
+    public Func<StringWalker, TextEditorHtmlDiagnosticBag, InjectedLanguageDefinition, List<TagSyntax>>
+        ParseInjectedLanguageFunc { get; set; }
 }

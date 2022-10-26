@@ -8,7 +8,7 @@
                  CssStyleString="@Dimensions.DimensionsCssString"
                  ContextKey="ContextFacts.EditorDisplayContext.ContextKey">
 
-    <h5 class="bstudio_large-title" 
+    <h5 class="bstudio_large-title"
         style="padding: 5px; cursor: pointer;"
         @onclick="_ => _textEditorShouldRemeasureFlag = !_textEditorShouldRemeasureFlag">
         Editor Display (Double-Click here to re-measure)
@@ -20,7 +20,7 @@
             var activeTextEditorKey = EditorStateWrap.Value.TextEditorKey;
 
             <div class="bstudio_editor-tabs-listing">
-                @for (int i = 0; i < textEditorList.Count; i++)
+                @for (var i = 0; i < textEditorList.Count; i++)
                 {
                     var index = i;
                     var textEditor = textEditorList[index];
@@ -35,27 +35,27 @@
                 var activeTextEditor =
                     TextEditorService.TextEditorStates.TextEditorList
                         .FirstOrDefault();
-                
-                <TextEditorDisplay @ref="_textEditorDisplay" 
+
+                <TextEditorDisplay @ref="_textEditorDisplay"
                                    TextEditorKey="activeTextEditorKey"
                                    StyleCssString="width: 100%; height: calc(100% - 2rem - 1.8rem - 10px);"
                                    OnSaveRequested="HandleOnSaveRequested"
                                    AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync"
                                    ShouldRemeasureFlag="_textEditorShouldRemeasureFlag"
                                    TabIndex="0">
-                    
+
                     <OnContextMenuRenderFragment>
-                        <TextEditorContextMenu TextEditor="activeTextEditor" 
-                                               TextEditorDisplay="_textEditorDisplay" />
+                        <TextEditorContextMenu TextEditor="activeTextEditor"
+                                               TextEditorDisplay="_textEditorDisplay"/>
                     </OnContextMenuRenderFragment>
-                    
+
                     <AutoCompleteMenuRenderFragment>
-                        <TextEditorAutoCompleteMenu AutoCompleteWordText="@_autoCompleteWordText" />
+                        <TextEditorAutoCompleteMenu AutoCompleteWordText="@_autoCompleteWordText"/>
                     </AutoCompleteMenuRenderFragment>
                 </TextEditorDisplay>
-                
-                <TextEditorFooter TextEditor="activeTextEditor" 
-                                  TextEditorDisplay="_textEditorDisplay" />
+
+                <TextEditorFooter TextEditor="activeTextEditor"
+                                  TextEditorDisplay="_textEditorDisplay"/>
             }
         }
     </div>

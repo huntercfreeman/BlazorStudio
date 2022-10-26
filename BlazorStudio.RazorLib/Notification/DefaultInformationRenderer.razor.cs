@@ -6,6 +6,7 @@ namespace BlazorStudio.RazorLib.Notification;
 
 public partial class DefaultInformationRenderer : ComponentBase, IDefaultInformationRenderer
 {
-    [CascadingParameter, EditorRequired]
+    [CascadingParameter]
+    [EditorRequired]
     public NotificationRecord NotificationRecord { get; set; } = null!;
 }

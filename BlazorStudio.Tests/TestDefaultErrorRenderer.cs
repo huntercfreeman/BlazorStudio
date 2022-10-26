@@ -4,5 +4,4 @@ namespace BlazorStudio.Tests;
 
 public class TestDefaultErrorRenderer : IDefaultErrorRenderer
 {
-    
 }

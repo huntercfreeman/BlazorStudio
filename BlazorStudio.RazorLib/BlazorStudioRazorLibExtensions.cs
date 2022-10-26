@@ -13,7 +13,7 @@ public static class BlazorStudioRazorLibExtensions
         return services
             .AddScoped<IDefaultErrorRenderer, DefaultErrorRenderer>()
             .AddScoped<IDefaultInformationRenderer, DefaultInformationRenderer>()
-            .AddBlazorStudioClassLibServices(_ => 
+            .AddBlazorStudioClassLibServices(_ =>
                 new TemporaryInMemoryClipboardProvider());
     }
 }

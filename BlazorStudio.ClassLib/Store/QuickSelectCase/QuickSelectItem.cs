@@ -11,7 +11,7 @@ public record QuickSelectItem<T>
         ItemNoType = item ?? throw new ArgumentNullException(nameof(item));
         ItemWithType = item;
     }
-    
+
     public string DisplayName { get; init; }
     public object ItemNoType { get; init; }
     public Type ItemType => typeof(T);

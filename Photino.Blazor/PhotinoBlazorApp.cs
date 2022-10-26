@@ -4,62 +4,60 @@ using PhotinoNET;
 using System;
 using System.IO;
 
-namespace Photino.Blazor
+namespace Photino.Blazor;
+
+public class PhotinoBlazorApp
 {
-    public class PhotinoBlazorApp
+    /// <summary>
+    /// Gets configuration for the service provider.
+    /// </summary>
+    public IServiceProvider Services { get; private set; }
+
+    /// <summary>
+    /// Gets configuration for the root components in the window.
+    /// </summary>
+    public BlazorWindowRootComponents RootComponents { get; private set; }
+
+    internal void Initialize(IServiceProvider services, RootComponentList rootComponents)
     {
-        /// <summary>
-        /// Gets configuration for the service provider.
-        /// </summary>
-        public IServiceProvider Services { get; private set; }
+        Services = services;
 
-        /// <summary>
-        /// Gets configuration for the root components in the window.
-        /// </summary>
-        public BlazorWindowRootComponents RootComponents { get; private set; }
+        MainWindow = new PhotinoWindow()
+            .SetTitle("Photino.Blazor App")
+            .SetUseOsDefaultLocation(false)
+            .SetWidth(1000)
+            .SetHeight(900)
+            .SetLeft(450)
+            .SetTop(100);
 
-        internal void Initialize(IServiceProvider services, RootComponentList rootComponents)
-        {
-            Services = services;
+        MainWindow.RegisterCustomSchemeHandler(PhotinoWebViewManager.BlazorAppScheme, HandleWebRequest);
 
-            MainWindow = new PhotinoWindow()
-                .SetTitle("Photino.Blazor App")
-                .SetUseOsDefaultLocation(false)
-                .SetWidth(1000)
-                .SetHeight(900)
-                .SetLeft(450)
-                .SetTop(100);
+        // We assume the host page is always in the root of the content directory, because it's
+        // unclear there's any other use case. We can add more options later if so.
+        var hostPage = "index.html";
+        var contentRootDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");
+        var fileProvider = new PhysicalFileProvider(contentRootDir);
 
-            MainWindow.RegisterCustomSchemeHandler(PhotinoWebViewManager.BlazorAppScheme, HandleWebRequest);
+        var dispatcher = new PhotinoDispatcher(MainWindow);
+        var jsComponents = new JSComponentConfigurationStore();
+        WindowManager = new PhotinoWebViewManager(MainWindow, services, dispatcher,
+            new Uri(PhotinoWebViewManager.AppBaseUri), fileProvider, jsComponents, hostPage);
+        RootComponents = new BlazorWindowRootComponents(WindowManager, jsComponents);
+        foreach (var component in rootComponents) RootComponents.Add(component.Item1, component.Item2);
+    }
 
-            // We assume the host page is always in the root of the content directory, because it's
-            // unclear there's any other use case. We can add more options later if so.
-            string hostPage = "index.html";
-            var contentRootDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");
-            var fileProvider = new PhysicalFileProvider(contentRootDir);
+    public PhotinoWindow MainWindow { get; private set; }
 
-            var dispatcher = new PhotinoDispatcher(MainWindow);
-            var jsComponents = new JSComponentConfigurationStore();
-            WindowManager = new PhotinoWebViewManager(MainWindow, services, dispatcher, new Uri(PhotinoWebViewManager.AppBaseUri), fileProvider, jsComponents, hostPage);
-            RootComponents = new BlazorWindowRootComponents(WindowManager, jsComponents);
-            foreach(var component in rootComponents)
-            {
-                RootComponents.Add(component.Item1, component.Item2);
-            }
-        }
+    public PhotinoWebViewManager WindowManager { get; private set; }
 
-        public PhotinoWindow MainWindow { get; private set; }
+    public void Run()
+    {
+        WindowManager.Navigate("/");
+        MainWindow.WaitForClose();
+    }
 
-        public PhotinoWebViewManager WindowManager { get; private set; }
-
-        public void Run()
-        {
-            WindowManager.Navigate("/");
-            MainWindow.WaitForClose();
-        }
-
-        public Stream HandleWebRequest(object sender, string scheme, string url, out string contentType)
-                => WindowManager.HandleWebRequest(sender, scheme, url, out contentType!)!;
-
+    public Stream HandleWebRequest(object sender, string scheme, string url, out string contentType)
+    {
+        return WindowManager.HandleWebRequest(sender, scheme, url, out contentType!)!;
     }
 }

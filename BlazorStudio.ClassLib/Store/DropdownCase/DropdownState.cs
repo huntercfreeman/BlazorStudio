@@ -8,6 +8,5 @@ public record DropdownState(ImmutableList<DropdownKey> ActiveDropdownKeys)
 {
     public DropdownState() : this(ImmutableList<DropdownKey>.Empty)
     {
-
     }
 }

@@ -12,14 +12,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
-    [Inject] 
+    [Inject]
     private IState<TransformableOptionsState> TransformableOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Func<Task> ReRenderFunc { get; set; } = null!;
 
     private Func<MouseEventArgs, Task>? _dragStateEventHandler;
@@ -62,17 +64,14 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
             if (!success)
                 return;
-        
+
             try
             {
                 var mouseEventArgs = DragStateWrap.Value.MouseEventArgs;
 
                 if (_dragStateEventHandler is not null)
                 {
-                    if (_previousDragMouseEventArgs is not null)
-                    {
-                        await _dragStateEventHandler(mouseEventArgs);
-                    }
+                    if (_previousDragMouseEventArgs is not null) await _dragStateEventHandler(mouseEventArgs);
 
                     _previousDragMouseEventArgs = mouseEventArgs;
                     await ReRenderFunc();
@@ -90,45 +89,46 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     {
         InvokeAsync(StateHasChanged);
     }
-    
+
     #region HandleCssStylings
+
     private string GetNorthResizeHandleCssStyling()
     {
         List<DimensionUnit> widthDimension = new(Dimensions.WidthCalc)
         {
-            new() 
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
-        
+
         List<DimensionUnit> heightDimension = new()
         {
-            new() 
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
 
         List<DimensionUnit> leftDimension = new()
         {
-            new() 
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
-        
+
         List<DimensionUnit> topDimension = new()
         {
-            new() 
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
 
         _northResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
@@ -145,40 +145,40 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     {
         List<DimensionUnit> widthDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
-        
+
         List<DimensionUnit> heightDimension = new(Dimensions.HeightCalc)
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
-        
+
         List<DimensionUnit> leftDimension = new(Dimensions.WidthCalc)
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
-        
+
         List<DimensionUnit> topDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
 
         _eastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
@@ -195,40 +195,40 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     {
         List<DimensionUnit> widthDimension = new(Dimensions.WidthCalc)
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
 
         List<DimensionUnit> heightDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
 
         List<DimensionUnit> leftDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
 
         List<DimensionUnit> topDimension = new(Dimensions.HeightCalc)
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
 
         _southResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
@@ -245,39 +245,39 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     {
         List<DimensionUnit> widthDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
 
         List<DimensionUnit> heightDimension = new(Dimensions.HeightCalc)
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
 
         List<DimensionUnit> leftDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
 
         List<DimensionUnit> topDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
 
         _westResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
@@ -294,39 +294,39 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     {
         List<DimensionUnit> widthDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
-        
+
         List<DimensionUnit> heightDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
-        
+
         List<DimensionUnit> leftDimension = new(Dimensions.WidthCalc)
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
-        
+
         List<DimensionUnit> topDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
 
         _northEastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
@@ -343,40 +343,40 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     {
         List<DimensionUnit> widthDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
-        
+
         List<DimensionUnit> heightDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
-        
+
         List<DimensionUnit> leftDimension = new(Dimensions.WidthCalc)
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
-        
+
         List<DimensionUnit> topDimension = new(Dimensions.HeightCalc)
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
 
         _southEastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
@@ -393,39 +393,39 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     {
         List<DimensionUnit> widthDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
-        
+
         List<DimensionUnit> heightDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
-        
+
         List<DimensionUnit> leftDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
-        
+
         List<DimensionUnit> topDimension = new(Dimensions.HeightCalc)
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
 
         _southWestResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
@@ -442,38 +442,38 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     {
         List<DimensionUnit> widthDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
-        
+
         List<DimensionUnit> heightDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value
-            }
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
         };
-        
+
         List<DimensionUnit> leftDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
-        
+
         List<DimensionUnit> topDimension = new()
         {
-            new()
+            new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0
-            }
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
         };
 
         _northWestResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
@@ -485,6 +485,7 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         return _northWestResizeHandleDimensions.DimensionsCssString;
     }
+
     #endregion
 
     private void SubscribeToDragEventWithNorthResizeHandle()
@@ -498,17 +499,18 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         _resizeEventCounter++;
 
         // HEIGHT
-        var heightPixelOffset = Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var heightPixelOffset =
+            Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (heightPixelOffset is null)
         {
-            heightPixelOffset = new()
+            heightPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
-            
+
             Dimensions.HeightCalc.Add(heightPixelOffset);
         }
 
@@ -521,11 +523,11 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         if (topPixelOffset is null)
         {
-            topPixelOffset = new()
+            topPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.TopCalc.Add(topPixelOffset);
@@ -543,15 +545,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
     private Task DragEventHandlerEastResizeHandle(MouseEventArgs mouseEventArgs)
     {
-        var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var widthPixelOffset =
+            Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (widthPixelOffset is null)
         {
-            widthPixelOffset = new()
+            widthPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.WidthCalc.Add(widthPixelOffset);
@@ -571,15 +574,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
     private Task DragEventHandlerSouthResizeHandle(MouseEventArgs mouseEventArgs)
     {
-        var heightPixelOffset = Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var heightPixelOffset =
+            Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (heightPixelOffset is null)
         {
-            heightPixelOffset = new()
+            heightPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.HeightCalc.Add(heightPixelOffset);
@@ -599,15 +603,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
     private Task DragEventHandlerWestResizeHandle(MouseEventArgs mouseEventArgs)
     {
-        var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var widthPixelOffset =
+            Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (widthPixelOffset is null)
         {
-            widthPixelOffset = new()
+            widthPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.WidthCalc.Add(widthPixelOffset);
@@ -616,16 +621,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
         widthPixelOffset.Value -= deltaX;
-        
+
         var leftPixelOffset = Dimensions.LeftCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (leftPixelOffset is null)
         {
-            leftPixelOffset = new()
+            leftPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.LeftCalc.Add(leftPixelOffset);
@@ -643,15 +648,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
     private Task DragEventHandlerNorthEastResizeHandle(MouseEventArgs mouseEventArgs)
     {
-        var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var widthPixelOffset =
+            Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (widthPixelOffset is null)
         {
-            widthPixelOffset = new()
+            widthPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.WidthCalc.Add(widthPixelOffset);
@@ -661,15 +667,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         widthPixelOffset.Value += deltaX;
 
-        var heightPixelOffset = Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var heightPixelOffset =
+            Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (heightPixelOffset is null)
         {
-            heightPixelOffset = new()
+            heightPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.HeightCalc.Add(heightPixelOffset);
@@ -678,16 +685,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
 
         heightPixelOffset.Value -= deltaY;
-        
+
         var topPixelOffset = Dimensions.TopCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (topPixelOffset is null)
         {
-            topPixelOffset = new()
+            topPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.TopCalc.Add(topPixelOffset);
@@ -705,15 +712,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
     private Task DragEventHandlerSouthEastResizeHandle(MouseEventArgs mouseEventArgs)
     {
-        var heightPixelOffset = Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var heightPixelOffset =
+            Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (heightPixelOffset is null)
         {
-            heightPixelOffset = new()
+            heightPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.HeightCalc.Add(heightPixelOffset);
@@ -722,16 +730,17 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
 
         heightPixelOffset.Value += deltaY;
-        
-        var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+
+        var widthPixelOffset =
+            Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (widthPixelOffset is null)
         {
-            widthPixelOffset = new()
+            widthPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.WidthCalc.Add(widthPixelOffset);
@@ -751,15 +760,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
     private Task DragEventHandlerSouthWestResizeHandle(MouseEventArgs mouseEventArgs)
     {
-        var heightPixelOffset = Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var heightPixelOffset =
+            Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (heightPixelOffset is null)
         {
-            heightPixelOffset = new()
+            heightPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.HeightCalc.Add(heightPixelOffset);
@@ -769,15 +779,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         heightPixelOffset.Value += deltaY;
 
-        var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var widthPixelOffset =
+            Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (widthPixelOffset is null)
         {
-            widthPixelOffset = new()
+            widthPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.WidthCalc.Add(widthPixelOffset);
@@ -786,16 +797,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
         widthPixelOffset.Value -= deltaX;
-        
+
         var leftPixelOffset = Dimensions.LeftCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (leftPixelOffset is null)
         {
-            leftPixelOffset = new()
+            leftPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.LeftCalc.Add(leftPixelOffset);
@@ -813,15 +824,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
     private Task DragEventHandlerNorthWestResizeHandle(MouseEventArgs mouseEventArgs)
     {
-        var heightPixelOffset = Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var heightPixelOffset =
+            Dimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (heightPixelOffset is null)
         {
-            heightPixelOffset = new()
+            heightPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.HeightCalc.Add(heightPixelOffset);
@@ -830,16 +842,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
 
         heightPixelOffset.Value -= deltaY;
-        
+
         var topPixelOffset = Dimensions.TopCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (topPixelOffset is null)
         {
-            topPixelOffset = new()
+            topPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.TopCalc.Add(topPixelOffset);
@@ -847,15 +859,16 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         topPixelOffset.Value += deltaY;
 
-        var widthPixelOffset = Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var widthPixelOffset =
+            Dimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (widthPixelOffset is null)
         {
-            widthPixelOffset = new()
+            widthPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.WidthCalc.Add(widthPixelOffset);
@@ -869,11 +882,11 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         if (leftPixelOffset is null)
         {
-            leftPixelOffset = new()
+            leftPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.LeftCalc.Add(leftPixelOffset);
@@ -897,11 +910,11 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         if (topPixelOffset is null)
         {
-            topPixelOffset = new()
+            topPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.TopCalc.Add(topPixelOffset);
@@ -915,11 +928,11 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         if (leftPixelOffset is null)
         {
-            leftPixelOffset = new()
+            leftPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             Dimensions.LeftCalc.Add(leftPixelOffset);
@@ -933,6 +946,5 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     {
         DragStateWrap.StateChanged -= DragState_StateChanged;
         TransformableOptionsStateWrap.StateChanged -= TransformableOptionsStateWrapOnStateChanged;
-
     }
 }

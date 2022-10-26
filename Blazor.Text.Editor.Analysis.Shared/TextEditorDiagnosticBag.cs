@@ -17,7 +17,7 @@ public class TextEditorDiagnosticBag : IEnumerable<TextEditorDiagnostic>
                 message,
                 textEditorTextSpan));
     }
-    
+
     public void ReportEndOfFileUnexpected(TextEditorTextSpan textEditorTextSpan)
     {
         Report(
@@ -26,7 +26,7 @@ public class TextEditorDiagnosticBag : IEnumerable<TextEditorDiagnostic>
             $" Wanted an ['attribute' OR 'closing tag'].",
             textEditorTextSpan);
     }
-    
+
     public IEnumerator<TextEditorDiagnostic> GetEnumerator()
     {
         return _textEditorDiagnostics.GetEnumerator();

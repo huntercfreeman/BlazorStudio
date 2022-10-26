@@ -20,10 +20,7 @@ public partial class DialogsInitializer : FluxorComponent
     {
         var dialogStates = DialogStatesWrap.Value;
 
-        foreach (var dialog in dialogStates.List)
-        {
-            Dispatcher.Dispatch(new DisposeDialogAction(dialog));
-        }
+        foreach (var dialog in dialogStates.List) Dispatcher.Dispatch(new DisposeDialogAction(dialog));
 
         base.Dispose(disposing);
     }

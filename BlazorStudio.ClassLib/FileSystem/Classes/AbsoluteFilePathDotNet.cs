@@ -11,23 +11,24 @@ public class AbsoluteFilePathDotNet : AbsoluteFilePath
         ProjectId = projectId;
     }
 
-    public AbsoluteFilePathDotNet(IAbsoluteFilePath absoluteFilePath, IRelativeFilePath relativeFilePath, ProjectId projectId)
+    public AbsoluteFilePathDotNet(IAbsoluteFilePath absoluteFilePath, IRelativeFilePath relativeFilePath,
+        ProjectId projectId)
         : base(absoluteFilePath, relativeFilePath)
     {
         ProjectId = projectId;
     }
 
-    public AbsoluteFilePathDotNet(IFileSystemDrive rootDrive, 
+    public AbsoluteFilePathDotNet(IFileSystemDrive rootDrive,
         List<IFilePath> directories,
-        string fileNameNoExtension, 
-        string extensionNoPeriod, 
+        string fileNameNoExtension,
+        string extensionNoPeriod,
         bool isDirectory,
         ProjectId projectId)
-            : base(rootDrive, 
-                directories,
-                fileNameNoExtension, 
-                extensionNoPeriod, 
-                isDirectory)
+        : base(rootDrive,
+            directories,
+            fileNameNoExtension,
+            extensionNoPeriod,
+            isDirectory)
     {
         ProjectId = projectId;
     }

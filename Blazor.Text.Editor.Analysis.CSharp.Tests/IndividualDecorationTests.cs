@@ -29,24 +29,24 @@ public class IndividualDecorationTests
         await textEditor.ApplySyntaxHighlightingAsync();
 
         var richCharacters = textEditor.GetAllRichCharacters();
-        
+
         Assert.Equal(
-            CSharpDecorationKind.None, 
+            CSharpDecorationKind.None,
             (CSharpDecorationKind)richCharacters.First().DecorationByte);
     }
-    
+
     [Fact]
     public async Task DecorateMethod()
     {
         var nameOfMethod = "MyMethod";
-        
+
         var input = $@"public class MyClass
 {{
     public void {nameOfMethod}() 
     {{
     }}
 }}";
-        
+
         var lexer = new TextEditorCSharpLexer();
         var decorationMapper = new TextEditorCSharpDecorationMapper();
 
@@ -66,27 +66,27 @@ public class IndividualDecorationTests
             .ToArray();
 
         Assert.True(methodIdentifierRichCharacters
-            .All(x => 
-                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Method));
+            .All(x =>
+                (CSharpDecorationKind)x.DecorationByte == CSharpDecorationKind.Method));
 
         var stringifiedMethodIdentifier = new string(methodIdentifierRichCharacters
             .Select(x => x.Value)
             .ToArray());
-        
+
         Assert.Equal(
-            nameOfMethod, 
+            nameOfMethod,
             stringifiedMethodIdentifier);
     }
-    
+
     [Fact]
     public async Task DecorateType()
     {
         var nameOfType = "MyClass";
-        
+
         var input = $@"public class {nameOfType}
 {{
 }}";
-        
+
         var lexer = new TextEditorCSharpLexer();
         var decorationMapper = new TextEditorCSharpDecorationMapper();
 
@@ -106,30 +106,30 @@ public class IndividualDecorationTests
             .ToArray();
 
         Assert.True(typeIdentifierRichCharacters
-            .All(x => 
-                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Type));
+            .All(x =>
+                (CSharpDecorationKind)x.DecorationByte == CSharpDecorationKind.Type));
 
         var stringifiedTypeIdentifier = new string(typeIdentifierRichCharacters
             .Select(x => x.Value)
             .ToArray());
-        
+
         Assert.Equal(
-            nameOfType, 
+            nameOfType,
             stringifiedTypeIdentifier);
     }
-    
+
     [Fact]
     public async Task DecorateParameter()
     {
         var nameOfParameter = "myParameter";
-        
+
         var input = $@"public class MyClass
 {{
     public void MyMethod(int {nameOfParameter}) 
     {{
     }}
 }}";
-        
+
         var lexer = new TextEditorCSharpLexer();
         var decorationMapper = new TextEditorCSharpDecorationMapper();
 
@@ -149,23 +149,23 @@ public class IndividualDecorationTests
             .ToArray();
 
         Assert.True(parameterIdentifierRichCharacters
-            .All(x => 
-                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Parameter));
+            .All(x =>
+                (CSharpDecorationKind)x.DecorationByte == CSharpDecorationKind.Parameter));
 
         var stringifiedParameter = new string(parameterIdentifierRichCharacters
             .Select(x => x.Value)
             .ToArray());
-        
+
         Assert.Equal(
-            nameOfParameter, 
+            nameOfParameter,
             stringifiedParameter);
     }
-    
+
     [Fact]
     public async Task DecorateStringLiteral()
     {
         var stringLiteral = "\"Hello World!\"";
-        
+
         var input = $@"public class MyClass
 {{
     public string MyMethod() 
@@ -173,7 +173,7 @@ public class IndividualDecorationTests
         return {stringLiteral};
     }}
 }}";
-        
+
         var lexer = new TextEditorCSharpLexer();
         var decorationMapper = new TextEditorCSharpDecorationMapper();
 
@@ -193,30 +193,30 @@ public class IndividualDecorationTests
             .ToArray();
 
         Assert.True(stringLiteralRichCharacters
-            .All(x => 
-                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.StringLiteral));
+            .All(x =>
+                (CSharpDecorationKind)x.DecorationByte == CSharpDecorationKind.StringLiteral));
 
         var stringifiedStringLiteral = new string(stringLiteralRichCharacters
             .Select(x => x.Value)
             .ToArray());
-        
+
         Assert.Equal(
-            stringLiteral, 
+            stringLiteral,
             stringifiedStringLiteral);
     }
-    
+
     [Fact]
     public async Task DecorateKeyword()
     {
         var keyword = "public";
-        
+
         var input = $@"{keyword} class MyClass
 {{
     public void MyMethod() 
     {{
     }}
 }}";
-        
+
         var lexer = new TextEditorCSharpLexer();
         var decorationMapper = new TextEditorCSharpDecorationMapper();
 
@@ -236,23 +236,23 @@ public class IndividualDecorationTests
             .ToArray();
 
         Assert.True(keywordRichCharacters
-            .All(x => 
-                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Keyword));
+            .All(x =>
+                (CSharpDecorationKind)x.DecorationByte == CSharpDecorationKind.Keyword));
 
         var stringifiedKeyword = new string(keywordRichCharacters
             .Select(x => x.Value)
             .ToArray());
-        
+
         Assert.Equal(
-            keyword, 
+            keyword,
             stringifiedKeyword);
     }
-    
+
     [Fact]
     public async Task DecorateSingleLineComment()
     {
         var comment = "// This is a comment";
-        
+
         var input = $@"{comment}
 public class MyClass
 {{
@@ -260,7 +260,7 @@ public class MyClass
     {{
     }}
 }}";
-        
+
         var lexer = new TextEditorCSharpLexer();
         var decorationMapper = new TextEditorCSharpDecorationMapper();
 
@@ -280,18 +280,18 @@ public class MyClass
             .ToArray();
 
         Assert.True(commentRichCharacters
-            .All(x => 
-                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Comment));
+            .All(x =>
+                (CSharpDecorationKind)x.DecorationByte == CSharpDecorationKind.Comment));
 
         var stringifiedComment = new string(commentRichCharacters
             .Select(x => x.Value)
             .ToArray());
-        
+
         Assert.Equal(
-            comment, 
+            comment,
             stringifiedComment);
     }
-    
+
     [Fact]
     public async Task DecorateMultiLineComment()
     {
@@ -300,7 +300,7 @@ This
 is a
 comment 
 */";
-        
+
         var input = $@"{comment}
 public class MyClass
 {{
@@ -308,7 +308,7 @@ public class MyClass
     {{
     }}
 }}";
-        
+
         var lexer = new TextEditorCSharpLexer();
         var decorationMapper = new TextEditorCSharpDecorationMapper();
 
@@ -328,15 +328,15 @@ public class MyClass
             .ToArray();
 
         Assert.True(commentRichCharacters
-            .All(x => 
-                ((CSharpDecorationKind)x.DecorationByte) == CSharpDecorationKind.Comment));
+            .All(x =>
+                (CSharpDecorationKind)x.DecorationByte == CSharpDecorationKind.Comment));
 
         var stringifiedComment = new string(commentRichCharacters
             .Select(x => x.Value)
             .ToArray());
-        
+
         Assert.Equal(
-            comment, 
+            comment,
             stringifiedComment);
     }
 }

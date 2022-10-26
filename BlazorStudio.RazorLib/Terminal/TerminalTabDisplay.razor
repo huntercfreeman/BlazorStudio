@@ -2,13 +2,13 @@
      tabindex="0"
      @onkeydown="TerminalTabHandleOnKeyDown"
      @onclick="DispatchSetActiveTerminalEntryAction">
-    
+
     @TerminalEntry.Title
-    
+
     &nbsp;
-    
+
     @if (TerminalEntry.IsExecuting)
     {
-        <IconLoader />
+        <IconLoader/>
     }
 </div>

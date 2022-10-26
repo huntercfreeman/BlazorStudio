@@ -14,6 +14,7 @@ public class FileSystemStateEffects
 
     private readonly Dictionary<AbsoluteFilePathStringValue, (Task writeTask, string content)>
         _trackFileSystemWritesMap = new();
+
     private readonly SemaphoreSlim _trackFileSystemWritesMapSemaphoreSlim = new(1, 1);
 
     public FileSystemStateEffects(IFileSystemProvider fileSystemProvider,
@@ -23,7 +24,7 @@ public class FileSystemStateEffects
         _fileSystemProvider = fileSystemProvider;
         _defaultInformationRenderer = defaultInformationRenderer;
         _defaultErrorRenderer = defaultErrorRenderer;
-    }    
+    }
 
     /// <summary>
     /// If <see cref="_trackFileSystemWritesMap"/> has an entry with the <see cref="WriteToFileSystemAction.AbsoluteFilePath"/>
@@ -50,7 +51,7 @@ public class FileSystemStateEffects
         try
         {
             await _trackFileSystemWritesMapSemaphoreSlim.WaitAsync();
-            
+
             var absoluteFilePathStringValue =
                 new AbsoluteFilePathStringValue(writeToFileSystemAction.AbsoluteFilePath);
 
@@ -58,16 +59,16 @@ public class FileSystemStateEffects
             {
                 if (previousWriteTask.content == writeToFileSystemAction.Content)
                 {
-                    dispatcher.Dispatch(new RegisterNotificationAction( new NotificationRecord(
-                        NotificationKey.NewNotificationKey(), 
+                    dispatcher.Dispatch(new RegisterNotificationAction(new NotificationRecord(
+                        NotificationKey.NewNotificationKey(),
                         $"No changes to write out: {writeToFileSystemAction.AbsoluteFilePath.GetAbsoluteFilePathString()}",
                         _defaultErrorRenderer.GetType(),
                         null,
                         TimeSpan.FromSeconds(3))));
-                    
+
                     return;
                 }
-                
+
                 await previousWriteTask.writeTask;
             }
 
@@ -83,18 +84,18 @@ public class FileSystemStateEffects
 
             if (previousWriteTask != default)
             {
-                _trackFileSystemWritesMap[absoluteFilePathStringValue] = 
+                _trackFileSystemWritesMap[absoluteFilePathStringValue] =
                     (writeTask, writeToFileSystemAction.Content);
             }
             else
             {
                 _trackFileSystemWritesMap.Add(
-                    absoluteFilePathStringValue, 
+                    absoluteFilePathStringValue,
                     (writeTask, writeToFileSystemAction.Content));
             }
-            
-            dispatcher.Dispatch(new RegisterNotificationAction( new NotificationRecord(
-                NotificationKey.NewNotificationKey(), 
+
+            dispatcher.Dispatch(new RegisterNotificationAction(new NotificationRecord(
+                NotificationKey.NewNotificationKey(),
                 $"Saved file: {writeToFileSystemAction.AbsoluteFilePath.GetAbsoluteFilePathString()}",
                 _defaultInformationRenderer.GetType(),
                 null,

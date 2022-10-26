@@ -11,10 +11,8 @@ public record TreeViewContextMenuEventDto<T>(MouseEventArgs MouseEventArgs,
         Func<Task> RefreshContextMenuTarget,
         Func<Task> RefreshParentOfContextMenuTarget,
         ElementReference FocusAfterTarget)
-    : TreeViewEventDto<T>(Item, 
-        ToggleIsExpanded, 
+    : TreeViewEventDto<T>(Item,
+        ToggleIsExpanded,
         SetIsActive,
-        RefreshContextMenuTarget, 
+        RefreshContextMenuTarget,
         RefreshParentOfContextMenuTarget);
-
-

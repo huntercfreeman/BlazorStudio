@@ -8,7 +8,7 @@ public class LexerTests
     public async Task Test1()
     {
         var content = @"some text";
-        
+
         /*
          * Expected:
          *     -TextNode = 'some text'
@@ -16,7 +16,7 @@ public class LexerTests
 
         var lexer = new TextEditorHtmlLexer();
 
-        var textEditorTextSpans = 
+        var textEditorTextSpans =
             await lexer.Lex(content);
     }
 }

@@ -13,10 +13,10 @@ public class ContextStateReducer
 
         return previousContextState with
         {
-            ContextRecords = nextImmutableList
+            ContextRecords = nextImmutableList,
         };
     }
-    
+
     [ReducerMethod]
     public static ContextState ReduceDisposeContextStateAction(ContextState previousContextState,
         DisposeContextStateAction disposeContextStateAction)
@@ -26,17 +26,17 @@ public class ContextStateReducer
 
         return previousContextState with
         {
-            ContextRecords = nextImmutableList
-        }; 
+            ContextRecords = nextImmutableList,
+        };
     }
-    
+
     [ReducerMethod]
     public static ContextState ReduceSetActiveContextStatesAction(ContextState previousContextState,
         SetActiveContextStatesAction setActiveContextStatesAction)
     {
         return previousContextState with
         {
-            ActiveContextRecords = setActiveContextStatesAction.ActiveContextStates
-        }; 
+            ActiveContextRecords = setActiveContextStatesAction.ActiveContextStates,
+        };
     }
 }

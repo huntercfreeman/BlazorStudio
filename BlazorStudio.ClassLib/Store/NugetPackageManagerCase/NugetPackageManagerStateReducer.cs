@@ -11,7 +11,7 @@ public class NugetPackageManagerStateReducer
     {
         return previousNugetPackageManagerState with
         {
-            FocusRequestedSequenceKey = SequenceKey.NewSequenceKey()
+            FocusRequestedSequenceKey = SequenceKey.NewSequenceKey(),
         };
     }
 }

@@ -9,7 +9,7 @@ public record FontOptionsState(DimensionUnit FontSize)
     public FontOptionsState() : this(new DimensionUnit()
     {
         DimensionUnitKind = DimensionUnitKind.Pixels,
-        Value = 17
+        Value = 17,
     })
     {
         if (OperatingSystem.IsWindows())
@@ -18,7 +18,7 @@ public record FontOptionsState(DimensionUnit FontSize)
             FontSize = new DimensionUnit()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 15
+                Value = 15,
             };
         }
     }

@@ -6,7 +6,7 @@ namespace Blazor.Text.Editor.Analysis.Html.ClassLib.ExtensionMethods;
 public static class StringWalkerExtensions
 {
     public static bool CheckForInjectedLanguageCodeBlockTag(
-        this StringWalker stringWalker, 
+        this StringWalker stringWalker,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         return stringWalker.CheckForSubstring(injectedLanguageDefinition.InjectedLanguageCodeBlockTag) &&

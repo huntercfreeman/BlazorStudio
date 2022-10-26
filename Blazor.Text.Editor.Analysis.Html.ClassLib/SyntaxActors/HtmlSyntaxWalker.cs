@@ -16,22 +16,21 @@ public class HtmlSyntaxWalker
 
     public void Visit(TagSyntax syntaxNode)
     {
-        foreach (var child in syntaxNode.ChildTagSyntaxes)
-        {
-            Visit(child);
-        }
-        
+        foreach (var child in syntaxNode.ChildTagSyntaxes) Visit(child);
+
         if (syntaxNode.OpenTagNameSyntax is not null)
             VisitTagNameSyntax(syntaxNode.OpenTagNameSyntax);
-            
+
         if (syntaxNode.CloseTagNameSyntax is not null)
             VisitTagNameSyntax(syntaxNode.CloseTagNameSyntax);
-        
+
         if (syntaxNode.TagKind == TagKind.InjectedLanguageCodeBlock)
+        {
             VisitInjectedLanguageFragmentSyntax(
                 (InjectedLanguageFragmentSyntax)syntaxNode);
+        }
     }
-    
+
     public void VisitAttributeNameSyntax(AttributeNameSyntax attributeNameSyntax)
     {
         AttributeNameSyntaxes.Add(attributeNameSyntax);

@@ -4,17 +4,17 @@
      @onkeydown="HandleOnKeyDown"
      @onkeydown:preventDefault="true"
      @onkeydown:stopPropagation="true">
-    
+
     <CascadingValue Name="ActiveMenuOptionIndex" Value="_activeMenuOptionIndex">
         @if (!ShouldCategorizeByMenuOptionKind)
         {
             for (var i = 0; i < _cachedMenuOptionRecords.Length; i++)
             {
                 var index = i;
-                
+
                 var menuOption = _cachedMenuOptionRecords[index];
                 <MenuOptionDisplay MenuOptionRecord="@menuOption"
-                                   MenuOptionIndex="index" />
+                                   MenuOptionIndex="index"/>
             }
         }
         else

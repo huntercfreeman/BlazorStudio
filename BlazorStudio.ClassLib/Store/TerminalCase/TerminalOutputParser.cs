@@ -23,10 +23,7 @@ public static class TerminalOutputParser
             {
                 var currentCharacter = input[position++];
 
-                if (currentCharacter == ' ')
-                {
-                    break;
-                }
+                if (currentCharacter == ' ') break;
 
                 httpBuilder.Append(currentCharacter);
             }
@@ -36,17 +33,12 @@ public static class TerminalOutputParser
             var result = firstSubstring.EscapeHtml()
                          + aTag.ToString();
 
-            if (position != input.Length - 1)
-            {
-                result += input.Substring(position);
-            }
+            if (position != input.Length - 1) result += input.Substring(position);
 
             outputBuilder.Append(result + "<br />");
         }
         else
-        {
             outputBuilder.Append(input.EscapeHtml() + "<br />");
-        }
 
         return outputBuilder.ToString();
     }

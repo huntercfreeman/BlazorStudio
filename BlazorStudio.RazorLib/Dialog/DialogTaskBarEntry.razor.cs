@@ -17,9 +17,10 @@ public partial class DialogTaskBarEntry : ComponentBase
         Dispatcher.Dispatch(new ReplaceDialogAction(DialogRecord,
             DialogRecord with
             {
-                IsMinimized = !DialogRecord.IsMinimized
+                IsMinimized = !DialogRecord.IsMinimized,
             }));
     }
+
     private void CloseOnClick()
     {
         Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));

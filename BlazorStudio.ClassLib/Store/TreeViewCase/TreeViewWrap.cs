@@ -31,7 +31,7 @@ public class TreeViewWrap<T> : ITreeViewWrap
         {
             RootTreeViews = RootTreeViews,
             ActiveTreeViews = ActiveTreeViews,
-            SequenceKey = SequenceKey.NewSequenceKey()
+            SequenceKey = SequenceKey.NewSequenceKey(),
         };
     }
 }

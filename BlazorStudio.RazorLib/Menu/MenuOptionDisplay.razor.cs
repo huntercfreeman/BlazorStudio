@@ -41,16 +41,16 @@ public partial class MenuOptionDisplay : FluxorComponent
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 0
-            }
+                Value = 0,
+            },
         },
         TopCalc = new List<DimensionUnit>
         {
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 0
-            }
+                Value = 0,
+            },
         },
     };
 
@@ -58,15 +58,13 @@ public partial class MenuOptionDisplay : FluxorComponent
     private bool _hasFocus;
 
     private DropdownKey _dropdownKey = DropdownKey.NewDropdownKey();
-    
+
     protected override async Task OnParametersSetAsync()
     {
         if (ActiveMenuOptionIndex == MenuOptionIndex &&
             !_hasFocus)
-        {
             await _menuOptionDisplayElementReference.FocusAsync();
-        }
-        
+
         await base.OnParametersSetAsync();
     }
 
@@ -86,7 +84,7 @@ public partial class MenuOptionDisplay : FluxorComponent
         else
             Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
     }
-    
+
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         var keyDownEventRecord = new KeyDownEventRecord(
@@ -95,7 +93,7 @@ public partial class MenuOptionDisplay : FluxorComponent
             keyboardEventArgs.CtrlKey,
             keyboardEventArgs.ShiftKey,
             keyboardEventArgs.AltKey);
-        
+
         switch (keyDownEventRecord.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
@@ -112,14 +110,14 @@ public partial class MenuOptionDisplay : FluxorComponent
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
                 if (CloseParentSubmenuFuncAsync is not null)
                     await CloseParentSubmenuFuncAsync.Invoke();
-                
+
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
             {
                 if (MenuOptionRecord.Children.Any())
                     DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);
-                
+
                 break;
             }
         }

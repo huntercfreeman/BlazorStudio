@@ -9,7 +9,8 @@ public partial class NotificationDisplay : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public NotificationRecord NotificationRecord { get; set; } = null!;
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -26,7 +27,7 @@ public partial class NotificationDisplay : ComponentBase
                 });
             }
         }
-        
+
         return base.OnAfterRenderAsync(firstRender);
     }
 
@@ -34,7 +35,7 @@ public partial class NotificationDisplay : ComponentBase
     {
         Dispatcher.Dispatch(new DisposeNotificationAction(NotificationRecord));
     }
-    
+
     private void DismissOnClick()
     {
         Dismiss();

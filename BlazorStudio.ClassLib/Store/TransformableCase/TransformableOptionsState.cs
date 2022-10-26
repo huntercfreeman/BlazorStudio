@@ -6,13 +6,12 @@ namespace BlazorStudio.ClassLib.Store.TransformableCase;
 [FeatureState]
 public record TransformableOptionsState(DimensionUnit ResizeHandleDimensionUnit)
 {
-    public TransformableOptionsState() 
+    public TransformableOptionsState()
         : this(new DimensionUnit()
-                {
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    Value = 7
-                })
+        {
+            DimensionUnitKind = DimensionUnitKind.Pixels,
+            Value = 7,
+        })
     {
-        
     }
 }

@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.ClassLib.CustomEvents;
 
-[EventHandler("oncustomkeydown", typeof(CustomKeyDown), enableStopPropagation: true, enablePreventDefault: true)]
-[EventHandler("oncustomclick", typeof(CustomOnClick), enableStopPropagation: true, enablePreventDefault: true)]
+[EventHandler("oncustomkeydown", typeof(CustomKeyDown), true, true)]
+[EventHandler("oncustomclick", typeof(CustomOnClick), true, true)]
 public static class EventHandlers
 {
 }

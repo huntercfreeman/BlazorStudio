@@ -36,7 +36,8 @@ public partial class FolderExplorer : FluxorComponent
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
 
     private bool _isInitialized;
@@ -46,7 +47,7 @@ public partial class FolderExplorer : FluxorComponent
     private RichErrorModel? _workspaceStateWrapStateChangedRichErrorModel;
     private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
     private Func<Task> _mostRecentRefreshContextMenuTarget;
-    
+
     private Dimensions _fileDropdownDimensions = new()
     {
         DimensionsPositionKind = DimensionsPositionKind.Absolute,
@@ -55,16 +56,16 @@ public partial class FolderExplorer : FluxorComponent
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 5
-            }
+                Value = 5,
+            },
         },
         TopCalc = new List<DimensionUnit>
         {
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
-                Value = 2.5
-            }
+                Value = 2.5,
+            },
         },
     };
 
@@ -73,7 +74,7 @@ public partial class FolderExplorer : FluxorComponent
     protected override void OnInitialized()
     {
         FolderExplorerStateWrap.StateChanged += WorkspaceStateWrap_StateChanged;
-        
+
         base.OnInitialized();
     }
 
@@ -94,17 +95,15 @@ public partial class FolderExplorer : FluxorComponent
 
             _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
                 {
-                    _rootAbsoluteFilePaths = (await LoadAbsoluteFilePathChildrenAsync(workspaceState.FolderAbsoluteFilePath))
+                    _rootAbsoluteFilePaths =
+                        (await LoadAbsoluteFilePathChildrenAsync(workspaceState.FolderAbsoluteFilePath))
                         .ToList();
 
                     _isInitialized = true;
 
                     await InvokeAsync(StateHasChanged);
 
-                    if (_treeViewWrapDisplay is not null)
-                    {
-                        _treeViewWrapDisplay.Reload();
-                    }
+                    if (_treeViewWrapDisplay is not null) _treeViewWrapDisplay.Reload();
                 },
                 $"{nameof(WorkspaceStateWrap_StateChanged)}",
                 false,
@@ -126,9 +125,7 @@ public partial class FolderExplorer : FluxorComponent
     private Task<IEnumerable<IAbsoluteFilePath>> LoadAbsoluteFilePathChildrenAsync(IAbsoluteFilePath absoluteFilePath)
     {
         if (!absoluteFilePath.IsDirectory)
-        {
             return Task.FromResult<IEnumerable<IAbsoluteFilePath>>(Array.Empty<IAbsoluteFilePath>());
-        }
 
         var childDirectoryAbsolutePaths = Directory
             .GetDirectories(absoluteFilePath.GetAbsoluteFilePathString())
@@ -146,7 +143,8 @@ public partial class FolderExplorer : FluxorComponent
             .Union(childFileAbsolutePaths));
     }
 
-    private void FolderExplorerTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<IAbsoluteFilePath> treeViewKeyboardEventDto)
+    private void FolderExplorerTreeViewOnEnterKeyDown(
+        TreeViewKeyboardEventDto<IAbsoluteFilePath> treeViewKeyboardEventDto)
     {
         if (!treeViewKeyboardEventDto.Item.IsDirectory)
         {
@@ -155,33 +153,32 @@ public partial class FolderExplorer : FluxorComponent
                 var content = await FileSystemProvider
                     .ReadFileAsync(
                         treeViewKeyboardEventDto.Item);
-            
+
                 var textEditor = new TextEditorBase(
                     content,
                     null,
                     null,
                     null);
-            
+
                 Dispatcher.Dispatch(new SetTextEditorResourceStateAction(
                     textEditor.Key,
                     treeViewKeyboardEventDto.Item));
-                
+
                 await textEditor.ApplySyntaxHighlightingAsync();
-            
+
                 TextEditorService
                     .RegisterTextEditor(textEditor);
-            
+
                 Dispatcher.Dispatch(
                     new SetActiveTextEditorKeyAction(textEditor.Key));
             });
         }
         else
-        {
             treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
-        }
     }
 
-    private void FolderExplorerTreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<IAbsoluteFilePath> treeViewKeyboardEventDto)
+    private void FolderExplorerTreeViewOnSpaceKeyDown(
+        TreeViewKeyboardEventDto<IAbsoluteFilePath> treeViewKeyboardEventDto)
     {
         treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
     }
@@ -195,30 +192,28 @@ public partial class FolderExplorer : FluxorComponent
                 var content = await FileSystemProvider
                     .ReadFileAsync(
                         treeViewMouseEventDto.Item);
-            
+
                 var textEditor = new TextEditorBase(
                     content,
                     null,
                     null,
                     null);
-            
+
                 Dispatcher.Dispatch(new SetTextEditorResourceStateAction(
                     textEditor.Key,
                     treeViewMouseEventDto.Item));
-                
+
                 await textEditor.ApplySyntaxHighlightingAsync();
-            
+
                 TextEditorService
                     .RegisterTextEditor(textEditor);
-            
+
                 Dispatcher.Dispatch(
                     new SetActiveTextEditorKeyAction(textEditor.Key));
             });
         }
         else
-        {
             treeViewMouseEventDto.ToggleIsExpanded.Invoke();
-        }
     }
 
     private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)

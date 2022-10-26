@@ -23,7 +23,7 @@ public class RichErrorModel
         IsResolved = isResolved;
         OnIsResolvedAction = onIsResolvedAction;
     }
-    
+
     public Guid Id { get; } = Guid.NewGuid();
     public string Message { get; }
     public string Hint { get; }

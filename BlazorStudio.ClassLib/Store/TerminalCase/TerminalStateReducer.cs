@@ -10,10 +10,10 @@ public class TerminalStateReducer
     {
         return previousTerminalState with
         {
-            ActiveIndex = setActiveTerminalEntryAction.Index
+            ActiveIndex = setActiveTerminalEntryAction.Index,
         };
     }
-    
+
     [ReducerMethod]
     public static TerminalState ReduceSetTerminalEntryIsExecutingAction(TerminalState previousTerminalState,
         SetTerminalEntryIsExecutingAction setTerminalEntryIsExecutingAction)
@@ -26,13 +26,13 @@ public class TerminalStateReducer
 
         var nextTerminalEntry = terminalEntry with
         {
-            IsExecuting = setTerminalEntryIsExecutingAction.IsExecuting
+            IsExecuting = setTerminalEntryIsExecutingAction.IsExecuting,
         };
 
         var nextTerminalState = previousTerminalState with
         {
             TerminalEntries = previousTerminalState.TerminalEntries
-                .Replace(terminalEntry, nextTerminalEntry)
+                .Replace(terminalEntry, nextTerminalEntry),
         };
 
         return nextTerminalState;

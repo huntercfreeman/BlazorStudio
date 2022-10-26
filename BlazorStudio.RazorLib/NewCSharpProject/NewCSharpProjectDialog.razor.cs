@@ -24,6 +24,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
     public Action<AbsoluteFilePathDotNet>? OnProjectCreatedCallback { get; set; }
 
     private List<CSharpTemplate>? _templates;
+
     // I cannot get 'dotnet new list' to run when I use Ubuntu OS
     // Therefore I am executing the deprecated version.
     private string getCSharpProjectTemplatesCommand = "dotnet new --list";
@@ -56,7 +57,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
             // Perhaps a bit peculiar to do this closure behavior...
             var output = string.Empty;
-            
+
             void OnEnd(Process finishedProcess)
             {
                 if (output is null)
@@ -65,7 +66,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
                 _startingRetrievingProjectTemplates = false;
                 _attemptedToRetrieveProjectTemplates = true;
 
-                _templates = new();
+                _templates = new List<CSharpTemplate>();
 
                 // I cannot get 'dotnet new list' to run when I use Ubuntu OS
                 // Therefore I am executing the deprecated version.
@@ -83,9 +84,9 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
                 var lengthsOfSections = new int[4];
 
-                int position = 0;
-                int lengthCounter = 0;
-                int currentSection = 0;
+                var position = 0;
+                var lengthCounter = 0;
+                var currentSection = 0;
 
                 while (position < output.Length - 1 && currentSection != 4)
                 {
@@ -106,7 +107,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
                 var actualValues = output.Substring(position);
 
-                StringReader stringReader = new StringReader(actualValues);
+                var stringReader = new StringReader(actualValues);
 
                 var line = string.Empty;
 
@@ -114,7 +115,8 @@ public partial class NewCSharpProjectDialog : ComponentBase
                 {
                     var templateName = line.Substring(0, lengthsOfSections[0]);
                     var shortName = line.Substring(lengthsOfSections[0] + 2, lengthsOfSections[1]);
-                    var language = line.Substring(lengthsOfSections[0] + lengthsOfSections[1] + 2, lengthsOfSections[2]);
+                    var language = line.Substring(lengthsOfSections[0] + lengthsOfSections[1] + 2,
+                        lengthsOfSections[2]);
                     var tags = line.Substring(lengthsOfSections[0] + lengthsOfSections[1] + lengthsOfSections[2] + 2);
 
                     _templates.Add(new CSharpTemplate
@@ -122,7 +124,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
                         TemplateName = templateName,
                         ShortName = shortName,
                         Language = language,
-                        Tags = tags
+                        Tags = tags,
                     });
                 }
 
@@ -136,20 +138,20 @@ public partial class NewCSharpProjectDialog : ComponentBase
                     null,
                     OnStart,
                     OnEnd,
-                null,
+                    null,
                     null,
                     (data) => output = data,
                     CancellationToken.None));
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 
     private void ExecuteNewCSharpProject()
     {
-        if (_disableExecuteButton || 
-            _finishedCreatingProject || 
-            _selectCSharpProjectTemplate is null || 
+        if (_disableExecuteButton ||
+            _finishedCreatingProject ||
+            _selectCSharpProjectTemplate is null ||
             InputFileDialogSelection is null ||
             !InputFileDialogSelection.IsDirectory)
             return;
@@ -170,7 +172,8 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
             if (InputFileDialogSelection.IsDirectory)
             {
-                var createdProjectContainingDirectory = new AbsoluteFilePath(InputFileDialogSelection.GetAbsoluteFilePathString() + _projectName, 
+                var createdProjectContainingDirectory = new AbsoluteFilePath(
+                    InputFileDialogSelection.GetAbsoluteFilePathString() + _projectName,
                     true);
 
                 Dispatcher.Dispatch(new SetFolderExplorerAction(createdProjectContainingDirectory));
@@ -178,9 +181,10 @@ public partial class NewCSharpProjectDialog : ComponentBase
                 if (OnProjectCreatedCallback is not null)
                 {
                     var createdProjectId = ProjectId.CreateNewId();
-                    
+
                     var createdProject = new AbsoluteFilePathDotNet(
-                        createdProjectContainingDirectory.GetAbsoluteFilePathString() + _projectName + '.' + ExtensionNoPeriodFacts.C_SHARP_PROJECT, 
+                        createdProjectContainingDirectory.GetAbsoluteFilePathString() + _projectName + '.' +
+                        ExtensionNoPeriodFacts.C_SHARP_PROJECT,
                         false,
                         createdProjectId);
 
@@ -204,7 +208,8 @@ public partial class NewCSharpProjectDialog : ComponentBase
                 CancellationToken.None));
     }
 
-    private void InputFileDialogOnEnterKeyDownOverride((IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
+    private void InputFileDialogOnEnterKeyDownOverride(
+        (IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
     {
         if (_disableExecuteButton || _finishedCreatingProject)
             return;
@@ -215,8 +220,9 @@ public partial class NewCSharpProjectDialog : ComponentBase
             InvokeAsync(StateHasChanged);
         }
     }
-    
-    private void InputFileDialogChooseContextMenuOption(TreeViewContextMenuEventDto<IAbsoluteFilePath> treeViewContextMenuEventDto)
+
+    private void InputFileDialogChooseContextMenuOption(
+        TreeViewContextMenuEventDto<IAbsoluteFilePath> treeViewContextMenuEventDto)
     {
         if (_disableExecuteButton || _finishedCreatingProject)
             return;
@@ -235,7 +241,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
         public string Language { get; set; }
         public string Tags { get; set; }
     }
-    
+
     public class RenderCSharpTemplate
     {
         public CSharpTemplate CSharpTemplate { get; set; }

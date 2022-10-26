@@ -8,9 +8,9 @@ namespace BlazorStudio.RazorLib.Font;
 
 public partial class FontOptionSettings : FluxorComponent
 {
-    [Inject] 
+    [Inject]
     private IState<FontOptionsState> FontOptionsStateWrap { get; set; } = null!;
-    [Inject] 
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private int _iconSizeInPixels;
@@ -24,14 +24,14 @@ public partial class FontOptionSettings : FluxorComponent
             Dispatcher.Dispatch(new SetFontOptionsStateAction(new DimensionUnit()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = _iconSizeInPixels
+                Value = _iconSizeInPixels,
             }));
         }
     }
 
     protected override void OnParametersSet()
     {
-        _iconSizeInPixels = (int) FontOptionsStateWrap.Value.FontSize.Value;
+        _iconSizeInPixels = (int)FontOptionsStateWrap.Value.FontSize.Value;
 
         base.OnParametersSet();
     }

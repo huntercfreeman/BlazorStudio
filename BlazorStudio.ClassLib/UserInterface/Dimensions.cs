@@ -33,7 +33,7 @@ public class Dimensions
 
         foreach (var arbitraryDimensionUnitList in ArbitraryDimensionUnitLists)
         {
-            DimensionUnitHelper.AppendToStyleString(builder, 
+            DimensionUnitHelper.AppendToStyleString(builder,
                 arbitraryDimensionUnitList.DimensionUnits,
                 arbitraryDimensionUnitList.StyleAttributeName);
         }

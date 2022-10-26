@@ -8,12 +8,12 @@ public class TagTextSyntax : TagSyntax
         ImmutableArray<AttributeTupleSyntax> attributeTupleSyntaxes,
         ImmutableArray<TagSyntax> childTagSyntaxes,
         string value,
-        bool hasSpecialHtmlCharacter = false) 
+        bool hasSpecialHtmlCharacter = false)
         : base(
-            null, 
             null,
-            attributeTupleSyntaxes, 
-            childTagSyntaxes, 
+            null,
+            attributeTupleSyntaxes,
+            childTagSyntaxes,
             TagKind.Text,
             hasSpecialHtmlCharacter)
     {

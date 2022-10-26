@@ -8,6 +8,5 @@ public record NugetPackageManagerState(SequenceKey FocusRequestedSequenceKey)
 {
     public NugetPackageManagerState() : this(SequenceKey.NewSequenceKey())
     {
-        
     }
 }

@@ -8,9 +8,9 @@ namespace BlazorStudio.RazorLib.Icons;
 
 public partial class IconOptionSettings : FluxorComponent
 {
-    [Inject] 
+    [Inject]
     private IState<IconOptionsState> IconOptionsStateWrap { get; set; } = null!;
-    [Inject] 
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private int _iconSizeInPixels;
@@ -24,14 +24,14 @@ public partial class IconOptionSettings : FluxorComponent
             Dispatcher.Dispatch(new SetIconOptionsStateAction(new DimensionUnit()
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = _iconSizeInPixels
+                Value = _iconSizeInPixels,
             }));
         }
     }
 
     protected override void OnParametersSet()
     {
-        _iconSizeInPixels = (int) IconOptionsStateWrap.Value.IconSize.Value;
+        _iconSizeInPixels = (int)IconOptionsStateWrap.Value.IconSize.Value;
 
         base.OnParametersSet();
     }

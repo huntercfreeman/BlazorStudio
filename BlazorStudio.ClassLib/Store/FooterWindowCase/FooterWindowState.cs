@@ -8,7 +8,6 @@ public record FooterWindowState(FooterWindowKind ActiveFooterWindowKind)
 {
     public FooterWindowState() : this(FooterWindowKind.Terminal)
     {
-        
     }
 
     public ImmutableArray<FooterWindowTabEntry> GetFooterWindowTabEntries()
