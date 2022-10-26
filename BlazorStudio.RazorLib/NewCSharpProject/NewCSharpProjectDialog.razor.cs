@@ -119,13 +119,11 @@ public partial class NewCSharpProjectDialog : ComponentBase
                         lengthsOfSections[2]);
                     var tags = line.Substring(lengthsOfSections[0] + lengthsOfSections[1] + lengthsOfSections[2] + 2);
 
-                    _templates.Add(new CSharpTemplate
-                    {
-                        TemplateName = templateName,
-                        ShortName = shortName,
-                        Language = language,
-                        Tags = tags,
-                    });
+                    _templates.Add(new CSharpTemplate(
+                        templateName,
+                        shortName,
+                        language,
+                        tags));
                 }
 
                 InvokeAsync(StateHasChanged);
@@ -236,18 +234,35 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     public class CSharpTemplate
     {
-        public string TemplateName { get; set; }
-        public string ShortName { get; set; }
-        public string Language { get; set; }
-        public string Tags { get; set; }
+        public CSharpTemplate(string templateName, string shortName, string language, string tags)
+        {
+            TemplateName = templateName;
+            ShortName = shortName;
+            Language = language;
+            Tags = tags;
+        }
+
+        public string TemplateName { get; }
+        public string ShortName { get; }
+        public string Language { get; }
+        public string Tags { get; }
     }
 
     public class RenderCSharpTemplate
     {
-        public CSharpTemplate CSharpTemplate { get; set; }
-        public Func<string> TitleFunc { get; set; }
-        public string StringIdentifier { get; set; }
-        public bool IsExpandable { get; set; } = false;
-        public Action? OnClick { get; set; }
+        public RenderCSharpTemplate(CSharpTemplate cSharpTemplate, Func<string> titleFunc, string stringIdentifier, bool isExpandable, Action? onClick)
+        {
+            CSharpTemplate = cSharpTemplate;
+            TitleFunc = titleFunc;
+            StringIdentifier = stringIdentifier;
+            IsExpandable = isExpandable;
+            OnClick = onClick;
+        }
+
+        public CSharpTemplate CSharpTemplate { get; }
+        public Func<string> TitleFunc { get; }
+        public string StringIdentifier { get; }
+        public bool IsExpandable { get; }
+        public Action? OnClick { get; }
     }
 }

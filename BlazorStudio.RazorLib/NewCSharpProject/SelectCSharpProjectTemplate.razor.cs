@@ -32,53 +32,49 @@ public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
     private List<RenderCSharpTemplate> GetRootThemes()
     {
         return Templates
-            .Select(x => new RenderCSharpTemplate
-            {
-                CSharpTemplate = x,
-                IsExpandable = true,
-                TitleFunc = () => x.TemplateName,
-            })
+            .Select(x => new RenderCSharpTemplate(
+                x,
+                () => x.TemplateName,
+                null,
+                false,
+                null))
             .ToList();
     }
 
     private Task<IEnumerable<RenderCSharpTemplate>> GetChildren(RenderCSharpTemplate renderCSharpTemplate)
     {
-        var acceptButton = new RenderCSharpTemplate
-        {
-            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
-            IsExpandable = false,
-            TitleFunc = () => "Confirm",
-            OnClick = () =>
+        var acceptButton = new RenderCSharpTemplate(
+            renderCSharpTemplate.CSharpTemplate,
+            () => "Confirm",
+            null,
+            false,
+            () =>
             {
                 SelectedCSharpTemplate = renderCSharpTemplate.CSharpTemplate;
                 InvokeAsync(StateHasChanged);
                 ReRenderCallbackFunc.Invoke();
-            },
-        };
+            });
 
-        var renderShortName = new RenderCSharpTemplate
-        {
-            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
-            IsExpandable = false,
-            TitleFunc = () => renderCSharpTemplate.CSharpTemplate.ShortName,
-            StringIdentifier = "ShortName",
-        };
+        var renderShortName = new RenderCSharpTemplate(
+            renderCSharpTemplate.CSharpTemplate,
+            () => renderCSharpTemplate.CSharpTemplate.ShortName,
+            "ShortName",
+            false,
+            null);
 
-        var renderLanguage = new RenderCSharpTemplate
-        {
-            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
-            IsExpandable = false,
-            TitleFunc = () => renderCSharpTemplate.CSharpTemplate.Language,
-            StringIdentifier = "Language",
-        };
+        var renderLanguage = new RenderCSharpTemplate(
+            renderCSharpTemplate.CSharpTemplate,
+            () => renderCSharpTemplate.CSharpTemplate.Language,
+            "Language",
+            false,
+            null);
 
-        var renderTags = new RenderCSharpTemplate
-        {
-            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
-            IsExpandable = false,
-            TitleFunc = () => renderCSharpTemplate.CSharpTemplate.Tags,
-            StringIdentifier = "Tags",
-        };
+        var renderTags = new RenderCSharpTemplate(
+            renderCSharpTemplate.CSharpTemplate,
+            () => renderCSharpTemplate.CSharpTemplate.Tags,
+            "Tags",
+            false,
+            null);
 
         return Task.FromResult(new List<RenderCSharpTemplate>
         {
