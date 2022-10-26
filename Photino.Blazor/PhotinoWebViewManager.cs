@@ -10,14 +10,13 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebView;
 using Microsoft.Extensions.FileProviders;
+using Photino.Blazor.Utils;
 using PhotinoNET;
 
 namespace Photino.Blazor;
 
 public class PhotinoWebViewManager : WebViewManager
 {
-    private readonly PhotinoWindow _window;
-
     // On Windows, we can't use a custom scheme to host the initial HTML,
     // because webview2 won't let you do top-level navigation to such a URL.
     // On Linux/Mac, we must use a custom scheme, because their webviews
@@ -29,6 +28,8 @@ public class PhotinoWebViewManager : WebViewManager
     public static readonly string AppBaseUri
         = $"{BlazorAppScheme}://0.0.0.0/";
 
+    private readonly PhotinoWindow _window;
+
     public PhotinoWebViewManager(PhotinoWindow window, IServiceProvider provider, Dispatcher dispatcher, Uri appBaseUri,
         IFileProvider fileProvider, JSComponentConfigurationStore jsComponents, string hostPageRelativePath)
         : base(provider, dispatcher, appBaseUri, fileProvider, jsComponents, hostPageRelativePath)
@@ -36,7 +37,7 @@ public class PhotinoWebViewManager : WebViewManager
         _window = window ?? throw new ArgumentNullException(nameof(window));
 
         // Create a scheduler that uses one threads.
-        var sts = new Utils.SynchronousTaskScheduler();
+        var sts = new SynchronousTaskScheduler();
 
         _window.WebMessageReceived += (sender, message) =>
         {

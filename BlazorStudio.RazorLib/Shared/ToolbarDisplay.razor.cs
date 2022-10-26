@@ -1,12 +1,8 @@
-﻿using BlazorStudio.ClassLib.Contexts;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Keyboard;
-using BlazorStudio.ClassLib.Store.ContextCase;
+﻿using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.UserInterface;
-using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.NewCSharpProject;
 using BlazorStudio.RazorLib.NewDotNetSolution;
@@ -18,18 +14,6 @@ namespace BlazorStudio.RazorLib.Shared;
 
 public partial class ToolbarDisplay
 {
-    [Inject]
-    private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-
-    private DialogRecord _inputFileDialog = new(
-        DialogKey.NewDialogKey(),
-        "Input File",
-        typeof(InputFileDialog),
-        null
-    );
-
     private readonly DialogRecord _newCSharpProjectDialog = new(
         DialogKey.NewDialogKey(),
         "New C# Project",
@@ -66,6 +50,18 @@ public partial class ToolbarDisplay
     };
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
+
+    private DialogRecord _inputFileDialog = new(
+        DialogKey.NewDialogKey(),
+        "Input File",
+        typeof(InputFileDialog),
+        null
+    );
+
+    [Inject]
+    private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     private void DispatchAddActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
     {

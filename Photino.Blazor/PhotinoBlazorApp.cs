@@ -1,22 +1,26 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+﻿using System;
+using System.IO;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.FileProviders;
 using PhotinoNET;
-using System;
-using System.IO;
 
 namespace Photino.Blazor;
 
 public class PhotinoBlazorApp
 {
     /// <summary>
-    /// Gets configuration for the service provider.
+    ///     Gets configuration for the service provider.
     /// </summary>
     public IServiceProvider Services { get; private set; }
 
     /// <summary>
-    /// Gets configuration for the root components in the window.
+    ///     Gets configuration for the root components in the window.
     /// </summary>
     public BlazorWindowRootComponents RootComponents { get; private set; }
+
+    public PhotinoWindow MainWindow { get; private set; }
+
+    public PhotinoWebViewManager WindowManager { get; private set; }
 
     internal void Initialize(IServiceProvider services, RootComponentList rootComponents)
     {
@@ -45,10 +49,6 @@ public class PhotinoBlazorApp
         RootComponents = new BlazorWindowRootComponents(WindowManager, jsComponents);
         foreach (var component in rootComponents) RootComponents.Add(component.Item1, component.Item2);
     }
-
-    public PhotinoWindow MainWindow { get; private set; }
-
-    public PhotinoWebViewManager WindowManager { get; private set; }
 
     public void Run()
     {

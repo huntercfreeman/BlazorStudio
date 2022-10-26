@@ -4,7 +4,6 @@ using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.NugetPackageManager;
 using BlazorStudio.ClassLib.Sequence;
-using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
@@ -21,6 +20,29 @@ namespace BlazorStudio.RazorLib.NugetPackageManager;
 
 public partial class NugetPackageManagerDisplay : FluxorComponent
 {
+    public enum NugetPackageManagerTreeViewEntryKind
+    {
+        NugetPackage,
+        NugetPackageVersion,
+        NugetPackageVersionEnumerable,
+        MarkupStringValue,
+        WrappedMarkupStringValue,
+        MarkupStringValueEnumerable,
+    }
+
+    private string? _activeQueryForNugetPackages;
+    private ContextBoundary? _contextBoundary;
+    private bool _includePrerelease;
+    private JsonException? _jsonExceptionFromQueryingNuget;
+
+    private TreeViewWrapKey _nugetPackageManagerTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+    private ImmutableArray<NugetPackageRecord> _nugetPackages = ImmutableArray<NugetPackageRecord>.Empty;
+    private TreeViewWrapDisplay<NugetPackageManagerTreeViewEntry>? _nugetPackagesTreeViewWrapDisplay;
+    private string _nugetQuery = string.Empty;
+
+    private SequenceKey? _previousFocusRequestedSequenceKey;
+
+    private Project? _selectedProjectToModify;
     [Inject]
     private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
     [Inject]
@@ -31,19 +53,6 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-
-    private SequenceKey? _previousFocusRequestedSequenceKey;
-    private ContextBoundary? _contextBoundary;
-    private string _nugetQuery = string.Empty;
-    private bool _includePrerelease;
-    private ImmutableArray<NugetPackageRecord> _nugetPackages = ImmutableArray<NugetPackageRecord>.Empty;
-
-    private Project? _selectedProjectToModify;
-
-    private TreeViewWrapKey _nugetPackageManagerTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-    private TreeViewWrapDisplay<NugetPackageManagerTreeViewEntry>? _nugetPackagesTreeViewWrapDisplay;
-    private string? _activeQueryForNugetPackages;
-    private JsonException? _jsonExceptionFromQueryingNuget;
 
     private INugetPackageManagerQuery BuiltNugetQuery => NugetPackageManagerProvider
         .BuildQuery(_nugetQuery, _includePrerelease);
@@ -444,19 +453,9 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
         public bool IsExpandable { get; set; }
     }
 
-    public enum NugetPackageManagerTreeViewEntryKind
-    {
-        NugetPackage,
-        NugetPackageVersion,
-        NugetPackageVersionEnumerable,
-        MarkupStringValue,
-        WrappedMarkupStringValue,
-        MarkupStringValueEnumerable,
-    }
-
     /// <summary>
-    /// This class is used when a string's value is very large and should have its own
-    /// child to hide the text until desired that it is shown.
+    ///     This class is used when a string's value is very large and should have its own
+    ///     child to hide the text until desired that it is shown.
     /// </summary>
     public class WrappedMarkupStringValue
     {

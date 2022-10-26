@@ -1,4 +1,9 @@
-﻿using BlazorStudio.ClassLib.Store.DialogCase;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.DropdownCase;
+using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.TaskModelManager;
@@ -6,17 +11,17 @@ using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Store.DropdownCase;
-using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
 public partial class InputFileDialog : ComponentBase
 {
+    private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+
+    private bool _isInitialized;
+    private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
+    private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -40,11 +45,6 @@ public partial class InputFileDialog : ComponentBase
     public string? InvalidSelectionTextOverride { get; set; }
     [Parameter]
     public Action<ImmutableArray<IAbsoluteFilePath>>? ConfirmOnClickOverrideAction { get; set; }
-
-    private bool _isInitialized;
-    private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-    private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
-    private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
 
     private string BodyCssClassString => ShowFooter
         ? "bstudio_input-file-dialog-body-show-footer"
@@ -176,7 +176,7 @@ public partial class InputFileDialog : ComponentBase
 
         var createNewEmptyFile = MenuOptionFacts.File
             .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(CreateNewFileForm.ParentDirectory),
@@ -203,7 +203,7 @@ public partial class InputFileDialog : ComponentBase
 
         var createNewDirectory = MenuOptionFacts.File
             .ConstructCreateNewDirectory(typeof(CreateNewDirectoryForm),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(CreateNewDirectoryForm.ParentDirectory),
@@ -250,7 +250,7 @@ public partial class InputFileDialog : ComponentBase
         string fileName,
         TreeViewContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
                 await File
                     .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName,
@@ -270,7 +270,7 @@ public partial class InputFileDialog : ComponentBase
         string directoryName,
         TreeViewContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
                 Directory.CreateDirectory(parentDirectoryAbsoluteFilePathString + directoryName);
 

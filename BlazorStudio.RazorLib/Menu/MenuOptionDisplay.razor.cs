@@ -11,27 +11,9 @@ namespace BlazorStudio.RazorLib.Menu;
 
 public partial class MenuOptionDisplay : FluxorComponent
 {
-    [Inject]
-    private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-
-    [CascadingParameter(Name = "ActiveMenuOptionIndex")]
-    public int? ActiveMenuOptionIndex { get; set; }
-    [CascadingParameter(Name = "CloseParentSubmenuFuncAsync")]
-    public Func<Task>? CloseParentSubmenuFuncAsync { get; set; }
-
-    [Parameter]
-    public MenuOptionRecord MenuOptionRecord { get; set; } = null!;
-    [Parameter]
-    public int MenuOptionIndex { get; set; }
-
-    private string HasSubmenuOpenCssClass => DropdownStateWrap.Value.ActiveDropdownKeys.Any(x => x == _dropdownKey)
-        ? "bstudio_sub-menu-is-open"
-        : string.Empty;
+    private int _activeMenuOptionIndex;
 
     private bool _displayWidget;
-    private ElementReference _menuOptionDisplayElementReference;
 
     private Dimensions _dropdownDimensions = new()
     {
@@ -54,10 +36,27 @@ public partial class MenuOptionDisplay : FluxorComponent
         },
     };
 
-    private int _activeMenuOptionIndex;
-    private bool _hasFocus;
-
     private DropdownKey _dropdownKey = DropdownKey.NewDropdownKey();
+    private bool _hasFocus;
+    private ElementReference _menuOptionDisplayElementReference;
+    [Inject]
+    private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+
+    [CascadingParameter(Name = "ActiveMenuOptionIndex")]
+    public int? ActiveMenuOptionIndex { get; set; }
+    [CascadingParameter(Name = "CloseParentSubmenuFuncAsync")]
+    public Func<Task>? CloseParentSubmenuFuncAsync { get; set; }
+
+    [Parameter]
+    public MenuOptionRecord MenuOptionRecord { get; set; } = null!;
+    [Parameter]
+    public int MenuOptionIndex { get; set; }
+
+    private string HasSubmenuOpenCssClass => DropdownStateWrap.Value.ActiveDropdownKeys.Any(x => x == _dropdownKey)
+        ? "bstudio_sub-menu-is-open"
+        : string.Empty;
 
     protected override async Task OnParametersSetAsync()
     {

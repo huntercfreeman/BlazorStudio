@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
-using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.NugetPackageManager;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -97,7 +96,7 @@ public partial class NugetPackageManagerMenuWrapperDisplay : ComponentBase
                 OnEnd,
                 null,
                 null,
-                (data) => output = data,
+                data => output = data,
                 CancellationToken.None));
     }
 }

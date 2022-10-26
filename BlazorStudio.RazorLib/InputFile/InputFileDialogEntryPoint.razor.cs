@@ -1,25 +1,22 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Store.DialogCase;
-using BlazorStudio.RazorLib.Settings;
+﻿using BlazorStudio.ClassLib.Store.DialogCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
 public partial class InputFileDialogEntryPoint : ComponentBase
 {
-    [Inject]
-    private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-
     private DialogRecord _inputFileDialog = new(
         DialogKey.NewDialogKey(),
         "Input File",
         typeof(InputFileDialog),
         null
     );
+
+    [Inject]
+    private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     private void OpenInputFileDialogOnClick()
     {

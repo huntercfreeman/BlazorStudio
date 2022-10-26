@@ -16,18 +16,18 @@ namespace BlazorStudio.RazorLib.NewDotNetSolution;
 
 public partial class NewDotNetSolutionDialog : ComponentBase
 {
+    private bool _disableExecuteButton;
+    private bool _finishedCreatingSolution;
+
+    private string _solutionName = string.Empty;
+    private bool _startingCreatingSolution;
+    private readonly string dotnetNewSlnCommand = "dotnet new sln";
+    private IAbsoluteFilePath? InputFileDialogSelection;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
-
-    private string _solutionName = string.Empty;
-    private bool _disableExecuteButton;
-    private bool _finishedCreatingSolution;
-    private bool _startingCreatingSolution;
-    private IAbsoluteFilePath? InputFileDialogSelection;
-    private string dotnetNewSlnCommand = "dotnet new sln";
 
     private string SolutionName => string.IsNullOrWhiteSpace(_solutionName)
         ? "{enter solution name}"
@@ -118,7 +118,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
                 OnEnd,
                 null,
                 null,
-                (data) => output = data,
+                data => output = data,
                 CancellationToken.None));
     }
 }

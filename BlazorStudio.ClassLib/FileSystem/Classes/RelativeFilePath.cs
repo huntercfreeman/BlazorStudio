@@ -5,8 +5,8 @@ namespace BlazorStudio.ClassLib.FileSystem.Classes;
 
 public class RelativeFilePath : IRelativeFilePath
 {
-    private int _position;
     private readonly StringBuilder _tokenBuilder = new();
+    private readonly int _position;
 
     public RelativeFilePath(List<IFilePath> directories,
         string fileNameNoExtension,
@@ -83,18 +83,6 @@ public class RelativeFilePath : IRelativeFilePath
         }
     }
 
-    public void ConsumeTokenAsDirectory()
-    {
-        var directoryFilePath = (IFilePath)new RelativeFilePath(new List<IFilePath>(Directories),
-            _tokenBuilder.ToString(),
-            Path.DirectorySeparatorChar.ToString(),
-            true);
-
-        Directories.Add(directoryFilePath);
-
-        _tokenBuilder.Clear();
-    }
-
     public string GetRelativeFilePathString()
     {
         StringBuilder absoluteFilePathStringBuilder = new();
@@ -115,4 +103,16 @@ public class RelativeFilePath : IRelativeFilePath
                                            (IsDirectory
                                                ? Path.DirectorySeparatorChar.ToString()
                                                : $".{ExtensionNoPeriod}");
+
+    public void ConsumeTokenAsDirectory()
+    {
+        var directoryFilePath = (IFilePath)new RelativeFilePath(new List<IFilePath>(Directories),
+            _tokenBuilder.ToString(),
+            Path.DirectorySeparatorChar.ToString(),
+            true);
+
+        Directories.Add(directoryFilePath);
+
+        _tokenBuilder.Clear();
+    }
 }

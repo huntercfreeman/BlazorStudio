@@ -13,9 +13,9 @@ namespace BlazorStudio.ClassLib.Store.CommandCase.Focus;
 public class FocusEffects
 {
     private readonly IState<ContextState> _contextStateWrap;
+    private readonly IDefaultErrorRenderer _defaultErrorRenderer;
     private readonly IState<DialogStates> _dialogStatesWrap;
     private readonly IState<QuickSelectState> _quickSelectStateWrap;
-    private readonly IDefaultErrorRenderer _defaultErrorRenderer;
 
     public FocusEffects(IState<ContextState> contextStateWrap,
         IState<DialogStates> dialogStatesWrap,
@@ -102,12 +102,12 @@ public class FocusEffects
         {
             IsDisplayed = true,
             QuickSelectItems = quickSelectItems,
-            OnItemSelectedFunc = (dialogRecord) =>
+            OnItemSelectedFunc = dialogRecord =>
             {
                 ((DialogRecord)dialogRecord.ItemNoType).InvokeOnFocusRequestedEventHandler();
                 return Task.CompletedTask;
             },
-            OnHoveredItemChangedFunc = (item) => Task.CompletedTask,
+            OnHoveredItemChangedFunc = item => Task.CompletedTask,
         };
 
         dispatcher.Dispatch(new SetQuickSelectStateAction(quickSelectState));

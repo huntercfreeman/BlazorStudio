@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Text.Json;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.CSharpKeywords;
@@ -19,7 +20,7 @@ public record CSharpKeywords(ImmutableList<string> Keywords)
         else
             jsonKeywords = File.ReadAllText(myWindowsOsLocation);
 
-        var listOfKeywords = System.Text.Json.JsonSerializer.Deserialize<List<string>>(jsonKeywords);
+        var listOfKeywords = JsonSerializer.Deserialize<List<string>>(jsonKeywords);
 
         if (listOfKeywords is not null) Keywords = listOfKeywords.ToImmutableList();
     }

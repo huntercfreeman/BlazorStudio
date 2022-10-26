@@ -63,7 +63,7 @@
 
             this.intersectionObserver.observe(element);
         }
-        ;
+
     },
     disposeVirtualizeCoordinateSystemInsersectionObserver: function (elementIds) {
         for (let i = 0; i < elementIds.length; i++) {
@@ -72,7 +72,7 @@
             let element = document.getElementById(elementId);
             this.intersectionObserver.unobserve(element);
         }
-        ;
+
     },
     handleThresholdChange: function (entries, dotNetObjectReferenceByVirtualizeCoordinateSystemElementId) {
         for (let i = 0; i < entries.length; i++) {
@@ -132,7 +132,7 @@
                 return;
             }
         }
-        ;
+
     },
     setScrollPosition: function (scrollLeft, scrollTop, elementId) {
         let element = document.getElementById(elementId);
@@ -140,7 +140,7 @@
         element.scrollLeft = scrollLeft;
         element.scrollTop = scrollTop;
 
-        return;
+
     },
     initKeymap: function (keymapDotNetObjectReference) {
         document.addEventListener('keydown', (e) => {

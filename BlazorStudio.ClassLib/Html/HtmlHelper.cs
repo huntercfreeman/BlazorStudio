@@ -4,14 +4,14 @@ namespace BlazorStudio.ClassLib.Html;
 
 public static class HtmlHelper
 {
-    private static string _spaceString = "&nbsp;";
-    private static string _tabString = "&nbsp;&nbsp;&nbsp;&nbsp;";
-    private static string _newLineString = "<br/>";
-    private static string _ampersandString = "&amp;";
-    private static string _leftAngleBracketString = "&lt;";
-    private static string _rightAngleBracketString = "&gt;";
-    private static string _doubleQuoteString = "&quot;";
-    private static string _singleQuoteString = "&#39;";
+    private static readonly string _spaceString = "&nbsp;";
+    private static readonly string _tabString = "&nbsp;&nbsp;&nbsp;&nbsp;";
+    private static readonly string _newLineString = "<br/>";
+    private static readonly string _ampersandString = "&amp;";
+    private static readonly string _leftAngleBracketString = "&lt;";
+    private static readonly string _rightAngleBracketString = "&gt;";
+    private static readonly string _doubleQuoteString = "&quot;";
+    private static readonly string _singleQuoteString = "&#39;";
 
     public static string EscapeHtml(this char input)
     {
@@ -25,7 +25,7 @@ public static class HtmlHelper
 
     public static string EscapeHtml(this string input)
     {
-        return input.ToString()
+        return input
             .Replace("&", _ampersandString)
             .Replace("<", _leftAngleBracketString)
             .Replace(">", _rightAngleBracketString)

@@ -1,24 +1,18 @@
 ﻿using System.Collections.Immutable;
-using Blazor.Text.Editor.Analysis.Html.ClassLib;
 using Blazor.Text.Editor.Analysis.Html.ClassLib.Decoration;
 using Blazor.Text.Editor.Analysis.Razor.ClassLib;
-using BlazorStudio.ClassLib.Contexts;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Renderer;
-using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FileSystemCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceCase;
-using BlazorStudio.ClassLib.SyntaxHighlighting;
 using BlazorStudio.ClassLib.UserInterface;
-using BlazorStudio.RazorLib.ContextCase;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Cursor;
 using BlazorTextEditor.RazorLib.HelperComponents;
 using BlazorTextEditor.RazorLib.Keyboard;
-using BlazorTextEditor.RazorLib.Keymap;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -29,6 +23,20 @@ namespace BlazorStudio.RazorLib.Editor;
 
 public partial class EditorDisplay : FluxorComponent
 {
+    private readonly SemaphoreSlim _afterOnKeyDownAutoCompleteSemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _afterOnKeyDownSyntaxHighlightingSemaphoreSlim = new(1, 1);
+
+    private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath(
+        @"C:\Users\hunte\source\Razor\Razor.ServerSide\Pages\Counter.razor",
+        false);
+
+    private string _autoCompleteWordText = string.Empty;
+    private string _previousDimensionsCssString = string.Empty;
+
+    private TextEditorKey _testTextEditorKey = TextEditorKey.NewTextEditorKey();
+    private TextEditorDisplay? _textEditorDisplay;
+
+    private bool _textEditorShouldRemeasureFlag;
     [Inject]
     private IState<EditorState> EditorStateWrap { get; set; } = null!;
     [Inject]
@@ -45,20 +53,6 @@ public partial class EditorDisplay : FluxorComponent
     [Parameter]
     [EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
-
-    private TextEditorKey _testTextEditorKey = TextEditorKey.NewTextEditorKey();
-
-    private IAbsoluteFilePath _absoluteFilePath = new AbsoluteFilePath(
-        @"C:\Users\hunte\source\Razor\Razor.ServerSide\Pages\Counter.razor",
-        false);
-
-    private readonly SemaphoreSlim _afterOnKeyDownAutoCompleteSemaphoreSlim = new(1, 1);
-    private readonly SemaphoreSlim _afterOnKeyDownSyntaxHighlightingSemaphoreSlim = new(1, 1);
-    private string _autoCompleteWordText = string.Empty;
-    private string _previousDimensionsCssString = string.Empty;
-
-    private bool _textEditorShouldRemeasureFlag;
-    private TextEditorDisplay? _textEditorDisplay;
 
     private TextEditorBase? TestTextEditor => TextEditorService.TextEditorStates.TextEditorList
         .FirstOrDefault(x => x.Key == _testTextEditorKey);
@@ -124,7 +118,7 @@ public partial class EditorDisplay : FluxorComponent
         {
             Dispatcher.Dispatch(new RegisterNotificationAction(new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
-                $"Could not find resource file",
+                "Could not find resource file",
                 DefaultErrorRenderer.GetType(),
                 null,
                 TimeSpan.FromSeconds(3))));
@@ -203,8 +197,6 @@ public partial class EditorDisplay : FluxorComponent
             {
                 _afterOnKeyDownSyntaxHighlightingSemaphoreSlim.Release();
             }
-
-            return;
         }
     }
 

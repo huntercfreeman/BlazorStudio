@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Photino.Blazor;
 
@@ -14,6 +14,10 @@ public class PhotinoBlazorAppBuilder
         RootComponents = new RootComponentList();
         Services = new ServiceCollection();
     }
+
+    public RootComponentList RootComponents { get; }
+
+    public IServiceCollection Services { get; }
 
     public static PhotinoBlazorAppBuilder CreateDefault(string[] args = default)
     {
@@ -34,10 +38,6 @@ public class PhotinoBlazorAppBuilder
         return builder;
     }
 
-    public RootComponentList RootComponents { get; }
-
-    public IServiceCollection Services { get; }
-
     public PhotinoBlazorApp Build(Action<IServiceProvider> serviceProviderOptions = null)
     {
         var sp = Services.BuildServiceProvider();
@@ -52,12 +52,7 @@ public class PhotinoBlazorAppBuilder
 
 public class RootComponentList : IEnumerable<(Type, string)>
 {
-    private List<(Type componentType, string domElementSelector)> components = new();
-
-    public void Add<TComponent>(string selector) where TComponent : IComponent
-    {
-        components.Add((typeof(TComponent), selector));
-    }
+    private readonly List<(Type componentType, string domElementSelector)> components = new();
 
     public IEnumerator<(Type, string)> GetEnumerator()
     {
@@ -67,5 +62,10 @@ public class RootComponentList : IEnumerable<(Type, string)>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return components.GetEnumerator();
+    }
+
+    public void Add<TComponent>(string selector) where TComponent : IComponent
+    {
+        components.Add((typeof(TComponent), selector));
     }
 }

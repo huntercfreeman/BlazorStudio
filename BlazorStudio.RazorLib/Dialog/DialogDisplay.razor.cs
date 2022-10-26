@@ -1,6 +1,4 @@
-﻿using BlazorStudio.ClassLib.Contexts;
-using BlazorStudio.ClassLib.Store.ContextCase;
-using BlazorStudio.ClassLib.Store.DialogCase;
+﻿using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.Transformable;
@@ -12,6 +10,9 @@ namespace BlazorStudio.RazorLib.Dialog;
 
 public partial class DialogDisplay : ComponentBase, IDisposable
 {
+    private ContextBoundary? _contextBoundary;
+
+    private TransformableDisplay? _transformableDisplay;
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
@@ -20,15 +21,18 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     [Parameter]
     public DialogRecord DialogRecord { get; set; } = null!;
 
-    private TransformableDisplay? _transformableDisplay;
-    private ContextBoundary? _contextBoundary;
-
     private string CssStyleString => $"{OverrideZIndex} {DialogRecord.Dimensions.DimensionsCssString}";
 
     private string OverrideZIndex => DialogStatesWrap.Value.DialogKeyWithOverridenZIndex is not null &&
                                      DialogStatesWrap.Value.DialogKeyWithOverridenZIndex == DialogRecord.DialogKey
         ? "z-index: 11;"
         : string.Empty;
+
+    public void Dispose()
+    {
+        DialogRecord.OnFocusRequestedEventHandler -= DialogRecordOnOnFocusRequestedEventHandler;
+        DialogRecord.OnStateHasChangeRequestedEventHandler -= DialogRecordOnOnStateHasChangeRequestedEventHandler;
+    }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -153,11 +157,5 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         DialogStatesWrap.Value.MostRecentlyFocusedDialogKey = DialogRecord.DialogKey;
 
         return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        DialogRecord.OnFocusRequestedEventHandler -= DialogRecordOnOnFocusRequestedEventHandler;
-        DialogRecord.OnStateHasChangeRequestedEventHandler -= DialogRecordOnOnStateHasChangeRequestedEventHandler;
     }
 }

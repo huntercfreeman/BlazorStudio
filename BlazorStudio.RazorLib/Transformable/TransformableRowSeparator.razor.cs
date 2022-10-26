@@ -8,6 +8,10 @@ namespace BlazorStudio.RazorLib.Transformable;
 
 public partial class TransformableRowSeparator : ComponentBase, IDisposable
 {
+    private readonly SemaphoreSlim _transformableRowSeparatorSemaphoreSlim = new(1, 1);
+
+    private Func<MouseEventArgs, Task>? _dragStateEventHandler;
+    private MouseEventArgs? _previousDragMouseEventArgs;
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
     [Inject]
@@ -23,9 +27,10 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
     [EditorRequired]
     public Func<Task> ReRenderFunc { get; set; } = null!;
 
-    private Func<MouseEventArgs, Task>? _dragStateEventHandler;
-    private MouseEventArgs? _previousDragMouseEventArgs;
-    private readonly SemaphoreSlim _transformableRowSeparatorSemaphoreSlim = new(1, 1);
+    public void Dispose()
+    {
+        DragStateWrap.StateChanged -= DragState_StateChanged;
+    }
 
     protected override void OnInitialized()
     {
@@ -114,10 +119,5 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
 
         bottomHeightPixelOffset.Value -= deltaY;
         return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        DragStateWrap.StateChanged -= DragState_StateChanged;
     }
 }

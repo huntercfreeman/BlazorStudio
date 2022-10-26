@@ -19,18 +19,17 @@ using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.Templates;
 using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.InputFile;
-using BlazorStudio.RazorLib.SyntaxRootRender;
 using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Text;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
 public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 {
+    private DialogKey _addProjectReferenceDialogKey = DialogKey.NewDialogKey();
+    private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
@@ -47,15 +46,12 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     [Parameter]
     public TreeViewContextMenuEventDto<AbsoluteFilePathDotNet> ContextMenuEventDto { get; set; } = null!;
 
-    private DialogKey _addProjectReferenceDialogKey = DialogKey.NewDialogKey();
-    private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
-
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
         TreeViewContextMenuEventDto<AbsoluteFilePathDotNet> contextMenuEventDto)
     {
         var createNewEmptyFile = MenuOptionFacts.File
             .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(CreateNewFileForm.ParentDirectory),
@@ -76,7 +72,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
         var createNewTemplatedFile = MenuOptionFacts.File
             .ConstructCreateNewTemplatedFile(typeof(CreateNewFileForm),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(CreateNewFileForm.ParentDirectory),
@@ -103,7 +99,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
         var createNewDirectory = MenuOptionFacts.File
             .ConstructCreateNewDirectory(typeof(CreateNewDirectoryForm),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(CreateNewDirectoryForm.ParentDirectory),
@@ -184,7 +180,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 DialogKey.NewDialogKey(),
                 "Add Project Reference",
                 typeof(InputFileDialog),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(InputFileDialog.IsValidSelectionOverrideFunc),
@@ -214,7 +210,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
             createNewEmptyFile = MenuOptionFacts.File
                 .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
-                    new Dictionary<string, object?>()
+                    new Dictionary<string, object?>
                     {
                         {
                             nameof(CreateNewFileForm.ParentDirectory),
@@ -235,7 +231,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
             createNewTemplatedFile = MenuOptionFacts.File
                 .ConstructCreateNewTemplatedFile(typeof(CreateNewFileForm),
-                    new Dictionary<string, object?>()
+                    new Dictionary<string, object?>
                     {
                         {
                             nameof(CreateNewFileForm.ParentDirectory),
@@ -262,7 +258,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
             createNewDirectory = MenuOptionFacts.File
                 .ConstructCreateNewDirectory(typeof(CreateNewDirectoryForm),
-                    new Dictionary<string, object?>()
+                    new Dictionary<string, object?>
                     {
                         {
                             nameof(CreateNewDirectoryForm.ParentDirectory),
@@ -301,7 +297,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
         {
             var createDeleteFile = MenuOptionFacts.File
                 .ConstructDeleteFile(typeof(DeleteFileForm),
-                    new Dictionary<string, object?>()
+                    new Dictionary<string, object?>
                     {
                         {
                             nameof(DeleteFileForm.AbsoluteFilePath),
@@ -309,7 +305,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         },
                         {
                             nameof(DeleteFileForm.OnAfterSubmitForm),
-                            new Action<IAbsoluteFilePath>((x) =>
+                            new Action<IAbsoluteFilePath>(x =>
                                 DeleteFileFormOnAfterSubmitForm((AbsoluteFilePathDotNet)x))
                         },
                         {
@@ -339,7 +335,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     {
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
                 var newFile = new AbsoluteFilePathDotNet(parentDirectoryAbsoluteFilePathString + fileName,
                     false,
@@ -418,7 +414,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     {
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
                 var newFile = new AbsoluteFilePathDotNet(parentDirectoryAbsoluteFilePathString + fileName,
                     false,
@@ -511,7 +507,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     {
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
                 Directory.CreateDirectory(parentDirectoryAbsoluteFilePathString + directoryName);
 
@@ -526,7 +522,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
     private void DeleteFileFormOnAfterSubmitForm(AbsoluteFilePathDotNet absoluteFilePath)
     {
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
                 if (absoluteFilePath.IsDirectory)
                 {

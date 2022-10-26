@@ -9,14 +9,13 @@ namespace BlazorStudio.RazorLib.Editor;
 
 public partial class TextEditorAutoCompleteMenu : ComponentBase
 {
+    private ElementReference? _textEditorAutoCompleteMenuElementReference;
     [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
     public Func<TextEditorMenuKind, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
 
     [Parameter]
     [EditorRequired]
     public string AutoCompleteWordText { get; set; } = string.Empty;
-
-    private ElementReference? _textEditorAutoCompleteMenuElementReference;
 
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {

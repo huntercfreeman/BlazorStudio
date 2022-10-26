@@ -1,53 +1,24 @@
-﻿using BlazorStudio.ClassLib.Contexts;
-using BlazorStudio.ClassLib.Errors;
+﻿using BlazorStudio.ClassLib.Errors;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
-using BlazorStudio.ClassLib.SyntaxHighlighting;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
-using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.TreeViewCase;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.FolderExplorer;
 
 public partial class FolderExplorer : FluxorComponent
 {
-    [Inject]
-    private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IState<TextEditorResourceState> TextEditorResourceStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
-
-    [Parameter]
-    [EditorRequired]
-    public Dimensions Dimensions { get; set; } = null!;
-
-    private bool _isInitialized;
-    private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-    private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
-    private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
-    private RichErrorModel? _workspaceStateWrapStateChangedRichErrorModel;
-    private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
-    private Func<Task> _mostRecentRefreshContextMenuTarget;
-
     private Dimensions _fileDropdownDimensions = new()
     {
         DimensionsPositionKind = DimensionsPositionKind.Absolute,
@@ -70,6 +41,28 @@ public partial class FolderExplorer : FluxorComponent
     };
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
+    private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+
+    private bool _isInitialized;
+    private Func<Task> _mostRecentRefreshContextMenuTarget;
+    private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
+    private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
+    private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
+    private RichErrorModel? _workspaceStateWrapStateChangedRichErrorModel;
+    [Inject]
+    private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IState<TextEditorResourceState> TextEditorResourceStateWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public Dimensions Dimensions { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -93,7 +86,7 @@ public partial class FolderExplorer : FluxorComponent
             _treeViewWrap = new TreeViewWrap<IAbsoluteFilePath>(
                 TreeViewWrapKey.NewTreeViewWrapKey());
 
-            _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+            _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
                 {
                     _rootAbsoluteFilePaths =
                         (await LoadAbsoluteFilePathChildrenAsync(workspaceState.FolderAbsoluteFilePath))
@@ -113,7 +106,7 @@ public partial class FolderExplorer : FluxorComponent
                     _isInitialized = true;
                     _workspaceStateWrapStateChangedRichErrorModel = new RichErrorModel(
                         $"{nameof(WorkspaceStateWrap_StateChanged)}: {exception.Message}",
-                        $"TODO: Add a hint");
+                        "TODO: Add a hint");
 
                     InvokeAsync(StateHasChanged);
 

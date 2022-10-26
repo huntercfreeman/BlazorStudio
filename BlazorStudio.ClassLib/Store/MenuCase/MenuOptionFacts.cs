@@ -4,6 +4,19 @@ namespace BlazorStudio.ClassLib.Store.MenuCase;
 
 public static class MenuOptionFacts
 {
+    public static MenuOptionRecord NewMenu(Action onNewCSharpProject, Action onNewDotNetSolution)
+    {
+        return new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
+            "New",
+            new[]
+            {
+                CSharp.ConstructCreateNewCSharpProject(onNewCSharpProject),
+                DotNet.ConstructCreateNewDotNetSolution(onNewDotNetSolution),
+            }.ToImmutableList(),
+            null,
+            MenuOptionKind.Create);
+    }
+
     public static class File
     {
         public static MenuOptionRecord ConstructOpenFolder(Action onClickAction)
@@ -131,18 +144,5 @@ public static class MenuOptionFacts
                 onClickAction,
                 MenuOptionKind.Create);
         }
-    }
-
-    public static MenuOptionRecord NewMenu(Action onNewCSharpProject, Action onNewDotNetSolution)
-    {
-        return new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
-            "New",
-            new MenuOptionRecord[]
-            {
-                CSharp.ConstructCreateNewCSharpProject(onNewCSharpProject),
-                DotNet.ConstructCreateNewDotNetSolution(onNewDotNetSolution),
-            }.ToImmutableList(),
-            null,
-            MenuOptionKind.Create);
     }
 }

@@ -7,11 +7,11 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 public class TerminalEntryEffects
 {
-    private readonly IState<TerminalState> _terminalStateWrap;
-    private readonly IState<TerminalSettingsState> _terminalSettingsStateWrap;
-    private readonly TerminalEntry _terminalEntry;
-    private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
     private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
+    private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
+    private readonly TerminalEntry _terminalEntry;
+    private readonly IState<TerminalSettingsState> _terminalSettingsStateWrap;
+    private readonly IState<TerminalState> _terminalStateWrap;
 
     public TerminalEntryEffects(IState<TerminalState> terminalStateWrap,
         IState<TerminalSettingsState> terminalSettingsStateWrap,

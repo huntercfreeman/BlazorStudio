@@ -2,13 +2,16 @@
 using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using static BlazorStudio.RazorLib.NewCSharpProject.NewCSharpProjectDialog;
 
 namespace BlazorStudio.RazorLib.NewCSharpProject;
 
 public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
 {
+    private bool _forceSelectCSharpTemplateTreeViewOpen;
+
+    private TreeViewWrapKey _newCSharpProjectTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -19,12 +22,12 @@ public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
     [EditorRequired]
     public Func<Task> ReRenderCallbackFunc { get; set; } = null!;
 
-    private CSharpTemplate? _selectedCSharpTemplate;
-    private bool _forceSelectCSharpTemplateTreeViewOpen;
+    public CSharpTemplate? SelectedCSharpTemplate { get; private set; }
 
-    private TreeViewWrapKey _newCSharpProjectTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-
-    public CSharpTemplate? SelectedCSharpTemplate => _selectedCSharpTemplate;
+    public void Dispose()
+    {
+        Dispatcher.Dispatch(new DisposeTreeViewWrapAction(_newCSharpProjectTreeViewKey));
+    }
 
     private List<RenderCSharpTemplate> GetRootThemes()
     {
@@ -47,7 +50,7 @@ public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
             TitleFunc = () => "Confirm",
             OnClick = () =>
             {
-                _selectedCSharpTemplate = renderCSharpTemplate.CSharpTemplate;
+                SelectedCSharpTemplate = renderCSharpTemplate.CSharpTemplate;
                 InvokeAsync(StateHasChanged);
                 ReRenderCallbackFunc.Invoke();
             },
@@ -77,7 +80,7 @@ public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
             StringIdentifier = "Tags",
         };
 
-        return Task.FromResult(new List<RenderCSharpTemplate>()
+        return Task.FromResult(new List<RenderCSharpTemplate>
         {
             acceptButton,
             renderShortName,
@@ -88,7 +91,7 @@ public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
 
     private void TreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<RenderCSharpTemplate> treeViewKeyboardEventDto)
     {
-        _selectedCSharpTemplate = treeViewKeyboardEventDto.Item.CSharpTemplate;
+        SelectedCSharpTemplate = treeViewKeyboardEventDto.Item.CSharpTemplate;
         ReRenderCallbackFunc.Invoke();
     }
 
@@ -100,10 +103,5 @@ public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
     private void TreeViewOnDoubleClick(TreeViewMouseEventDto<RenderCSharpTemplate> treeViewMouseEventDto)
     {
         treeViewMouseEventDto.ToggleIsExpanded.Invoke();
-    }
-
-    public void Dispose()
-    {
-        Dispatcher.Dispatch(new DisposeTreeViewWrapAction(_newCSharpProjectTreeViewKey));
     }
 }

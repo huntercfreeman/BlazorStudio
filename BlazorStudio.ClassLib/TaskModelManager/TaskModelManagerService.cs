@@ -58,7 +58,7 @@ public static class TaskModelManagerService
 
                 var task = taskFunc(cancellationToken);
 
-                await Task.WhenAny(new Task[]
+                await Task.WhenAny(new[]
                 {
                     task,
                     unresponsiveTask,
@@ -70,7 +70,7 @@ public static class TaskModelManagerService
 
                     await RemoveFromActiveTaskModelsDictionary(taskModel.Key);
 
-                    await task.ContinueWith(async (previousTask) =>
+                    await task.ContinueWith(async previousTask =>
                     {
                         await RemoveFromSeeminglyUnresponsiveTaskModelsDictionary(taskModel.Key);
                     });

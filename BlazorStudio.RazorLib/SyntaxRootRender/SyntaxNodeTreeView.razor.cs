@@ -10,14 +10,68 @@ namespace BlazorStudio.RazorLib.SyntaxRootRender;
 
 public partial class SyntaxNodeTreeView : ComponentBase
 {
+    private readonly Dimensions _anotherDimensions = new()
+    {
+        DimensionsPositionKind = DimensionsPositionKind.Static,
+        WidthCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 100,
+            },
+        },
+        HeightCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 50,
+            },
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -4,
+            },
+        },
+    };
+
+    private int _preFontSize = 15;
+
+    private readonly TreeViewWrapKey _syntaxNodeTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+
+    private readonly Dimensions _toFullStringDimensions = new()
+    {
+        DimensionsPositionKind = DimensionsPositionKind.Static,
+        WidthCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 100,
+            },
+        },
+        HeightCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Percentage,
+                Value = 50,
+            },
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -4,
+            },
+        },
+    };
+
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter]
     [EditorRequired]
     public SyntaxNode SyntaxNode { get; set; } = null!;
-
-    private TreeViewWrapKey _syntaxNodeTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
 
     private List<SyntaxTreeViewWrapper> GetRoot()
     {
@@ -149,60 +203,6 @@ public partial class SyntaxNodeTreeView : ComponentBase
         syntaxNode = null;
         return false;
     }
-
-    private int _preFontSize = 15;
-
-    private Dimensions _toFullStringDimensions = new()
-    {
-        DimensionsPositionKind = DimensionsPositionKind.Static,
-        WidthCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 100,
-            },
-        },
-        HeightCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 50,
-            },
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -4,
-            },
-        },
-    };
-
-    private Dimensions _anotherDimensions = new()
-    {
-        DimensionsPositionKind = DimensionsPositionKind.Static,
-        WidthCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 100,
-            },
-        },
-        HeightCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Percentage,
-                Value = 50,
-            },
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -4,
-            },
-        },
-    };
 
     private async Task ReRender()
     {

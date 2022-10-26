@@ -1,5 +1,4 @@
 ﻿using BlazorStudio.ClassLib.Keyboard;
-using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;

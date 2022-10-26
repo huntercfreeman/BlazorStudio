@@ -5,8 +5,8 @@ namespace BlazorStudio.ClassLib.FileSystem.Classes;
 
 public class AbsoluteFilePath : IAbsoluteFilePath
 {
-    private int _position;
     private readonly StringBuilder _tokenBuilder = new();
+    private int _position;
 
     public AbsoluteFilePath(string absoluteFilePathString, bool isDirectory)
     {
@@ -71,7 +71,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
     }
 
     /// <summary>
-    /// Given an absoluteFilePath and a relative path from that absolute path construct a joined absolute path
+    ///     Given an absoluteFilePath and a relative path from that absolute path construct a joined absolute path
     /// </summary>
     /// <param name="absoluteFilePath"></param>
     /// <param name="relativeFilePath"></param>
@@ -108,28 +108,6 @@ public class AbsoluteFilePath : IAbsoluteFilePath
         FileNameNoExtension = fileNameNoExtension;
         ExtensionNoPeriod = extensionNoPeriod;
         IsDirectory = isDirectory;
-    }
-
-    public void ConsumeTokenAsRootDrive()
-    {
-        RootDrive = new FileSystemDrive(_tokenBuilder.ToString());
-        _tokenBuilder.Clear();
-
-        // skip the next file delimiter
-        _position++;
-    }
-
-    public void ConsumeTokenAsDirectory()
-    {
-        var directoryFilePath = (IFilePath)new AbsoluteFilePath(RootDrive,
-            new List<IFilePath>(Directories),
-            _tokenBuilder.ToString(),
-            Path.DirectorySeparatorChar.ToString(),
-            true);
-
-        Directories.Add(directoryFilePath);
-
-        _tokenBuilder.Clear();
     }
 
     public FilePathType FilePathType { get; } = FilePathType.AbsoluteFilePath;
@@ -170,4 +148,26 @@ public class AbsoluteFilePath : IAbsoluteFilePath
     }
 
     public virtual AbsoluteFilePathKind AbsoluteFilePathKind { get; } = AbsoluteFilePathKind.Default;
+
+    public void ConsumeTokenAsRootDrive()
+    {
+        RootDrive = new FileSystemDrive(_tokenBuilder.ToString());
+        _tokenBuilder.Clear();
+
+        // skip the next file delimiter
+        _position++;
+    }
+
+    public void ConsumeTokenAsDirectory()
+    {
+        var directoryFilePath = (IFilePath)new AbsoluteFilePath(RootDrive,
+            new List<IFilePath>(Directories),
+            _tokenBuilder.ToString(),
+            Path.DirectorySeparatorChar.ToString(),
+            true);
+
+        Directories.Add(directoryFilePath);
+
+        _tokenBuilder.Clear();
+    }
 }

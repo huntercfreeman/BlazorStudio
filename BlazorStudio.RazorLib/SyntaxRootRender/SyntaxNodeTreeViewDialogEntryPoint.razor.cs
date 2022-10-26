@@ -7,6 +7,7 @@ namespace BlazorStudio.RazorLib.SyntaxRootRender;
 
 public partial class SyntaxNodeTreeViewDialogEntryPoint : ComponentBase
 {
+    private DialogRecord? _syntaxNodeTreeViewDialog;
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
@@ -21,8 +22,6 @@ public partial class SyntaxNodeTreeViewDialogEntryPoint : ComponentBase
     [Parameter]
     [EditorRequired]
     public string? TitleOverride { get; set; }
-
-    private DialogRecord? _syntaxNodeTreeViewDialog;
 
     private async Task OpenSyntaxNodeDialogOnClickAsync()
     {

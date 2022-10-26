@@ -4,14 +4,13 @@ namespace BlazorStudio.RazorLib.ShouldRender;
 
 public partial class ShouldRenderBoundary : ComponentBase
 {
+    private IsFirstShouldRenderValue _isFirstShouldRenderValue = new(true);
     [Parameter]
     [EditorRequired]
     public Func<IsFirstShouldRenderValue, bool> ShouldRenderFunc { get; set; } = null!;
     [Parameter]
     [EditorRequired]
     public RenderFragment ChildContent { get; set; } = null!;
-
-    private IsFirstShouldRenderValue _isFirstShouldRenderValue = new(true);
 
     protected override bool ShouldRender()
     {

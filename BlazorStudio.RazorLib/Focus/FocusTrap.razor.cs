@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.Focus;
 
 /// <summary>
-/// Used typically in situations where a "quick select" input Blazor component
-/// is empty in order to ensure focus is not lost from the "quick select".
-///
-/// See <see cref="DialogQuickSelectOverlay"/>
+///     Used typically in situations where a "quick select" input Blazor component
+///     is empty in order to ensure focus is not lost from the "quick select".
+///     See <see cref="DialogQuickSelectOverlay" />
 /// </summary>
 public partial class FocusTrap : ComponentBase
 {
@@ -25,7 +25,7 @@ public partial class FocusTrap : ComponentBase
         {
             await _focusTrapElementReference.FocusAsync();
         }
-        catch (Microsoft.JSInterop.JSException)
+        catch (JSException)
         {
             // Caused when calling:
             // await _focusTrap.FocusAsync();

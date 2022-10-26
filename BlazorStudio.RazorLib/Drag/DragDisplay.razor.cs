@@ -1,5 +1,4 @@
-﻿using BlazorStudio.ClassLib.Mouse;
-using BlazorStudio.ClassLib.Store.DragCase;
+﻿using BlazorStudio.ClassLib.Store.DragCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;

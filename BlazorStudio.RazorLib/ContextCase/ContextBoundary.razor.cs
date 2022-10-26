@@ -10,6 +10,7 @@ namespace BlazorStudio.RazorLib.ContextCase;
 
 public partial class ContextBoundary : ComponentBase, IDisposable
 {
+    private ElementReference? _contextBoundaryElementReference;
     [Inject]
     private IStateSelection<ContextState, ContextRecord> ContextStateSelector { get; set; } = null!;
     [Inject]
@@ -31,10 +32,10 @@ public partial class ContextBoundary : ComponentBase, IDisposable
     [Parameter]
     public int TabIndex { get; set; } = -1;
     /// <summary>
-    /// <see cref="IsIsland"/> set to true means the Blazor component
-    /// will only rerender due to FluxorComponent state [Inject]
-    /// (or other EventHandler like logic). And will ShouldRender => false
-    /// on any cascading StateHasChanged events from a parent component. 
+    ///     <see cref="IsIsland" /> set to true means the Blazor component
+    ///     will only rerender due to FluxorComponent state [Inject]
+    ///     (or other EventHandler like logic). And will ShouldRender => false
+    ///     on any cascading StateHasChanged events from a parent component.
     /// </summary>
     [Parameter]
     public bool IsIsland { get; set; }
@@ -47,9 +48,12 @@ public partial class ContextBoundary : ComponentBase, IDisposable
     [Parameter]
     public bool OnKeyDownPreventDefault { get; set; }
 
-    private ElementReference? _contextBoundaryElementReference;
-
     public ContextRecord GetContextState => ContextStateSelector.Value;
+
+    public void Dispose()
+    {
+        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
+    }
 
     protected override void OnInitialized()
     {
@@ -108,10 +112,5 @@ public partial class ContextBoundary : ComponentBase, IDisposable
             return true;
 
         return false;
-    }
-
-    public void Dispose()
-    {
-        ContextStateSelector.Value.OnFocusRequestedEventHandler -= ValueOnOnFocusRequestedEventHandler;
     }
 }

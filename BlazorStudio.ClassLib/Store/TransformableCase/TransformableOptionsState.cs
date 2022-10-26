@@ -7,7 +7,7 @@ namespace BlazorStudio.ClassLib.Store.TransformableCase;
 public record TransformableOptionsState(DimensionUnit ResizeHandleDimensionUnit)
 {
     public TransformableOptionsState()
-        : this(new DimensionUnit()
+        : this(new DimensionUnit
         {
             DimensionUnitKind = DimensionUnitKind.Pixels,
             Value = 7,

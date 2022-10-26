@@ -1,82 +1,43 @@
-﻿using BlazorStudio.ClassLib.Errors;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Store.DropdownCase;
-using BlazorStudio.ClassLib.Store.TreeViewCase;
-using BlazorStudio.ClassLib.TaskModelManager;
-using BlazorStudio.ClassLib.UserInterface;
-using BlazorStudio.RazorLib.TreeViewCase;
-using Fluxor.Blazor.Web.Components;
-using Fluxor;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
-using BlazorStudio.ClassLib.FileConstants;
-using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
-using BlazorStudio.ClassLib.Store.DialogCase;
-using Microsoft.Build.Locator;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.MSBuild;
-using BlazorStudio.RazorLib.NewCSharpProject;
-using BlazorStudio.ClassLib.Store.TerminalCase;
+﻿using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.Loader;
 using Blazor.Text.Editor.Analysis.Html.ClassLib;
 using Blazor.Text.Editor.Analysis.Html.ClassLib.Decoration;
 using Blazor.Text.Editor.Analysis.Razor.ClassLib;
-using BlazorStudio.ClassLib.Contexts;
+using BlazorStudio.ClassLib.Errors;
+using BlazorStudio.ClassLib.FileConstants;
+using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.RoslynHelpers;
-using BlazorStudio.ClassLib.Sequence;
-using BlazorStudio.ClassLib.Store.ContextCase;
+using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
-using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
 using BlazorStudio.ClassLib.Store.SolutionCase;
+using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
+using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceCase;
+using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.SyntaxHighlighting;
+using BlazorStudio.ClassLib.TaskModelManager;
+using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.ContextCase;
-using BlazorStudio.RazorLib.Forms;
-using BlazorStudio.RazorLib.SyntaxRootRender;
+using BlazorStudio.RazorLib.NewCSharpProject;
+using BlazorStudio.RazorLib.TreeViewCase;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.TextEditor;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Build.Locator;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.MSBuild;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
 public partial class SolutionExplorerDisplay : FluxorComponent
 {
-    [Inject]
-    private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
-    [Inject]
-    private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<RoslynWorkspaceState> RoslynWorkspaceStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<TextEditorResourceState> TextEditorResourceStateWrap { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
-
-    [Parameter]
-    [EditorRequired]
-    public Dimensions Dimensions { get; set; } = null!;
-
-    private bool _isInitialized;
-    private TreeViewWrapKey _solutionExplorerTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-    private TreeViewWrap<AbsoluteFilePathDotNet> _treeViewWrap = null!;
-    private List<AbsoluteFilePathDotNet> _rootAbsoluteFilePaths;
-    private RichErrorModel? _solutionExplorerStateWrapStateChangedRichErrorModel;
-    private TreeViewWrapDisplay<AbsoluteFilePathDotNet>? _treeViewWrapDisplay;
-    private Func<Task> _mostRecentRefreshContextMenuTarget;
     private ContextBoundary _contextBoundary = null!;
-    private ElementReference _solutionExplorerElementReference;
 
     private Dimensions _fileDropdownDimensions = new()
     {
@@ -99,10 +60,39 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         },
     };
 
-    private DialogRecord _newCSharpProjectDialog;
-
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
+
+    private bool _isInitialized;
     private bool _loadingSln;
+    private Func<Task> _mostRecentRefreshContextMenuTarget;
+
+    private DialogRecord _newCSharpProjectDialog;
+    private List<AbsoluteFilePathDotNet> _rootAbsoluteFilePaths;
+    private ElementReference _solutionExplorerElementReference;
+    private RichErrorModel? _solutionExplorerStateWrapStateChangedRichErrorModel;
+    private TreeViewWrapKey _solutionExplorerTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+    private TreeViewWrap<AbsoluteFilePathDotNet> _treeViewWrap = null!;
+    private TreeViewWrapDisplay<AbsoluteFilePathDotNet>? _treeViewWrapDisplay;
+    [Inject]
+    private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
+    [Inject]
+    private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<RoslynWorkspaceState> RoslynWorkspaceStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<TextEditorResourceState> TextEditorResourceStateWrap { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public Dimensions Dimensions { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -113,7 +103,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             DialogKey.NewDialogKey(),
             "New C# Project",
             typeof(NewCSharpProjectDialog),
-            new Dictionary<string, object?>()
+            new Dictionary<string, object?>
             {
                 {
                     nameof(NewCSharpProjectDialog.OnProjectCreatedCallback),
@@ -140,7 +130,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             _treeViewWrap = new TreeViewWrap<AbsoluteFilePathDotNet>(
                 TreeViewWrapKey.NewTreeViewWrapKey());
 
-            _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+            _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
                 {
                     try
                     {
@@ -245,7 +235,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     _isInitialized = true;
                     _solutionExplorerStateWrapStateChangedRichErrorModel = new RichErrorModel(
                         $"{nameof(SolutionExplorerStateWrap_StateChanged)}: {exception.Message}",
-                        $"TODO: Add a hint");
+                        "TODO: Add a hint");
 
                     InvokeAsync(StateHasChanged);
 

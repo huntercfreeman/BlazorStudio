@@ -1,13 +1,13 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable disable warnings
+
 using System;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using PhotinoNET;
-
-#nullable disable warnings
 
 namespace Photino.Blazor;
 // Most UI platforms have a built-in SyncContext/Dispatcher, e.g., Windows Forms and WPF, which WebView
@@ -35,9 +35,12 @@ internal class PhotinoSynchronizationContext : SynchronizationContext
         item.SynchronizationContext.ExecuteBackground(item);
     };
 
-    private readonly PhotinoWindow _window;
-    private readonly int _uiThreadId;
     private readonly MethodInfo _invokeMethodInfo;
+
+    private readonly State _state;
+    private readonly int _uiThreadId;
+
+    private readonly PhotinoWindow _window;
 
     public PhotinoSynchronizationContext(PhotinoWindow window)
         : this(window, new State())
@@ -56,8 +59,6 @@ internal class PhotinoSynchronizationContext : SynchronizationContext
 
         _invokeMethodInfo = typeof(PhotinoWindow).GetMethod("Invoke", BindingFlags.Public | BindingFlags.Instance)!;
     }
-
-    private readonly State _state;
 
     public event UnhandledExceptionEventHandler UnhandledException;
 
@@ -318,10 +319,10 @@ internal class PhotinoSynchronizationContext : SynchronizationContext
 
     private class WorkItem
     {
-        public PhotinoSynchronizationContext SynchronizationContext;
-        public ExecutionContext ExecutionContext;
         public SendOrPostCallback Callback;
+        public ExecutionContext ExecutionContext;
         public object State;
+        public PhotinoSynchronizationContext SynchronizationContext;
     }
 
     private class PhotinoSynchronizationTaskCompletionSource<TCallback, TResult> : TaskCompletionSource<TResult>

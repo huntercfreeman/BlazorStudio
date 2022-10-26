@@ -4,12 +4,14 @@ using BlazorStudio.ClassLib.Store.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.TreeViewCase;
 
 public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
 {
+    private SequenceKey? _previousSequenceKey;
+
+    private int _sequence;
     [Inject]
     private IStateSelection<TreeViewWrapStates, ITreeViewWrap?> TreeViewWrapStateSelection { get; set; } = null!;
     [Inject]
@@ -43,20 +45,18 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     [EditorRequired]
     public Func<T, bool> IsExpandable { get; set; } = null!;
     /// <summary>
-    /// If <see cref="OnContextMenu"/> is provided then:
-    /// upon ContextMenuEvent event the Action will be invoked.
-    /// 
-    /// If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
-    /// the MouseEventArgs will be null.
+    ///     If <see cref="OnContextMenu" /> is provided then:
+    ///     upon ContextMenuEvent event the Action will be invoked.
+    ///     If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
+    ///     the MouseEventArgs will be null.
     /// </summary>
     [Parameter]
     public Action<TreeViewContextMenuEventDto<T>>? OnContextMenu { get; set; }
     /// <summary>
-    /// If <see cref="OnContextMenuRenderFragment"/> is provided then:
-    /// upon ContextMenuEvent event the RenderFragment will be rendered.
-    ///
-    /// If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
-    /// the MouseEventArgs will be null.
+    ///     If <see cref="OnContextMenuRenderFragment" /> is provided then:
+    ///     upon ContextMenuEvent event the RenderFragment will be rendered.
+    ///     If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
+    ///     the MouseEventArgs will be null.
     /// </summary>
     [Parameter]
     public RenderFragment<TreeViewContextMenuEventDto<T>>? OnContextMenuRenderFragment { get; set; }
@@ -68,9 +68,6 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
     public string BodyCssClassAttribute { get; set; } = string.Empty;
     [Parameter]
     public string StyleString { get; set; } = string.Empty;
-
-    private int _sequence;
-    private SequenceKey? _previousSequenceKey;
 
     protected override void OnInitialized()
     {

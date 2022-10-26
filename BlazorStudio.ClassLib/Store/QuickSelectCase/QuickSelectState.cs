@@ -11,8 +11,8 @@ public record QuickSelectState(bool IsDisplayed,
 {
     public QuickSelectState() : this(false,
         ImmutableArray<IQuickSelectItem>.Empty,
-        (item) => Task.CompletedTask,
-        (item) => Task.CompletedTask)
+        item => Task.CompletedTask,
+        item => Task.CompletedTask)
     {
     }
 }

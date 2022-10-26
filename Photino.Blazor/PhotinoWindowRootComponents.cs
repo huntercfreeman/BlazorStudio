@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components.Web;
 namespace Photino.Blazor;
 
 /// <summary>
-/// Configures root components for a <see cref="BlazorWindow"/>.
+///     Configures root components for a <see cref="BlazorWindow" />.
 /// </summary>
 public sealed class BlazorWindowRootComponents : IJSComponentConfiguration
 {
@@ -24,7 +24,7 @@ public sealed class BlazorWindowRootComponents : IJSComponentConfiguration
     public JSComponentConfigurationStore JSComponents { get; }
 
     /// <summary>
-    /// Adds a root component to the window.
+    ///     Adds a root component to the window.
     /// </summary>
     /// <typeparam name="TComponent">The component type.</typeparam>
     /// <param name="selector">A CSS selector describing where the component should be added in the host page.</param>

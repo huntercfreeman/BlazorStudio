@@ -4,7 +4,7 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 /// <summary>
-/// Do not mix OnAnyDataReceivedAsync and OnAnyDataReceived it is one or the other
+///     Do not mix OnAnyDataReceivedAsync and OnAnyDataReceived it is one or the other
 /// </summary>
 public record EnqueueProcessOnTerminalEntryAction(TerminalEntryKey TerminalEntryKey,
     string Command,

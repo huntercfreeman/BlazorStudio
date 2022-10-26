@@ -1,24 +1,27 @@
-﻿using BlazorStudio.ClassLib.FileConstants;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.Store.DialogCase;
-using BlazorStudio.ClassLib.Store.SolutionCase;
-using BlazorStudio.ClassLib.Store.StartupProject;
-using BlazorStudio.ClassLib.Store.TerminalCase;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
-using Microsoft.AspNetCore.Components;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.ContextCase;
+using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;
+using BlazorStudio.ClassLib.Store.SolutionCase;
+using BlazorStudio.ClassLib.Store.StartupProject;
+using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.RazorLib.ExceptionNotifications;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.StartupProjectControls;
 
 public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposable
 {
+    private CancellationTokenSource _cancellationTokenSource = new();
+    private EnqueueProcessOnTerminalEntryAction _enqueueProcessOnTerminalEntryAction;
+    private bool _isEnqueuedToRun;
+    private bool _isRunning;
+    private StringBuilder _outputBuilder;
     [Inject]
     private IState<StartupProjectState> StartupProjectStateWrap { get; set; } = null!;
     [Inject]
@@ -31,12 +34,6 @@ public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposabl
     private IState<ContextState> ContextStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-
-    private CancellationTokenSource _cancellationTokenSource = new();
-    private bool _isEnqueuedToRun;
-    private bool _isRunning;
-    private StringBuilder _outputBuilder;
-    private EnqueueProcessOnTerminalEntryAction _enqueueProcessOnTerminalEntryAction;
 
     private void DispatchEnqueueProcessOnTerminalEntryAction()
     {

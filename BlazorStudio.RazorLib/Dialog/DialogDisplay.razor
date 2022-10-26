@@ -1,5 +1,4 @@
 ﻿@using BlazorStudio.ClassLib.Contexts
-
 <ContextBoundary ContextKey="ContextFacts.DialogDisplayContext.ContextKey"
                  OnFocusIn="HandleOnFocusInAsync"
                  CssClassString="bstudio_dialog-display bstudio_focus-display-large"
@@ -43,7 +42,7 @@
     </div>
 
     <div class="bstudio_dialog-display-body">
-        <ShouldRenderBoundary ShouldRenderFunc="(_) => false">
+        <ShouldRenderBoundary ShouldRenderFunc="_ => false">
             <CascadingValue Value="DialogRecord">
                 <DynamicComponent Type="DialogRecord.Type"
                                   Parameters="DialogRecord.Parameters ?? new Dictionary<string, object?>()"/>

@@ -7,6 +7,8 @@ namespace BlazorStudio.RazorLib.Forms;
 
 public partial class CreateNewDirectoryForm : ComponentBase
 {
+    private string _directoryName = string.Empty;
+    private ElementReference _inputElementReference;
     [Parameter]
     public IAbsoluteFilePath ParentDirectory { get; set; } = null!;
     [Parameter]
@@ -14,9 +16,6 @@ public partial class CreateNewDirectoryForm : ComponentBase
     [Parameter]
     [EditorRequired]
     public Action OnAfterCancelForm { get; set; } = null!;
-
-    private string _directoryName = string.Empty;
-    private ElementReference _inputElementReference;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

@@ -6,6 +6,8 @@ namespace BlazorStudio.RazorLib.TaskModelManager.Helpers;
 
 public partial class TaskModelListDisplay : ComponentBase, IDisposable
 {
+    private bool _isExpanded = true;
+    private ImmutableArray<ITaskModel> _taskModelCache = ImmutableArray<ITaskModel>.Empty;
     [Parameter]
     public Func<IEnumerable<ITaskModel>> GetTaskModelsFunc { get; set; } = null!;
     [Parameter]
@@ -19,8 +21,13 @@ public partial class TaskModelListDisplay : ComponentBase, IDisposable
     [Parameter]
     public bool ShowCancelButton { get; set; }
 
-    private bool _isExpanded = true;
-    private ImmutableArray<ITaskModel> _taskModelCache = ImmutableArray<ITaskModel>.Empty;
+    public void Dispose()
+    {
+        TaskModelManagerService.OnTasksStateHasChangedEventHandler -=
+            TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler -=
+            TaskModelManagerServiceStateHasChangedEventHandler;
+    }
 
     protected override void OnInitialized()
     {
@@ -48,13 +55,5 @@ public partial class TaskModelListDisplay : ComponentBase, IDisposable
             _taskModelCache = GetTaskModelsFunc().ToImmutableArray();
 
         StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        TaskModelManagerService.OnTasksStateHasChangedEventHandler -=
-            TaskModelManagerServiceStateHasChangedEventHandler;
-        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler -=
-            TaskModelManagerServiceStateHasChangedEventHandler;
     }
 }

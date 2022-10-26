@@ -7,6 +7,9 @@ namespace BlazorStudio.RazorLib.Forms;
 
 public partial class CreateNewFileForm : ComponentBase
 {
+    private string _fileName = string.Empty;
+    private ElementReference _inputElementReference;
+    private bool _shouldAddCodebehind = true;
     [Parameter]
     public IAbsoluteFilePath ParentDirectory { get; set; } = null!;
     [Parameter]
@@ -16,10 +19,6 @@ public partial class CreateNewFileForm : ComponentBase
     [Parameter]
     [EditorRequired]
     public Action OnAfterCancelForm { get; set; } = null!;
-
-    private string _fileName = string.Empty;
-    private ElementReference _inputElementReference;
-    private bool _shouldAddCodebehind = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

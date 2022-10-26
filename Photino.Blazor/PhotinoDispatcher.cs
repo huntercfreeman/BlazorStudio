@@ -46,13 +46,13 @@ internal class PhotinoDispatcher : Dispatcher
     {
         if (CheckAccess()) return Task.FromResult(workItem());
 
-        return _context.InvokeAsync<TResult>(workItem);
+        return _context.InvokeAsync(workItem);
     }
 
     public override Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> workItem)
     {
         if (CheckAccess()) return workItem();
 
-        return _context.InvokeAsync<TResult>(workItem);
+        return _context.InvokeAsync(workItem);
     }
 }

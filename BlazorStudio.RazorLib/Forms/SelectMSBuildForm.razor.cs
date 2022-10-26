@@ -9,6 +9,10 @@ namespace BlazorStudio.RazorLib.Forms;
 
 public partial class SelectMSBuildForm : ComponentBase
 {
+    private string _providedAbsoluteFilePathToMSBuildVersion = string.Empty;
+    private VisualStudioInstance _selectedVisualStudioInstance;
+
+    private readonly TreeViewWrapKey _selectMSBuildTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -17,10 +21,6 @@ public partial class SelectMSBuildForm : ComponentBase
 
     [Parameter]
     public VisualStudioInstance[] VisualStudioInstances { get; set; } = null!;
-
-    private TreeViewWrapKey _selectMSBuildTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-    private VisualStudioInstance _selectedVisualStudioInstance;
-    private string _providedAbsoluteFilePathToMSBuildVersion = string.Empty;
 
     protected override void OnParametersSet()
     {

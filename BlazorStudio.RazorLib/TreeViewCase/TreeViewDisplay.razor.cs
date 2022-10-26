@@ -1,8 +1,6 @@
 ﻿using BlazorStudio.ClassLib.Errors;
 using BlazorStudio.ClassLib.Keyboard;
-using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
-using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.UserInterface;
@@ -15,6 +13,43 @@ namespace BlazorStudio.RazorLib.TreeViewCase;
 
 public partial class TreeViewDisplay<T>
 {
+    private const int DEPTH_PADDING_LEFT_SCALING_IN_PIXELS = 12;
+
+    private readonly Dimensions _fileDropdownDimensions = new()
+    {
+        DimensionsPositionKind = DimensionsPositionKind.Absolute,
+        LeftCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = 5,
+            },
+        },
+        TopCalc = new List<DimensionUnit>
+        {
+            new()
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = 0,
+            },
+        },
+    };
+
+    private readonly DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
+    private bool _isGettingChildren;
+    private MouseEventArgs? _mostRecentMouseEventArgs;
+    private bool _previousFocusState;
+
+    /// <summary>
+    ///     This is used to ensure Children are only loaded once
+    ///     when the user expands and collapses many times in a row.
+    ///     A separate way to force refresh children needs to exist
+    /// </summary>
+    private bool _shouldLoadChildren = true;
+
+    private ElementReference _titleSpan;
+    private RichErrorModel? _toggleIsExpandedOnClickRichErrorModel;
     [Inject]
     private IStateSelection<TreeViewWrapStates, ITreeViewWrap?> TreeViewWrapStateSelection { get; set; } = null!;
     [Inject]
@@ -25,7 +60,7 @@ public partial class TreeViewDisplay<T>
     [CascadingParameter]
     public RenderFragment<T> ChildContent { get; set; } = null!;
     /// <summary>
-    /// Depth starts at 0
+    ///     Depth starts at 0
     /// </summary>
     [CascadingParameter(Name = "Depth")]
     public int Depth { get; set; }
@@ -36,22 +71,20 @@ public partial class TreeViewDisplay<T>
     [CascadingParameter(Name = "OnSpaceKeyDown")]
     public Action<TreeViewKeyboardEventDto<T>> OnSpaceKeyDown { get; set; } = null!;
     [CascadingParameter(Name = "OnDoubleClick")]
-    public Action<TreeViewMouseEventDto<T>>? OnDoubleClick { get; set; } = null!;
+    public Action<TreeViewMouseEventDto<T>>? OnDoubleClick { get; set; }
     /// <summary>
-    /// If <see cref="OnContextMenu"/> is provided then:
-    /// upon ContextMenuEvent event the Action will be invoked.
-    /// 
-    /// If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
-    /// the MouseEventArgs will be null.
+    ///     If <see cref="OnContextMenu" /> is provided then:
+    ///     upon ContextMenuEvent event the Action will be invoked.
+    ///     If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
+    ///     the MouseEventArgs will be null.
     /// </summary>
     [CascadingParameter(Name = "OnContextMenu")]
     public Action<TreeViewContextMenuEventDto<T>>? OnContextMenu { get; set; }
     /// <summary>
-    /// If <see cref="OnContextMenuRenderFragment"/> is provided then:
-    /// upon ContextMenuEvent event the RenderFragment will be rendered.
-    ///
-    /// If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
-    /// the MouseEventArgs will be null.
+    ///     If <see cref="OnContextMenuRenderFragment" /> is provided then:
+    ///     upon ContextMenuEvent event the RenderFragment will be rendered.
+    ///     If ContextMenu event occurs with { 'F10' + 'ShiftKey' }
+    ///     the MouseEventArgs will be null.
     /// </summary>
     [CascadingParameter(Name = "OnContextMenuRenderFragment")]
     public RenderFragment<TreeViewContextMenuEventDto<T>>? OnContextMenuRenderFragment { get; set; }
@@ -73,44 +106,13 @@ public partial class TreeViewDisplay<T>
     [EditorRequired]
     public TreeViewDisplay<T>? Parent { get; set; }
 
-    private const int DEPTH_PADDING_LEFT_SCALING_IN_PIXELS = 12;
+    private bool IsActive => TreeViewWrapStateSelection.Value?.ActiveTreeViews
+        .Select(x => x.Key)
+        .Contains(TreeView.Key) ?? false;
 
-    /// <summary>
-    /// This is used to ensure Children are only loaded once
-    /// when the user expands and collapses many times in a row.
-    ///
-    /// A separate way to force refresh children needs to exist
-    /// </summary>
-    private bool _shouldLoadChildren = true;
-
-    private ElementReference _titleSpan;
-    private bool _isGettingChildren;
-    private bool _previousFocusState;
-    private RichErrorModel? _toggleIsExpandedOnClickRichErrorModel;
-    private MouseEventArgs? _mostRecentMouseEventArgs;
-
-    private Dimensions _fileDropdownDimensions = new()
-    {
-        DimensionsPositionKind = DimensionsPositionKind.Absolute,
-        LeftCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 5,
-            },
-        },
-        TopCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 0,
-            },
-        },
-    };
-
-    private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
+    private string IsActiveStyling => IsActive
+        ? "bstudio_active"
+        : string.Empty;
 
     protected override void OnInitialized()
     {
@@ -139,14 +141,6 @@ public partial class TreeViewDisplay<T>
         base.OnAfterRender(firstRender);
     }
 
-    private bool IsActive => TreeViewWrapStateSelection.Value?.ActiveTreeViews
-        .Select(x => x.Key)
-        .Contains(TreeView.Key) ?? false;
-
-    private string IsActiveStyling => IsActive
-        ? "bstudio_active"
-        : string.Empty;
-
     private string GetScaledByDepthPixelsOffset(int depth)
     {
         return $"{depth * DEPTH_PADDING_LEFT_SCALING_IN_PIXELS}px";
@@ -154,7 +148,7 @@ public partial class TreeViewDisplay<T>
 
     private void GetChildrenAsync()
     {
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
                 _isGettingChildren = true;
 
@@ -187,7 +181,7 @@ public partial class TreeViewDisplay<T>
         _isGettingChildren = false;
         _toggleIsExpandedOnClickRichErrorModel = new RichErrorModel(
             $"{nameof(ToggleIsExpandedOnClick)}: {exception.Message}",
-            $"TODO: Add a hint");
+            "TODO: Add a hint");
 
         InvokeAsync(StateHasChanged);
 

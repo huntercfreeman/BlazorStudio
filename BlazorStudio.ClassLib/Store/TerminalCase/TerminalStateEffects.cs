@@ -1,16 +1,16 @@
-﻿using Fluxor;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
+using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 public class TerminalStateEffects
 {
+    private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
+    private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
     private readonly Dictionary<TerminalEntryKey, TerminalEntryEffects> _terminalEffects = new();
+    private readonly IState<TerminalSettingsState> _terminalSettingsStateWrap;
 
     private readonly IState<TerminalState> _terminalStateWrap;
-    private readonly IState<TerminalSettingsState> _terminalSettingsStateWrap;
-    private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
-    private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
 
     public TerminalStateEffects(IState<TerminalState> terminalStateWrap,
         IState<TerminalSettingsState> terminalSettingsStateWrap)

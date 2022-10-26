@@ -48,10 +48,10 @@ public static class HtmlSyntaxTree
     private static class HtmlSyntaxTreeStateMachine
     {
         /// <summary>
-        /// Invocation of this method requires the
-        /// stringWalker to have <see cref="StringWalker.Peek" />
-        /// of 0 be equal to
-        /// <see cref="HtmlFacts.OPEN_TAG_BEGINNING"/>
+        ///     Invocation of this method requires the
+        ///     stringWalker to have <see cref="StringWalker.Peek" />
+        ///     of 0 be equal to
+        ///     <see cref="HtmlFacts.OPEN_TAG_BEGINNING" />
         /// </summary>
         public static TagSyntax ParseTag(
             StringWalker stringWalker,
@@ -212,10 +212,10 @@ public static class HtmlSyntaxTree
         }
 
         /// <summary>
-        /// Invocation of this method requires the
-        /// stringWalker to have <see cref="StringWalker.Peek" />
-        /// of 0 be equal to the first
-        /// character that is part of the tag's name
+        ///     Invocation of this method requires the
+        ///     stringWalker to have <see cref="StringWalker.Peek" />
+        ///     of 0 be equal to the first
+        ///     character that is part of the tag's name
         /// </summary>
         public static TagNameSyntax ParseTagName(
             StringWalker stringWalker,

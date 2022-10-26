@@ -1,7 +1,7 @@
 ﻿namespace BlazorStudio.ClassLib.FileConstants;
 
 /// <summary>
-/// The constants do not start with a period
+///     The constants do not start with a period
 /// </summary>
 public static class ExtensionNoPeriodFacts
 {

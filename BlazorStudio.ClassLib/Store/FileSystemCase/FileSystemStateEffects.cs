@@ -8,9 +8,9 @@ namespace BlazorStudio.ClassLib.Store.FileSystemCase;
 
 public class FileSystemStateEffects
 {
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IDefaultInformationRenderer _defaultInformationRenderer;
     private readonly IDefaultErrorRenderer _defaultErrorRenderer;
+    private readonly IDefaultInformationRenderer _defaultInformationRenderer;
+    private readonly IFileSystemProvider _fileSystemProvider;
 
     private readonly Dictionary<AbsoluteFilePathStringValue, (Task writeTask, string content)>
         _trackFileSystemWritesMap = new();
@@ -27,22 +27,25 @@ public class FileSystemStateEffects
     }
 
     /// <summary>
-    /// If <see cref="_trackFileSystemWritesMap"/> has an entry with the <see cref="WriteToFileSystemAction.AbsoluteFilePath"/>
-    /// then check if the entry's <see cref="Task"/> has completed.
-    /// <br/><br/>
-    /// If a previous write task to the same physical file was already in <see cref="_trackFileSystemWritesMap"/>
-    /// and the task has completed. Then check if the string content written out is equal. If the content being
-    /// written is equal then do nothing.
-    /// <br/><br/>
-    /// If <see cref="_trackFileSystemWritesMap"/> shows that the file content is different and needs updating then
-    /// proceed with setting the new value for the Key provided. Further write requests are to await the previous write
-    /// request to complete.
-    /// <br/><br/>
-    /// <see cref="_trackFileSystemWritesMapSemaphoreSlim"/> is used to ensure when a write request comes in
-    /// that while the first write request is being validated a second write request cannot come along and for whatever reason
-    /// finish being validated before the first write request was causing a de-sync.
-    /// <br/><br/>
-    /// Validated in this context refers to: (does the file actually need updated or is there an in progress write task that needs awaiting)
+    ///     If <see cref="_trackFileSystemWritesMap" /> has an entry with the
+    ///     <see cref="WriteToFileSystemAction.AbsoluteFilePath" />
+    ///     then check if the entry's <see cref="Task" /> has completed.
+    ///     <br /><br />
+    ///     If a previous write task to the same physical file was already in <see cref="_trackFileSystemWritesMap" />
+    ///     and the task has completed. Then check if the string content written out is equal. If the content being
+    ///     written is equal then do nothing.
+    ///     <br /><br />
+    ///     If <see cref="_trackFileSystemWritesMap" /> shows that the file content is different and needs updating then
+    ///     proceed with setting the new value for the Key provided. Further write requests are to await the previous write
+    ///     request to complete.
+    ///     <br /><br />
+    ///     <see cref="_trackFileSystemWritesMapSemaphoreSlim" /> is used to ensure when a write request comes in
+    ///     that while the first write request is being validated a second write request cannot come along and for whatever
+    ///     reason
+    ///     finish being validated before the first write request was causing a de-sync.
+    ///     <br /><br />
+    ///     Validated in this context refers to: (does the file actually need updated or is there an in progress write task
+    ///     that needs awaiting)
     /// </summary>
     [EffectMethod]
     public async Task ReduceWriteToFileSystemAction(WriteToFileSystemAction writeToFileSystemAction,

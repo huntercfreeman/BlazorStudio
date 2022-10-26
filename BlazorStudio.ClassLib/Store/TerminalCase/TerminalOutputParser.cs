@@ -31,7 +31,7 @@ public static class TerminalOutputParser
             var aTag = $"<a href=\"{httpBuilder}\" target=\"_blank\">{httpBuilder}</a>";
 
             var result = firstSubstring.EscapeHtml()
-                         + aTag.ToString();
+                         + aTag;
 
             if (position != input.Length - 1) result += input.Substring(position);
 

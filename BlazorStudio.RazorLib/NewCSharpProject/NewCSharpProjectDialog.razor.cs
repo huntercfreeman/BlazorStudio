@@ -1,19 +1,36 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+﻿using System.Diagnostics;
+using BlazorStudio.ClassLib.FileConstants;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
-using Fluxor;
-using Microsoft.AspNetCore.Components;
-using System.Diagnostics;
-using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.RazorLib.TreeViewCase;
+using Fluxor;
+using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.RazorLib.NewCSharpProject;
 
 public partial class NewCSharpProjectDialog : ComponentBase
 {
+    private bool _attemptedToRetrieveProjectTemplates;
+    private bool _disableExecuteButton;
+    private readonly string _executionOfNewCSharpProjectOutput = string.Empty;
+    private bool _finishedCreatingProject;
+
+    private string _projectName = string.Empty;
+    private SelectCSharpProjectTemplate? _selectCSharpProjectTemplate;
+
+    private bool _startingRetrievingProjectTemplates;
+    private string _templateArguments = string.Empty;
+
+    private List<CSharpTemplate>? _templates;
+
+    // I cannot get 'dotnet new list' to run when I use Ubuntu OS
+    // Therefore I am executing the deprecated version.
+    private readonly string getCSharpProjectTemplatesCommand = "dotnet new --list";
+    private IAbsoluteFilePath? InputFileDialogSelection;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -23,28 +40,11 @@ public partial class NewCSharpProjectDialog : ComponentBase
     [Parameter]
     public Action<AbsoluteFilePathDotNet>? OnProjectCreatedCallback { get; set; }
 
-    private List<CSharpTemplate>? _templates;
-
-    // I cannot get 'dotnet new list' to run when I use Ubuntu OS
-    // Therefore I am executing the deprecated version.
-    private string getCSharpProjectTemplatesCommand = "dotnet new --list";
-    private string _templateArguments = string.Empty;
-    private SelectCSharpProjectTemplate? _selectCSharpProjectTemplate;
-    private bool _disableExecuteButton;
-    private bool _finishedCreatingProject;
-    private string _executionOfNewCSharpProjectOutput = string.Empty;
-    private IAbsoluteFilePath? InputFileDialogSelection;
-
-    private string InterpolatedCommand => $"dotnet new" +
+    private string InterpolatedCommand => "dotnet new" +
                                           $" {_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "{select a template}"}" +
                                           $" {(string.IsNullOrWhiteSpace(_projectName) ? string.Empty : $"-o {_projectName}")}" +
-                                          $"  --framework net6.0" +
+                                          "  --framework net6.0" +
                                           $" {_templateArguments}";
-
-    private string _projectName = string.Empty;
-
-    private bool _startingRetrievingProjectTemplates;
-    private bool _attemptedToRetrieveProjectTemplates;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -140,7 +140,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
                     OnEnd,
                     null,
                     null,
-                    (data) => output = data,
+                    data => output = data,
                     CancellationToken.None));
         }
 

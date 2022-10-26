@@ -1,15 +1,19 @@
-﻿using System.Collections.Immutable;
-using BlazorStudio.ClassLib.Keyboard;
+﻿using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.Menu;
 
 public partial class MenuDisplay : ComponentBase
 {
+    private int? _activeMenuOptionIndex = null;
+
+    private MenuOptionRecord[] _cachedMenuOptionRecords = Array.Empty<MenuOptionRecord>();
+    private ElementReference _menuDisplayElementReference;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -26,10 +30,6 @@ public partial class MenuDisplay : ComponentBase
     public Func<KeyboardEventArgs, Task>? AfterOnKeyDownAsync { get; set; }
     [Parameter]
     public bool FocusOnAfterFirstRender { get; set; } = true;
-
-    private MenuOptionRecord[] _cachedMenuOptionRecords = Array.Empty<MenuOptionRecord>();
-    private ElementReference _menuDisplayElementReference;
-    private int? _activeMenuOptionIndex = null;
 
     protected override void OnInitialized()
     {
@@ -126,7 +126,7 @@ public partial class MenuDisplay : ComponentBase
                         {
                             await FocusAfterTarget.Value.FocusAsync();
                         }
-                        catch (Microsoft.JSInterop.JSException)
+                        catch (JSException)
                         {
                             // Caused when calling:
                             // FocusAsync();

@@ -6,6 +6,7 @@ using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
+using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.RazorLib.Forms;
@@ -17,12 +18,14 @@ namespace BlazorStudio.RazorLib.FolderExplorer;
 
 public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
 {
+    private DialogKey _addProjectReferenceDialogKey = DialogKey.NewDialogKey();
+    private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<BlazorStudio.ClassLib.Store.SolutionCase.SolutionState> SolutionStateWrap { get; set; } = null!;
+    private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -31,15 +34,12 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
     [Parameter]
     public TreeViewContextMenuEventDto<IAbsoluteFilePath> ContextMenuEventDto { get; set; } = null!;
 
-    private DialogKey _addProjectReferenceDialogKey = DialogKey.NewDialogKey();
-    private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
-
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
         TreeViewContextMenuEventDto<IAbsoluteFilePath> contextMenuEventDto)
     {
         var createNewEmptyFile = MenuOptionFacts.File
             .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(CreateNewFileForm.ParentDirectory),
@@ -57,7 +57,7 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
 
         var createNewDirectory = MenuOptionFacts.File
             .ConstructCreateNewDirectory(typeof(CreateNewDirectoryForm),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(CreateNewDirectoryForm.ParentDirectory),
@@ -75,7 +75,7 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
 
         var createDeleteFile = MenuOptionFacts.File
             .ConstructDeleteFile(typeof(DeleteFileForm),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(DeleteFileForm.AbsoluteFilePath),
@@ -129,7 +129,7 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
     {
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
                 await File
                     .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName,
@@ -147,7 +147,7 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
     private void CreateNewDirectoryFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
         string directoryName)
     {
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
                 Directory.CreateDirectory(parentDirectoryAbsoluteFilePathString + directoryName);
 
@@ -162,7 +162,7 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
 
     private void DeleteFileFormOnAfterSubmitForm(IAbsoluteFilePath absoluteFilePath)
     {
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
                 if (absoluteFilePath.IsDirectory)
                 {

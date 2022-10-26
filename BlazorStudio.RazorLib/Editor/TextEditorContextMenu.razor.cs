@@ -1,22 +1,21 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Keyboard;
-using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
-using BlazorStudio.RazorLib.Forms;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Clipboard;
 using BlazorTextEditor.RazorLib.Commands;
 using BlazorTextEditor.RazorLib.Cursor;
 using BlazorTextEditor.RazorLib.HelperComponents;
-using BlazorTextEditor.RazorLib.Store.TextEditorCase;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.Editor;
 
 public partial class TextEditorContextMenu : ComponentBase
 {
+    private ElementReference? _textEditorContextMenuElementReference;
     [Inject]
     private IClipboardProvider ClipboardProvider { get; set; } = null!;
     [Inject]
@@ -32,8 +31,6 @@ public partial class TextEditorContextMenu : ComponentBase
     [EditorRequired]
     public TextEditorBase TextEditor { get; set; } = null!;
 
-    private ElementReference? _textEditorContextMenuElementReference;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -45,7 +42,7 @@ public partial class TextEditorContextMenu : ComponentBase
                     await _textEditorContextMenuElementReference.Value
                         .FocusAsync();
                 }
-                catch (Microsoft.JSInterop.JSException)
+                catch (JSException)
                 {
                     // Caused when calling:
                     // await (ElementReference).FocusAsync();

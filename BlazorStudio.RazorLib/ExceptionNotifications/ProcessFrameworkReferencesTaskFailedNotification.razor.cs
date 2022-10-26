@@ -9,6 +9,7 @@ namespace BlazorStudio.RazorLib.ExceptionNotifications;
 
 public partial class ProcessFrameworkReferencesTaskFailedNotification : ComponentBase
 {
+    private bool _buttonWasPressed;
     [Inject]
     private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
     [Inject]
@@ -22,8 +23,6 @@ public partial class ProcessFrameworkReferencesTaskFailedNotification : Componen
     [Parameter]
     [EditorRequired]
     public IAbsoluteFilePath ProjectAbsoluteFilePath { get; set; } = null!;
-
-    private bool _buttonWasPressed;
 
     private string GlobalJsonText => $@"
 {{

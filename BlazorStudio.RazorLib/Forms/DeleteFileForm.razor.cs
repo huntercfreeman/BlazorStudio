@@ -5,6 +5,9 @@ namespace BlazorStudio.RazorLib.Forms;
 
 public partial class DeleteFileForm : ComponentBase
 {
+    private int _directDescendantCount;
+
+    private bool _isLoaded;
     [Parameter]
     [EditorRequired]
     public IAbsoluteFilePath AbsoluteFilePath { get; set; } = null!;
@@ -14,9 +17,6 @@ public partial class DeleteFileForm : ComponentBase
     [Parameter]
     [EditorRequired]
     public Action OnAfterCancelForm { get; set; } = null!;
-
-    private bool _isLoaded;
-    private int _directDescendantCount;
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {

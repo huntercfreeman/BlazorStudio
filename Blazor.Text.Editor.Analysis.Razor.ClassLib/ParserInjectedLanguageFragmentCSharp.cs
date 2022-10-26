@@ -103,7 +103,7 @@ public static class ParserInjectedLanguageFragmentCSharp
                     var classTemplateOpening = "public class Aaa{";
 
                     var injectedLanguageString = classTemplateOpening +
-                                                 injectedLanguageBuilder.ToString();
+                                                 injectedLanguageBuilder;
 
                     var lexedInjectedLanguage = lexer.Lex(
                             injectedLanguageString)
@@ -214,8 +214,6 @@ public static class ParserInjectedLanguageFragmentCSharp
                                     stringWalker.GetText(razorCommentTextSpan),
                                     razorCommentTextSpan));
 
-                                break;
-                            default:
                                 break;
                         }
                     }

@@ -1,5 +1,4 @@
-﻿using System.Text;
-using BlazorStudio.ClassLib.Store.DragCase;
+﻿using BlazorStudio.ClassLib.Store.DragCase;
 using BlazorStudio.ClassLib.Store.TransformableCase;
 using BlazorStudio.ClassLib.UserInterface;
 using Fluxor;
@@ -10,6 +9,24 @@ namespace BlazorStudio.RazorLib.Transformable;
 
 public partial class TransformableDisplay : ComponentBase, IDisposable
 {
+    private readonly SemaphoreSlim _transformableDisplaySemaphoreSlim = new(1, 1);
+
+    private Func<MouseEventArgs, Task>? _dragStateEventHandler;
+    private Dimensions _eastResizeHandleDimensions = new();
+
+    // Diagonal Resize Handles
+    private Dimensions _northEastResizeHandleDimensions = new();
+
+    // Cardinal Resize Handles
+    private Dimensions _northResizeHandleDimensions = new();
+    private Dimensions _northWestResizeHandleDimensions = new();
+    private MouseEventArgs? _previousDragMouseEventArgs;
+
+    private int _resizeEventCounter;
+    private Dimensions _southEastResizeHandleDimensions = new();
+    private Dimensions _southResizeHandleDimensions = new();
+    private Dimensions _southWestResizeHandleDimensions = new();
+    private Dimensions _westResizeHandleDimensions = new();
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
     [Inject]
@@ -24,23 +41,11 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     [EditorRequired]
     public Func<Task> ReRenderFunc { get; set; } = null!;
 
-    private Func<MouseEventArgs, Task>? _dragStateEventHandler;
-    private MouseEventArgs? _previousDragMouseEventArgs;
-
-    private int _resizeEventCounter;
-    private readonly SemaphoreSlim _transformableDisplaySemaphoreSlim = new(1, 1);
-
-    // Cardinal Resize Handles
-    private Dimensions _northResizeHandleDimensions = new();
-    private Dimensions _eastResizeHandleDimensions = new();
-    private Dimensions _southResizeHandleDimensions = new();
-    private Dimensions _westResizeHandleDimensions = new();
-
-    // Diagonal Resize Handles
-    private Dimensions _northEastResizeHandleDimensions = new();
-    private Dimensions _southEastResizeHandleDimensions = new();
-    private Dimensions _southWestResizeHandleDimensions = new();
-    private Dimensions _northWestResizeHandleDimensions = new();
+    public void Dispose()
+    {
+        DragStateWrap.StateChanged -= DragState_StateChanged;
+        TransformableOptionsStateWrap.StateChanged -= TransformableOptionsStateWrapOnStateChanged;
+    }
 
     protected override void OnInitialized()
     {
@@ -89,404 +94,6 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
     {
         InvokeAsync(StateHasChanged);
     }
-
-    #region HandleCssStylings
-
-    private string GetNorthResizeHandleCssStyling()
-    {
-        List<DimensionUnit> widthDimension = new(Dimensions.WidthCalc)
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> heightDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> leftDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        List<DimensionUnit> topDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        _northResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
-
-        _northResizeHandleDimensions.WidthCalc = widthDimension;
-        _northResizeHandleDimensions.HeightCalc = heightDimension;
-        _northResizeHandleDimensions.LeftCalc = leftDimension;
-        _northResizeHandleDimensions.TopCalc = topDimension;
-
-        return _northResizeHandleDimensions.DimensionsCssString;
-    }
-
-    private string GetEastResizeHandleCssStyling()
-    {
-        List<DimensionUnit> widthDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> heightDimension = new(Dimensions.HeightCalc)
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> leftDimension = new(Dimensions.WidthCalc)
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        List<DimensionUnit> topDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        _eastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
-
-        _eastResizeHandleDimensions.WidthCalc = widthDimension;
-        _eastResizeHandleDimensions.HeightCalc = heightDimension;
-        _eastResizeHandleDimensions.LeftCalc = leftDimension;
-        _eastResizeHandleDimensions.TopCalc = topDimension;
-
-        return _eastResizeHandleDimensions.DimensionsCssString;
-    }
-
-    private string GetSouthResizeHandleCssStyling()
-    {
-        List<DimensionUnit> widthDimension = new(Dimensions.WidthCalc)
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> heightDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> leftDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        List<DimensionUnit> topDimension = new(Dimensions.HeightCalc)
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        _southResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
-
-        _southResizeHandleDimensions.WidthCalc = widthDimension;
-        _southResizeHandleDimensions.HeightCalc = heightDimension;
-        _southResizeHandleDimensions.LeftCalc = leftDimension;
-        _southResizeHandleDimensions.TopCalc = topDimension;
-
-        return _southResizeHandleDimensions.DimensionsCssString;
-    }
-
-    private string GetWestResizeHandleCssStyling()
-    {
-        List<DimensionUnit> widthDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> heightDimension = new(Dimensions.HeightCalc)
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> leftDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        List<DimensionUnit> topDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        _westResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
-
-        _westResizeHandleDimensions.WidthCalc = widthDimension;
-        _westResizeHandleDimensions.HeightCalc = heightDimension;
-        _westResizeHandleDimensions.LeftCalc = leftDimension;
-        _westResizeHandleDimensions.TopCalc = topDimension;
-
-        return _westResizeHandleDimensions.DimensionsCssString;
-    }
-
-    private string GetNorthEastResizeHandleCssStyling()
-    {
-        List<DimensionUnit> widthDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> heightDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> leftDimension = new(Dimensions.WidthCalc)
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        List<DimensionUnit> topDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        _northEastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
-
-        _northEastResizeHandleDimensions.WidthCalc = widthDimension;
-        _northEastResizeHandleDimensions.HeightCalc = heightDimension;
-        _northEastResizeHandleDimensions.LeftCalc = leftDimension;
-        _northEastResizeHandleDimensions.TopCalc = topDimension;
-
-        return _northEastResizeHandleDimensions.DimensionsCssString;
-    }
-
-    private string GetSouthEastResizeHandleCssStyling()
-    {
-        List<DimensionUnit> widthDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> heightDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> leftDimension = new(Dimensions.WidthCalc)
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        List<DimensionUnit> topDimension = new(Dimensions.HeightCalc)
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        _southEastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
-
-        _southEastResizeHandleDimensions.WidthCalc = widthDimension;
-        _southEastResizeHandleDimensions.HeightCalc = heightDimension;
-        _southEastResizeHandleDimensions.LeftCalc = leftDimension;
-        _southEastResizeHandleDimensions.TopCalc = topDimension;
-
-        return _southEastResizeHandleDimensions.DimensionsCssString;
-    }
-
-    private string GetSouthWestResizeHandleCssStyling()
-    {
-        List<DimensionUnit> widthDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> heightDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> leftDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        List<DimensionUnit> topDimension = new(Dimensions.HeightCalc)
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        _southWestResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
-
-        _southWestResizeHandleDimensions.WidthCalc = widthDimension;
-        _southWestResizeHandleDimensions.HeightCalc = heightDimension;
-        _southWestResizeHandleDimensions.LeftCalc = leftDimension;
-        _southWestResizeHandleDimensions.TopCalc = topDimension;
-
-        return _southWestResizeHandleDimensions.DimensionsCssString;
-    }
-
-    private string GetNorthWestResizeHandleCssStyling()
-    {
-        List<DimensionUnit> widthDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> heightDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
-            },
-        };
-
-        List<DimensionUnit> leftDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        List<DimensionUnit> topDimension = new()
-        {
-            new DimensionUnit
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
-            },
-        };
-
-        _northWestResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
-
-        _northWestResizeHandleDimensions.WidthCalc = widthDimension;
-        _northWestResizeHandleDimensions.HeightCalc = heightDimension;
-        _northWestResizeHandleDimensions.LeftCalc = leftDimension;
-        _northWestResizeHandleDimensions.TopCalc = topDimension;
-
-        return _northWestResizeHandleDimensions.DimensionsCssString;
-    }
-
-    #endregion
 
     private void SubscribeToDragEventWithNorthResizeHandle()
     {
@@ -942,9 +549,401 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
         return Task.CompletedTask;
     }
 
-    public void Dispose()
+    #region HandleCssStylings
+
+    private string GetNorthResizeHandleCssStyling()
     {
-        DragStateWrap.StateChanged -= DragState_StateChanged;
-        TransformableOptionsStateWrap.StateChanged -= TransformableOptionsStateWrapOnStateChanged;
+        List<DimensionUnit> widthDimension = new(Dimensions.WidthCalc)
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> heightDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> leftDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        List<DimensionUnit> topDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        _northResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
+
+        _northResizeHandleDimensions.WidthCalc = widthDimension;
+        _northResizeHandleDimensions.HeightCalc = heightDimension;
+        _northResizeHandleDimensions.LeftCalc = leftDimension;
+        _northResizeHandleDimensions.TopCalc = topDimension;
+
+        return _northResizeHandleDimensions.DimensionsCssString;
     }
+
+    private string GetEastResizeHandleCssStyling()
+    {
+        List<DimensionUnit> widthDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> heightDimension = new(Dimensions.HeightCalc)
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> leftDimension = new(Dimensions.WidthCalc)
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        List<DimensionUnit> topDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        _eastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
+
+        _eastResizeHandleDimensions.WidthCalc = widthDimension;
+        _eastResizeHandleDimensions.HeightCalc = heightDimension;
+        _eastResizeHandleDimensions.LeftCalc = leftDimension;
+        _eastResizeHandleDimensions.TopCalc = topDimension;
+
+        return _eastResizeHandleDimensions.DimensionsCssString;
+    }
+
+    private string GetSouthResizeHandleCssStyling()
+    {
+        List<DimensionUnit> widthDimension = new(Dimensions.WidthCalc)
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> heightDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> leftDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        List<DimensionUnit> topDimension = new(Dimensions.HeightCalc)
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        _southResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
+
+        _southResizeHandleDimensions.WidthCalc = widthDimension;
+        _southResizeHandleDimensions.HeightCalc = heightDimension;
+        _southResizeHandleDimensions.LeftCalc = leftDimension;
+        _southResizeHandleDimensions.TopCalc = topDimension;
+
+        return _southResizeHandleDimensions.DimensionsCssString;
+    }
+
+    private string GetWestResizeHandleCssStyling()
+    {
+        List<DimensionUnit> widthDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> heightDimension = new(Dimensions.HeightCalc)
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> leftDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        List<DimensionUnit> topDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        _westResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
+
+        _westResizeHandleDimensions.WidthCalc = widthDimension;
+        _westResizeHandleDimensions.HeightCalc = heightDimension;
+        _westResizeHandleDimensions.LeftCalc = leftDimension;
+        _westResizeHandleDimensions.TopCalc = topDimension;
+
+        return _westResizeHandleDimensions.DimensionsCssString;
+    }
+
+    private string GetNorthEastResizeHandleCssStyling()
+    {
+        List<DimensionUnit> widthDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> heightDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> leftDimension = new(Dimensions.WidthCalc)
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        List<DimensionUnit> topDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        _northEastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
+
+        _northEastResizeHandleDimensions.WidthCalc = widthDimension;
+        _northEastResizeHandleDimensions.HeightCalc = heightDimension;
+        _northEastResizeHandleDimensions.LeftCalc = leftDimension;
+        _northEastResizeHandleDimensions.TopCalc = topDimension;
+
+        return _northEastResizeHandleDimensions.DimensionsCssString;
+    }
+
+    private string GetSouthEastResizeHandleCssStyling()
+    {
+        List<DimensionUnit> widthDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> heightDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> leftDimension = new(Dimensions.WidthCalc)
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        List<DimensionUnit> topDimension = new(Dimensions.HeightCalc)
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        _southEastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
+
+        _southEastResizeHandleDimensions.WidthCalc = widthDimension;
+        _southEastResizeHandleDimensions.HeightCalc = heightDimension;
+        _southEastResizeHandleDimensions.LeftCalc = leftDimension;
+        _southEastResizeHandleDimensions.TopCalc = topDimension;
+
+        return _southEastResizeHandleDimensions.DimensionsCssString;
+    }
+
+    private string GetSouthWestResizeHandleCssStyling()
+    {
+        List<DimensionUnit> widthDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> heightDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> leftDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        List<DimensionUnit> topDimension = new(Dimensions.HeightCalc)
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionUnitOperationKind = DimensionUnitOperationKind.Subtract,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        _southWestResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
+
+        _southWestResizeHandleDimensions.WidthCalc = widthDimension;
+        _southWestResizeHandleDimensions.HeightCalc = heightDimension;
+        _southWestResizeHandleDimensions.LeftCalc = leftDimension;
+        _southWestResizeHandleDimensions.TopCalc = topDimension;
+
+        return _southWestResizeHandleDimensions.DimensionsCssString;
+    }
+
+    private string GetNorthWestResizeHandleCssStyling()
+    {
+        List<DimensionUnit> widthDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> heightDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value,
+            },
+        };
+
+        List<DimensionUnit> leftDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        List<DimensionUnit> topDimension = new()
+        {
+            new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = -1 * TransformableOptionsStateWrap.Value.ResizeHandleDimensionUnit.Value / 2.0,
+            },
+        };
+
+        _northWestResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
+
+        _northWestResizeHandleDimensions.WidthCalc = widthDimension;
+        _northWestResizeHandleDimensions.HeightCalc = heightDimension;
+        _northWestResizeHandleDimensions.LeftCalc = leftDimension;
+        _northWestResizeHandleDimensions.TopCalc = topDimension;
+
+        return _northWestResizeHandleDimensions.DimensionsCssString;
+    }
+
+    #endregion
 }

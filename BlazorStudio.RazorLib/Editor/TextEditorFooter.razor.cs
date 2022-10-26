@@ -7,6 +7,7 @@ namespace BlazorStudio.RazorLib.Editor;
 
 public partial class TextEditorFooter : ComponentBase, IDisposable
 {
+    private TextEditorDisplay? _previousTextEditorDisplay;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -17,7 +18,11 @@ public partial class TextEditorFooter : ComponentBase, IDisposable
     [EditorRequired]
     public TextEditorDisplay? TextEditorDisplay { get; set; }
 
-    private TextEditorDisplay? _previousTextEditorDisplay;
+    public void Dispose()
+    {
+        if (TextEditorDisplay is not null)
+            TextEditorDisplay.CursorsChanged -= PreviousTextEditorDisplayOnCursorsChanged;
+    }
 
     protected override Task OnParametersSetAsync()
     {
@@ -56,11 +61,5 @@ public partial class TextEditorFooter : ComponentBase, IDisposable
 
         if (Enum.TryParse<RowEndingKind>(rowEndingKindString, out var rowEndingKind))
             TextEditorService.SetUsingRowEndingKind(textEditorKey, rowEndingKind);
-    }
-
-    public void Dispose()
-    {
-        if (TextEditorDisplay is not null)
-            TextEditorDisplay.CursorsChanged -= PreviousTextEditorDisplayOnCursorsChanged;
     }
 }

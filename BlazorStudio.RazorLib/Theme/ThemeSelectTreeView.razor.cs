@@ -3,17 +3,16 @@ using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Theme;
 
 public partial class ThemeSelectTreeView : ComponentBase
 {
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private List<ThemeKey> _rootThemes = GetRootThemes();
 
     private TreeViewWrapKey _themeTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-    private List<ThemeKey> _rootThemes = GetRootThemes();
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     private static List<ThemeKey> GetRootThemes()
     {

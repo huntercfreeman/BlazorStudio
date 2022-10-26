@@ -8,10 +8,9 @@ public static class UniqueFileFacts
     public const string WwwRoot = "wwwroot";
 
     /// <summary>
-    /// If rendering a .csproj file pass in <see cref="ExtensionNoPeriodFacts.C_SHARP_PROJECT"/>
-    ///
-    /// Then perhaps the returning array would contain { "Properties", "wwwroot" } as they are unique files
-    /// with this context.
+    ///     If rendering a .csproj file pass in <see cref="ExtensionNoPeriodFacts.C_SHARP_PROJECT" />
+    ///     Then perhaps the returning array would contain { "Properties", "wwwroot" } as they are unique files
+    ///     with this context.
     /// </summary>
     /// <returns></returns>
     public static ImmutableArray<string> GetUniqueFilesByContainerFileExtension(string extensionNoPeriod)

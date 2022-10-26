@@ -1,13 +1,9 @@
-﻿using BlazorStudio.ClassLib.Contexts;
-using BlazorStudio.ClassLib.Store.ContextCase;
-using BlazorStudio.ClassLib.Store.DragCase;
+﻿using BlazorStudio.ClassLib.Store.DragCase;
 using BlazorStudio.ClassLib.Store.FontCase;
 using BlazorStudio.ClassLib.Store.ThemeCase;
-using BlazorStudio.RazorLib.ContextCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Shared;
 

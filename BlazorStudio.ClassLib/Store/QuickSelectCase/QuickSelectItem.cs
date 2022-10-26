@@ -12,8 +12,9 @@ public record QuickSelectItem<T>
         ItemWithType = item;
     }
 
+    public T ItemWithType { get; init; }
+
     public string DisplayName { get; init; }
     public object ItemNoType { get; init; }
     public Type ItemType => typeof(T);
-    public T ItemWithType { get; init; }
 }
