@@ -34,7 +34,7 @@ public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
                 x,
                 () => x.TemplateName,
                 null,
-                false,
+                true,
                 null))
             .ToList();
     }
