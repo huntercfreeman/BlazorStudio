@@ -37,7 +37,8 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
                 query,
                 cancellationToken);
 
-        return nugetPackages.Data.ToImmutableArray();
+        return (nugetPackages?.Data ?? Array.Empty<NugetPackageRecord>())
+            .ToImmutableArray();
     }
 
     public INugetPackageManagerQuery BuildQuery(string query, bool includePrerelease = false)

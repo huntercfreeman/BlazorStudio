@@ -73,7 +73,7 @@ public partial class ContextBoundary : ComponentBase, IDisposable
         base.OnAfterRender(firstRender);
     }
 
-    private async void ValueOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
+    private async void ValueOnOnFocusRequestedEventHandler()
     {
         if (_contextBoundaryElementReference is not null)
             await _contextBoundaryElementReference.Value.FocusAsync();

@@ -18,7 +18,7 @@ public record NugetPackageVersionRecord(
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
     //
     // Need disable UnusedAutoPropertyAccessor.Global because
-    // NugetPackageVersionRecord is JSON deserialized
+    // Property is JSON deserialized
     // and I don't want to miss any of the data
     // because of a general sense of unease by the idea of that.
     public string? AtId { get; init; }

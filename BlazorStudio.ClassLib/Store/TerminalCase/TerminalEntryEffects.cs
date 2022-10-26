@@ -56,7 +56,7 @@ public class TerminalEntryEffects
 
             var process = new Process();
 
-            void EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler(object? sender, EventArgs e)
+            void EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler()
             {
                 process.Kill(true);
 

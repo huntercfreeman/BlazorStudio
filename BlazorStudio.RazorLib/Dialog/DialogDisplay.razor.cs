@@ -45,7 +45,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async void DialogRecordOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
+    private async void DialogRecordOnOnFocusRequestedEventHandler()
     {
         if (_contextBoundary is not null)
         {
@@ -54,7 +54,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         }
     }
 
-    private async void DialogRecordOnOnStateHasChangeRequestedEventHandler(object? sender, EventArgs e)
+    private async void DialogRecordOnOnStateHasChangeRequestedEventHandler()
     {
         await InvokeAsync(StateHasChanged);
     }

@@ -97,7 +97,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
         IsDirectory = relativeFilePath.IsDirectory;
     }
 
-    public AbsoluteFilePath(IFileSystemDrive rootDrive,
+    public AbsoluteFilePath(IFileSystemDrive? rootDrive,
         List<IFilePath> directories,
         string fileNameNoExtension,
         string extensionNoPeriod,

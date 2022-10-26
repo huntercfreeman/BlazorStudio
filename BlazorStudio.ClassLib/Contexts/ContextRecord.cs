@@ -18,10 +18,10 @@ namespace BlazorStudio.ClassLib.Contexts;
 /// </param>
 public record ContextRecord(ContextKey ContextKey, string DisplayName, string ContextName, Keymap Keymap)
 {
-    public event EventHandler? OnFocusRequestedEventHandler;
+    public event Action? OnFocusRequestedEventHandler;
 
     public void InvokeOnFocusRequestedEventHandler()
     {
-        OnFocusRequestedEventHandler?.Invoke(null, EventArgs.Empty);
+        OnFocusRequestedEventHandler?.Invoke();
     }
 }

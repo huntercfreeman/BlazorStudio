@@ -49,7 +49,7 @@ public partial class TaskModelManagerDialogEntryPointTaskModelListPreviewDisplay
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private async void TaskModelManagerServiceStateHasChangedEventHandler(object? sender, EventArgs? e)
+    private async void TaskModelManagerServiceStateHasChangedEventHandler()
     {
         _taskModelCache = GetTaskModelsFunc().ToImmutableArray();
         await InvokeAsync(StateHasChanged);

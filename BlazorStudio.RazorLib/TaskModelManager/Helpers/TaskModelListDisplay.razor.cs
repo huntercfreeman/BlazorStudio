@@ -41,7 +41,7 @@ public partial class TaskModelListDisplay : ComponentBase, IDisposable
         base.OnInitialized();
     }
 
-    private async void TaskModelManagerServiceStateHasChangedEventHandler(object? sender, EventArgs? e)
+    private async void TaskModelManagerServiceStateHasChangedEventHandler()
     {
         _taskModelCache = GetTaskModelsFunc().ToImmutableArray();
         await InvokeAsync(StateHasChanged);

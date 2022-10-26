@@ -22,8 +22,8 @@ public static class TaskModelManagerService
     public static ImmutableArray<ITaskModel> SeeminglyUnresponsiveTaskModels { get; private set; } =
         ImmutableArray<ITaskModel>.Empty;
 
-    public static event EventHandler<EventArgs?>? OnTasksStateHasChangedEventHandler;
-    public static event EventHandler<EventArgs?>? OnTaskSeemsUnresponsiveEventHandler;
+    public static event Action? OnTasksStateHasChangedEventHandler;
+    public static event Action? OnTaskSeemsUnresponsiveEventHandler;
 
     public static async Task<ITaskModel> EnqueueTaskModelAsync(Func<CancellationToken, Task> taskFunc, string taskTitle,
         bool isBackgroundTask, TimeSpan lifetimeUntilSeemsUnresponsive,
@@ -136,7 +136,7 @@ public static class TaskModelManagerService
             ActiveTaskModels = ActiveTaskModelsDictionary.Values
                 .ToImmutableArray();
 
-            OnTasksStateHasChangedEventHandler?.Invoke(null, null);
+            OnTasksStateHasChangedEventHandler?.Invoke();
         }
         finally
         {
@@ -156,7 +156,7 @@ public static class TaskModelManagerService
             SeeminglyUnresponsiveTaskModels = SeeminglyUnresponsiveTaskModelsDictionary.Values
                 .ToImmutableArray();
 
-            OnTasksStateHasChangedEventHandler?.Invoke(null, null);
+            OnTasksStateHasChangedEventHandler?.Invoke();
         }
         finally
         {
@@ -175,7 +175,7 @@ public static class TaskModelManagerService
             FailedTaskModels = FailedTaskModelsDictionary.Values
                 .ToImmutableArray();
 
-            OnTasksStateHasChangedEventHandler?.Invoke(null, null);
+            OnTasksStateHasChangedEventHandler?.Invoke();
         }
         finally
         {
@@ -194,7 +194,7 @@ public static class TaskModelManagerService
             SuccessfulTaskModels = SuccessfulTaskModelsDictionary.Values
                 .ToImmutableArray();
 
-            OnTasksStateHasChangedEventHandler?.Invoke(null, null);
+            OnTasksStateHasChangedEventHandler?.Invoke();
         }
         finally
         {
@@ -213,7 +213,7 @@ public static class TaskModelManagerService
             ActiveTaskModels = ActiveTaskModelsDictionary.Values
                 .ToImmutableArray();
 
-            OnTasksStateHasChangedEventHandler?.Invoke(null, null);
+            OnTasksStateHasChangedEventHandler?.Invoke();
         }
         finally
         {
@@ -232,7 +232,7 @@ public static class TaskModelManagerService
             SeeminglyUnresponsiveTaskModels = SeeminglyUnresponsiveTaskModelsDictionary.Values
                 .ToImmutableArray();
 
-            OnTasksStateHasChangedEventHandler?.Invoke(null, null);
+            OnTasksStateHasChangedEventHandler?.Invoke();
         }
         finally
         {
@@ -253,7 +253,7 @@ public static class TaskModelManagerService
             FailedTaskModels = FailedTaskModelsDictionary.Values
                 .ToImmutableArray();
 
-            OnTasksStateHasChangedEventHandler?.Invoke(null, null);
+            OnTasksStateHasChangedEventHandler?.Invoke();
         }
         finally
         {
@@ -272,7 +272,7 @@ public static class TaskModelManagerService
             FailedTaskModels = FailedTaskModelsDictionary.Values
                 .ToImmutableArray();
 
-            OnTasksStateHasChangedEventHandler?.Invoke(null, null);
+            OnTasksStateHasChangedEventHandler?.Invoke();
         }
         finally
         {
@@ -291,7 +291,7 @@ public static class TaskModelManagerService
             SuccessfulTaskModels = SuccessfulTaskModelsDictionary.Values
                 .ToImmutableArray();
 
-            OnTasksStateHasChangedEventHandler?.Invoke(null, null);
+            OnTasksStateHasChangedEventHandler?.Invoke();
         }
         finally
         {
@@ -310,7 +310,7 @@ public static class TaskModelManagerService
             SeeminglyUnresponsiveTaskModels = SeeminglyUnresponsiveTaskModelsDictionary.Values
                 .ToImmutableArray();
 
-            OnTasksStateHasChangedEventHandler?.Invoke(null, null);
+            OnTasksStateHasChangedEventHandler?.Invoke();
         }
         finally
         {

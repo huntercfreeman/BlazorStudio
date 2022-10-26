@@ -592,10 +592,17 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         _northResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        _northResizeHandleDimensions.WidthCalc = widthDimension;
-        _northResizeHandleDimensions.HeightCalc = heightDimension;
-        _northResizeHandleDimensions.LeftCalc = leftDimension;
-        _northResizeHandleDimensions.TopCalc = topDimension;
+        _northResizeHandleDimensions.WidthCalc.Clear();
+        _northResizeHandleDimensions.WidthCalc.AddRange(widthDimension);
+        
+        _northResizeHandleDimensions.HeightCalc.Clear();
+        _northResizeHandleDimensions.HeightCalc.AddRange(heightDimension);
+        
+        _northResizeHandleDimensions.LeftCalc.Clear();
+        _northResizeHandleDimensions.LeftCalc.AddRange(leftDimension);
+        
+        _northResizeHandleDimensions.TopCalc.Clear();
+        _northResizeHandleDimensions.TopCalc.AddRange(topDimension);
 
         return _northResizeHandleDimensions.DimensionsCssString;
     }
@@ -642,10 +649,18 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         _eastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        _eastResizeHandleDimensions.WidthCalc = widthDimension;
-        _eastResizeHandleDimensions.HeightCalc = heightDimension;
-        _eastResizeHandleDimensions.LeftCalc = leftDimension;
-        _eastResizeHandleDimensions.TopCalc = topDimension;
+        _eastResizeHandleDimensions.WidthCalc.Clear();
+        _eastResizeHandleDimensions.WidthCalc.AddRange(widthDimension);
+        
+        _eastResizeHandleDimensions.HeightCalc.Clear();
+        _eastResizeHandleDimensions.HeightCalc.AddRange(heightDimension);
+        
+        _eastResizeHandleDimensions.LeftCalc.Clear();
+        _eastResizeHandleDimensions.LeftCalc.AddRange(leftDimension);
+        
+        _eastResizeHandleDimensions.TopCalc.Clear();
+        _eastResizeHandleDimensions.TopCalc.AddRange(topDimension);
+        
 
         return _eastResizeHandleDimensions.DimensionsCssString;
     }
@@ -692,10 +707,18 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         _southResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        _southResizeHandleDimensions.WidthCalc = widthDimension;
-        _southResizeHandleDimensions.HeightCalc = heightDimension;
-        _southResizeHandleDimensions.LeftCalc = leftDimension;
-        _southResizeHandleDimensions.TopCalc = topDimension;
+        _southResizeHandleDimensions.WidthCalc.Clear();
+        _southResizeHandleDimensions.WidthCalc.AddRange(widthDimension);
+        
+        _southResizeHandleDimensions.HeightCalc.Clear();
+        _southResizeHandleDimensions.HeightCalc.AddRange(heightDimension);
+        
+        _southResizeHandleDimensions.LeftCalc.Clear();
+        _southResizeHandleDimensions.LeftCalc.AddRange(leftDimension);
+        
+        _southResizeHandleDimensions.TopCalc.Clear();
+        _southResizeHandleDimensions.TopCalc.AddRange(topDimension);
+        
 
         return _southResizeHandleDimensions.DimensionsCssString;
     }
@@ -741,10 +764,18 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         _westResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        _westResizeHandleDimensions.WidthCalc = widthDimension;
-        _westResizeHandleDimensions.HeightCalc = heightDimension;
-        _westResizeHandleDimensions.LeftCalc = leftDimension;
-        _westResizeHandleDimensions.TopCalc = topDimension;
+        _westResizeHandleDimensions.WidthCalc.Clear();
+        _westResizeHandleDimensions.WidthCalc.AddRange(widthDimension);
+        
+        _westResizeHandleDimensions.HeightCalc.Clear();
+        _westResizeHandleDimensions.HeightCalc.AddRange(heightDimension);
+        
+        _westResizeHandleDimensions.LeftCalc.Clear();
+        _westResizeHandleDimensions.LeftCalc.AddRange(leftDimension);
+        
+        _westResizeHandleDimensions.TopCalc.Clear();
+        _westResizeHandleDimensions.TopCalc.AddRange(topDimension);
+        
 
         return _westResizeHandleDimensions.DimensionsCssString;
     }
@@ -790,10 +821,18 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         _northEastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        _northEastResizeHandleDimensions.WidthCalc = widthDimension;
-        _northEastResizeHandleDimensions.HeightCalc = heightDimension;
-        _northEastResizeHandleDimensions.LeftCalc = leftDimension;
-        _northEastResizeHandleDimensions.TopCalc = topDimension;
+        _northEastResizeHandleDimensions.WidthCalc.Clear();
+        _northEastResizeHandleDimensions.WidthCalc.AddRange(widthDimension);
+        
+        _northEastResizeHandleDimensions.HeightCalc.Clear();
+        _northEastResizeHandleDimensions.HeightCalc.AddRange(heightDimension);
+        
+        _northEastResizeHandleDimensions.LeftCalc.Clear();
+        _northEastResizeHandleDimensions.LeftCalc.AddRange(leftDimension);
+        
+        _northEastResizeHandleDimensions.TopCalc.Clear();
+        _northEastResizeHandleDimensions.TopCalc.AddRange(topDimension);
+        
 
         return _northEastResizeHandleDimensions.DimensionsCssString;
     }
@@ -840,10 +879,18 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         _southEastResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        _southEastResizeHandleDimensions.WidthCalc = widthDimension;
-        _southEastResizeHandleDimensions.HeightCalc = heightDimension;
-        _southEastResizeHandleDimensions.LeftCalc = leftDimension;
-        _southEastResizeHandleDimensions.TopCalc = topDimension;
+        _southEastResizeHandleDimensions.WidthCalc.Clear();
+        _southEastResizeHandleDimensions.WidthCalc.AddRange(widthDimension);
+        
+        _southEastResizeHandleDimensions.HeightCalc.Clear();
+        _southEastResizeHandleDimensions.HeightCalc.AddRange(heightDimension);
+        
+        _southEastResizeHandleDimensions.LeftCalc.Clear();
+        _southEastResizeHandleDimensions.LeftCalc.AddRange(leftDimension);
+        
+        _southEastResizeHandleDimensions.TopCalc.Clear();
+        _southEastResizeHandleDimensions.TopCalc.AddRange(topDimension);
+        
 
         return _southEastResizeHandleDimensions.DimensionsCssString;
     }
@@ -889,10 +936,18 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         _southWestResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        _southWestResizeHandleDimensions.WidthCalc = widthDimension;
-        _southWestResizeHandleDimensions.HeightCalc = heightDimension;
-        _southWestResizeHandleDimensions.LeftCalc = leftDimension;
-        _southWestResizeHandleDimensions.TopCalc = topDimension;
+        _southWestResizeHandleDimensions.WidthCalc.Clear();
+        _southWestResizeHandleDimensions.WidthCalc.AddRange(widthDimension);
+        
+        _southWestResizeHandleDimensions.HeightCalc.Clear();
+        _southWestResizeHandleDimensions.HeightCalc.AddRange(heightDimension);
+        
+        _southWestResizeHandleDimensions.LeftCalc.Clear();
+        _southWestResizeHandleDimensions.LeftCalc.AddRange(leftDimension);
+        
+        _southWestResizeHandleDimensions.TopCalc.Clear();
+        _southWestResizeHandleDimensions.TopCalc.AddRange(topDimension);
+        
 
         return _southWestResizeHandleDimensions.DimensionsCssString;
     }
@@ -937,10 +992,18 @@ public partial class TransformableDisplay : ComponentBase, IDisposable
 
         _northWestResizeHandleDimensions.DimensionsPositionKind = DimensionsPositionKind.Absolute;
 
-        _northWestResizeHandleDimensions.WidthCalc = widthDimension;
-        _northWestResizeHandleDimensions.HeightCalc = heightDimension;
-        _northWestResizeHandleDimensions.LeftCalc = leftDimension;
-        _northWestResizeHandleDimensions.TopCalc = topDimension;
+        _northWestResizeHandleDimensions.WidthCalc.Clear();
+        _northWestResizeHandleDimensions.WidthCalc.AddRange(widthDimension);
+        
+        _northWestResizeHandleDimensions.HeightCalc.Clear();
+        _northWestResizeHandleDimensions.HeightCalc.AddRange(heightDimension);
+        
+        _northWestResizeHandleDimensions.LeftCalc.Clear();
+        _northWestResizeHandleDimensions.LeftCalc.AddRange(leftDimension);
+        
+        _northWestResizeHandleDimensions.TopCalc.Clear();
+        _northWestResizeHandleDimensions.TopCalc.AddRange(topDimension);
+        
 
         return _northWestResizeHandleDimensions.DimensionsCssString;
     }

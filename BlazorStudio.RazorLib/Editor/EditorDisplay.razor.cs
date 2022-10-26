@@ -93,7 +93,7 @@ public partial class EditorDisplay : FluxorComponent
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private void TextEditorServiceOnOnTextEditorStatesChanged(object? sender, EventArgs e)
+    private void TextEditorServiceOnOnTextEditorStatesChanged()
     {
         InvokeAsync(StateHasChanged);
     }
