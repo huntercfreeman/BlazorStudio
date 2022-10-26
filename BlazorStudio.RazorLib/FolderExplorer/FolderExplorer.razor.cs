@@ -44,8 +44,8 @@ public partial class FolderExplorer : FluxorComponent
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
 
     private bool _isInitialized;
-    private Func<Task> _mostRecentRefreshContextMenuTarget;
-    private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
+    private Func<Task>? _mostRecentRefreshContextMenuTarget;
+    private List<IAbsoluteFilePath>? _rootAbsoluteFilePaths;
     private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
     private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
     private RichErrorModel? _workspaceStateWrapStateChangedRichErrorModel;

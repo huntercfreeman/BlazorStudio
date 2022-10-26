@@ -10,7 +10,7 @@ namespace BlazorStudio.RazorLib.Forms;
 public partial class SelectMsBuildForm : ComponentBase
 {
     private string _providedAbsoluteFilePathToMsBuildVersion = string.Empty;
-    private VisualStudioInstance _selectedVisualStudioInstance;
+    private VisualStudioInstance? _selectedVisualStudioInstance;
 
     private readonly TreeViewWrapKey _selectMsBuildTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     [Inject]

@@ -5,12 +5,13 @@ namespace BlazorStudio.ClassLib.FileSystem.Classes;
 
 public class AbsoluteFilePathDotNet : AbsoluteFilePath
 {
-    public AbsoluteFilePathDotNet(string absoluteFilePathString, bool isDirectory, ProjectId projectId)
+    public AbsoluteFilePathDotNet(string absoluteFilePathString, bool isDirectory, ProjectId? projectId)
         : base(absoluteFilePathString, isDirectory)
     {
         ProjectId = projectId;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public AbsoluteFilePathDotNet(IAbsoluteFilePath absoluteFilePath, IRelativeFilePath relativeFilePath,
         ProjectId projectId)
         : base(absoluteFilePath, relativeFilePath)
@@ -18,6 +19,7 @@ public class AbsoluteFilePathDotNet : AbsoluteFilePath
         ProjectId = projectId;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public AbsoluteFilePathDotNet(IFileSystemDrive rootDrive,
         List<IFilePath> directories,
         string fileNameNoExtension,
@@ -34,8 +36,8 @@ public class AbsoluteFilePathDotNet : AbsoluteFilePath
     }
 
     /// <summary>
-    ///     The project the file belongs to. (this AbsoluteFilePathDotNet can also be the project itself)
+    /// The project the file belongs to. (this AbsoluteFilePathDotNet can also be the project itself)
     /// </summary>
-    public ProjectId ProjectId { get; protected set; }
-    public override AbsoluteFilePathKind AbsoluteFilePathKind { get; } = AbsoluteFilePathKind.DotNet;
+    public ProjectId? ProjectId { get; }
+    public override AbsoluteFilePathKind AbsoluteFilePathKind => AbsoluteFilePathKind.DotNet;
 }

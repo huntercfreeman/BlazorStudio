@@ -14,9 +14,6 @@ public partial class FooterWindowTabEntryDisplay : ComponentBase
     [Parameter]
     [EditorRequired]
     public FooterWindowTabEntry FooterWindowTabEntry { get; set; } = null!;
-    [Parameter]
-    [EditorRequired]
-    public int FooterWindowTabIndex { get; set; }
 
     private string IsActiveCssClassString =>
         FooterWindowStateWrap.Value.ActiveFooterWindowKind == FooterWindowTabEntry.FooterWindowKind

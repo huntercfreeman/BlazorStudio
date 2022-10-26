@@ -250,7 +250,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
     public class RenderCSharpTemplate
     {
-        public RenderCSharpTemplate(CSharpTemplate cSharpTemplate, Func<string> titleFunc, string stringIdentifier, bool isExpandable, Action? onClick)
+        public RenderCSharpTemplate(CSharpTemplate cSharpTemplate, Func<string> titleFunc, string? stringIdentifier, bool isExpandable, Action? onClick)
         {
             CSharpTemplate = cSharpTemplate;
             TitleFunc = titleFunc;
@@ -261,7 +261,7 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
         public CSharpTemplate CSharpTemplate { get; }
         public Func<string> TitleFunc { get; }
-        public string StringIdentifier { get; }
+        public string? StringIdentifier { get; }
         public bool IsExpandable { get; }
         public Action? OnClick { get; }
     }

@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.TreeViewCase;
 
-public record TreeViewContextMenuEventDto<T>(MouseEventArgs MouseEventArgs,
-        KeyboardEventArgs KeyboardEventArgs,
+// ReSharper disable once NotAccessedPositionalProperty.Global
+public record TreeViewContextMenuEventDto<T>(MouseEventArgs? MouseEventArgs,
+        // ReSharper disable once NotAccessedPositionalProperty.Global
+        KeyboardEventArgs? KeyboardEventArgs,
         T Item,
         Action ToggleIsExpanded,
         Action SetIsActive,

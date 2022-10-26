@@ -336,4 +336,15 @@ public static class TaskModelManagerService
         public CancellationTokenSource CancellationTokenSource { get; }
         public bool IsBackgroundTask { get; }
     }
+
+    // ReSharper disable once UnusedMember.Local
+    //
+    // Need disable UnusedMember.Local because
+    // I want this method to be here as indication of purpose
+    // of the encompassing class even if it is isn't
+    // currently being used.
+    private static void OnOnTaskSeemsUnresponsiveEventHandler()
+    {
+        OnTaskSeemsUnresponsiveEventHandler?.Invoke();
+    }
 }

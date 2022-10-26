@@ -4,5 +4,5 @@ namespace BlazorStudio.ClassLib.Store.ContextCase;
 
 public record KeymapEventAction(
     KeyDownEventRecord KeyDownEventRecord,
-    object Parameters,
+    object? Parameters,
     CancellationToken CancellationToken);

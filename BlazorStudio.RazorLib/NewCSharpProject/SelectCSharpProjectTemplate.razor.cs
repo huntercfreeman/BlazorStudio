@@ -17,7 +17,7 @@ public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
 
     [Parameter]
     [EditorRequired]
-    public List<CSharpTemplate>? Templates { get; set; }
+    public List<CSharpTemplate> Templates { get; set; } = null!;
     [Parameter]
     [EditorRequired]
     public Func<Task> ReRenderCallbackFunc { get; set; } = null!;

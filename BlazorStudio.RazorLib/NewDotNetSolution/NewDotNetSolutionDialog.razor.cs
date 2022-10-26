@@ -78,6 +78,9 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
     private void DispatchTerminalNewSolutionOnClick()
     {
+        if (_inputFileDialogSelection is null)
+            return;
+        
         void OnStart()
         {
             _startingCreatingSolution = true;
@@ -89,7 +92,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
         void OnEnd(Process finishedProcess)
         {
-            if (output is null)
+            if (output == string.Empty)
                 return;
 
             _startingCreatingSolution = false;
