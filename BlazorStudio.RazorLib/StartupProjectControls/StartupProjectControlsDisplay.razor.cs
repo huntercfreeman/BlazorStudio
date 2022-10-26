@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.StartupProjectControls;
 
-public partial class StartupProjectControlsDisplay : FluxorComponent, IDisposable
+public partial class StartupProjectControlsDisplay : FluxorComponent
 {
     private CancellationTokenSource _cancellationTokenSource = new();
     private EnqueueProcessOnTerminalEntryAction _enqueueProcessOnTerminalEntryAction;

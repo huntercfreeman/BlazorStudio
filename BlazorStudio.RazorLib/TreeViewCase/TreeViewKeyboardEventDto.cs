@@ -1,4 +1,4 @@
-using BlazorStudio.RazorLib.CustomEvents;
+using BlazorStudio.ClassLib.CustomEvents;
 
 namespace BlazorStudio.RazorLib.TreeViewCase;
 

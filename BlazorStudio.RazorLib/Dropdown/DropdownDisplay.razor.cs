@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Dropdown;
 
-public partial class DropdownDisplay : FluxorComponent, IDisposable
+public partial class DropdownDisplay : FluxorComponent
 {
     [Inject]
     private IState<DropdownState> DropdownStateWrap { get; set; } = null!;

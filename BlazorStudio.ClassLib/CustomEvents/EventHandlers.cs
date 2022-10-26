@@ -1,4 +1,3 @@
-using BlazorStudio.RazorLib.CustomEvents;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.ClassLib.CustomEvents;

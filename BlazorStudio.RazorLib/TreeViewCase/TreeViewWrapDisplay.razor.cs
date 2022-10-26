@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.TreeViewCase;
 
-public partial class TreeViewWrapDisplay<T> : FluxorComponent, IDisposable
+public partial class TreeViewWrapDisplay<T> : FluxorComponent
 {
     private SequenceKey? _previousSequenceKey;
 

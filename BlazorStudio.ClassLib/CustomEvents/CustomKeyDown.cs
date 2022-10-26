@@ -1,4 +1,4 @@
-namespace BlazorStudio.RazorLib.CustomEvents;
+namespace BlazorStudio.ClassLib.CustomEvents;
 
 public class CustomKeyDown : EventArgs
 {
