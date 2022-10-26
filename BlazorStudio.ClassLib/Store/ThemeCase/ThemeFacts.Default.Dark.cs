@@ -8,16 +8,16 @@ public static partial class ThemeFacts
     {
         public static class Dark
         {
-            public static ThemeKey BstudioDefaultDarkTheme = 
+            public static ThemeKey BstudioDefaultDarkTheme =
                 ThemeKey.NewThemeKey("bstudio_default-dark-theme");
-            
-            public static ThemeKey BstudioDefaultDarkSolarizedTheme = 
+
+            public static ThemeKey BstudioDefaultDarkSolarizedTheme =
                 ThemeKey.NewThemeKey("bstudio_default-dark-solarized-theme");
 
-            public static ImmutableArray<ThemeKey> AllDefaultDarkThemeKeys = new ThemeKey[]
+            public static ImmutableArray<ThemeKey> AllDefaultDarkThemeKeys = new[]
             {
                 BstudioDefaultDarkTheme,
-                BstudioDefaultDarkSolarizedTheme
+                BstudioDefaultDarkSolarizedTheme,
             }.ToImmutableArray();
         }
     }

@@ -8,5 +8,5 @@ public enum CSharpDecorationKind
     Parameter,
     StringLiteral,
     Keyword,
-    Comment
+    Comment,
 }

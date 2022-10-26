@@ -1,9 +1,8 @@
-﻿@using BlazorStudio.RazorLib.TaskModelManager.Helpers
-@using BlazorStudio.ClassLib.TaskModelManager
-
+﻿@using BlazorStudio.ClassLib.TaskModelManager
+@using BlazorStudio.RazorLib.TaskModelManager.Helpers
 <div class="bstudio_task-model-manager-dialog-entry-point-display"
      @onclick="OpenTaskModelManagerDialogOnClick">
-    
+
     <span>Task Manager</span>
 
     <TaskModelManagerDialogEntryPointTaskModelListPreviewDisplay GetTaskModelsFunc="() => TaskModelManagerService.ActiveTaskModels"

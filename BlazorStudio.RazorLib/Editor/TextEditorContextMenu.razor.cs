@@ -1,36 +1,35 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Keyboard;
-using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
-using BlazorStudio.RazorLib.Forms;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Clipboard;
 using BlazorTextEditor.RazorLib.Commands;
 using BlazorTextEditor.RazorLib.Cursor;
 using BlazorTextEditor.RazorLib.HelperComponents;
-using BlazorTextEditor.RazorLib.Store.TextEditorCase;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.Editor;
 
 public partial class TextEditorContextMenu : ComponentBase
 {
+    private ElementReference? _textEditorContextMenuElementReference;
     [Inject]
     private IClipboardProvider ClipboardProvider { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    
-    [CascadingParameter(Name="SetShouldDisplayMenuAsync")]
+
+    [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
     public Func<TextEditorMenuKind, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
-    
-    [Parameter, EditorRequired]
+
+    [Parameter]
+    [EditorRequired]
     public TextEditorDisplay TextEditorDisplay { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public TextEditorBase TextEditor { get; set; } = null!;
-    
-    private ElementReference? _textEditorContextMenuElementReference;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -43,7 +42,7 @@ public partial class TextEditorContextMenu : ComponentBase
                     await _textEditorContextMenuElementReference.Value
                         .FocusAsync();
                 }
-                catch (Microsoft.JSInterop.JSException)
+                catch (JSException)
                 {
                     // Caused when calling:
                     // await (ElementReference).FocusAsync();
@@ -51,22 +50,20 @@ public partial class TextEditorContextMenu : ComponentBase
                 }
             }
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-        {
             await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None);
-        }
     }
-    
+
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords()
     {
         List<MenuOptionRecord> menuOptionRecords = new();
-        
+
         var copy = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
             "Copy",
             ImmutableList<MenuOptionRecord>.Empty,
@@ -74,24 +71,24 @@ public partial class TextEditorContextMenu : ComponentBase
             MenuOptionKind.Update);
 
         menuOptionRecords.Add(copy);
-        
+
         var paste = new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
             "Paste",
             ImmutableList<MenuOptionRecord>.Empty,
             () => SelectMenuOption(PasteMenuOption),
             MenuOptionKind.Update);
-                
+
         menuOptionRecords.Add(paste);
 
         return menuOptionRecords.Any()
             ? menuOptionRecords
-            : new []
+            : new[]
             {
                 new MenuOptionRecord(MenuOptionKey.NewMenuOptionKey(),
                     "No Context Menu Options for this item",
-                    ImmutableList<MenuOptionRecord>.Empty, 
+                    ImmutableList<MenuOptionRecord>.Empty,
                     null,
-                    MenuOptionKind.Read)
+                    MenuOptionKind.Read),
             };
     }
 
@@ -103,14 +100,14 @@ public partial class TextEditorContextMenu : ComponentBase
             await menuOptionAction();
         });
     }
-    
+
     private async Task CopyMenuOption()
     {
         var cursorSnapshots = new TextEditorCursorSnapshot[]
         {
-            new TextEditorCursorSnapshot(TextEditorDisplay.PrimaryCursor)
+            new(TextEditorDisplay.PrimaryCursor),
         }.ToImmutableArray();
-        
+
         await TextEditorCommandFacts.Copy.DoAsyncFunc
             .Invoke(new TextEditorCommandParameter(
                 TextEditor,
@@ -120,14 +117,14 @@ public partial class TextEditorContextMenu : ComponentBase
                 TextEditorDisplay.ReloadVirtualizationDisplay,
                 TextEditorDisplay.OnSaveRequested));
     }
-    
+
     private async Task PasteMenuOption()
     {
         var cursorSnapshots = new TextEditorCursorSnapshot[]
         {
-            new TextEditorCursorSnapshot(TextEditorDisplay.PrimaryCursor)
+            new(TextEditorDisplay.PrimaryCursor),
         }.ToImmutableArray();
-        
+
         await TextEditorCommandFacts.Paste.DoAsyncFunc
             .Invoke(new TextEditorCommandParameter(
                 TextEditor,

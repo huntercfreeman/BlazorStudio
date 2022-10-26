@@ -9,6 +9,7 @@ namespace BlazorStudio.RazorLib.ExceptionNotifications;
 
 public partial class ProcessFrameworkReferencesTaskFailedNotification : ComponentBase
 {
+    private bool _buttonWasPressed;
     [Inject]
     private IState<SolutionState> SolutionStateWrap { get; set; } = null!;
     [Inject]
@@ -19,10 +20,9 @@ public partial class ProcessFrameworkReferencesTaskFailedNotification : Componen
     [CascadingParameter]
     public NotificationRecord NotificationRecord { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public IAbsoluteFilePath ProjectAbsoluteFilePath { get; set; } = null!;
-
-    private bool _buttonWasPressed;
 
     private string GlobalJsonText => $@"
 {{
@@ -38,7 +38,7 @@ public partial class ProcessFrameworkReferencesTaskFailedNotification : Componen
         {
             _buttonWasPressed = true;
 
-            var containingDirectoryOfProject = (IAbsoluteFilePath)(ProjectAbsoluteFilePath.Directories.Last());
+            var containingDirectoryOfProject = (IAbsoluteFilePath)ProjectAbsoluteFilePath.Directories.Last();
 
             File.AppendAllText(containingDirectoryOfProject.GetAbsoluteFilePathString() + "global.json",
                 GlobalJsonText);

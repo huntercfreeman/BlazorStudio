@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Blazor.Text.Editor.Analysis.Html.ClassLib.Syntax;
+﻿using Blazor.Text.Editor.Analysis.Html.ClassLib.SyntaxItems;
 
 namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
 
@@ -18,8 +17,14 @@ public class HtmlSyntaxUnit
 
     public class HtmlSyntaxUnitBuilder
     {
-        public TagSyntax RootTagSyntax { get; set; }
-        public TextEditorHtmlDiagnosticBag TextEditorHtmlDiagnosticBag { get; set; }
+        public HtmlSyntaxUnitBuilder(TagSyntax rootTagSyntax, TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
+        {
+            RootTagSyntax = rootTagSyntax;
+            TextEditorHtmlDiagnosticBag = textEditorHtmlDiagnosticBag;
+        }
+
+        public TagSyntax RootTagSyntax { get; }
+        public TextEditorHtmlDiagnosticBag TextEditorHtmlDiagnosticBag { get; }
 
         public HtmlSyntaxUnit Build()
         {

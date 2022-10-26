@@ -6,5 +6,5 @@ public enum MenuOptionKind
     Read,
     Update,
     Delete,
-    Execute
+    Execute,
 }

@@ -11,9 +11,9 @@ public static partial class ThemeFacts
             public static ThemeKey BstudioHighContrastLightTheme =
                 ThemeKey.NewThemeKey("TODO: bstudio_high-contrast-default-light-theme");
 
-            public static ImmutableArray<ThemeKey> AllHighContrastLightThemeKeys = new ThemeKey[]
+            public static ImmutableArray<ThemeKey> AllHighContrastLightThemeKeys = new[]
             {
-                BstudioHighContrastLightTheme
+                BstudioHighContrastLightTheme,
             }.ToImmutableArray();
         }
     }

@@ -5,6 +5,7 @@ using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Clipboard;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
+using ServiceCollectionExtensions = BlazorTextEditor.RazorLib.ServiceCollectionExtensions;
 
 namespace BlazorStudio.ClassLib;
 
@@ -23,7 +24,7 @@ public static class BlazorStudioClassLibExtensions
             .AddFluxor(options => options
                 .ScanAssemblies(
                     typeof(BlazorStudioClassLibExtensions).Assembly,
-                    typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly))
+                    typeof(ServiceCollectionExtensions).Assembly))
             .AddScoped<IFileSystemProvider, LocalFileSystemProvider>()
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>();
     }

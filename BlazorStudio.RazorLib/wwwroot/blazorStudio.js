@@ -1,16 +1,16 @@
 ﻿window.blazorStudio = {
     addToLocalStorage(key, value) {
-         localStorage[key] = value;
+        localStorage[key] = value;
     },
     readLocalStorage(key) {
-         return localStorage[key];
+        return localStorage[key];
     },
-    getViewportDimensions: function() {
+    getViewportDimensions: function () {
         // Use the specified window or the current window if no argument
         let w = window;
 
         // This works for all browsers except IE8 and before
-        if (w.innerWidth != null) return { widthInPixels: w.innerWidth, heightInPixels: w.innerHeight };
+        if (w.innerWidth != null) return {widthInPixels: w.innerWidth, heightInPixels: w.innerHeight};
 
         // For IE (or any browser) in Standards mode
         var d = w.document;
@@ -21,7 +21,7 @@
             };
 
         // For browsers in Quirks mode
-        return { widthInPixels: d.body.clientWidth, heightInPixels: d.body.clientHeight };
+        return {widthInPixels: d.body.clientWidth, heightInPixels: d.body.clientHeight};
     },
     intersectionObserver: 0,
     dotNetObjectReferenceByVirtualizeCoordinateSystemElementId: new Map(),
@@ -46,8 +46,8 @@
         }
 
         this.intersectionObserver = new IntersectionObserver((entries) =>
-            this.handleThresholdChange(entries,
-                this.dotNetObjectReferenceByVirtualizeCoordinateSystemElementId),
+                this.handleThresholdChange(entries,
+                    this.dotNetObjectReferenceByVirtualizeCoordinateSystemElementId),
             options);
     },
     subscribeVirtualizeCoordinateSystemInsersectionObserver: function (dotNetObjectReference, elementIds) {
@@ -55,14 +55,15 @@
             let elementId = elementIds[i];
 
             this.dotNetObjectReferenceByVirtualizeCoordinateSystemElementId.set(elementId, {
-                    dotNetObjectReference: dotNetObjectReference,
-                    intersectionRatio: 0
+                dotNetObjectReference: dotNetObjectReference,
+                intersectionRatio: 0
             });
 
             let element = document.getElementById(elementId);
 
             this.intersectionObserver.observe(element);
-        };
+        }
+
     },
     disposeVirtualizeCoordinateSystemInsersectionObserver: function (elementIds) {
         for (let i = 0; i < elementIds.length; i++) {
@@ -70,7 +71,8 @@
 
             let element = document.getElementById(elementId);
             this.intersectionObserver.unobserve(element);
-        };
+        }
+
     },
     handleThresholdChange: function (entries, dotNetObjectReferenceByVirtualizeCoordinateSystemElementId) {
         for (let i = 0; i < entries.length; i++) {
@@ -96,7 +98,7 @@
             elementReference.offsetWidth,
             elementReference.offsetHeight);
     },
-    checkIfInView: function(dotNetObjectReference, elementIds) {
+    checkIfInView: function (dotNetObjectReference, elementIds) {
         for (let i = 0; i < elementIds.length; i++) {
             let elementId = elementIds[i];
 
@@ -129,7 +131,8 @@
 
                 return;
             }
-        };
+        }
+
     },
     setScrollPosition: function (scrollLeft, scrollTop, elementId) {
         let element = document.getElementById(elementId);
@@ -137,7 +140,7 @@
         element.scrollLeft = scrollLeft;
         element.scrollTop = scrollTop;
 
-        return;
+
     },
     initKeymap: function (keymapDotNetObjectReference) {
         document.addEventListener('keydown', (e) => {
@@ -156,10 +159,10 @@
         let bounds = document
             .getElementById(elementId)
             .getBoundingClientRect();
-        
+
         let x = clientX - bounds.left;
         let y = clientY - bounds.top;
-        
+
         return {
             relativeX: x,
             relativeY: y
@@ -190,7 +193,7 @@
     measureDimensionsByElementId: function (elementId) {
         let element = document.getElementById(elementId);
 
-        return  {
+        return {
             Width: element.offsetWidth,
             Height: element.offsetHeight
         };
@@ -203,7 +206,7 @@ Blazor.registerCustomEventType('customkeydown', {
         if (e.code !== "Tab") {
             e.preventDefault();
         }
-        
+
         return {
             "key": e.key,
             "code": e.code,

@@ -8,12 +8,12 @@ window.virtualizeCoordinateSystem = {
                                                         intersectionObserverMapKey) {
 
         let parentElement = leftBoundary.parentElement;
-        
+
         parentElement.addEventListener('scroll', (event) => {
             let intersectionObserverWrap = this.intersectionObserverMap.get(intersectionObserverMapKey);
 
             let values = Array.from(intersectionObserverWrap.intersectionRatioMap.values());
-            
+
             for (let i = 0; i < values.length; i++) {
                 let currentValue = values[i];
 
@@ -22,15 +22,15 @@ window.virtualizeCoordinateSystem = {
                     let parentElement = leftBoundary.parentElement;
 
                     virtualizeCoordinateSystemDotNetObjectReference.invokeMethodAsync(
-                        "OnIntersectionObserverThresholdChanged", 
+                        "OnIntersectionObserverThresholdChanged",
                         parentElement.scrollLeft,
                         parentElement.scrollTop);
-                    
+
                     return;
                 }
             }
         }, true)
-        
+
         let options = {
             rootMargin: '0px',
             threshold: [
@@ -51,7 +51,7 @@ window.virtualizeCoordinateSystem = {
             intersectionObserver: intersectionObserver,
             intersectionRatioMap: intersectionRatioMap
         });
-        
+
         intersectionRatioMap.set(leftBoundary.id, 0);
         intersectionObserver.observe(leftBoundary);
 
@@ -60,7 +60,7 @@ window.virtualizeCoordinateSystem = {
 
         intersectionRatioMap.set(topBoundary.id, 0);
         intersectionObserver.observe(topBoundary);
-        
+
         intersectionRatioMap.set(rightBoundary.id, 0);
         intersectionObserver.observe(rightBoundary);
     },
@@ -80,10 +80,10 @@ window.virtualizeCoordinateSystem = {
             intersectionObserverWrap.intersectionRatioMap
                 .set(currentEntry.target.id, currentEntry.intersectionRatio);
         }
-        
+
         for (let i = 0; i < entries.length; i++) {
             let currentEntry = entries[i];
-            
+
             if (currentEntry.intersectionRatio > 0) {
                 // Scrolling into view
 

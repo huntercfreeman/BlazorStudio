@@ -8,6 +8,5 @@ public record TerminalEntryOutputStates(ImmutableDictionary<TerminalEntryKey, st
 {
     public TerminalEntryOutputStates() : this(ImmutableDictionary<TerminalEntryKey, string>.Empty)
     {
-
     }
 }

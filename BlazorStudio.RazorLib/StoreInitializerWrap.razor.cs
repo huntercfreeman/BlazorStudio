@@ -11,18 +11,16 @@ public partial class StoreInitializerWrap : ComponentBase, IDisposable
     [Parameter]
     public bool InitializeFluxor { get; set; } = true;
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            JsRuntime.InvokeVoidAsync("blazorStudio.initializeVirtualizeCoordinateSystemIntersectionObserver");
-        }
-
-        return base.OnAfterRenderAsync(firstRender);
-    }
-
     public void Dispose()
     {
         JsRuntime.InvokeVoidAsync("blazorStudio.disposeIntersectionObserver");
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            JsRuntime.InvokeVoidAsync("blazorStudio.initializeVirtualizeCoordinateSystemIntersectionObserver");
+
+        return base.OnAfterRenderAsync(firstRender);
     }
 }

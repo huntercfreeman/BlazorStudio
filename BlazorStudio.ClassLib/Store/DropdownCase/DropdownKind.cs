@@ -4,5 +4,5 @@ public enum DropdownKind
 {
     Vertical,
     Horizontal,
-    Unset
+    Unset,
 }

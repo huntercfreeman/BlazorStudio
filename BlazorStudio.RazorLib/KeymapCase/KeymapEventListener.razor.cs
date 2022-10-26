@@ -6,7 +6,7 @@ using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.KeymapCase;
 
-public partial class KeymapEventListener : ComponentBase
+public class KeymapEventListener : ComponentBase
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;

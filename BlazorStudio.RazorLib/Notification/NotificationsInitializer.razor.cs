@@ -1,6 +1,6 @@
 ﻿using BlazorStudio.ClassLib.Store.NotificationCase;
-using Fluxor.Blazor.Web.Components;
 using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Notification;
@@ -17,9 +17,7 @@ public partial class NotificationsInitializer : FluxorComponent
         var notificationStates = NotificationStatesWrap.Value;
 
         foreach (var notification in notificationStates.List)
-        {
             Dispatcher.Dispatch(new DisposeNotificationAction(notification));
-        }
 
         base.Dispose(disposing);
     }

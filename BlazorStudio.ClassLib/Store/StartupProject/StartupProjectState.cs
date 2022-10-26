@@ -8,6 +8,5 @@ public record StartupProjectState(IAbsoluteFilePath? ProjectAbsoluteFilePath)
 {
     public StartupProjectState() : this(default(IAbsoluteFilePath))
     {
-
     }
 }

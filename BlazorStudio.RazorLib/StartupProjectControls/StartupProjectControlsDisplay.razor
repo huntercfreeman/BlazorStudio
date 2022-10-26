@@ -49,7 +49,7 @@
                 }
                 else if (_isRunning)
                 {
-                    <div @onclick="_enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler">
+                    <div @onclick="KillProcessOnClick">
                         <IconStopCircle/>
                     </div>
                 }
@@ -61,21 +61,21 @@
                 }
             </div>
         }
-        
+
         <div>
             @{
                 var localContextRecords = ContextStateWrap.Value.ActiveContextRecords;
-                
+
                 <span style="margin-left: 20px;">
                     Focus:&nbsp;
                 </span>
-                
+
                 for (var index = 0; index < localContextRecords.Count; index++)
                 {
                     var contextRecord = localContextRecords[index];
                     <span>
                         <em>@contextRecord.DisplayName</em>
-                        
+
                         @if (index < localContextRecords.Count - 1)
                         {
                             <text>&nbsp;->&nbsp;</text>

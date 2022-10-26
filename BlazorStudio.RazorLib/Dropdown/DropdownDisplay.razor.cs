@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Dropdown;
 
-public partial class DropdownDisplay : FluxorComponent, IDisposable
+public partial class DropdownDisplay : FluxorComponent
 {
     [Inject]
     private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
@@ -30,7 +30,7 @@ public partial class DropdownDisplay : FluxorComponent, IDisposable
         DropdownKind.Vertical => "position: relative;",
         DropdownKind.Horizontal => "position: relative; display: inline;",
         DropdownKind.Unset => string.Empty,
-        _ => throw new ApplicationException($"The {nameof(DropdownKind)}: '{DropdownKind}' was not recognized.")
+        _ => throw new ApplicationException($"The {nameof(DropdownKind)}: '{DropdownKind}' was not recognized."),
     };
 
     private void ClickedOutOfBoundsOnClick(MouseEventArgs mouseEventArgs)

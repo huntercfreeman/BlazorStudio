@@ -11,9 +11,9 @@ public static partial class ThemeFacts
             public static ThemeKey BstudioDefaultLightTheme =
                 ThemeKey.NewThemeKey("bstudio_default-light-theme");
 
-            public static ImmutableArray<ThemeKey> AllDefaultLightThemeKeys = new ThemeKey[]
+            public static ImmutableArray<ThemeKey> AllDefaultLightThemeKeys = new[]
             {
-                BstudioDefaultLightTheme
+                BstudioDefaultLightTheme,
             }.ToImmutableArray();
         }
     }

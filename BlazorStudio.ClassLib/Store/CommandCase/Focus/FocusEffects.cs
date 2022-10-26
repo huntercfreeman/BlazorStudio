@@ -13,9 +13,9 @@ namespace BlazorStudio.ClassLib.Store.CommandCase.Focus;
 public class FocusEffects
 {
     private readonly IState<ContextState> _contextStateWrap;
+    private readonly IDefaultErrorRenderer _defaultErrorRenderer;
     private readonly IState<DialogStates> _dialogStatesWrap;
     private readonly IState<QuickSelectState> _quickSelectStateWrap;
-    private readonly IDefaultErrorRenderer _defaultErrorRenderer;
 
     public FocusEffects(IState<ContextState> contextStateWrap,
         IState<DialogStates> dialogStatesWrap,
@@ -29,51 +29,57 @@ public class FocusEffects
     }
 
     [EffectMethod(typeof(FocusMainLayoutAction))]
-    public async Task HandleFocusMainLayoutAction(IDispatcher dispatcher)
+    public Task HandleFocusMainLayoutAction(IDispatcher dispatcher)
     {
         _contextStateWrap.Value.ContextRecords[ContextFacts.GlobalContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
+        return Task.CompletedTask;
     }
-    
+
     [EffectMethod(typeof(FocusFolderExplorerAction))]
-    public async Task HandleFocusFolderExplorerAction(IDispatcher dispatcher)
+    public Task HandleFocusFolderExplorerAction(IDispatcher dispatcher)
     {
         _contextStateWrap.Value.ContextRecords[ContextFacts.FolderExplorerContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
+        return Task.CompletedTask;
     }
-    
+
     [EffectMethod(typeof(FocusSolutionExplorerAction))]
-    public async Task HandleFocusSolutionExplorerAction(IDispatcher dispatcher)
+    public Task HandleFocusSolutionExplorerAction(IDispatcher dispatcher)
     {
         _contextStateWrap.Value.ContextRecords[ContextFacts.SolutionExplorerContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
+        return Task.CompletedTask;
     }
-    
+
     [EffectMethod(typeof(FocusToolbarDisplayAction))]
-    public async Task HandleFocusToolbarDisplayAction(IDispatcher dispatcher)
+    public Task HandleFocusToolbarDisplayAction(IDispatcher dispatcher)
     {
         _contextStateWrap.Value.ContextRecords[ContextFacts.ToolbarDisplayContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
+        return Task.CompletedTask;
     }
-    
+
     [EffectMethod(typeof(FocusEditorDisplayAction))]
-    public async Task HandleFocusEditorDisplayAction(IDispatcher dispatcher)
+    public Task HandleFocusEditorDisplayAction(IDispatcher dispatcher)
     {
         _contextStateWrap.Value.ContextRecords[ContextFacts.EditorDisplayContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
+        return Task.CompletedTask;
     }
-    
+
     [EffectMethod(typeof(FocusTerminalDisplayAction))]
-    public async Task HandleFocusTerminalDisplayAction(IDispatcher dispatcher)
+    public Task HandleFocusTerminalDisplayAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new SetActiveFooterWindowKindAction(FooterWindowKind.Terminal));
-        
+
         _contextStateWrap.Value.ContextRecords[ContextFacts.TerminalDisplayContext.ContextKey]
             .InvokeOnFocusRequestedEventHandler();
+        return Task.CompletedTask;
     }
-            
+
     [EffectMethod(typeof(FocusDialogQuickSelectDisplayAction))]
-    public async Task HandleFocusDialogQuickSelectDisplayAction(IDispatcher dispatcher)
+    public Task HandleFocusDialogQuickSelectDisplayAction(IDispatcher dispatcher)
     {
         if (_quickSelectStateWrap.Value.IsDisplayed)
         {
@@ -84,33 +90,35 @@ public class FocusEffects
             //     null));
             //
             // dispatcher.Dispatch(registerNotificationAction);
-            
-            return;
+
+            return Task.CompletedTask;
         }
-        
+
         var quickSelectItems = _dialogStatesWrap.Value.List
-            .Select(x => (IQuickSelectItem) new QuickSelectItem<DialogRecord>(x.Title, x))
+            .Select(x => (IQuickSelectItem)new QuickSelectItem<DialogRecord>(x.Title, x))
             .ToImmutableArray();
 
         var quickSelectState = new QuickSelectState
         {
             IsDisplayed = true,
             QuickSelectItems = quickSelectItems,
-            OnItemSelectedFunc = (dialogRecord) =>
+            OnItemSelectedFunc = dialogRecord =>
             {
                 ((DialogRecord)dialogRecord.ItemNoType).InvokeOnFocusRequestedEventHandler();
                 return Task.CompletedTask;
             },
-            OnHoveredItemChangedFunc = (item) => Task.CompletedTask
+            OnHoveredItemChangedFunc = item => Task.CompletedTask,
         };
-        
+
         dispatcher.Dispatch(new SetQuickSelectStateAction(quickSelectState));
+        return Task.CompletedTask;
     }
-    
+
     [EffectMethod(typeof(FocusNugetPackageManagerDisplayAction))]
-    public async Task HandleFocusNugetPackageManagerDisplayAction(IDispatcher dispatcher)
+    public Task HandleFocusNugetPackageManagerDisplayAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new SetActiveFooterWindowKindAction(FooterWindowKind.NugetPackageManager));
         dispatcher.Dispatch(new RequestFocusOnNugetPackageManagerAction());
+        return Task.CompletedTask;
     }
 }

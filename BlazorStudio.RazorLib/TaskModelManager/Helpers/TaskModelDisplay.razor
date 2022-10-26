@@ -2,7 +2,7 @@
     <div class="bstudio_task-model-display-title">
         Title: @TaskModel.Key.Title&nbsp;
         (Status: @TaskModel.Task.Status)&nbsp;
-        
+
         @if (ShowCancelButton)
         {
             if (TaskModel.CancellationTokenSource.IsCancellationRequested)
@@ -25,10 +25,10 @@
         <div>
             Lifetime Until Seems Unresponsive: @TaskModel.LifetimeUntilSeemsUnresponsive.TotalSeconds seconds
         </div>
-        
+
         @if (TaskModel.RichErrorModel is not null)
         {
-            <RichErrorDisplay RichErrorModel="TaskModel.RichErrorModel" />
+            <RichErrorDisplay RichErrorModel="TaskModel.RichErrorModel"/>
         }
     </div>
 </div>

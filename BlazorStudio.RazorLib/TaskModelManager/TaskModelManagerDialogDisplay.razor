@@ -1,13 +1,12 @@
-﻿@using BlazorStudio.RazorLib.TaskModelManager.Helpers
-@using BlazorStudio.ClassLib.TaskModelManager
-
+﻿@using BlazorStudio.ClassLib.TaskModelManager
+@using BlazorStudio.RazorLib.TaskModelManager.Helpers
 <div class="bstudio_task-model-manager-dialog-display">
     <TaskModelListDisplay GetTaskModelsFunc="() => TaskModelManagerService.ActiveTaskModels"
                           ListTitle="Active Task Models"
                           ClassParameter="bstudio_primary"
                           ClearTaskModelsAction="() => TaskModelManagerService.ClearActiveTaskModels()"
                           ShowCancelButton="true"/>
-    
+
     <TaskModelListDisplay GetTaskModelsFunc="() => TaskModelManagerService.SeeminglyUnresponsiveTaskModels"
                           ListTitle="Seemingly Unresponsive Task Models"
                           ClassParameter="bstudio_warning"
@@ -18,7 +17,7 @@
                           ListTitle="Failed Task Models"
                           ClassParameter="bstudio_danger"
                           ClearTaskModelsAction="() => TaskModelManagerService.ClearFailedTaskModels()"/>
-    
+
     <TaskModelListDisplay GetTaskModelsFunc="() => TaskModelManagerService.SuccessfulTaskModels"
                           ListTitle="Successful Task Models"
                           ClassParameter="bstudio_success"

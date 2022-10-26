@@ -5,6 +5,7 @@ namespace BlazorStudio.RazorLib.Errors;
 
 public partial class RichErrorDisplay : ComponentBase
 {
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public RichErrorModel RichErrorModel { get; set; } = null!;
 }

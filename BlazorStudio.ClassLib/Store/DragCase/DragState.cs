@@ -8,6 +8,5 @@ public record DragState(bool IsDisplayed, MouseEventArgs? MouseEventArgs)
 {
     public DragState() : this(false, null)
     {
-
     }
 }

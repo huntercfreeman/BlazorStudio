@@ -1,16 +1,16 @@
-﻿using Fluxor;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
+using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 public class TerminalStateEffects
 {
+    private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
+    private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
     private readonly Dictionary<TerminalEntryKey, TerminalEntryEffects> _terminalEffects = new();
+    private readonly IState<TerminalSettingsState> _terminalSettingsStateWrap;
 
     private readonly IState<TerminalState> _terminalStateWrap;
-    private readonly IState<TerminalSettingsState> _terminalSettingsStateWrap;
-    private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
-    private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
 
     public TerminalStateEffects(IState<TerminalState> terminalStateWrap,
         IState<TerminalSettingsState> terminalSettingsStateWrap)
@@ -22,7 +22,7 @@ public class TerminalStateEffects
 
         foreach (var terminalEntry in localTerminalStateWrap.TerminalEntries)
         {
-            _terminalEffects.Add(terminalEntry.TerminalEntryKey, 
+            _terminalEffects.Add(terminalEntry.TerminalEntryKey,
                 new TerminalEntryEffects(terminalStateWrap, _terminalSettingsStateWrap, terminalEntry));
         }
     }
@@ -35,10 +35,7 @@ public class TerminalStateEffects
         {
             await _executeHandleEffectSemaphoreSlim.WaitAsync();
 
-            if (_handleEffectQueue.TryDequeue(out var fifoHandleEffect))
-            {
-                await fifoHandleEffect!.Invoke();
-            }
+            if (_handleEffectQueue.TryDequeue(out var fifoHandleEffect)) await fifoHandleEffect!.Invoke();
         }
         finally
         {
@@ -47,7 +44,8 @@ public class TerminalStateEffects
     }
 
     [EffectMethod]
-    public async Task HandleEnqueueProcessOnTerminalEntryAction(EnqueueProcessOnTerminalEntryAction enqueueProcessOnTerminalEntryAction,
+    public async Task HandleEnqueueProcessOnTerminalEntryAction(
+        EnqueueProcessOnTerminalEntryAction enqueueProcessOnTerminalEntryAction,
         IDispatcher dispatcher)
     {
         await QueueHandleEffectAsync(async () =>

@@ -1,11 +1,7 @@
-﻿using BlazorStudio.ClassLib.Contexts;
-using BlazorStudio.ClassLib.Store.ContextCase;
-using BlazorStudio.ClassLib.Store.DialogCase;
-using BlazorStudio.RazorLib.ContextCase;
+﻿using BlazorStudio.ClassLib.Store.DialogCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Dialog;
 
@@ -20,10 +16,7 @@ public partial class DialogsInitializer : FluxorComponent
     {
         var dialogStates = DialogStatesWrap.Value;
 
-        foreach (var dialog in dialogStates.List)
-        {
-            Dispatcher.Dispatch(new DisposeDialogAction(dialog));
-        }
+        foreach (var dialog in dialogStates.List) Dispatcher.Dispatch(new DisposeDialogAction(dialog));
 
         base.Dispose(disposing);
     }

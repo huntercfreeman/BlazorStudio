@@ -1,11 +1,14 @@
 ﻿# BlazorStudio.WebAssembly Project
+
 This C# project acts as a host for the application.
 
 This project is a default template for Blazor WebAssembly that Microsoft provides.
 
 I then deleted nearly all UI related pieces (including @page "/xxxx" razor files).
 
-In [App.razor](/BlazorStudio.WebAssembly/App.razor) is the Blazor Router. I have no pages in this application. Solely there is a reference in this file to the ComponentLayout located in the BlazorStudio.RazorLib Project named, [MainLayout.razor](/BlazorStudio.RazorLib/Shared/MainLayout.razor).
+In [App.razor](/BlazorStudio.WebAssembly/App.razor) is the Blazor Router. I have no pages in this application. Solely
+there is a reference in this file to the ComponentLayout located in the BlazorStudio.RazorLib Project
+named, [MainLayout.razor](/BlazorStudio.RazorLib/Shared/MainLayout.razor).
 
 ```html
 <!-- App.razor -->
@@ -71,4 +74,5 @@ In [wwwroot/index.html](/BlazorStudio.WebAssembly/wwwroot/index.html) I referenc
 </html>
 ```
 
-I believe that is all that goes on in this Project. I never want to say with certainty that I remembered to comment on everything, but these are the important details I remember.
+I believe that is all that goes on in this Project. I never want to say with certainty that I remembered to comment on
+everything, but these are the important details I remember.

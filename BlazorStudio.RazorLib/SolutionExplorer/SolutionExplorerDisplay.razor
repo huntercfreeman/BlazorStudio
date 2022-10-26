@@ -1,9 +1,7 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
-@using BlazorStudio.ClassLib.FileSystem.Interfaces
+﻿@using BlazorStudio.ClassLib.Contexts
 @using BlazorStudio.ClassLib.FileConstants
 @using BlazorStudio.ClassLib.FileSystem.Classes
-@using BlazorStudio.ClassLib.Contexts
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <ContextBoundary @ref="_contextBoundary"
                  CssClassString="bstudio_solution-explorer bstudio_focus-display-large"
@@ -54,8 +52,11 @@
                                         null,
                                         solutionExplorerState.SolutionAbsoluteFilePath,
                                         null,
-                                        null,
-                                        async () => SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty),
+                                        null, () =>
+                                        {
+                                            SolutionExplorerStateWrap_StateChanged(null, EventArgs.Empty);
+                                            return Task.CompletedTask;
+                                        },
                                         null,
                                         default);
 

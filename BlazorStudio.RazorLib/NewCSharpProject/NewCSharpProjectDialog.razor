@@ -7,34 +7,34 @@
         }
         else
         {
-            <div>Enqueued terminal task "dotnet new --list"</div>   
+            <div>Enqueued terminal task "dotnet new --list"</div>
         }
     }
     else if (!_templates.Any())
     {
-        <div>No C# Project Templates found. attempted: "@getCSharpProjectTemplatesCommand"</div>
+        <div>No C# Project Templates found. attempted: "@_getCSharpProjectTemplatesCommand"</div>
     }
     else
     {
         <SelectCSharpProjectTemplate @ref="_selectCSharpProjectTemplate"
                                      Templates="_templates"
-                                     ReRenderCallbackFunc="async () => await InvokeAsync(StateHasChanged)" />
-        
+                                     ReRenderCallbackFunc="async () => await InvokeAsync(StateHasChanged)"/>
+
         <hr/>
 
         <div style="height: 35%; margin-left: 10px; margin-right: 30px;">
             <BlazorStudio.RazorLib.InputFile.InputFileDialog OnEnterKeyDownOverride="InputFileDialogOnEnterKeyDownOverride"
                                                              ChooseContextMenuOption="InputFileDialogChooseContextMenuOption"
-                                                             ShowFooter="false" />
+                                                             ShowFooter="false"/>
         </div>
 
-        <hr />
+        <hr/>
 
         <div style="margin-left: 10px; margin-right: 30px;">
             <div>
                 Selected Absolute Path:
                 <em>
-                    @(InputFileDialogSelection?.GetAbsoluteFilePathString() ?? "{select a path}")
+                    @(_inputFileDialogSelection?.GetAbsoluteFilePathString() ?? "{select a path}")
                 </em>
             </div>
 
@@ -42,17 +42,19 @@
                 <div>
                     dotnet&nbsp;new&nbsp;<em>@(_selectCSharpProjectTemplate?.SelectedCSharpTemplate?.ShortName ?? "{select a template}")</em>
                     &nbsp;
-                    <input class="bstudio_input bstudio_input-text" 
-                           placeholder="project name" 
-                           @bind="_projectName" 
-                           @bind:event="oninput" />
+                    <input class="bstudio_input bstudio_input-text"
+                           placeholder="project name"
+                           @bind="_projectName"
+                           @bind:event="oninput"/>
                     &nbsp;
-                    <input class="bstudio_input bstudio_input-text" 
-                           placeholder="optional args" 
-                           @bind="_templateArguments" 
-                           @bind:event="oninput" />
+                    <input class="bstudio_input bstudio_input-text"
+                           placeholder="optional args"
+                           @bind="_templateArguments"
+                           @bind:event="oninput"/>
                 </div>
-                <div style="margin-top: 2px;"><em>@InterpolatedCommand</em></div>
+                <div style="margin-top: 2px;">
+                    <em>@InterpolatedCommand</em>
+                </div>
             </div>
 
             <div>
@@ -67,7 +69,7 @@
             @if (_finishedCreatingProject)
             {
                 <div>Finished: "<em>@InterpolatedCommand</em>"</div>
-                <div>Opening Directory...: "<em>@InputFileDialogSelection?.GetAbsoluteFilePathString()</em>"</div>
+                <div>Opening Directory...: "<em>@_inputFileDialogSelection?.GetAbsoluteFilePathString()</em>"</div>
             }
 
             <button class="btn btn-primary"

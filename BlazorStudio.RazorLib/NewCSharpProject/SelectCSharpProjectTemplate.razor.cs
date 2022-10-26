@@ -2,106 +2,100 @@
 using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using static BlazorStudio.RazorLib.NewCSharpProject.NewCSharpProjectDialog;
 
 namespace BlazorStudio.RazorLib.NewCSharpProject;
 
 public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
 {
+    private TreeViewWrapKey _newCSharpProjectTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [Parameter, EditorRequired]
-    public List<CSharpTemplate>? Templates { get; set; }
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
+    public List<CSharpTemplate> Templates { get; set; } = null!;
+    [Parameter]
+    [EditorRequired]
     public Func<Task> ReRenderCallbackFunc { get; set; } = null!;
 
-    private CSharpTemplate? _selectedCSharpTemplate;
-    private bool _forceSelectCSharpTemplateTreeViewOpen;
+    public CSharpTemplate? SelectedCSharpTemplate { get; private set; }
 
-    private TreeViewWrapKey _newCSharpProjectTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
-    
-    public CSharpTemplate? SelectedCSharpTemplate => _selectedCSharpTemplate;
+    public void Dispose()
+    {
+        Dispatcher.Dispatch(new DisposeTreeViewWrapAction(_newCSharpProjectTreeViewKey));
+    }
 
     private List<RenderCSharpTemplate> GetRootThemes()
     {
         return Templates
-            .Select(x => new RenderCSharpTemplate
-            {
-                CSharpTemplate = x,
-                IsExpandable = true,
-                TitleFunc = () => x.TemplateName
-            })
+            .Select(x => new RenderCSharpTemplate(
+                x,
+                () => x.TemplateName,
+                null,
+                true,
+                null))
             .ToList();
     }
 
     private Task<IEnumerable<RenderCSharpTemplate>> GetChildren(RenderCSharpTemplate renderCSharpTemplate)
     {
-        var acceptButton = new RenderCSharpTemplate
-        {
-            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
-            IsExpandable = false,
-            TitleFunc = () => "Confirm",
-            OnClick = () =>
+        var acceptButton = new RenderCSharpTemplate(
+            renderCSharpTemplate.CSharpTemplate,
+            () => "Confirm",
+            null,
+            false,
+            () =>
             {
-                _selectedCSharpTemplate = renderCSharpTemplate.CSharpTemplate;
+                SelectedCSharpTemplate = renderCSharpTemplate.CSharpTemplate;
                 InvokeAsync(StateHasChanged);
                 ReRenderCallbackFunc.Invoke();
-            }
-        };
+            });
 
-        var renderShortName = new RenderCSharpTemplate
-        {
-            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
-            IsExpandable = false,
-            TitleFunc = () => renderCSharpTemplate.CSharpTemplate.ShortName,
-            StringIdentifier = "ShortName"
-        };
+        var renderShortName = new RenderCSharpTemplate(
+            renderCSharpTemplate.CSharpTemplate,
+            () => renderCSharpTemplate.CSharpTemplate.ShortName,
+            "ShortName",
+            false,
+            null);
 
-        var renderLanguage = new RenderCSharpTemplate
-        {
-            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
-            IsExpandable = false,
-            TitleFunc = () => renderCSharpTemplate.CSharpTemplate.Language,
-            StringIdentifier = "Language"
-        };
+        var renderLanguage = new RenderCSharpTemplate(
+            renderCSharpTemplate.CSharpTemplate,
+            () => renderCSharpTemplate.CSharpTemplate.Language,
+            "Language",
+            false,
+            null);
 
-        var renderTags = new RenderCSharpTemplate
-        {
-            CSharpTemplate = renderCSharpTemplate.CSharpTemplate,
-            IsExpandable = false,
-            TitleFunc = () => renderCSharpTemplate.CSharpTemplate.Tags,
-            StringIdentifier = "Tags"
-        };
+        var renderTags = new RenderCSharpTemplate(
+            renderCSharpTemplate.CSharpTemplate,
+            () => renderCSharpTemplate.CSharpTemplate.Tags,
+            "Tags",
+            false,
+            null);
 
-        return Task.FromResult(new List<RenderCSharpTemplate>()
+        return Task.FromResult(new List<RenderCSharpTemplate>
         {
             acceptButton,
             renderShortName,
             renderLanguage,
-            renderTags
+            renderTags,
         }.AsEnumerable());
     }
 
     private void TreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<RenderCSharpTemplate> treeViewKeyboardEventDto)
     {
-        _selectedCSharpTemplate = treeViewKeyboardEventDto.Item.CSharpTemplate;
+        SelectedCSharpTemplate = treeViewKeyboardEventDto.Item.CSharpTemplate;
         ReRenderCallbackFunc.Invoke();
     }
 
     private void TreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<RenderCSharpTemplate> treeViewKeyboardEventDto)
     {
-        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
+        treeViewKeyboardEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private void TreeViewOnDoubleClick(TreeViewMouseEventDto<RenderCSharpTemplate> treeViewMouseEventDto)
     {
-        treeViewMouseEventDto.ToggleIsExpanded.Invoke();
-    }
-
-    public void Dispose()
-    {
-        Dispatcher.Dispatch(new DisposeTreeViewWrapAction(_newCSharpProjectTreeViewKey));
+        treeViewMouseEventDto.ToggleIsExpanded?.Invoke();
     }
 }

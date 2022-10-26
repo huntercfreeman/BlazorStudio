@@ -3,11 +3,9 @@
 namespace BlazorStudio.ClassLib.Store.TreeViewCase;
 
 /// <summary>
-/// This class is written poorly.
-///
-/// I need a new instance I suppose to fire Fluxor re-render of Blazor Component.
-///
-/// This needs to be rewritten immutably.
+///     This class is written poorly.
+///     I need a new instance I suppose to fire Fluxor re-render of Blazor Component.
+///     This needs to be rewritten immutably.
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class TreeViewWrap<T> : ITreeViewWrap
@@ -31,7 +29,7 @@ public class TreeViewWrap<T> : ITreeViewWrap
         {
             RootTreeViews = RootTreeViews,
             ActiveTreeViews = ActiveTreeViews,
-            SequenceKey = SequenceKey.NewSequenceKey()
+            SequenceKey = SequenceKey.NewSequenceKey(),
         };
     }
 }

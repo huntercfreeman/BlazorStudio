@@ -39,10 +39,10 @@
     cursor: text;
 }
 
-    .pte_plain-text-editor-display.pte_focused {
-        border: 1.5px solid var(--pte_active-border-color);
-        box-shadow: 0px 0px 6px rgb(0, 0, 0);
-    }
+.pte_plain-text-editor-display.pte_focused {
+    border: 1.5px solid var(--pte_active-border-color);
+    box-shadow: 0px 0px 6px rgb(0, 0, 0);
+}
 
 .pte_active-row-position-marker.pte_visually-hidden.pte_unselectable {
     height: 34px;
@@ -60,11 +60,11 @@
 
 @keyframes pte_blink {
     /* When the cursor moves I need to reset the animation but I am focusing on other features first */
-   
+
     /*0% {*/
     /*    background-color: var(--pte_primary-cursor-color);*/
     /*}*/
-    
+
     /*50% {*/
     /*    background-color: var(--pte_secondary-cursor-color);*/
     /*}*/
@@ -135,10 +135,10 @@
     min-width: 3ch;
 }
 
-    .pte_plain-text-editor-footer-entry:not(:last-child) {
-        border-right: 1.5px solid var(--bstudio_primary-border-color);
-        padding-right: 2px;
-    }
+.pte_plain-text-editor-footer-entry:not(:last-child) {
+    border-right: 1.5px solid var(--bstudio_primary-border-color);
+    padding-right: 2px;
+}
 
 .pte_plain-text-editor-text-token-display-keyword {
     color: var(--pte_token-keyword);

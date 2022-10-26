@@ -8,11 +8,12 @@ public class TreeView<T> : ITreeView
         Item = item;
     }
 
+    public T Item { get; }
+
     public TreeViewKey Key { get; }
-    public object ItemUntyped => Item;
-    public T Item { get; init; }
+    public object ItemUntyped => Item!;
     public Type ItemType => typeof(T);
     public bool IsExpanded { get; set; }
-    public ITreeView[] Children { get; set; } 
+    public ITreeView[] Children { get; set; }
         = Array.Empty<ITreeView>();
 }

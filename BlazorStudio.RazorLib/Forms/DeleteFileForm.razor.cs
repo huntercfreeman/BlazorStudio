@@ -5,15 +5,18 @@ namespace BlazorStudio.RazorLib.Forms;
 
 public partial class DeleteFileForm : ComponentBase
 {
-    [Parameter, EditorRequired]
-    public IAbsoluteFilePath AbsoluteFilePath { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public Action<IAbsoluteFilePath> OnAfterSubmitForm { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public Action OnAfterCancelForm { get; set; } = null!;
+    private int _directDescendantCount;
 
     private bool _isLoaded;
-    private int _directDescendantCount;
+    [Parameter]
+    [EditorRequired]
+    public IAbsoluteFilePath AbsoluteFilePath { get; set; } = null!;
+    [Parameter]
+    [EditorRequired]
+    public Action<IAbsoluteFilePath> OnAfterSubmitForm { get; set; } = null!;
+    [Parameter]
+    [EditorRequired]
+    public Action OnAfterCancelForm { get; set; } = null!;
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -21,7 +24,8 @@ public partial class DeleteFileForm : ComponentBase
         {
             if (AbsoluteFilePath.IsDirectory)
             {
-                var childFileSystemEntries = Directory.GetFileSystemEntries(AbsoluteFilePath.GetAbsoluteFilePathString());
+                var childFileSystemEntries =
+                    Directory.GetFileSystemEntries(AbsoluteFilePath.GetAbsoluteFilePathString());
 
                 _directDescendantCount = childFileSystemEntries.Length;
             }

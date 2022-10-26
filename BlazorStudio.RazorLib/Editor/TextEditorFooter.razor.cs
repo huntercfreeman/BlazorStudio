@@ -7,16 +7,23 @@ namespace BlazorStudio.RazorLib.Editor;
 
 public partial class TextEditorFooter : ComponentBase, IDisposable
 {
+    private TextEditorDisplay? _previousTextEditorDisplay;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    
-    [Parameter, EditorRequired]
+
+    [Parameter]
+    [EditorRequired]
     public TextEditorBase? TextEditor { get; set; }
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public TextEditorDisplay? TextEditorDisplay { get; set; }
 
-    private TextEditorDisplay? _previousTextEditorDisplay;
-    
+    public void Dispose()
+    {
+        if (TextEditorDisplay is not null)
+            TextEditorDisplay.CursorsChanged -= PreviousTextEditorDisplayOnCursorsChanged;
+    }
+
     protected override Task OnParametersSetAsync()
     {
         if (TextEditorDisplay is null)
@@ -29,12 +36,12 @@ public partial class TextEditorFooter : ComponentBase, IDisposable
         {
             if (_previousTextEditorDisplay is not null)
                 _previousTextEditorDisplay.CursorsChanged -= PreviousTextEditorDisplayOnCursorsChanged;
-            
+
             TextEditorDisplay.CursorsChanged += PreviousTextEditorDisplayOnCursorsChanged;
         }
 
         _previousTextEditorDisplay = TextEditorDisplay;
-        
+
         return base.OnParametersSetAsync();
     }
 
@@ -46,19 +53,13 @@ public partial class TextEditorFooter : ComponentBase, IDisposable
     private void SelectRowEndingKindOnChange(ChangeEventArgs changeEventArgs)
     {
         var textEditorKey = TextEditor?.Key;
-    
+
         if (textEditorKey is null)
             return;
-        
+
         var rowEndingKindString = (string)(changeEventArgs.Value ?? string.Empty);
-    
+
         if (Enum.TryParse<RowEndingKind>(rowEndingKindString, out var rowEndingKind))
             TextEditorService.SetUsingRowEndingKind(textEditorKey, rowEndingKind);
-    }
-    
-    public void Dispose()
-    {
-        if (TextEditorDisplay is not null)
-            TextEditorDisplay.CursorsChanged -= PreviousTextEditorDisplayOnCursorsChanged;
     }
 }

@@ -10,7 +10,7 @@ public class IndexedProject
         Project = project;
         AbsoluteFilePathDotNet = absoluteFilePathDotNet;
     }
-    
+
     public Project Project { get; set; }
     public AbsoluteFilePathDotNet AbsoluteFilePathDotNet { get; set; }
 }

@@ -1,5 +1,4 @@
 ﻿using BlazorStudio.ClassLib.Keyboard;
-using BlazorStudio.ClassLib.Store.FooterWindowCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -14,9 +13,11 @@ public partial class TerminalTabDisplay : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public TerminalEntry TerminalEntry { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public int Index { get; set; }
 
     private string IsActiveCssClass => TerminalStateWrap.Value.ActiveIndex == Index
@@ -27,13 +28,11 @@ public partial class TerminalTabDisplay : ComponentBase
     {
         Dispatcher.Dispatch(new SetActiveTerminalEntryAction(Index));
     }
-    
+
     private void TerminalTabHandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code ||
             KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE == keyboardEventArgs.Code)
-        {
             DispatchSetActiveTerminalEntryAction();
-        }
     }
 }

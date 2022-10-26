@@ -6,5 +6,5 @@ public enum DiagnosticLevel
     Suggestion,
     Warning,
     Error,
-    Other
+    Other,
 }

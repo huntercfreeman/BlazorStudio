@@ -8,6 +8,6 @@ public class FooterWindowStateReducer
     public static FooterWindowState ReduceSetActiveFooterWindowKindAction(FooterWindowState previousFooterWindowState,
         SetActiveFooterWindowKindAction setActiveFooterWindowKindAction)
     {
-        return new(setActiveFooterWindowKindAction.FooterWindowKind);
+        return new FooterWindowState(setActiveFooterWindowKindAction.FooterWindowKind);
     }
 }

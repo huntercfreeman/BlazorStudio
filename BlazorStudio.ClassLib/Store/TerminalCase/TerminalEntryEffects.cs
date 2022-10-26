@@ -7,11 +7,11 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 public class TerminalEntryEffects
 {
-    private readonly IState<TerminalState> _terminalStateWrap;
-    private readonly IState<TerminalSettingsState> _terminalSettingsStateWrap;
-    private readonly TerminalEntry _terminalEntry;
-    private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
     private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
+    private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
+    private readonly TerminalEntry _terminalEntry;
+    private readonly IState<TerminalSettingsState> _terminalSettingsStateWrap;
+    private readonly IState<TerminalState> _terminalStateWrap;
 
     public TerminalEntryEffects(IState<TerminalState> terminalStateWrap,
         IState<TerminalSettingsState> terminalSettingsStateWrap,
@@ -30,10 +30,7 @@ public class TerminalEntryEffects
         {
             await _executeHandleEffectSemaphoreSlim.WaitAsync();
 
-            if (_handleEffectQueue.TryDequeue(out var fifoHandleEffect))
-            {
-                await fifoHandleEffect!.Invoke();
-            }
+            if (_handleEffectQueue.TryDequeue(out var fifoHandleEffect)) await fifoHandleEffect!.Invoke();
         }
         finally
         {
@@ -41,7 +38,8 @@ public class TerminalEntryEffects
         }
     }
 
-    public async Task HandleEnqueueProcessOnTerminalEntryAction(EnqueueProcessOnTerminalEntryAction enqueueProcessOnTerminalEntryAction,
+    public async Task HandleEnqueueProcessOnTerminalEntryAction(
+        EnqueueProcessOnTerminalEntryAction enqueueProcessOnTerminalEntryAction,
         IDispatcher dispatcher)
     {
         await QueueHandleEffectAsync(async () =>
@@ -49,9 +47,7 @@ public class TerminalEntryEffects
             if (enqueueProcessOnTerminalEntryAction.CancellationToken.IsCancellationRequested)
             {
                 if (enqueueProcessOnTerminalEntryAction.OnCancelled is not null)
-                {
                     enqueueProcessOnTerminalEntryAction.OnCancelled.Invoke();
-                }
 
                 return;
             }
@@ -60,7 +56,7 @@ public class TerminalEntryEffects
 
             var process = new Process();
 
-            void EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler(object? sender, EventArgs e)
+            void EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler()
             {
                 process.Kill(true);
 
@@ -70,7 +66,8 @@ public class TerminalEntryEffects
 
             if (enqueueProcessOnTerminalEntryAction.WorkingDirectoryAbsoluteFilePath is not null)
             {
-                process.StartInfo.WorkingDirectory = enqueueProcessOnTerminalEntryAction.WorkingDirectoryAbsoluteFilePath
+                process.StartInfo.WorkingDirectory = enqueueProcessOnTerminalEntryAction
+                    .WorkingDirectoryAbsoluteFilePath
                     .GetAbsoluteFilePathString();
             }
 
@@ -86,7 +83,7 @@ public class TerminalEntryEffects
                 process.StartInfo.FileName = "cmd.exe";
                 process.StartInfo.Arguments = $"/c {enqueueProcessOnTerminalEntryAction.Command} 2>&1";
             }
-            
+
             // Start the child process.
             // 2>&1 combines stdout and stderr
             //process.StartInfo.Arguments = $"";
@@ -97,7 +94,7 @@ public class TerminalEntryEffects
 
             void OutputDataReceived(object sender, DataReceivedEventArgs e)
             {
-                dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey, 
+                dispatcher.Dispatch(new SetTerminalEntryOutputStatesAction(_terminalEntry.TerminalEntryKey,
                     _terminalEntry.ParseOutputFunc(e.Data ?? string.Empty)));
 
                 if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync != null)
@@ -105,13 +102,12 @@ public class TerminalEntryEffects
             }
 
             if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync is not null)
-            {
                 process.OutputDataReceived += OutputDataReceived;
-            }
 
             try
             {
-                enqueueProcessOnTerminalEntryAction.KillRequestedEventHandler += EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler;
+                enqueueProcessOnTerminalEntryAction.KillRequestedEventHandler +=
+                    EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler;
 
                 dispatcher.Dispatch(new SetTerminalEntryIsExecutingAction(_terminalEntry.TerminalEntryKey,
                     true));
@@ -132,13 +128,11 @@ public class TerminalEntryEffects
                 }
 
                 dispatcher.Dispatch(new SetActiveFooterWindowKindAction(FooterWindowKind.Terminal));
-                
+
                 process.Start();
 
                 if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceivedAsync is not null)
-                {
                     process.BeginOutputReadLine();
-                }
                 else if (enqueueProcessOnTerminalEntryAction.OnAnyDataReceived is not null)
                 {
                     var output = await process.StandardOutput.ReadToEndAsync();
@@ -169,7 +163,8 @@ public class TerminalEntryEffects
 
                 enqueueProcessOnTerminalEntryAction.OnEnd.Invoke(process);
 
-                enqueueProcessOnTerminalEntryAction.KillRequestedEventHandler -= EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler;
+                enqueueProcessOnTerminalEntryAction.KillRequestedEventHandler -=
+                    EnqueueProcessOnTerminalEntryActionOnKillRequestedEventHandler;
 
                 dispatcher.Dispatch(new SetTerminalEntryIsExecutingAction(_terminalEntry.TerminalEntryKey,
                     false));

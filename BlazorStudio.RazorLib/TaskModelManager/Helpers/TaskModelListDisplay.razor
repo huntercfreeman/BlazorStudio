@@ -1,24 +1,26 @@
 ﻿<div class="bstudio_task-model-manager-task-model-list-display @ClassParameter"
      style="@StyleParameter">
-     
+
     <div class="bstudio_task-model-manager-task-model-list-display-title"
          @onclick="ToggleIsExpandedOnClick">
         @ListTitle&nbsp;
-        
+
         @if (_isExpanded)
         {
-            <IconChevronDown />
+            <IconChevronDown/>
         }
         else
         {
-            <IconChevronRight />
+            <IconChevronRight/>
         }
-        
+
         &nbsp;
         <span stlye="margin-left: 5px;"
-              @onclick="ClearTaskModelsAction">Clear</span>
+              @onclick="ClearTaskModelsAction">
+            Clear
+        </span>
     </div>
-    
+
     @if (_isExpanded)
     {
         <div class="bstudio_task-model-manager-task-model-list-display-body">

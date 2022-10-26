@@ -7,12 +7,12 @@ namespace BlazorStudio.RazorLib.Icons.Codicon;
 
 public class IconBase : FluxorComponent
 {
-    [Inject] 
+    [Inject]
     private IState<IconOptionsState> IconOptionsStateWrap { get; set; } = null!;
 
     protected int WidthInPixels => (int)(WidthInPixelsOverride ?? IconOptionsStateWrap.Value.IconSize.Value);
     protected int HeightInPixels => (int)(HeightInPixelsOverride ?? IconOptionsStateWrap.Value.IconSize.Value);
-    
+
     [Parameter]
     public int? WidthInPixelsOverride { get; set; }
     [Parameter]

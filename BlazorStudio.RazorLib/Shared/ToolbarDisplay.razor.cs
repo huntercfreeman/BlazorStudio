@@ -1,12 +1,8 @@
-﻿using BlazorStudio.ClassLib.Contexts;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Keyboard;
-using BlazorStudio.ClassLib.Store.ContextCase;
+﻿using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.UserInterface;
-using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.NewCSharpProject;
 using BlazorStudio.RazorLib.NewDotNetSolution;
@@ -18,26 +14,14 @@ namespace BlazorStudio.RazorLib.Shared;
 
 public partial class ToolbarDisplay
 {
-    [Inject]
-    private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-
-    private DialogRecord _inputFileDialog = new DialogRecord(
-        DialogKey.NewDialogKey(),
-        "Input File",
-        typeof(InputFileDialog),
-        null
-    );
-    
-    private readonly DialogRecord _newCSharpProjectDialog = new DialogRecord(
+    private readonly DialogRecord _newCSharpProjectDialog = new(
         DialogKey.NewDialogKey(),
         "New C# Project",
         typeof(NewCSharpProjectDialog),
         null
     );
-    
-    private readonly DialogRecord _newDotNetSolutionDialog = new DialogRecord(
+
+    private readonly DialogRecord _newDotNetSolutionDialog = new(
         DialogKey.NewDialogKey(),
         "New .NET Solution",
         typeof(NewDotNetSolutionDialog),
@@ -52,20 +36,32 @@ public partial class ToolbarDisplay
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
-                Value = -2
-            }
+                Value = -2,
+            },
         },
         TopCalc = new List<DimensionUnit>
         {
             new()
             {
                 DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
-                Value = 0.7
-            }
+                Value = 0.7,
+            },
         },
     };
 
     private DropdownKey _fileDropdownKey = DropdownKey.NewDropdownKey();
+
+    private DialogRecord _inputFileDialog = new(
+        DialogKey.NewDialogKey(),
+        "Input File",
+        typeof(InputFileDialog),
+        null
+    );
+
+    [Inject]
+    private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     private void DispatchAddActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
     {
@@ -77,7 +73,7 @@ public partial class ToolbarDisplay
         if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _inputFileDialog.DialogKey))
             Dispatcher.Dispatch(new RegisterDialogAction(_inputFileDialog));
     }
-    
+
     private void OpenNewCSharpProjectDialog()
     {
         if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _newCSharpProjectDialog.DialogKey))
@@ -99,13 +95,11 @@ public partial class ToolbarDisplay
 
         return new[] { openFolder, newMenu };
     }
-    
+
     private void FileDropdownHandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code ||
             KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE == keyboardEventArgs.Code)
-        {
             DispatchAddActiveDropdownKeyActionOnClick(_fileDropdownKey);
-        }
     }
 }

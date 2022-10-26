@@ -15,13 +15,13 @@ public static class GenerateATxtFile
 
         var spacer = ' ';
 
-        for (int i = 0; i < rows; i++)
+        for (var i = 0; i < rows; i++)
         {
             var rowMarker = $"// {i + 1}";
 
             builder.Append(rowMarker);
 
-            for (int j = rowMarker.Length; j < columns; j++)
+            for (var j = rowMarker.Length; j < columns; j++)
             {
                 if (j % columnMarkerSpacing == 0)
                 {
@@ -31,9 +31,7 @@ public static class GenerateATxtFile
                     j += columnMarker.Length;
                 }
                 else
-                {
                     builder.Append(spacer);
-                }
             }
 
             builder.AppendLine();

@@ -23,32 +23,22 @@ public static class TerminalOutputParser
             {
                 var currentCharacter = input[position++];
 
-                if (currentCharacter == ' ')
-                {
-                    break;
-                }
-                else
-                {
-                    httpBuilder.Append(currentCharacter);
-                }
+                if (currentCharacter == ' ') break;
+
+                httpBuilder.Append(currentCharacter);
             }
 
             var aTag = $"<a href=\"{httpBuilder}\" target=\"_blank\">{httpBuilder}</a>";
 
             var result = firstSubstring.EscapeHtml()
-                         + aTag.ToString();
+                         + aTag;
 
-            if (position != input.Length - 1)
-            {
-                result += input.Substring(position);
-            }
+            if (position != input.Length - 1) result += input.Substring(position);
 
             outputBuilder.Append(result + "<br />");
         }
         else
-        {
             outputBuilder.Append(input.EscapeHtml() + "<br />");
-        }
 
         return outputBuilder.ToString();
     }

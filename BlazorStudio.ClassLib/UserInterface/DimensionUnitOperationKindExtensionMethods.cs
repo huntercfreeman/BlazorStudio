@@ -10,7 +10,8 @@ public static class DimensionUnitOperationKindExtensionMethods
             DimensionUnitOperationKind.Subtract => "-",
             DimensionUnitOperationKind.Multiply => "*",
             DimensionUnitOperationKind.Divide => "/",
-            _ => throw new ApplicationException($"The {nameof(DimensionUnitOperationKind)}: '{dimensionUnitOperationKind}' was not recognized.")
+            _ => throw new ApplicationException(
+                $"The {nameof(DimensionUnitOperationKind)}: '{dimensionUnitOperationKind}' was not recognized."),
         };
     }
 }

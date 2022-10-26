@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Blazor.Text.Editor.Analysis.CSharp.ClassLib\Blazor.Text.Editor.Analysis.CSharp.ClassLib.csproj" />
-      <ProjectReference Include="..\Blazor.Text.Editor.Analysis.Html.ClassLib\Blazor.Text.Editor.Analysis.Html.ClassLib.csproj" />
+        <ProjectReference Include="..\Blazor.Text.Editor.Analysis.CSharp.ClassLib\Blazor.Text.Editor.Analysis.CSharp.ClassLib.csproj"/>
+        <ProjectReference Include="..\Blazor.Text.Editor.Analysis.Html.ClassLib\Blazor.Text.Editor.Analysis.Html.ClassLib.csproj"/>
     </ItemGroup>
 
 </Project>

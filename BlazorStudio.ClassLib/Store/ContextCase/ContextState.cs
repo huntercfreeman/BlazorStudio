@@ -49,7 +49,7 @@ public record ContextState(ImmutableDictionary<ContextKey, ContextRecord> Contex
 
         ActiveContextRecords = new List<ContextRecord>
         {
-            ContextFacts.GlobalContext
+            ContextFacts.GlobalContext,
         }.ToImmutableList();
     }
 }

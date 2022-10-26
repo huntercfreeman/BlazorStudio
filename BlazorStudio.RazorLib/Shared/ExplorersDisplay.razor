@@ -1,13 +1,12 @@
 ﻿@using BlazorStudio.RazorLib.FolderExplorer
 <div class="bstudio_explorers-display"
      style="@ExplorersDimensions.DimensionsCssString">
-    
-    <BlazorStudio.RazorLib.SolutionExplorer.SolutionExplorerDisplay Dimensions="_solutionExplorerDimensions" />
+
+    <BlazorStudio.RazorLib.SolutionExplorer.SolutionExplorerDisplay Dimensions="_solutionExplorerDimensions"/>
 
     <BlazorStudio.RazorLib.Transformable.TransformableRowSeparator TopDimensions="_solutionExplorerDimensions"
                                                                    BottomDimensions="_folderExplorerDimensions"
-                                                                   ReRenderFunc="ReRender" />
+                                                                   ReRenderFunc="ReRender"/>
 
-    <FolderExplorer Dimensions="_folderExplorerDimensions" />
+    <FolderExplorer Dimensions="_folderExplorerDimensions"/>
 </div>
-

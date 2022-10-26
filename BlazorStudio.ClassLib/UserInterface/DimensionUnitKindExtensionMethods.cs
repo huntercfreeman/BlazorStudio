@@ -5,7 +5,7 @@ public static class DimensionUnitKindExtensionMethods
     public static string ToCssString(this DimensionUnitKind dimensionUnitKind)
     {
         return dimensionUnitKind switch
-        {  
+        {
             DimensionUnitKind.Pixels => "px",
             DimensionUnitKind.ViewportWidth => "vw",
             DimensionUnitKind.ViewportHeight => "vh",
@@ -14,7 +14,8 @@ public static class DimensionUnitKindExtensionMethods
             DimensionUnitKind.RootCharacterHeight => "rem",
             DimensionUnitKind.CharacterWidth => "ch",
             DimensionUnitKind.CharacterHeight => "em",
-            _ => throw new ApplicationException($"The {nameof(DimensionUnitKind)}: '{dimensionUnitKind}' was not recognized.")
+            _ => throw new ApplicationException(
+                $"The {nameof(DimensionUnitKind)}: '{dimensionUnitKind}' was not recognized."),
         };
     }
 }

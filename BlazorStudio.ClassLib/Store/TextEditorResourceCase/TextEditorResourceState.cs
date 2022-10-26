@@ -10,6 +10,5 @@ public record TextEditorResourceState(ImmutableDictionary<TextEditorKey, IAbsolu
 {
     public TextEditorResourceState() : this(ImmutableDictionary<TextEditorKey, IAbsoluteFilePath>.Empty)
     {
-    
     }
 }

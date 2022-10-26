@@ -11,19 +11,19 @@ public record DialogRecord(DialogKey DialogKey,
     public bool IsMinimized { get; init; }
     public bool IsMaximized { get; set; }
     public bool IsTransformable { get; set; } = true;
-    public event EventHandler? OnFocusRequestedEventHandler;
-    public event EventHandler? OnStateHasChangeRequestedEventHandler;
+    public event Action? OnFocusRequestedEventHandler;
+    public event Action? OnStateHasChangeRequestedEventHandler;
 
     public void InvokeOnFocusRequestedEventHandler()
     {
-        OnFocusRequestedEventHandler?.Invoke(null, EventArgs.Empty);
+        OnFocusRequestedEventHandler?.Invoke();
     }
-    
+
     public void InvokeOnStateHasChangeRequestedEventHandler()
     {
-        OnStateHasChangeRequestedEventHandler?.Invoke(null, EventArgs.Empty);
+        OnStateHasChangeRequestedEventHandler?.Invoke();
     }
-    
+
     public static Dimensions ConstructDefaultDialogDimensions()
     {
         return new Dimensions
@@ -34,32 +34,32 @@ public record DialogRecord(DialogKey DialogKey,
                 new()
                 {
                     DimensionUnitKind = DimensionUnitKind.ViewportWidth,
-                    Value = 60
-                }
+                    Value = 60,
+                },
             },
             HeightCalc = new List<DimensionUnit>
             {
                 new()
                 {
                     DimensionUnitKind = DimensionUnitKind.ViewportHeight,
-                    Value = 60
-                }
+                    Value = 60,
+                },
             },
             LeftCalc = new List<DimensionUnit>
             {
                 new()
                 {
                     DimensionUnitKind = DimensionUnitKind.ViewportWidth,
-                    Value = 20
-                }
+                    Value = 20,
+                },
             },
             TopCalc = new List<DimensionUnit>
             {
                 new()
                 {
                     DimensionUnitKind = DimensionUnitKind.ViewportHeight,
-                    Value = 20
-                }
+                    Value = 20,
+                },
             },
         };
     }

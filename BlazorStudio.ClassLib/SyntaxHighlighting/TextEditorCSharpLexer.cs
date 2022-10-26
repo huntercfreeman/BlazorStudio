@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BlazorTextEditor.RazorLib.Lexing;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
@@ -16,17 +17,17 @@ public class TextEditorCSharpLexer : ILexer
         var generalSyntaxCollector = new GeneralSyntaxCollector();
 
         generalSyntaxCollector.Visit(syntaxNodeRoot);
-        
+
         List<TextEditorTextSpan> textEditorTextSpans = new();
-        
+
         // Type decorations
         {
             var decorationByte = (byte)DecorationKind.Type;
-            
+
             // Property Type
             textEditorTextSpans.AddRange(generalSyntaxCollector.PropertyDeclarationSyntaxes
                 .Select(pds => pds.Type.Span)
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,
@@ -35,7 +36,7 @@ public class TextEditorCSharpLexer : ILexer
             // Class Declaration
             textEditorTextSpans.AddRange(generalSyntaxCollector.ClassDeclarationSyntaxes
                 .Select(cds => cds.Identifier.Span)
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,
@@ -47,11 +48,12 @@ public class TextEditorCSharpLexer : ILexer
                 {
                     var retType = mds
                         .ChildNodes()
-                        .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+                        .FirstOrDefault(x =>
+                            x.IsKind(SyntaxKind.IdentifierName));
 
                     return retType?.Span ?? default;
                 })
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,
@@ -61,17 +63,16 @@ public class TextEditorCSharpLexer : ILexer
             textEditorTextSpans.AddRange(generalSyntaxCollector.ParameterSyntaxes
                 .Select(ps =>
                 {
-                    var identifierNameNode = ps.ChildNodes()
-                        .FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierName);
+                    var identifierNameNode = ps
+                        .ChildNodes()
+                        .FirstOrDefault(x =>
+                            x.IsKind(SyntaxKind.IdentifierName));
 
-                    if (identifierNameNode is null)
-                    {
-                        return TextSpan.FromBounds(0, 0);
-                    }
+                    if (identifierNameNode is null) return TextSpan.FromBounds(0, 0);
 
                     return identifierNameNode.Span;
                 })
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,
@@ -85,7 +86,7 @@ public class TextEditorCSharpLexer : ILexer
             // Method declaration identifier
             textEditorTextSpans.AddRange(generalSyntaxCollector.MethodDeclarationSyntaxes
                 .Select(mds => mds.Identifier.Span)
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,
@@ -101,7 +102,7 @@ public class TextEditorCSharpLexer : ILexer
 
                     return lastNode?.Span ?? TextSpan.FromBounds(0, 0);
                 })
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,
@@ -111,26 +112,29 @@ public class TextEditorCSharpLexer : ILexer
         // Local variable decorations
         {
             var decorationByte = (byte)DecorationKind.Parameter;
-            
-            // Parameter declaration identifier
-            textEditorTextSpans.AddRange(generalSyntaxCollector.ParameterSyntaxes
-                .Select(ps =>
-                {
-                    var identifierToken =
-                        ps.ChildTokens().FirstOrDefault(x => x.Kind() == SyntaxKind.IdentifierToken);
 
-                    return identifierToken.Span;
-                })
-                .Select(roslynSpan => 
-                    new TextEditorTextSpan(
-                        roslynSpan.Start,
-                        roslynSpan.End,
-                        decorationByte)));
+            // Parameter declaration identifier
+            textEditorTextSpans
+                .AddRange(generalSyntaxCollector.ParameterSyntaxes
+                    .Select(ps =>
+                    {
+                        var identifierToken =
+                            ps.ChildTokens()
+                                .FirstOrDefault(x =>
+                                    x.IsKind(SyntaxKind.IdentifierToken));
+
+                        return identifierToken.Span;
+                    })
+                    .Select(roslynSpan =>
+                        new TextEditorTextSpan(
+                            roslynSpan.Start,
+                            roslynSpan.End,
+                            decorationByte)));
 
             // Argument declaration identifier
             textEditorTextSpans.AddRange(generalSyntaxCollector.ArgumentSyntaxes
                 .Select(argumentSyntax => argumentSyntax.Span)
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,
@@ -144,7 +148,7 @@ public class TextEditorCSharpLexer : ILexer
             // String literal
             textEditorTextSpans.AddRange(generalSyntaxCollector.StringLiteralExpressionSyntaxes
                 .Select(sles => sles.Span)
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,
@@ -158,16 +162,16 @@ public class TextEditorCSharpLexer : ILexer
             // Keywords
             textEditorTextSpans.AddRange(generalSyntaxCollector.KeywordSyntaxTokens
                 .Select(kst => kst.Span)
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,
                         decorationByte)));
-            
+
             // Contextual var keyword
             textEditorTextSpans.AddRange(generalSyntaxCollector
                 .VarTextSpans
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,
@@ -181,7 +185,7 @@ public class TextEditorCSharpLexer : ILexer
             // Default comments
             textEditorTextSpans.AddRange(generalSyntaxCollector.SyntaxTrivias
                 .Select(st => st.Span)
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,
@@ -190,7 +194,7 @@ public class TextEditorCSharpLexer : ILexer
             // Xml comments
             textEditorTextSpans.AddRange(generalSyntaxCollector.XmlCommentSyntaxes
                 .Select(xml => xml.Span)
-                .Select(roslynSpan => 
+                .Select(roslynSpan =>
                     new TextEditorTextSpan(
                         roslynSpan.Start,
                         roslynSpan.End,

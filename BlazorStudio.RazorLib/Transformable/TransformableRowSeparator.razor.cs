@@ -8,21 +8,29 @@ namespace BlazorStudio.RazorLib.Transformable;
 
 public partial class TransformableRowSeparator : ComponentBase, IDisposable
 {
+    private readonly SemaphoreSlim _transformableRowSeparatorSemaphoreSlim = new(1, 1);
+
+    private Func<MouseEventArgs, Task>? _dragStateEventHandler;
+    private MouseEventArgs? _previousDragMouseEventArgs;
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Dimensions TopDimensions { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Dimensions BottomDimensions { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Func<Task> ReRenderFunc { get; set; } = null!;
 
-    private Func<MouseEventArgs, Task>? _dragStateEventHandler;
-    private MouseEventArgs? _previousDragMouseEventArgs;
-    private readonly SemaphoreSlim _transformableRowSeparatorSemaphoreSlim = new(1, 1);
+    public void Dispose()
+    {
+        DragStateWrap.StateChanged -= DragState_StateChanged;
+    }
 
     protected override void OnInitialized()
     {
@@ -45,14 +53,15 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
 
             if (!success)
                 return;
-        
+
             try
             {
                 var mouseEventArgs = DragStateWrap.Value.MouseEventArgs;
 
                 if (_dragStateEventHandler is not null)
                 {
-                    if (_previousDragMouseEventArgs is not null)
+                    if (_previousDragMouseEventArgs is not null &&
+                        mouseEventArgs is not null)
                     {
                         await _dragStateEventHandler(mouseEventArgs);
                     }
@@ -76,45 +85,43 @@ public partial class TransformableRowSeparator : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerNorthResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerNorthResizeHandle(MouseEventArgs mouseEventArgs)
     {
         var deltaY = mouseEventArgs.ClientY - _previousDragMouseEventArgs!.ClientY;
 
-        var topHeightPixelOffset = TopDimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var topHeightPixelOffset =
+            TopDimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (topHeightPixelOffset is null)
         {
-            topHeightPixelOffset = new()
+            topHeightPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             TopDimensions.HeightCalc.Add(topHeightPixelOffset);
         }
 
         topHeightPixelOffset.Value += deltaY;
-        
-        var bottomHeightPixelOffset = BottomDimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+
+        var bottomHeightPixelOffset =
+            BottomDimensions.HeightCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (bottomHeightPixelOffset is null)
         {
-            bottomHeightPixelOffset = new()
+            bottomHeightPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             BottomDimensions.HeightCalc.Add(bottomHeightPixelOffset);
         }
 
         bottomHeightPixelOffset.Value -= deltaY;
-    }
-
-    public void Dispose()
-    {
-        DragStateWrap.StateChanged -= DragState_StateChanged;
+        return Task.CompletedTask;
     }
 }

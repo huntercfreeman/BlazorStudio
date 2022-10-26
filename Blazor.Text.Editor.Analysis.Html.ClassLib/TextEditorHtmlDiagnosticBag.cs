@@ -1,4 +1,5 @@
-﻿using BlazorTextEditor.RazorLib.Lexing;
+﻿using Blazor.Text.Editor.Analysis.Shared;
+using BlazorTextEditor.RazorLib.Lexing;
 
 namespace Blazor.Text.Editor.Analysis.Html.ClassLib;
 
@@ -11,7 +12,7 @@ public class TextEditorHtmlDiagnosticBag : TextEditorDiagnosticBag
             "Missing tag name.",
             textEditorTextSpan);
     }
-    
+
     public void ReportOpenTagWithUnMatchedCloseTag(
         string openTagName,
         string closeTagName,

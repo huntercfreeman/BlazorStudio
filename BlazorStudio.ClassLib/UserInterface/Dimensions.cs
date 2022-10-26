@@ -8,13 +8,12 @@ public class Dimensions
     public const char STYLE_STRING_WHITESPACE = ' ';
 
     public DimensionsPositionKind DimensionsPositionKind { get; set; } = new();
-    public List<DimensionUnit> WidthCalc { get; set; } = new();
-    public List<DimensionUnit> HeightCalc { get; set; } = new();
-    public List<DimensionUnit> LeftCalc { get; set; } = new();
-    public List<DimensionUnit> RightCalc { get; set; } = new();
-    public List<DimensionUnit> TopCalc { get; set; } = new();
-    public List<DimensionUnit> BottomCalc { get; set; } = new();
-    public List<ArbitraryDimensionUnitList> ArbitraryDimensionUnitLists { get; set; } = new();
+    public List<DimensionUnit> WidthCalc { get; init; } = new();
+    public List<DimensionUnit> HeightCalc { get; init; } = new();
+    public List<DimensionUnit> LeftCalc { get; init; } = new();
+    public List<DimensionUnit> RightCalc { get; init; } = new();
+    public List<DimensionUnit> TopCalc { get; init; } = new();
+    public List<DimensionUnit> BottomCalc { get; init; } = new();
 
     public string DimensionsCssString => GetDimensionsString();
 
@@ -30,13 +29,6 @@ public class Dimensions
         DimensionUnitHelper.AppendToStyleString(builder, RightCalc, "right");
         DimensionUnitHelper.AppendToStyleString(builder, TopCalc, "top");
         DimensionUnitHelper.AppendToStyleString(builder, BottomCalc, "bottom");
-
-        foreach (var arbitraryDimensionUnitList in ArbitraryDimensionUnitLists)
-        {
-            DimensionUnitHelper.AppendToStyleString(builder, 
-                arbitraryDimensionUnitList.DimensionUnits,
-                arbitraryDimensionUnitList.StyleAttributeName);
-        }
 
         return builder.ToString();
     }

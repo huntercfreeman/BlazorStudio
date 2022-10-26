@@ -16,18 +16,15 @@ namespace BlazorStudio.RazorLib.NewDotNetSolution;
 
 public partial class NewDotNetSolutionDialog : ComponentBase
 {
+    private string _solutionName = string.Empty;
+    private bool _startingCreatingSolution;
+    private readonly string _dotnetNewSlnCommand = "dotnet new sln";
+    private IAbsoluteFilePath? _inputFileDialogSelection;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
-
-    private string _solutionName = string.Empty;
-    private bool _disableExecuteButton;
-    private bool _finishedCreatingSolution;
-    private bool _startingCreatingSolution;
-    private IAbsoluteFilePath? InputFileDialogSelection;
-    private string dotnetNewSlnCommand = "dotnet new sln";
 
     private string SolutionName => string.IsNullOrWhiteSpace(_solutionName)
         ? "{enter solution name}"
@@ -35,51 +32,46 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
     private string AbsoluteFilePathString => GetAbsoluteFilePathString();
 
-    private string InterpolatedCommand => $"{dotnetNewSlnCommand} -o {_solutionName}";
+    private string InterpolatedCommand => $"{_dotnetNewSlnCommand} -o {_solutionName}";
 
-    private void InputFileDialogOnEnterKeyDownOverride((IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
+    private void InputFileDialogOnEnterKeyDownOverride(
+        (IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
     {
-        if (_disableExecuteButton || _finishedCreatingSolution)
-            return;
-
         if (tupleArgument.absoluteFilePath.IsDirectory)
         {
-            InputFileDialogSelection = tupleArgument.absoluteFilePath;
+            _inputFileDialogSelection = tupleArgument.absoluteFilePath;
             InvokeAsync(StateHasChanged);
         }
     }
-    
-    private void InputFileDialogChooseContextMenuOption(TreeViewContextMenuEventDto<IAbsoluteFilePath> treeViewContextMenuEventDto)
-    {
-        if (_disableExecuteButton || _finishedCreatingSolution)
-            return;
 
+    private void InputFileDialogChooseContextMenuOption(
+        TreeViewContextMenuEventDto<IAbsoluteFilePath> treeViewContextMenuEventDto)
+    {
         if (treeViewContextMenuEventDto.Item.IsDirectory)
         {
-            InputFileDialogSelection = treeViewContextMenuEventDto.Item;
+            _inputFileDialogSelection = treeViewContextMenuEventDto.Item;
             InvokeAsync(StateHasChanged);
         }
     }
-    
+
     private string GetAbsoluteFilePathString()
     {
         var builder = new StringBuilder();
 
-        if (InputFileDialogSelection is null || 
-            !InputFileDialogSelection.IsDirectory)
-        {
+        if (_inputFileDialogSelection is null ||
+            !_inputFileDialogSelection.IsDirectory)
             builder.Append($"{{pick a directory}}{Path.DirectorySeparatorChar}");
-        }
         else
-        {
-            builder.Append(InputFileDialogSelection.GetAbsoluteFilePathString());
-        }
+            builder.Append(_inputFileDialogSelection.GetAbsoluteFilePathString());
 
         return builder.ToString();
     }
-    
+
     private void DispatchTerminalNewSolutionOnClick()
     {
+        if (_inputFileDialogSelection is null)
+            return;
+        
         void OnStart()
         {
             _startingCreatingSolution = true;
@@ -91,7 +83,7 @@ public partial class NewDotNetSolutionDialog : ComponentBase
 
         void OnEnd(Process finishedProcess)
         {
-            if (output is null)
+            if (output == string.Empty)
                 return;
 
             _startingCreatingSolution = false;
@@ -99,10 +91,11 @@ public partial class NewDotNetSolutionDialog : ComponentBase
             InvokeAsync(StateHasChanged);
 
             var createdSolutionContainingDirectory = new AbsoluteFilePathDotNet(
-                InputFileDialogSelection.GetAbsoluteFilePathString() + _solutionName, true, null);
-            
+                _inputFileDialogSelection.GetAbsoluteFilePathString() + _solutionName, true, null);
+
             var createdSolutionFile = new AbsoluteFilePathDotNet(
-                createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + '.' + ExtensionNoPeriodFacts.DOT_NET_SOLUTION, false, null);
+                createdSolutionContainingDirectory.GetAbsoluteFilePathString() + _solutionName + '.' +
+                ExtensionNoPeriodFacts.DOT_NET_SOLUTION, false, null);
 
             Dispatcher.Dispatch(new SetFolderExplorerAction(createdSolutionContainingDirectory));
             Dispatcher.Dispatch(new SetSolutionExplorerAction(createdSolutionFile, SequenceKey.NewSequenceKey()));
@@ -114,12 +107,12 @@ public partial class NewDotNetSolutionDialog : ComponentBase
             .Dispatch(new EnqueueProcessOnTerminalEntryAction(
                 TerminalStateFacts.GeneralTerminalEntry.TerminalEntryKey,
                 InterpolatedCommand,
-                InputFileDialogSelection,
+                _inputFileDialogSelection,
                 OnStart,
                 OnEnd,
                 null,
                 null,
-                (data) => output = data,
+                data => output = data,
                 CancellationToken.None));
     }
 }

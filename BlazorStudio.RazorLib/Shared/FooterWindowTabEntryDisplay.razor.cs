@@ -10,13 +10,12 @@ public partial class FooterWindowTabEntryDisplay : ComponentBase
     private IState<FooterWindowState> FooterWindowStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    
-    [Parameter, EditorRequired]
-    public FooterWindowTabEntry FooterWindowTabEntry { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public int FooterWindowTabIndex { get; set; }
 
-    private string IsActiveCssClassString => 
+    [Parameter]
+    [EditorRequired]
+    public FooterWindowTabEntry FooterWindowTabEntry { get; set; } = null!;
+
+    private string IsActiveCssClassString =>
         FooterWindowStateWrap.Value.ActiveFooterWindowKind == FooterWindowTabEntry.FooterWindowKind
             ? "bstudio_active"
             : string.Empty;
@@ -24,6 +23,6 @@ public partial class FooterWindowTabEntryDisplay : ComponentBase
     private void DispatchSetActiveFooterWindowKindAction()
     {
         Dispatcher
-            .Dispatch(new SetActiveFooterWindowKindAction(FooterWindowTabEntry.FooterWindowKind));       
+            .Dispatch(new SetActiveFooterWindowKindAction(FooterWindowTabEntry.FooterWindowKind));
     }
 }

@@ -8,21 +8,29 @@ namespace BlazorStudio.RazorLib.Transformable;
 
 public partial class TransformableColumnSeparator : ComponentBase, IDisposable
 {
+    private readonly SemaphoreSlim _transformableColumnSeparatorSemaphoreSlim = new(1, 1);
+
+    private Func<MouseEventArgs, Task>? _dragStateEventHandler;
+    private MouseEventArgs? _previousDragMouseEventArgs;
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Dimensions LeftDimensions { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Dimensions RightDimensions { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public Func<Task> ReRenderFunc { get; set; } = null!;
 
-    private Func<MouseEventArgs, Task>? _dragStateEventHandler;
-    private MouseEventArgs? _previousDragMouseEventArgs;
-    private readonly SemaphoreSlim _transformableColumnSeparatorSemaphoreSlim = new(1, 1);
+    public void Dispose()
+    {
+        DragStateWrap.StateChanged -= DragState_StateChanged;
+    }
 
     protected override void OnInitialized()
     {
@@ -45,18 +53,19 @@ public partial class TransformableColumnSeparator : ComponentBase, IDisposable
 
             if (!success)
                 return;
-        
+
             try
             {
                 var mouseEventArgs = DragStateWrap.Value.MouseEventArgs;
 
                 if (_dragStateEventHandler is not null)
                 {
-                    if (_previousDragMouseEventArgs is not null)
+                    if (_previousDragMouseEventArgs is not null &&
+                        mouseEventArgs is not null)
                     {
                         await _dragStateEventHandler(mouseEventArgs);
                     }
-
+                    
                     _previousDragMouseEventArgs = mouseEventArgs;
 
                     await ReRenderFunc();
@@ -76,19 +85,20 @@ public partial class TransformableColumnSeparator : ComponentBase, IDisposable
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerEastResizeHandle(MouseEventArgs mouseEventArgs)
+    private Task DragEventHandlerEastResizeHandle(MouseEventArgs mouseEventArgs)
     {
         var deltaX = mouseEventArgs.ClientX - _previousDragMouseEventArgs!.ClientX;
 
-        var leftWidthPixelOffset = LeftDimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var leftWidthPixelOffset =
+            LeftDimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (leftWidthPixelOffset is null)
         {
-            leftWidthPixelOffset = new()
+            leftWidthPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             LeftDimensions.WidthCalc.Add(leftWidthPixelOffset);
@@ -96,25 +106,22 @@ public partial class TransformableColumnSeparator : ComponentBase, IDisposable
 
         leftWidthPixelOffset.Value += deltaX;
 
-        var rightWidthPixelOffset = RightDimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
+        var rightWidthPixelOffset =
+            RightDimensions.WidthCalc.FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.Pixels);
 
         if (rightWidthPixelOffset is null)
         {
-            rightWidthPixelOffset = new()
+            rightWidthPixelOffset = new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionUnitOperationKind = DimensionUnitOperationKind.Add,
-                Value = 0
+                Value = 0,
             };
 
             RightDimensions.WidthCalc.Add(rightWidthPixelOffset);
         }
 
         rightWidthPixelOffset.Value -= deltaX;
-    }
-
-    public void Dispose()
-    {
-        DragStateWrap.StateChanged -= DragState_StateChanged;
+        return Task.CompletedTask;
     }
 }

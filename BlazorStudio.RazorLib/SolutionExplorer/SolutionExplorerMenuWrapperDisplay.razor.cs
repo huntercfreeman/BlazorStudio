@@ -19,18 +19,17 @@ using BlazorStudio.ClassLib.TaskModelManager;
 using BlazorStudio.ClassLib.Templates;
 using BlazorStudio.RazorLib.Forms;
 using BlazorStudio.RazorLib.InputFile;
-using BlazorStudio.RazorLib.SyntaxRootRender;
 using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Text;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
 public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 {
+    private DialogKey _addProjectReferenceDialogKey = DialogKey.NewDialogKey();
+    private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
@@ -47,15 +46,12 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     [Parameter]
     public TreeViewContextMenuEventDto<AbsoluteFilePathDotNet> ContextMenuEventDto { get; set; } = null!;
 
-    private DialogKey _addProjectReferenceDialogKey = DialogKey.NewDialogKey();
-    private DialogKey _syntaxRootDisplayDialogKey = DialogKey.NewDialogKey();
-
     private IEnumerable<MenuOptionRecord> GetMenuOptionRecords(
         TreeViewContextMenuEventDto<AbsoluteFilePathDotNet> contextMenuEventDto)
     {
         var createNewEmptyFile = MenuOptionFacts.File
             .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(CreateNewFileForm.ParentDirectory),
@@ -63,9 +59,9 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
-                        new Action<string, string, bool>((parentDirectoryAbsoluteFilePathString, filename, _) => 
+                        new Action<string, string, bool>((parentDirectoryAbsoluteFilePathString, filename, _) =>
                             CreateNewEmptyFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
-                                filename, 
+                                filename,
                                 ContextMenuEventDto.Item))
                     },
                     {
@@ -73,10 +69,10 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
                     },
                 });
-        
+
         var createNewTemplatedFile = MenuOptionFacts.File
             .ConstructCreateNewTemplatedFile(typeof(CreateNewFileForm),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(CreateNewFileForm.ParentDirectory),
@@ -84,11 +80,12 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     },
                     {
                         nameof(CreateNewFileForm.OnAfterSubmitForm),
-                        new Action<string, string, bool>((parentDirectoryAbsoluteFilePathString, filename, shouldAddCodebehind) => 
-                            CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
-                                filename, 
-                                ContextMenuEventDto.Item,
-                                shouldAddCodebehind))
+                        new Action<string, string, bool>(
+                            (parentDirectoryAbsoluteFilePathString, filename, shouldAddCodebehind) =>
+                                CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
+                                    filename,
+                                    ContextMenuEventDto.Item,
+                                    shouldAddCodebehind))
                     },
                     {
                         nameof(CreateNewFileForm.IsTemplated),
@@ -102,7 +99,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
         var createNewDirectory = MenuOptionFacts.File
             .ConstructCreateNewDirectory(typeof(CreateNewDirectoryForm),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(CreateNewDirectoryForm.ParentDirectory),
@@ -133,11 +130,11 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 .SetAsStartupProject(() =>
                     Dispatcher.Dispatch(new SetStartupProjectAction(contextMenuEventDto.Item)));
 
-            DialogRecord addProjectReferenceDialog = null;
+            DialogRecord? addProjectReferenceDialog = null;
 
             void AddProjectReferenceConfirmOnClickOverrideAction(ImmutableArray<IAbsoluteFilePath> activeItems)
             {
-                Dispatcher.Dispatch(new DisposeDialogAction(addProjectReferenceDialog));
+                Dispatcher.Dispatch(new DisposeDialogAction(addProjectReferenceDialog!));
 
                 var localSolutionExplorerState = SolutionExplorerStateWrap.Value;
 
@@ -148,18 +145,18 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
                 void OnStart()
                 {
-
                 }
 
                 void OnEnd(Process finishedProcess)
                 {
-                    var localMSBuildWorkspace = RoslynWorkspaceStateWrap.Value.MSBuildWorkspace;
+                    var localMsBuildWorkspace = RoslynWorkspaceStateWrap.Value.MsBuildWorkspace;
 
-                    if (localMSBuildWorkspace is not null)
+                    if (localMsBuildWorkspace is not null)
                     {
-                        localMSBuildWorkspace.CloseSolution();
+                        localMsBuildWorkspace.CloseSolution();
 
-                        Dispatcher.Dispatch(new SetSolutionExplorerAction(SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath, SequenceKey.NewSequenceKey()));
+                        Dispatcher.Dispatch(new SetSolutionExplorerAction(
+                            localSolutionExplorerState.SolutionAbsoluteFilePath, SequenceKey.NewSequenceKey()));
                     }
                 }
 
@@ -183,11 +180,12 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 DialogKey.NewDialogKey(),
                 "Add Project Reference",
                 typeof(InputFileDialog),
-                new Dictionary<string, object?>()
+                new Dictionary<string, object?>
                 {
                     {
                         nameof(InputFileDialog.IsValidSelectionOverrideFunc),
-                        AddProjectReferenceInputIsValidOverride
+                        new Func<ImmutableArray<IAbsoluteFilePath>, bool>(
+                            AddProjectReferenceInputIsValidOverride)
                     },
                     {
                         nameof(InputFileDialog.InvalidSelectionTextOverride),
@@ -195,8 +193,9 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     },
                     {
                         nameof(InputFileDialog.ConfirmOnClickOverrideAction),
-                        AddProjectReferenceConfirmOnClickOverrideAction
-                    }
+                        new Action<ImmutableArray<IAbsoluteFilePath>>(
+                            AddProjectReferenceConfirmOnClickOverrideAction)
+                    },
                 }
             );
 
@@ -211,7 +210,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
             createNewEmptyFile = MenuOptionFacts.File
                 .ConstructCreateNewEmptyFile(typeof(CreateNewFileForm),
-                    new Dictionary<string, object?>()
+                    new Dictionary<string, object?>
                     {
                         {
                             nameof(CreateNewFileForm.ParentDirectory),
@@ -219,9 +218,9 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         },
                         {
                             nameof(CreateNewFileForm.OnAfterSubmitForm),
-                            new Action<string, string, bool>((parentDirectoryAbsoluteFilePathString, filename, _) => 
+                            new Action<string, string, bool>((parentDirectoryAbsoluteFilePathString, filename, _) =>
                                 CreateNewEmptyFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
-                                    filename, 
+                                    filename,
                                     ContextMenuEventDto.Item))
                         },
                         {
@@ -232,7 +231,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
             createNewTemplatedFile = MenuOptionFacts.File
                 .ConstructCreateNewTemplatedFile(typeof(CreateNewFileForm),
-                    new Dictionary<string, object?>()
+                    new Dictionary<string, object?>
                     {
                         {
                             nameof(CreateNewFileForm.ParentDirectory),
@@ -240,11 +239,12 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         },
                         {
                             nameof(CreateNewFileForm.OnAfterSubmitForm),
-                            new Action<string, string, bool>((parentDirectoryAbsoluteFilePathString, filename, shouldAddCodebehind) => 
-                                CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
-                                    filename, 
-                                    ContextMenuEventDto.Item,
-                                    shouldAddCodebehind))
+                            new Action<string, string, bool>(
+                                (parentDirectoryAbsoluteFilePathString, filename, shouldAddCodebehind) =>
+                                    CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
+                                        filename,
+                                        ContextMenuEventDto.Item,
+                                        shouldAddCodebehind))
                         },
                         {
                             nameof(CreateNewFileForm.IsTemplated),
@@ -258,7 +258,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
             createNewDirectory = MenuOptionFacts.File
                 .ConstructCreateNewDirectory(typeof(CreateNewDirectoryForm),
-                    new Dictionary<string, object?>()
+                    new Dictionary<string, object?>
                     {
                         {
                             nameof(CreateNewDirectoryForm.ParentDirectory),
@@ -273,11 +273,11 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                             new Action(() => Dispatcher.Dispatch(new ClearActiveDropdownKeysAction()))
                         },
                     });
-            
+
             var requestFocusOnNugetPackageManager = new MenuOptionRecord(
-                MenuOptionKey.NewMenuOptionKey(), 
+                MenuOptionKey.NewMenuOptionKey(),
                 "Nuget Packages",
-                ImmutableList<MenuOptionRecord>.Empty, 
+                ImmutableList<MenuOptionRecord>.Empty,
                 () =>
                 {
                     Dispatcher.Dispatch(new SetActiveFooterWindowKindAction(FooterWindowKind.NugetPackageManager));
@@ -297,7 +297,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
         {
             var createDeleteFile = MenuOptionFacts.File
                 .ConstructDeleteFile(typeof(DeleteFileForm),
-                    new Dictionary<string, object?>()
+                    new Dictionary<string, object?>
                     {
                         {
                             nameof(DeleteFileForm.AbsoluteFilePath),
@@ -305,7 +305,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                         },
                         {
                             nameof(DeleteFileForm.OnAfterSubmitForm),
-                            new Action<IAbsoluteFilePath>((x) => DeleteFileFormOnAfterSubmitForm((AbsoluteFilePathDotNet)x))
+                            new Action<IAbsoluteFilePath>(x =>
+                                DeleteFileFormOnAfterSubmitForm((AbsoluteFilePathDotNet)x))
                         },
                         {
                             nameof(DeleteFileForm.OnAfterCancelForm),
@@ -324,7 +325,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     "No Context Menu Options for this item",
                     ImmutableList<MenuOptionRecord>.Empty,
                     null,
-                    MenuOptionKind.Read)
+                    MenuOptionKind.Read),
             };
     }
 
@@ -334,41 +335,45 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     {
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
-                var newFile = new AbsoluteFilePathDotNet(parentDirectoryAbsoluteFilePathString + fileName, 
+                var newFile = new AbsoluteFilePathDotNet(parentDirectoryAbsoluteFilePathString + fileName,
                     false,
                     absoluteFilePathDotNet.ProjectId);
-                
+
                 await File
                     .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName,
-                        string.Empty);
+                        string.Empty, 
+                        cancellationToken);
 
                 await localRefreshContextMenuTarget();
 
                 Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
-                
+
                 var solutionState = SolutionStateWrap.Value;
 
-                var project = SolutionStateWrap.Value.ProjectIdToProjectMap[absoluteFilePathDotNet.ProjectId];
-
-                var namespaceString = project.Project.DefaultNamespace;
+                var project = SolutionStateWrap.Value.ProjectIdToProjectMap[absoluteFilePathDotNet.ProjectId!];
 
                 if (newFile.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_CLASS)
                 {
-                    var syntaxTree = CSharpSyntaxTree.ParseText(await File.ReadAllTextAsync(newFile.GetAbsoluteFilePathString()));
+                    var syntaxTree =
+                        CSharpSyntaxTree.ParseText(
+                            await File.ReadAllTextAsync(
+                                newFile.GetAbsoluteFilePathString(), 
+                                cancellationToken));
 
-                    var document = project.Project.AddDocument(fileName, await syntaxTree.GetRootAsync());
+                    var document = project.Project
+                        .AddDocument(fileName, await syntaxTree.GetRootAsync(cancellationToken));
 
-                    var nextProjectIdToProjectMap = 
+                    var nextProjectIdToProjectMap =
                         SolutionStateWrap.Value.ProjectIdToProjectMap
-                            .SetItem(project.Project.Id, 
+                            .SetItem(project.Project.Id,
                                 new IndexedProject(document.Project, project.AbsoluteFilePathDotNet));
 
                     var nextDocumentMap =
                         SolutionStateWrap.Value.FileAbsoluteFilePathToDocumentMap
                             .SetItem(
-                                new AbsoluteFilePathStringValue(newFile), 
+                                new AbsoluteFilePathStringValue(newFile),
                                 new IndexedDocument(document, newFile));
 
                     Dispatcher.Dispatch(new SetSolutionStateAction(solutionState.Solution,
@@ -380,18 +385,19 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 {
                     var document = project.Project
                         .AddDocument(
-                            fileName, 
-                            await File.ReadAllTextAsync(newFile.GetAbsoluteFilePathString()));
+                            fileName,
+                            await File
+                                .ReadAllTextAsync(newFile.GetAbsoluteFilePathString(), cancellationToken));
 
-                    var nextProjectIdToProjectMap = 
+                    var nextProjectIdToProjectMap =
                         SolutionStateWrap.Value.ProjectIdToProjectMap
-                            .SetItem(project.Project.Id, 
+                            .SetItem(project.Project.Id,
                                 new IndexedProject(document.Project, project.AbsoluteFilePathDotNet));
 
                     var nextAdditionalDocumentMap =
                         SolutionStateWrap.Value.FileAbsoluteFilePathToAdditionalDocumentMap
                             .SetItem(
-                                new AbsoluteFilePathStringValue(newFile), 
+                                new AbsoluteFilePathStringValue(newFile),
                                 new IndexedAdditionalDocument(document, newFile));
 
                     Dispatcher.Dispatch(new SetSolutionStateAction(solutionState.Solution,
@@ -412,23 +418,20 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     {
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
             {
-                var newFile = new AbsoluteFilePathDotNet(parentDirectoryAbsoluteFilePathString + fileName, 
+                var newFile = new AbsoluteFilePathDotNet(parentDirectoryAbsoluteFilePathString + fileName,
                     false,
                     absoluteFilePathDotNet.ProjectId);
-                
+
                 var solutionState = SolutionStateWrap.Value;
 
-                var project = SolutionStateWrap.Value.ProjectIdToProjectMap[absoluteFilePathDotNet.ProjectId];
+                var project = SolutionStateWrap.Value.ProjectIdToProjectMap[absoluteFilePathDotNet.ProjectId!];
 
                 var namespaceString = project.Project.DefaultNamespace;
 
-                if (string.IsNullOrWhiteSpace(namespaceString))
-                {
-                    namespaceString = project.Project.Name;
-                }
-                
+                if (string.IsNullOrWhiteSpace(namespaceString)) namespaceString = project.Project.Name;
+
                 await File
                     .AppendAllTextAsync(newFile.GetAbsoluteFilePathString(),
                         DotNetTemplates
@@ -436,8 +439,9 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                                 newFile.FilenameWithExtension.EndsWith(ExtensionNoPeriodFacts.RAZOR_CODEBEHIND)
                                     ? ExtensionNoPeriodFacts.RAZOR_CODEBEHIND
                                     : newFile.ExtensionNoPeriod,
-                                namespaceString, 
-                                newFile.FileNameNoExtension));
+                                namespaceString,
+                                newFile.FileNameNoExtension), 
+                        cancellationToken);
 
                 await localRefreshContextMenuTarget();
 
@@ -445,19 +449,20 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
                 if (newFile.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_CLASS)
                 {
-                    var syntaxTree = CSharpSyntaxTree.ParseText(await File.ReadAllTextAsync(newFile.GetAbsoluteFilePathString()));
+                    var syntaxTree =
+                        CSharpSyntaxTree.ParseText(await File.ReadAllTextAsync(newFile.GetAbsoluteFilePathString()));
 
                     var document = project.Project.AddDocument(fileName, await syntaxTree.GetRootAsync());
 
-                    var nextProjectIdToProjectMap = 
+                    var nextProjectIdToProjectMap =
                         SolutionStateWrap.Value.ProjectIdToProjectMap
-                            .SetItem(project.Project.Id, 
+                            .SetItem(project.Project.Id,
                                 new IndexedProject(document.Project, project.AbsoluteFilePathDotNet));
 
                     var nextDocumentMap =
                         SolutionStateWrap.Value.FileAbsoluteFilePathToDocumentMap
                             .SetItem(
-                                new AbsoluteFilePathStringValue(newFile), 
+                                new AbsoluteFilePathStringValue(newFile),
                                 new IndexedDocument(document, newFile));
 
                     Dispatcher.Dispatch(new SetSolutionStateAction(solutionState.Solution,
@@ -469,18 +474,18 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 {
                     var document = project.Project
                         .AddDocument(
-                            fileName, 
+                            fileName,
                             await File.ReadAllTextAsync(newFile.GetAbsoluteFilePathString()));
 
-                    var nextProjectIdToProjectMap = 
+                    var nextProjectIdToProjectMap =
                         SolutionStateWrap.Value.ProjectIdToProjectMap
-                            .SetItem(project.Project.Id, 
+                            .SetItem(project.Project.Id,
                                 new IndexedProject(document.Project, project.AbsoluteFilePathDotNet));
 
                     var nextAdditionalDocumentMap =
                         SolutionStateWrap.Value.FileAbsoluteFilePathToAdditionalDocumentMap
                             .SetItem(
-                                new AbsoluteFilePathStringValue(newFile), 
+                                new AbsoluteFilePathStringValue(newFile),
                                 new IndexedAdditionalDocument(document, newFile));
 
                     Dispatcher.Dispatch(new SetSolutionStateAction(solutionState.Solution,
@@ -491,9 +496,9 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
                 if (shouldAddCodebehind && newFile.ExtensionNoPeriod == ExtensionNoPeriodFacts.RAZOR_MARKUP)
                 {
-                    CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString, 
-                        fileName + '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS, 
-                        absoluteFilePathDotNet, 
+                    CreateNewTemplatedFileFormOnAfterSubmitForm(parentDirectoryAbsoluteFilePathString,
+                        fileName + '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS,
+                        absoluteFilePathDotNet,
                         false);
                 }
             },
@@ -507,7 +512,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     {
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async _ =>
             {
                 Directory.CreateDirectory(parentDirectoryAbsoluteFilePathString + directoryName);
 
@@ -522,19 +527,16 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
     private void DeleteFileFormOnAfterSubmitForm(AbsoluteFilePathDotNet absoluteFilePath)
     {
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async (cancellationToken) =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async _ =>
             {
                 if (absoluteFilePath.IsDirectory)
-                {
                     Directory.Delete(absoluteFilePath.GetAbsoluteFilePathString(), true);
-                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
-                }
                 else
-                {
                     File.Delete(absoluteFilePath.GetAbsoluteFilePathString());
-                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
-                }
 
+                if (ContextMenuEventDto.RefreshParentOfContextMenuTarget is not null)
+                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
+                
                 Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
             },
             $"{nameof(DeleteFileFormOnAfterSubmitForm)}",

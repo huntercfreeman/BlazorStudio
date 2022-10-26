@@ -1,10 +1,9 @@
-﻿@typeparam T
-@using BlazorStudio.ClassLib.Store.TreeViewCase
-@using BlazorStudio.ClassLib.Store.DropdownCase
+﻿@using BlazorStudio.ClassLib.Store.TreeViewCase
 @using BlazorStudio.ClassLib.CustomEvents
+@typeparam T
 
 <div class="bstudio_tree-view-display">
-    
+
     <span @ref="_titleSpan"
           class="bstudio_tree-view-display-title pte_unselectable @IsActiveStyling"
           style="padding-left: calc(@(GetScaledByDepthPixelsOffset(Depth)) + 5px);"
@@ -16,7 +15,7 @@
           @ondblclick="HandleOnDoubleClick"
           @oncontextmenu="HandleOnContextMenu"
           @oncontextmenu:preventDefault="true">
-        
+
         @if (IsExpandable(TreeView.Item))
         {
             <span @onclick="ToggleIsExpandedOnClick"
@@ -25,17 +24,17 @@
                   class="bstudio_expansion-chevron">
                 @if (TreeView.IsExpanded)
                 {
-                    <IconChevronDown />
+                    <IconChevronDown/>
                 }
                 else
                 {
-                    <IconChevronRight />
+                    <IconChevronRight/>
                 }
             </span>
         }
         else
         {
-            <IconBlank />
+            <IconBlank/>
         }
 
         @ChildContent(TreeView.Item)
@@ -44,7 +43,7 @@
     <div class="bstudio_tree-view-display-body">
         <DropdownDisplay Dimensions="_fileDropdownDimensions"
                          DropdownKey="_fileDropdownKey">
-                         
+
             @if (OnContextMenuRenderFragment is not null)
             {
                 var contextMenuEventDto = new TreeViewContextMenuEventDto<T>(_mostRecentMouseEventArgs,
@@ -55,12 +54,12 @@
                     RefreshTreeViewTargetAsync,
                     RefreshParentOfTreeViewTargetAsync,
                     _titleSpan);
-                
+
                 @OnContextMenuRenderFragment(contextMenuEventDto)
             }
 
         </DropdownDisplay>
-        
+
         @{
             var paddingLeftFromTreeDepth = GetScaledByDepthPixelsOffset(Depth + 1);
 
@@ -70,7 +69,6 @@
 
             @if (TreeView.IsExpanded)
             {
-
                 @if (_isGettingChildren)
                 {
                     <span>Loading...</span>
@@ -86,9 +84,10 @@
                 else
                 {
                     <CascadingValue Name="Depth" Value="Depth + 1">
-                        @for (int i = 0; i < TreeView.Children.Length; i++)
+                        @for (var i = 0; i < TreeView.Children.Length; i++)
                         {
-                            int index = i;
+                            // ReSharper disable once UnusedVariable
+                            var index = i;
                             var child = (TreeView<T>)TreeView.Children[i];
 
                             <TreeViewDisplay @key="child.Key"

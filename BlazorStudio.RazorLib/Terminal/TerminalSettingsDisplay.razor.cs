@@ -20,7 +20,7 @@ public partial class TerminalSettingsDisplay : FluxorComponent
 
         Dispatcher.Dispatch(new SetTerminalSettingsStateAction(localTerminalSettingsState with
         {
-            ShowTerminalOnProcessStarted = value
+            ShowTerminalOnProcessStarted = value,
         }));
     }
 }

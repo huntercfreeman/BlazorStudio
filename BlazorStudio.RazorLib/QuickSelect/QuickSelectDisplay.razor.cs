@@ -8,25 +8,24 @@ namespace BlazorStudio.RazorLib.QuickSelect;
 
 public partial class QuickSelectDisplay : ComponentBase
 {
+    private int _activeEntryIndex;
+
+    private ElementReference? _quickSelectDisplayElementReference;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    
-    [Parameter, EditorRequired]
+
+    [Parameter]
+    [EditorRequired]
     public QuickSelectState QuickSelectState { get; set; } = null!;
-    
-    private ElementReference? _quickSelectDisplayElementReference;
-    private int _activeEntryIndex;
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             if (_quickSelectDisplayElementReference is not null)
-            {
                 await _quickSelectDisplayElementReference.Value.FocusAsync();
-            }
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 
@@ -36,30 +35,27 @@ public partial class QuickSelectDisplay : ComponentBase
         if (keyboardEventArgs.Key == "d")
         {
             if (_activeEntryIndex < localQuickSelectState.QuickSelectItems.Length - 1)
-            {
                 _activeEntryIndex++;
-            }
             else
-            {
                 _activeEntryIndex = 0;
-            }
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
             if (_activeEntryIndex < localQuickSelectState.QuickSelectItems.Length)
             {
                 HandleOnFocusOut();
-                
-                await localQuickSelectState.OnItemSelectedFunc.Invoke(localQuickSelectState.QuickSelectItems[_activeEntryIndex]);
+
+                await localQuickSelectState.OnItemSelectedFunc.Invoke(
+                    localQuickSelectState.QuickSelectItems[_activeEntryIndex]);
             }
         }
     }
-    
+
     private void HandleOnFocusOut()
     {
         Dispatcher.Dispatch(new SetQuickSelectStateAction(QuickSelectState with
         {
-            IsDisplayed = false
+            IsDisplayed = false,
         }));
     }
 }

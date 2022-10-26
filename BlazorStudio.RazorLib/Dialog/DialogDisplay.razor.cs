@@ -1,6 +1,4 @@
-﻿using BlazorStudio.ClassLib.Contexts;
-using BlazorStudio.ClassLib.Store.ContextCase;
-using BlazorStudio.ClassLib.Store.DialogCase;
+﻿using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.UserInterface;
 using BlazorStudio.RazorLib.ContextCase;
 using BlazorStudio.RazorLib.Transformable;
@@ -12,6 +10,9 @@ namespace BlazorStudio.RazorLib.Dialog;
 
 public partial class DialogDisplay : ComponentBase, IDisposable
 {
+    private ContextBoundary? _contextBoundary;
+
+    private TransformableDisplay? _transformableDisplay;
     [Inject]
     private IState<DialogStates> DialogStatesWrap { get; set; } = null!;
     [Inject]
@@ -20,15 +21,18 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     [Parameter]
     public DialogRecord DialogRecord { get; set; } = null!;
 
-    private TransformableDisplay? _transformableDisplay;
-    private ContextBoundary? _contextBoundary;
-
     private string CssStyleString => $"{OverrideZIndex} {DialogRecord.Dimensions.DimensionsCssString}";
-    
+
     private string OverrideZIndex => DialogStatesWrap.Value.DialogKeyWithOverridenZIndex is not null &&
                                      DialogStatesWrap.Value.DialogKeyWithOverridenZIndex == DialogRecord.DialogKey
         ? "z-index: 11;"
         : string.Empty;
+
+    public void Dispose()
+    {
+        DialogRecord.OnFocusRequestedEventHandler -= DialogRecordOnOnFocusRequestedEventHandler;
+        DialogRecord.OnStateHasChangeRequestedEventHandler -= DialogRecordOnOnStateHasChangeRequestedEventHandler;
+    }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -37,11 +41,11 @@ public partial class DialogDisplay : ComponentBase, IDisposable
             DialogRecord.OnFocusRequestedEventHandler += DialogRecordOnOnFocusRequestedEventHandler;
             DialogRecord.OnStateHasChangeRequestedEventHandler += DialogRecordOnOnStateHasChangeRequestedEventHandler;
         }
-        
+
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async void DialogRecordOnOnFocusRequestedEventHandler(object? sender, EventArgs e)
+    private async void DialogRecordOnOnFocusRequestedEventHandler()
     {
         if (_contextBoundary is not null)
         {
@@ -49,63 +53,47 @@ public partial class DialogDisplay : ComponentBase, IDisposable
             await InvokeAsync(StateHasChanged);
         }
     }
-    
-    private async void DialogRecordOnOnStateHasChangeRequestedEventHandler(object? sender, EventArgs e)
+
+    private async void DialogRecordOnOnStateHasChangeRequestedEventHandler()
     {
         await InvokeAsync(StateHasChanged);
     }
 
     private void FireSubscribeToDragEventWithMoveHandle()
     {
-        if (_transformableDisplay is not null)
-        {
-            _transformableDisplay.SubscribeToDragEventWithMoveHandle();
-        }
+        if (_transformableDisplay is not null) _transformableDisplay.SubscribeToDragEventWithMoveHandle();
     }
 
     private async Task ReRender()
     {
         await InvokeAsync(StateHasChanged);
     }
-    
+
     private void MinimizeOnClick()
     {
         Dispatcher.Dispatch(new ReplaceDialogAction(DialogRecord,
             DialogRecord with
             {
-                IsMinimized = true
+                IsMinimized = true,
             }));
     }
-    
+
     private void MaximizeOnClick()
     {
         double widthHeightViewportAmount = DialogRecord.IsMaximized ? 60 : 100;
         double leftTopViewportAmount = DialogRecord.IsMaximized ? 20 : 0;
-        bool isDisabled = !DialogRecord.IsMaximized;
+        var isDisabled = !DialogRecord.IsMaximized;
         DialogRecord.IsTransformable = DialogRecord.IsMaximized;
 
         DialogRecord.IsMaximized = !DialogRecord.IsMaximized;
 
+        foreach (var widthDimension in DialogRecord.Dimensions.WidthCalc) widthDimension.IsDisabled = isDisabled;
 
-        foreach (var widthDimension in DialogRecord.Dimensions.WidthCalc)
-        {
-            widthDimension.IsDisabled = isDisabled;
-        }
-        
-        foreach (var heightDimension in DialogRecord.Dimensions.HeightCalc)
-        {
-            heightDimension.IsDisabled = isDisabled;
-        }
-        
-        foreach (var leftDimension in DialogRecord.Dimensions.LeftCalc)
-        {
-            leftDimension.IsDisabled = isDisabled;
-        }
-        
-        foreach (var topDimension in DialogRecord.Dimensions.TopCalc)
-        {
-            topDimension.IsDisabled = isDisabled;
-        }
+        foreach (var heightDimension in DialogRecord.Dimensions.HeightCalc) heightDimension.IsDisabled = isDisabled;
+
+        foreach (var leftDimension in DialogRecord.Dimensions.LeftCalc) leftDimension.IsDisabled = isDisabled;
+
+        foreach (var topDimension in DialogRecord.Dimensions.TopCalc) topDimension.IsDisabled = isDisabled;
 
         var viewportWidthDimension = DialogRecord.Dimensions.WidthCalc
             .FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.ViewportWidth);
@@ -115,7 +103,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
             viewportWidthDimension.IsDisabled = false;
             viewportWidthDimension.Value = widthHeightViewportAmount;
         }
-        
+
         var viewportHeightDimension = DialogRecord.Dimensions.HeightCalc
             .FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.ViewportHeight);
 
@@ -124,7 +112,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
             viewportHeightDimension.IsDisabled = false;
             viewportHeightDimension.Value = widthHeightViewportAmount;
         }
-        
+
         var viewportLeftDimension = DialogRecord.Dimensions.LeftCalc
             .FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.ViewportWidth);
 
@@ -133,7 +121,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
             viewportLeftDimension.IsDisabled = false;
             viewportLeftDimension.Value = leftTopViewportAmount;
         }
-        
+
         var viewportTopDimension = DialogRecord.Dimensions.TopCalc
             .FirstOrDefault(x => x.DimensionUnitKind == DimensionUnitKind.ViewportHeight);
 
@@ -143,12 +131,12 @@ public partial class DialogDisplay : ComponentBase, IDisposable
             viewportTopDimension.Value = leftTopViewportAmount;
         }
     }
-    
+
     private void CloseOnClick()
     {
         Dispatcher.Dispatch(new DisposeDialogAction(DialogRecord));
     }
-    
+
     private Task HandleOnFocusInAsync(FocusEventArgs focusEventArgs)
     {
         var dialogStates = DialogStatesWrap.Value;
@@ -160,20 +148,14 @@ public partial class DialogDisplay : ComponentBase, IDisposable
                 .FirstOrDefault(d => d.DialogKey == dialogStates.DialogKeyWithOverridenZIndex);
 
             dialogStates.DialogKeyWithOverridenZIndex = null;
-            
+
             if (dialog is not null)
                 dialog.InvokeOnStateHasChangeRequestedEventHandler();
         }
-        
+
         DialogStatesWrap.Value.DialogKeyWithOverridenZIndex = DialogRecord.DialogKey;
         DialogStatesWrap.Value.MostRecentlyFocusedDialogKey = DialogRecord.DialogKey;
 
         return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        DialogRecord.OnFocusRequestedEventHandler -= DialogRecordOnOnFocusRequestedEventHandler;
-        DialogRecord.OnStateHasChangeRequestedEventHandler -= DialogRecordOnOnStateHasChangeRequestedEventHandler;
     }
 }

@@ -4,5 +4,5 @@ public enum FooterWindowKind
 {
     Terminal,
     NugetPackageManager,
-    TaskBar
+    TaskBar,
 }

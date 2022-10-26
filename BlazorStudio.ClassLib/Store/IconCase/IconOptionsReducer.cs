@@ -8,6 +8,6 @@ public class IconOptionsReducer
     public static IconOptionsState ReduceSetIconOptionsStateAction(IconOptionsState previousIconOptionsState,
         SetIconOptionsStateAction setIconOptionsStateAction)
     {
-        return new(setIconOptionsStateAction.IconSize);
+        return new IconOptionsState(setIconOptionsStateAction.IconSize);
     }
 }

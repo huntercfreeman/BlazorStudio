@@ -1,3 +1,3 @@
 namespace BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 
-public record RequestFocusOnNugetPackageManagerAction();
+public record RequestFocusOnNugetPackageManagerAction;

@@ -10,7 +10,8 @@ public partial class TerminalEntryDisplay : FluxorComponent
     [Inject]
     private IStateSelection<TerminalEntryOutputStates, string> TerminalEntryOutputStatesSelection { get; set; } = null!;
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public TerminalEntry TerminalEntry { get; set; } = null!;
 
     protected override void OnInitialized()
@@ -18,10 +19,7 @@ public partial class TerminalEntryDisplay : FluxorComponent
         TerminalEntryOutputStatesSelection
             .Select(x =>
             {
-                if (!x.OutputMap.TryGetValue(TerminalEntry.TerminalEntryKey, out var output))
-                {
-                    output = string.Empty;
-                }
+                if (!x.OutputMap.TryGetValue(TerminalEntry.TerminalEntryKey, out var output)) output = string.Empty;
 
                 return output;
             });

@@ -10,7 +10,7 @@ public class IndexedDocument
         Document = document;
         AbsoluteFilePathDotNet = absoluteFilePathDotNet;
     }
-    
+
     public Document Document { get; set; }
     public AbsoluteFilePathDotNet AbsoluteFilePathDotNet { get; set; }
 }

@@ -6,6 +6,7 @@ namespace BlazorStudio.RazorLib.TaskModelManager.Helpers;
 
 public partial class TaskModelManagerDialogEntryPointTaskModelListPreviewDisplay : ComponentBase, IDisposable
 {
+    private ImmutableArray<ITaskModel> _taskModelCache = ImmutableArray<ITaskModel>.Empty;
     [Parameter]
     public Func<IEnumerable<ITaskModel>> GetTaskModelsFunc { get; set; } = null!;
     [Parameter]
@@ -17,14 +18,22 @@ public partial class TaskModelManagerDialogEntryPointTaskModelListPreviewDisplay
     [Parameter]
     public string StyleParameter { get; set; } = string.Empty;
 
-    private ImmutableArray<ITaskModel> _taskModelCache = ImmutableArray<ITaskModel>.Empty;
+    public void Dispose()
+    {
+        TaskModelManagerService.OnTasksStateHasChangedEventHandler -=
+            TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler -=
+            TaskModelManagerServiceStateHasChangedEventHandler;
+    }
 
     protected override void OnInitialized()
     {
         _taskModelCache = GetTaskModelsFunc().ToImmutableArray();
 
-        TaskModelManagerService.OnTasksStateHasChangedEventHandler += TaskModelManagerServiceStateHasChangedEventHandler;
-        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler += TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTasksStateHasChangedEventHandler +=
+            TaskModelManagerServiceStateHasChangedEventHandler;
+        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler +=
+            TaskModelManagerServiceStateHasChangedEventHandler;
 
         base.OnInitialized();
     }
@@ -40,15 +49,9 @@ public partial class TaskModelManagerDialogEntryPointTaskModelListPreviewDisplay
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private async void TaskModelManagerServiceStateHasChangedEventHandler(object? sender, EventArgs? e)
+    private async void TaskModelManagerServiceStateHasChangedEventHandler()
     {
         _taskModelCache = GetTaskModelsFunc().ToImmutableArray();
         await InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        TaskModelManagerService.OnTasksStateHasChangedEventHandler -= TaskModelManagerServiceStateHasChangedEventHandler;
-        TaskModelManagerService.OnTaskSeemsUnresponsiveEventHandler -= TaskModelManagerServiceStateHasChangedEventHandler;
     }
 }

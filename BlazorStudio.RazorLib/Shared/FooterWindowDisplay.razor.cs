@@ -10,7 +10,8 @@ public partial class FooterWindowDisplay : FluxorComponent
 {
     [Inject]
     private IState<FooterWindowState> FooterWindowStateWrap { get; set; } = null!;
-    
-    [Parameter, EditorRequired]
+
+    [Parameter]
+    [EditorRequired]
     public Dimensions Dimensions { get; set; } = null!;
 }

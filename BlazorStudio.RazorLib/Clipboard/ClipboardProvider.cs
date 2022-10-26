@@ -1,9 +1,10 @@
+using BlazorStudio.ClassLib.Clipboard;
 using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.Clipboard;
 
 public class ClipboardProvider :
-    BlazorStudio.ClassLib.Clipboard.IClipboardProvider,
+    IClipboardProvider,
     BlazorTextEditor.RazorLib.Clipboard.IClipboardProvider
 {
     private readonly IJSRuntime _jsRuntime;
@@ -20,7 +21,7 @@ public class ClipboardProvider :
             return await _jsRuntime.InvokeAsync<string>(
                 "plainTextEditor.readClipboard");
         }
-        catch (TaskCanceledException e)
+        catch (TaskCanceledException)
         {
             return string.Empty;
         }
@@ -34,7 +35,7 @@ public class ClipboardProvider :
                 "plainTextEditor.setClipboard",
                 value);
         }
-        catch (TaskCanceledException e)
+        catch (TaskCanceledException)
         {
         }
     }

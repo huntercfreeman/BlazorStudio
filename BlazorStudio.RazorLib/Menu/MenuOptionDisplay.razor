@@ -1,7 +1,5 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
-@using BlazorStudio.ClassLib.Store.MenuCase
-@using BlazorStudio.ClassLib.Store.DropdownCase
+﻿@using BlazorStudio.ClassLib.Store.DropdownCase
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_menu-option-display @HasSubmenuOpenCssClass"
      tabindex="-1"
@@ -15,15 +13,15 @@
     @if (MenuOptionRecord.Children.Any())
     {
         <text>@(MenuOptionRecord.DisplayName)&nbsp;</text>
-        <IconChevronRight />
+        <IconChevronRight/>
 
         <DropdownDisplay Dimensions="_dropdownDimensions"
-                     DropdownKey="_dropdownKey"
-                     DropdownKind="DropdownKind.Horizontal"
-                     CloseOnOutOfBoundsClick="false">
+                         DropdownKey="_dropdownKey"
+                         DropdownKind="DropdownKind.Horizontal"
+                         CloseOnOutOfBoundsClick="false">
 
             <CascadingValue Name="CloseParentSubmenuFuncAsync" Value="CloseSelfSubmenuAsync">
-                <MenuDisplay MenuOptionRecords="MenuOptionRecord.Children" />
+                <MenuDisplay MenuOptionRecords="MenuOptionRecord.Children"/>
             </CascadingValue>
 
         </DropdownDisplay>
@@ -34,12 +32,12 @@
             @MenuOptionRecord.DisplayName
         </div>
 
-        @if (_displayWidget && (MenuOptionRecord.WidgetType is not null))
+        @if (_displayWidget && MenuOptionRecord.WidgetType is not null)
         {
             <div @onclick:stopPropagation="true"
                  class="bstudio_menu-option-display-widget">
                 <DynamicComponent Type="MenuOptionRecord.WidgetType"
-                                  Parameters="MenuOptionRecord.WidgetParameters" />
+                                  Parameters="MenuOptionRecord.WidgetParameters"/>
             </div>
         }
     }
