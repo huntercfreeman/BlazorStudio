@@ -36,11 +36,9 @@ public static class HtmlSyntaxTree
                 textEditorHtmlDiagnosticBag,
                 injectedLanguageDefinition);
 
-        var htmlSyntaxUnitBuilder = new HtmlSyntaxUnit.HtmlSyntaxUnitBuilder
-        {
-            RootTagSyntax = rootTagSyntaxBuilder.Build(),
-            TextEditorHtmlDiagnosticBag = textEditorHtmlDiagnosticBag,
-        };
+        var htmlSyntaxUnitBuilder = new HtmlSyntaxUnit.HtmlSyntaxUnitBuilder(
+            rootTagSyntaxBuilder.Build(),
+            textEditorHtmlDiagnosticBag);
 
         return htmlSyntaxUnitBuilder.Build();
     }

@@ -5,9 +5,16 @@ namespace Blazor.Text.Editor.Analysis.Html.ClassLib.InjectLanguage;
 
 public class InjectedLanguageDefinition
 {
-    public string InjectedLanguageCodeBlockTag { get; set; }
-    public string InjectedLanguageCodeBlockTagEscaped { get; set; }
-    public InjectedLanguageCodeBlock[] InjectedLanguageCodeBlocks { get; set; }
+    public InjectedLanguageDefinition(string injectedLanguageCodeBlockTag, string injectedLanguageCodeBlockTagEscaped, Func<StringWalker, TextEditorHtmlDiagnosticBag, InjectedLanguageDefinition, List<TagSyntax>> parseInjectedLanguageFunc, InjectedLanguageCodeBlock[] injectedLanguageCodeBlocks)
+    {
+        InjectedLanguageCodeBlockTag = injectedLanguageCodeBlockTag;
+        InjectedLanguageCodeBlockTagEscaped = injectedLanguageCodeBlockTagEscaped;
+        ParseInjectedLanguageFunc = parseInjectedLanguageFunc;
+        InjectedLanguageCodeBlocks = injectedLanguageCodeBlocks;
+    }
+
+    public string InjectedLanguageCodeBlockTag { get; }
+    public string InjectedLanguageCodeBlockTagEscaped { get; }
     /// <summary>
     ///     Assume following the <see cref="CodeBlockTag" /> there is
     ///     a single expression and that the func will notify the HTML
@@ -25,5 +32,6 @@ public class InjectedLanguageDefinition
     ///     for myself for the future.
     /// </summary>
     public Func<StringWalker, TextEditorHtmlDiagnosticBag, InjectedLanguageDefinition, List<TagSyntax>>
-        ParseInjectedLanguageFunc { get; set; }
+        ParseInjectedLanguageFunc { get; }
+    public InjectedLanguageCodeBlock[] InjectedLanguageCodeBlocks { get; }
 }
