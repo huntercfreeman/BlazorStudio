@@ -18,10 +18,10 @@ namespace BlazorStudio.RazorLib.StartupProjectControls;
 public partial class StartupProjectControlsDisplay : FluxorComponent
 {
     private CancellationTokenSource _cancellationTokenSource = new();
-    private EnqueueProcessOnTerminalEntryAction _enqueueProcessOnTerminalEntryAction;
+    private EnqueueProcessOnTerminalEntryAction? _enqueueProcessOnTerminalEntryAction;
     private bool _isEnqueuedToRun;
     private bool _isRunning;
-    private StringBuilder _outputBuilder;
+    private StringBuilder _outputBuilder = new();
     [Inject]
     private IState<StartupProjectState> StartupProjectStateWrap { get; set; } = null!;
     [Inject]
@@ -96,7 +96,7 @@ public partial class StartupProjectControlsDisplay : FluxorComponent
             }
 
             var containingDirectoryOfProject =
-                (IAbsoluteFilePath)StartupProjectStateWrap.Value.ProjectAbsoluteFilePath.Directories.Last();
+                (IAbsoluteFilePath)StartupProjectStateWrap.Value.ProjectAbsoluteFilePath!.Directories.Last();
 
             _enqueueProcessOnTerminalEntryAction = new EnqueueProcessOnTerminalEntryAction(
                 TerminalStateFacts.ProgramTerminalEntry.TerminalEntryKey,
@@ -119,7 +119,9 @@ public partial class StartupProjectControlsDisplay : FluxorComponent
 
     private void OutputDataReceived(object sender, DataReceivedEventArgs e)
     {
+#pragma warning disable CA1416
         _outputBuilder.Append(e.Data ?? string.Empty);
+#pragma warning restore CA1416
     }
 
     public CancellationToken CancelTokenSourceAndGetNewToken()
@@ -132,11 +134,16 @@ public partial class StartupProjectControlsDisplay : FluxorComponent
 
     protected override void Dispose(bool disposing)
     {
-        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource.Cancel();
 
         if (_enqueueProcessOnTerminalEntryAction is not null)
             _enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler();
 
         base.Dispose(disposing);
+    }
+
+    private void KillProcessOnClick()
+    {
+        _enqueueProcessOnTerminalEntryAction?.InvokeKillRequestedEventHandler();
     }
 }

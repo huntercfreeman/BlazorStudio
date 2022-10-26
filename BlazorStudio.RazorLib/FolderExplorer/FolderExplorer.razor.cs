@@ -44,7 +44,6 @@ public partial class FolderExplorer : FluxorComponent
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
 
     private bool _isInitialized;
-    private Func<Task>? _mostRecentRefreshContextMenuTarget;
     private List<IAbsoluteFilePath>? _rootAbsoluteFilePaths;
     private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
     private TreeViewWrapDisplay<IAbsoluteFilePath>? _treeViewWrapDisplay;
@@ -167,13 +166,13 @@ public partial class FolderExplorer : FluxorComponent
             });
         }
         else
-            treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
+            treeViewKeyboardEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private void FolderExplorerTreeViewOnSpaceKeyDown(
         TreeViewKeyboardEventDto<IAbsoluteFilePath> treeViewKeyboardEventDto)
     {
-        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
+        treeViewKeyboardEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private void FolderExplorerTreeViewOnDoubleClick(TreeViewMouseEventDto<IAbsoluteFilePath> treeViewMouseEventDto)
@@ -206,7 +205,7 @@ public partial class FolderExplorer : FluxorComponent
             });
         }
         else
-            treeViewMouseEventDto.ToggleIsExpanded.Invoke();
+            treeViewMouseEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)

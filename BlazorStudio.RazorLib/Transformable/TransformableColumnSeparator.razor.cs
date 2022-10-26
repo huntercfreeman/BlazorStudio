@@ -60,8 +60,12 @@ public partial class TransformableColumnSeparator : ComponentBase, IDisposable
 
                 if (_dragStateEventHandler is not null)
                 {
-                    if (_previousDragMouseEventArgs is not null) await _dragStateEventHandler(mouseEventArgs);
-
+                    if (_previousDragMouseEventArgs is not null &&
+                        mouseEventArgs is not null)
+                    {
+                        await _dragStateEventHandler(mouseEventArgs);
+                    }
+                    
                     _previousDragMouseEventArgs = mouseEventArgs;
 
                     await ReRenderFunc();

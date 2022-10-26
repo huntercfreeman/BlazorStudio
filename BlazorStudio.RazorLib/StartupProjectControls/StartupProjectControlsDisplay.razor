@@ -49,7 +49,7 @@
                 }
                 else if (_isRunning)
                 {
-                    <div @onclick="_enqueueProcessOnTerminalEntryAction.InvokeKillRequestedEventHandler">
+                    <div @onclick="KillProcessOnClick">
                         <IconStopCircle/>
                     </div>
                 }

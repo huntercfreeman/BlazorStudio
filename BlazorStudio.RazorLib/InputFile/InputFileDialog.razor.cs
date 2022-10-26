@@ -20,7 +20,7 @@ public partial class InputFileDialog : ComponentBase
     private TreeViewWrapKey _inputFileTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
 
     private bool _isInitialized;
-    private List<IAbsoluteFilePath> _rootAbsoluteFilePaths;
+    private List<IAbsoluteFilePath>? _rootAbsoluteFilePaths;
     private TreeViewWrap<IAbsoluteFilePath> _treeViewWrap = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
@@ -29,11 +29,11 @@ public partial class InputFileDialog : ComponentBase
     public DialogRecord DialogRecord { get; set; } = null!;
 
     [Parameter]
-    public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)>? OnEnterKeyDownOverride { get; set; }
+    public Action<(IAbsoluteFilePath absoluteFilePath, Action? toggleIsExpanded)>? OnEnterKeyDownOverride { get; set; }
     [Parameter]
-    public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded)>? OnSpaceKeyDownOverride { get; set; }
+    public Action<(IAbsoluteFilePath absoluteFilePath, Action? toggleIsExpanded)>? OnSpaceKeyDownOverride { get; set; }
     [Parameter]
-    public Action<(IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded, MouseEventArgs mouseEventArgs)>?
+    public Action<(IAbsoluteFilePath absoluteFilePath, Action? toggleIsExpanded, MouseEventArgs mouseEventArgs)>?
         OnDoubleClickOverride { get; set; }
     [Parameter]
     public Action<TreeViewContextMenuEventDto<IAbsoluteFilePath>>? ChooseContextMenuOption { get; set; }
@@ -122,7 +122,8 @@ public partial class InputFileDialog : ComponentBase
             return;
         }
 
-        if (treeViewKeyboardEventDto.Item.IsDirectory) treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
+        if (treeViewKeyboardEventDto.Item.IsDirectory) 
+            treeViewKeyboardEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private void InputFileTreeViewOnDoubleClick(TreeViewMouseEventDto<IAbsoluteFilePath> treeViewMouseEventDto)
@@ -134,7 +135,7 @@ public partial class InputFileDialog : ComponentBase
             return;
         }
 
-        treeViewMouseEventDto.ToggleIsExpanded.Invoke();
+        treeViewMouseEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private bool GetIsExpandable(IAbsoluteFilePath absoluteFilePath)

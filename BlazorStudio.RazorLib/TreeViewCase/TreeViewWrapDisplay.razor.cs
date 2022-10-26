@@ -9,9 +9,6 @@ namespace BlazorStudio.RazorLib.TreeViewCase;
 
 public partial class TreeViewWrapDisplay<T> : FluxorComponent
 {
-    private SequenceKey? _previousSequenceKey;
-
-    private int _sequence;
     [Inject]
     private IStateSelection<TreeViewWrapStates, ITreeViewWrap?> TreeViewWrapStateSelection { get; set; } = null!;
     [Inject]
@@ -115,10 +112,6 @@ public partial class TreeViewWrapDisplay<T> : FluxorComponent
     {
         if (treeViewWrap is null)
             return;
-
-        if (_previousSequenceKey is null || treeViewWrap.SequenceKey != _previousSequenceKey)
-        {
-        }
     }
 
     public void Reload()

@@ -130,11 +130,11 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                 .SetAsStartupProject(() =>
                     Dispatcher.Dispatch(new SetStartupProjectAction(contextMenuEventDto.Item)));
 
-            DialogRecord addProjectReferenceDialog = null;
+            DialogRecord? addProjectReferenceDialog = null;
 
             void AddProjectReferenceConfirmOnClickOverrideAction(ImmutableArray<IAbsoluteFilePath> activeItems)
             {
-                Dispatcher.Dispatch(new DisposeDialogAction(addProjectReferenceDialog));
+                Dispatcher.Dispatch(new DisposeDialogAction(addProjectReferenceDialog!));
 
                 var localSolutionExplorerState = SolutionExplorerStateWrap.Value;
 
@@ -343,7 +343,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
                 await File
                     .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName,
-                        string.Empty);
+                        string.Empty, 
+                        cancellationToken);
 
                 await localRefreshContextMenuTarget();
 
@@ -351,14 +352,18 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
                 var solutionState = SolutionStateWrap.Value;
 
-                var project = SolutionStateWrap.Value.ProjectIdToProjectMap[absoluteFilePathDotNet.ProjectId];
+                var project = SolutionStateWrap.Value.ProjectIdToProjectMap[absoluteFilePathDotNet.ProjectId!];
 
                 if (newFile.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_CLASS)
                 {
                     var syntaxTree =
-                        CSharpSyntaxTree.ParseText(await File.ReadAllTextAsync(newFile.GetAbsoluteFilePathString()));
+                        CSharpSyntaxTree.ParseText(
+                            await File.ReadAllTextAsync(
+                                newFile.GetAbsoluteFilePathString(), 
+                                cancellationToken));
 
-                    var document = project.Project.AddDocument(fileName, await syntaxTree.GetRootAsync());
+                    var document = project.Project
+                        .AddDocument(fileName, await syntaxTree.GetRootAsync(cancellationToken));
 
                     var nextProjectIdToProjectMap =
                         SolutionStateWrap.Value.ProjectIdToProjectMap
@@ -381,7 +386,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                     var document = project.Project
                         .AddDocument(
                             fileName,
-                            await File.ReadAllTextAsync(newFile.GetAbsoluteFilePathString()));
+                            await File
+                                .ReadAllTextAsync(newFile.GetAbsoluteFilePathString(), cancellationToken));
 
                     var nextProjectIdToProjectMap =
                         SolutionStateWrap.Value.ProjectIdToProjectMap
@@ -420,7 +426,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
                 var solutionState = SolutionStateWrap.Value;
 
-                var project = SolutionStateWrap.Value.ProjectIdToProjectMap[absoluteFilePathDotNet.ProjectId];
+                var project = SolutionStateWrap.Value.ProjectIdToProjectMap[absoluteFilePathDotNet.ProjectId!];
 
                 var namespaceString = project.Project.DefaultNamespace;
 
@@ -434,7 +440,8 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
                                     ? ExtensionNoPeriodFacts.RAZOR_CODEBEHIND
                                     : newFile.ExtensionNoPeriod,
                                 namespaceString,
-                                newFile.FileNameNoExtension));
+                                newFile.FileNameNoExtension), 
+                        cancellationToken);
 
                 await localRefreshContextMenuTarget();
 
@@ -505,7 +512,7 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
     {
         var localRefreshContextMenuTarget = ContextMenuEventDto.RefreshContextMenuTarget;
 
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async _ =>
             {
                 Directory.CreateDirectory(parentDirectoryAbsoluteFilePathString + directoryName);
 
@@ -520,19 +527,16 @@ public partial class SolutionExplorerMenuWrapperDisplay : ComponentBase
 
     private void DeleteFileFormOnAfterSubmitForm(AbsoluteFilePathDotNet absoluteFilePath)
     {
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async _ =>
             {
                 if (absoluteFilePath.IsDirectory)
-                {
                     Directory.Delete(absoluteFilePath.GetAbsoluteFilePathString(), true);
-                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
-                }
                 else
-                {
                     File.Delete(absoluteFilePath.GetAbsoluteFilePathString());
-                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
-                }
 
+                if (ContextMenuEventDto.RefreshParentOfContextMenuTarget is not null)
+                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
+                
                 Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
             },
             $"{nameof(DeleteFileFormOnAfterSubmitForm)}",

@@ -8,10 +8,10 @@ public record TreeViewContextMenuEventDto<T>(MouseEventArgs? MouseEventArgs,
         // ReSharper disable once NotAccessedPositionalProperty.Global
         KeyboardEventArgs? KeyboardEventArgs,
         T Item,
-        Action ToggleIsExpanded,
-        Action SetIsActive,
+        Action? ToggleIsExpanded,
+        Action? SetIsActive,
         Func<Task> RefreshContextMenuTarget,
-        Func<Task> RefreshParentOfContextMenuTarget,
+        Func<Task>? RefreshParentOfContextMenuTarget,
         ElementReference FocusAfterTarget)
     : TreeViewEventDto<T>(Item,
         ToggleIsExpanded,

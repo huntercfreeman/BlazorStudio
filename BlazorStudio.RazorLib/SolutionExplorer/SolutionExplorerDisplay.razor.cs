@@ -64,11 +64,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     private bool _isInitialized;
     private bool _loadingSln;
-    private Func<Task> _mostRecentRefreshContextMenuTarget;
 
-    private DialogRecord _newCSharpProjectDialog;
-    private List<AbsoluteFilePathDotNet> _rootAbsoluteFilePaths;
-    private ElementReference _solutionExplorerElementReference;
+    private DialogRecord? _newCSharpProjectDialog;
+    private List<AbsoluteFilePathDotNet>? _rootAbsoluteFilePaths;
     private RichErrorModel? _solutionExplorerStateWrapStateChangedRichErrorModel;
     private TreeViewWrapKey _solutionExplorerTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     private TreeViewWrap<AbsoluteFilePathDotNet> _treeViewWrap = null!;
@@ -391,13 +389,13 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             });
         }
         else
-            treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
+            treeViewKeyboardEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private void SolutionExplorerTreeViewOnSpaceKeyDown(
         TreeViewKeyboardEventDto<AbsoluteFilePathDotNet> treeViewKeyboardEventDto)
     {
-        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
+        treeViewKeyboardEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private void SolutionExplorerTreeViewOnDoubleClick(
@@ -462,7 +460,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             });
         }
         else
-            treeViewMouseEventDto.ToggleIsExpanded.Invoke();
+            treeViewMouseEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private bool GetIsExpandable(AbsoluteFilePathDotNet absoluteFilePath)
@@ -486,6 +484,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     private void OpenNewCSharpProjectDialog()
     {
+        if (_newCSharpProjectDialog is null)
+            return;
+        
         if (DialogStatesWrap.Value.List.All(x => x.DialogKey != _newCSharpProjectDialog.DialogKey))
             Dispatcher.Dispatch(new RegisterDialogAction(_newCSharpProjectDialog));
     }
@@ -526,7 +527,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
                 var indexedProject = new IndexedProject(recentlyCreatedProject, absoluteFilePathDotNet);
 
-                nextProjectIdToProjectMap.Add(absoluteFilePathDotNet.ProjectId,
+                nextProjectIdToProjectMap.Add(absoluteFilePathDotNet.ProjectId!,
                     indexedProject);
 
                 var localFileDocumentMap =
@@ -578,6 +579,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             });
         }
 
+        if (localSolutionExplorerState.SolutionAbsoluteFilePath is null)
+            return;
+        
         var command = $"dotnet sln {localSolutionExplorerState.SolutionAbsoluteFilePath.GetAbsoluteFilePathString()} " +
                       $"add {absoluteFilePathDotNet.GetAbsoluteFilePathString()}";
 

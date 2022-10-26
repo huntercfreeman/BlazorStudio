@@ -8,8 +8,6 @@ namespace BlazorStudio.RazorLib.NewCSharpProject;
 
 public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
 {
-    private bool _forceSelectCSharpTemplateTreeViewOpen;
-
     private TreeViewWrapKey _newCSharpProjectTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
 
     [Inject]
@@ -93,11 +91,11 @@ public partial class SelectCSharpProjectTemplate : ComponentBase, IDisposable
 
     private void TreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<RenderCSharpTemplate> treeViewKeyboardEventDto)
     {
-        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
+        treeViewKeyboardEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private void TreeViewOnDoubleClick(TreeViewMouseEventDto<RenderCSharpTemplate> treeViewMouseEventDto)
     {
-        treeViewMouseEventDto.ToggleIsExpanded.Invoke();
+        treeViewMouseEventDto.ToggleIsExpanded?.Invoke();
     }
 }

@@ -9,7 +9,6 @@ namespace BlazorStudio.RazorLib.Terminal;
 public partial class TerminalDisplay : FluxorComponent
 {
     private ContextBoundary _contextBoundary = null!;
-    private ElementReference _terminalDisplayElementReference;
     [Inject]
     private IState<TerminalState> TerminalStatesWrap { get; set; } = null!;
     [Inject]

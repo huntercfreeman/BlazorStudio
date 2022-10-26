@@ -40,8 +40,6 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     private TreeViewWrapDisplay<NugetPackageManagerTreeViewEntry>? _nugetPackagesTreeViewWrapDisplay;
     private string _nugetQuery = string.Empty;
 
-    private SequenceKey? _previousFocusRequestedSequenceKey;
-
     private Project? _selectedProjectToModify;
     [Inject]
     private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
@@ -91,14 +89,10 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
 
     private async void NugetPackageManagerStateWrapperOnStateChanged(object? sender, EventArgs e)
     {
-        if (_previousFocusRequestedSequenceKey is null ||
-            _previousFocusRequestedSequenceKey != NugetPackageManagerStateWrapper.Value.FocusRequestedSequenceKey)
+        if (_contextBoundary is not null)
         {
-            if (_contextBoundary is not null)
-            {
-                await _contextBoundary.HandleOnFocusInAsync(null);
-                ContextFacts.NugetPackageManagerDisplayContext.InvokeOnFocusRequestedEventHandler();
-            }
+            await _contextBoundary.HandleOnFocusInAsync(null);
+            ContextFacts.NugetPackageManagerDisplayContext.InvokeOnFocusRequestedEventHandler();
         }
     }
 
@@ -228,7 +222,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
                     NugetPackageManagerTreeViewEntryKind.MarkupStringValue));
 
                 children.Add(new NugetPackageManagerTreeViewEntry(
-                    nugetPackageVersion.AtId,
+                    nugetPackageVersion.AtId ?? string.Empty,
                     false,
                     (MarkupString)$"@id: <em>{nugetPackageVersion.AtId}</em>",
                     NugetPackageManagerTreeViewEntryKind.MarkupStringValue));
@@ -260,19 +254,19 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
     private void ThemeTreeViewOnEnterKeyDown(
         TreeViewKeyboardEventDto<NugetPackageManagerTreeViewEntry> treeViewKeyboardEventDto)
     {
-        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
+        treeViewKeyboardEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private void ThemeTreeViewOnSpaceKeyDown(
         TreeViewKeyboardEventDto<NugetPackageManagerTreeViewEntry> treeViewKeyboardEventDto)
     {
-        treeViewKeyboardEventDto.ToggleIsExpanded.Invoke();
+        treeViewKeyboardEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private void ThemeTreeViewOnDoubleClick(
         TreeViewMouseEventDto<NugetPackageManagerTreeViewEntry> treeViewMouseEventDto)
     {
-        treeViewMouseEventDto.ToggleIsExpanded.Invoke();
+        treeViewMouseEventDto.ToggleIsExpanded?.Invoke();
     }
 
     private IEnumerable<NugetPackageManagerTreeViewEntry> GetNugetPackageRecordChildren(
@@ -358,7 +352,7 @@ public partial class NugetPackageManagerDisplay : FluxorComponent
             NugetPackageManagerTreeViewEntryKind.MarkupStringValue));
 
         children.Add(new NugetPackageManagerTreeViewEntry(
-            nugetPackageRecord.AtId,
+            nugetPackageRecord.AtId ?? string.Empty,
             false,
             (MarkupString)$"@id: <em>{nugetPackageRecord.AtId}</em>",
             NugetPackageManagerTreeViewEntryKind.MarkupStringValue));

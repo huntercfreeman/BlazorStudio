@@ -133,7 +133,8 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
             {
                 await File
                     .AppendAllTextAsync(parentDirectoryAbsoluteFilePathString + fileName,
-                        string.Empty);
+                        string.Empty, 
+                        cancellationToken);
 
                 await localRefreshContextMenuTarget();
 
@@ -147,7 +148,7 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
     private void CreateNewDirectoryFormOnAfterSubmitForm(string parentDirectoryAbsoluteFilePathString,
         string directoryName)
     {
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async _ =>
             {
                 Directory.CreateDirectory(parentDirectoryAbsoluteFilePathString + directoryName);
 
@@ -162,18 +163,15 @@ public partial class FolderExplorerMenuWrapperDisplay : ComponentBase
 
     private void DeleteFileFormOnAfterSubmitForm(IAbsoluteFilePath absoluteFilePath)
     {
-        _ = TaskModelManagerService.EnqueueTaskModelAsync(async cancellationToken =>
+        _ = TaskModelManagerService.EnqueueTaskModelAsync(async _ =>
             {
                 if (absoluteFilePath.IsDirectory)
-                {
                     Directory.Delete(absoluteFilePath.GetAbsoluteFilePathString(), true);
-                    await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
-                }
                 else
-                {
                     File.Delete(absoluteFilePath.GetAbsoluteFilePathString());
+
+                if (ContextMenuEventDto.RefreshParentOfContextMenuTarget is not null)
                     await ContextMenuEventDto.RefreshParentOfContextMenuTarget.Invoke();
-                }
 
                 Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
             },

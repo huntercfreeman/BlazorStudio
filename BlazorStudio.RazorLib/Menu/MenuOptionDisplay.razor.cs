@@ -11,8 +11,6 @@ namespace BlazorStudio.RazorLib.Menu;
 
 public partial class MenuOptionDisplay : FluxorComponent
 {
-    private int _activeMenuOptionIndex;
-
     private bool _displayWidget;
 
     private Dimensions _dropdownDimensions = new()

@@ -14,7 +14,6 @@ namespace BlazorStudio.RazorLib.NewCSharpProject;
 
 public partial class NewCSharpProjectDialog : ComponentBase
 {
-    private bool _attemptedToRetrieveProjectTemplates;
     private bool _disableExecuteButton;
     private readonly string _executionOfNewCSharpProjectOutput = string.Empty;
     private bool _finishedCreatingProject;
@@ -60,17 +59,18 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
             void OnEnd(Process finishedProcess)
             {
-                if (output is null)
+                if (output == string.Empty)
                     return;
 
                 _startingRetrievingProjectTemplates = false;
-                _attemptedToRetrieveProjectTemplates = true;
 
                 _templates = new List<CSharpTemplate>();
 
                 // I cannot get 'dotnet new list' to run when I use Ubuntu OS
                 // Therefore I am executing the deprecated version.
-                var skipIsDeprecatedNotice = output.IndexOf("Template Name");
+                var skipIsDeprecatedNotice = output.IndexOf(
+                    "Template Name", 
+                    StringComparison.Ordinal);
 
                 if (skipIsDeprecatedNotice != -1)
                 {
@@ -109,9 +109,9 @@ public partial class NewCSharpProjectDialog : ComponentBase
 
                 var stringReader = new StringReader(actualValues);
 
-                var line = string.Empty;
+                string line;
 
-                while ((line = stringReader.ReadLine()) is not null && line.Length > lengthsOfSections.Sum(x => x))
+                while ((line = stringReader.ReadLine() ?? string.Empty) is not null && line.Length > lengthsOfSections.Sum(x => x))
                 {
                     var templateName = line.Substring(0, lengthsOfSections[0]);
                     var shortName = line.Substring(lengthsOfSections[0] + 2, lengthsOfSections[1]);

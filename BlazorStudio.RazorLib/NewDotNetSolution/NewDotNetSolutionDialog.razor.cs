@@ -16,9 +16,6 @@ namespace BlazorStudio.RazorLib.NewDotNetSolution;
 
 public partial class NewDotNetSolutionDialog : ComponentBase
 {
-    private bool _disableExecuteButton;
-    private bool _finishedCreatingSolution;
-
     private string _solutionName = string.Empty;
     private bool _startingCreatingSolution;
     private readonly string _dotnetNewSlnCommand = "dotnet new sln";
@@ -40,9 +37,6 @@ public partial class NewDotNetSolutionDialog : ComponentBase
     private void InputFileDialogOnEnterKeyDownOverride(
         (IAbsoluteFilePath absoluteFilePath, Action toggleIsExpanded) tupleArgument)
     {
-        if (_disableExecuteButton || _finishedCreatingSolution)
-            return;
-
         if (tupleArgument.absoluteFilePath.IsDirectory)
         {
             _inputFileDialogSelection = tupleArgument.absoluteFilePath;
@@ -53,9 +47,6 @@ public partial class NewDotNetSolutionDialog : ComponentBase
     private void InputFileDialogChooseContextMenuOption(
         TreeViewContextMenuEventDto<IAbsoluteFilePath> treeViewContextMenuEventDto)
     {
-        if (_disableExecuteButton || _finishedCreatingSolution)
-            return;
-
         if (treeViewContextMenuEventDto.Item.IsDirectory)
         {
             _inputFileDialogSelection = treeViewContextMenuEventDto.Item;
