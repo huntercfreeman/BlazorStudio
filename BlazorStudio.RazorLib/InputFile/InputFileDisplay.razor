@@ -8,9 +8,10 @@
                 @treeViewModel.Item.FilenameWithExtension
             </ItemRenderFragment>
             
-            <ContextMenuEventRenderFragment Context="treeViewModel">
-                <div class="bte_dropdown-display-default-background">
-                    <MenuDisplay MenuRecord="GetContextMenu(treeViewModel)" />
+            <ContextMenuEventRenderFragment Context="contextMenuEvent">
+                <div class="bte_dropdown-display-default-background"
+                     style="@GetStyleForContextMenu(contextMenuEvent.CapturedMouseEventArgs)">
+                    <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent.TreeViewModel)" />
                 </div>
             </ContextMenuEventRenderFragment>
         </TreeViewDisplay>

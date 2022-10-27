@@ -1,3 +1,4 @@
+using BlazorStudio.ClassLib.CustomEvents;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.ClassLib.Keyboard;
@@ -220,6 +221,15 @@ public static class KeyboardKeyFacts
                           && altWasPressed;
 
         return wasShiftF10 || wasAltPeriod;
+    }
+    
+    public static bool CheckIsContextMenuEvent(CustomKeyDownEventArgs customKeyDownEventArgs)
+    {
+        return CheckIsAlternateContextMenuEvent(
+            customKeyDownEventArgs.Key, 
+            customKeyDownEventArgs.Code, 
+            customKeyDownEventArgs.ShiftWasPressed, 
+            customKeyDownEventArgs.AltWasPressed);
     }
     
     public static bool CheckIsContextMenuEvent(string key, string code, bool shiftWasPressed, bool altWasPressed)

@@ -14,6 +14,9 @@
           @ref="_titleElementReference"
           @onkeydown:stopPropagation="true"
           @oncustomkeydown="HandleTitleOnCustomKeyDown"
+          @oncontextmenu="HandleTitleOnContextMenu"
+          @oncontextmenu:stopPropagation="true"
+          @oncontextmenu:preventDefault="true"
           tabindex="@TitleTabIndex">
         <span class="bte_tree-view-display-expansion"
               @onclick="ToggleIsExpandedOnClick"
@@ -33,7 +36,7 @@
         <DropdownDisplay DropdownKey="_contextMenuEventDropdownKey"
                          DropdownPositionKind="DropdownPositionKind.Vertical">
             
-            @ContextMenuEventRenderFragment(TreeViewModel)
+            @ContextMenuEventRenderFragment(ContextMenuEvent)
         </DropdownDisplay>
     </span>
     

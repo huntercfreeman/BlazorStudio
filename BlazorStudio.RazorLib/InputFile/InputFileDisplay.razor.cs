@@ -7,6 +7,7 @@ using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
@@ -85,5 +86,14 @@ public partial class InputFileDisplay : ComponentBase
             
             TextEditorService.RegisterTextEditor(textEditor);
         });
+    }
+
+    private string GetStyleForContextMenu(MouseEventArgs? mouseEventArgs)
+    {
+        if (mouseEventArgs is null)
+            return string.Empty;
+
+        return 
+            $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
     }
 }
