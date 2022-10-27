@@ -1,4 +1,6 @@
-﻿using BlazorStudio.ClassLib.Store.ThemeCase;
+﻿using BlazorStudio.ClassLib.CustomEvents;
+using BlazorStudio.ClassLib.Store.ThemeCase;
+using BlazorStudio.ClassLib.TreeView;
 using BlazorTextEditor.RazorLib.Store.ThemeCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -8,34 +10,26 @@ namespace BlazorStudio.RazorLib.Theme;
 
 public partial class ThemeSelectTreeView : ComponentBase
 {
-    private List<ThemeKey> _rootThemes = GetRootThemes();
-
-    private TreeViewWrapKey _themeTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private static List<ThemeKey> GetRootThemes()
+    private TreeViewKey _themeTreeViewKey = TreeViewKey.NewTreeViewKey();
+
+    private TreeViewModel<ThemeRecord> GetRoot()
     {
-        return ThemeFacts.AllDefaultThemeKeys.ToList();
+        return new TreeViewModel<ThemeRecord>(
+            null,
+            LoadTreeViewModelChildren);
     }
 
-    private Task<IEnumerable<ThemeKey>> LoadThemesChildren(ThemeKey themeKey)
+    private Task LoadTreeViewModelChildren(TreeViewModel<ThemeRecord> treeViewModel)
     {
-        return Task.FromResult(Array.Empty<ThemeKey>().AsEnumerable());
-    }
-
-    private void ThemeTreeViewOnEnterKeyDown(TreeViewKeyboardEventDto<ThemeKey> treeViewKeyboardEventDto)
-    {
-        Dispatcher.Dispatch(new SetThemeStateAction(treeViewKeyboardEventDto.Item));
-    }
-
-    private void ThemeTreeViewOnSpaceKeyDown(TreeViewKeyboardEventDto<ThemeKey> treeViewKeyboardEventDto)
-    {
-        ThemeTreeViewOnEnterKeyDown(treeViewKeyboardEventDto);
-    }
-
-    private void ThemeTreeViewOnDoubleClick(TreeViewMouseEventDto<ThemeKey> treeViewMouseEventDto)
-    {
-        Dispatcher.Dispatch(new SetThemeStateAction(treeViewMouseEventDto.Item));
+        var children = ThemeFacts.DefaultThemeRecords
+            .Select(x => new TreeViewModel<ThemeRecord>(
+                x,
+                LoadTreeViewModelChildren));
+                
+        treeViewModel.Children.Clear();
+        treeViewModel.Children.AddRange(children);
     }
 }

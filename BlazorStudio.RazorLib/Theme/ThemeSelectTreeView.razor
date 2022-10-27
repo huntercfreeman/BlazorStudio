@@ -1,13 +1,6 @@
-﻿<TreeViewWrapDisplay ShouldDispose="false"
-                     TreeViewWrapKey="_themeTreeViewKey"
-                     RootItems="_rootThemes"
-                     GetChildrenFunc="LoadThemesChildren"
-                     OnEnterKeyDown="ThemeTreeViewOnEnterKeyDown"
-                     OnSpaceKeyDown="ThemeTreeViewOnSpaceKeyDown"
-                     OnDoubleClick="ThemeTreeViewOnDoubleClick"
-                     IsExpandable="_ => false">
+﻿<TreeViewDisplay TreeViewModel="GetRoot()">
 
     <ItemRenderFragment Context="theme">
         @theme.KeyName
     </ItemRenderFragment>
-</TreeViewWrapDisplay>
+</TreeViewDisplay>

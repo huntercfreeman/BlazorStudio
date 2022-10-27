@@ -1,4 +1,5 @@
 using BlazorStudio.ClassLib.Store.NotificationCase;
+using BlazorStudio.ClassLib.TreeView;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Build.Locator;
@@ -10,7 +11,7 @@ public partial class SelectMsBuildForm : ComponentBase
     private string _providedAbsoluteFilePathToMsBuildVersion = string.Empty;
     private VisualStudioInstance? _selectedVisualStudioInstance;
 
-    private readonly TreeViewWrapKey _selectMsBuildTreeViewKey = TreeViewWrapKey.NewTreeViewWrapKey();
+    private readonly TreeViewKey _selectMsBuildTreeViewKey = TreeViewKey.NewTreeViewKey();
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
