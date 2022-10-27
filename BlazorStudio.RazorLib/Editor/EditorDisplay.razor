@@ -1,60 +1,9 @@
-﻿@using BlazorTextEditor.RazorLib.TextEditor
-@using BlazorTextEditor.RazorLib
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@using BlazorStudio.ClassLib.Context
+@using BlazorStudio.RazorLib.ContextCase
 
-<ContextBoundary CssClassString="bstudio_editor-display bstudio_focus-display-large"
-                 CssStyleString="@Dimensions.DimensionsCssString"
-                 ContextKey="ContextFacts.EditorDisplayContext.ContextKey">
-
-    <h5 class="bstudio_large-title"
-        style="padding: 5px; cursor: pointer;"
-        @onclick="_ => _textEditorShouldRemeasureFlag = !_textEditorShouldRemeasureFlag">
-        Editor Display (Double-Click here to re-measure)
-    </h5>
-
-    <div style="padding: 0 5px; height: 100%;">
-        @{
-            var textEditorList = TextEditorService.TextEditorStates.TextEditorList;
-            var activeTextEditorKey = EditorStateWrap.Value.TextEditorKey;
-
-            <div class="bstudio_editor-tabs-listing">
-                @for (var i = 0; i < textEditorList.Count; i++)
-                {
-                    var index = i;
-                    var textEditor = textEditorList[index];
-
-                    <EditorTabDisplay TabIndex="index"
-                                      TextEditor="textEditor"/>
-                }
-            </div>
-
-            if (activeTextEditorKey != TextEditorKey.Empty)
-            {
-                var activeTextEditor =
-                    TextEditorService.TextEditorStates.TextEditorList
-                        .FirstOrDefault();
-
-                <TextEditorDisplay @ref="_textEditorDisplay"
-                                   TextEditorKey="activeTextEditorKey"
-                                   StyleCssString="width: 100%; height: calc(100% - 2rem - 1.8rem - 10px);"
-                                   OnSaveRequested="HandleOnSaveRequested"
-                                   AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync"
-                                   ShouldRemeasureFlag="_textEditorShouldRemeasureFlag"
-                                   TabIndex="0">
-
-                    <OnContextMenuRenderFragment>
-                        <TextEditorContextMenu TextEditor="activeTextEditor"
-                                               TextEditorDisplay="_textEditorDisplay"/>
-                    </OnContextMenuRenderFragment>
-
-                    <AutoCompleteMenuRenderFragment>
-                        <TextEditorAutoCompleteMenu AutoCompleteWordText="@_autoCompleteWordText"/>
-                    </AutoCompleteMenuRenderFragment>
-                </TextEditorDisplay>
-
-                <TextEditorFooter TextEditor="activeTextEditor"
-                                  TextEditorDisplay="_textEditorDisplay"/>
-            }
-        }
-    </div>
+<ContextBoundary ContextRecord="ContextFacts.EditorContext"
+                 ClassCssString="bte_editor-display"
+                 StyleCssString="@EditorElementDimensions.StyleString">
+    
+    <TextEditorDisplay TextEditorKey="TextEditorStatesWrap.Value.TextEditorList.Last().Key"/>    
 </ContextBoundary>

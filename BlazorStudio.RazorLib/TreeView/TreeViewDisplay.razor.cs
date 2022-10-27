@@ -17,12 +17,16 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     public TreeViewModel<TItem> TreeViewModel { get; set; } = null!;
     [Parameter, EditorRequired]
     public RenderFragment<TreeViewModel<TItem>> ItemRenderFragment { get; set; } = null!;
-    [Parameter]
+    [Parameter, EditorRequired]
     public RenderFragment<TreeViewModel<TItem>> ContextMenuEventRenderFragment { get; set; } = null!;
     [Parameter]
-    public Func<TreeViewModel<TItem>, CustomKeyDownEventArgs, Task>? OnAfterKeyDown { get; set; }
+    public Func<TreeViewModel<TItem>>? GetRootFunc { get; set; }
     [Parameter]
-    public TreeViewDisplayInternalParameters<TItem>? InternalUseOnly { get; set; }
+    public int Depth { get; set; }
+    [Parameter]
+    public int Index { get; set; }
+    [Parameter]
+    public TreeViewDisplay<TItem>? ParentTreeViewDisplay { get; set; }
 
     private const int PADDING_LEFT_PER_DEPTH_IN_PIXELS = 25;
     
@@ -30,9 +34,9 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     private ElementReference? _titleElementReference;
     private DropdownKey _contextMenuEventDropdownKey = DropdownKey.NewDropdownKey();
 
-    private TreeViewModel<TItem> Root => InternalUseOnly?.GetRootFunc is null
+    private TreeViewModel<TItem> Root => GetRootFunc is null
         ? TreeViewModel
-        : InternalUseOnly.GetRootFunc.Invoke();
+        : GetRootFunc.Invoke();
 
     private string IsActiveDescendantClassCss => IsActiveDescendant
         ? "bte_active"
@@ -41,7 +45,7 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     private bool IsActiveDescendant =>
         Root.ActiveDescendant is not null && Root.ActiveDescendant.Id == TreeViewModel.Id;
 
-    private int PaddingLeft => (InternalUseOnly?.Depth ?? 0) * PADDING_LEFT_PER_DEPTH_IN_PIXELS;
+    private int PaddingLeft => Depth * PADDING_LEFT_PER_DEPTH_IN_PIXELS;
 
     private string RootTabIndex => Root.Id == TreeViewModel.Id
         ? "0"
@@ -130,10 +134,13 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
             {
+                // CASE: TreeViewModel.IsExpanded
+                // CASE: !TreeViewModel.IsExpanded && ParentTreeViewDisplay is not null
+
                 if (TreeViewModel.IsExpanded)
                     TreeViewModel.IsExpanded = false;
-                else if (InternalUseOnly?.ParentTreeViewDisplay is not null)
-                    SetActiveDescendantAndRerender(InternalUseOnly.ParentTreeViewDisplay.TreeViewModel);
+                else if (ParentTreeViewDisplay is not null)
+                    SetActiveDescendantAndRerender(ParentTreeViewDisplay.TreeViewModel);
                 
                 break;
             }
@@ -144,52 +151,82 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
                 {
                     SetActiveDescendantAndRerender(TreeViewModel.Children.First());
                 }
-                else if (InternalUseOnly?.ParentTreeViewDisplay is not null)
+                else if (ParentTreeViewDisplay is not null)
                 {
-                    if (InternalUseOnly.Index < InternalUseOnly.ParentTreeViewDisplay.TreeViewModel.Children.Count - 1)
+                    if (Index < ParentTreeViewDisplay.TreeViewModel.Children.Count - 1)
                     {
                         SetActiveDescendantAndRerender(
-                            InternalUseOnly.ParentTreeViewDisplay.TreeViewModel.Children[InternalUseOnly.Index + 1]);
+                            ParentTreeViewDisplay.TreeViewModel.Children[Index + 1]);
                     }
                     else
                     {
                         var targetDisplay = this;
 
-                        while (targetDisplay.InternalUseOnly.Index == (targetDisplay.InternalUseOnly.ParentTreeViewDisplay?.TreeViewModel.Children.Count ?? 0) - 1)
+                        while (targetDisplay.Index == (targetDisplay.ParentTreeViewDisplay?.TreeViewModel.Children.Count ?? 0) - 1)
                         {
-                            if (targetDisplay.InternalUseOnly.ParentTreeViewDisplay is null)
+                            if (targetDisplay.ParentTreeViewDisplay is null)
                                 break;
 
-                            targetDisplay = targetDisplay.InternalUseOnly.ParentTreeViewDisplay;
+                            targetDisplay = targetDisplay.ParentTreeViewDisplay;
                         }
 
-                        if (targetDisplay.InternalUseOnly.ParentTreeViewDisplay is null ||
-                            targetDisplay.InternalUseOnly.Index == (targetDisplay.InternalUseOnly.ParentTreeViewDisplay?.TreeViewModel.Children.Count ?? 0) - 1)
+                        if (targetDisplay.ParentTreeViewDisplay is null ||
+                            targetDisplay.Index == (targetDisplay.ParentTreeViewDisplay?.TreeViewModel.Children.Count ?? 0) - 1)
                         {
                             break;
                         }
 
-                        var model = targetDisplay.InternalUseOnly.ParentTreeViewDisplay.TreeViewModel.Children[targetDisplay.InternalUseOnly.Index + 1];
+                        var model = targetDisplay.ParentTreeViewDisplay.TreeViewModel.Children[targetDisplay.Index + 1];
 
                         SetActiveDescendantAndRerender(model);
                     }
                 }
                 
+                // CASE: TreeViewModel.IsExpanded && has children
+                // CASE: Parent is not null
+                //     SUB_CASE: TreeViewModel is NOT the last child
+                //     SUB_CASE: TreeViewModel is the last child
+                //     {
+                //         /*
+                //                  * Algorithm:
+                //                  *
+                //                  * Capture a variable reference named 'targetDisplay' to the TreeViewDisplay.
+                //                  *
+                //                  * while (targetDisplay is final child of their respective parent // so targetDisplay.Parent.Last() == targetDisplay)
+                //                  * {
+                //                  *     if (targetDisplay.Parent is null)
+                //                  *         break;
+                //                  * 
+                //                  *     update targetDisplay = targetDisplay.Parent;
+                //                  * }
+                //                  * 
+                //                  * 
+                //                  *
+                //                  *  if (targetDisplay.ParentTreeViewDisplay is null ||
+                //                         targetDisplay.Index == ParentTreeViewDisplay.TreeViewModel.Children.Count - 1)
+                //                  *      do nothing
+                //
+                //                     targetDisplay = targetDisplay.nextSibling
+                //                  * 
+                //                  * SetActiveDescendantAndRerender(targetDisplay);
+                //                  */
+                //     }
+
                 break;
             }
             case KeyboardKeyFacts.MovementKeys.ARROW_UP:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
             {
-                if (InternalUseOnly?.ParentTreeViewDisplay is null)
+                if (ParentTreeViewDisplay is null)
                     break;
 
-                if (InternalUseOnly.Index == 0)
+                if (Index == 0)
                 {
-                    SetActiveDescendantAndRerender(InternalUseOnly.ParentTreeViewDisplay.TreeViewModel);
+                    SetActiveDescendantAndRerender(ParentTreeViewDisplay.TreeViewModel);
                 }
                 else
                 {
-                    var model = InternalUseOnly.ParentTreeViewDisplay.TreeViewModel.Children[InternalUseOnly.Index - 1];
+                    var model = ParentTreeViewDisplay.TreeViewModel.Children[Index - 1];
 
                     while (model.IsExpanded && model.Children.Any())
                     {
@@ -199,11 +236,23 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
                     SetActiveDescendantAndRerender(model);
                 }
 
+
+                // CASE: ParentDisplay is null
+                // CASE: ParentDisplay is NOT null
+                //     SUB_CASE: First child of parent
+                //     SUB_CASE: NOT first child of parent
+                //         SUB_CASE: Previous sibling IsExpanded && PreviousSibling.Children.Any()
+
                 break;
             }
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
             {
+                // -CASE: TreeViewModel.IsExpanded  && TreeViewModel.Children.Any()
+                //     -CASE: (NOT) TreeViewModel.IsExpanded
+                //         -SUB_CASE: TreeViewModel.IsExpandable
+                //         -SUB_CASE: (NOT) TreeViewModel.IsExpandable
+
                 if (TreeViewModel.IsExpanded && TreeViewModel.Children.Any())
                 {
                     SetActiveDescendantAndRerender(TreeViewModel.Children.First());
@@ -220,9 +269,9 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             {
                 if (customKeyDownEventArgs.CtrlWasPressed)
                 {
-                    if (InternalUseOnly?.ParentTreeViewDisplay is not null)
+                    if (ParentTreeViewDisplay is not null)
                     {
-                        SetActiveDescendantAndRerender(InternalUseOnly.ParentTreeViewDisplay.TreeViewModel.Children.First());
+                        SetActiveDescendantAndRerender(ParentTreeViewDisplay.TreeViewModel.Children.First());
                     }
                 }
                 else
@@ -230,6 +279,9 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
                     // Later video add a while loop
                     SetActiveDescendantAndRerender(Root);
                 }
+                
+                // if (customKeyDownEventArgs.CtrlWasPressed)
+                // else if (Root.Children.Any())
 
                 break;
             }
@@ -237,9 +289,9 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             {
                 if (customKeyDownEventArgs.CtrlWasPressed)
                 {
-                    if (InternalUseOnly?.ParentTreeViewDisplay is not null)
+                    if (ParentTreeViewDisplay is not null)
                     {
-                        SetActiveDescendantAndRerender(InternalUseOnly.ParentTreeViewDisplay.TreeViewModel.Children.Last());
+                        SetActiveDescendantAndRerender(ParentTreeViewDisplay.TreeViewModel.Children.Last());
                     }
                 }
                 else if (Root.IsExpanded && Root.Children.Any())
@@ -248,6 +300,9 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
                     
                     SetActiveDescendantAndRerender(Root.Children.Last());
                 }
+                
+                // if (customKeyDownEventArgs.CtrlWasPressed)
+                // else if (Root.Children.Any())
 
                 break;
             }
@@ -261,8 +316,6 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
         {
             Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_contextMenuEventDropdownKey));
         }
-
-        OnAfterKeyDown?.Invoke(TreeViewModel, customKeyDownEventArgs);
     }
     
     public void Dispose()

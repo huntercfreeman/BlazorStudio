@@ -1,3 +1,0 @@
-﻿namespace BlazorStudio.ClassLib.Store.TerminalCase;
-
-public record ClearTerminalEntryOutputStatesAction(TerminalEntryKey TerminalEntryKey);

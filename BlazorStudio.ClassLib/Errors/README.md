@@ -1,5 +1,0 @@
-﻿# BlazorStudio.ClassLib/Errors
-
-This directory contains [RichErrorModel.cs](/BlazorStudio.ClassLib/Errors/RichErrorModel.cs) which is used along with
-the [RichErrorDisplay.razor](/BlazorStudio.RazorLib/Errors/RichErrorDisplay.razor) component when a C# Exception is
-caught. This allows the user to see the error message and if provided, a hint of how to remedy the situation.

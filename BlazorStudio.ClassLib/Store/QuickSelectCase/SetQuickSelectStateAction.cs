@@ -1,3 +1,0 @@
-namespace BlazorStudio.ClassLib.Store.QuickSelectCase;
-
-public record SetQuickSelectStateAction(QuickSelectState QuickSelectState);

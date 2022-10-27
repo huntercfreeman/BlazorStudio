@@ -17,12 +17,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Templates\" />
-        <Folder Include="Store\StartupProject\" />
-        <Folder Include="Store\SolutionExplorerCase\" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\..\Blazor.Text.Editor\BlazorTextEditor.RazorLib\BlazorTextEditor.RazorLib.csproj" />
     </ItemGroup>
 

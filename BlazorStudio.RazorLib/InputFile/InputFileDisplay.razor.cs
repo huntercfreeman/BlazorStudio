@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.TreeView;
+using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -13,6 +14,8 @@ public partial class InputFileDisplay : ComponentBase
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
     
     private TreeViewModel<IAbsoluteFilePath>? _rootTreeViewModel;
     
@@ -74,9 +77,13 @@ public partial class InputFileDisplay : ComponentBase
             var fileContents = await File
                 .ReadAllTextAsync(treeViewModel.Item.GetAbsoluteFilePathString());
 
-            var textEditor = new TextEditorBase(fileContents);
+            var textEditor = new TextEditorBase(
+                fileContents,
+                null,
+                null,
+                null);
             
-            Dispatcher.Dispatch(new RegisterTextEditorStateAction(textEditor));
+            TextEditorService.RegisterTextEditor(textEditor);
         });
     }
 }

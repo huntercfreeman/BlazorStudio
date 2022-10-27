@@ -3,41 +3,41 @@ using BlazorStudio.RazorLib;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 
-namespace BlazorStudio.Photino;
-
-internal class Program
+namespace BlazorStudio.Photino
 {
-    [STAThread]
-    private static void Main(string[] args)
+    class Program
     {
-        var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
-        appBuilder.Services
-            .AddLogging();
-
-        // register root component
-        appBuilder.RootComponents.Add<App>("app");
-
-        appBuilder.Services.AddHttpClient();
-
-        appBuilder.Services.AddBlazorStudioRazorLibServices();
-
-        var app = appBuilder.Build();
-
-        // customize window
-        app.MainWindow
-            .SetIconFile("favicon.ico")
-            .SetTitle("BlazorStudio")
-            .SetDevToolsEnabled(true)
-            .SetContextMenuEnabled(true)
-            .SetUseOsDefaultSize(false)
-            .SetSize(2500, 1750)
-            .SetGrantBrowserPermissions(true);
-
-        AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
+        [STAThread]
+        static void Main(string[] args)
         {
-            app.MainWindow.OpenAlertWindow("Fatal exception", error.ExceptionObject.ToString());
-        };
+            var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
+            appBuilder.Services
+                .AddLogging();
 
-        app.Run();
+            appBuilder.Services.AddBlazorTextEditorRazorLibServices();
+            
+            // register root component
+            appBuilder.RootComponents.Add<App>("app");
+
+            var app = appBuilder.Build();
+
+            // customize window
+            app.MainWindow
+                .SetIconFile("favicon.ico")
+                .SetTitle("Blazor Text Editor")
+                .SetDevToolsEnabled(true)
+                .SetContextMenuEnabled(true)
+                .SetUseOsDefaultSize(false)
+                .SetSize(2900, 1900)
+                .SetLeft(500);
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
+            {
+                app.MainWindow.OpenAlertWindow("Fatal exception", error.ExceptionObject.ToString());
+            };
+
+            app.Run();
+        }
+
     }
 }
