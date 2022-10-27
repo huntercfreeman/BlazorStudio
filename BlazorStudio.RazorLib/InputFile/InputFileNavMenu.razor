@@ -1,0 +1,53 @@
+﻿@using BlazorStudio.RazorLib.Menu
+@using BlazorStudio.RazorLib.TreeView
+@using BlazorStudio.RazorLib.ResizableCase
+
+<div class="bte_input-file-display-nav-menu"
+     style="@NavMenuElementDimensions.StyleString">
+
+    <div style="overflow: auto; @_homeElementDimensions.StyleString">
+        <div class="bte_input-file-display-nav-menu-quick-select">Home</div>
+        <div class="bte_input-file-display-nav-menu-tree">
+            @if (_homeTreeViewModel is not null)
+            {
+                <TreeViewDisplay TreeViewModel="_homeTreeViewModel">
+                    <ItemRenderFragment Context="treeViewModel">
+                        @treeViewModel.Item.FilenameWithExtension
+                    </ItemRenderFragment>
+
+                    <ContextMenuEventRenderFragment Context="contextMenuEvent">
+                        <div class="bte_dropdown-display-default-background"
+                             style="@GetStyleForContextMenu(contextMenuEvent.CapturedMouseEventArgs)">
+                            <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent.TreeViewModel)"/>
+                        </div>
+                    </ContextMenuEventRenderFragment>
+                </TreeViewDisplay>
+            }
+        </div>
+    </div>
+    
+    <ResizableRow TopElementDimensions="_homeElementDimensions"
+                  BottomElementDimensions="_rootElementDimensions"
+                  ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)"/>
+
+    <div style="overflow: auto; @_rootElementDimensions.StyleString">
+        <div class="bte_input-file-display-nav-menu-quick-select">Root</div>
+        <div class="bte_input-file-display-nav-menu-tree">
+            @if (_rootTreeViewModel is not null)
+            {
+                <TreeViewDisplay TreeViewModel="_rootTreeViewModel">
+                    <ItemRenderFragment Context="treeViewModel">
+                        @treeViewModel.Item.FilenameWithExtension
+                    </ItemRenderFragment>
+
+                    <ContextMenuEventRenderFragment Context="contextMenuEvent">
+                        <div class="bte_dropdown-display-default-background"
+                             style="@GetStyleForContextMenu(contextMenuEvent.CapturedMouseEventArgs)">
+                            <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent.TreeViewModel)"/>
+                        </div>
+                    </ContextMenuEventRenderFragment>
+                </TreeViewDisplay>
+            }
+        </div>
+    </div>
+</div>

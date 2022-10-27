@@ -328,6 +328,17 @@ input[type="checkbox"]{
     overflow: auto;
 }
 
+.bte_input-file-display-nav-menu-quick-select {
+    height: var(--bte_input-file-display-nav-menu-title-height);
+    overflow: auto;
+    background-color: var(--bte_body-background-color);
+}
+
+.bte_input-file-display-nav-menu-tree {
+    height: calc(100% - var(--bte_input-file-display-nav-menu-title-height));
+    overflow: auto;
+}
+
 em {
     color: var(--bte_primary-emphasis-foreground-color);
     font-style: normal;
