@@ -5,7 +5,7 @@
      @onkeydown:stopPropagation="true"
      @onkeydown="HandleOnKeyDown">
 
-    <CascadingValue Value="RestoreFocusToThisMenu" Name="ReturnFocusToParentMenu">
+    <CascadingValue Value="RestoreFocusToThisMenu" Name="ReturnFocusToParentAction">
         @for (var i = 0; i < MenuRecord.MenuOptions.Length; i++)
         {
             var index = i;

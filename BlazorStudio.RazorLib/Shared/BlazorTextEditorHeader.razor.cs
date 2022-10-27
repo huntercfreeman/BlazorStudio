@@ -15,6 +15,7 @@ public partial class BlazorTextEditorHeader : ComponentBase
     
     private DropdownKey _dropdownKeyFileDropdown = DropdownKey.NewDropdownKey();
     private MenuRecord _fileMenu = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private ElementReference? _fileButton;
 
     protected override Task OnInitializedAsync()
     {
@@ -69,5 +70,13 @@ public partial class BlazorTextEditorHeader : ComponentBase
             "Input File",
             typeof(InputFileDisplay),
             null)));
+    }
+    
+    /// <summary>
+    /// TODO: Make this method abstracted into a component that takes care of the UI to show the dropdown and to restore focus when menu closed
+    /// </summary>
+    private void RestoreFocusToFileButton()
+    {
+        _fileButton?.FocusAsync();
     }
 }

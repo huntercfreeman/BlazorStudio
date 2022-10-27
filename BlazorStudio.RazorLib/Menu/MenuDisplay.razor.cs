@@ -12,8 +12,8 @@ public partial class MenuDisplay : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     
-    [CascadingParameter(Name="ReturnFocusToParentMenu")]
-    public Action? ReturnFocusToParentMenuAction { get; set; }
+    [CascadingParameter(Name="ReturnFocusToParentAction")]
+    public Action? ReturnFocusToParentAction { get; set; }
     [CascadingParameter]
     public DropdownKey? DropdownKey { get; set; }
     
@@ -76,10 +76,10 @@ public partial class MenuDisplay : ComponentBase
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
                 if (DropdownKey is not null &&
-                    ReturnFocusToParentMenuAction is not null)
+                    ReturnFocusToParentAction is not null)
                 {
                     Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(DropdownKey));
-                    ReturnFocusToParentMenuAction.Invoke();
+                    ReturnFocusToParentAction.Invoke();
                 }
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
@@ -106,8 +106,8 @@ public partial class MenuDisplay : ComponentBase
                 if (DropdownKey is not null)
                     Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(DropdownKey));
 
-                if (ReturnFocusToParentMenuAction is not null)
-                    ReturnFocusToParentMenuAction.Invoke();
+                if (ReturnFocusToParentAction is not null)
+                    ReturnFocusToParentAction.Invoke();
                 
                 break;
         }

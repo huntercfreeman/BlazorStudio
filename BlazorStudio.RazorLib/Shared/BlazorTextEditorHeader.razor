@@ -12,6 +12,7 @@
     
     <div style="position: relative; margin-left: 15px;">
         <button @onclick="AddActiveFileDropdown"
+                @ref="_fileButton"
                 class="btn btn-primary"
                 style="display: flex;">
             File
@@ -19,8 +20,11 @@
         
         <DropdownDisplay DropdownKey="_dropdownKeyFileDropdown"
                          DropdownPositionKind="DropdownPositionKind.Vertical">
+            
             <div class="bte_dropdown-display-default-background">
-                <MenuDisplay MenuRecord="_fileMenu" />
+                <CascadingValue Value="RestoreFocusToFileButton" Name="ReturnFocusToParentAction">
+                    <MenuDisplay MenuRecord="_fileMenu"/>
+                </CascadingValue>
             </div>
         </DropdownDisplay>
     </div>
