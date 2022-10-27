@@ -268,7 +268,17 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     
     private void HandleTitleOnContextMenu(MouseEventArgs? mouseEventArgs)
     {
-        _contextMenuCapturedMouseEventArgs = mouseEventArgs;
+        // mouseEventArgs is null -> came from HandleTitleOnCustomKeyDown
+        // mouseEventArgs.Button != 2 -> non right click triggered the ContextMenuEvent
+        if (mouseEventArgs is null ||
+            mouseEventArgs.Button != 2)
+        {
+            _contextMenuCapturedMouseEventArgs = null;
+        }
+        else
+        {
+            _contextMenuCapturedMouseEventArgs = mouseEventArgs;
+        }
         
         Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_contextMenuEventDropdownKey));
     } 
