@@ -1,13 +1,14 @@
 @using BlazorStudio.RazorLib.Editor
 @using BlazorStudio.RazorLib.FolderExplorer
 @using BlazorStudio.RazorLib.ResizableCase
+
 <div class="bte_body"
      style="@BodyElementDimensions.StyleString">
-    <FolderExplorerDisplay FolderExplorerElementDimensions="_folderExplorerElementDimensions" />
-    
+    <FolderExplorerDisplay FolderExplorerElementDimensions="_folderExplorerElementDimensions"/>
+
     <ResizableColumn LeftElementDimensions="_folderExplorerElementDimensions"
-                                                             RightElementDimensions="_editorElementDimensions"
-                                                             ReRenderFuncAsync="ReRenderAsync" />
-    
-    <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
+                     RightElementDimensions="_editorElementDimensions"
+                     ReRenderFuncAsync="ReRenderAsync"/>
+
+    <EditorDisplay EditorElementDimensions="_editorElementDimensions"/>
 </div>

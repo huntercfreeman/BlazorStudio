@@ -311,6 +311,20 @@ input[type="checkbox"]{
 
 .bte_input-file-display {
     height: 100%;
+}
+
+.bte_input-file-display-body {
+    height: 100%;
+    display: flex;
+}
+
+.bte_input-file-display-content {
+    height: 100%;
+    overflow: auto;
+}
+
+.bte_input-file-display-nav-menu {
+    height: 100%;
     overflow: auto;
 }
 
