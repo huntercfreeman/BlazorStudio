@@ -286,9 +286,8 @@ input[type="checkbox"]{
     position: absolute;
 }
 
-.bte_dropdown-position-marker {
-    z-index: 20;
-    position: absolute;
+.bte_menu-display:focus {
+    outline: solid 2px var(--bte_primary-emphasis-foreground-color);
 }
 
 .bte_menu-option-display {
@@ -300,6 +299,14 @@ input[type="checkbox"]{
 
 .bte_menu-option-display:hover {
     background-color: var(--bte_primary-hover-background-color);
+}
+
+.bte_menu-option-display:focus {
+    background-color: var(--bte_primary-hover-background-color);
+}
+
+.bte_menu-option-display.bstudio_active {
+    outline: solid 2px var(--bte_primary-emphasis-foreground-color);
 }
 
 .bte_input-file-display {

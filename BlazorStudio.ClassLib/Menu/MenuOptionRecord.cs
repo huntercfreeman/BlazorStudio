@@ -5,4 +5,7 @@ public record MenuOptionRecord(
     Action? OnClick = null,
     MenuRecord? SubMenu = null,
     Type? WidgetRendererType = null,
-    Dictionary<string, object?>? WidgetParameters = null);
+    Dictionary<string, object?>? WidgetParameters = null)
+{
+    public Guid Id { get; } = Guid.NewGuid();
+}

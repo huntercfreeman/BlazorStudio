@@ -1,7 +1,7 @@
 @using BlazorStudio.ClassLib.Dropdown
 @using BlazorStudio.RazorLib.Dropdown
 
-<div class="bte_menu-option-display bte_unselectable"
+<div class="bte_menu-option-display bte_unselectable @IsActiveCssClass"
      @onclick="HandleOnClick">
     
     @MenuOptionRecord.DisplayName

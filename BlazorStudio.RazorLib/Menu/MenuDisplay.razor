@@ -1,6 +1,10 @@
-<div class="bte_menu-display">
+<div class="bte_menu-display"
+     tabindex="0"
+     @ref="_menuDisplayElementReference">
+    
     @foreach (var menuOption in MenuRecord.MenuOptions)
     {
-        <MenuOptionDisplay MenuOptionRecord="menuOption" />
+        <MenuOptionDisplay MenuOptionRecord="menuOption"
+                           ActiveMenuOptionRecord="_activeMenuOptionRecord"/>
     }
 </div>
