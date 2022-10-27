@@ -20,6 +20,8 @@ public partial class DropdownDisplay : FluxorComponent
     public RenderFragment ChildContent { get; set; } = null!;
     [Parameter, EditorRequired]
     public DropdownPositionKind DropdownPositionKind { get; set; } = DropdownPositionKind.Vertical;
+    [Parameter]
+    public bool ShouldDisplayOutOfBoundsClickDisplay { get; set; } = true;
 
     private bool ShouldDisplay => DropdownStatesWrap.Value.ActiveDropdownKeys
         .Contains(DropdownKey);

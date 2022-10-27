@@ -13,7 +13,7 @@ public partial class MenuOptionDisplay : ComponentBase
     private IState<DropdownStates> DropdownStatesWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    
+
     [Parameter, EditorRequired]
     public MenuOptionRecord MenuOptionRecord { get; set; } = null!;
     [Parameter, EditorRequired]
@@ -22,22 +22,39 @@ public partial class MenuOptionDisplay : ComponentBase
     public int ActiveMenuOptionRecordIndex { get; set; }
     
     private readonly DropdownKey _subMenuDropdownKey = DropdownKey.NewDropdownKey();
+    private ElementReference? _menuOptionDisplayElementReference;
 
     private bool IsActive => Index == ActiveMenuOptionRecordIndex;
+    private bool HasSubmenuActive => DropdownStatesWrap.Value.ActiveDropdownKeys
+        .Any(x => x.Guid == _subMenuDropdownKey.Guid);
     
     private string IsActiveCssClass => IsActive
         ? "bstudio_active"
         : string.Empty;
     
-    private string HasSubmenuActiveCssClass =>
-        DropdownStatesWrap.Value.ActiveDropdownKeys.Any(x => x.Guid == _subMenuDropdownKey.Guid)
+    private string HasSubmenuActiveCssClass => HasSubmenuActive
             ? "bstudio_active"
             : string.Empty;
-    
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IsActive && 
+            !HasSubmenuActive &&
+            _menuOptionDisplayElementReference.HasValue)
+        {
+            await _menuOptionDisplayElementReference.Value.FocusAsync();
+        }
+        
+        await base.OnParametersSetAsync();
+    }
+
     private void HandleOnClick()
     {
         if (MenuOptionRecord.OnClick is not null)
+        {
             MenuOptionRecord.OnClick.Invoke();
+            Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+        }
         
         if (MenuOptionRecord.SubMenu is not null)
             Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_subMenuDropdownKey));
@@ -49,9 +66,16 @@ public partial class MenuOptionDisplay : ComponentBase
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
+                if (MenuOptionRecord.SubMenu is not null)
+                    Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_subMenuDropdownKey));
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
+        }
+        
+        switch (keyboardEventArgs.Code)
+        {
+            case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
+            case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
+                HandleOnClick();
                 break;
         }
     }

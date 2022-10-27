@@ -3,12 +3,17 @@
 
 @if (ShouldDisplay)
 {
-    <OutOfBoundsClickDisplay ZIndex="15"
-                             OnClickCallback="ClearAllActiveDropdownKeys" />
+    if (ShouldDisplayOutOfBoundsClickDisplay)
+    {
+        <OutOfBoundsClickDisplay ZIndex="15"
+                                 OnClickCallback="ClearAllActiveDropdownKeys" />    
+    }
     
     <div class="bte_dropdown-display"
          @onclick:stopPropagation="true"
          style="@DropdownPositionKindStyleCss">
-    	@ChildContent
+        <CascadingValue Value="DropdownKey">
+            @ChildContent
+        </CascadingValue>
     </div>
 }

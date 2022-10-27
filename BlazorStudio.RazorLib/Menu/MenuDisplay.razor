@@ -1,17 +1,19 @@
 <div class="bte_menu-display"
-     tabindex="0"
+     tabindex="-1"
      @ref="_menuDisplayElementReference"
      @onclick:stopPropagation="true"
      @onkeydown:stopPropagation="true"
      @onkeydown="HandleOnKeyDown">
 
-    @for (var i = 0; i < MenuRecord.MenuOptions.Length; i++)
-    {
-        var index = i;
-        var menuOption = MenuRecord.MenuOptions[index];
-        
-        <MenuOptionDisplay MenuOptionRecord="@menuOption"
-                           ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
-                           Index="index"/>
-    }
+    <CascadingValue Value="RestoreFocusToThisMenu" Name="ReturnFocusToParentMenu">
+        @for (var i = 0; i < MenuRecord.MenuOptions.Length; i++)
+        {
+            var index = i;
+            var menuOption = MenuRecord.MenuOptions[index];
+            
+            <MenuOptionDisplay MenuOptionRecord="@menuOption"
+                               ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
+                               Index="index" />
+        }
+    </CascadingValue>
 </div>

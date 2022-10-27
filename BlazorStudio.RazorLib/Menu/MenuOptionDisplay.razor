@@ -2,7 +2,10 @@
 @using BlazorStudio.RazorLib.Dropdown
 
 <div class="bte_menu-option-display bte_unselectable @IsActiveCssClass"
+     tabindex="-1"
+     @ref="_menuOptionDisplayElementReference"
      @onclick="HandleOnClick"
+     @onclick:stopPropagation="true"
      @onkeydown="HandleOnKeyDown">
     
     @MenuOptionRecord.DisplayName
@@ -12,7 +15,8 @@
         <IconChevronRight />
         
         <DropdownDisplay DropdownKey="_subMenuDropdownKey"
-                         DropdownPositionKind="DropdownPositionKind.Horizontal">
+                         DropdownPositionKind="DropdownPositionKind.Horizontal"
+                         ShouldDisplayOutOfBoundsClickDisplay="false">
             
             <div class="bte_dropdown-display-default-background">
                 <MenuDisplay MenuRecord="MenuOptionRecord.SubMenu" />

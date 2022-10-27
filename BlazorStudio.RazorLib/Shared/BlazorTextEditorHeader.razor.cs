@@ -31,8 +31,7 @@ public partial class BlazorTextEditorHeader : ComponentBase
     private MenuOptionRecord GetMenuOptionNew()
     {
         return new MenuOptionRecord(
-            "New",
-            () => {});
+            "New");
     }
     
     private MenuOptionRecord GetMenuOptionOpen()
@@ -42,17 +41,14 @@ public partial class BlazorTextEditorHeader : ComponentBase
             ShowInputFileDialog);
         
         var openCSharpProject = new MenuOptionRecord(
-            "C# Project",
-            () => {});
+            "C# Project");
         
         var openDotNetSolution = new MenuOptionRecord(
-            ".NET Solution",
-            () => {});
+            ".NET Solution");
 
         return new MenuOptionRecord(
             "Open",
-            () => {},
-            new MenuRecord(
+            SubMenu: new MenuRecord(
                 new []
                 {
                     openFile,
