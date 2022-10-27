@@ -1,0 +1,43 @@
+<div class="bte_resizable-display">
+    @* Cardinal Resize Handles *@
+    <div class="bte_resize-handle bte_resize-handle-north bte_resize-handle-cardinal"
+         style="@GetNorthResizeHandleStyleCss()"
+         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerNorthResizeHandleAsync)">
+    </div>
+    
+    <div class="bte_resize-handle bte_resize-handle-east bte_resize-handle-cardinal"
+         style="@GetEastResizeHandleStyleCss()"
+         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerEastResizeHandleAsync)">
+    </div>
+    
+    <div class="bte_resize-handle bte_resize-handle-south bte_resize-handle-cardinal"
+         style="@GetSouthResizeHandleStyleCss()"
+         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerSouthResizeHandleAsync)">
+    </div>
+    
+    <div class="bte_resize-handle bte_resize-handle-west bte_resize-handle-cardinal"
+         style="@GetWestResizeHandleStyleCss()"
+         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerWestResizeHandleAsync)">
+    </div>
+    
+    @* Diagonal Resize Handles *@
+    <div class="bte_resize-handle bte_resize-handle-north-east bte_resize-handle-diagonal"
+         style="@GetNorthEastResizeHandleStyleCss()"
+         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerNorthEastResizeHandleAsync)">
+    </div>
+    
+    <div class="bte_resize-handle bte_resize-handle-south-east bte_resize-handle-diagonal"
+         style="@GetSouthEastResizeHandleStyleCss()"
+         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerSouthEastResizeHandleAsync)">
+    </div>
+    
+    <div class="bte_resize-handle bte_resize-handle-south-west bte_resize-handle-diagonal"
+         style="@GetSouthWestResizeHandleStyleCss()"
+         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerSouthWestResizeHandleAsync)">
+    </div>
+    
+    <div class="bte_resize-handle bte_resize-handle-north-west bte_resize-handle-diagonal"
+         style="@GetNorthWestResizeHandleStyleCss()"
+         @onmousedown="() => SubscribeToDragEvent(DragEventHandlerNorthWestResizeHandleAsync)">
+    </div>
+</div>

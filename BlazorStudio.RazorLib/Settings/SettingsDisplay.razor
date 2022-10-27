@@ -1,0 +1,24 @@
+@using BlazorStudio.RazorLib.FontSettings
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bte_settings-display">
+    Settings Display
+    
+    <FontSettingsDisplay />
+    
+    <div>
+        Active Theme:&nbsp;@ThemeStateWrap.Value.ActiveThemeRecord.ClassCssString
+    </div>
+    
+    <hr/>
+    
+    @foreach (var theme in ThemeFacts.DefaultThemeRecords)
+    {
+        <div>
+            <button class="btn btn-primary"
+                    @onclick="() => DispatchSetThemeStateAction(theme)">
+                @theme.ClassCssString
+            </button>
+        </div>
+    }
+</div>

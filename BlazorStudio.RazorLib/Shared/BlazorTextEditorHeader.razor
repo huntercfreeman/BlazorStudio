@@ -1,0 +1,26 @@
+@using BlazorTextEditor.ClassLib.Context
+@using BlazorTextEditor.ClassLib.Dropdown
+@using BlazorStudio.RazorLib.Settings
+@using BlazorStudio.ClassLib.Context
+@using BlazorStudio.ClassLib.Dropdown
+
+<ContextBoundary ContextRecord="ContextFacts.MainLayoutHeaderContext"
+                 ClassCssString="bte_header">
+
+    <SettingsDialogEntryPoint />
+    
+    <div style="position: relative; margin-left: 15px;">
+        <button @onclick="AddActiveFileDropdown"
+                class="btn btn-primary"
+                style="display: flex;">
+            File
+        </button>
+        
+        <DropdownDisplay DropdownKey="_dropdownKeyFileDropdown"
+                         DropdownPositionKind="DropdownPositionKind.Vertical">
+            <div class="bte_dropdown-display-default-background">
+                <MenuDisplay MenuRecord="_fileMenu" />
+            </div>
+        </DropdownDisplay>
+    </div>
+</ContextBoundary>

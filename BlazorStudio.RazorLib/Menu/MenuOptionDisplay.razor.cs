@@ -1,129 +1,26 @@
-﻿using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.DropdownCase;
-using BlazorStudio.ClassLib.Store.MenuCase;
-using BlazorStudio.ClassLib.UserInterface;
 using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Menu;
 
-public partial class MenuOptionDisplay : FluxorComponent
+public partial class MenuOptionDisplay : ComponentBase
 {
-    private bool _displayWidget;
-
-    private Dimensions _dropdownDimensions = new()
-    {
-        DimensionsPositionKind = DimensionsPositionKind.Absolute,
-        LeftCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 0,
-            },
-        },
-        TopCalc = new List<DimensionUnit>
-        {
-            new()
-            {
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                Value = 0,
-            },
-        },
-    };
-
-    private DropdownKey _dropdownKey = DropdownKey.NewDropdownKey();
-    private bool _hasFocus;
-    private ElementReference _menuOptionDisplayElementReference;
-    [Inject]
-    private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-
-    [CascadingParameter(Name = "ActiveMenuOptionIndex")]
-    public int? ActiveMenuOptionIndex { get; set; }
-    [CascadingParameter(Name = "CloseParentSubmenuFuncAsync")]
-    public Func<Task>? CloseParentSubmenuFuncAsync { get; set; }
-
-    [Parameter]
+    
+    [Parameter, EditorRequired]
     public MenuOptionRecord MenuOptionRecord { get; set; } = null!;
-    [Parameter]
-    public int MenuOptionIndex { get; set; }
+    
+    private readonly DropdownKey _subMenuDropdownKey = DropdownKey.NewDropdownKey();
 
-    private string HasSubmenuOpenCssClass => DropdownStateWrap.Value.ActiveDropdownKeys.Any(x => x == _dropdownKey)
-        ? "bstudio_sub-menu-is-open"
-        : string.Empty;
-
-    protected override async Task OnParametersSetAsync()
+    private void HandleOnClick()
     {
-        if (ActiveMenuOptionIndex == MenuOptionIndex &&
-            !_hasFocus)
-            await _menuOptionDisplayElementReference.FocusAsync();
-
-        await base.OnParametersSetAsync();
-    }
-
-    private void DispatchToggleActiveDropdownKeyActionOnClick(DropdownKey fileDropdownKey)
-    {
-        if (MenuOptionRecord.OnClickAction is not null)
-        {
-            MenuOptionRecord.OnClickAction();
-
-            Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
-
-            return;
-        }
-
-        if (DropdownStateWrap.Value.ActiveDropdownKeys.Any(x => x == _dropdownKey))
-            Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(fileDropdownKey));
-        else
-            Dispatcher.Dispatch(new AddActiveDropdownKeyAction(fileDropdownKey));
-    }
-
-    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
-    {
-        var keyDownEventRecord = new KeyDownEventRecord(
-            keyboardEventArgs.Key,
-            keyboardEventArgs.Code,
-            keyboardEventArgs.CtrlKey,
-            keyboardEventArgs.ShiftKey,
-            keyboardEventArgs.AltKey);
-
-        switch (keyDownEventRecord.Code)
-        {
-            case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-            case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-            {
-                DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);
-
-                if (MenuOptionRecord.WidgetType is not null)
-                    _displayWidget = !_displayWidget;
-
-                break;
-            }
-            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
-                if (CloseParentSubmenuFuncAsync is not null)
-                    await CloseParentSubmenuFuncAsync.Invoke();
-
-                break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
-            {
-                if (MenuOptionRecord.Children.Any())
-                    DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);
-
-                break;
-            }
-        }
-    }
-
-    private async Task CloseSelfSubmenuAsync()
-    {
-        DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey);
-
-        await _menuOptionDisplayElementReference.FocusAsync();
+        if (MenuOptionRecord.OnClick is not null)
+            MenuOptionRecord.OnClick.Invoke();
+        
+        if (MenuOptionRecord.SubMenu is not null)
+            Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_subMenuDropdownKey));
     }
 }

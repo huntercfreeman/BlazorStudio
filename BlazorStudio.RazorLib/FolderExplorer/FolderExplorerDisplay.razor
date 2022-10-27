@@ -1,0 +1,33 @@
+@using BlazorStudio.RazorLib.TreeView
+@using BlazorStudio.ClassLib.Context
+<ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
+                 ClassCssString="bte_folder-explorer-display"
+                 StyleCssString="@($"height: 100% {FolderExplorerElementDimensions.StyleString}")">
+    
+    <div style="height: 10rem; overflow: auto;">
+        <div class="bte_section-title">
+            Folder Explorer
+        </div>
+
+        <input @bind="_filePath" 
+               @bind:event="oninput"
+               class="bte_input" />
+
+        <button class="btn btn-primary"
+                @onclick="DispatchSetFolderExplorerStateOnClick">
+
+            Open In Folder Explorer
+        </button>
+    </div>
+    
+    <div style="height: calc(100% - 10rem);  overflow: auto;">
+        @if (_rootTreeViewModel is not null)
+        {
+            <TreeViewDisplay TreeViewModel="_rootTreeViewModel">
+                <ItemRenderFragment Context="treeViewModel">
+                    @treeViewModel.Item.FilenameWithExtension
+                </ItemRenderFragment>
+            </TreeViewDisplay>
+        }
+    </div>
+</ContextBoundary>

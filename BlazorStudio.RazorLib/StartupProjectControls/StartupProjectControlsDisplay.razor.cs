@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Store.ContextCase;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.RoslynWorkspaceState;

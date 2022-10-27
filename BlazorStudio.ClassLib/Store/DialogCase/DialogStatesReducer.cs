@@ -1,30 +1,38 @@
-﻿using Fluxor;
+using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.DialogCase;
 
 public class DialogStatesReducer
 {
     [ReducerMethod]
-    public static DialogStates ReduceRegisterDialogAction(DialogStates previousDialogStates,
-        RegisterDialogAction registerDialogAction)
+    public static DialogStates ReduceRegisterDialogRecordAction(DialogStates previousDialogStates,
+        RegisterDialogRecordAction registerDialogRecordAction)
     {
-        return new DialogStates(previousDialogStates.List
-            .Add(registerDialogAction.DialogRecord));
-    }
+        if (previousDialogStates.DialogRecords
+            .Any(x => x.DialogKey == registerDialogRecordAction.DialogRecord.DialogKey))
+        {
+            return previousDialogStates;
+        }
+        
+        var nextList = previousDialogStates.DialogRecords
+            .Add(registerDialogRecordAction.DialogRecord);
 
-    [ReducerMethod]
-    public static DialogStates ReduceDisposeDialogAction(DialogStates previousDialogStates,
-        DisposeDialogAction disposeDialogAction)
-    {
-        return new DialogStates(previousDialogStates.List
-            .Remove(disposeDialogAction.DialogRecord));
+        return previousDialogStates with
+        {
+            DialogRecords = nextList
+        };
     }
-
+    
     [ReducerMethod]
-    public static DialogStates ReduceReplaceDialogAction(DialogStates previousDialogStates,
-        ReplaceDialogAction replaceDialogAction)
+    public static DialogStates ReduceDisposeDialogRecordAction(DialogStates previousDialogStates,
+        DisposeDialogRecordAction disposeDialogRecordAction)
     {
-        return new DialogStates(previousDialogStates.List
-            .Replace(replaceDialogAction.PreviousDialogRecord, replaceDialogAction.NextDialogRecord));
+        var nextList = previousDialogStates.DialogRecords
+            .Remove(disposeDialogRecordAction.DialogRecord);
+
+        return previousDialogStates with
+        {
+            DialogRecords = nextList
+        };
     }
 }

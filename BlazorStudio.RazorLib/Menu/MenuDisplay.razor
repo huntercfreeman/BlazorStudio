@@ -1,47 +1,6 @@
-﻿<div class="bstudio_menu-display"
-     tabindex="-1"
-     @ref="_menuDisplayElementReference"
-     @onkeydown="HandleOnKeyDown"
-     @onkeydown:preventDefault="true"
-     @onkeydown:stopPropagation="true">
-
-    <CascadingValue Name="ActiveMenuOptionIndex" Value="_activeMenuOptionIndex">
-        @if (!ShouldCategorizeByMenuOptionKind)
-        {
-            for (var i = 0; i < _cachedMenuOptionRecords.Length; i++)
-            {
-                var index = i;
-
-                var menuOption = _cachedMenuOptionRecords[index];
-                <MenuOptionDisplay MenuOptionRecord="@menuOption"
-                                   MenuOptionIndex="index"/>
-            }
-        }
-        else
-        {
-            var categories = _cachedMenuOptionRecords
-                .GroupBy(x => x.MenuOptionKind)
-                .ToList();
-            var menuOptionIndex = 0;
-
-            for (var i = 0; i < categories.Count; i++)
-            {
-                var index = i;
-                var category = categories[index];
-
-                foreach (var menuOption in category)
-                {
-                    <MenuOptionDisplay MenuOptionRecord="menuOption"
-                                       MenuOptionIndex="menuOptionIndex++"/>
-                }
-
-                if (index != categories.Count - 1)
-                {
-                    <div class="bstudio_menu-option-separator">
-
-                    </div>
-                }
-            }
-        }
-    </CascadingValue>
+<div class="bte_menu-display">
+    @foreach (var menuOption in MenuRecord.MenuOptions)
+    {
+        <MenuOptionDisplay MenuOptionRecord="menuOption" />
+    }
 </div>

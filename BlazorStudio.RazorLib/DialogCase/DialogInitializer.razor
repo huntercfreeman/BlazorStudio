@@ -1,0 +1,11 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var dialogRecords = DialogStatesWrap.Value.DialogRecords;
+
+    foreach (var dialogRecord in dialogRecords)
+    {
+        <DialogDisplay @key="dialogRecord.DialogKey" 
+                       DialogRecord="dialogRecord" />
+    }
+}

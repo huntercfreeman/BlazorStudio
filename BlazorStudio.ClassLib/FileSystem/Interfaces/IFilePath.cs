@@ -3,9 +3,9 @@
 namespace BlazorStudio.ClassLib.FileSystem.Interfaces;
 
 /// <summary>
-///     A side comment: Windows allow both '\\' and '/' as file delimiters.
-///     Be sure to check both System.IO.Path.DirectorySeparatorChar and
-///     System.IO.Path.AltDirectorySeparatorChar
+/// A side comment: Windows allow both '\\' and '/' as file delimiters.
+/// Be sure to check both System.IO.Path.DirectorySeparatorChar and
+/// System.IO.Path.AltDirectorySeparatorChar
 /// </summary>
 public interface IFilePath
 {

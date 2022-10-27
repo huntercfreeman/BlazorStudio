@@ -1,14 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using BlazorStudio.ClassLib.FileConstants;
-using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.DialogCase;
-using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
-using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 

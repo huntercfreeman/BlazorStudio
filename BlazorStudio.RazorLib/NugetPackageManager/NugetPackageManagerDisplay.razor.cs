@@ -1,15 +1,12 @@
 using System.Collections.Immutable;
 using System.Text.Json;
-using BlazorStudio.ClassLib.Contexts;
+using BlazorStudio.ClassLib.Context;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.NugetPackageManager;
-using BlazorStudio.ClassLib.Sequence;
 using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 using BlazorStudio.ClassLib.Store.SolutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorerCase;
-using BlazorStudio.ClassLib.Store.TreeViewCase;
 using BlazorStudio.RazorLib.ContextCase;
-using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;

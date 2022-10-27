@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorTextEditor.RazorLib.HelperComponents;
 using Microsoft.AspNetCore.Components;

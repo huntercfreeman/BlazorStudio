@@ -1,8 +1,8 @@
 ﻿using BlazorStudio.ClassLib.Store.ThemeCase;
-using BlazorStudio.ClassLib.Store.TreeViewCase;
-using BlazorStudio.RazorLib.TreeViewCase;
+using BlazorTextEditor.RazorLib.Store.ThemeCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using ThemeFacts = BlazorStudio.ClassLib.Store.ThemeCase.ThemeFacts;
 
 namespace BlazorStudio.RazorLib.Theme;
 

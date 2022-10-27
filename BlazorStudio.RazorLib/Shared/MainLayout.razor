@@ -1,24 +1,25 @@
-﻿@using BlazorStudio.ClassLib.Contexts
-@inherits Fluxor.Blazor.Web.Components.FluxorLayout
+@using BlazorTextEditor.ClassLib.TextEditor
+@using BlazorTextEditor.ClassLib.Context
+@using BlazorStudio.RazorLib.DialogCase
+@using BlazorStudio.RazorLib.DragCase
+@using BlazorStudio.RazorLib.ResizableCase
+@using BlazorStudio.ClassLib.Context
+@inherits LayoutComponentBase
 
-<BlazorStudio.RazorLib.StoreInitializerWrap/>
-<BlazorTextEditor.RazorLib.BlazorTextEditorInitializer/>
-
-<div class="bstudio_theme-wrapper @ThemeStateWrap.Value.ThemeKey.KeyName"
-     style="font-size: @(FontOptionsStateWrap.Value.FontSize.Value)px;">
-    <ContextBoundary CssClassString="@CssClassString"
-                     ContextKey="ContextFacts.GlobalContext.ContextKey">
-        <BlazorStudio.RazorLib.KeymapCase.KeymapEventListener/>
-        <BlazorStudio.RazorLib.Dialog.DialogsInitializer/>
-        <BlazorStudio.RazorLib.Notification.NotificationsInitializer/>
-        <BlazorStudio.RazorLib.QuickSelect.QuickSelectInitializer/>
-
-        <ToolbarDisplay/>
-
-        <BodyDisplay/>
-
-        <FooterWindowTabs/>
-
-        <BlazorStudio.RazorLib.Drag.DragDisplay/>
-    </ContextBoundary>
-</div>
+<ContextBoundary ContextRecord="ContextFacts.GlobalContext"
+                 ClassCssString="@($"bte_main-layout {UnselectableClassCss} {ThemeStateWrap.Value.ActiveThemeRecord.ClassCssString}")"
+                 StyleCssString="@($"font-size: {FontStateWrap.Value.FontSizeInPixels}px;")">
+    <BlazorTextEditor.RazorLib.BlazorTextEditorRazorLibInitializer />
+    <DialogInitializer />
+    <DragDisplay />
+    
+    <BlazorTextEditorHeader />
+    
+    <BlazorTextEditorBody BodyElementDimensions="_bodyElementDimensions" />
+    
+    <ResizableRow TopElementDimensions="_bodyElementDimensions"
+                                                          BottomElementDimensions="_footerElementDimensions"
+                                                          ReRenderFuncAsync="ReRenderAsync" />
+    
+    <BlazorTextEditorFooter FooterElementDimensions="_footerElementDimensions" />
+</ContextBoundary>

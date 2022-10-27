@@ -1,6 +1,4 @@
 ﻿using System.Collections.Immutable;
-using Blazor.Text.Editor.Analysis.Html.ClassLib.Decoration;
-using Blazor.Text.Editor.Analysis.Razor.ClassLib;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Renderer;
@@ -8,7 +6,6 @@ using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FileSystemCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceCase;
-using BlazorStudio.ClassLib.UserInterface;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Cursor;
 using BlazorTextEditor.RazorLib.HelperComponents;

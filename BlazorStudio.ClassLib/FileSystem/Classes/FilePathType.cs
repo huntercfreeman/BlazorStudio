@@ -3,5 +3,5 @@
 public enum FilePathType
 {
     AbsoluteFilePath,
-    RelativeFilePath,
+    RelativeFilePath
 }

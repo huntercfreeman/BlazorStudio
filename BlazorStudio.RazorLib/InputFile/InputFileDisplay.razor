@@ -1,0 +1,17 @@
+@using BlazorStudio.RazorLib.TreeView
+<div class="bte_input-file-display">
+    @if (_rootTreeViewModel is not null)
+    {
+        <TreeViewDisplay TreeViewModel="_rootTreeViewModel">
+            <ItemRenderFragment Context="treeViewModel">
+                @treeViewModel.Item.FilenameWithExtension
+            </ItemRenderFragment>
+            
+            <ContextMenuEventRenderFragment Context="treeViewModel">
+                <div class="bte_dropdown-display-default-background">
+                    <MenuDisplay MenuRecord="GetContextMenu(treeViewModel)" />
+                </div>
+            </ContextMenuEventRenderFragment>
+        </TreeViewDisplay>
+    }
+</div>

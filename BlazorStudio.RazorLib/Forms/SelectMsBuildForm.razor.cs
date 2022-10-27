@@ -1,6 +1,4 @@
 using BlazorStudio.ClassLib.Store.NotificationCase;
-using BlazorStudio.ClassLib.Store.TreeViewCase;
-using BlazorStudio.RazorLib.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Build.Locator;

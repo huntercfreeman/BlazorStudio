@@ -1,7 +1,7 @@
 ﻿namespace BlazorStudio.ClassLib.FileConstants;
 
 /// <summary>
-///     The constants do not start with a period
+/// The constants do not start with a period
 /// </summary>
 public static class ExtensionNoPeriodFacts
 {
@@ -12,7 +12,6 @@ public static class ExtensionNoPeriodFacts
     public const string RAZOR_MARKUP = "razor";
     public const string RAZOR_CODEBEHIND = "razor.cs";
     public const string JSON = "json";
-    public const string XML = "xml";
     public const string HTML = "html";
     public const string CSS = "css";
     public const string JAVA_SCRIPT = "js";

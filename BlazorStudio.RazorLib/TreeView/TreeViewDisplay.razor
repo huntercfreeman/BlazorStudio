@@ -1,0 +1,58 @@
+@using BlazorStudio.ClassLib.Dropdown
+@typeparam TItem
+
+<div class="bte_tree-view-display"
+     tabindex="@RootTabIndex"
+     @onkeydown="HandleRootOnKeyDown">
+    <span class="bte_tree-view-display-title bte_unselectable @IsActiveDescendantClassCss"
+          style="@($"padding-left: {PaddingLeft}px;")"
+          @onclick="SetActiveDescendantOnClick"
+          @ref="_titleElementReference"
+          @onkeydown:stopPropagation="true"
+          @oncustomkeydown="HandleTitleOnCustomKeyDown"
+          tabindex="@TitleTabIndex">
+        <span class="bte_tree-view-display-expansion"
+              @onclick="ToggleIsExpandedOnClick"
+              @onclick:stopPropagation="true">
+            @if (TreeViewModel.IsExpanded)
+            {
+                <IconChevronDown />
+            }
+            else
+            {
+                <IconChevronRight />
+            }
+        </span>
+        
+        @ItemRenderFragment(TreeViewModel)
+        
+        <DropdownDisplay DropdownKey="_contextMenuEventDropdownKey"
+                         DropdownPositionKind="DropdownPositionKind.Vertical">
+            
+            @ContextMenuEventRenderFragment(TreeViewModel)
+        </DropdownDisplay>
+    </span>
+    
+    <div class="bte_tree-view-display-body">
+        @if (TreeViewModel.IsExpanded)
+        {
+            var immutableChildArray = TreeViewModel.Children.ToImmutableArray();
+            
+            for (var i = 0; i < immutableChildArray.Length; i++)
+            {
+                var index = i;
+                var child = immutableChildArray[index];
+                
+                <TreeViewDisplay @key="child.Id"
+                                 TreeViewModel="child"
+                                 ItemRenderFragment="ItemRenderFragment"
+                                 GetRootFunc="() => Root"
+                                 Depth="Depth + 1"
+                                 Index="index"
+                                 ParentTreeViewDisplay="this"
+                                 ContextMenuEventRenderFragment="ContextMenuEventRenderFragment" />
+
+            }
+        }
+    </div>
+</div>

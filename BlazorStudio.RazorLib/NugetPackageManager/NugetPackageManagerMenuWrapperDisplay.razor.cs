@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
+using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.NugetPackageManager;
 using BlazorStudio.ClassLib.Store.MenuCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
