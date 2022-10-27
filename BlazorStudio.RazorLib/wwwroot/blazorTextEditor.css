@@ -297,15 +297,15 @@ input[type="checkbox"]{
     padding: 0 10px;
 }
 
+.bte_menu-option-display.bstudio_active {
+    background-color: var(--bte_primary-hover-background-color);
+}
+
 .bte_menu-option-display:hover {
     background-color: var(--bte_primary-hover-background-color);
 }
 
 .bte_menu-option-display:focus {
-    background-color: var(--bte_primary-hover-background-color);
-}
-
-.bte_menu-option-display.bstudio_active {
     outline: solid 2px var(--bte_primary-emphasis-foreground-color);
 }
 

@@ -1,7 +1,9 @@
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.DropdownCase;
+using BlazorTextEditor.RazorLib.Keyboard;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Menu;
 
@@ -15,14 +17,17 @@ public partial class MenuOptionDisplay : ComponentBase
     [Parameter, EditorRequired]
     public MenuOptionRecord MenuOptionRecord { get; set; } = null!;
     [Parameter, EditorRequired]
-    public MenuOptionRecord? ActiveMenuOptionRecord { get; set; }
+    public int Index { get; set; }
+    [Parameter, EditorRequired]
+    public int ActiveMenuOptionRecordIndex { get; set; }
     
     private readonly DropdownKey _subMenuDropdownKey = DropdownKey.NewDropdownKey();
 
-    private string IsActiveCssClass =>
-        (ActiveMenuOptionRecord?.Id ?? Guid.Empty) == MenuOptionRecord.Id
-            ? "bstudio_active"
-            : string.Empty;
+    private bool IsActive => Index == ActiveMenuOptionRecordIndex;
+    
+    private string IsActiveCssClass => IsActive
+        ? "bstudio_active"
+        : string.Empty;
     
     private string HasSubmenuActiveCssClass =>
         DropdownStatesWrap.Value.ActiveDropdownKeys.Any(x => x.Guid == _subMenuDropdownKey.Guid)
@@ -36,5 +41,18 @@ public partial class MenuOptionDisplay : ComponentBase
         
         if (MenuOptionRecord.SubMenu is not null)
             Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_subMenuDropdownKey));
+    }
+
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        switch (keyboardEventArgs.Key)
+        {
+            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
+                break;
+            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
+                break;
+        }
     }
 }

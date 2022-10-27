@@ -1,10 +1,17 @@
 <div class="bte_menu-display"
      tabindex="0"
-     @ref="_menuDisplayElementReference">
-    
-    @foreach (var menuOption in MenuRecord.MenuOptions)
+     @ref="_menuDisplayElementReference"
+     @onclick:stopPropagation="true"
+     @onkeydown:stopPropagation="true"
+     @onkeydown="HandleOnKeyDown">
+
+    @for (var i = 0; i < MenuRecord.MenuOptions.Length; i++)
     {
-        <MenuOptionDisplay MenuOptionRecord="menuOption"
-                           ActiveMenuOptionRecord="_activeMenuOptionRecord"/>
+        var index = i;
+        var menuOption = MenuRecord.MenuOptions[index];
+        
+        <MenuOptionDisplay MenuOptionRecord="@menuOption"
+                           ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
+                           Index="index"/>
     }
 </div>
