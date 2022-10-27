@@ -19,7 +19,6 @@
     <ItemGroup>
         <Folder Include="FileConstants\" />
         <Folder Include="Templates\" />
-        <Folder Include="Store\CSharpKeywords\" />
         <Folder Include="Store\StartupProject\" />
         <Folder Include="Store\SolutionExplorerCase\" />
     </ItemGroup>
