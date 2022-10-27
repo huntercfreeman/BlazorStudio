@@ -1,9 +1,20 @@
 @using BlazorStudio.ClassLib.Context
 @using BlazorStudio.RazorLib.ContextCase
+@using BlazorTextEditor.RazorLib
 
 <ContextBoundary ContextRecord="ContextFacts.EditorContext"
                  ClassCssString="bte_editor-display"
                  StyleCssString="@EditorElementDimensions.StyleString">
     
-    <TextEditorDisplay TextEditorKey="TextEditorStatesWrap.Value.TextEditorList.Last().Key"/>    
+    @{
+        var textEditorStates = TextEditorStatesWrap.Value;
+        
+        foreach (var textEditor in textEditorStates.TextEditorList)
+        {
+            <TextEditorDisplay @key="textEditor.Key" 
+                               TextEditorKey="textEditor.Key"
+                               TabIndex="0"
+                               StyleCssString="width: 400px; height: 400px;"/>    
+        }
+    }
 </ContextBoundary>
