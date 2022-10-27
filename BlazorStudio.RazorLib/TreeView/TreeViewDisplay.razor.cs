@@ -134,9 +134,6 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
             {
-                // CASE: TreeViewModel.IsExpanded
-                // CASE: !TreeViewModel.IsExpanded && ParentTreeViewDisplay is not null
-
                 if (TreeViewModel.IsExpanded)
                     TreeViewModel.IsExpanded = false;
                 else if (ParentTreeViewDisplay is not null)
