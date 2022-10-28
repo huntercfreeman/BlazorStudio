@@ -84,7 +84,7 @@ public record InputFileState(
             var nextSelectedIndexInHistory = inInputFileState.SelectedIndexInHistory; 
             
             if (nextSelectedIndexInHistory < inInputFileState.SelectedTreeViewModelHistory.Count - 1)
-                nextSelectedIndexInHistory--;
+                nextSelectedIndexInHistory++;
             
             return inInputFileState with
             {
