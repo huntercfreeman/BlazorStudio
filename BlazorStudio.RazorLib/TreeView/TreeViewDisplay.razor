@@ -5,13 +5,13 @@
 
 @typeparam TItem
 
-<div class="bte_tree-view-display"
+<div class="bstudio_tree-view-display"
      tabindex="@RootTabIndex"
      @onkeydown="HandleRootOnKeyDown">
     
     @if (ShouldShowRoot || !IsRoot)
     {
-        <span class="bte_tree-view-display-title bte_unselectable @IsActiveDescendantClassCss"
+        <span class="bstudio_tree-view-display-title bstudio_unselectable @IsActiveDescendantClassCss"
               style="@($"padding-left: {PaddingLeft}px;")"
               @onclick="SetActiveDescendantOnClick"
               @ref="_titleElementReference"
@@ -22,7 +22,7 @@
               @oncontextmenu:preventDefault="true"
               tabindex="@TitleTabIndex">
             
-            <span class="bte_tree-view-display-expansion"
+            <span class="bstudio_tree-view-display-expansion"
                   @onclick="ToggleIsExpandedOnClick"
                   @onclick:stopPropagation="true">
                 @if (TreeViewModel.IsExpanded)
@@ -45,7 +45,7 @@
         </span>
     }
 
-    <div class="bte_tree-view-display-body">
+    <div class="bstudio_tree-view-display-body">
         @if (TreeViewModel.IsExpanded || (!ShouldShowRoot && IsRoot))
         {
             var immutableChildArray = TreeViewModel.Children.ToImmutableArray();

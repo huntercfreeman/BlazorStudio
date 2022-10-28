@@ -33,16 +33,16 @@ public partial class VirtualizationDisplay<T> : ComponentBase, IDisposable
     private VirtualizationRequest _request = null!;
 
     private string LeftVirtualizationBoundaryDisplayId =>
-        $"bte_left-virtualization-boundary-display-{_intersectionObserverMapKey}";
+        $"bstudio_left-virtualization-boundary-display-{_intersectionObserverMapKey}";
     
     private string RightVirtualizationBoundaryDisplayId =>
-        $"bte_right-virtualization-boundary-display-{_intersectionObserverMapKey}";
+        $"bstudio_right-virtualization-boundary-display-{_intersectionObserverMapKey}";
     
     private string TopVirtualizationBoundaryDisplayId =>
-        $"bte_top-virtualization-boundary-display-{_intersectionObserverMapKey}";
+        $"bstudio_top-virtualization-boundary-display-{_intersectionObserverMapKey}";
     
     private string BottomVirtualizationBoundaryDisplayId =>
-        $"bte_bottom-virtualization-boundary-display-{_intersectionObserverMapKey}";
+        $"bstudio_bottom-virtualization-boundary-display-{_intersectionObserverMapKey}";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

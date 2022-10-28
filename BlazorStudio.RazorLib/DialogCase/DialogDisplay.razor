@@ -2,7 +2,7 @@
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorStudio.RazorLib.ResizableCase
 <ContextBoundary ContextRecord="ContextFacts.DialogDisplayContext"
-                 ClassCssString="bte_dialog-display"
+                 ClassCssString="bstudio_dialog-display"
                  StyleCssString="@StyleCssString">
     @if (DialogRecord.IsResizable)
     {
@@ -11,30 +11,30 @@
                                                                   ReRenderFuncAsync="ReRenderAsync"/>
     }
 
-    <div class="bte_dialog-display-toolbar"
+    <div class="bstudio_dialog-display-toolbar"
          @onmousedown="SubscribeMoveHandle">
-        <div class="bte_dialog-display-title">
+        <div class="bstudio_dialog-display-title">
             @DialogRecord.Title
         </div>
 
-        <div class="bte_dialog-display-buttons"
+        <div class="bstudio_dialog-display-buttons"
              @onmousedown:stopPropagation="true">
-            <div class="bte_dialog-display-button-entry">
+            <div class="bstudio_dialog-display-button-entry">
                 <IconMinimize/>
             </div>
 
-            <div class="bte_dialog-display-button-entry">
+            <div class="bstudio_dialog-display-button-entry">
                 <IconMaximize/>
             </div>
 
-            <div class="bte_dialog-display-button-entry"
+            <div class="bstudio_dialog-display-button-entry"
                  @onclick="DispatchDisposeDialogRecordAction">
                 <IconClose/>
             </div>
         </div>
     </div>
 
-    <div class="bte_dialog-display-body">
+    <div class="bstudio_dialog-display-body">
         <CascadingValue Value="DialogRecord">
             <DynamicComponent @key="DialogRecord.DialogKey"
                               Type="DialogRecord.RendererType"

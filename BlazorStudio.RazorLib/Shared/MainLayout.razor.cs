@@ -23,7 +23,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private string _message = string.Empty;
     
     private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay
-        ? "bte_unselectable"
+        ? "bstudio_unselectable"
         : string.Empty;
     
     private bool _previousDragStateWrapShouldDisplay;

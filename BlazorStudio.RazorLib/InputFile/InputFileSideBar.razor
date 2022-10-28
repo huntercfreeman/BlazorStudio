@@ -2,7 +2,7 @@
 @using BlazorStudio.RazorLib.TreeView
 @using BlazorStudio.RazorLib.ResizableCase
 
-<div class="bte_input-file-display-side-bar"
+<div class="bstudio_input-file-display-side-bar"
      style="@ElementDimensions.StyleString">
 
     @if (_fileSystemTreeViewModel is not null)
@@ -14,7 +14,7 @@
             </ItemRenderFragment>
 
             <ContextMenuEventRenderFragment Context="contextMenuEvent">
-                <div class="bte_dropdown-display-default-background"
+                <div class="bstudio_dropdown-display-default-background"
                      style="@GetStyleForContextMenu(contextMenuEvent.CapturedMouseEventArgs)">
                     <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent.TreeViewModel)"/>
                 </div>

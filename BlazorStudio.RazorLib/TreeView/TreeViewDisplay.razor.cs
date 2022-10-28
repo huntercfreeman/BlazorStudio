@@ -47,7 +47,7 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
         : InternalParameters.GetRootFunc.Invoke();
 
     private string IsActiveDescendantClassCss => IsActiveDescendant
-        ? "bte_active"
+        ? "bstudio_active"
         : string.Empty;
     
     private bool IsActiveDescendant =>
