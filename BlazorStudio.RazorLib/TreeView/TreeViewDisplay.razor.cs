@@ -20,6 +20,8 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public RenderFragment<TreeViewDisplayContextMenuEvent<TItem>> ContextMenuEventRenderFragment { get; set; } = null!;
     [Parameter]
+    public bool ShouldShowRoot { get; set; } = true;
+    [Parameter]
     public Func<TreeViewModel<TItem>>? GetRootFunc { get; set; }
     [Parameter]
     public int Depth { get; set; }
@@ -49,10 +51,12 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     
     private bool IsActiveDescendant =>
         Root.ActiveDescendant is not null && Root.ActiveDescendant.Id == TreeViewModel.Id;
+    
+    private bool IsRoot => Root.Id == TreeViewModel.Id;
 
     private int PaddingLeft => Depth * PADDING_LEFT_PER_DEPTH_IN_PIXELS;
 
-    private string RootTabIndex => Root.Id == TreeViewModel.Id
+    private string RootTabIndex => IsRoot 
         ? "0"
         : string.Empty;
 
@@ -97,6 +101,21 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     
     private void SetActiveDescendantAndRerender(TreeViewModel<TItem> treeViewModel)
     {
+        if (treeViewModel.Id == Root.Id &&
+            !ShouldShowRoot)
+        {
+            // !ShouldShowRoot then don't let root get focused
+            // Set focus instead to the root's first child if any
+
+            if (Root.Children.Any())
+            {
+                SetActiveDescendantAndRerender(
+                    Root.Children.First());
+            }
+
+            return;
+        }
+        
         var previousActiveDescendant = Root.ActiveDescendant; 
         
         Root.ActiveDescendant = treeViewModel;

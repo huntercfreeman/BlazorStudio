@@ -26,10 +26,24 @@ public partial class InputFileNavMenu : ComponentBase
     
     private ElementDimensions _homeElementDimensions = new();
     private ElementDimensions _rootElementDimensions = new();
+    private TreeViewModel<IAbsoluteFilePath>? _fileSystemTreeViewModel;
     private TreeViewModel<IAbsoluteFilePath>? _homeTreeViewModel;
     private TreeViewModel<IAbsoluteFilePath>? _rootTreeViewModel;
 
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
+    {
+        _fileSystemTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
+            new AbsoluteFilePath(string.Empty, true), 
+            LoadTreeViewRoot);
+
+        _fileSystemTreeViewModel.LoadChildrenFuncAsync.Invoke(_fileSystemTreeViewModel);
+        
+        InitializeElementDimensions();
+        
+        base.OnInitialized();
+    }
+    
+    private Task LoadTreeViewRoot(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
         // HOME
         var homeAbsoluteFilePath = new AbsoluteFilePath(
@@ -52,10 +66,16 @@ public partial class InputFileNavMenu : ComponentBase
             LoadChildrenAsync);
 
         _rootTreeViewModel.LoadChildrenFuncAsync.Invoke(_rootTreeViewModel);
-
-        InvokeAsync(StateHasChanged);
         
-        return base.OnInitializedAsync();
+        treeViewModel.Children.Clear();
+        
+        treeViewModel.Children.AddRange(new []
+        {
+            _homeTreeViewModel,
+            _rootTreeViewModel
+        });
+
+        return Task.CompletedTask;
     }
 
     private Task LoadChildrenAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)

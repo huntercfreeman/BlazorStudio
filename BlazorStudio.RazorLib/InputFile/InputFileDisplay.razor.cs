@@ -70,7 +70,7 @@ public partial class InputFileDisplay : ComponentBase
         {
             new DimensionUnit
             {
-                Value = 30,
+                Value = 40,
                 DimensionUnitKind = DimensionUnitKind.Percentage
             },
             new DimensionUnit
@@ -88,7 +88,7 @@ public partial class InputFileDisplay : ComponentBase
         {
             new DimensionUnit
             {
-                Value = 70,
+                Value = 60,
                 DimensionUnitKind = DimensionUnitKind.Percentage
             },
             new DimensionUnit
