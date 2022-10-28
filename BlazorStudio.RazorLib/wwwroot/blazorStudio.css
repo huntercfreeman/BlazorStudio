@@ -228,6 +228,16 @@ input[type="checkbox"]{
     width: var(--bstudio_input-file-display-top-nav-bar-buttons-width);
 }
 
+.bstudio_input-file-display-top-nav-bar-buttons .bstudio_button.bstudio_disabled {
+    background-color: var(--bstudio_primary-disabled-background-color);
+    color: var(--bstudio_primary-disabled-foreground-color);
+}
+
+.bstudio_input-file-display-top-nav-bar-buttons .bstudio_button.bstudio_disabled:hover {
+    background-color: var(--bstudio_primary-disabled-hover-background-color);
+    color: var(--bstudio_primary-disabled-hover-foreground-color);
+}
+
 .bstudio_input-file-display-top-nav-bar-address {
     display: flex;
     align-items: center;
@@ -250,7 +260,7 @@ input[type="checkbox"]{
     width: var(--bstudio_input-file-display-top-nav-bar-search-width);
 }
 
-.bstudio_input-file-search-button {
+.bstudio_input-file-search-button.bstudio_button {
     background-color: var(--bstudio_input-background-color);
     color: var(--bstudio_input-font-color);
     letter-spacing: normal;

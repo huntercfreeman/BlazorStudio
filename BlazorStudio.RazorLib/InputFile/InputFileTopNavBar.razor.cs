@@ -30,12 +30,12 @@ public partial class InputFileTopNavBar : FluxorComponent
     
     private void HandleBackButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.SelectPreviousHistoryIndexAction());
+        Dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
     }
     
     private void HandleForwardButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.SelectNextHistoryIndexAction());
+        Dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
     }
 
     private void HandleUpwardButtonOnClick()

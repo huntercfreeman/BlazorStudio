@@ -43,10 +43,17 @@ public record InputFileState(
     public record SetSelectedTreeViewModelAction(
         TreeViewModel<IAbsoluteFilePath> SelectedTreeViewModel);
 
-    public record SelectPreviousHistoryIndexAction;
-    public record SelectNextHistoryIndexAction;
+    public record MoveBackwardsInHistoryAction;
+    public record MoveForwardsInHistoryAction;
     public record SelectParentDirectoryAction;
     public record RefreshCurrentSelectionAction;
+    
+    public static bool CanMoveBackwardsInHistory(InputFileState inputFileState) => 
+        inputFileState.SelectedIndexInHistory > 0;
+    
+    public static bool CanMoveForwardsInHistory(InputFileState inputFileState) => 
+        inputFileState.SelectedIndexInHistory < 
+        inputFileState.SelectedTreeViewModelHistory.Count - 1;
     
     private class InputFileStateReducer
     {
@@ -61,35 +68,37 @@ public record InputFileState(
         }
 
         [ReducerMethod]
-        public static InputFileState ReduceSelectPreviousHistoryIndexAction(
+        public static InputFileState ReduceMoveBackwardsInHistoryAction(
             InputFileState inInputFileState,
-            SelectPreviousHistoryIndexAction selectPreviousHistoryIndexAction)
+            MoveBackwardsInHistoryAction moveBackwardsInHistoryAction)
         {
-            var nextSelectedIndexInHistory = inInputFileState.SelectedIndexInHistory; 
-            
-            if (nextSelectedIndexInHistory > 0)
-                nextSelectedIndexInHistory--;
-            
-            return inInputFileState with
+            if (CanMoveBackwardsInHistory(inInputFileState))
             {
-                SelectedIndexInHistory = nextSelectedIndexInHistory,
-            };
+                return inInputFileState with
+                {
+                    SelectedIndexInHistory = inInputFileState.SelectedIndexInHistory - 
+                                             1,
+                };
+            }
+            
+            return inInputFileState;
         }
         
         [ReducerMethod]
-        public static InputFileState ReduceSelectNextHistoryIndexAction(
+        public static InputFileState ReduceMoveForwardsInHistoryAction(
             InputFileState inInputFileState,
-            SelectNextHistoryIndexAction selectNextHistoryIndexAction)
+            MoveForwardsInHistoryAction moveForwardsInHistoryAction)
         {
-            var nextSelectedIndexInHistory = inInputFileState.SelectedIndexInHistory; 
-            
-            if (nextSelectedIndexInHistory < inInputFileState.SelectedTreeViewModelHistory.Count - 1)
-                nextSelectedIndexInHistory++;
-            
-            return inInputFileState with
+            if (CanMoveForwardsInHistory(inInputFileState))
             {
-                SelectedIndexInHistory = nextSelectedIndexInHistory,
-            };
+                return inInputFileState with
+                {
+                    SelectedIndexInHistory = inInputFileState.SelectedIndexInHistory + 
+                                             1,
+                };
+            }
+            
+            return inInputFileState;
         }
         
         [ReducerMethod]

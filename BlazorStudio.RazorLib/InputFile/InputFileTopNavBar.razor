@@ -1,12 +1,15 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+﻿@using BlazorStudio.ClassLib.Store.InputFileCase
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_input-file-display-top-nav-bar">
     <div class="bstudio_input-file-display-top-nav-bar-buttons">
-        <ButtonDisplay OnClickAction="HandleBackButtonOnClick">
+        <ButtonDisplay OnClickAction="HandleBackButtonOnClick"
+                       IsDisabled="!InputFileState.CanMoveBackwardsInHistory(InputFileStateWrap.Value)">
             <IconArrowLeft/>
         </ButtonDisplay>
     
-        <ButtonDisplay OnClickAction="HandleForwardButtonOnClick">
+        <ButtonDisplay OnClickAction="HandleForwardButtonOnClick"
+                       IsDisabled="!InputFileState.CanMoveForwardsInHistory(InputFileStateWrap.Value)">
             <IconArrowRight/>
         </ButtonDisplay>
     

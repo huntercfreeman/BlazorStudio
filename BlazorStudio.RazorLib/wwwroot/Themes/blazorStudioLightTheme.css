@@ -17,4 +17,8 @@
     --bstudio_primary-emphasis-foreground-color: red;
     --bstudio_input-background-color: red;
     --bstudio_input-font-color: red;
+    --bstudio_primary-disabled-background-color: red;
+    --bstudio_primary-disabled-foreground-color: red;
+    --bstudio_primary-disabled-hover-background-color: red;
+    --bstudio_primary-disabled-hover-foreground-color: red;
 }

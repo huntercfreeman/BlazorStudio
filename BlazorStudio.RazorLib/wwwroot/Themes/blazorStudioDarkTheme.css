@@ -17,4 +17,8 @@
     --bstudio_primary-emphasis-foreground-color: #4d8aea;
     --bstudio_input-background-color: #2d2f34;
     --bstudio_input-font-color: #d1d2ca;
+    --bstudio_primary-disabled-background-color: #5c5959;
+    --bstudio_primary-disabled-foreground-color: #ba931e;
+    --bstudio_primary-disabled-hover-background-color: var(--bstudio_primary-disabled-foreground-color);
+    --bstudio_primary-disabled-hover-foreground-color: var(--bstudio_primary-disabled-background-color);
 }

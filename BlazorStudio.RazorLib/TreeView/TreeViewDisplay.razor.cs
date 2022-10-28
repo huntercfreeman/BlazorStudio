@@ -21,6 +21,8 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     public RenderFragment<TreeViewDisplayContextMenuEvent<TItem>>? ContextMenuEventRenderFragment { get; set; }
     [Parameter]
     public bool ShouldShowRoot { get; set; } = true;
+    [Parameter]
+    public TreeViewDisplayOnEventRegistration<TItem> TreeViewDisplayOnEventRegistration { get; set; } = new();
     /// <summary>
     /// If consuming the <see cref="TreeViewDisplay{TItem}"/>
     /// one should ignore this [Parameter]. I do not want to use
@@ -117,9 +119,15 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
         });
     }
 
-    private void SetActiveDescendantOnClick()
+    private async Task SetActiveDescendantOnClick(MouseEventArgs mouseEventArgs)
     {
         SetActiveDescendantAndRerender(TreeViewModel);
+        
+        if (TreeViewDisplayOnEventRegistration.AfterClickFuncAsync is not null)
+        {
+            await TreeViewDisplayOnEventRegistration.AfterClickFuncAsync
+                .Invoke(mouseEventArgs, this);
+        }
     }
     
     private void SetActiveDescendantAndRerender(TreeViewModel<TItem> treeViewModel)
@@ -157,7 +165,7 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             await _titleElementReference.Value.FocusAsync();
     }
 
-    private void HandleRootOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private void HandleContainingBoxOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         switch (keyboardEventArgs.Key)
         {
@@ -174,7 +182,7 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
         }
     }
 
-    private void HandleTitleOnCustomKeyDown(CustomKeyDownEventArgs customKeyDownEventArgs)
+    private async Task HandleTitleOnCustomKeyDown(CustomKeyDownEventArgs customKeyDownEventArgs)
     {
         switch (customKeyDownEventArgs.Key)
         {
@@ -312,6 +320,12 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
 
         if (KeyboardKeyFacts.CheckIsContextMenuEvent(customKeyDownEventArgs))
             HandleTitleOnContextMenu(null);
+
+        if (TreeViewDisplayOnEventRegistration.AfterKeyDownFuncAsync is not null)
+        {
+            await TreeViewDisplayOnEventRegistration.AfterKeyDownFuncAsync
+                .Invoke(customKeyDownEventArgs, this);
+        }
     }
     
     private void HandleTitleOnContextMenu(MouseEventArgs? mouseEventArgs)
@@ -333,6 +347,15 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
         
         Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_contextMenuEventDropdownKey));
     } 
+    
+    private async Task HandleDoubleClick(MouseEventArgs mouseEventArgs)
+    {
+        if (TreeViewDisplayOnEventRegistration.AfterDoubleClickFuncAsync is not null)
+        {
+            await TreeViewDisplayOnEventRegistration.AfterDoubleClickFuncAsync
+                .Invoke(mouseEventArgs, this);
+        }
+    }
     
     public void Dispose()
     {

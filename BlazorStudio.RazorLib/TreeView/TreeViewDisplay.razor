@@ -7,13 +7,16 @@
 
 <div class="bstudio_tree-view-display"
      tabindex="@RootTabIndex"
-     @onkeydown="HandleRootOnKeyDown">
+     @onkeydown="HandleContainingBoxOnKeyDown">
     
     @if (ShouldShowRoot || !IsRoot)
     {
         <span class="bstudio_tree-view-display-title bstudio_unselectable @IsActiveDescendantClassCss"
               style="@($"padding-left: {PaddingLeft}px;")"
               @onclick="SetActiveDescendantOnClick"
+              @onclick:stopPropagation="true"
+              @ondblclick="HandleDoubleClick"
+              @ondblclick:stopPropagation="true"
               @ref="_titleElementReference"
               @onkeydown:stopPropagation="true"
               @oncustomkeydown="HandleTitleOnCustomKeyDown"
