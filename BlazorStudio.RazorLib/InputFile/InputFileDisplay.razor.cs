@@ -2,6 +2,7 @@ using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.TreeView;
+using BlazorStudio.RazorLib.ResizableCase;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -75,7 +76,7 @@ public partial class InputFileDisplay : ComponentBase
             },
             new DimensionUnit
             {
-                Value = 2,
+                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }
@@ -93,7 +94,7 @@ public partial class InputFileDisplay : ComponentBase
             },
             new DimensionUnit
             {
-                Value = 2,
+                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }

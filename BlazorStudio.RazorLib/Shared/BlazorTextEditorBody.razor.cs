@@ -1,4 +1,5 @@
 using BlazorStudio.ClassLib.Dimensions;
+using BlazorStudio.RazorLib.ResizableCase;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Shared;
@@ -25,7 +26,7 @@ public partial class BlazorTextEditorBody : ComponentBase
             },
             new DimensionUnit
             {
-                Value = 2,
+                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }
@@ -43,7 +44,7 @@ public partial class BlazorTextEditorBody : ComponentBase
             },
             new DimensionUnit
             {
-                Value = 2,
+                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }

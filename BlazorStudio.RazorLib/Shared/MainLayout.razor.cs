@@ -4,6 +4,7 @@ using BlazorStudio.ClassLib.Store.DragCase;
 using BlazorStudio.ClassLib.Store.FontCase;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.RazorLib.DialogCase;
+using BlazorStudio.RazorLib.ResizableCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -50,14 +51,14 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             },
             new DimensionUnit
             {
-                Value = 2,
+                Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             },
             new DimensionUnit
             {
-                Value = 3,
-                DimensionUnitKind = DimensionUnitKind.RootCharacterHeight,
+                Value = SizeFacts.Bstudio.Header.Height.Value / 2,
+                DimensionUnitKind = SizeFacts.Bstudio.Header.Height.DimensionUnitKind,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }
         });
@@ -74,8 +75,14 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             },
             new DimensionUnit
             {
-                Value = 2,
+                Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract
+            },
+            new DimensionUnit
+            {
+                Value = SizeFacts.Bstudio.Header.Height.Value / 2,
+                DimensionUnitKind = SizeFacts.Bstudio.Header.Height.DimensionUnitKind,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }
         });
