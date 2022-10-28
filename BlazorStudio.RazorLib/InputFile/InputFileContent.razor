@@ -1,23 +1,25 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+﻿@using BlazorStudio.RazorLib.TreeView
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_input-file-display-content"
      style="@ElementDimensions.StyleString">
     
-    bstudio_input-file-display-content
+    @{
+        var selectionSafeReference = SelectionMutablyReferenced;
+        
+        <TreeViewDisplay TreeViewModel="selectionSafeReference"
+                         ShouldShowRoot="false">
+            <ItemRenderFragment Context="treeViewModel">
+                @treeViewModel.Item.FilenameWithExtension
+            </ItemRenderFragment>
     
-    @* @if (_rootTreeViewModel is not null) *@
-    @* { *@
-    @*     <TreeViewDisplay TreeViewModel="_rootTreeViewModel"> *@
-    @*         <ItemRenderFragment Context="treeViewModel"> *@
-    @*             @treeViewModel.Item.FilenameWithExtension *@
-    @*         </ItemRenderFragment> *@
-    @* *@
-    @*         <ContextMenuEventRenderFragment Context="contextMenuEvent"> *@
-    @*             <div class="bstudio_dropdown-display-default-background" *@
-    @*                  style="@GetStyleForContextMenu(contextMenuEvent.CapturedMouseEventArgs)"> *@
-    @*                 <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent.TreeViewModel)"/> *@
-    @*             </div> *@
-    @*         </ContextMenuEventRenderFragment> *@
-    @*     </TreeViewDisplay> *@
-    @* } *@
+            <ContextMenuEventRenderFragment Context="contextMenuEvent">
+                <div class="bstudio_dropdown-display-default-background"
+                     style="@GetStyleForContextMenu(contextMenuEvent.CapturedMouseEventArgs)">
+                    <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent.TreeViewModel)"/>
+                </div>
+            </ContextMenuEventRenderFragment>
+        </TreeViewDisplay>
+    }
 </div>

@@ -22,9 +22,19 @@ public record InputFileState(
         FileSystemTreeViewModel.LoadChildrenFuncAsync
             .Invoke(FileSystemTreeViewModel);
 
+        var firstChild = FileSystemTreeViewModel.Children.First();
+        
+        var selection = new TreeViewModel<IAbsoluteFilePath>(
+            firstChild.Item,
+            LoadChildrenAsync);
+
+        selection.LoadChildrenFuncAsync.Invoke(selection);
+        
+        selection.IsExpanded = true;
+
         SelectedTreeViewModelHistory = new []
         {
-            FileSystemTreeViewModel.Children.First(),
+            selection,
         }.ToImmutableList();
     }
 
@@ -121,7 +131,9 @@ public record InputFileState(
         {
             var currentSelection = inInputFileState
                 .SelectedTreeViewModelHistory[inInputFileState.SelectedIndexInHistory];
-            
+
+            currentSelection.Children.Clear();
+
             currentSelection.LoadChildrenFuncAsync
                 .Invoke(currentSelection);
 
@@ -132,8 +144,13 @@ public record InputFileState(
             InputFileState inInputFileState,
             TreeViewModel<IAbsoluteFilePath> selectedTreeViewModel)
         {
-            selectedTreeViewModel.LoadChildrenFuncAsync
-                .Invoke(selectedTreeViewModel);
+            var selectionClone = new TreeViewModel<IAbsoluteFilePath>(
+                selectedTreeViewModel.Item,
+                LoadChildrenAsync);
+
+            selectionClone.LoadChildrenFuncAsync.Invoke(selectionClone);
+
+            selectionClone.IsExpanded = true;
             
             var nextHistory = 
                 inInputFileState.SelectedTreeViewModelHistory;
@@ -215,7 +232,6 @@ public record InputFileState(
             .Union(childFiles)
             .Select(afp => new TreeViewModel<IAbsoluteFilePath>(afp, LoadChildrenAsync));
 
-        treeViewModel.Children.Clear();
         treeViewModel.Children.AddRange(childTreeViewModels);
         
         return Task.CompletedTask;
