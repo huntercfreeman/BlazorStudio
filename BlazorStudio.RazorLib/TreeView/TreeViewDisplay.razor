@@ -44,11 +44,14 @@
 
             @ItemRenderFragment(TreeViewModel)
 
-            <DropdownDisplay DropdownKey="_contextMenuEventDropdownKey"
-                             DropdownPositionKind="DropdownPositionKind.Vertical">
+            @if (ContextMenuEventRenderFragment is not null)
+            {
+                <DropdownDisplay DropdownKey="_contextMenuEventDropdownKey"
+                                 DropdownPositionKind="DropdownPositionKind.Vertical">
 
-                @ContextMenuEventRenderFragment(ContextMenuEvent)
-            </DropdownDisplay>
+                    @ContextMenuEventRenderFragment(ContextMenuEvent)
+                </DropdownDisplay>
+            }
         </span>
     }
 

@@ -28,7 +28,7 @@ public record InputFileState(
         var selection = new TreeViewModel<IAbsoluteFilePath>(
             firstChild.Item,
             false,
-            LoadChildrenAsync);
+            LoadNotExpandableChildrenAsync);
 
         selection.LoadChildrenFuncAsync.Invoke(selection);
         
@@ -111,7 +111,7 @@ public record InputFileState(
                 parentDirectoryTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
                     (IAbsoluteFilePath)parentDirectoryAbsoluteFilePath, 
                     false,
-                    LoadChildrenAsync);
+                    LoadNotExpandableChildrenAsync);
 
                 parentDirectoryTreeViewModel.LoadChildrenFuncAsync
                     .Invoke(parentDirectoryTreeViewModel);  
@@ -149,13 +149,13 @@ public record InputFileState(
         {
             var selectionClone = new TreeViewModel<IAbsoluteFilePath>(
                 selectedTreeViewModel.Item,
-                false,
-                LoadChildrenAsync);
+                true,
+                LoadNotExpandableChildrenAsync);
 
             selectionClone.LoadChildrenFuncAsync.Invoke(selectionClone);
 
             selectionClone.IsExpanded = true;
-            
+
             var nextHistory = 
                 inInputFileState.SelectedTreeViewModelHistory;
              
@@ -173,7 +173,7 @@ public record InputFileState(
             }
             
             nextHistory = nextHistory
-                .Add(selectedTreeViewModel);
+                .Add(selectionClone);
             
             return inInputFileState with
             {
@@ -193,7 +193,7 @@ public record InputFileState(
         var homeTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
             homeAbsoluteFilePath, 
             true,
-            LoadChildrenAsync);
+            LoadNotExpandableChildrenAsync);
 
         homeTreeViewModel.LoadChildrenFuncAsync.Invoke(homeTreeViewModel);    
             
@@ -205,7 +205,7 @@ public record InputFileState(
         var rootTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
             rootAbsoluteFilePath, 
             true,
-            LoadChildrenAsync);
+            LoadExpandableChildrenAsync);
 
         rootTreeViewModel.LoadChildrenFuncAsync.Invoke(rootTreeViewModel);
         
@@ -220,7 +220,35 @@ public record InputFileState(
         return Task.CompletedTask;
     }
 
-    private static Task LoadChildrenAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private static async Task LoadExpandableChildrenAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    {
+        var children = await ReadFilesAsync(treeViewModel);
+
+        var childTreeViewModels = children
+            .Select(afp => 
+                new TreeViewModel<IAbsoluteFilePath>(
+                    afp,
+                    true,
+                    LoadNotExpandableChildrenAsync));
+
+        treeViewModel.Children.AddRange(childTreeViewModels);
+    }
+    
+    private static async Task LoadNotExpandableChildrenAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    {
+        var children = await ReadFilesAsync(treeViewModel);
+
+        var childTreeViewModels = children
+            .Select(afp => 
+                new TreeViewModel<IAbsoluteFilePath>(
+                    afp,
+                    false,
+                    LoadNotExpandableChildrenAsync));
+
+        treeViewModel.Children.AddRange(childTreeViewModels);
+    }
+    
+    private static async Task<IEnumerable<AbsoluteFilePath>> ReadFilesAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
         var absoluteFilePathString = treeViewModel.Item.GetAbsoluteFilePathString();
 
@@ -234,16 +262,7 @@ public record InputFileState(
             .OrderBy(filename => filename)
             .Select(cd => new AbsoluteFilePath(cd, true));
 
-        var childTreeViewModels = childDirectories
-            .Union(childFiles)
-            .Select(afp => 
-                new TreeViewModel<IAbsoluteFilePath>(
-                    afp,
-                    true,
-                    LoadChildrenAsync));
-
-        treeViewModel.Children.AddRange(childTreeViewModels);
-        
-        return Task.CompletedTask;
+        return childDirectories
+            .Union(childFiles);
     }
 }
