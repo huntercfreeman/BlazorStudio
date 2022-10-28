@@ -1,3 +1,9 @@
 :root {
+    --bte_section-title-font-size: 1.75rem;
+    --bte_folder-explorer-display-padding: 5px;
+    --bte_editor-display-padding: 5px;
+    --bte_editor-display-border-left-size: 2px;
+    --bte_dialog-display-toolbar-height: 2.5rem;
     --bte_input-file-display-top-nav-bar-height: 2.5rem;
+    --bte_footer-padding: 5px;
 }

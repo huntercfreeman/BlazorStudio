@@ -33,22 +33,21 @@ input[type="checkbox"]{
 }
 
 .bte_folder-explorer-display {
-    padding: 5px;
+    padding: var(--bte_folder-explorer-display-padding);
 }
 
 .bte_footer {
-    padding: 5px;
-    height: 6rem;
+    padding: var(--bte_footer-padding);
     background-color: var(--bte_footer-background-color);
 }
 
 .bte_section-title {
-    font-size: 1.75rem;
+    font-size: var(--bte_section-title-font-size);
 }
 
 .bte_editor-display {
-    padding: 5px;
-    border-left: 2px solid var(--bte_primary-border-color);
+    padding: var(--bte_editor-display-padding);
+    border-left: var(--bte_editor-display-border-left-size) solid var(--bte_primary-border-color);
 }
 
 .bte_resize-column {
@@ -70,7 +69,7 @@ input[type="checkbox"]{
 }
 
 .bte_dialog-display-toolbar {
-    height: 3rem;
+    height: var(--bte_dialog-display-toolbar-height);
     display: flex;
     justify-content: space-between;
     align-items: center;
