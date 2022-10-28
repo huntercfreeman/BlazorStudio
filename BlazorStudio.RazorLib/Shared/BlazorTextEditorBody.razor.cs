@@ -25,7 +25,7 @@ public partial class BlazorTextEditorBody : ComponentBase
             },
             new DimensionUnit
             {
-                Value = 2.5,
+                Value = 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }
@@ -43,7 +43,7 @@ public partial class BlazorTextEditorBody : ComponentBase
             },
             new DimensionUnit
             {
-                Value = 2.5,
+                Value = 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }

@@ -21,7 +21,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public Func<Task> ReRenderFuncAsync { get; set; } = null!;
     
-    public const double RESIZE_HANDLE_WIDTH_IN_PIXELS = 5;
+    public const double RESIZE_HANDLE_WIDTH_IN_PIXELS = 4;
     
     private Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? 
         _dragEventHandler;

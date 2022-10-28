@@ -75,7 +75,7 @@ public partial class InputFileDisplay : ComponentBase
             },
             new DimensionUnit
             {
-                Value = 2.5,
+                Value = 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }
@@ -93,7 +93,7 @@ public partial class InputFileDisplay : ComponentBase
             },
             new DimensionUnit
             {
-                Value = 2.5,
+                Value = 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }

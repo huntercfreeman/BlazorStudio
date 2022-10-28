@@ -31,7 +31,7 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     [Parameter]
     public InternalParameters<TItem> InternalParameters { get; set; } = new();
 
-    private const int PADDING_LEFT_PER_DEPTH_IN_PIXELS = 22;
+    private const int PADDING_LEFT_PER_DEPTH_IN_PIXELS = 14;
     
     private TreeViewModel<TItem>? _previousTreeViewModel;
     private ElementReference? _titleElementReference;
@@ -82,10 +82,21 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
 
     private InternalParameters<TItem> ConstructInternalParameters(int index)
     {
+        int depth;
+
+        if (IsRoot && !ShouldShowRoot)
+        {
+            depth = 0;
+        }
+        else
+        {
+            depth = InternalParameters.Depth + 1;
+        }
+        
         return new InternalParameters<TItem>
         {
             Index = index,
-            Depth = InternalParameters.Depth + 1,
+            Depth = depth,
             GetRootFunc = () => Root,
             ParentTreeViewDisplay = this
         };
