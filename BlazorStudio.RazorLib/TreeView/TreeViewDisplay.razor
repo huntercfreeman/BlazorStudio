@@ -22,18 +22,25 @@
               @oncontextmenu:preventDefault="true"
               tabindex="@TitleTabIndex">
             
-            <span class="bstudio_tree-view-display-expansion"
-                  @onclick="ToggleIsExpandedOnClick"
-                  @onclick:stopPropagation="true">
-                @if (TreeViewModel.IsExpanded)
-                {
-                    <IconChevronDown/>
-                }
-                else
-                {
-                    <IconChevronRight/>
-                }
-            </span>
+            @if (TreeViewModel.CanToggleExpandable)
+            {
+                <span class="bstudio_tree-view-display-expansion"
+                      @onclick="ToggleIsExpandedOnClick"
+                      @onclick:stopPropagation="true">
+                    @if (TreeViewModel.IsExpanded)
+                    {
+                        <IconChevronDown/>
+                    }
+                    else
+                    {
+                        <IconChevronRight/>
+                    }
+                </span>
+            }
+            else
+            {
+                <IconBlank/>
+            }
 
             @ItemRenderFragment(TreeViewModel)
 

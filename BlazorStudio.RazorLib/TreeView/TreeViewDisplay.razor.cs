@@ -18,7 +18,7 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public RenderFragment<TreeViewModel<TItem>> ItemRenderFragment { get; set; } = null!;
     [Parameter, EditorRequired]
-    public RenderFragment<TreeViewDisplayContextMenuEvent<TItem>> ContextMenuEventRenderFragment { get; set; } = null!;
+    public RenderFragment<TreeViewDisplayContextMenuEvent<TItem>>? ContextMenuEventRenderFragment { get; set; }
     [Parameter]
     public bool ShouldShowRoot { get; set; } = true;
     /// <summary>
@@ -316,6 +316,9 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     
     private void HandleTitleOnContextMenu(MouseEventArgs? mouseEventArgs)
     {
+        if (ContextMenuEventRenderFragment is null)
+            return;
+        
         // mouseEventArgs is null -> came from HandleTitleOnCustomKeyDown
         // mouseEventArgs.Button != 2 -> non right click triggered the ContextMenuEvent
         if (mouseEventArgs is null ||

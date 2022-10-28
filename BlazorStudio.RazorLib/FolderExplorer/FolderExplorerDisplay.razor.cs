@@ -34,7 +34,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             return;
 
         _rootTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
-            FolderExplorerStateWrap.Value.AbsoluteFilePath, 
+            FolderExplorerStateWrap.Value.AbsoluteFilePath,
+            true,
             LoadChildrenAsync);
 
         _rootTreeViewModel.LoadChildrenFuncAsync.Invoke(_rootTreeViewModel);
@@ -56,7 +57,11 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
         var childTreeViewModels = childDirectories
             .Union(childFiles)
-            .Select(afp => new TreeViewModel<IAbsoluteFilePath>(afp, LoadChildrenAsync));
+            .Select(afp => 
+                new TreeViewModel<IAbsoluteFilePath>(
+                    afp, 
+                    true, 
+                    LoadChildrenAsync));
 
         treeViewModel.Children.Clear();
         treeViewModel.Children.AddRange(childTreeViewModels);

@@ -15,6 +15,7 @@ public record InputFileState(
     private InputFileState() : this(
         new TreeViewModel<IAbsoluteFilePath>(
             new AbsoluteFilePath(string.Empty, true),
+            true,
             LoadTreeViewRoot),
         0,
         ImmutableList<TreeViewModel<IAbsoluteFilePath>>.Empty)
@@ -26,6 +27,7 @@ public record InputFileState(
         
         var selection = new TreeViewModel<IAbsoluteFilePath>(
             firstChild.Item,
+            false,
             LoadChildrenAsync);
 
         selection.LoadChildrenFuncAsync.Invoke(selection);
@@ -108,6 +110,7 @@ public record InputFileState(
                 
                 parentDirectoryTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
                     (IAbsoluteFilePath)parentDirectoryAbsoluteFilePath, 
+                    false,
                     LoadChildrenAsync);
 
                 parentDirectoryTreeViewModel.LoadChildrenFuncAsync
@@ -146,6 +149,7 @@ public record InputFileState(
         {
             var selectionClone = new TreeViewModel<IAbsoluteFilePath>(
                 selectedTreeViewModel.Item,
+                false,
                 LoadChildrenAsync);
 
             selectionClone.LoadChildrenFuncAsync.Invoke(selectionClone);
@@ -188,6 +192,7 @@ public record InputFileState(
         
         var homeTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
             homeAbsoluteFilePath, 
+            true,
             LoadChildrenAsync);
 
         homeTreeViewModel.LoadChildrenFuncAsync.Invoke(homeTreeViewModel);    
@@ -199,6 +204,7 @@ public record InputFileState(
         
         var rootTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
             rootAbsoluteFilePath, 
+            true,
             LoadChildrenAsync);
 
         rootTreeViewModel.LoadChildrenFuncAsync.Invoke(rootTreeViewModel);
@@ -230,7 +236,11 @@ public record InputFileState(
 
         var childTreeViewModels = childDirectories
             .Union(childFiles)
-            .Select(afp => new TreeViewModel<IAbsoluteFilePath>(afp, LoadChildrenAsync));
+            .Select(afp => 
+                new TreeViewModel<IAbsoluteFilePath>(
+                    afp,
+                    true,
+                    LoadChildrenAsync));
 
         treeViewModel.Children.AddRange(childTreeViewModels);
         
