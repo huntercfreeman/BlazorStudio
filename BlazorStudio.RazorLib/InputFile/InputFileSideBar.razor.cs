@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
-public partial class InputFileNavMenu : ComponentBase
+public partial class InputFileSideBar : ComponentBase
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
@@ -20,15 +20,11 @@ public partial class InputFileNavMenu : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
     
     [Parameter, EditorRequired]
-    public ElementDimensions NavMenuElementDimensions { get; set; } = null!;
+    public ElementDimensions ElementDimensions { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action<TreeViewModel<IAbsoluteFilePath>?> SetSelectedTreeViewModel { get; set; } = null!;
+    public Action<IAbsoluteFilePath>? SetSelectedAbsoluteFilePath { get; set; } = null!;
     
-    private ElementDimensions _homeElementDimensions = new();
-    private ElementDimensions _rootElementDimensions = new();
     private TreeViewModel<IAbsoluteFilePath>? _fileSystemTreeViewModel;
-    private TreeViewModel<IAbsoluteFilePath>? _homeTreeViewModel;
-    private TreeViewModel<IAbsoluteFilePath>? _rootTreeViewModel;
 
     protected override void OnInitialized()
     {
@@ -37,8 +33,6 @@ public partial class InputFileNavMenu : ComponentBase
             LoadTreeViewRoot);
 
         _fileSystemTreeViewModel.LoadChildrenFuncAsync.Invoke(_fileSystemTreeViewModel);
-        
-        InitializeElementDimensions();
         
         base.OnInitialized();
     }
@@ -50,29 +44,29 @@ public partial class InputFileNavMenu : ComponentBase
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             true);
         
-        _homeTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
+        var homeTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
             homeAbsoluteFilePath, 
             LoadChildrenAsync);
 
-        _homeTreeViewModel.LoadChildrenFuncAsync.Invoke(_homeTreeViewModel);    
+        homeTreeViewModel.LoadChildrenFuncAsync.Invoke(homeTreeViewModel);    
             
         // ROOT
         var rootAbsoluteFilePath = new AbsoluteFilePath(
             "/",
             true);
         
-        _rootTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
+        var rootTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
             rootAbsoluteFilePath, 
             LoadChildrenAsync);
 
-        _rootTreeViewModel.LoadChildrenFuncAsync.Invoke(_rootTreeViewModel);
+        rootTreeViewModel.LoadChildrenFuncAsync.Invoke(rootTreeViewModel);
         
         treeViewModel.Children.Clear();
         
         treeViewModel.Children.AddRange(new []
         {
-            _homeTreeViewModel,
-            _rootTreeViewModel
+            homeTreeViewModel,
+            rootTreeViewModel
         });
 
         return Task.CompletedTask;
@@ -105,30 +99,13 @@ public partial class InputFileNavMenu : ComponentBase
     private MenuRecord GetContextMenu(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
         var openInTextEditorMenuOption = new MenuOptionRecord(
-            "Open in Text Editor",
-            () => OpenInTextEditor(treeViewModel));
+            "Nothing here TODO: Aaa",
+            () => { });
 
         return new MenuRecord(new []
         {
             openInTextEditorMenuOption
         }.ToImmutableArray());
-    }
-
-    private void OpenInTextEditor(TreeViewModel<IAbsoluteFilePath> treeViewModel)
-    {
-        _ = Task.Run(async () =>
-        {
-            var fileContents = await File
-                .ReadAllTextAsync(treeViewModel.Item.GetAbsoluteFilePathString());
-
-            var textEditor = new TextEditorBase(
-                fileContents,
-                null,
-                null,
-                null);
-            
-            TextEditorService.RegisterTextEditor(textEditor);
-        });
     }
 
     private string GetStyleForContextMenu(MouseEventArgs? mouseEventArgs)
@@ -138,44 +115,5 @@ public partial class InputFileNavMenu : ComponentBase
 
         return 
             $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
-    }
-    
-    private void InitializeElementDimensions()
-    {
-        var homeTreeHeight = _homeElementDimensions.DimensionAttributes
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-        
-        homeTreeHeight.DimensionUnits.AddRange(new []
-        {
-            new DimensionUnit
-            {
-                Value = 50,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = 2.5,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
-
-        var rootTreeHeight = _rootElementDimensions.DimensionAttributes
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-        
-        rootTreeHeight.DimensionUnits.AddRange(new []
-        {
-            new DimensionUnit
-            {
-                Value = 50,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = 2.5,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
     }
 }

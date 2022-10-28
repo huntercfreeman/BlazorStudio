@@ -21,16 +21,17 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     public RenderFragment<TreeViewDisplayContextMenuEvent<TItem>> ContextMenuEventRenderFragment { get; set; } = null!;
     [Parameter]
     public bool ShouldShowRoot { get; set; } = true;
+    /// <summary>
+    /// If consuming the <see cref="TreeViewDisplay{TItem}"/>
+    /// one should ignore this [Parameter]. I do not want to use
+    /// [CascadingParameter] for these out of fear that
+    /// something will cascade from a location I wasn't expecting
+    /// and break things.
+    /// </summary>
     [Parameter]
-    public Func<TreeViewModel<TItem>>? GetRootFunc { get; set; }
-    [Parameter]
-    public int Depth { get; set; }
-    [Parameter]
-    public int Index { get; set; }
-    [Parameter]
-    public TreeViewDisplay<TItem>? ParentTreeViewDisplay { get; set; }
+    public InternalParameters<TItem> InternalParameters { get; set; } = new();
 
-    private const int PADDING_LEFT_PER_DEPTH_IN_PIXELS = 25;
+    private const int PADDING_LEFT_PER_DEPTH_IN_PIXELS = 22;
     
     private TreeViewModel<TItem>? _previousTreeViewModel;
     private ElementReference? _titleElementReference;
@@ -41,9 +42,9 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             TreeViewModel, 
             _contextMenuCapturedMouseEventArgs);
 
-    private TreeViewModel<TItem> Root => GetRootFunc is null
+    private TreeViewModel<TItem> Root => InternalParameters.GetRootFunc is null
         ? TreeViewModel
-        : GetRootFunc.Invoke();
+        : InternalParameters.GetRootFunc.Invoke();
 
     private string IsActiveDescendantClassCss => IsActiveDescendant
         ? "bte_active"
@@ -54,7 +55,7 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     
     private bool IsRoot => Root.Id == TreeViewModel.Id;
 
-    private int PaddingLeft => Depth * PADDING_LEFT_PER_DEPTH_IN_PIXELS;
+    private int PaddingLeft => InternalParameters.Depth * PADDING_LEFT_PER_DEPTH_IN_PIXELS;
 
     private string RootTabIndex => IsRoot 
         ? "0"
@@ -77,6 +78,17 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
         }
         
         return base.OnParametersSetAsync();
+    }
+
+    private InternalParameters<TItem> ConstructInternalParameters(int index)
+    {
+        return new InternalParameters<TItem>
+        {
+            Index = index,
+            Depth = InternalParameters.Depth + 1,
+            GetRootFunc = () => Root,
+            ParentTreeViewDisplay = this
+        };
     }
 
     private void ToggleIsExpandedOnClick()
@@ -160,8 +172,8 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             {
                 if (TreeViewModel.IsExpanded)
                     TreeViewModel.IsExpanded = false;
-                else if (ParentTreeViewDisplay is not null)
-                    SetActiveDescendantAndRerender(ParentTreeViewDisplay.TreeViewModel);
+                else if (InternalParameters.ParentTreeViewDisplay is not null)
+                    SetActiveDescendantAndRerender(InternalParameters.ParentTreeViewDisplay.TreeViewModel);
                 
                 break;
             }
@@ -172,32 +184,33 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
                 {
                     SetActiveDescendantAndRerender(TreeViewModel.Children.First());
                 }
-                else if (ParentTreeViewDisplay is not null)
+                else if (InternalParameters.ParentTreeViewDisplay is not null)
                 {
-                    if (Index < ParentTreeViewDisplay.TreeViewModel.Children.Count - 1)
+                    if (InternalParameters.Index < InternalParameters.ParentTreeViewDisplay.TreeViewModel.Children.Count - 1)
                     {
                         SetActiveDescendantAndRerender(
-                            ParentTreeViewDisplay.TreeViewModel.Children[Index + 1]);
+                            InternalParameters.ParentTreeViewDisplay.TreeViewModel.Children[InternalParameters.Index + 1]);
                     }
                     else
                     {
                         var targetDisplay = this;
 
-                        while (targetDisplay.Index == (targetDisplay.ParentTreeViewDisplay?.TreeViewModel.Children.Count ?? 0) - 1)
+                        while (targetDisplay.InternalParameters.Index == (targetDisplay.InternalParameters.ParentTreeViewDisplay?.TreeViewModel.Children.Count ?? 0) - 1)
                         {
-                            if (targetDisplay.ParentTreeViewDisplay is null)
+                            if (targetDisplay.InternalParameters.ParentTreeViewDisplay is null)
                                 break;
 
-                            targetDisplay = targetDisplay.ParentTreeViewDisplay;
+                            targetDisplay = targetDisplay.InternalParameters.ParentTreeViewDisplay;
                         }
 
-                        if (targetDisplay.ParentTreeViewDisplay is null ||
-                            targetDisplay.Index == (targetDisplay.ParentTreeViewDisplay?.TreeViewModel.Children.Count ?? 0) - 1)
+                        if (targetDisplay.InternalParameters.ParentTreeViewDisplay is null ||
+                            targetDisplay.InternalParameters.Index == (targetDisplay.InternalParameters.ParentTreeViewDisplay?.TreeViewModel.Children.Count ?? 0) - 1)
                         {
                             break;
                         }
 
-                        var model = targetDisplay.ParentTreeViewDisplay.TreeViewModel.Children[targetDisplay.Index + 1];
+                        var model = targetDisplay.InternalParameters.ParentTreeViewDisplay.TreeViewModel.Children
+                            [targetDisplay.InternalParameters.Index + 1];
 
                         SetActiveDescendantAndRerender(model);
                     }
@@ -208,16 +221,17 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             case KeyboardKeyFacts.MovementKeys.ARROW_UP:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
             {
-                if (ParentTreeViewDisplay is null)
+                if (InternalParameters.ParentTreeViewDisplay is null)
                     break;
 
-                if (Index == 0)
+                if (InternalParameters.Index == 0)
                 {
-                    SetActiveDescendantAndRerender(ParentTreeViewDisplay.TreeViewModel);
+                    SetActiveDescendantAndRerender(InternalParameters.ParentTreeViewDisplay.TreeViewModel);
                 }
                 else
                 {
-                    var model = ParentTreeViewDisplay.TreeViewModel.Children[Index - 1];
+                    var model = InternalParameters.ParentTreeViewDisplay.TreeViewModel.Children
+                        [InternalParameters.Index - 1];
 
                     while (model.IsExpanded && model.Children.Any())
                     {
@@ -248,9 +262,11 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             {
                 if (customKeyDownEventArgs.CtrlWasPressed)
                 {
-                    if (ParentTreeViewDisplay is not null)
+                    if (InternalParameters.ParentTreeViewDisplay is not null)
                     {
-                        SetActiveDescendantAndRerender(ParentTreeViewDisplay.TreeViewModel.Children.First());
+                        SetActiveDescendantAndRerender(
+                            InternalParameters.ParentTreeViewDisplay.TreeViewModel.Children
+                                .First());
                     }
                 }
                 else
@@ -265,9 +281,11 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             {
                 if (customKeyDownEventArgs.CtrlWasPressed)
                 {
-                    if (ParentTreeViewDisplay is not null)
+                    if (InternalParameters.ParentTreeViewDisplay is not null)
                     {
-                        SetActiveDescendantAndRerender(ParentTreeViewDisplay.TreeViewModel.Children.Last());
+                        SetActiveDescendantAndRerender(
+                            InternalParameters.ParentTreeViewDisplay.TreeViewModel.Children
+                                .Last());
                     }
                 }
                 else if (Root.IsExpanded && Root.Children.Any())

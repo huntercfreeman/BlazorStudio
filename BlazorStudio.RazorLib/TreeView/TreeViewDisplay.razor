@@ -58,10 +58,7 @@
                 <TreeViewDisplay @key="child.Id"
                                  TreeViewModel="child"
                                  ItemRenderFragment="ItemRenderFragment"
-                                 GetRootFunc="() => Root"
-                                 Depth="Depth + 1"
-                                 Index="index"
-                                 ParentTreeViewDisplay="this"
+                                 InternalParameters="ConstructInternalParameters(index)"
                                  ContextMenuEventRenderFragment="ContextMenuEventRenderFragment"
                                  ShouldShowRoot="ShouldShowRoot"/>
 

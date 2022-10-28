@@ -3,25 +3,27 @@
 <div class="bte_input-file-display">
     @if (HeaderRenderFragment is not null)
     {
-        @HeaderRenderFragment(_selectedTreeViewModel)
+        @HeaderRenderFragment(_selectedAbsoluteFilePath)
     }
 
+    <InputFileTopNavBar />
+    
     <div class="bte_input-file-display-body @BodyClassCssString"
          style="@BodyStyleCssString">
 
-        <InputFileNavMenu NavMenuElementDimensions="_navMenuElementDimensions"
-                          SetSelectedTreeViewModel="tvm => _selectedTreeViewModel = tvm" />
+        <InputFileSideBar ElementDimensions="_navMenuElementDimensions"
+                          SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm" />
 
         <ResizableColumn LeftElementDimensions="_navMenuElementDimensions"
                          RightElementDimensions="_contentElementDimensions"
                          ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)"/>
 
-        <InputFileContent ContentElementDimensions="_contentElementDimensions"
-                          SetSelectedTreeViewModel="tvm => _selectedTreeViewModel = tvm" />
+        <InputFileContent ElementDimensions="_contentElementDimensions"
+                          SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm" />
     </div>
 
     @if (FooterRenderFragment is not null)
     {
-        @FooterRenderFragment(_selectedTreeViewModel)
+        @FooterRenderFragment(_selectedAbsoluteFilePath)
     }
 </div>

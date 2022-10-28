@@ -51,16 +51,6 @@ input[type="checkbox"]{
     background-color: var(--bte_text-editor-gutter-background-color);
 }
 
-.bte_text-editor-content {
-    cursor: text;
-    position: relative;
-    display: flex;
-    overflow: auto;
-    height: calc(100% - 7rem);
-    font-family: monospace;
-    margin: 5px;
-}
-
 .bte_text-editor-cursor {
     position: absolute;
     width: 4px;
@@ -112,7 +102,7 @@ input[type="checkbox"]{
 
 .bte_header {
     padding: 5px;
-    border-bottom: 5px solid var(--bte_primary-border-color);
+    border-bottom: 4px solid var(--bte_primary-border-color);
     height: 3rem;
     background-color: var(--bte_header-background-color);
 }
@@ -313,30 +303,28 @@ input[type="checkbox"]{
     height: 100%;
 }
 
-.bte_input-file-display-body {
-    height: 100%;
+.bte_input-file-display-top-nav-bar {
+    height: var(--bte_input-file-display-top-nav-bar-height);
     display: flex;
+    align-items: center;
+    background-color: var(--bte_body-background-color);
+}
+
+.bte_input-file-display-body {
+    height: calc(100% - var(--bte_input-file-display-top-nav-bar-height));
+    display: flex;
+}
+
+.bte_input-file-display-side-bar {
+    height: 100%;
+    overflow: auto;
+    margin-right: 10px;
 }
 
 .bte_input-file-display-content {
     height: 100%;
     overflow: auto;
-}
-
-.bte_input-file-display-nav-menu {
-    height: 100%;
-    overflow: auto;
-}
-
-.bte_input-file-display-nav-menu-quick-select {
-    height: var(--bte_input-file-display-nav-menu-title-height);
-    overflow: auto;
-    background-color: var(--bte_body-background-color);
-}
-
-.bte_input-file-display-nav-menu-tree {
-    height: calc(100% - var(--bte_input-file-display-nav-menu-title-height));
-    overflow: auto;
+    margin-left: 10px;
 }
 
 em {

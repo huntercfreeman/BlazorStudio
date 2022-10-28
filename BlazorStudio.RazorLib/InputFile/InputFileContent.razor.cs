@@ -8,7 +8,7 @@ namespace BlazorStudio.RazorLib.InputFile;
 public partial class InputFileContent : ComponentBase
 {
     [Parameter, EditorRequired]
-    public ElementDimensions ContentElementDimensions { get; set; } = null!;
+    public ElementDimensions ElementDimensions { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action<TreeViewModel<IAbsoluteFilePath>?> SetSelectedTreeViewModel { get; set; } = null!;
+    public Action<IAbsoluteFilePath?> SetSelectedAbsoluteFilePath { get; set; } = null!;
 }

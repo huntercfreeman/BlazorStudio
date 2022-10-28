@@ -16,17 +16,17 @@ public partial class InputFileDisplay : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     /// <summary>
-    /// Receives the TreeViewModel selection as
-    /// parameter to the <see cref="RenderFragment"/>
+    /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
+    /// a parameter to the <see cref="RenderFragment"/>
     /// </summary>
     [Parameter]
-    public RenderFragment<TreeViewModel<IAbsoluteFilePath>?>? HeaderRenderFragment { get; set; }
+    public RenderFragment<IAbsoluteFilePath?>? HeaderRenderFragment { get; set; }
     /// <summary>
-    /// Receives the TreeViewModel selection as
-    /// parameter to the <see cref="RenderFragment"/>
+    /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
+    /// a parameter to the <see cref="RenderFragment"/>
     /// </summary>
     [Parameter]
-    public RenderFragment<TreeViewModel<IAbsoluteFilePath>?>? FooterRenderFragment { get; set; }
+    public RenderFragment<IAbsoluteFilePath?>? FooterRenderFragment { get; set; }
     /// <summary>
     /// One would likely use <see cref="BodyClassCssString"/> in the case where
     /// either <see cref="HeaderRenderFragment"/> or <see cref="FooterRenderFragment"/>
@@ -52,7 +52,7 @@ public partial class InputFileDisplay : ComponentBase
     
     private ElementDimensions _navMenuElementDimensions = new();
     private ElementDimensions _contentElementDimensions = new();
-    private TreeViewModel<IAbsoluteFilePath>? _selectedTreeViewModel;
+    private IAbsoluteFilePath? _selectedAbsoluteFilePath;
         
     protected override void OnInitialized()
     {
