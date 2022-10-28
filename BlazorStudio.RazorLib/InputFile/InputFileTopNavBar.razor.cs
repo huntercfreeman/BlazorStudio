@@ -3,24 +3,45 @@ using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
+using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeView;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
-public partial class InputFileTopNavBar : ComponentBase
+public partial class InputFileTopNavBar : FluxorComponent
 {
+    [Inject]
+    private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+
+    private TreeViewModel<IAbsoluteFilePath> SelectionMutablyReferenced => 
+        InputFileStateWrap.Value.SelectedTreeViewModelHistory[
+            InputFileStateWrap.Value.SelectedIndexInHistory];
+    
     private void HandleBackButtonOnClick()
     {
-        throw new NotImplementedException();
+        Dispatcher.Dispatch(new InputFileState.SelectPreviousHistoryIndexAction());
     }
     
     private void HandleForwardButtonOnClick()
     {
-        throw new NotImplementedException();
+        Dispatcher.Dispatch(new InputFileState.SelectNextHistoryIndexAction());
+    }
+
+    private void HandleUpwardButtonOnClick()
+    {
+        Dispatcher.Dispatch(new InputFileState.SelectParentDirectoryAction());
+    }
+
+    private void HandleRefreshButtonOnClick()
+    {
+        Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction());
     }
 }

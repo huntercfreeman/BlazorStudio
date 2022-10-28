@@ -2,12 +2,15 @@
 @using BlazorStudio.RazorLib.TreeView
 @using BlazorStudio.RazorLib.ResizableCase
 
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
 <div class="bstudio_input-file-display-side-bar"
      style="@ElementDimensions.StyleString">
 
-    @if (_fileSystemTreeViewModel is not null)
-    {
-        <TreeViewDisplay TreeViewModel="_fileSystemTreeViewModel"
+    @{
+        var fileSystemTreeViewModelMutablyReferencedSafeReference = FileSystemTreeViewModelMutablyReferenced;
+        
+        <TreeViewDisplay TreeViewModel="fileSystemTreeViewModelMutablyReferencedSafeReference"
                          ShouldShowRoot="false">
             <ItemRenderFragment Context="treeViewModel">
                 @treeViewModel.Item.FilenameWithExtension

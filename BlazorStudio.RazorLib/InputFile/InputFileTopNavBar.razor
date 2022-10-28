@@ -1,9 +1,29 @@
-﻿<div class="bstudio_input-file-display-top-nav-bar">
-    <ButtonDisplay OnClickAction="HandleBackButtonOnClick">
-        <IconArrowLeft/>
-    </ButtonDisplay>
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_input-file-display-top-nav-bar">
+    <div class="bstudio_input-file-display-top-nav-bar-buttons">
+        <ButtonDisplay OnClickAction="HandleBackButtonOnClick">
+            <IconArrowLeft/>
+        </ButtonDisplay>
     
-    <ButtonDisplay OnClickAction="HandleForwardButtonOnClick">
-        <IconArrowRight/>
-    </ButtonDisplay>
+        <ButtonDisplay OnClickAction="HandleForwardButtonOnClick">
+            <IconArrowRight/>
+        </ButtonDisplay>
+    
+        <ButtonDisplay OnClickAction="HandleUpwardButtonOnClick">
+            <IconArrowUp/>
+        </ButtonDisplay>
+    </div>
+    
+    <div class="bstudio_input-file-display-top-nav-bar-address">
+        @{
+            var selectionSafeReference = SelectionMutablyReferenced;
+        }
+        
+        @selectionSafeReference.Item.GetAbsoluteFilePathString()
+        
+        <ButtonDisplay OnClickAction="HandleRefreshButtonOnClick">
+            <IconRefresh/>
+        </ButtonDisplay>
+    </div>
 </div>
