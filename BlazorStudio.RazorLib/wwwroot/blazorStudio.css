@@ -254,6 +254,17 @@ em {
     box-shadow: 0 0 var(--bstudio_input-focus-box-shadow-blur-radius) var(--bstudio_primary-emphasis-foreground-color);
 }
 
-.bstudio_virtualization-boundary-display {
-    position: absolute;
+.bstudio_button {
+    background-color: transparent;
+    border: none;
+    color: var(--bstudio_primary-font-color);
+}
+
+.bstudio_button:focus {
+    outline: solid var(--bstudio_menu-option-display-focus-outline-size) var(--bstudio_primary-emphasis-foreground-color);
+    background-color: var(--bstudio_primary-hover-background-color);
+}
+
+.bstudio_button:hover {
+    background-color: var(--bstudio_primary-hover-background-color);
 }

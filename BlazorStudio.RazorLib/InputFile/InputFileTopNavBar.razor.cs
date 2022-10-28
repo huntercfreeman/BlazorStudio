@@ -14,5 +14,13 @@ namespace BlazorStudio.RazorLib.InputFile;
 
 public partial class InputFileTopNavBar : ComponentBase
 {
+    private void HandleBackButtonOnClick()
+    {
+        throw new NotImplementedException();
+    }
     
+    private void HandleForwardButtonOnClick()
+    {
+        throw new NotImplementedException();
+    }
 }
