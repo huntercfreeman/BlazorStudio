@@ -21,6 +21,9 @@ public partial class InputFileTopNavBar : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
+    private ElementReference? _searchElementReference;
+    private string _searchQuery = string.Empty;
+
     private TreeViewModel<IAbsoluteFilePath> SelectionMutablyReferenced => 
         InputFileStateWrap.Value.SelectedTreeViewModelHistory[
             InputFileStateWrap.Value.SelectedIndexInHistory];
@@ -43,5 +46,10 @@ public partial class InputFileTopNavBar : FluxorComponent
     private void HandleRefreshButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction());
+    }
+
+    private void FocusSearchElementReferenceOnClick()
+    {
+        _searchElementReference?.FocusAsync();
     }
 }

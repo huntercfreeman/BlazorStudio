@@ -20,10 +20,23 @@
             var selectionSafeReference = SelectionMutablyReferenced;
         }
         
-        @selectionSafeReference.Item.GetAbsoluteFilePathString()
+        <div class="bstudio_input-file-display-top-nav-bar-address-hierarchy">
+            @selectionSafeReference.Item.GetAbsoluteFilePathString()    
+        </div>
         
         <ButtonDisplay OnClickAction="HandleRefreshButtonOnClick">
             <IconRefresh/>
         </ButtonDisplay>
+    </div>
+    
+    <div class="bstudio_input-file-display-top-nav-bar-search">
+        <ButtonDisplay OnClickAction="FocusSearchElementReferenceOnClick"
+                       CssClassString="bstudio_input-file-search-button">
+            <IconSearch/>
+        </ButtonDisplay>
+        
+        <input @ref="_searchElementReference"
+               @bind="_searchQuery"
+               class="bstudio_input bstudio_input-file-search-input"/>
     </div>
 </div>

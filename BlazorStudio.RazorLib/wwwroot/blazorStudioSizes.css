@@ -29,4 +29,6 @@
     --bstudio_input-padding-width: 3px;
     --bstudio_input-focus-outline-size: 2px;
     --bstudio_input-focus-box-shadow-blur-radius: 21px;
+    --bstudio_input-file-search-height: calc(100% - 4px);
+    --bstudio_input-file-search-margin-bottom: 1px;
 }
