@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -82,6 +83,9 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
             return;
         }
 
+        if (absoluteFilePath.IsDirectory)
+            return;
+        
         var inputFileAbsoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
 
         KeyValuePair<TextEditorKey, IAbsoluteFilePath>? existingResourceMapPair = null;
@@ -102,14 +106,18 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
             var content = await File
                 .ReadAllTextAsync(inputFileAbsoluteFilePathString);
 
+            var textEditor = new TextEditorBase(
+                content,
+                ExtensionNoPeriodFacts.GetLexer(absoluteFilePath.ExtensionNoPeriod),
+                ExtensionNoPeriodFacts.GetDecorationMapper(absoluteFilePath.ExtensionNoPeriod),
+                null,
+                textEditorKey
+            );
+
+            await textEditor.ApplySyntaxHighlightingAsync();
+            
             textEditorService.RegisterTextEditor(
-                new TextEditorBase(
-                    content,
-                    null,
-                    null,
-                    null,
-                    textEditorKey
-                ));
+                textEditor);
         }
 
         dispatcher.Dispatch(
