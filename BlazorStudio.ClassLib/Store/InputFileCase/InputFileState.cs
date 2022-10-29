@@ -246,7 +246,7 @@ public record InputFileState(
             RequestInputFileStateFormAction RequestInputFileStateFormAction);
         
         [EffectMethod]
-        public Task ReduceStartInputFileStateFormAction(
+        public Task ReduceRequestInputFileStateFormAction(
             RequestInputFileStateFormAction requestInputFileStateFormAction,
             IDispatcher dispatcher)
         {
@@ -255,7 +255,7 @@ public record InputFileState(
                     requestInputFileStateFormAction));
 
             dispatcher.Dispatch(new DialogRecord(
-                DialogKey.NewDialogKey(), 
+                DialogFacts.InputFileDialogKey, 
                 "Input File",
                 _commonComponentRenderers.InputFileRendererType,
                 null));

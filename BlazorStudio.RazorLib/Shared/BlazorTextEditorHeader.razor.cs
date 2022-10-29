@@ -87,12 +87,6 @@ public partial class BlazorTextEditorHeader : ComponentBase
                     
                     return Task.FromResult(true);
                 }));
-        
-        Dispatcher.Dispatch(new RegisterDialogRecordAction(new DialogRecord(
-            DialogKey.NewDialogKey(), 
-            "Input File",
-            typeof(InputFileDisplay),
-            null)));
     }
     
     /// <summary>
