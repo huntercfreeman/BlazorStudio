@@ -125,6 +125,21 @@ public record InputFileState(
             InputFileState inInputFileState,
             SetSelectedInputFilePatternAction setSelectedInputFilePatternAction)
         {
+            // TODO: I am not sure where I was going with this commented code. If you want
+            // to find a .sln file this logic results in it being impossible to use the main
+            // main view if that .sln is nested in a directory the directory is hidden
+            //
+            // var openedTreeViewModel = inInputFileState
+            //     .OpenedTreeViewModelHistory[
+            //         inInputFileState.IndexInHistory];
+            //
+            // foreach (var treeViewModel in openedTreeViewModel.Children)
+            // {
+            //     treeViewModel.IsDisplayed = setSelectedInputFilePatternAction
+            //         .InputFilePattern.MatchesPattern
+            //         .Invoke(treeViewModel.Item);
+            // }
+            
             return inInputFileState with
             {
                 SelectedInputFilePattern = 
