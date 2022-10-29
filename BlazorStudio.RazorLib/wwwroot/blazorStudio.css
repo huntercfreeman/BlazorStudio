@@ -41,6 +41,7 @@ input[type="checkbox"]{
 }
 
 .bstudio_section-title {
+    background-color: var(--bstudio_section-title-background-color);
     font-size: var(--bstudio_section-title-font-size);
     height: var(--bstudio_section-title-height);
 }
