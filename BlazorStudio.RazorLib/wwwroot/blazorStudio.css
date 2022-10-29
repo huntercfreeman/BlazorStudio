@@ -55,6 +55,7 @@ input[type="checkbox"]{
 
 .bstudio_editor-display {
     border-left: var(--bstudio_editor-display-border-left-size) solid var(--bstudio_primary-border-color);
+    height: 100%;
 }
 
 .bstudio_resize-column {

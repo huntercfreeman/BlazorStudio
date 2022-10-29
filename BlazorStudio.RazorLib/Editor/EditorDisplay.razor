@@ -1,20 +1,39 @@
 @using BlazorStudio.ClassLib.Context
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorTextEditor.RazorLib
+@using BlazorTextEditor.RazorLib.TextEditor
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <ContextBoundary ContextRecord="ContextFacts.EditorContext"
                  ClassCssString="bstudio_editor-display"
                  StyleCssString="@EditorElementDimensions.StyleString">
-    
-    @{
-        var textEditorStates = TextEditorStatesWrap.Value;
-        
-        foreach (var textEditor in textEditorStates.TextEditorList)
-        {
-            <TextEditorDisplay @key="textEditor.Key" 
-                               TextEditorKey="textEditor.Key"
-                               TabIndex="0"
-                               StyleCssString="width: 400px; height: 400px;"/>    
+
+    <div class="bstudio_section-title">
+        Editor
+    </div>
+
+    <div class="bstudio_section-body">
+        @{
+            var editorState = EditorStateWrap.Value;
+
+            var activeTextEditor = TextEditorService.TextEditorStates.TextEditorList
+                .FirstOrDefault(x =>
+                    x.Key == editorState.ActiveTextEditorKey);
+
+            if (activeTextEditor is not null)
+            {
+                <TextEditorDisplay @key="activeTextEditor.Key"
+                                   TextEditorKey="activeTextEditor.Key"
+                                   TabIndex="0"
+                                   StyleCssString="height: 100%"/>
+            }
+            else
+            {
+                <ButtonDisplay OnClickFunc="OpenFileOnClick">
+                    Open File
+                </ButtonDisplay>
+            }
         }
-    }
+    </div>
 </ContextBoundary>
