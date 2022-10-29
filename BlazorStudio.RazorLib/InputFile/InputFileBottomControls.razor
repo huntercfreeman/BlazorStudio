@@ -2,20 +2,23 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_input-file-display-bottom-controls">
+    @{
+        var inputFileState = InputFileStateWrap.Value;
+    }
     <div class="bstudio_input-file-display-bottom-controls-text-input">
         @* TODO: allow input text html element *@
         @* File name: *@
         @* <input class="bstudio_input"/> *@
-        @(InputFileStateWrap.Value.SelectedTreeViewModel?.Item
+        @(inputFileState.SelectedTreeViewModel?.Item
             .GetAbsoluteFilePathString() ?? "null")
     </div>
     <div class="bstudio_input-file-display-bottom-controls-non-text">
         <div>
             <select>
-                <option>All Files</option>
-                <option>Aaa</option>
-                <option>Bbb</option>
-                <option>Ccc</option>
+                @foreach (var inputFilePattern in inputFileState.InputFilePatterns)
+                {
+                    <option>@inputFilePattern.PatternName</option>
+                }
             </select>
         </div>
         <div style="display: flex;">

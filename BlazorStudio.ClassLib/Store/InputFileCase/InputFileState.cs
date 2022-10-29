@@ -14,7 +14,8 @@ public record InputFileState(
     ImmutableList<TreeViewModel<IAbsoluteFilePath>> OpenedTreeViewModelHistory,
     TreeViewModel<IAbsoluteFilePath>? SelectedTreeViewModel,
     Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc,
-    Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc)
+    Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc,
+    ImmutableArray<InputFilePattern> InputFilePatterns)
 {
     private InputFileState() : this(
         new TreeViewModel<IAbsoluteFilePath>(
@@ -25,7 +26,8 @@ public record InputFileState(
         ImmutableList<TreeViewModel<IAbsoluteFilePath>>.Empty,
         null,
         _ => Task.CompletedTask,
-        _ => Task.FromResult(false))
+        _ => Task.FromResult(false),
+        ImmutableArray<InputFilePattern>.Empty) 
     {
         FileSystemTreeViewModel.LoadChildrenFuncAsync
             .Invoke(FileSystemTreeViewModel);
@@ -82,7 +84,9 @@ public record InputFileState(
                 SelectionIsValidFunc = startInputFileStateFormAction
                     .RequestInputFileStateFormAction.SelectionIsValidFunc,
                 OnAfterSubmitFunc = startInputFileStateFormAction
-                    .RequestInputFileStateFormAction.OnAfterSubmitFunc
+                    .RequestInputFileStateFormAction.OnAfterSubmitFunc,
+                InputFilePatterns = startInputFileStateFormAction
+                    .RequestInputFileStateFormAction.InputFilePatterns,
             };
         }
         
