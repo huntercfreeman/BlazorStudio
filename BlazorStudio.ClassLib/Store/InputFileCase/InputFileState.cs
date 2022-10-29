@@ -254,11 +254,15 @@ public record InputFileState(
                 new StartInputFileStateFormAction(
                     requestInputFileStateFormAction));
 
-            dispatcher.Dispatch(new DialogRecord(
-                DialogFacts.InputFileDialogKey, 
+            var inputFileDialog = new DialogRecord(
+                DialogFacts.InputFileDialogKey,
                 "Input File",
                 _commonComponentRenderers.InputFileRendererType,
-                null));
+                null); 
+            
+            dispatcher.Dispatch(
+                new RegisterDialogRecordAction(
+                    inputFileDialog));
 
             return Task.CompletedTask;
         }
