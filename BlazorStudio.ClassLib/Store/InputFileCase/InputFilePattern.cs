@@ -6,12 +6,12 @@ public class InputFilePattern
 {
     public InputFilePattern(
         string patternName,
-        Func<IAbsoluteFilePath, bool> matchesPattern)
+        Func<IAbsoluteFilePath, bool> matchesPatternFunc)
     {
         PatternName = patternName;
-        MatchesPattern = matchesPattern;
+        MatchesPatternFunc = matchesPatternFunc;
     }
 
     public string PatternName { get; }
-    public Func<IAbsoluteFilePath, bool> MatchesPattern { get; }
+    public Func<IAbsoluteFilePath, bool> MatchesPatternFunc { get; }
 }
