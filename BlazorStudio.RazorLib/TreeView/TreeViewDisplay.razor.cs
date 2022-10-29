@@ -173,10 +173,21 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
             {
                 if (Root.ActiveDescendant is null)
+                {
                     SetActiveDescendantAndRerender(Root);
-                else
+                }
+                else if (Root.ActiveDescendant.IsDisplayed)
+                {
                     SetActiveDescendantAndRerender(Root.ActiveDescendant);
-                
+                }
+                else
+                {
+                    var firstChildIsDisplayed = Root.Children
+                        .FirstOrDefault(x => x.IsDisplayed);
+
+                    if (firstChildIsDisplayed is not null)
+                        SetActiveDescendantAndRerender(firstChildIsDisplayed);
+                }
                 break;
             }
         }
@@ -205,10 +216,26 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
                 }
                 else if (InternalParameters.ParentTreeViewDisplay is not null)
                 {
-                    if (InternalParameters.Index < InternalParameters.ParentTreeViewDisplay.TreeViewModel.Children.Count - 1)
+                    var targetIndex = InternalParameters.Index;
+                    TreeViewModel<TItem>? targetTreeView = null;
+                    
+                    while (targetIndex < InternalParameters.ParentTreeViewDisplay.TreeViewModel.Children.Count - 1)
                     {
-                        SetActiveDescendantAndRerender(
-                            InternalParameters.ParentTreeViewDisplay.TreeViewModel.Children[InternalParameters.Index + 1]);
+                        targetIndex++;
+
+                        var localTarget = InternalParameters.ParentTreeViewDisplay.TreeViewModel.Children[
+                            InternalParameters.Index + 1];
+
+                        if (localTarget.IsDisplayed)
+                        {
+                            targetTreeView = localTarget;
+                            break;
+                        }
+                    }
+                    
+                    if (targetTreeView is not null)
+                    {
+                        SetActiveDescendantAndRerender(targetTreeView);
                     }
                     else
                     {

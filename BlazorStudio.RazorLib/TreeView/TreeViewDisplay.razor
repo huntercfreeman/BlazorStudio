@@ -61,22 +61,23 @@
     <div class="bstudio_tree-view-display-body">
         @if (TreeViewModel.IsExpanded || (!ShouldShowRoot && IsRoot))
         {
-            var immutableChildArray = TreeViewModel.Children
-                .Where(x => x.IsDisplayed)
-                .ToImmutableArray();
+            var immutableChildArray = TreeViewModel.Children.ToImmutableArray();
 
             for (var i = 0; i < immutableChildArray.Length; i++)
             {
                 var index = i;
                 var child = immutableChildArray[index];
 
-                <TreeViewDisplay @key="child.Id"
-                                 TreeViewModel="child"
-                                 ItemRenderFragment="ItemRenderFragment"
-                                 InternalParameters="ConstructInternalParameters(index)"
-                                 ContextMenuEventRenderFragment="ContextMenuEventRenderFragment"
-                                 ShouldShowRoot="ShouldShowRoot"
-                                 TreeViewDisplayOnEventRegistration="TreeViewDisplayOnEventRegistration"/>
+                if (child.IsDisplayed)
+                {
+                    <TreeViewDisplay @key="child.Id"
+                                     TreeViewModel="child"
+                                     ItemRenderFragment="ItemRenderFragment"
+                                     InternalParameters="ConstructInternalParameters(index)"
+                                     ContextMenuEventRenderFragment="ContextMenuEventRenderFragment"
+                                     ShouldShowRoot="ShouldShowRoot"
+                                     TreeViewDisplayOnEventRegistration="TreeViewDisplayOnEventRegistration"/>
+                }
             }
         }
     </div>
