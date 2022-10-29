@@ -1,16 +1,14 @@
 :root {
     --bstudio_section-title-font-size: 1.5rem;
     --bstudio_section-title-height: 2.5rem;
-    --bstudio_folder-explorer-display-padding: 5px;
-    --bstudio_editor-display-padding: 5px;
+    --bstudio_section-title-padding: 0 5px;
+    --bstudio_section-body-padding: 5px;
     --bstudio_editor-display-border-left-size: 2px;
     --bstudio_dialog-display-toolbar-height: 2.5rem;
     --bstudio_input-file-display-top-nav-bar-height: 2.5rem;
     --bstudio_input-file-display-bottom-controls-height: 5rem;
     --bstudio_input-file-display-body-height: calc(100% - var(--bstudio_input-file-display-top-nav-bar-height) - var(--bstudio_input-file-display-bottom-controls-height));
-    --bstudio_footer-padding: 5px;
     --bstudio_checkbox-size: 1.75rem;
-    --bstudio_header-padding: 5px;
     --bstudio_header-border-bottom-size: 4px;
     --bstudio_header-height: 3rem;
     --bstudio_body-border-bottom-size: 2px;

@@ -18,7 +18,6 @@ input[type="checkbox"]{
 }
 
 .bstudio_header {
-    padding: var(--bstudio_header-padding);
     border-bottom: var(--bstudio_header-border-bottom-size) solid var(--bstudio_primary-border-color);
     height: var(--bstudio_header-height);
     background-color: var(--bstudio_header-background-color);
@@ -32,28 +31,29 @@ input[type="checkbox"]{
 }
 
 .bstudio_folder-explorer-display {
-    padding: var(--bstudio_folder-explorer-display-padding);
 }
 
 .bstudio_footer {
-    padding: var(--bstudio_footer-padding);
     background-color: var(--bstudio_footer-background-color);
 }
 
 .bstudio_section-title {
+    display: flex;
+    align-items: center;
+    padding: var(--bstudio_section-title-padding);
     background-color: var(--bstudio_section-title-background-color);
     font-size: var(--bstudio_section-title-font-size);
     height: var(--bstudio_section-title-height);
 }
 
 .bstudio_section-body {
+    padding: var(--bstudio_section-body-padding);
     font-size: var(--bstudio_section-title-font-size);
     height: calc(100% - var(--bstudio_section-title-height));
-    overflow: auto;;
+    overflow: auto;
 }
 
 .bstudio_editor-display {
-    padding: var(--bstudio_editor-display-padding);
     border-left: var(--bstudio_editor-display-border-left-size) solid var(--bstudio_primary-border-color);
 }
 

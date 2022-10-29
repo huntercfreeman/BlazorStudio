@@ -24,7 +24,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     public ElementDimensions SolutionExplorerElementDimensions { get; set; } = null!;
 
     private string _filePath = string.Empty;
-    private TreeViewModel<IAbsoluteFilePath>? _rootTreeViewModel;
+    private TreeViewModel<IAbsoluteFilePath>? _solutionTreeViewModel;
 
     protected override void OnInitialized()
     {
@@ -38,12 +38,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         if (SolutionExplorerStateWrap.Value.AbsoluteFilePath is null)
             return;
 
-        _rootTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
+        _solutionTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
             SolutionExplorerStateWrap.Value.AbsoluteFilePath,
             true,
             LoadChildrenAsync);
 
-        _rootTreeViewModel.LoadChildrenFuncAsync.Invoke(_rootTreeViewModel);
+        _solutionTreeViewModel.LoadChildrenFuncAsync.Invoke(_solutionTreeViewModel);
     }
     
     private Task LoadChildrenAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
@@ -103,6 +103,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
         return 
             $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
+    }
+    
+    private Task OpenSolutionOnClick()
+    {
+        throw new NotImplementedException();
     }
 
     public void Dispose()

@@ -8,24 +8,23 @@
                  ClassCssString="bstudio_folder-explorer-display"
                  StyleCssString="@($"height: 100% {SolutionExplorerElementDimensions.StyleString}")">
     
-    <div style="height: 10rem; overflow: auto;">
-        <div class="bstudio_section-title">
-            Solution Explorer
-        </div>
+    <div class="bstudio_section-title">
+        Solution Explorer
     </div>
     
-    <div style="height: calc(100% - 10rem);  overflow: auto;">
+    <div class="bstudio_section-body">
         @{
             var solutionExplorerState = SolutionExplorerStateWrap.Value;
 
             if (solutionExplorerState.AbsoluteFilePath is null)
             {
-                <button class="btn btn-primary">
-                </button>                
+                <ButtonDisplay OnClickFunc="OpenSolutionOnClick">
+                    Open Solution
+                </ButtonDisplay>
             }
             else
             {
-                <TreeViewDisplay TreeViewModel="_rootTreeViewModel">
+                <TreeViewDisplay TreeViewModel="_solutionTreeViewModel">
                     <ItemRenderFragment Context="treeViewModel">
                         @treeViewModel.Item.FilenameWithExtension
                     </ItemRenderFragment>

@@ -104,6 +104,11 @@ public partial class FolderExplorerDisplay : FluxorComponent
             $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
     }
 
+    private Task OpenFolderOnClick()
+    {
+        throw new NotImplementedException();
+    }
+    
     public void Dispose()
     {
         FolderExplorerStateWrap.StateChanged -= FolderExplorerStateWrapOnStateChanged;
