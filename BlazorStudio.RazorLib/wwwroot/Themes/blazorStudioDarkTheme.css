@@ -21,4 +21,7 @@
     --bstudio_primary-disabled-foreground-color: #ba931e;
     --bstudio_primary-disabled-hover-background-color: var(--bstudio_primary-disabled-foreground-color);
     --bstudio_primary-disabled-hover-foreground-color: var(--bstudio_primary-disabled-background-color);
+    --bstudio_section-title-background-color: #033a00;
+    --bstudio_button-background-color: #034f74;
+    --bstudio_button-foreground-color: var(--bstudio_primary-font-color);
 }

@@ -21,4 +21,7 @@
     --bstudio_primary-disabled-foreground-color: red;
     --bstudio_primary-disabled-hover-background-color: red;
     --bstudio_primary-disabled-hover-foreground-color: red;
+    --bstudio_section-title-background-color: red;
+    --bstudio_button-background-color: red;
+    --bstudio_button-foreground-color: red;
 }

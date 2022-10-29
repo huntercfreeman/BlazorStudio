@@ -15,6 +15,10 @@ public partial class ButtonDisplay : ComponentBase
     [Parameter]
     public string CssStyleString { get; set; } = string.Empty;
 
+    private ElementReference? _buttonElementReference;
+    
+    public ElementReference? ButtonElementReference => _buttonElementReference;
+    
     private string IsDisabledCssClass => IsDisabled
         ? "bstudio_disabled"
         : string.Empty;

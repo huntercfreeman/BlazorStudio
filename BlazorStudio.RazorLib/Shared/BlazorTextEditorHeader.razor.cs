@@ -4,6 +4,7 @@ using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
+using BlazorStudio.RazorLib.Button;
 using BlazorStudio.RazorLib.InputFile;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -17,7 +18,7 @@ public partial class BlazorTextEditorHeader : ComponentBase
     
     private DropdownKey _dropdownKeyFileDropdown = DropdownKey.NewDropdownKey();
     private MenuRecord _fileMenu = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private ElementReference? _fileButton;
+    private ButtonDisplay? _fileButtonDisplay;
 
     protected override Task OnInitializedAsync()
     {
@@ -99,6 +100,7 @@ public partial class BlazorTextEditorHeader : ComponentBase
     /// </summary>
     private void RestoreFocusToFileButton()
     {
-        _fileButton?.FocusAsync();
+        _fileButtonDisplay?.ButtonElementReference?
+            .FocusAsync();
     }
 }

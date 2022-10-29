@@ -11,16 +11,14 @@
     <SettingsDialogEntryPoint />
     
     <div style="position: relative; margin-left: 15px;">
-        <button @onclick="AddActiveFileDropdown"
-                @ref="_fileButton"
-                class="btn btn-primary"
-                style="display: flex;">
-            File
-        </button>
-        
+        <ButtonDisplay @ref="_fileButtonDisplay" 
+                       OnClickFunc="async () => AddActiveFileDropdown()">
+                File
+        </ButtonDisplay>
+
         <DropdownDisplay DropdownKey="_dropdownKeyFileDropdown"
                          DropdownPositionKind="DropdownPositionKind.Vertical">
-            
+
             <div class="bstudio_dropdown-display-default-background">
                 <CascadingValue Value="RestoreFocusToFileButton" Name="ReturnFocusToParentAction">
                     <MenuDisplay MenuRecord="_fileMenu"/>
