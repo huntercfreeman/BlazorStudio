@@ -42,6 +42,13 @@ input[type="checkbox"]{
 
 .bstudio_section-title {
     font-size: var(--bstudio_section-title-font-size);
+    height: var(--bstudio_section-title-height);
+}
+
+.bstudio_section-body {
+    font-size: var(--bstudio_section-title-font-size);
+    height: calc(100% - var(--bstudio_section-title-height));
+    overflow: auto;;
 }
 
 .bstudio_editor-display {

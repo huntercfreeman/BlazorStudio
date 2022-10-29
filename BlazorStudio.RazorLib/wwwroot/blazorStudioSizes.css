@@ -1,5 +1,6 @@
 :root {
-    --bstudio_section-title-font-size: 1.75rem;
+    --bstudio_section-title-font-size: 1.5rem;
+    --bstudio_section-title-height: 2.5rem;
     --bstudio_folder-explorer-display-padding: 5px;
     --bstudio_editor-display-padding: 5px;
     --bstudio_editor-display-border-left-size: 2px;

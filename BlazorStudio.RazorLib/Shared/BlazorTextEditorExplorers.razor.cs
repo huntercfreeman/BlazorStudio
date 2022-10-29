@@ -1,50 +1,50 @@
-using BlazorStudio.ClassLib.Dimensions;
+﻿using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.RazorLib.ResizableCase;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Shared;
 
-public partial class BlazorTextEditorBody : ComponentBase
+public partial class BlazorTextEditorExplorers : ComponentBase
 {
     [Parameter, EditorRequired]
-    public ElementDimensions BodyElementDimensions { get; set; } = null!;
+    public ElementDimensions ExplorersElementDimensions { get; set; } = null!;
     
-    private ElementDimensions _explorersElementDimensions = new();
-    private ElementDimensions _editorElementDimensions = new();
+    private ElementDimensions _solutionExplorerElementDimensions = new();
+    private ElementDimensions _folderExplorerElementDimensions = new();
 
     protected override void OnInitialized()
     {
-        var explorersWidth = _explorersElementDimensions.DimensionAttributes
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
+        var solutionExplorerHeight = _solutionExplorerElementDimensions.DimensionAttributes
+            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
         
-        explorersWidth.DimensionUnits.AddRange(new []
+        solutionExplorerHeight.DimensionUnits.AddRange(new []
         {
             new DimensionUnit
             {
-                Value = 30,
+                Value = 50,
                 DimensionUnitKind = DimensionUnitKind.Percentage
             },
             new DimensionUnit
             {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }
         });
 
-        var editorWidth = _editorElementDimensions.DimensionAttributes
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
+        var folderExplorerHeight = _folderExplorerElementDimensions.DimensionAttributes
+            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
         
-        editorWidth.DimensionUnits.AddRange(new []
+        folderExplorerHeight.DimensionUnits.AddRange(new []
         {
             new DimensionUnit
             {
-                Value = 70,
+                Value = 50,
                 DimensionUnitKind = DimensionUnitKind.Percentage
             },
             new DimensionUnit
             {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }

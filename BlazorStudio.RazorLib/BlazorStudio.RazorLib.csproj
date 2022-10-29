@@ -269,4 +269,8 @@
         <UpToDateCheckInput Remove="ExceptionNotifications\FailedToBindNotification.razor" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AdditionalFiles Include="SolutionExplorer\SolutionExplorerDisplay.razor" />
+    </ItemGroup>
+
 </Project>
