@@ -43,6 +43,9 @@ public record InputFileState(
     }
 
     public record SetSelectedTreeViewModelAction(
+        TreeViewModel<IAbsoluteFilePath>? SelectedTreeViewModel);
+    
+    public record SetOpenedTreeViewModelAction(
         TreeViewModel<IAbsoluteFilePath> SelectedTreeViewModel);
 
     public record MoveBackwardsInHistoryAction;
@@ -60,13 +63,25 @@ public record InputFileState(
     private class InputFileStateReducer
     {
         [ReducerMethod]
-        public static InputFileState ReduceSetSelectedTreeViewModel(
+        public static InputFileState ReduceSetSelectedTreeViewModelAction(
             InputFileState inInputFileState,
             SetSelectedTreeViewModelAction setSelectedTreeViewModelAction)
         {
-            return SelectNewHistory(
+            return inInputFileState with
+            {
+                SelectedTreeViewModel = 
+                    setSelectedTreeViewModelAction.SelectedTreeViewModel
+            };
+        }
+        
+        [ReducerMethod]
+        public static InputFileState ReduceSetOpenedTreeViewModelAction(
+            InputFileState inInputFileState,
+            SetOpenedTreeViewModelAction setOpenedTreeViewModelAction)
+        {
+            return NewOpenedTreeViewModelHistory(
                 inInputFileState,
-                setSelectedTreeViewModelAction.SelectedTreeViewModel);
+                setOpenedTreeViewModelAction.SelectedTreeViewModel);
         }
 
         [ReducerMethod]
@@ -130,7 +145,7 @@ public record InputFileState(
 
             if (parentDirectoryTreeViewModel is not null)
             {
-                return SelectNewHistory(
+                return NewOpenedTreeViewModelHistory(
                     inInputFileState,
                     parentDirectoryTreeViewModel);
             }
@@ -154,7 +169,7 @@ public record InputFileState(
             return inInputFileState;
         }
         
-        private static InputFileState SelectNewHistory(
+        private static InputFileState NewOpenedTreeViewModelHistory(
             InputFileState inInputFileState,
             TreeViewModel<IAbsoluteFilePath> selectedTreeViewModel)
         {

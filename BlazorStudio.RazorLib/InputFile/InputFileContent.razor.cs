@@ -36,18 +36,30 @@ public partial class InputFileContent : FluxorComponent
     {
         _treeViewDisplayOnEventRegistration = new TreeViewDisplayOnEventRegistration<IAbsoluteFilePath>();
         
+        _treeViewDisplayOnEventRegistration.AfterClickFuncAsync = AfterClickFuncAsync; 
         _treeViewDisplayOnEventRegistration.AfterDoubleClickFuncAsync = AfterDoubleClickFuncAsync; 
         _treeViewDisplayOnEventRegistration.AfterKeyDownFuncAsync = AfterKeyDownFuncAsync; 
         
         base.OnInitialized();
     }
 
-    private Task AfterDoubleClickFuncAsync(
+    private Task AfterClickFuncAsync(
         MouseEventArgs mouseEventArgs, 
         TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
     {
         Dispatcher.Dispatch(
             new InputFileState.SetSelectedTreeViewModelAction(
+                treeViewDisplay.TreeViewModel));
+
+        return Task.CompletedTask;
+    }
+    
+    private Task AfterDoubleClickFuncAsync(
+        MouseEventArgs mouseEventArgs, 
+        TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
+    {
+        Dispatcher.Dispatch(
+            new InputFileState.SetOpenedTreeViewModelAction(
                 treeViewDisplay.TreeViewModel));
 
         return Task.CompletedTask;
@@ -69,7 +81,7 @@ public partial class InputFileContent : FluxorComponent
                 case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
                     Dispatcher.Dispatch(
-                        new InputFileState.SetSelectedTreeViewModelAction(
+                        new InputFileState.SetOpenedTreeViewModelAction(
                             treeViewDisplay.TreeViewModel));
                     break;
                 case KeyboardKeyFacts.MovementKeys.ARROW_UP:
@@ -90,7 +102,7 @@ public partial class InputFileContent : FluxorComponent
             {
                 case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
                     Dispatcher.Dispatch(
-                        new InputFileState.SetSelectedTreeViewModelAction(
+                        new InputFileState.SetOpenedTreeViewModelAction(
                             treeViewDisplay.TreeViewModel));
                     break;
                 case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:

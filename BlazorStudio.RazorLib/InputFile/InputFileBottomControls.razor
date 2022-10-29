@@ -3,8 +3,11 @@
 
 <div class="bstudio_input-file-display-bottom-controls">
     <div class="bstudio_input-file-display-bottom-controls-text-input">
-        File name:
-        <input class="bstudio_input"/>
+        @* TODO: allow input text html element *@
+        @* File name: *@
+        @* <input class="bstudio_input"/> *@
+        @(InputFileStateWrap.Value.SelectedTreeViewModel?.Item
+            .GetAbsoluteFilePathString() ?? "null")
     </div>
     <div class="bstudio_input-file-display-bottom-controls-non-text">
         <div>
