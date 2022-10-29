@@ -242,16 +242,6 @@ input[type="checkbox"]{
     width: var(--bstudio_input-file-display-top-nav-bar-buttons-width);
 }
 
-.bstudio_input-file-display-top-nav-bar-buttons .bstudio_button.bstudio_disabled {
-    background-color: var(--bstudio_primary-disabled-background-color);
-    color: var(--bstudio_primary-disabled-foreground-color);
-}
-
-.bstudio_input-file-display-top-nav-bar-buttons .bstudio_button.bstudio_disabled:hover {
-    background-color: var(--bstudio_primary-disabled-hover-background-color);
-    color: var(--bstudio_primary-disabled-hover-foreground-color);
-}
-
 .bstudio_input-file-display-top-nav-bar-address {
     display: flex;
     align-items: center;
@@ -375,4 +365,14 @@ em {
 
 .bstudio_button:hover {
     background-color: var(--bstudio_primary-hover-background-color);
+}
+
+.bstudio_button.bstudio_disabled {
+    background-color: var(--bstudio_primary-disabled-background-color);
+    color: var(--bstudio_primary-disabled-foreground-color);
+}
+
+.bstudio_button.bstudio_disabled:hover {
+    background-color: var(--bstudio_primary-disabled-hover-background-color);
+    color: var(--bstudio_primary-disabled-hover-foreground-color);
 }

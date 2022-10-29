@@ -115,9 +115,14 @@ public record InputFileState(
             InputFileState inInputFileState,
             SetOpenedTreeViewModelAction setOpenedTreeViewModelAction)
         {
-            return NewOpenedTreeViewModelHistory(
-                inInputFileState,
-                setOpenedTreeViewModelAction.SelectedTreeViewModel);
+            if (setOpenedTreeViewModelAction.SelectedTreeViewModel.Item.IsDirectory)
+            {
+                return NewOpenedTreeViewModelHistory(
+                    inInputFileState,
+                    setOpenedTreeViewModelAction.SelectedTreeViewModel);
+            }
+                
+            return inInputFileState;
         }
         
         [ReducerMethod]

@@ -28,7 +28,7 @@
         </div>
         <div style="display: flex;">
             <ButtonDisplay OnClickFunc="FireOnAfterSubmit"
-                           IsDisabled="OnAfterSubmitIsValid()">
+                           IsDisabled="OnAfterSubmitIsDisabled()">
                 Select
             </ButtonDisplay>
             <ButtonDisplay OnClickFunc="() => { return Task.CompletedTask; }"

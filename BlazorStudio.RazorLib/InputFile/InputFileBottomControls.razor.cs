@@ -74,11 +74,11 @@ public partial class InputFileBottomControls : FluxorComponent
         }
     }
     
-    private bool OnAfterSubmitIsValid()
+    private bool OnAfterSubmitIsDisabled()
     {
         var inputFileState = InputFileStateWrap.Value;
 
-        return inputFileState.SelectionIsValidFunc.Invoke(
+        return !inputFileState.SelectionIsValidFunc.Invoke(
             inputFileState.SelectedTreeViewModel?.Item)
             .Result;
     }
