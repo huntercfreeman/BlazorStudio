@@ -86,7 +86,13 @@ public partial class BlazorTextEditorHeader : ComponentBase
                     }
                     
                     return Task.FromResult(true);
-                }));
+                },
+                new []
+                {
+                    new InputFilePattern(
+                        "Directory",
+                        afp => afp.IsDirectory)
+                }.ToImmutableArray()));
     }
     
     /// <summary>

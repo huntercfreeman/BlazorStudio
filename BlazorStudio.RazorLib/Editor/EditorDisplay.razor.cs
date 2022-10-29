@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
@@ -42,7 +43,13 @@ public partial class EditorDisplay : FluxorComponent
                     }
                     
                     return Task.FromResult(true);
-                }));
+                },
+                new []
+                {
+                    new InputFilePattern(
+                        "File",
+                        afp => !afp.IsDirectory)
+                }.ToImmutableArray()));
         
         return Task.CompletedTask;
     }

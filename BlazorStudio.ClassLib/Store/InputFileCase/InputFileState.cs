@@ -49,7 +49,8 @@ public record InputFileState(
 
     public record RequestInputFileStateFormAction(
         Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc,
-        Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc);
+        Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc,
+        ImmutableArray<InputFilePattern> InputFilePatterns);
     
     public record SetSelectedTreeViewModelAction(
         TreeViewModel<IAbsoluteFilePath>? SelectedTreeViewModel);

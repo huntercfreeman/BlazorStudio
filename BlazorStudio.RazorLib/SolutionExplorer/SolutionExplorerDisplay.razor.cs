@@ -127,7 +127,14 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     }
                     
                     return Task.FromResult(true);
-                }));
+                },
+                new []
+                {
+                    new InputFilePattern(
+                        ".NET Solution",
+                        afp => 
+                            afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+                }.ToImmutableArray()));
         
         return Task.CompletedTask;
     }

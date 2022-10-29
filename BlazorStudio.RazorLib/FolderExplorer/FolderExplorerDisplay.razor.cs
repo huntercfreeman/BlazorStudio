@@ -125,7 +125,13 @@ public partial class FolderExplorerDisplay : FluxorComponent
                     }
                     
                     return Task.FromResult(true);
-                }));
+                },
+                new []
+                {
+                    new InputFilePattern(
+                        "Directory",
+                        afp => afp.IsDirectory)
+                }.ToImmutableArray()));
         
         return Task.CompletedTask;
     }
