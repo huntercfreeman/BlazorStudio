@@ -27,6 +27,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     private string _filePath = string.Empty;
     private TreeViewModel<IAbsoluteFilePath>? _solutionTreeViewModel;
+    private bool _settingsSolutionExplorerState;
 
     protected override void OnInitialized()
     {
@@ -90,9 +91,19 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             new InputFileState.RequestInputFileStateFormAction(
                 afp =>
                 {
-                    Dispatcher.Dispatch(
-                        new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                            afp));
+                    _settingsSolutionExplorerState = true;
+                    InvokeAsync(StateHasChanged);
+                    
+                    // Without Task.Run blocks UI thread I believe
+                    Task.Run(() =>
+                    {
+                        Dispatcher.Dispatch(
+                            new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+                                afp));
+                        
+                        _settingsSolutionExplorerState = false;
+                        InvokeAsync(StateHasChanged);
+                    });
                     
                     return Task.CompletedTask;
                 },
