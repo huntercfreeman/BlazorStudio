@@ -113,6 +113,11 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
                 null,
                 textEditorKey
             );
+            
+            dispatcher.Dispatch(
+                new TextEditorResourceMapState.SetTextEditorResourceAction(
+                    textEditorKey,
+                    absoluteFilePath));
 
             await textEditor.ApplySyntaxHighlightingAsync();
             

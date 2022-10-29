@@ -1,12 +1,12 @@
 ﻿@using BlazorTextEditor.RazorLib.Row
-<div class="bstudio_text-editor-footer @TextEditorService.GlobalThemeCssClassString">
+<div class="bstudio_editor-footer @TextEditorService.GlobalThemeCssClassString">
     @if (TextEditor is not null)
     {
-        <div class="bstudio_text-editor-footer-entry">
+        <div class="bstudio_editor-footer-entry">
             @(AbsoluteFilePath?.ExtensionNoPeriod ?? "in-memory")
         </div>
 
-        <div class="bstudio_text-editor-footer-entry">
+        <div class="bstudio_editor-footer-entry">
             length:@($"{TextEditor.DocumentLength}")
             &nbsp;
             lines:@($"{TextEditor.RowCount}")
@@ -14,14 +14,14 @@
 
         if (TextEditorDisplay is not null)
         {
-            <div class="bstudio_text-editor-footer-entry">
+            <div class="bstudio_editor-footer-entry">
                 Ln:@($"{TextEditorDisplay.PrimaryCursor.IndexCoordinates.rowIndex}")
                 &nbsp;
                 Col:@($"{TextEditorDisplay.PrimaryCursor.IndexCoordinates.columnIndex}")
             </div>
         }
 
-        <div class="bstudio_text-editor-footer-entry">
+        <div class="bstudio_editor-footer-entry">
             @if (TextEditor.OnlyRowEndingKind is null)
             {
                 <text>has:mixed </text>
@@ -45,7 +45,7 @@
     }
     else
     {
-        <div class="bstudio_text-editor-footer-entry bstudio_text-editor-footer-file-sizing">
+        <div class="bstudio_editor-footer-entry bstudio_editor-footer-file-sizing">
             TextEditor is null
         </div>
     }

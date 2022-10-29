@@ -404,3 +404,23 @@ em {
         transform: rotate(360deg);
     }
 }
+
+.bstudio_editor-footer {
+    display: flex;
+    height: 1.8rem;
+    align-items: center;
+    overflow: auto;
+    white-space: nowrap;
+    border-top: 2px solid var(--bte_text-editor-gutter-border-color);
+    color: var(--bte_primary-font-color);
+    background-color: var(--bte_text-editor-gutter-background-color);
+}
+
+.bstudio_editor-footer-entry {
+    padding-right: 5px;
+}
+
+.bstudio_editor-footer-entry:not(:last-child) {
+    border-right: 2px solid var(--bte_text-editor-caret-row-border-color);
+    margin-right: 5px;
+}
