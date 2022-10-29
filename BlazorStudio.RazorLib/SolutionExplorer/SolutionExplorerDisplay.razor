@@ -9,7 +9,12 @@
                  StyleCssString="@($"height: 100% {SolutionExplorerElementDimensions.StyleString}")">
     
     <div class="bstudio_section-title">
-        Solution Explorer @(_settingsSolutionExplorerState ? "Aaaaa" : "BBBBBBB")
+        Solution Explorer
+        @if (_settingsSolutionExplorerState)
+        {
+            <text>&nbsp;</text>
+            <IconLoading />
+        }
     </div>
     
     <div class="bstudio_section-body">
