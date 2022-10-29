@@ -50,29 +50,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     
     private Task LoadChildrenAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
-        var absoluteFilePathString = treeViewModel.Item.GetAbsoluteFilePathString();
-
-        var childFiles = Directory
-            .GetFiles(absoluteFilePathString)
-            .OrderBy(filename => filename)
-            .Select(cf => new AbsoluteFilePath(cf, false));
-        
-        var childDirectories = Directory
-            .GetDirectories(absoluteFilePathString)
-            .OrderBy(filename => filename)
-            .Select(cd => new AbsoluteFilePath(cd, true));
-
-        var childTreeViewModels = childDirectories
-            .Union(childFiles)
-            .Select(afp => 
-                new TreeViewModel<IAbsoluteFilePath>(
-                    afp, 
-                    true, 
-                    LoadChildrenAsync));
-
-        treeViewModel.Children.Clear();
-        treeViewModel.Children.AddRange(childTreeViewModels);
-        
         return Task.CompletedTask;
     }
     
@@ -114,7 +91,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 afp =>
                 {
                     Dispatcher.Dispatch(
-                        new SetFolderExplorerStateAction(afp));
+                        new SolutionExplorerState.SetSolutionExplorerStateAction(afp));
                     
                     return Task.CompletedTask;
                 },
