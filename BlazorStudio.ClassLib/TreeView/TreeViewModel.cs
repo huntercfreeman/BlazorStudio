@@ -20,7 +20,7 @@ public class TreeViewModel<TItem> : ITreeViewModel
     public Func<TreeViewModel<TItem>, Task> LoadChildrenFuncAsync { get; set; }
     public List<TreeViewModel<TItem>> Children { get; } = new();
     public Guid Id { get; } = Guid.NewGuid();
-    public bool IsDisplayed { get; set; }
+    public bool IsDisplayed { get; set; } = true;
 
     public bool IsExpanded
     {

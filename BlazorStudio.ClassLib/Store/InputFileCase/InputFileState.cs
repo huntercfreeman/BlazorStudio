@@ -15,7 +15,8 @@ public record InputFileState(
     TreeViewModel<IAbsoluteFilePath>? SelectedTreeViewModel,
     Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc,
     Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc,
-    ImmutableArray<InputFilePattern> InputFilePatterns)
+    ImmutableArray<InputFilePattern> InputFilePatterns,
+    InputFilePattern? SelectedInputFilePattern)
 {
     private InputFileState() : this(
         new TreeViewModel<IAbsoluteFilePath>(
@@ -27,7 +28,8 @@ public record InputFileState(
         null,
         _ => Task.CompletedTask,
         _ => Task.FromResult(false),
-        ImmutableArray<InputFilePattern>.Empty) 
+        ImmutableArray<InputFilePattern>.Empty,
+        null) 
     {
         FileSystemTreeViewModel.LoadChildrenFuncAsync
             .Invoke(FileSystemTreeViewModel);
@@ -59,6 +61,9 @@ public record InputFileState(
     
     public record SetOpenedTreeViewModelAction(
         TreeViewModel<IAbsoluteFilePath> SelectedTreeViewModel);
+    
+    public record SetSelectedInputFilePatternAction(
+        InputFilePattern InputFilePattern);
 
     public record MoveBackwardsInHistoryAction;
     public record MoveForwardsInHistoryAction;
@@ -87,6 +92,9 @@ public record InputFileState(
                     .RequestInputFileStateFormAction.OnAfterSubmitFunc,
                 InputFilePatterns = startInputFileStateFormAction
                     .RequestInputFileStateFormAction.InputFilePatterns,
+                SelectedInputFilePattern = startInputFileStateFormAction
+                    .RequestInputFileStateFormAction.InputFilePatterns
+                    .First()
             };
         }
         
@@ -110,6 +118,18 @@ public record InputFileState(
             return NewOpenedTreeViewModelHistory(
                 inInputFileState,
                 setOpenedTreeViewModelAction.SelectedTreeViewModel);
+        }
+        
+        [ReducerMethod]
+        public static InputFileState ReduceSetSelectedInputFilePatternAction(
+            InputFileState inInputFileState,
+            SetSelectedInputFilePatternAction setSelectedInputFilePatternAction)
+        {
+            return inInputFileState with
+            {
+                SelectedInputFilePattern = 
+                    setSelectedInputFilePatternAction.InputFilePattern
+            };
         }
 
         [ReducerMethod]

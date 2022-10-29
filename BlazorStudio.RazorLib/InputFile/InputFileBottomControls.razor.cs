@@ -82,4 +82,21 @@ public partial class InputFileBottomControls : FluxorComponent
             inputFileState.SelectedTreeViewModel?.Item)
             .Result;
     }
+    
+    private void SelectInputFilePatternOnChange(ChangeEventArgs changeEventArgs)
+    {
+        var inputFileState = InputFileStateWrap.Value;
+        
+        var patternName = (string)(changeEventArgs.Value ?? string.Empty);
+
+        var pattern = inputFileState.InputFilePatterns
+            .FirstOrDefault(x => x.PatternName == patternName);
+
+        if (pattern is not null)
+        {
+            Dispatcher.Dispatch(
+                new InputFileState.SetSelectedInputFilePatternAction(
+                    pattern));            
+        }
+    }
 }

@@ -14,10 +14,15 @@
     </div>
     <div class="bstudio_input-file-display-bottom-controls-non-text">
         <div>
-            <select>
+            <select @onchange="SelectInputFilePatternOnChange">
                 @foreach (var inputFilePattern in inputFileState.InputFilePatterns)
                 {
-                    <option>@inputFilePattern.PatternName</option>
+                    <option value="@inputFilePattern.PatternName"
+                            selected="@(
+                                (inputFileState.SelectedInputFilePattern?.PatternName ?? string.Empty)
+                                == inputFilePattern.PatternName)">
+                        @inputFilePattern.PatternName
+                    </option>
                 }
             </select>
         </div>
