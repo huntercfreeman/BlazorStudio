@@ -16,7 +16,8 @@ public record InputFileState(
     Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc,
     Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc,
     ImmutableArray<InputFilePattern> InputFilePatterns,
-    InputFilePattern? SelectedInputFilePattern)
+    InputFilePattern? SelectedInputFilePattern,
+    string SearchQuery)
 {
     private InputFileState() : this(
         new TreeViewModel<IAbsoluteFilePath>(
@@ -29,7 +30,8 @@ public record InputFileState(
         _ => Task.CompletedTask,
         _ => Task.FromResult(false),
         ImmutableArray<InputFilePattern>.Empty,
-        null) 
+        null,
+        string.Empty) 
     {
         FileSystemTreeViewModel.LoadChildrenFuncAsync
             .Invoke(FileSystemTreeViewModel);
@@ -64,6 +66,9 @@ public record InputFileState(
     
     public record SetSelectedInputFilePatternAction(
         InputFilePattern InputFilePattern);
+    
+    public record SetSearchQueryAction(
+        string SearchQuery);
 
     public record MoveBackwardsInHistoryAction;
     public record MoveForwardsInHistoryAction;
@@ -130,21 +135,6 @@ public record InputFileState(
             InputFileState inInputFileState,
             SetSelectedInputFilePatternAction setSelectedInputFilePatternAction)
         {
-            // TODO: I am not sure where I was going with this commented code. If you want
-            // to find a .sln file this logic results in it being impossible to use the main
-            // main view if that .sln is nested in a directory the directory is hidden
-            //
-            // var openedTreeViewModel = inInputFileState
-            //     .OpenedTreeViewModelHistory[
-            //         inInputFileState.IndexInHistory];
-            //
-            // foreach (var treeViewModel in openedTreeViewModel.Children)
-            // {
-            //     treeViewModel.IsDisplayed = setSelectedInputFilePatternAction
-            //         .InputFilePattern.MatchesPattern
-            //         .Invoke(treeViewModel.Item);
-            // }
-            
             return inInputFileState with
             {
                 SelectedInputFilePattern = 
@@ -235,6 +225,27 @@ public record InputFileState(
                 .Invoke(currentSelection);
 
             return inInputFileState;
+        }
+        
+        [ReducerMethod]
+        public static InputFileState ReduceSetSearchQueryAction(
+            InputFileState inInputFileState,
+            SetSearchQueryAction setSearchQueryAction)
+        {
+            var openedTreeViewModel = inInputFileState
+                .OpenedTreeViewModelHistory[
+                    inInputFileState.IndexInHistory];
+            
+            foreach (var treeViewModel in openedTreeViewModel.Children)
+            {
+                treeViewModel.IsDisplayed = treeViewModel.Item.FilenameWithExtension
+                    .Contains(setSearchQueryAction.SearchQuery);
+            }
+
+            return inInputFileState with
+            {
+                SearchQuery = setSearchQueryAction.SearchQuery
+            };
         }
         
         private static InputFileState NewOpenedTreeViewModelHistory(

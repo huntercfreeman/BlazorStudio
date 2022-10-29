@@ -39,7 +39,8 @@
         </ButtonDisplay>
         
         <input @ref="_searchElementReference"
-               @bind="_searchQuery"
+               @bind="SearchQuery"
+               @bind:event="oninput"
                class="bstudio_input bstudio_input-file-search-input"/>
     </div>
 </div>

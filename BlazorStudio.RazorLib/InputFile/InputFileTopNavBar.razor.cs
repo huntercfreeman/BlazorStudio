@@ -24,10 +24,32 @@ public partial class InputFileTopNavBar : FluxorComponent
     private ElementReference? _searchElementReference;
     private string _searchQuery = string.Empty;
 
+    public string SearchQuery
+    {
+        get => _searchQuery;
+        set => Dispatcher
+            .Dispatch(
+                new InputFileState.SetSearchQueryAction(
+                    value));
+    }
+
     private TreeViewModel<IAbsoluteFilePath> SelectionMutablyReferenced => 
         InputFileStateWrap.Value.OpenedTreeViewModelHistory[
             InputFileStateWrap.Value.IndexInHistory];
-    
+
+    protected override void OnInitialized()
+    {
+        InputFileStateWrap.StateChanged += InputFileStateWrapOnStateChanged;
+        
+        base.OnInitialized();
+    }
+
+    private void InputFileStateWrapOnStateChanged(object? sender, EventArgs e)
+    {
+        _searchQuery = InputFileStateWrap.Value.SearchQuery;
+        InvokeAsync(StateHasChanged);
+    }
+
     private void HandleBackButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
@@ -51,5 +73,12 @@ public partial class InputFileTopNavBar : FluxorComponent
     private void FocusSearchElementReferenceOnClick()
     {
         _searchElementReference?.FocusAsync();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        InputFileStateWrap.StateChanged -= InputFileStateWrapOnStateChanged;
+        
+        base.Dispose(disposing);
     }
 }
