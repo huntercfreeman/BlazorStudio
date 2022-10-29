@@ -32,7 +32,8 @@ public partial class EditorDisplay : FluxorComponent
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
     
     private readonly SemaphoreSlim _afterOnKeyDownSyntaxHighlightingSemaphoreSlim = new(1, 1);
-    
+    private TextEditorDisplay? _textEditorDisplay;
+
     private async Task HandleAfterOnKeyDownAsync(
         TextEditorBase textEditor,
         ImmutableArray<TextEditorCursorSnapshot> cursorSnapshots,

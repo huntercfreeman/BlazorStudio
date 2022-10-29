@@ -25,11 +25,26 @@
 
             if (activeTextEditor is not null)
             {
-                <TextEditorDisplay @key="activeTextEditor.Key"
+                _ = textEditorResourceMapState.ResourceMap
+                    .TryGetValue(
+                        activeTextEditor.Key, 
+                        out var resource);
+
+                <TextEditorDisplay @ref="_textEditorDisplay"
                                    TextEditorKey="activeTextEditor.Key"
                                    TabIndex="0"
                                    StyleCssString="height: 100%"
-                                   AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync"/>
+                                   AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync">
+                    
+                    <OnContextMenuRenderFragment>
+                        <EditorContextMenu TextEditor="activeTextEditor"
+                                           TextEditorDisplay="_textEditorDisplay"/>
+                    </OnContextMenuRenderFragment>
+                </TextEditorDisplay>
+                
+                <EditorFooter TextEditor="activeTextEditor"
+                              TextEditorDisplay="_textEditorDisplay"
+                              AbsoluteFilePath="resource"/>
             }
             else
             {
