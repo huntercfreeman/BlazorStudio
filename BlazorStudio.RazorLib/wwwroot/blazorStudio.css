@@ -23,6 +23,11 @@ input[type="checkbox"]{
     background-color: var(--bstudio_header-background-color);
 }
 
+.bstudio_header .bstudio_button {
+    height: 100%;
+    margin-left: 15px;
+}
+
 .bstudio_body {
     display: flex;
     border-bottom: var(--bstudio_body-border-bottom-size) solid var(--bstudio_primary-border-color);
@@ -328,6 +333,14 @@ input[type="checkbox"]{
     align-items: center;
     justify-content: flex-end;
     background-color: var(--bstudio_body-background-color);
+}
+
+.bstudio_input-file-display-bottom-controls-non-text {
+    margin-left: 15px;
+}
+
+.bstudio_input-file-display-bottom-controls-non-text .bstudio_button:last-of-type {
+    margin-left: 15px;
 }
 
 em {
