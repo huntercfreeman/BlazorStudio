@@ -17,7 +17,8 @@ public record InputFileState(
     Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc,
     ImmutableArray<InputFilePattern> InputFilePatterns,
     InputFilePattern? SelectedInputFilePattern,
-    string SearchQuery)
+    string SearchQuery,
+    string Message)
 {
     private InputFileState() : this(
         new TreeViewModel<IAbsoluteFilePath>(
@@ -31,6 +32,7 @@ public record InputFileState(
         _ => Task.FromResult(false),
         ImmutableArray<InputFilePattern>.Empty,
         null,
+        string.Empty,
         string.Empty) 
     {
         FileSystemTreeViewModel.LoadChildrenFuncAsync
@@ -54,6 +56,7 @@ public record InputFileState(
     }
 
     public record RequestInputFileStateFormAction(
+        string Message,
         Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc,
         Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc,
         ImmutableArray<InputFilePattern> InputFilePatterns);
@@ -99,7 +102,9 @@ public record InputFileState(
                     .RequestInputFileStateFormAction.InputFilePatterns,
                 SelectedInputFilePattern = startInputFileStateFormAction
                     .RequestInputFileStateFormAction.InputFilePatterns
-                    .First()
+                    .First(),
+                Message = startInputFileStateFormAction
+                    .RequestInputFileStateFormAction.Message
             };
         }
         

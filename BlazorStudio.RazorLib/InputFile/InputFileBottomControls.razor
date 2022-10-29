@@ -9,8 +9,13 @@
         @* TODO: allow input text html element *@
         @* File name: *@
         @* <input class="bstudio_input"/> *@
-        @(inputFileState.SelectedTreeViewModel?.Item
-            .GetAbsoluteFilePathString() ?? "null")
+        <div>
+            (@inputFileState.Message)    
+        </div>
+        <div>
+            @(inputFileState.SelectedTreeViewModel?.Item
+                        .GetAbsoluteFilePathString() ?? "(no selection yet)")
+        </div>
     </div>
     <div class="bstudio_input-file-display-bottom-controls-non-text">
         <div>

@@ -1,4 +1,5 @@
 @using BlazorStudio.ClassLib.Context
+@using BlazorStudio.ClassLib.Store.FolderExplorerCase
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorStudio.RazorLib.TreeView
 
@@ -18,7 +19,7 @@
 
             if (folderExplorerState.AbsoluteFilePath is null)
             {
-                <ButtonDisplay OnClickFunc="OpenFolderOnClick">
+                <ButtonDisplay OnClickFunc="async () => await FolderExplorerState.OpenFolderOnClick(Dispatcher)">
                     Open Folder
                 </ButtonDisplay>
             }

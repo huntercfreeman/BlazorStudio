@@ -27,7 +27,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     private string _filePath = string.Empty;
     private TreeViewModel<IAbsoluteFilePath>? _solutionTreeViewModel;
-    private bool _settingsSolutionExplorerState;
 
     protected override void OnInitialized()
     {
@@ -83,49 +82,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
         return 
             $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
-    }
-    
-    private Task OpenSolutionOnClick()
-    {
-        Dispatcher.Dispatch(
-            new InputFileState.RequestInputFileStateFormAction(
-                afp =>
-                {
-                    _settingsSolutionExplorerState = true;
-                    InvokeAsync(StateHasChanged);
-                    
-                    // Without Task.Run blocks UI thread I believe
-                    Task.Run(() =>
-                    {
-                        Dispatcher.Dispatch(
-                            new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                                afp));
-                        
-                        _settingsSolutionExplorerState = false;
-                        InvokeAsync(StateHasChanged);
-                    });
-                    
-                    return Task.CompletedTask;
-                },
-                afp =>
-                {
-                    if (afp is null ||
-                        afp.ExtensionNoPeriod != ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-                    {
-                        return Task.FromResult(false);
-                    }
-                    
-                    return Task.FromResult(true);
-                },
-                new []
-                {
-                    new InputFilePattern(
-                        ".NET Solution",
-                        afp => 
-                            afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-                }.ToImmutableArray()));
-        
-        return Task.CompletedTask;
     }
 
     protected override void Dispose(bool disposing)

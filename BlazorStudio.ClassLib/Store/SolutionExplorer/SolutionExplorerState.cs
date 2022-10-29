@@ -1,5 +1,8 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.FileConstants;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using Fluxor;
 using Microsoft.Build.Locator;
@@ -16,14 +19,12 @@ namespace BlazorStudio.ClassLib.Store.SolutionExplorer;
 public record SolutionExplorerState(
     IAbsoluteFilePath? SolutionAbsoluteFilePath,
     Solution? Solution,
-    IAbsoluteFilePath? MsBuildAbsoluteFilePath,
-    MSBuildWorkspace? MsBuildWorkspace)
+    bool PerformingAsynchronousOperation)
 {
     public SolutionExplorerState() : this(
         default, 
         default,
-        default,
-        default)
+        false)
     {
         
     }
@@ -44,6 +45,21 @@ public record SolutionExplorerState(
                     setSolutionExplorerStateAction.SolutionAbsoluteFilePath,
                 Solution = 
                     setSolutionExplorerStateAction.Solution,
+                PerformingAsynchronousOperation = setSolutionExplorerStateAction
+                    .PerformingAsynchronousOperation ?? previousSolutionExplorerState
+                    .PerformingAsynchronousOperation 
+            };
+        }
+        
+        [ReducerMethod]
+        public SolutionExplorerState ReduceSetPerformingAsynchronousOperationAction(
+            SolutionExplorerState previousSolutionExplorerState,
+            SolutionExplorerStateEffects.SetPerformingAsynchronousOperationAction setPerformingAsynchronousOperationAction)
+        {
+            return previousSolutionExplorerState with
+            {
+                PerformingAsynchronousOperation = setPerformingAsynchronousOperationAction
+                    .PerformingAsynchronousOperation,
             };
         }
     }
@@ -59,13 +75,20 @@ public record SolutionExplorerState(
         
         public record SetSolutionExplorerStateAction(
             IAbsoluteFilePath? SolutionAbsoluteFilePath,
-            Solution? Solution);
+            Solution? Solution,
+            bool? PerformingAsynchronousOperation);
+        
+        public record SetPerformingAsynchronousOperationAction(
+            bool PerformingAsynchronousOperation);
 
         [EffectMethod]
         public async Task HandleSetSolutionExplorerStateAction(
             RequestSetSolutionExplorerStateAction requestSetSolutionExplorerStateAction,
             IDispatcher dispatcher)
         {
+            dispatcher.Dispatch(
+                new SetPerformingAsynchronousOperationAction(true));
+            
             if (_workspaceStateWrap.Value.Workspace is null)
             {
                 dispatcher.Dispatch(new SetWorkspaceStateAction());
@@ -80,7 +103,47 @@ public record SolutionExplorerState(
                 new SetSolutionExplorerStateAction(
                     requestSetSolutionExplorerStateAction
                         .SolutionAbsoluteFilePath,
-                    solution));
+                    solution,
+                    false));
         }
+    }
+    
+    public static Task OpenSolutionOnClick(
+        IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(
+            new InputFileState.RequestInputFileStateFormAction(
+                "SolutionExplorer",
+                afp =>
+                {
+                    // Without Task.Run blocks UI thread I believe
+                    Task.Run(() =>
+                    {
+                        dispatcher.Dispatch(
+                            new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+                                afp));
+                    });
+                    
+                    return Task.CompletedTask;
+                },
+                afp =>
+                {
+                    if (afp is null ||
+                        afp.ExtensionNoPeriod != ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+                    {
+                        return Task.FromResult(false);
+                    }
+                    
+                    return Task.FromResult(true);
+                },
+                new []
+                {
+                    new InputFilePattern(
+                        ".NET Solution",
+                        afp => 
+                            afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+                }.ToImmutableArray()));
+        
+        return Task.CompletedTask;
     }
 }

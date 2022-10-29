@@ -2,10 +2,14 @@ using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
+using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
+using BlazorStudio.ClassLib.Store.SolutionExplorer;
+using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.RazorLib.Button;
 using BlazorStudio.RazorLib.InputFile;
+using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -14,7 +18,11 @@ namespace BlazorStudio.RazorLib.Shared;
 public partial class BlazorTextEditorHeader : ComponentBase
 {
     [Inject]
+    private IState<TextEditorResourceMapState> TextEditorResourceMapStateWrap { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
     
     private DropdownKey _dropdownKeyFileDropdown = DropdownKey.NewDropdownKey();
     private MenuRecord _fileMenu = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -42,13 +50,29 @@ public partial class BlazorTextEditorHeader : ComponentBase
     {
         var openFile = new MenuOptionRecord(
             "File",
-            ShowInputFileDialog);
+            async () => 
+                await EditorState.OpenFileOnClick(
+                    Dispatcher, 
+                    TextEditorService, 
+                    TextEditorResourceMapStateWrap.Value));
+        
+        var openDirectory = new MenuOptionRecord(
+            "Directory",
+            async () => 
+                await FolderExplorerState.OpenFolderOnClick(Dispatcher));
         
         var openCSharpProject = new MenuOptionRecord(
-            "C# Project");
+            "C# Project - TODO: Adhoc Sln",
+            async () => 
+                await EditorState.OpenFileOnClick(
+                    Dispatcher, 
+                    TextEditorService, 
+                    TextEditorResourceMapStateWrap.Value));
         
         var openDotNetSolution = new MenuOptionRecord(
-            ".NET Solution");
+            ".NET Solution",
+            async () => 
+                await SolutionExplorerState.OpenSolutionOnClick(Dispatcher));
 
         return new MenuOptionRecord(
             "Open",
@@ -56,6 +80,7 @@ public partial class BlazorTextEditorHeader : ComponentBase
                 new []
                 {
                     openFile,
+                    openDirectory,
                     openCSharpProject,
                     openDotNetSolution
                 }.ToImmutableArray()));
@@ -64,35 +89,6 @@ public partial class BlazorTextEditorHeader : ComponentBase
     private void AddActiveFileDropdown()
     {
         Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_dropdownKeyFileDropdown));
-    }
-
-    private void ShowInputFileDialog()
-    {
-        Dispatcher.Dispatch(
-            new InputFileState.RequestInputFileStateFormAction(
-                afp =>
-                {
-                    Dispatcher.Dispatch(
-                        new SetFolderExplorerStateAction(afp));
-                    
-                    return Task.CompletedTask;
-                },
-                afp =>
-                {
-                    if (afp is null ||
-                        !afp.IsDirectory)
-                    {
-                        return Task.FromResult(false);
-                    }
-                    
-                    return Task.FromResult(true);
-                },
-                new []
-                {
-                    new InputFilePattern(
-                        "Directory",
-                        afp => afp.IsDirectory)
-                }.ToImmutableArray()));
     }
     
     /// <summary>

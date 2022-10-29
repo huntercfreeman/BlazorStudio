@@ -104,37 +104,6 @@ public partial class FolderExplorerDisplay : FluxorComponent
         return 
             $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
     }
-    
-    private Task OpenFolderOnClick()
-    {
-        Dispatcher.Dispatch(
-            new InputFileState.RequestInputFileStateFormAction(
-                afp =>
-                {
-                    Dispatcher.Dispatch(
-                        new SetFolderExplorerStateAction(afp));
-                    
-                    return Task.CompletedTask;
-                },
-                afp =>
-                {
-                    if (afp is null ||
-                        !afp.IsDirectory)
-                    {
-                        return Task.FromResult(false);
-                    }
-                    
-                    return Task.FromResult(true);
-                },
-                new []
-                {
-                    new InputFilePattern(
-                        "Directory",
-                        afp => afp.IsDirectory)
-                }.ToImmutableArray()));
-        
-        return Task.CompletedTask;
-    }
 
     protected override void Dispose(bool disposing)
     {

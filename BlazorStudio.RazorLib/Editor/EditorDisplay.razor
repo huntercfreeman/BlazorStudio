@@ -1,4 +1,5 @@
 @using BlazorStudio.ClassLib.Context
+@using BlazorStudio.ClassLib.Store.EditorCase
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorTextEditor.RazorLib
 @using BlazorTextEditor.RazorLib.TextEditor
@@ -16,7 +17,8 @@
     <div class="bstudio_section-body">
         @{
             var editorState = EditorStateWrap.Value;
-
+            var textEditorResourceMapState = TextEditorResourceMapStateWrap.Value;
+            
             var activeTextEditor = TextEditorService.TextEditorStates.TextEditorList
                 .FirstOrDefault(x =>
                     x.Key == editorState.ActiveTextEditorKey);
@@ -30,7 +32,7 @@
             }
             else
             {
-                <ButtonDisplay OnClickFunc="OpenFileOnClick">
+                <ButtonDisplay OnClickFunc="async () => await EditorState.OpenFileOnClick(Dispatcher, TextEditorService, textEditorResourceMapState)">
                     Open File
                 </ButtonDisplay>
             }

@@ -1,4 +1,5 @@
 @using BlazorStudio.ClassLib.Context
+@using BlazorStudio.ClassLib.Store.SolutionExplorer
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorStudio.RazorLib.TreeView
 
@@ -7,41 +8,42 @@
 <ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
                  ClassCssString="bstudio_folder-explorer-display"
                  StyleCssString="@($"height: 100% {SolutionExplorerElementDimensions.StyleString}")">
-    
-    <div class="bstudio_section-title">
-        Solution Explorer
-        @if (_settingsSolutionExplorerState)
-        {
-            <text>&nbsp;</text>
-            <IconLoading />
-        }
-    </div>
-    
-    <div class="bstudio_section-body">
-        @{
-            var solutionExplorerState = SolutionExplorerStateWrap.Value;
-
-            if (solutionExplorerState.SolutionAbsoluteFilePath is null)
+    @{
+        var solutionExplorerState = SolutionExplorerStateWrap.Value;
+        
+        <div class="bstudio_section-title">
+            Solution Explorer
+            @if (solutionExplorerState.PerformingAsynchronousOperation)
             {
-                <ButtonDisplay OnClickFunc="OpenSolutionOnClick">
-                    Open Solution
-                </ButtonDisplay>
+                <text>&nbsp;</text>
+                <IconLoading/>
             }
-            else
-            {
-                <TreeViewDisplay TreeViewModel="_solutionTreeViewModel">
-                    <ItemRenderFragment Context="treeViewModel">
-                        @treeViewModel.Item.FilenameWithExtension
-                    </ItemRenderFragment>
+        </div>
 
-                    <ContextMenuEventRenderFragment Context="contextMenuEvent">
-                        <div class="bstudio_dropdown-display-default-background"
-                             style="@GetStyleForContextMenu(contextMenuEvent.CapturedMouseEventArgs)">
-                            <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent.TreeViewModel)"/>
-                        </div>
-                    </ContextMenuEventRenderFragment>
-                </TreeViewDisplay>
+        <div class="bstudio_section-body">
+            @{
+                if (solutionExplorerState.SolutionAbsoluteFilePath is null)
+                {
+                    <ButtonDisplay OnClickFunc="async () => await SolutionExplorerState.OpenSolutionOnClick(Dispatcher)">
+                        Open Solution
+                    </ButtonDisplay>
+                }
+                else
+                {
+                    <TreeViewDisplay TreeViewModel="_solutionTreeViewModel">
+                        <ItemRenderFragment Context="treeViewModel">
+                            @treeViewModel.Item.FilenameWithExtension
+                        </ItemRenderFragment>
+
+                        <ContextMenuEventRenderFragment Context="contextMenuEvent">
+                            <div class="bstudio_dropdown-display-default-background"
+                                 style="@GetStyleForContextMenu(contextMenuEvent.CapturedMouseEventArgs)">
+                                <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent.TreeViewModel)"/>
+                            </div>
+                        </ContextMenuEventRenderFragment>
+                    </TreeViewDisplay>
+                }
             }
-        }
-    </div>
+        </div>
+    }
 </ContextBoundary>
