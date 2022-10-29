@@ -4,6 +4,7 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
+using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeView;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -103,14 +104,36 @@ public partial class FolderExplorerDisplay : FluxorComponent
         return 
             $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
     }
-
+    
     private Task OpenFolderOnClick()
     {
-        throw new NotImplementedException();
+        Dispatcher.Dispatch(
+            new InputFileState.RequestInputFileStateFormAction(
+                afp =>
+                {
+                    Dispatcher.Dispatch(
+                        new SetFolderExplorerStateAction(afp));
+                    
+                    return Task.CompletedTask;
+                },
+                afp =>
+                {
+                    if (afp is null ||
+                        !afp.IsDirectory)
+                    {
+                        return Task.FromResult(false);
+                    }
+                    
+                    return Task.FromResult(true);
+                }));
+        
+        return Task.CompletedTask;
     }
-    
-    public void Dispose()
+
+    protected override void Dispose(bool disposing)
     {
         FolderExplorerStateWrap.StateChanged -= FolderExplorerStateWrapOnStateChanged;
+        
+        base.Dispose(disposing);
     }
 }

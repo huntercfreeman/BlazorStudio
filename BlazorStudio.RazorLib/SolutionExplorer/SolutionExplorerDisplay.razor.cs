@@ -1,9 +1,11 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Dimensions;
+using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
+using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.TreeView;
 using Fluxor;
@@ -107,11 +109,33 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     
     private Task OpenSolutionOnClick()
     {
-        throw new NotImplementedException();
+        Dispatcher.Dispatch(
+            new InputFileState.RequestInputFileStateFormAction(
+                afp =>
+                {
+                    Dispatcher.Dispatch(
+                        new SetFolderExplorerStateAction(afp));
+                    
+                    return Task.CompletedTask;
+                },
+                afp =>
+                {
+                    if (afp is null ||
+                        afp.ExtensionNoPeriod != ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+                    {
+                        return Task.FromResult(false);
+                    }
+                    
+                    return Task.FromResult(true);
+                }));
+        
+        return Task.CompletedTask;
     }
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
         SolutionExplorerStateWrap.StateChanged -= SolutionExplorerStateWrapOnStateChanged;
+        
+        base.Dispose(disposing);
     }
 }
