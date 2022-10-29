@@ -25,8 +25,8 @@ public partial class InputFileTopNavBar : FluxorComponent
     private string _searchQuery = string.Empty;
 
     private TreeViewModel<IAbsoluteFilePath> SelectionMutablyReferenced => 
-        InputFileStateWrap.Value.SelectedTreeViewModelHistory[
-            InputFileStateWrap.Value.SelectedIndexInHistory];
+        InputFileStateWrap.Value.OpenedTreeViewModelHistory[
+            InputFileStateWrap.Value.IndexInHistory];
     
     private void HandleBackButtonOnClick()
     {
@@ -40,7 +40,7 @@ public partial class InputFileTopNavBar : FluxorComponent
 
     private void HandleUpwardButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.SelectParentDirectoryAction());
+        Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction());
     }
 
     private void HandleRefreshButtonOnClick()

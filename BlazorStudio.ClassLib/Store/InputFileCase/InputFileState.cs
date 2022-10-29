@@ -9,8 +9,9 @@ namespace BlazorStudio.ClassLib.Store.InputFileCase;
 [FeatureState]
 public record InputFileState(
     TreeViewModel<IAbsoluteFilePath> FileSystemTreeViewModel,
-    int SelectedIndexInHistory,
-    ImmutableList<TreeViewModel<IAbsoluteFilePath>> SelectedTreeViewModelHistory)
+    int IndexInHistory,
+    ImmutableList<TreeViewModel<IAbsoluteFilePath>> OpenedTreeViewModelHistory,
+    TreeViewModel<IAbsoluteFilePath>? SelectedTreeViewModel)
 {
     private InputFileState() : this(
         new TreeViewModel<IAbsoluteFilePath>(
@@ -18,7 +19,8 @@ public record InputFileState(
             true,
             LoadTreeViewRoot),
         0,
-        ImmutableList<TreeViewModel<IAbsoluteFilePath>>.Empty)
+        ImmutableList<TreeViewModel<IAbsoluteFilePath>>.Empty,
+        null)
     {
         FileSystemTreeViewModel.LoadChildrenFuncAsync
             .Invoke(FileSystemTreeViewModel);
@@ -34,7 +36,7 @@ public record InputFileState(
         
         selection.IsExpanded = true;
 
-        SelectedTreeViewModelHistory = new []
+        OpenedTreeViewModelHistory = new []
         {
             selection,
         }.ToImmutableList();
@@ -45,15 +47,15 @@ public record InputFileState(
 
     public record MoveBackwardsInHistoryAction;
     public record MoveForwardsInHistoryAction;
-    public record SelectParentDirectoryAction;
+    public record OpenParentDirectoryAction;
     public record RefreshCurrentSelectionAction;
     
     public static bool CanMoveBackwardsInHistory(InputFileState inputFileState) => 
-        inputFileState.SelectedIndexInHistory > 0;
+        inputFileState.IndexInHistory > 0;
     
     public static bool CanMoveForwardsInHistory(InputFileState inputFileState) => 
-        inputFileState.SelectedIndexInHistory < 
-        inputFileState.SelectedTreeViewModelHistory.Count - 1;
+        inputFileState.IndexInHistory < 
+        inputFileState.OpenedTreeViewModelHistory.Count - 1;
     
     private class InputFileStateReducer
     {
@@ -76,7 +78,7 @@ public record InputFileState(
             {
                 return inInputFileState with
                 {
-                    SelectedIndexInHistory = inInputFileState.SelectedIndexInHistory - 
+                    IndexInHistory = inInputFileState.IndexInHistory - 
                                              1,
                 };
             }
@@ -93,7 +95,7 @@ public record InputFileState(
             {
                 return inInputFileState with
                 {
-                    SelectedIndexInHistory = inInputFileState.SelectedIndexInHistory + 
+                    IndexInHistory = inInputFileState.IndexInHistory + 
                                              1,
                 };
             }
@@ -102,12 +104,12 @@ public record InputFileState(
         }
         
         [ReducerMethod]
-        public static InputFileState ReduceSelectParentDirectoryAction(
+        public static InputFileState ReduceOpenParentDirectoryAction(
             InputFileState inInputFileState,
-            SelectParentDirectoryAction selectParentDirectoryAction)
+            OpenParentDirectoryAction openParentDirectoryAction)
         {
             var currentSelection = inInputFileState
-                .SelectedTreeViewModelHistory[inInputFileState.SelectedIndexInHistory];
+                .OpenedTreeViewModelHistory[inInputFileState.IndexInHistory];
 
             TreeViewModel<IAbsoluteFilePath>? parentDirectoryTreeViewModel = null;
             
@@ -142,7 +144,7 @@ public record InputFileState(
             RefreshCurrentSelectionAction refreshCurrentSelectionAction)
         {
             var currentSelection = inInputFileState
-                .SelectedTreeViewModelHistory[inInputFileState.SelectedIndexInHistory];
+                .OpenedTreeViewModelHistory[inInputFileState.IndexInHistory];
 
             currentSelection.Children.Clear();
 
@@ -166,18 +168,18 @@ public record InputFileState(
             selectionClone.IsExpanded = true;
 
             var nextHistory = 
-                inInputFileState.SelectedTreeViewModelHistory;
+                inInputFileState.OpenedTreeViewModelHistory;
              
             // If not at end of history the more recent history is
             // replaced by the to be selected TreeViewModel
-            if (inInputFileState.SelectedIndexInHistory != 
-                inInputFileState.SelectedTreeViewModelHistory.Count - 1)
+            if (inInputFileState.IndexInHistory != 
+                inInputFileState.OpenedTreeViewModelHistory.Count - 1)
             {
-                var historyCount = inInputFileState.SelectedTreeViewModelHistory.Count;
-                var startingIndexToRemove = inInputFileState.SelectedIndexInHistory + 1;
+                var historyCount = inInputFileState.OpenedTreeViewModelHistory.Count;
+                var startingIndexToRemove = inInputFileState.IndexInHistory + 1;
                 var countToRemove = historyCount - startingIndexToRemove;
 
-                nextHistory = inInputFileState.SelectedTreeViewModelHistory
+                nextHistory = inInputFileState.OpenedTreeViewModelHistory
                     .RemoveRange(startingIndexToRemove, countToRemove);
             }
             
@@ -186,8 +188,8 @@ public record InputFileState(
             
             return inInputFileState with
             {
-                SelectedIndexInHistory = inInputFileState.SelectedIndexInHistory + 1,
-                SelectedTreeViewModelHistory = nextHistory,
+                IndexInHistory = inInputFileState.IndexInHistory + 1,
+                OpenedTreeViewModelHistory = nextHistory,
             };
         }
     }

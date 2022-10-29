@@ -10,7 +10,8 @@
         var selectionSafeReference = SelectionMutablyReferenced;
         
         <TreeViewDisplay TreeViewModel="selectionSafeReference"
-                         ShouldShowRoot="false">
+                         ShouldShowRoot="false"
+                         TreeViewDisplayOnEventRegistration="_treeViewDisplayOnEventRegistration">
             <ItemRenderFragment Context="treeViewModel">
                 @treeViewModel.Item.FilenameWithExtension
             </ItemRenderFragment>

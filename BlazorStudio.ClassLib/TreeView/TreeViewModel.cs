@@ -2,6 +2,8 @@
 
 public class TreeViewModel<TItem> : ITreeViewModel
 {
+    private bool _isExpanded;
+
     public TreeViewModel(
         TItem item, 
         bool canToggleExpandable,
@@ -19,7 +21,19 @@ public class TreeViewModel<TItem> : ITreeViewModel
     public List<TreeViewModel<TItem>> Children { get; } = new();
     public Guid Id { get; } = Guid.NewGuid();
     public bool IsDisplayed { get; set; }
-    public bool IsExpanded { get; set; }
+
+    public bool IsExpanded
+    {
+        get => _isExpanded;
+        set
+        {
+            if (!CanToggleExpandable)
+                return;
+                
+            _isExpanded = value;
+        }
+    }
+
     public bool CanToggleExpandable { get; set; }
     public TreeViewModel<TItem>? ActiveDescendant { get; set; }
 
