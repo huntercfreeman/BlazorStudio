@@ -1,13 +1,19 @@
 using System.Collections.Immutable;
+using BlazorStudio.ClassLib.CustomEvents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Menu;
+using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
+using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.ClassLib.TreeView;
+using BlazorStudio.RazorLib.TreeView;
+using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -20,17 +26,28 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
+    private IState<TextEditorResourceMapState> TextEditorResourceMapStateWrap { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions SolutionExplorerElementDimensions { get; set; } = null!;
 
     private string _filePath = string.Empty;
     private TreeViewModel<IAbsoluteFilePath>? _solutionTreeViewModel;
-
+    private TreeViewDisplayOnEventRegistration<IAbsoluteFilePath> _treeViewDisplayOnEventRegistration = null!;
+    
     protected override void OnInitialized()
     {
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrapOnStateChanged;
+    
+        _treeViewDisplayOnEventRegistration = new TreeViewDisplayOnEventRegistration<IAbsoluteFilePath>();
+        
+        _treeViewDisplayOnEventRegistration.AfterClickFuncAsync = AfterClickFuncAsync; 
+        _treeViewDisplayOnEventRegistration.AfterDoubleClickFuncAsync = AfterDoubleClickFuncAsync; 
+        _treeViewDisplayOnEventRegistration.AfterKeyDownFuncAsync = AfterKeyDownFuncAsync;
         
         base.OnInitialized();
     }
@@ -165,10 +182,48 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 new AbsoluteFilePath(_filePath, true)));
     }
     
+    private Task AfterClickFuncAsync(
+        MouseEventArgs mouseEventArgs, 
+        TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
+    {
+        return Task.CompletedTask;
+    }
+    
+    private async Task AfterDoubleClickFuncAsync(
+        MouseEventArgs mouseEventArgs, 
+        TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
+    {
+        await EditorState.OpenInEditorAsync(
+            treeViewDisplay.TreeViewModel.Item,
+            Dispatcher,
+            TextEditorService,
+            TextEditorResourceMapStateWrap.Value);
+    }
+    
+    private async Task AfterKeyDownFuncAsync(
+        CustomKeyDownEventArgs customKeyDownEventArgs, 
+        TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
+    {
+        switch (customKeyDownEventArgs.Code)
+        {
+            case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
+                await EditorState.OpenInEditorAsync(
+                    treeViewDisplay.TreeViewModel.Item,
+                    Dispatcher,
+                    TextEditorService,
+                    TextEditorResourceMapStateWrap.Value);
+                break;
+            case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
+                treeViewDisplay.TreeViewModel.IsExpanded = 
+                    !treeViewDisplay.TreeViewModel.IsExpanded;
+                break;
+        }
+    }
+
     private MenuRecord GetContextMenu(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
         var openInTextEditorMenuOption = new MenuOptionRecord(
-            "Nothing here TODO: Aaa",
+            "SolutionExplorer Nothing here TODO: Aaa",
             () => { });
 
         return new MenuRecord(new []

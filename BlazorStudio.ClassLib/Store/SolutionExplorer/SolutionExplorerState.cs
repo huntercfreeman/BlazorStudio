@@ -108,7 +108,7 @@ public record SolutionExplorerState(
         }
     }
     
-    public static Task OpenSolutionOnClick(
+    public static Task ShowInputFileAsync(
         IDispatcher dispatcher)
     {
         dispatcher.Dispatch(

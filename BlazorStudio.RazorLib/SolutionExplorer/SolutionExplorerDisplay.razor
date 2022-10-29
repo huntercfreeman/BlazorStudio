@@ -2,6 +2,7 @@
 @using BlazorStudio.ClassLib.Store.SolutionExplorer
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorStudio.RazorLib.TreeView
+@using BlazorStudio.RazorLib.Menu
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -24,13 +25,14 @@
             @{
                 if (solutionExplorerState.SolutionAbsoluteFilePath is null)
                 {
-                    <ButtonDisplay OnClickFunc="async () => await SolutionExplorerState.OpenSolutionOnClick(Dispatcher)">
+                    <ButtonDisplay OnClickFunc="async () => await SolutionExplorerState.ShowInputFileAsync(Dispatcher)">
                         Open Solution
                     </ButtonDisplay>
                 }
                 else
                 {
-                    <TreeViewDisplay TreeViewModel="_solutionTreeViewModel">
+                    <TreeViewDisplay TreeViewModel="_solutionTreeViewModel"
+                                     TreeViewDisplayOnEventRegistration="_treeViewDisplayOnEventRegistration">
                         <ItemRenderFragment Context="treeViewModel">
                             @treeViewModel.Item.FilenameWithExtension
                         </ItemRenderFragment>

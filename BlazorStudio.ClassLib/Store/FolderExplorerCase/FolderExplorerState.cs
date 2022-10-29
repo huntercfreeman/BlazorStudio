@@ -13,7 +13,7 @@ public record FolderExplorerState(IAbsoluteFilePath? AbsoluteFilePath)
         
     }
     
-    public static Task OpenFolderOnClick(IDispatcher dispatcher)
+    public static Task ShowInputFileAsync(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(

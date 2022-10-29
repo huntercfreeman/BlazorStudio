@@ -32,7 +32,7 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
         }
     }
 
-    public static Task OpenFileOnClick(
+    public static Task ShowInputFileAsync(
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
         TextEditorResourceMapState textEditorResourceMapState)
@@ -42,46 +42,11 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
                 "TextEditor",
                 async afp =>
                 {
-                    if (afp is null)
-                    {
-                        dispatcher.Dispatch(
-                            new SetActiveTextEditorKeyAction(null));
-
-                        return;
-                    }
-
-                    var inputFileAbsoluteFilePathString = afp.GetAbsoluteFilePathString();
-
-                    KeyValuePair<TextEditorKey, IAbsoluteFilePath>? existingResourceMapPair = null;
-
-                    foreach (var kvp in textEditorResourceMapState.ResourceMap)
-                    {
-                        if (kvp.Value.GetAbsoluteFilePathString() == inputFileAbsoluteFilePathString)
-                        {
-                            existingResourceMapPair = kvp;
-                        }
-                    }
-
-                    var textEditorKey = existingResourceMapPair?.Key ?? 
-                                        TextEditorKey.NewTextEditorKey();
-
-                    if (existingResourceMapPair is null)
-                    {
-                        var content = await File
-                            .ReadAllTextAsync(inputFileAbsoluteFilePathString);
-
-                        textEditorService.RegisterTextEditor(
-                            new TextEditorBase(
-                                content,
-                                null,
-                                null,
-                                null,
-                                textEditorKey
-                            ));
-                    }
-
-                    dispatcher.Dispatch(
-                        new SetActiveTextEditorKeyAction(textEditorKey));
+                    await OpenInEditorAsync(
+                        afp, 
+                        dispatcher, 
+                        textEditorService, 
+                        textEditorResourceMapState);
                 },
                 afp =>
                 {
@@ -101,5 +66,53 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
                 }.ToImmutableArray()));
 
         return Task.CompletedTask;
+    }
+    
+    public static async Task OpenInEditorAsync(
+        IAbsoluteFilePath? absoluteFilePath,
+        IDispatcher dispatcher,
+        ITextEditorService textEditorService,
+        TextEditorResourceMapState textEditorResourceMapState)
+    {
+        if (absoluteFilePath is null)
+        {
+            dispatcher.Dispatch(
+                new SetActiveTextEditorKeyAction(null));
+
+            return;
+        }
+
+        var inputFileAbsoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
+
+        KeyValuePair<TextEditorKey, IAbsoluteFilePath>? existingResourceMapPair = null;
+
+        foreach (var kvp in textEditorResourceMapState.ResourceMap)
+        {
+            if (kvp.Value.GetAbsoluteFilePathString() == inputFileAbsoluteFilePathString)
+            {
+                existingResourceMapPair = kvp;
+            }
+        }
+
+        var textEditorKey = existingResourceMapPair?.Key ?? 
+                            TextEditorKey.NewTextEditorKey();
+
+        if (existingResourceMapPair is null)
+        {
+            var content = await File
+                .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+
+            textEditorService.RegisterTextEditor(
+                new TextEditorBase(
+                    content,
+                    null,
+                    null,
+                    null,
+                    textEditorKey
+                ));
+        }
+
+        dispatcher.Dispatch(
+            new SetActiveTextEditorKeyAction(textEditorKey));
     }
 }
