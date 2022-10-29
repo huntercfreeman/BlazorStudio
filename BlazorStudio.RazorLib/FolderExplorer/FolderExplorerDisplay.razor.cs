@@ -1,11 +1,14 @@
+using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.TreeView;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.FolderExplorer;
 
@@ -78,6 +81,27 @@ public partial class FolderExplorerDisplay : FluxorComponent
         Dispatcher.Dispatch(
             new SetFolderExplorerStateAction(
                 new AbsoluteFilePath(_filePath, true)));
+    }
+    
+    private MenuRecord GetContextMenu(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    {
+        var openInTextEditorMenuOption = new MenuOptionRecord(
+            "Nothing here TODO: Aaa",
+            () => { });
+
+        return new MenuRecord(new []
+        {
+            openInTextEditorMenuOption
+        }.ToImmutableArray());
+    }
+
+    private string GetStyleForContextMenu(MouseEventArgs? mouseEventArgs)
+    {
+        if (mouseEventArgs is null)
+            return string.Empty;
+
+        return 
+            $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
     }
 
     public void Dispose()
