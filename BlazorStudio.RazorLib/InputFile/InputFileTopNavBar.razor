@@ -3,17 +3,17 @@
 
 <div class="bstudio_input-file-display-top-nav-bar">
     <div class="bstudio_input-file-display-top-nav-bar-buttons">
-        <ButtonDisplay OnClickAction="HandleBackButtonOnClick"
+        <ButtonDisplay OnClickFunc="async () => HandleBackButtonOnClick()"
                        IsDisabled="!InputFileState.CanMoveBackwardsInHistory(InputFileStateWrap.Value)">
             <IconArrowLeft/>
         </ButtonDisplay>
     
-        <ButtonDisplay OnClickAction="HandleForwardButtonOnClick"
+        <ButtonDisplay OnClickFunc="async () => HandleForwardButtonOnClick()"
                        IsDisabled="!InputFileState.CanMoveForwardsInHistory(InputFileStateWrap.Value)">
             <IconArrowRight/>
         </ButtonDisplay>
     
-        <ButtonDisplay OnClickAction="HandleUpwardButtonOnClick">
+        <ButtonDisplay OnClickFunc="async () => HandleUpwardButtonOnClick()">
             <IconArrowUp/>
         </ButtonDisplay>
     </div>
@@ -27,13 +27,13 @@
             @selectionSafeReference.Item.GetAbsoluteFilePathString()    
         </div>
         
-        <ButtonDisplay OnClickAction="HandleRefreshButtonOnClick">
+        <ButtonDisplay OnClickFunc="async () => HandleRefreshButtonOnClick()">
             <IconRefresh/>
         </ButtonDisplay>
     </div>
     
     <div class="bstudio_input-file-display-top-nav-bar-search">
-        <ButtonDisplay OnClickAction="FocusSearchElementReferenceOnClick"
+        <ButtonDisplay OnClickFunc="async () => FocusSearchElementReferenceOnClick()"
                        CssClassString="bstudio_input-file-search-button">
             <IconSearch/>
         </ButtonDisplay>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.TreeView;
 using Fluxor;
 
@@ -11,7 +12,9 @@ public record InputFileState(
     TreeViewModel<IAbsoluteFilePath> FileSystemTreeViewModel,
     int IndexInHistory,
     ImmutableList<TreeViewModel<IAbsoluteFilePath>> OpenedTreeViewModelHistory,
-    TreeViewModel<IAbsoluteFilePath>? SelectedTreeViewModel)
+    TreeViewModel<IAbsoluteFilePath>? SelectedTreeViewModel,
+    Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc,
+    Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc)
 {
     private InputFileState() : this(
         new TreeViewModel<IAbsoluteFilePath>(
@@ -20,7 +23,9 @@ public record InputFileState(
             LoadTreeViewRoot),
         0,
         ImmutableList<TreeViewModel<IAbsoluteFilePath>>.Empty,
-        null)
+        null,
+        _ => Task.CompletedTask,
+        _ => Task.FromResult(false))
     {
         FileSystemTreeViewModel.LoadChildrenFuncAsync
             .Invoke(FileSystemTreeViewModel);
@@ -42,6 +47,10 @@ public record InputFileState(
         }.ToImmutableList();
     }
 
+    public record RequestInputFileStateFormAction(
+        Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc,
+        Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc);
+    
     public record SetSelectedTreeViewModelAction(
         TreeViewModel<IAbsoluteFilePath>? SelectedTreeViewModel);
     
@@ -52,7 +61,7 @@ public record InputFileState(
     public record MoveForwardsInHistoryAction;
     public record OpenParentDirectoryAction;
     public record RefreshCurrentSelectionAction;
-    
+
     public static bool CanMoveBackwardsInHistory(InputFileState inputFileState) => 
         inputFileState.IndexInHistory > 0;
     
@@ -62,6 +71,20 @@ public record InputFileState(
     
     private class InputFileStateReducer
     {
+        [ReducerMethod]
+        public static InputFileState ReduceStartInputFileStateFormAction(
+            InputFileState inInputFileState,
+            InputFileStateEffects.StartInputFileStateFormAction startInputFileStateFormAction)
+        {
+            return inInputFileState with
+            {
+                SelectionIsValidFunc = startInputFileStateFormAction
+                    .RequestInputFileStateFormAction.SelectionIsValidFunc,
+                OnAfterSubmitFunc = startInputFileStateFormAction
+                    .RequestInputFileStateFormAction.OnAfterSubmitFunc
+            };
+        }
+        
         [ReducerMethod]
         public static InputFileState ReduceSetSelectedTreeViewModelAction(
             InputFileState inInputFileState,
@@ -206,6 +229,38 @@ public record InputFileState(
                 IndexInHistory = inInputFileState.IndexInHistory + 1,
                 OpenedTreeViewModelHistory = nextHistory,
             };
+        }
+    }
+    
+    private class InputFileStateEffects
+    {
+        private readonly ICommonComponentRenderers _commonComponentRenderers;
+
+        public InputFileStateEffects(
+            ICommonComponentRenderers commonComponentRenderers)
+        {
+            _commonComponentRenderers = commonComponentRenderers;
+        }
+        
+        public record StartInputFileStateFormAction(
+            RequestInputFileStateFormAction RequestInputFileStateFormAction);
+        
+        [EffectMethod]
+        public Task ReduceStartInputFileStateFormAction(
+            RequestInputFileStateFormAction requestInputFileStateFormAction,
+            IDispatcher dispatcher)
+        {
+            dispatcher.Dispatch(
+                new StartInputFileStateFormAction(
+                    requestInputFileStateFormAction));
+
+            dispatcher.Dispatch(new DialogRecord(
+                DialogKey.NewDialogKey(), 
+                "Input File",
+                _commonComponentRenderers.InputFileRendererType,
+                null));
+
+            return Task.CompletedTask;
         }
     }
     

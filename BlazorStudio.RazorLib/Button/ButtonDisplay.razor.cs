@@ -5,7 +5,7 @@ namespace BlazorStudio.RazorLib.Button;
 public partial class ButtonDisplay : ComponentBase
 {
     [Parameter, EditorRequired]
-    public Action OnClickAction { get; set; } = null!;
+    public Func<Task> OnClickFunc { get; set; } = null!;
     [Parameter, EditorRequired]
     public RenderFragment ChildContent { get; set; } = null!;
     [Parameter]
@@ -19,9 +19,8 @@ public partial class ButtonDisplay : ComponentBase
         ? "bstudio_disabled"
         : string.Empty;
 
-    public void FireOnClickAction()
+    public async Task FireOnClickAction()
     {
-        if (!IsDisabled)
-            OnClickAction.Invoke();
+        await OnClickFunc.Invoke();
     }
 }

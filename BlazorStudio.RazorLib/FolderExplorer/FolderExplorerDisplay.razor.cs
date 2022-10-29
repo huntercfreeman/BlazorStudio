@@ -4,11 +4,12 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.TreeView;
 using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.FolderExplorer;
 
-public partial class FolderExplorerDisplay : ComponentBase, IDisposable
+public partial class FolderExplorerDisplay : FluxorComponent
 {
     [Inject]
     private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;

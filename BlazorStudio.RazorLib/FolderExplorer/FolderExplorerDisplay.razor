@@ -2,6 +2,8 @@
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorStudio.RazorLib.TreeView
 
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
 <ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
                  ClassCssString="bstudio_folder-explorer-display"
                  StyleCssString="@($"height: 100% {FolderExplorerElementDimensions.StyleString}")">
@@ -19,9 +21,10 @@
             if (folderExplorerState.AbsoluteFilePath is null)
             {
                 <button class="btn btn-primary">
-                    
                 </button>                
             }
+            
+            @(folderExplorerState.AbsoluteFilePath?.GetAbsoluteFilePathString() ?? "null")
         }
     </div>
 </ContextBoundary>

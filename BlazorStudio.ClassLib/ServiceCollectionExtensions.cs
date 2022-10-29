@@ -11,9 +11,11 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddBlazorStudioClassLibServices(
         this IServiceCollection services,
-        Func<IServiceProvider, IClipboardProvider> clipboardProviderDefaultFactory)
+        Func<IServiceProvider, IClipboardProvider> clipboardProviderDefaultFactory,
+        ICommonComponentRenderers commonComponentRenderers)
     {
         return services
+            .AddSingleton<ICommonComponentRenderers>(commonComponentRenderers)
             .AddTextEditorRazorLibServices(options =>
             {
                 options.InitializeFluxor = false;

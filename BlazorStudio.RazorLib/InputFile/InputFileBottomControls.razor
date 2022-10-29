@@ -19,11 +19,11 @@
             </select>
         </div>
         <div style="display: flex;">
-            <ButtonDisplay OnClickAction="HandleBackButtonOnClick"
-                           IsDisabled="!InputFileState.CanMoveBackwardsInHistory(InputFileStateWrap.Value)">
+            <ButtonDisplay OnClickFunc="FireOnAfterSubmit"
+                           IsDisabled="OnAfterSubmitIsValid()">
                 Select
             </ButtonDisplay>
-            <ButtonDisplay OnClickAction="HandleBackButtonOnClick"
+            <ButtonDisplay OnClickFunc="() => { return Task.CompletedTask; }"
                            IsDisabled="!InputFileState.CanMoveBackwardsInHistory(InputFileStateWrap.Value)">
                 Cancel
             </ButtonDisplay>

@@ -2,6 +2,8 @@ using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DropdownCase;
+using BlazorStudio.ClassLib.Store.FolderExplorerCase;
+using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.RazorLib.InputFile;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -65,6 +67,26 @@ public partial class BlazorTextEditorHeader : ComponentBase
 
     private void ShowInputFileDialog()
     {
+        Dispatcher.Dispatch(
+            new InputFileState.RequestInputFileStateFormAction(
+                afp =>
+                {
+                    Dispatcher.Dispatch(
+                        new SetFolderExplorerStateAction(afp));
+                    
+                    return Task.CompletedTask;
+                },
+                afp =>
+                {
+                    if (afp is null ||
+                        !afp.IsDirectory)
+                    {
+                        return Task.FromResult(false);
+                    }
+                    
+                    return Task.FromResult(true);
+                }));
+        
         Dispatcher.Dispatch(new RegisterDialogRecordAction(new DialogRecord(
             DialogKey.NewDialogKey(), 
             "Input File",
