@@ -37,11 +37,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     private void SolutionExplorerStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        if (SolutionExplorerStateWrap.Value.AbsoluteFilePath is null)
+        if (SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath is null)
             return;
 
         _solutionTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
-            SolutionExplorerStateWrap.Value.AbsoluteFilePath,
+            SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath,
             true,
             LoadChildrenAsync);
 
@@ -91,7 +91,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 afp =>
                 {
                     Dispatcher.Dispatch(
-                        new SolutionExplorerState.SetSolutionExplorerStateAction(afp));
+                        new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+                            afp));
                     
                     return Task.CompletedTask;
                 },

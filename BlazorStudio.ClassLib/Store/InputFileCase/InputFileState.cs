@@ -302,7 +302,7 @@ public record InputFileState(
             RequestInputFileStateFormAction RequestInputFileStateFormAction);
         
         [EffectMethod]
-        public Task ReduceRequestInputFileStateFormAction(
+        public Task HandleRequestInputFileStateFormAction(
             RequestInputFileStateFormAction requestInputFileStateFormAction,
             IDispatcher dispatcher)
         {
