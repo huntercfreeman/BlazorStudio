@@ -406,8 +406,9 @@ em {
 }
 
 .bstudio_editor-footer {
+    font-size: .7em;
     display: flex;
-    height: 1.8rem;
+    height: var(--bstudio_editor-footer-height);
     align-items: center;
     overflow: auto;
     white-space: nowrap;
@@ -423,4 +424,8 @@ em {
 .bstudio_editor-footer-entry:not(:last-child) {
     border-right: 2px solid var(--bte_text-editor-caret-row-border-color);
     margin-right: 5px;
+}
+
+.bstudio_text-editor-display {
+    height: calc(100% - var(--bstudio_editor-footer-height));
 }

@@ -35,4 +35,5 @@
     --bstudio_input-file-display-top-nav-bar-buttons-width: 120px;
     --bstudio_input-file-display-top-nav-bar-search-width: 220px;
     --bstudio_input-file-display-top-nav-bar-address-hierarchy-width: calc(100% - var(--bstudio_input-file-display-top-nav-bar-buttons-width) - var(--bstudio_input-file-display-top-nav-bar-search-width));
+    --bstudio_editor-footer-height: 1.8rem;
 }

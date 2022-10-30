@@ -216,6 +216,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
                 treeViewDisplay.TreeViewModel.IsExpanded = 
                     !treeViewDisplay.TreeViewModel.IsExpanded;
+                
+                _ = Task.Run(async () =>
+                {
+                    await treeViewDisplay.TreeViewModel.LoadChildrenFuncAsync
+                        .Invoke(treeViewDisplay.TreeViewModel);
+                    
+                    await InvokeAsync(StateHasChanged);
+                });
+                
                 break;
         }
     }
