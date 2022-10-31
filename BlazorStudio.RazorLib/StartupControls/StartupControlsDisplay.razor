@@ -1,0 +1,12 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_startup-controls-display">
+   <span>
+      MSBuild:&nbsp;
+      @(WorkspaceStateWrap.Value.MsBuildAbsoluteFilePath?.FileNameNoExtension ?? "null")   
+   </span>
+   <span>
+     StartupProject:&nbsp;
+     @(WorkspaceStateWrap.Value.MsBuildAbsoluteFilePath?.FileNameNoExtension ?? "null")   
+  </span>
+</div>

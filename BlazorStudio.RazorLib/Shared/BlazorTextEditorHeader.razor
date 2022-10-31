@@ -4,6 +4,7 @@
 @using BlazorStudio.RazorLib.Dropdown
 @using BlazorStudio.RazorLib.Menu
 @using BlazorStudio.RazorLib.Settings
+@using BlazorStudio.RazorLib.StartupControls
 
 <ContextBoundary ContextRecord="ContextFacts.MainLayoutHeaderContext"
                  ClassCssString="bstudio_header">
@@ -13,7 +14,7 @@
     <div style="position: relative;">
         <ButtonDisplay @ref="_fileButtonDisplay" 
                        OnClickFunc="async () => AddActiveFileDropdown()">
-                File
+            File
         </ButtonDisplay>
 
         <DropdownDisplay DropdownKey="_dropdownKeyFileDropdown"
@@ -26,4 +27,6 @@
             </div>
         </DropdownDisplay>
     </div>
+    
+    <StartupControlsDisplay />
 </ContextBoundary>

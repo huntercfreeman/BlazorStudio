@@ -2,7 +2,6 @@
 @using BlazorStudio.ClassLib.Store.SolutionExplorer
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorStudio.RazorLib.TreeView
-@using BlazorStudio.RazorLib.Menu
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -39,10 +38,7 @@
                         </ItemRenderFragment>
 
                         <ContextMenuEventRenderFragment Context="contextMenuEvent">
-                            <div class="bstudio_dropdown-display-default-background"
-                                 style="@GetStyleForContextMenu(contextMenuEvent.CapturedMouseEventArgs)">
-                                <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent.TreeViewModel)"/>
-                            </div>
+                            <SolutionExplorerContextMenu TreeViewDisplayContextMenuEvent="contextMenuEvent"/>
                         </ContextMenuEventRenderFragment>
                     </TreeViewDisplay>
                 }

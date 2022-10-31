@@ -259,27 +259,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         }
     }
 
-    private MenuRecord GetContextMenu(TreeViewModel<IAbsoluteFilePath> treeViewModel)
-    {
-        var openInTextEditorMenuOption = new MenuOptionRecord(
-            "SolutionExplorer Nothing here TODO: Aaa",
-            () => { });
-
-        return new MenuRecord(new []
-        {
-            openInTextEditorMenuOption
-        }.ToImmutableArray());
-    }
-
-    private string GetStyleForContextMenu(MouseEventArgs? mouseEventArgs)
-    {
-        if (mouseEventArgs is null)
-            return string.Empty;
-
-        return 
-            $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
-    }
-
     protected override void Dispose(bool disposing)
     {
         SolutionExplorerStateWrap.StateChanged -= SolutionExplorerStateWrapOnStateChanged;
