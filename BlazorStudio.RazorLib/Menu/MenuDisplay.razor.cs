@@ -1,3 +1,4 @@
+using BlazorStudio.ClassLib.CustomEvents;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.DropdownCase;
@@ -63,7 +64,7 @@ public partial class MenuDisplay : ComponentBase
         InvokeAsync(StateHasChanged);
     }
 
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private void HandleOnKeyDown(CustomKeyDownEventArgs customKeyDownEventArgs)
     {
         if (MenuRecord.MenuOptions.Length == 0)
         {
@@ -71,7 +72,7 @@ public partial class MenuDisplay : ComponentBase
             return;
         }
         
-        switch (keyboardEventArgs.Key)
+        switch (customKeyDownEventArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:

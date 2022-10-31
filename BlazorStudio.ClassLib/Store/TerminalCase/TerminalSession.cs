@@ -49,12 +49,14 @@ public class TerminalSession
         }
 
         process.OutputDataReceived += OutputDataReceived;
-
+        
         try
         {
             process.Start();
 
             process.BeginOutputReadLine();
+            
+            await process.WaitForExitAsync();
         }
         finally
         {

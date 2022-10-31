@@ -19,8 +19,9 @@
 
                 foreach (var result in TerminalResultStateWrap.Value.TerminalCommandResultMap)
                 {
-                    <pre>@result.Value.StandardOut.ToString()
-</pre>
+                    <div>
+                        @GetAllTextEscaped(result.Value.StandardOut.ToString())    
+                    </div>
                 }
             }
         </div>
