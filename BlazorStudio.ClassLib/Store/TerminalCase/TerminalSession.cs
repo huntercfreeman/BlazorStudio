@@ -4,8 +4,19 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 public class TerminalSession
 {
+    private readonly TerminalCommand _terminalCommand;
+
+    private TerminalSession(TerminalCommand terminalCommand)
+    {
+        _terminalCommand = terminalCommand;
+    }
+
+    public static async Task<TerminalSession> BeginSession(TerminalCommand terminalCommand)
+    {
+        return new TerminalSession(terminalCommand);
+    }
+    
     public async Task<TerminalSession> ExecuteCommand(
-        TerminalCommand terminalCommand, 
         string command)
     {
         var process = new Process();
@@ -33,7 +44,7 @@ public class TerminalSession
 
         void OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            terminalCommand.StandardOut
+            _terminalCommand.StandardOut
                 .Append(e.Data ?? string.Empty);
         }
 

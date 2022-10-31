@@ -36,7 +36,8 @@ public class TerminalStateEffects
             while (_terminalCommandQueue
                    .TryDequeue(out var fifoTerminalCommand))
             {
-                await fifoTerminalCommand.CommandFunc.Invoke();
+                await fifoTerminalCommand.CommandFunc
+                    .Invoke(fifoTerminalCommand);
             }
 
             // Prior to disposing the consumer ensure
