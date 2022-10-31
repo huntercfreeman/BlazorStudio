@@ -1,5 +1,7 @@
 ﻿@using BlazorStudio.ClassLib.Context
 
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
 <ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
                  ClassCssString="bstudio_terminal-display"
                  StyleCssString="height: 100%">
@@ -9,6 +11,18 @@
     </div>
 
     <div class="bstudio_section-body">
-        Body
+        Body <ButtonDisplay OnClickFunc="async () => { }">StateHasChanged</ButtonDisplay>
+        
+        <div>
+            @{
+                var terminalResultState = TerminalResultStateWrap.Value;
+
+                foreach (var result in TerminalResultStateWrap.Value.TerminalCommandResultMap)
+                {
+                    <pre>@result.Value.StandardOut.ToString()
+</pre>
+                }
+            }
+        </div>
     </div>
 </ContextBoundary>
