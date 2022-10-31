@@ -4,6 +4,6 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 public record TerminalCommand(
     TerminalCommandKey TerminalCommandKey,
-    Func<Task> CommandFunc,
+    Func<TerminalSession, Task> CommandFunc,
     StringBuilder StandardOut,
     StringBuilder StandardError);

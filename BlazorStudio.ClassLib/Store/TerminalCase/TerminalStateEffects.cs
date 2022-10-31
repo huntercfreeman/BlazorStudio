@@ -6,7 +6,6 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 public class TerminalStateEffects
 {
     public record QueueTerminalCommandToExecuteAction(TerminalCommand TerminalCommand);
-    public record ConsumeFromTerminalCommandQueueAction(TerminalCommand TerminalCommand);
 
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandQueue = new ConcurrentQueue<TerminalCommand>();
     private readonly SemaphoreSlim _executeTerminalCommandSemaphoreSlim = new(1, 1);

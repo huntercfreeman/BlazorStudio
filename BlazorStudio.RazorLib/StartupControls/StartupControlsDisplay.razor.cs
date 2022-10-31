@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
+using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -17,6 +18,12 @@ public partial class StartupControlsDisplay : FluxorComponent
     
     private Task StartProgramWithoutDebuggingOnClick()
     {
-        Dispatcher.Dispatch(new Set);
+        var startProgramWithoutDebugging = new TerminalCommand(
+            TerminalCommandKey.NewTerminalCommandKey(), 
+            );
+        
+        Dispatcher.Dispatch(
+            new TerminalStateEffects.QueueTerminalCommandToExecuteAction(
+                ));
     }
 }
