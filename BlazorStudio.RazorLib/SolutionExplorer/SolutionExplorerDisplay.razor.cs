@@ -113,23 +113,53 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         var parentAbsoluteFilePathString = parentDirectoryOfCSharpProject
             .GetAbsoluteFilePathString();
         
+        var hiddenFiles = HiddenFileFacts
+            .GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
+        
         var childDirectoryTreeViewModels = Directory
             .GetDirectories(parentAbsoluteFilePathString)
+            .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
             .Select(x => 
                 new TreeViewModel<IAbsoluteFilePath>(
                     new AbsoluteFilePath(x, true),
                     true,
                     LoadChildrenAsync));
         
+        var uniqueDirectories = UniqueFileFacts
+            .GetUniqueFilesByContainerFileExtension(
+                ExtensionNoPeriodFacts.C_SHARP_PROJECT);
+        
+        var foundUniqueDirectories = new List<TreeViewModel<IAbsoluteFilePath>>();
+        var foundDefaultDirectories = new List<TreeViewModel<IAbsoluteFilePath>>();
+
+        foreach (var directoryTreeViewModel in childDirectoryTreeViewModels)
+        {
+            if (uniqueDirectories.Any(unique => directoryTreeViewModel.Item.FileNameNoExtension == unique))
+                foundUniqueDirectories.Add(directoryTreeViewModel);
+            else
+                foundDefaultDirectories.Add(directoryTreeViewModel);
+        }
+        
+        foundUniqueDirectories = foundUniqueDirectories
+            .OrderBy(x => x.Item.FileNameNoExtension)
+            .ToList();
+
+        foundDefaultDirectories = foundDefaultDirectories
+            .OrderBy(x => x.Item.FileNameNoExtension)
+            .ToList();
+        
         var childFileTreeViewModels = Directory
             .GetFiles(parentAbsoluteFilePathString)
+            .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             .Select(x => 
                 new TreeViewModel<IAbsoluteFilePath>(
                     new AbsoluteFilePath(x, false),
                     false,
                     LoadChildrenAsync));
-
-        var allChildTreeViewModels = childDirectoryTreeViewModels
+        
+        var allChildTreeViewModels = 
+            foundUniqueDirectories
+            .Union(foundDefaultDirectories)
             .Union(childFileTreeViewModels);
 
         treeViewModel.Children.Clear();
