@@ -12,4 +12,11 @@ public partial class StartupControlsDisplay : FluxorComponent
     private IState<WorkspaceState> WorkspaceStateWrap { get; set; } = null!;
     [Inject]
     private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    
+    private Task StartProgramWithoutDebuggingOnClick()
+    {
+        Dispatcher.Dispatch(new Set);
+    }
 }

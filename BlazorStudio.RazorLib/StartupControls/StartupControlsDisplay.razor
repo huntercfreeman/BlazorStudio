@@ -6,7 +6,13 @@
       @(WorkspaceStateWrap.Value.MsBuildAbsoluteFilePath?.FileNameNoExtension ?? "null")   
    </span>
    <span>
-     StartupProject:&nbsp;
-     @(ProgramExecutionStateWrap.Value.StartupProjectAbsoluteFilePath?.FileNameNoExtension ?? "null")   
-  </span>
+      StartupProject:&nbsp;
+      @(ProgramExecutionStateWrap.Value.StartupProjectAbsoluteFilePath?.FileNameNoExtension ?? "null")   
+   </span>
+   <span>
+      <ButtonDisplay OnClickFunc="StartProgramWithoutDebuggingOnClick"
+                     IsDisabled="ProgramExecutionStateWrap.Value.StartupProjectAbsoluteFilePath is null">
+         <IconStartWithoutDebugging/>
+      </ButtonDisplay>
+   </span>
 </div>
