@@ -18,11 +18,24 @@
         @{
             var editorState = EditorStateWrap.Value;
             var textEditorResourceMapState = TextEditorResourceMapStateWrap.Value;
+
+            var textEditorList = TextEditorService.TextEditorStates.TextEditorList;
             
-            var activeTextEditor = TextEditorService.TextEditorStates.TextEditorList
+            var activeTextEditor = textEditorList
                 .FirstOrDefault(x =>
                     x.Key == editorState.ActiveTextEditorKey);
 
+            <div class="bstudio_editor-tabs-bar">
+                @for (var i = 0; i < textEditorList.Count; i++)
+                {
+                    var index = i;
+                    var textEditor = textEditorList[index];
+
+                    <EditorTab TabIndex="index"
+                               TextEditor="textEditor"/>
+                }
+            </div>
+            
             if (activeTextEditor is not null)
             {
                 _ = textEditorResourceMapState.ResourceMap

@@ -63,6 +63,70 @@ input[type="checkbox"]{
     height: 100%;
 }
 
+.bstudio_editor-tabs-bar {
+    display: flex;
+    height: var(--bstudio_editor-tabs-bar-height);
+    margin-bottom: 10px;
+    overflow-x: auto;
+    font-size: 0.7em;
+}
+
+.bstudio_editor-tab-display {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
+    margin: 2px;
+    /*background-color: var(--bstudio_secondary-background-color);*/
+    cursor: pointer;
+}
+
+.bstudio_editor-tab-display:hover {
+    /*background-color: var(--bstudio_primary-hover-background-color);*/
+    /*color: var(--bstudio_primary-hover-font-color);*/
+}
+
+.bstudio_editor-tab-display.bstudio_active {
+    /*color: var(--bstudio_primary-active-font-color);*/
+    /*background-color: var(--bstudio_primary-active-background-color);*/
+    /*box-shadow: var(--bstudio_primary-overlay-box-shadow);*/
+}
+
+.bstudio_editor-tab-close-display {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
+    margin-left: 5px;
+    /*background-color: var(--bstudio_secondary-background-color);*/
+}
+
+.bstudio_editor-tab-close-display:hover {
+    /*background-color: var(--bstudio_tertiary-hover-background-color);*/
+    /*color: var(--bstudio_tertiary-hover-font-color);*/
+}
+
+.bstudio_editor-footer {
+    font-size: .7em;
+    display: flex;
+    height: var(--bstudio_editor-footer-height);
+    align-items: center;
+    overflow: auto;
+    white-space: nowrap;
+    border-top: 2px solid var(--bte_text-editor-gutter-border-color);
+    color: var(--bte_primary-font-color);
+    background-color: var(--bte_text-editor-gutter-background-color);
+}
+
+.bstudio_editor-footer-entry {
+    padding-right: 5px;
+}
+
+.bstudio_editor-footer-entry:not(:last-child) {
+    border-right: 2px solid var(--bte_text-editor-caret-row-border-color);
+    margin-right: 5px;
+}
+
 .bstudio_resize-column {
     background-color: var(--bstudio_resize-column-background-color);
     height: 100%;
@@ -405,27 +469,7 @@ em {
     }
 }
 
-.bstudio_editor-footer {
-    font-size: .7em;
-    display: flex;
-    height: var(--bstudio_editor-footer-height);
-    align-items: center;
-    overflow: auto;
-    white-space: nowrap;
-    border-top: 2px solid var(--bte_text-editor-gutter-border-color);
-    color: var(--bte_primary-font-color);
-    background-color: var(--bte_text-editor-gutter-background-color);
-}
-
-.bstudio_editor-footer-entry {
-    padding-right: 5px;
-}
-
-.bstudio_editor-footer-entry:not(:last-child) {
-    border-right: 2px solid var(--bte_text-editor-caret-row-border-color);
-    margin-right: 5px;
-}
-
 .bstudio_text-editor-display {
-    height: calc(100% - var(--bstudio_editor-footer-height));
+    height: var(--bstudio_text-editor-display-height);
 }
+

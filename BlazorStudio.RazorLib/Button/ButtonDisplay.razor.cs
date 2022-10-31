@@ -9,6 +9,8 @@ public partial class ButtonDisplay : ComponentBase
     [Parameter, EditorRequired]
     public RenderFragment ChildContent { get; set; } = null!;
     [Parameter]
+    public bool OnClickStopPropagation { get; set; }
+    [Parameter]
     public bool IsDisabled { get; set; }
     [Parameter]
     public string CssClassString { get; set; } = string.Empty;

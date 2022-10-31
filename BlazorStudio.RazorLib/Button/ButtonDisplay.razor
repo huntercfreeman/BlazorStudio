@@ -1,6 +1,7 @@
 ﻿<button class="bstudio_button @IsDisabledCssClass @CssClassString"
         style="@CssStyleString"
         @ref="_buttonElementReference"
-        @onclick="FireOnClickAction">
+        @onclick="FireOnClickAction"
+        @onclick:stopPropagation="OnClickStopPropagation">
     @ChildContent
 </button>
