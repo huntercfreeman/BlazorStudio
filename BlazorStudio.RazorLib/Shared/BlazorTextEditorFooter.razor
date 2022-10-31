@@ -1,10 +1,10 @@
 @using BlazorStudio.ClassLib.Context
 @using BlazorStudio.RazorLib.ContextCase
+@using BlazorStudio.RazorLib.Terminal
+
 <ContextBoundary ContextRecord="ContextFacts.MainLayoutFooterContext"
                  ClassCssString="bstudio_footer"
                  StyleCssString="@FooterElementDimensions.StyleString">
     
-    <div class="bstudio_section-title">
-        Footer
-    </div>
+    <TerminalDisplay/>
 </ContextBoundary>

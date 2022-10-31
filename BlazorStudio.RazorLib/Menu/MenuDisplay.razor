@@ -1,9 +1,12 @@
+@using BlazorStudio.ClassLib.CustomEvents
+
 <div class="bstudio_menu-display"
      tabindex="-1"
      @ref="_menuDisplayElementReference"
      @onclick:stopPropagation="true"
      @onkeydown:stopPropagation="true"
-     @onkeydown="HandleOnKeyDown">
+     @onkeydown="HandleOnKeyDown"
+     @oncustomkeydown:stopPropagation="true">
 
     <CascadingValue Value="RestoreFocusToThisMenu" Name="ReturnFocusToParentAction">
         @for (var i = 0; i < MenuRecord.MenuOptions.Length; i++)
