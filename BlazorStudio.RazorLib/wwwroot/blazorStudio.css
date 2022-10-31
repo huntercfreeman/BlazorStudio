@@ -311,6 +311,8 @@ input[type="checkbox"]{
     align-items: center;
     height: 100%;
     width: var(--bstudio_input-file-display-top-nav-bar-address-hierarchy-width);
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .bstudio_input-file-display-top-nav-bar-address-hierarchy {
@@ -389,12 +391,19 @@ input[type="checkbox"]{
     background-color: var(--bstudio_body-background-color);
 }
 
-.bstudio_input-file-display-bottom-controls-non-text {
-    margin-left: 15px;
+.bstudio_input-file-display-bottom-controls-text-input {
+    overflow: auto;
+    width: var(--bstudio_input-file-display-bottom-controls-text-input-width);
+    padding-left: var(--bstudio_input-file-display-bottom-controls-text-input-padding-left);
 }
 
-.bstudio_input-file-display-bottom-controls-non-text .bstudio_button:last-of-type {
-    margin-left: 15px;
+.bstudio_input-file-display-bottom-controls-non-text {
+    margin-left: var(--bstudio_input-file-display-bottom-controls-non-text-margin-left);
+    width: var(--bstudio_input-file-display-bottom-controls-non-text-width);
+}
+
+.bstudio_input-file-display-bottom-controls-non-text .bstudio_button:not(:first-of-type) {
+    margin-left: var(--bstudio_input-file-display-bottom-controls-non-text-buttons-margin-left);
 }
 
 em {

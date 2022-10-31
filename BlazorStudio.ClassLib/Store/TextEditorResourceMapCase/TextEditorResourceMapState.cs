@@ -13,6 +13,7 @@ public record TextEditorResourceMapState(ImmutableDictionary<TextEditorKey, IAbs
     }
 
     public record SetTextEditorResourceAction(TextEditorKey TextEditorKey, IAbsoluteFilePath AbsoluteFilePath);
+    public record RemoveTextEditorResourceAction(TextEditorKey TextEditorKey);
 
     private class TextEditorResourceMapStateReducer
     {
@@ -25,6 +26,20 @@ public record TextEditorResourceMapState(ImmutableDictionary<TextEditorKey, IAbs
                 .Add(
                     setTextEditorResourceAction.TextEditorKey,
                     setTextEditorResourceAction.AbsoluteFilePath);
+
+            return inTextEditorResourceMapState with
+            {
+                ResourceMap = nextMap
+            };
+        }
+        
+        [ReducerMethod]
+        public static TextEditorResourceMapState ReduceRemoveTextEditorResourceAction(
+            TextEditorResourceMapState inTextEditorResourceMapState,
+            RemoveTextEditorResourceAction removeTextEditorResourceAction)
+        {
+            var nextMap = inTextEditorResourceMapState.ResourceMap
+                .Remove(removeTextEditorResourceAction.TextEditorKey);
 
             return inTextEditorResourceMapState with
             {

@@ -101,6 +101,24 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
         var textEditorKey = existingResourceMapPair?.Key ?? 
                             TextEditorKey.NewTextEditorKey();
 
+        // If a text editor for the file used to exist but
+        // the resource was not disposed of
+        if (existingResourceMapPair is not null && 
+            textEditorService.TextEditorStates.TextEditorList
+                .All(x => 
+                    x.Key != existingResourceMapPair.Value.Key))
+        {
+            dispatcher.Dispatch(
+                new TextEditorResourceMapState.RemoveTextEditorResourceAction(
+                    existingResourceMapPair.Value.Key!));
+
+            // Set existingResourceMapPair to null
+            // so the next if statement outside of this block
+            // will create a new text editor
+            existingResourceMapPair = null;
+        }
+        
+        // If a new text editor is needed
         if (existingResourceMapPair is null)
         {
             var content = await File

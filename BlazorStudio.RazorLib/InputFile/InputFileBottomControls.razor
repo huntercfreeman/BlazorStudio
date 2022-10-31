@@ -12,9 +12,9 @@
         <div>
             (@inputFileState.Message)    
         </div>
-        <div>
+        <div title="@(inputFileState.SelectedTreeViewModel?.Item.GetAbsoluteFilePathString() ?? "(no selection yet)")">
             @(inputFileState.SelectedTreeViewModel?.Item
-                        .GetAbsoluteFilePathString() ?? "(no selection yet)")
+                .FilenameWithExtension ?? "(no selection yet)")
         </div>
     </div>
     <div class="bstudio_input-file-display-bottom-controls-non-text">
