@@ -73,6 +73,9 @@ public class TerminalStateEffects
     {
         _terminalCommandQueue.Enqueue(
             enqueueProcessOnTerminalEntryAction.TerminalCommand);
+        
+        dispatcher.Dispatch(new RegisterTerminalResultAction(
+            enqueueProcessOnTerminalEntryAction.TerminalCommand));
 
         bool hasActiveConsumer = false;
         bool activeConsumerIsDisposing = false;
