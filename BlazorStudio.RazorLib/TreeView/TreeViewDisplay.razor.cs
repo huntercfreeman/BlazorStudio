@@ -40,6 +40,9 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     private DropdownKey _contextMenuEventDropdownKey = DropdownKey.NewDropdownKey();
     private MouseEventArgs? _contextMenuCapturedMouseEventArgs;
 
+    private bool _thinksHasFocus;
+    private bool _rootTreeViewModelHasChanged;
+
     private TreeViewDisplayContextMenuEvent<TItem> ContextMenuEvent => new(
             TreeViewModel, 
             _contextMenuCapturedMouseEventArgs);
@@ -73,13 +76,22 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
             _previousTreeViewModel.Id != TreeViewModel.Id)
         {
             if (_previousTreeViewModel is not null)
+            {
+                _rootTreeViewModelHasChanged = true;
                 _previousTreeViewModel.OnStateChanged -= TreeViewModelOnStateChanged;
+            }
 
             TreeViewModel.OnStateChanged += TreeViewModelOnStateChanged;
             _previousTreeViewModel = TreeViewModel;
         }
         
         return base.OnParametersSetAsync();
+    }
+
+    public async Task SetFocusAsync()
+    {
+        if (_titleElementReference is not null)
+            await _titleElementReference.Value.FocusAsync();
     }
 
     private InternalParameters<TItem> ConstructInternalParameters(int index)
@@ -381,6 +393,34 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
         {
             await TreeViewDisplayOnEventRegistration.AfterDoubleClickFuncAsync
                 .Invoke(mouseEventArgs, this);
+        }
+    }
+    
+    private void HandleOnFocusIn()
+    {
+        _thinksHasFocus = true;
+    }
+    
+    private async Task HandleOnFocusOut()
+    {
+        _thinksHasFocus = false;
+
+        if (_rootTreeViewModelHasChanged)
+        {
+            _rootTreeViewModelHasChanged = false;
+
+            if (ShouldShowRoot)
+            {
+                SetActiveDescendantAndRerender(Root);
+            }
+            else
+            {
+                var firstChildIsDisplayed = Root.Children
+                    .FirstOrDefault(x => x.IsDisplayed);
+
+                if (firstChildIsDisplayed is not null)
+                    SetActiveDescendantAndRerender(firstChildIsDisplayed);
+            }
         }
     }
     

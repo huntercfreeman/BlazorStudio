@@ -7,7 +7,9 @@
 
 <div class="bstudio_tree-view-display"
      tabindex="@RootTabIndex"
-     @onkeydown="HandleContainingBoxOnKeyDown">
+     @onkeydown="HandleContainingBoxOnKeyDown"
+     @onfocusin="HandleOnFocusIn"
+     @onfocusout="HandleOnFocusOut">
     
     @if (ShouldShowRoot || !IsRoot)
     {
