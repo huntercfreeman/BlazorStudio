@@ -52,6 +52,8 @@ public class TerminalStateEffects
                 // wait for the producer to enqueue the terminal command and
                 // then goto the while loop again
                 await _disposeExecuteTerminalCommandConsumerSemaphoreSlim.WaitAsync();
+                _disposeExecuteTerminalCommandConsumerSemaphoreSlim.Release();
+                
                 goto continueUsingCurrentConsumer;
             }
         }
@@ -108,7 +110,7 @@ public class TerminalStateEffects
                 
                 if (needReleaseDisposeExecuteTerminalCommandConsumerSemaphoreSlim)
                 {
-                    _executeTerminalCommandSemaphoreSlim.Release();
+                    _disposeExecuteTerminalCommandConsumerSemaphoreSlim.Release();
                     needReleaseDisposeExecuteTerminalCommandConsumerSemaphoreSlim = false;
                 }
                 
@@ -126,7 +128,7 @@ public class TerminalStateEffects
                 
             if (needReleaseDisposeExecuteTerminalCommandConsumerSemaphoreSlim)
             {
-                _executeTerminalCommandSemaphoreSlim.Release();
+                _disposeExecuteTerminalCommandConsumerSemaphoreSlim.Release();
                 needReleaseDisposeExecuteTerminalCommandConsumerSemaphoreSlim = false;
             }
         }
