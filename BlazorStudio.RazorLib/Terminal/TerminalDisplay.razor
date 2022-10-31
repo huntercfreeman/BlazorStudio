@@ -4,23 +4,24 @@
 
 <ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
                  ClassCssString="bstudio_terminal-display"
-                 StyleCssString="height: 100%">
+                 StyleCssString="height: 100%; width: 100%;">
 
     <div class="bstudio_section-title">
         Terminal Display
     </div>
 
-    <div class="bstudio_section-body">
+    <div class="bstudio_section-body"
+         style="width: 100%;">
         Body <ButtonDisplay OnClickFunc="async () => { }">StateHasChanged</ButtonDisplay>
         
-        <div>
+        <div style="width: 100%; overflow-wrap: anywhere;">
             @{
                 var terminalResultState = TerminalResultStateWrap.Value;
 
                 foreach (var result in TerminalResultStateWrap.Value.TerminalCommandResultMap)
                 {
                     <div>
-                        @GetAllTextEscaped(result.Value.StandardOut.ToString())    
+                        @ParseHttpLinks(result.Value.StandardOut.ToString())    
                     </div>
                 }
             }
