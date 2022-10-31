@@ -19,4 +19,20 @@ public class TerminalResultStateReducer
             TerminalCommandResultMap = nextResultMap
         };
     }
+    
+    [ReducerMethod]
+    public static TerminalResultState ReduceReplaceTerminalResultAction(
+        TerminalResultState inTerminalResultState,
+        ReplaceTerminalResultAction replaceTerminalResultAction)
+    {
+        var nextResultMap = inTerminalResultState.TerminalCommandResultMap
+            .SetItem(
+                replaceTerminalResultAction.TerminalCommand.TerminalCommandKey, 
+                replaceTerminalResultAction.TerminalCommand);
+
+        return inTerminalResultState with
+        {
+            TerminalCommandResultMap = nextResultMap
+        };
+    }
 }

@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics;
+using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 public class TerminalSession
 {
-    private readonly TerminalCommand _terminalCommand;
+    private TerminalCommand _terminalCommand;
 
     private TerminalSession(TerminalCommand terminalCommand)
     {
@@ -17,7 +18,8 @@ public class TerminalSession
     }
     
     public async Task<TerminalSession> ExecuteCommand(
-        string command)
+        string command,
+        IDispatcher dispatcher)
     {
         var process = new Process();
 
@@ -44,8 +46,18 @@ public class TerminalSession
 
         void OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
+            // TODO: Remove this temporary hack to get the UI to rerender am tired and needed a motivation boost from seeing the progress visually
+            _terminalCommand = _terminalCommand with
+            {
+                
+            };
+            
             _terminalCommand.StandardOut
                 .Append(e.Data ?? string.Empty);
+            
+            dispatcher.Dispatch(
+                new ReplaceTerminalResultAction(
+                    _terminalCommand));
         }
 
         process.OutputDataReceived += OutputDataReceived;
