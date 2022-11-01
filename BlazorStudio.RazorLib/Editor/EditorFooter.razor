@@ -1,0 +1,52 @@
+﻿@using BlazorTextEditor.RazorLib.Row
+<div class="bstudio_editor-footer @TextEditorService.GlobalThemeCssClassString">
+    @if (TextEditor is not null)
+    {
+        <div class="bstudio_editor-footer-entry">
+            @(AbsoluteFilePath?.ExtensionNoPeriod ?? "in-memory")
+        </div>
+
+        <div class="bstudio_editor-footer-entry">
+            length:@($"{TextEditor.DocumentLength}")
+            &nbsp;
+            lines:@($"{TextEditor.RowCount}")
+        </div>
+
+        if (TextEditorDisplay is not null)
+        {
+            <div class="bstudio_editor-footer-entry">
+                Ln:@($"{TextEditorDisplay.PrimaryCursor.IndexCoordinates.rowIndex}")
+                &nbsp;
+                Col:@($"{TextEditorDisplay.PrimaryCursor.IndexCoordinates.columnIndex}")
+            </div>
+        }
+
+        <div class="bstudio_editor-footer-entry">
+            @if (TextEditor.OnlyRowEndingKind is null)
+            {
+                <text>has:mixed </text>
+            }
+            else
+            {
+                <text>has:@TextEditor.OnlyRowEndingKind.Value.AsFriendlyName() </text>
+            }
+
+            use:
+            <select @onchange="SelectRowEndingKindOnChange">
+                @foreach (var rowEndingKind in RowEndingKind.Linefeed.GetRowEndingsUserAllowedToUse())
+                {
+                    <option value="@rowEndingKind.ToString()"
+                            selected="@(TextEditor.UsingRowEndingKind == rowEndingKind)">
+                        @rowEndingKind.AsFriendlyName()
+                    </option>
+                }
+            </select>
+        </div>
+    }
+    else
+    {
+        <div class="bstudio_editor-footer-entry bstudio_editor-footer-file-sizing">
+            TextEditor is null
+        </div>
+    }
+</div>

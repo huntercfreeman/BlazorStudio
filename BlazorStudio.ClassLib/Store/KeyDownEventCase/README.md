@@ -1,4 +1,0 @@
-﻿# BlazorStudio.ClassLib/Store/PlainTextEditorCase
-
-This directory contains an Action class for when the user hits a key on their keyboard. It is used primarily
-by [PlainTextEditorDisplay.razor](/BlazorStudio.RazorLib/PlainTextEditorCase/PlainTextEditorDisplay.razor) component.

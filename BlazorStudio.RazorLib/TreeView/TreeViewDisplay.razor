@@ -1,0 +1,86 @@
+@using System.Collections.Immutable
+@using BlazorStudio.ClassLib.Dropdown
+@using BlazorStudio.RazorLib.Dropdown
+@using BlazorStudio.ClassLib.CustomEvents
+
+@typeparam TItem
+
+<div class="bstudio_tree-view-display"
+     tabindex="@RootTabIndex"
+     @onkeydown="HandleContainingBoxOnKeyDown"
+     @onfocusin="HandleOnFocusIn"
+     @onfocusout="HandleOnFocusOut">
+    
+    @if (ShouldShowRoot || !IsRoot)
+    {
+        <span class="bstudio_tree-view-display-title bstudio_unselectable @IsActiveDescendantClassCss"
+              style="@($"padding-left: {PaddingLeft}px;")"
+              @onclick="SetActiveDescendantOnClick"
+              @onclick:stopPropagation="true"
+              @ondblclick="HandleDoubleClick"
+              @ondblclick:stopPropagation="true"
+              @ref="_titleElementReference"
+              @onkeydown:stopPropagation="true"
+              @oncustomkeydown="HandleTitleOnCustomKeyDown"
+              @oncontextmenu="HandleTitleOnContextMenu"
+              @oncontextmenu:stopPropagation="true"
+              @oncontextmenu:preventDefault="true"
+              tabindex="@TitleTabIndex">
+            
+            @if (TreeViewModel.CanToggleExpandable)
+            {
+                <span class="bstudio_tree-view-display-expansion"
+                      @onclick="ToggleIsExpandedOnClick"
+                      @onclick:stopPropagation="true">
+                    @if (TreeViewModel.IsExpanded)
+                    {
+                        <IconChevronDown/>
+                    }
+                    else
+                    {
+                        <IconChevronRight/>
+                    }
+                </span>
+            }
+            else
+            {
+                <IconBlank/>
+            }
+
+            @ItemRenderFragment(TreeViewModel)
+
+            @if (ContextMenuEventRenderFragment is not null)
+            {
+                <DropdownDisplay DropdownKey="_contextMenuEventDropdownKey"
+                                 DropdownPositionKind="DropdownPositionKind.Vertical">
+
+                    @ContextMenuEventRenderFragment(ContextMenuEvent)
+                </DropdownDisplay>
+            }
+        </span>
+    }
+
+    <div class="bstudio_tree-view-display-body">
+        @if (TreeViewModel.IsExpanded || (!ShouldShowRoot && IsRoot))
+        {
+            var immutableChildArray = TreeViewModel.Children.ToImmutableArray();
+
+            for (var i = 0; i < immutableChildArray.Length; i++)
+            {
+                var index = i;
+                var child = immutableChildArray[index];
+
+                if (child.IsDisplayed)
+                {
+                    <TreeViewDisplay @key="child.Id"
+                                     TreeViewModel="child"
+                                     ItemRenderFragment="ItemRenderFragment"
+                                     InternalParameters="ConstructInternalParameters(index)"
+                                     ContextMenuEventRenderFragment="ContextMenuEventRenderFragment"
+                                     ShouldShowRoot="ShouldShowRoot"
+                                     TreeViewDisplayOnEventRegistration="TreeViewDisplayOnEventRegistration"/>
+                }
+            }
+        }
+    </div>
+</div>

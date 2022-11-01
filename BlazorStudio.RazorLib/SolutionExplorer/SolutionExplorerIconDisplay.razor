@@ -1,14 +1,13 @@
 ﻿@using BlazorStudio.ClassLib.FileConstants
-<span title="icon"
-      class="bstudio_solution-explorer-icon-display">
 
+<span class="bstudio_solution-explorer-icon-display">
     @if (AbsoluteFilePath.IsDirectory)
     {
-        if (AbsoluteFilePath.FileNameNoExtension == UniqueFileFacts.PROPERTIES)
+        if (AbsoluteFilePath.FileNameNoExtension == UniqueFileFacts.Properties)
         {
             <IconProperties/>
         }
-        else if (AbsoluteFilePath.FileNameNoExtension == UniqueFileFacts.WWW_ROOT)
+        else if (AbsoluteFilePath.FileNameNoExtension == UniqueFileFacts.WwwRoot)
         {
             <IconWwwRoot/>
         }
@@ -22,22 +21,23 @@
         switch (AbsoluteFilePath.ExtensionNoPeriod)
         {
             case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
-                <IconSolution/>
+                <IconDotNetSolution/>
                 break;
             case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                <IconProject/>
+                <IconCSharpProject/>
+                break;
+            case ExtensionNoPeriodFacts.C_SHARP_CLASS:
+            case ExtensionNoPeriodFacts.RAZOR_CODEBEHIND:
+                <IconCSharpClass/>
+                break;
+            case ExtensionNoPeriodFacts.CSHTML_CLASS:
+                <IconCshtml/>
                 break;
             case ExtensionNoPeriodFacts.RAZOR_MARKUP:
                 <IconRazor/>
                 break;
             case ExtensionNoPeriodFacts.JSON:
                 <IconJson/>
-                break;
-            case ExtensionNoPeriodFacts.C_SHARP_CLASS:
-                <IconCSharpClass/>
-                break;
-            case ExtensionNoPeriodFacts.CSHTML_CLASS:
-                <IconCshtml/>
                 break;
             case ExtensionNoPeriodFacts.CSS:
                 <IconCss/>

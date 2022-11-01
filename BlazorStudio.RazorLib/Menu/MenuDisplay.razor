@@ -1,47 +1,22 @@
-﻿<div class="bstudio_menu-display"
+@using BlazorStudio.ClassLib.CustomEvents
+
+<div class="bstudio_menu-display"
      tabindex="-1"
      @ref="_menuDisplayElementReference"
-     @onkeydown="HandleOnKeyDown"
-     @onkeydown:preventDefault="true"
-     @onkeydown:stopPropagation="true">
+     @onclick:stopPropagation="true"
+     @onkeydown:stopPropagation="true"
+     @oncustomkeydown="HandleOnKeyDown"
+     @oncustomkeydown:stopPropagation="true">
 
-    <CascadingValue Name="ActiveMenuOptionIndex" Value="_activeMenuOptionIndex">
-        @if (!ShouldCategorizeByMenuOptionKind)
+    <CascadingValue Value="RestoreFocusToThisMenu" Name="ReturnFocusToParentAction">
+        @for (var i = 0; i < MenuRecord.MenuOptions.Length; i++)
         {
-            for (var i = 0; i < _cachedMenuOptionRecords.Length; i++)
-            {
-                var index = i;
-
-                var menuOption = _cachedMenuOptionRecords[index];
-                <MenuOptionDisplay MenuOptionRecord="@menuOption"
-                                   MenuOptionIndex="index"/>
-            }
-        }
-        else
-        {
-            var categories = _cachedMenuOptionRecords
-                .GroupBy(x => x.MenuOptionKind)
-                .ToList();
-            var menuOptionIndex = 0;
-
-            for (var i = 0; i < categories.Count; i++)
-            {
-                var index = i;
-                var category = categories[index];
-
-                foreach (var menuOption in category)
-                {
-                    <MenuOptionDisplay MenuOptionRecord="menuOption"
-                                       MenuOptionIndex="menuOptionIndex++"/>
-                }
-
-                if (index != categories.Count - 1)
-                {
-                    <div class="bstudio_menu-option-separator">
-
-                    </div>
-                }
-            }
+            var index = i;
+            var menuOption = MenuRecord.MenuOptions[index];
+            
+            <MenuOptionDisplay MenuOptionRecord="@menuOption"
+                               ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
+                               Index="index" />
         }
     </CascadingValue>
 </div>

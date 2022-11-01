@@ -5,25 +5,25 @@ namespace BlazorStudio.ClassLib.FileSystem.Classes;
 public class LocalFileSystemProvider : IFileSystemProvider
 {
     public async Task WriteFileAsync(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsoluteFilePath absoluteFilePath, 
         string content,
-        bool overwrite,
+        bool overwrite, 
         bool create,
         CancellationToken cancellationToken = default)
     {
         await File
             .WriteAllTextAsync(
-                absoluteFilePath.GetAbsoluteFilePathString(),
-                content,
+                absoluteFilePath.GetAbsoluteFilePathString(), 
+                content, 
                 cancellationToken);
     }
 
     public async Task<string> ReadFileAsync(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsoluteFilePath absoluteFilePath, 
         CancellationToken cancellationToken = default)
     {
         return await File.ReadAllTextAsync(
-            absoluteFilePath.GetAbsoluteFilePathString(),
+            absoluteFilePath.GetAbsoluteFilePathString(), 
             cancellationToken);
     }
 }

@@ -1,0 +1,43 @@
+@using BlazorStudio.ClassLib.Context
+@using BlazorStudio.ClassLib.Store.FolderExplorerCase
+@using BlazorStudio.RazorLib.ContextCase
+@using BlazorStudio.RazorLib.TreeView
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
+                 ClassCssString="bstudio_folder-explorer-display"
+                 StyleCssString="@($"height: 100% {FolderExplorerElementDimensions.StyleString}")">
+    
+    <div class="bstudio_section-title">
+        Folder Explorer
+    </div>
+    
+    <div class="bstudio_section-body">
+        @{
+            var folderExplorerState = FolderExplorerStateWrap.Value;
+
+            if (folderExplorerState.AbsoluteFilePath is null)
+            {
+                <ButtonDisplay OnClickFunc="async () => await FolderExplorerState.ShowInputFileAsync(Dispatcher)">
+                    Open Folder
+                </ButtonDisplay>
+            }
+            else
+            {
+                <TreeViewDisplay TreeViewModel="_rootTreeViewModel">
+                    <ItemRenderFragment Context="treeViewModel">
+                        @treeViewModel.Item.FilenameWithExtension
+                    </ItemRenderFragment>
+
+                    <ContextMenuEventRenderFragment Context="contextMenuEvent">
+                        <div class="bstudio_dropdown-display-default-background"
+                             style="@GetStyleForContextMenu(contextMenuEvent.CapturedMouseEventArgs)">
+                            <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent.TreeViewModel)"/>
+                        </div>
+                    </ContextMenuEventRenderFragment>
+                </TreeViewDisplay>
+            }
+        }
+    </div>
+</ContextBoundary>

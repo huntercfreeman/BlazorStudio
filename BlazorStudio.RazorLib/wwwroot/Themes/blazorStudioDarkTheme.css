@@ -1,0 +1,38 @@
+.bstudio_dark-theme {
+    --bstudio_primary-font-color: #d2d2d2;
+    --bstudio_header-background-color: #2a2a2e;
+    --bstudio_primary-border-color: #d7d7d7;
+    --bstudio_body-background-color: #1E1E1E;
+    --bstudio_footer-background-color: #2b2d2d;
+    --bstudio_resize-column-background-color: #d7d7d7;
+    --bstudio_resize-row-background-color: #d7d7d7;
+    --bstudio_dialog-display-background-color: #2d2f34;
+    --bstudio_primary-box-shadow-color: #f5f5f5;
+    --bstudio_dialog-display-toolbar-background-color: #071c57;
+    --bstudio_primary-hover-background-color: #956100;
+    --bstudio-primary-outline-color: #2d498b;
+    --bstudio-primary-active-not-focused-background-color: #566060;
+    --bstudio-primary-active-focused-background-color: #2d498b;
+    --bstudio_dropdown-display-default-background-color: rgb(48, 51, 101);
+    --bstudio_primary-emphasis-foreground-color: #4d8aea;
+    --bstudio_input-background-color: #2d2f34;
+    --bstudio_input-font-color: #d1d2ca;
+    --bstudio_primary-disabled-background-color: #5c5959;
+    --bstudio_primary-disabled-foreground-color: #ba931e;
+    --bstudio_primary-disabled-hover-background-color: var(--bstudio_primary-disabled-foreground-color);
+    --bstudio_primary-disabled-hover-foreground-color: var(--bstudio_primary-disabled-background-color);
+    --bstudio_section-title-background-color: #033a00;
+    --bstudio_button-background-color: #034f74;
+    --bstudio_button-foreground-color: var(--bstudio_primary-font-color);
+    --bstudio_icon-solution-font-color: #a074c4;
+    --bstudio_icon-project-font-color: #88d184;
+    --bstudio_icon-razor-font-color: #c586c0;
+    --bstudio_icon-folder-font-color: #d7ab69;
+    --bstudio_icon-json-font-color: #cbc638;
+    --bstudio_icon-c-sharp-class-font-color: #519aba;
+    --bstudio_icon-cshtml-font-color: #c586c0;
+    --bstudio_icon-css-font-color: #e36a6e;
+    --bstudio_icon-js-font-color: #519aba;
+    --bstudio_icon-ts-font-color: #37b38b;
+    --bstudio_icon-start-without-debugging-font-color: #37b38b;
+}

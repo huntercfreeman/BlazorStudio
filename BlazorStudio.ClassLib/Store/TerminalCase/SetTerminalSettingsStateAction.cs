@@ -1,3 +1,0 @@
-﻿namespace BlazorStudio.ClassLib.Store.TerminalCase;
-
-public record SetTerminalSettingsStateAction(TerminalSettingsState NextTerminalSettingsState);

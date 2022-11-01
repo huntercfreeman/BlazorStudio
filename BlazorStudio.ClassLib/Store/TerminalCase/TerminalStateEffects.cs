@@ -5,54 +5,135 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 public class TerminalStateEffects
 {
-    private readonly SemaphoreSlim _executeHandleEffectSemaphoreSlim = new(1, 1);
-    private readonly ConcurrentQueue<Func<Task>> _handleEffectQueue = new();
-    private readonly Dictionary<TerminalEntryKey, TerminalEntryEffects> _terminalEffects = new();
-    private readonly IState<TerminalSettingsState> _terminalSettingsStateWrap;
+    public record QueueTerminalCommandToExecuteAction(TerminalCommand TerminalCommand);
 
-    private readonly IState<TerminalState> _terminalStateWrap;
+    private readonly ConcurrentQueue<TerminalCommand> _terminalCommandQueue = new ConcurrentQueue<TerminalCommand>();
+    private readonly SemaphoreSlim _executeTerminalCommandSemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _disposeExecuteTerminalCommandConsumerSemaphoreSlim = new(1, 1);
 
-    public TerminalStateEffects(IState<TerminalState> terminalStateWrap,
-        IState<TerminalSettingsState> terminalSettingsStateWrap)
+    /// <summary>
+    /// I am unsure if many async Tasks pending has a performance detriment.
+    /// <br/><br/>
+    /// Therefore <see cref="QueueHandleEffectAsync"/> will make use of one async Task
+    /// that acts as a 'producer-consumer' situation.
+    /// </summary>
+    private bool _hasExecuteTerminalCommandConsumer;
+    private bool _isDisposingExecuteTerminalCommandConsumer;
+    
+    private async Task QueueHandleEffectAsync()
     {
-        _terminalStateWrap = terminalStateWrap;
-        _terminalSettingsStateWrap = terminalSettingsStateWrap;
-
-        var localTerminalStateWrap = _terminalStateWrap.Value;
-
-        foreach (var terminalEntry in localTerminalStateWrap.TerminalEntries)
-        {
-            _terminalEffects.Add(terminalEntry.TerminalEntryKey,
-                new TerminalEntryEffects(terminalStateWrap, _terminalSettingsStateWrap, terminalEntry));
-        }
-    }
-
-    private async Task QueueHandleEffectAsync(Func<Task> func)
-    {
-        _handleEffectQueue.Enqueue(func);
-
         try
         {
-            await _executeHandleEffectSemaphoreSlim.WaitAsync();
+            var shouldConstructConsumer = await _executeTerminalCommandSemaphoreSlim.WaitAsync(0);
 
-            if (_handleEffectQueue.TryDequeue(out var fifoHandleEffect)) await fifoHandleEffect!.Invoke();
+            if (!shouldConstructConsumer)
+                return;
+            
+            _hasExecuteTerminalCommandConsumer = true;
+            
+            continueUsingCurrentConsumer:
+            
+            while (_terminalCommandQueue
+                   .TryDequeue(out var fifoTerminalCommand))
+            {
+                await fifoTerminalCommand.CommandFunc
+                    .Invoke(fifoTerminalCommand);
+            }
+
+            // Prior to disposing the consumer ensure
+            // there are no producers enqueueing terminal commands 
+            var shouldDisposeConsumer = await _disposeExecuteTerminalCommandConsumerSemaphoreSlim
+                .WaitAsync(0);
+
+            if (!shouldDisposeConsumer)
+            {
+                // If there is a producer trying to enqueue a terminal command
+                // do not dispose of the current consumer but instead
+                // wait for the producer to enqueue the terminal command and
+                // then goto the while loop again
+                await _disposeExecuteTerminalCommandConsumerSemaphoreSlim.WaitAsync();
+                _disposeExecuteTerminalCommandConsumerSemaphoreSlim.Release();
+                
+                goto continueUsingCurrentConsumer;
+            }
         }
         finally
         {
-            _executeHandleEffectSemaphoreSlim.Release();
+            _hasExecuteTerminalCommandConsumer = false;
+            
+            _executeTerminalCommandSemaphoreSlim.Release();
+            _disposeExecuteTerminalCommandConsumerSemaphoreSlim.Release();
         }
     }
 
     [EffectMethod]
     public async Task HandleEnqueueProcessOnTerminalEntryAction(
-        EnqueueProcessOnTerminalEntryAction enqueueProcessOnTerminalEntryAction,
+        QueueTerminalCommandToExecuteAction enqueueProcessOnTerminalEntryAction,
         IDispatcher dispatcher)
     {
-        await QueueHandleEffectAsync(async () =>
-        {
-            var target = _terminalEffects[enqueueProcessOnTerminalEntryAction.TerminalEntryKey];
+        _terminalCommandQueue.Enqueue(
+            enqueueProcessOnTerminalEntryAction.TerminalCommand);
+        
+        dispatcher.Dispatch(new RegisterTerminalResultAction(
+            enqueueProcessOnTerminalEntryAction.TerminalCommand));
 
-            await target.HandleEnqueueProcessOnTerminalEntryAction(enqueueProcessOnTerminalEntryAction, dispatcher);
-        });
+        bool hasActiveConsumer = false;
+        bool activeConsumerIsDisposing = false;
+
+        bool needReleaseExecuteTerminalCommandSemaphoreSlim = false;
+        bool needReleaseDisposeExecuteTerminalCommandConsumerSemaphoreSlim = false;
+        
+        try
+        {
+            // If a consumer has control of the _executeTerminalCommandSemaphoreSlim
+            // but is not controlling _disposeExecuteTerminalCommandConsumerSemaphoreSlim
+            // then that consumer will do another iteration of the while loop
+            // and 'consume' the TerminalCommand which was 'produced' in this method.
+            hasActiveConsumer = !(await _executeTerminalCommandSemaphoreSlim
+                .WaitAsync(0));
+            
+            activeConsumerIsDisposing = 
+                !(await _disposeExecuteTerminalCommandConsumerSemaphoreSlim
+                    .WaitAsync(0));
+
+            needReleaseExecuteTerminalCommandSemaphoreSlim = 
+                !hasActiveConsumer;
+            
+            needReleaseDisposeExecuteTerminalCommandConsumerSemaphoreSlim = 
+                !activeConsumerIsDisposing;
+
+            if (!hasActiveConsumer ||
+                hasActiveConsumer && activeConsumerIsDisposing)
+            {
+                if (needReleaseExecuteTerminalCommandSemaphoreSlim)
+                {
+                    _executeTerminalCommandSemaphoreSlim.Release();
+                    needReleaseExecuteTerminalCommandSemaphoreSlim = false;
+                }
+                
+                if (needReleaseDisposeExecuteTerminalCommandConsumerSemaphoreSlim)
+                {
+                    _disposeExecuteTerminalCommandConsumerSemaphoreSlim.Release();
+                    needReleaseDisposeExecuteTerminalCommandConsumerSemaphoreSlim = false;
+                }
+                
+                // Construct new consumer
+                await QueueHandleEffectAsync();
+            }
+        }
+        finally
+        {
+            if (needReleaseExecuteTerminalCommandSemaphoreSlim)
+            {
+                _executeTerminalCommandSemaphoreSlim.Release();
+                needReleaseExecuteTerminalCommandSemaphoreSlim = false;
+            }
+                
+            if (needReleaseDisposeExecuteTerminalCommandConsumerSemaphoreSlim)
+            {
+                _disposeExecuteTerminalCommandConsumerSemaphoreSlim.Release();
+                needReleaseDisposeExecuteTerminalCommandConsumerSemaphoreSlim = false;
+            }
+        }
     }
 }

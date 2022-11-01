@@ -1,0 +1,38 @@
+.bstudio_light-theme {
+    --bstudio_primary-font-color: black;
+    --bstudio_header-background-color: #7fa1e1;
+    --bstudio_primary-border-color: black;
+    --bstudio_body-background-color: rgb(253, 253, 253);
+    --bstudio_footer-background-color: #d4d4d4;
+    --bstudio_resize-column-background-color: black;
+    --bstudio_resize-row-background-color: black;
+    --bstudio_dialog-display-background-color: rgb(252, 252, 245);
+    --bstudio_primary-box-shadow-color: #000000;
+    --bstudio_dialog-display-toolbar-background-color: rgb(192, 214, 247);
+    --bstudio_primary-hover-background-color: orange;
+    --bstudio-primary-outline-color: #ADD6FF;
+    --bstudio-primary-active-not-focused-background-color: #d9dcdf;
+    --bstudio-primary-active-focused-background-color: #ADD6FF;
+    --bstudio_dropdown-display-default-background-color: rgb(253, 253, 253);
+    --bstudio_primary-emphasis-foreground-color: red;
+    --bstudio_input-background-color: red;
+    --bstudio_input-font-color: red;
+    --bstudio_primary-disabled-background-color: red;
+    --bstudio_primary-disabled-foreground-color: red;
+    --bstudio_primary-disabled-hover-background-color: red;
+    --bstudio_primary-disabled-hover-foreground-color: red;
+    --bstudio_section-title-background-color: red;
+    --bstudio_button-background-color: red;
+    --bstudio_button-foreground-color: red;
+    --bstudio_icon-solution-font-color: #a074c4;
+    --bstudio_icon-project-font-color: #88d184;
+    --bstudio_icon-razor-font-color: #c586c0;
+    --bstudio_icon-folder-font-color: #d7ab69;
+    --bstudio_icon-json-font-color: #cbc638;
+    --bstudio_icon-c-sharp-class-font-color: #519aba;
+    --bstudio_icon-cshtml-font-color: #c586c0;
+    --bstudio_icon-css-font-color: #e36a6e;
+    --bstudio_icon-js-font-color: #519aba;
+    --bstudio_icon-ts-font-color: #37b38b;
+    --bstudio_icon-start-without-debugging-font-color: #37b38b;
+}

@@ -1,21 +1,30 @@
-﻿@using BlazorStudio.ClassLib.Contexts
+﻿@using BlazorStudio.ClassLib.Context
+
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<ContextBoundary @ref="_contextBoundary"
-                 CssClassString="bstudio_terminal-display bstudio_focus-display-large"
-                 ContextKey="ContextFacts.TerminalDisplayContext.ContextKey">
+<ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
+                 ClassCssString="bstudio_terminal-display"
+                 StyleCssString="height: 100%; width: 100%;">
 
-    <h5 class="bstudio_large-title" style="padding: 5px;">Terminals</h5>
+    <div class="bstudio_section-title">
+        Terminal Display
+    </div>
 
-    <div class="bstudio_terminal-body" style="padding: 0 5px; height: calc(100% - 2rem - 10px);">
-        @{
-            var localTerminalState = TerminalStatesWrap.Value;
+    <div class="bstudio_section-body"
+         style="width: 100%;">
+        Body <ButtonDisplay OnClickFunc="async () => { }">StateHasChanged</ButtonDisplay>
+        
+        <div style="width: 100%; overflow-wrap: anywhere;">
+            @{
+                var terminalResultState = TerminalResultStateWrap.Value;
 
-            <TerminalTabs TerminalEntries="localTerminalState.TerminalEntries"/>
-
-            var activeTerminalEntry = localTerminalState.TerminalEntries[localTerminalState.ActiveIndex];
-
-            <TerminalEntryDisplay TerminalEntry="activeTerminalEntry"/>
-        }
+                foreach (var result in TerminalResultStateWrap.Value.TerminalCommandResultMap)
+                {
+                    <div>
+                        @ParseHttpLinks(result.Value.StandardOut.ToString())    
+                    </div>
+                }
+            }
+        </div>
     </div>
 </ContextBoundary>

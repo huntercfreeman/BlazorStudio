@@ -1,24 +1,25 @@
-﻿@using BlazorStudio.ClassLib.Contexts
-@inherits Fluxor.Blazor.Web.Components.FluxorLayout
+@using BlazorStudio.ClassLib.Context
+@using BlazorStudio.RazorLib.ContextCase
+@using BlazorStudio.RazorLib.DialogCase
+@using BlazorStudio.RazorLib.DragCase
+@using BlazorStudio.RazorLib.ResizableCase
+@inherits LayoutComponentBase
 
-<BlazorStudio.RazorLib.StoreInitializerWrap/>
-<BlazorTextEditor.RazorLib.BlazorTextEditorInitializer/>
+<ContextBoundary ContextRecord="ContextFacts.GlobalContext"
+                 ClassCssString="@($"bstudio_main-layout {UnselectableClassCss} {ThemeStateWrap.Value.ActiveThemeRecord.ClassCssString}")"
+                 StyleCssString="@($"font-size: {FontStateWrap.Value.FontSizeInPixels}px;")">
 
-<div class="bstudio_theme-wrapper @ThemeStateWrap.Value.ThemeKey.KeyName"
-     style="font-size: @(FontOptionsStateWrap.Value.FontSize.Value)px;">
-    <ContextBoundary CssClassString="@CssClassString"
-                     ContextKey="ContextFacts.GlobalContext.ContextKey">
-        <BlazorStudio.RazorLib.KeymapCase.KeymapEventListener/>
-        <BlazorStudio.RazorLib.Dialog.DialogsInitializer/>
-        <BlazorStudio.RazorLib.Notification.NotificationsInitializer/>
-        <BlazorStudio.RazorLib.QuickSelect.QuickSelectInitializer/>
+    <BlazorTextEditorRazorLibInitializer/>
+    <DialogInitializer/>
+    <DragDisplay/>
 
-        <ToolbarDisplay/>
+    <BlazorTextEditorHeader/>
 
-        <BodyDisplay/>
+    <BlazorTextEditorBody BodyElementDimensions="_bodyElementDimensions"/>
 
-        <FooterWindowTabs/>
+    <ResizableRow TopElementDimensions="_bodyElementDimensions"
+                  BottomElementDimensions="_footerElementDimensions"
+                  ReRenderFuncAsync="ReRenderAsync"/>
 
-        <BlazorStudio.RazorLib.Drag.DragDisplay/>
-    </ContextBoundary>
-</div>
+    <BlazorTextEditorFooter FooterElementDimensions="_footerElementDimensions"/>
+</ContextBoundary>

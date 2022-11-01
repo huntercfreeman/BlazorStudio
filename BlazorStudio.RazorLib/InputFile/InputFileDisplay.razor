@@ -1,0 +1,31 @@
+@using BlazorStudio.RazorLib.ResizableCase
+
+<div class="bstudio_input-file-display">
+    @if (HeaderRenderFragment is not null)
+    {
+        @HeaderRenderFragment(_selectedAbsoluteFilePath)
+    }
+
+    <InputFileTopNavBar />
+    
+    <div class="bstudio_input-file-display-body @BodyClassCssString"
+         style="@BodyStyleCssString">
+
+        <InputFileSidebar ElementDimensions="_navMenuElementDimensions"
+                          SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm" />
+
+        <ResizableColumn LeftElementDimensions="_navMenuElementDimensions"
+                         RightElementDimensions="_contentElementDimensions"
+                         ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)"/>
+
+        <InputFileContent ElementDimensions="_contentElementDimensions"
+                          SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm" />
+    </div>
+    
+    <InputFileBottomControls />
+
+    @if (FooterRenderFragment is not null)
+    {
+        @FooterRenderFragment(_selectedAbsoluteFilePath)
+    }
+</div>

@@ -1,11 +1,12 @@
-﻿using Fluxor;
+using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.ThemeCase;
 
 [FeatureState]
-public record ThemeState(ThemeKey ThemeKey)
+public record ThemeState(ThemeRecord ActiveThemeRecord)
 {
-    public ThemeState() : this(ThemeFacts.HighContrast.Dark.BstudioHighContrastDarkTheme)
+    public ThemeState() : this(ThemeFacts.DarkTheme)
     {
+        
     }
 }

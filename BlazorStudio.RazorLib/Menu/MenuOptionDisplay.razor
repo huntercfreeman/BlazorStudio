@@ -1,44 +1,26 @@
-﻿@using BlazorStudio.ClassLib.Store.DropdownCase
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@using BlazorStudio.ClassLib.Dropdown
+@using BlazorStudio.RazorLib.Dropdown
 
-<div class="bstudio_menu-option-display @HasSubmenuOpenCssClass"
+<div class="bstudio_menu-option-display bstudio_unselectable @IsActiveCssClass"
      tabindex="-1"
      @ref="_menuOptionDisplayElementReference"
+     @onclick="HandleOnClick"
      @onclick:stopPropagation="true"
-     @onclick="() => DispatchToggleActiveDropdownKeyActionOnClick(_dropdownKey)"
-     @onkeydown="HandleOnKeyDown"
-     @onfocusin="() => _hasFocus = true"
-     @onfocusout="() => _hasFocus = false">
-
-    @if (MenuOptionRecord.Children.Any())
+     @onkeydown="HandleOnKeyDown">
+    
+    @MenuOptionRecord.DisplayName
+    
+    @if (MenuOptionRecord.SubMenu is not null)
     {
-        <text>@(MenuOptionRecord.DisplayName)&nbsp;</text>
-        <IconChevronRight/>
-
-        <DropdownDisplay Dimensions="_dropdownDimensions"
-                         DropdownKey="_dropdownKey"
-                         DropdownKind="DropdownKind.Horizontal"
-                         CloseOnOutOfBoundsClick="false">
-
-            <CascadingValue Name="CloseParentSubmenuFuncAsync" Value="CloseSelfSubmenuAsync">
-                <MenuDisplay MenuOptionRecords="MenuOptionRecord.Children"/>
-            </CascadingValue>
-
-        </DropdownDisplay>
-    }
-    else
-    {
-        <div @onclick="() => _displayWidget = !_displayWidget">
-            @MenuOptionRecord.DisplayName
-        </div>
-
-        @if (_displayWidget && MenuOptionRecord.WidgetType is not null)
-        {
-            <div @onclick:stopPropagation="true"
-                 class="bstudio_menu-option-display-widget">
-                <DynamicComponent Type="MenuOptionRecord.WidgetType"
-                                  Parameters="MenuOptionRecord.WidgetParameters"/>
+        <IconChevronRight />
+        
+        <DropdownDisplay DropdownKey="_subMenuDropdownKey"
+                         DropdownPositionKind="DropdownPositionKind.Horizontal"
+                         ShouldDisplayOutOfBoundsClickDisplay="false">
+            
+            <div class="bstudio_dropdown-display-default-background">
+                <MenuDisplay MenuRecord="MenuOptionRecord.SubMenu" />
             </div>
-        }
+        </DropdownDisplay>
     }
 </div>

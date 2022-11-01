@@ -1,14 +1,10 @@
-﻿using System.Collections.Immutable;
-using Fluxor;
+﻿using Fluxor;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 [FeatureState]
-public record TerminalState(int ActiveIndex, ImmutableList<TerminalEntry> TerminalEntries)
+public record TerminalState()
 {
-    public TerminalState() : this(0, ImmutableList<TerminalEntry>.Empty)
-    {
-        TerminalEntries = TerminalEntries.Add(TerminalStateFacts.ProgramTerminalEntry);
-        TerminalEntries = TerminalEntries.Add(TerminalStateFacts.GeneralTerminalEntry);
-    }
+    
 }

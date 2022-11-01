@@ -1,9 +1,9 @@
-﻿namespace BlazorStudio.ClassLib.Store.DialogCase;
+namespace BlazorStudio.ClassLib.Store.DialogCase;
 
 public record DialogKey(Guid Guid)
 {
     public static DialogKey NewDialogKey()
     {
-        return new DialogKey(Guid.NewGuid());
+        return new(Guid.NewGuid());
     }
 }

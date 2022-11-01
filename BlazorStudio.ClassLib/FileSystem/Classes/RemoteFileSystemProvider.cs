@@ -5,9 +5,9 @@ namespace BlazorStudio.ClassLib.FileSystem.Classes;
 public class RemoteFileSystemProvider : IFileSystemProvider
 {
     public Task WriteFileAsync(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsoluteFilePath absoluteFilePath, 
         string content,
-        bool overwrite,
+        bool overwrite, 
         bool create,
         CancellationToken cancellationToken = default)
     {
@@ -15,7 +15,7 @@ public class RemoteFileSystemProvider : IFileSystemProvider
     }
 
     public Task<string> ReadFileAsync(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsoluteFilePath absoluteFilePath, 
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();

@@ -27,7 +27,6 @@
         <ProjectReference Include="..\..\Blazor.Text.Editor.Analysis\JavaScript\Blazor.Text.Editor.Analysis.JavaScript.ClassLib\Blazor.Text.Editor.Analysis.JavaScript.ClassLib.csproj" />
         <ProjectReference Include="..\..\Blazor.Text.Editor.Analysis\Razor\Blazor.Text.Editor.Analysis.Razor.ClassLib\Blazor.Text.Editor.Analysis.Razor.ClassLib.csproj" />
         <ProjectReference Include="..\..\Blazor.Text.Editor.Analysis\TypeScript\Blazor.Text.Editor.Analysis.TypeScript.ClassLib\Blazor.Text.Editor.Analysis.TypeScript.ClassLib.csproj" />
-        <ProjectReference Include="..\..\Blazor.Text.Editor\BlazorTextEditor.RazorLib\BlazorTextEditor.RazorLib.csproj" />
         <ProjectReference Include="..\BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj" />
     </ItemGroup>
 
@@ -75,16 +74,123 @@
         <_ContentIncludedByDefault Remove="VirtualizeComponents\VirtualizeCoordinateSystemContent.razor" />
         <_ContentIncludedByDefault Remove="SyntaxRootRender\SyntaxNodeTreeView.razor" />
         <_ContentIncludedByDefault Remove="SyntaxRootRender\SyntaxNodeTreeViewDialogEntryPoint.razor" />
+        <_ContentIncludedByDefault Remove="FolderExplorer\FolderExplorer.razor" />
+        <_ContentIncludedByDefault Remove="FolderExplorer\FolderExplorerMenuWrapperDisplay.razor" />
+        <_ContentIncludedByDefault Remove="ContextCase\ContextBoundary.razor" />
+        <_ContentIncludedByDefault Remove="Dialog\DialogDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Dialog\DialogsInitializer.razor" />
+        <_ContentIncludedByDefault Remove="Dialog\DialogTaskBar.razor" />
+        <_ContentIncludedByDefault Remove="Dialog\DialogTaskBarEntry.razor" />
+        <_ContentIncludedByDefault Remove="Drag\DragDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Dropdown\DropdownDisplay.razor" />
+        <_ContentIncludedByDefault Remove="FolderExplorer\FolderExplorerDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Font\FontOptionSettings.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconAdd.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconBlank.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconChevronDown.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconChevronRight.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconClose.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconCSharpClass.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconCshtml.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconCss.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconDiff.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconFile.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconFolder.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconJs.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconJson.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconMaximize.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconMinimize.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconProject.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconProperties.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconRazor.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconSettings.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconSolution.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconStartWithoutDebugging.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconStopCircle.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconTs.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconWwwRoot.razor" />
+        <_ContentIncludedByDefault Remove="Icons\IconLoader.razor" />
+        <_ContentIncludedByDefault Remove="Icons\IconOptionSettings.razor" />
+        <_ContentIncludedByDefault Remove="InputFile\InputFileDialog.razor" />
+        <_ContentIncludedByDefault Remove="InputFile\InputFileDialogEntryPoint.razor" />
+        <_ContentIncludedByDefault Remove="Transformable\TransformableColumnSeparator.razor" />
+        <_ContentIncludedByDefault Remove="Transformable\TransformableRowSeparator.razor" />
+        <_ContentIncludedByDefault Remove="Transformable\TransformableSettings.razor" />
+        <_ContentIncludedByDefault Remove="Settings\SettingsDialogEntryPoint.razor" />
+        <_ContentIncludedByDefault Remove="Shared\ExplorersDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Shared\FooterWindowDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Shared\FooterWindowTabEntryDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Shared\FooterWindowTabs.razor" />
+        <_ContentIncludedByDefault Remove="Shared\MainLayout.razor" />
+        <_ContentIncludedByDefault Remove="Shared\ToolbarDisplay.razor" />
+        <_ContentIncludedByDefault Remove="TreeViewCase\TreeViewDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Shared\ActiveContextRecordsDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Shared\BlazorTextEditorBody.razor" />
+        <_ContentIncludedByDefault Remove="Shared\BlazorTextEditorFooter.razor" />
+        <_ContentIncludedByDefault Remove="Shared\BlazorTextEditorHeader.razor" />
+        <_ContentIncludedByDefault Remove="TreeView\TreeViewDisplay.razor" />
+        <_ContentIncludedByDefault Remove="SolutionExplorer\SolutionExplorerIconDisplay.razor" />
+        <_ContentIncludedByDefault Remove="SolutionExplorer\SolutionExplorerMenuWrapperDisplay.razor" />
+        <_ContentIncludedByDefault Remove="NewCSharpProject\NewCSharpProjectDialog.razor" />
+        <_ContentIncludedByDefault Remove="NewCSharpProject\SelectCSharpProjectTemplate.razor" />
+        <_ContentIncludedByDefault Remove="NewDotNetSolution\NewDotNetSolutionDialog.razor" />
+        <_ContentIncludedByDefault Remove="NugetPackageManager\NugetPackageManagerDisplay.razor" />
+        <_ContentIncludedByDefault Remove="NugetPackageManager\NugetPackageManagerMenuWrapperDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Editor\EditorTabDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Editor\TextEditorAutoCompleteMenu.razor" />
+        <_ContentIncludedByDefault Remove="Editor\TextEditorContextMenu.razor" />
+        <_ContentIncludedByDefault Remove="Editor\TextEditorFooter.razor" />
+        <_ContentIncludedByDefault Remove="ExceptionNotifications\ProcessFrameworkReferencesTaskFailedNotification.razor" />
+        <_ContentIncludedByDefault Remove="DialogCase\DialogDisplay.razor" />
+        <_ContentIncludedByDefault Remove="DialogCase\DialogInitializer.razor" />
+        <_ContentIncludedByDefault Remove="DialogCase\ExampleDialog.razor" />
+        <_ContentIncludedByDefault Remove="DragCase\DragDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Focus\FocusTrap.razor" />
+        <_ContentIncludedByDefault Remove="Forms\CreateNewDirectoryForm.razor" />
+        <_ContentIncludedByDefault Remove="Forms\DeleteFileForm.razor" />
+        <_ContentIncludedByDefault Remove="Forms\YesNoButtons.razor" />
+        <_ContentIncludedByDefault Remove="Icons\Codicon\IconSettingsGear.razor" />
+        <_ContentIncludedByDefault Remove="InputFile\InputFileDisplay.razor" />
+        <_ContentIncludedByDefault Remove="ResizableCase\ResizableColumn.razor" />
+        <_ContentIncludedByDefault Remove="ResizableCase\ResizableDisplay.razor" />
+        <_ContentIncludedByDefault Remove="ResizableCase\ResizableRow.razor" />
+        <_ContentIncludedByDefault Remove="Settings\SettingsDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Terminal\TerminalTabDisplay.razor" />
+        <_ContentIncludedByDefault Remove="Terminal\TerminalTabs.razor" />
+        <_ContentIncludedByDefault Remove="Theme\ThemeSelectTreeView.razor" />
     </ItemGroup>
 
     <ItemGroup>
         <UpToDateCheckInput Remove="TreeViewCase\TreeViewWrapDisplay.razor" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Drag\" />
-        <Folder Include="Dropdown\" />
-        <Folder Include="NewDotNetSolution\" />
+        <UpToDateCheckInput Remove="Menu\MenuDisplay.razor" />
+        <UpToDateCheckInput Remove="Menu\MenuOptionDisplay.razor" />
+        <UpToDateCheckInput Remove="Settings\SettingsDialog.razor" />
+        <UpToDateCheckInput Remove="Shared\BodyDisplay.razor" />
+        <UpToDateCheckInput Remove="SolutionExplorer\SolutionExplorerDisplay.razor" />
+        <UpToDateCheckInput Remove="Editor\EditorDisplay.razor" />
+        <UpToDateCheckInput Remove="ExceptionNotifications\FailedToBindNotification.razor" />
+        <UpToDateCheckInput Remove="StartupProjectControls\StartupProjectControlsDisplay.razor" />
+        <UpToDateCheckInput Remove="ContextCase\ContextBoundary.razor" />
+        <UpToDateCheckInput Remove="Dropdown\DropdownDisplay.razor" />
+        <UpToDateCheckInput Remove="FolderExplorer\FolderExplorerDisplay.razor" />
+        <UpToDateCheckInput Remove="Icons\Codicon\IconChevronDown.razor" />
+        <UpToDateCheckInput Remove="Icons\Codicon\IconChevronRight.razor" />
+        <UpToDateCheckInput Remove="Icons\Codicon\IconClose.razor" />
+        <UpToDateCheckInput Remove="Icons\Codicon\IconMaximize.razor" />
+        <UpToDateCheckInput Remove="Icons\Codicon\IconMinimize.razor" />
+        <UpToDateCheckInput Remove="Menu\MenuDisplay.razor" />
+        <UpToDateCheckInput Remove="Menu\MenuOptionDisplay.razor" />
+        <UpToDateCheckInput Remove="OutOfBoundsClick\OutOfBoundsClickDisplay.razor" />
+        <UpToDateCheckInput Remove="Settings\SettingsDialogEntryPoint.razor" />
+        <UpToDateCheckInput Remove="Shared\ActiveContextRecordsDisplay.razor" />
+        <UpToDateCheckInput Remove="Shared\BlazorTextEditorBody.razor" />
+        <UpToDateCheckInput Remove="Shared\BlazorTextEditorFooter.razor" />
+        <UpToDateCheckInput Remove="Shared\BlazorTextEditorHeader.razor" />
+        <UpToDateCheckInput Remove="Shared\MainLayout.razor" />
+        <UpToDateCheckInput Remove="Terminal\TerminalDisplay.razor" />
+        <UpToDateCheckInput Remove="Terminal\TerminalEntryDisplay.razor" />
+        <UpToDateCheckInput Remove="Terminal\TerminalSettingsDisplay.razor" />
+        <UpToDateCheckInput Remove="TreeView\TreeViewDisplay.razor" />
     </ItemGroup>
 
     <ItemGroup>
@@ -97,14 +203,6 @@
 
     <ItemGroup>
         <UpToDateCheckInput Remove="Transformable\TransformableDisplay.razor" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Include="Errors\RichErrorDisplay.razor" />
-        <None Include="TaskModelManager\Helpers\TaskModelManagerDialogEntryPointTaskModelListPreviewDisplay.razor" />
-        <None Include="TaskModelManager\TaskModelManagerDialogEntryPointDisplay.razor" />
-        <None Include="wwwroot\README.md" />
-        <None Include="wwwroot\Themes\README.md" />
     </ItemGroup>
 
     <ItemGroup>
@@ -169,6 +267,10 @@
 
     <ItemGroup>
         <UpToDateCheckInput Remove="ExceptionNotifications\FailedToBindNotification.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="SolutionExplorer\SolutionExplorerDisplay.razor" />
     </ItemGroup>
 
 </Project>

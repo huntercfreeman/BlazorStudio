@@ -1,144 +1,116 @@
-﻿using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.CustomEvents;
+using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.DropdownCase;
-using BlazorStudio.ClassLib.Store.MenuCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.Menu;
 
 public partial class MenuDisplay : ComponentBase
 {
-    private int? _activeMenuOptionIndex = null;
-
-    private MenuOptionRecord[] _cachedMenuOptionRecords = Array.Empty<MenuOptionRecord>();
-    private ElementReference _menuDisplayElementReference;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-
+    
+    [CascadingParameter(Name="ReturnFocusToParentAction")]
+    public Action? ReturnFocusToParentAction { get; set; }
     [CascadingParameter]
-    public DropdownKey DropdownKey { get; set; } = null!;
+    public DropdownKey? DropdownKey { get; set; }
+    
+    [Parameter, EditorRequired]
+    public MenuRecord MenuRecord { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public int InitialActiveMenuOptionRecordIndex { get; set; } = -1;
 
-    [Parameter]
-    public IEnumerable<MenuOptionRecord> MenuOptionRecords { get; set; } = null!;
-    [Parameter]
-    public bool ShouldCategorizeByMenuOptionKind { get; set; }
-    [Parameter]
-    public ElementReference? FocusAfterTarget { get; set; }
-    [Parameter]
-    public Func<KeyboardEventArgs, Task>? AfterOnKeyDownAsync { get; set; }
-    [Parameter]
-    public bool FocusOnAfterFirstRender { get; set; } = true;
-
-    protected override void OnInitialized()
-    {
-        ReloadParameters();
-
-        base.OnInitialized();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private ElementReference? _menuDisplayElementReference;
+    
+    /// <summary>
+    /// First time the MenuDisplay opens
+    /// the _activeMenuOptionRecordIndex == -1
+    /// </summary>
+    private int _activeMenuOptionRecordIndex = -1;
+    
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (FocusOnAfterFirstRender)
-                await _menuDisplayElementReference.FocusAsync();
-        }
+            _activeMenuOptionRecordIndex = InitialActiveMenuOptionRecordIndex;
 
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-    private void ReloadParameters()
-    {
-        _cachedMenuOptionRecords = MenuOptionRecords
-            .ToArray();
-    }
-
-    public async Task ReloadParametersAsync()
-    {
-        ReloadParameters();
-
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
-    {
-        var keyDownEventRecord = new KeyDownEventRecord(
-            keyboardEventArgs.Key,
-            keyboardEventArgs.Code,
-            keyboardEventArgs.CtrlKey,
-            keyboardEventArgs.ShiftKey,
-            keyboardEventArgs.AltKey);
-
-        if (KeyboardKeyFacts.IsMovementKey(keyDownEventRecord) ||
-            KeyboardKeyFacts.IsAlternateMovementKey(keyDownEventRecord))
-        {
-            switch (keyDownEventRecord.Key)
+            if (_activeMenuOptionRecordIndex == -1 &&
+                _menuDisplayElementReference is not null)
             {
-                case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
-                    if (_activeMenuOptionIndex is null &&
-                        _cachedMenuOptionRecords.Length > 0)
-                        _activeMenuOptionIndex = 0;
-                    else if (_activeMenuOptionIndex < _cachedMenuOptionRecords.Length - 1)
-                        _activeMenuOptionIndex++;
-                    else if (_cachedMenuOptionRecords.Length > 0)
-                    {
-                        // Wrap around
-                        _activeMenuOptionIndex = 0;
-                    }
-
-                    break;
-                case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
-                    if (_activeMenuOptionIndex is null &&
-                        _cachedMenuOptionRecords.Length > 0)
-                        _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
-                    else if (_activeMenuOptionIndex > 0)
-                        _activeMenuOptionIndex--;
-                    else if (_cachedMenuOptionRecords.Length > 0)
-                    {
-                        // Wrap around
-                        _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
-                    }
-
-                    break;
-                case KeyboardKeyFacts.MovementKeys.HOME:
-                    if (_cachedMenuOptionRecords.Length > 0) _activeMenuOptionIndex = 0;
-                    break;
-                case KeyboardKeyFacts.MovementKeys.END:
-                    if (_cachedMenuOptionRecords.Length > 0)
-                        _activeMenuOptionIndex = _cachedMenuOptionRecords.Length - 1;
-                    break;
+                _menuDisplayElementReference.Value.FocusAsync();
+            }
+            else
+            {
+                InvokeAsync(StateHasChanged);
             }
         }
-        else if (KeyboardKeyFacts.IsMetaKey(keyDownEventRecord))
+        
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void RestoreFocusToThisMenu()
+    {
+        if (_activeMenuOptionRecordIndex == -1)
         {
-            switch (keyDownEventRecord.Key)
+            if (_menuDisplayElementReference is not null)
             {
-                case KeyboardKeyFacts.MetaKeys.ESCAPE:
-                    Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
-
-                    if (FocusAfterTarget is not null)
-                    {
-                        try
-                        {
-                            await FocusAfterTarget.Value.FocusAsync();
-                        }
-                        catch (JSException)
-                        {
-                            // Caused when calling:
-                            // FocusAsync();
-                            // After component is no longer rendered
-                        }
-                    }
-
-                    break;
+                _menuDisplayElementReference.Value.FocusAsync();
             }
         }
 
-        if (AfterOnKeyDownAsync is not null)
-            await AfterOnKeyDownAsync.Invoke(keyboardEventArgs);
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleOnKeyDown(CustomKeyDownEventArgs customKeyDownEventArgs)
+    {
+        if (MenuRecord.MenuOptions.Length == 0)
+        {
+            _activeMenuOptionRecordIndex = -1;
+            return;
+        }
+        
+        switch (customKeyDownEventArgs.Key)
+        {
+            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
+                if (DropdownKey is not null &&
+                    ReturnFocusToParentAction is not null)
+                {
+                    Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(DropdownKey));
+                    ReturnFocusToParentAction.Invoke();
+                }
+                break;
+            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
+                if (_activeMenuOptionRecordIndex >= MenuRecord.MenuOptions.Length - 1)
+                    _activeMenuOptionRecordIndex = 0;
+                else
+                    _activeMenuOptionRecordIndex++;
+                break;
+            case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
+                if (_activeMenuOptionRecordIndex <= 0)
+                    _activeMenuOptionRecordIndex = MenuRecord.MenuOptions.Length - 1;
+                else
+                    _activeMenuOptionRecordIndex--;
+                break;
+            case KeyboardKeyFacts.MovementKeys.HOME:
+                _activeMenuOptionRecordIndex = 0;
+                break;
+            case KeyboardKeyFacts.MovementKeys.END:
+                _activeMenuOptionRecordIndex = MenuRecord.MenuOptions.Length - 1;
+                break;
+            case KeyboardKeyFacts.MetaKeys.ESCAPE:
+                if (DropdownKey is not null)
+                    Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(DropdownKey));
+
+                if (ReturnFocusToParentAction is not null)
+                    ReturnFocusToParentAction.Invoke();
+                
+                break;
+        }
     }
 }

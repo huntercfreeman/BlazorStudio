@@ -1,14 +1,8 @@
-using BlazorStudio.ClassLib.Clipboard;
+﻿using BlazorTextEditor.RazorLib.Clipboard;
 
 namespace BlazorStudio.RazorLib.Clipboard;
 
-/// <summary>
-///     I cannot figure out how to get access to operating system clipboard
-///     in a Photino application. This will be used until I find out how to get access.
-/// </summary>
-public class TemporaryInMemoryClipboardProvider :
-    IClipboardProvider,
-    BlazorTextEditor.RazorLib.Clipboard.IClipboardProvider
+public class TemporaryInMemoryClipboardProvider : IClipboardProvider
 {
     private string _clipboard = string.Empty;
 

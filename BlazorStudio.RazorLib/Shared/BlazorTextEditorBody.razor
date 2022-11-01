@@ -1,0 +1,15 @@
+@using BlazorStudio.RazorLib.Editor
+@using BlazorStudio.RazorLib.FolderExplorer
+@using BlazorStudio.RazorLib.ResizableCase
+
+<div class="bstudio_body"
+     style="@BodyElementDimensions.StyleString">
+    
+    <BlazorTextEditorExplorers ExplorersElementDimensions="_explorersElementDimensions"/>
+
+    <ResizableColumn LeftElementDimensions="_explorersElementDimensions"
+                     RightElementDimensions="_editorElementDimensions"
+                     ReRenderFuncAsync="ReRenderAsync"/>
+
+    <EditorDisplay EditorElementDimensions="_editorElementDimensions"/>
+</div>

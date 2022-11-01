@@ -1,22 +1,19 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@using BlazorStudio.RazorLib.OutOfBoundsClick
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@if (DropdownStateWrap.Value.ActiveDropdownKeys.Any(x => x == DropdownKey))
+@if (ShouldDisplay)
 {
-    if (CloseOnOutOfBoundsClick)
+    if (ShouldDisplayOutOfBoundsClickDisplay)
     {
-        <BlazorStudio.RazorLib.OutOfBoundsClick.OutOfBoundsClickDisplay ClickedOutOfBounds="ClickedOutOfBoundsOnClick"
-                                                                        ZIndex="25"/>
+        <OutOfBoundsClickDisplay ZIndex="15"
+                                 OnClickCallback="ClearAllActiveDropdownKeys" />    
     }
-
-    <div class="bstudio_dropdown-display-wrapper"
-         style="@DropdownKindCssString">
-
-        <div class="bstudio_dropdown-display"
-             style="@Dimensions.DimensionsCssString">
-
-            <CascadingValue Value="DropdownKey">
-                @ChildContent
-            </CascadingValue>
-        </div>
+    
+    <div class="bstudio_dropdown-display"
+         @onclick:stopPropagation="true"
+         style="@DropdownPositionKindStyleCss">
+        <CascadingValue Value="DropdownKey">
+            @ChildContent
+        </CascadingValue>
     </div>
 }

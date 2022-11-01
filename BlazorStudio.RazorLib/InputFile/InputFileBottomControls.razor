@@ -1,0 +1,45 @@
+﻿@using BlazorStudio.ClassLib.Store.InputFileCase
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_input-file-display-bottom-controls">
+    @{
+        var inputFileState = InputFileStateWrap.Value;
+    }
+    <div class="bstudio_input-file-display-bottom-controls-text-input">
+        @* TODO: allow input text html element *@
+        @* File name: *@
+        @* <input class="bstudio_input"/> *@
+        <div>
+            (@inputFileState.Message)    
+        </div>
+        <div title="@(inputFileState.SelectedTreeViewModel?.Item.GetAbsoluteFilePathString() ?? "(no selection yet)")">
+            @(inputFileState.SelectedTreeViewModel?.Item
+                .FilenameWithExtension ?? "(no selection yet)")
+        </div>
+    </div>
+    <div class="bstudio_input-file-display-bottom-controls-non-text">
+        <div>
+            <select @onchange="SelectInputFilePatternOnChange">
+                @foreach (var inputFilePattern in inputFileState.InputFilePatterns)
+                {
+                    <option value="@inputFilePattern.PatternName"
+                            selected="@(
+                                (inputFileState.SelectedInputFilePattern?.PatternName ?? string.Empty)
+                                == inputFilePattern.PatternName)">
+                        @inputFilePattern.PatternName
+                    </option>
+                }
+            </select>
+        </div>
+        <div style="display: flex;">
+            <ButtonDisplay OnClickFunc="FireOnAfterSubmit"
+                           IsDisabled="OnAfterSubmitIsDisabled()">
+                Select
+            </ButtonDisplay>
+            <ButtonDisplay OnClickFunc="() => { return Task.CompletedTask; }"
+                           IsDisabled="!InputFileState.CanMoveBackwardsInHistory(InputFileStateWrap.Value)">
+                Cancel
+            </ButtonDisplay>
+        </div>
+    </div>
+</div>
