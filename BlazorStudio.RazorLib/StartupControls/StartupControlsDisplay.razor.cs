@@ -34,7 +34,7 @@ public partial class StartupControlsDisplay : FluxorComponent
                 
                 await terminalSession.ExecuteCommand(
                     DotNetCliFacts
-                        .StartProjectWithoutDebugging(
+                        .FormatStartProjectWithoutDebugging(
                             programExecutionState.StartupProjectAbsoluteFilePath),
                     Dispatcher);
             },

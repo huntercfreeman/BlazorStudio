@@ -516,3 +516,15 @@ em {
     height: calc(100% - var(--bstudio_notification-display-toolbar-height));
     overflow: auto;
 }
+
+.bstudio_new-dot-net-solution-form-group {
+    display: flex;
+}
+
+.bstudio_new-dot-net-solution-form-group:not(:last-of-type) {
+    margin-bottom: 10px;
+}
+
+.bstudio_new-dot-net-solution-form-label {
+    margin-right: 10px;
+}
