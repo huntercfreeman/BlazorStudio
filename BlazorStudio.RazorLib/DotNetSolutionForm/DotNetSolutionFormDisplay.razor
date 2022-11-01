@@ -1,0 +1,61 @@
+﻿@using BlazorStudio.RazorLib.InputFile
+
+<div class="bstudio_new-dot-net-solution-form">
+    
+    <div class="bstudio_new-dot-net-solution-form-group">
+        <div class="bstudio_new-dot-net-solution-form-label">
+            Name:
+        </div>
+
+        <div class="bstudio_new-dot-net-solution-form-value">
+            <input class="bstudio_input bstudio_input-text"
+                       style="height: 2em;"
+                       placeholder="Solution name"
+                       @bind="_solutionName"
+                       @bind:event="oninput"/>
+        </div>
+    </div>
+
+    <div class="bstudio_new-dot-net-solution-form-group">
+        <div class="bstudio_new-dot-net-solution-form-label">
+            Directory:
+        </div>
+
+        <div class="bstudio_new-dot-net-solution-form-value"
+             style="display: flex;">
+            
+            <input class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   placeholder="Parent directory"
+                   @bind="_parentDirectoryName"
+                   @bind:event="oninput"/>
+
+            <ButtonDisplay OnClickFunc="async () => RequestInputFileForParentDirectory()">
+                <IconFolder/>
+            </ButtonDisplay>
+        </div>
+    </div>
+
+    <div>
+        Solution&nbsp;Name:
+        <div><em>@SolutionName</em>.sln</div>
+    </div>
+
+    <div>
+        Directory&nbsp;Absolute&nbsp;File&nbsp;Path:
+        <div>
+            <em>@ParentDirectoryName</em>
+        </div>
+    </div>
+
+    <div>
+        Command:
+        <div>
+            <em>@InterpolatedCommand</em>
+        </div>
+    </div>
+    
+    <ButtonDisplay OnClickFunc="StartNewDotNetSolutionCommandOnClick">
+        Run
+    </ButtonDisplay>
+</div>

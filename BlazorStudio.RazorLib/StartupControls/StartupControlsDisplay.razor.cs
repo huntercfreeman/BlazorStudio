@@ -27,6 +27,7 @@ public partial class StartupControlsDisplay : FluxorComponent
         
         var startProgramWithoutDebugging = new TerminalCommand(
             TerminalCommandKey.NewTerminalCommandKey(),
+            null,
             async terminalCommand =>
             {
                 var terminalSession = await TerminalSession
@@ -34,7 +35,7 @@ public partial class StartupControlsDisplay : FluxorComponent
                 
                 await terminalSession.ExecuteCommand(
                     DotNetCliFacts
-                        .StartProjectWithoutDebugging(
+                        .FormatStartProjectWithoutDebugging(
                             programExecutionState.StartupProjectAbsoluteFilePath),
                     Dispatcher);
             },

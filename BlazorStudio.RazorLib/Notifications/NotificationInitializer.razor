@@ -1,0 +1,15 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var notificationState = NotificationStateWrap.Value;
+
+    for (int i = 0; i < notificationState.Notifications.Count; i++)
+    {
+        var index = i;
+        var notification = notificationState.Notifications[index];
+        
+        <NotificationDisplay @key="notification.NotificationKey" 
+                             NotificationRecord="notification"
+                             Index="index"/>
+    }
+}

@@ -2,16 +2,35 @@
 
 namespace BlazorStudio.ClassLib.CommandLine;
 
+/// <summary>
+/// Any parameters given will be wrapped in quotes internally
+/// </summary>
 public static class DotNetCliFacts
 {
-    public static string StartProjectWithoutDebugging(IAbsoluteFilePath projectAbsoluteFilePath)
+    public const string DotnetNewSlnCommand = "dotnet new sln";
+    
+    public static string FormatStartProjectWithoutDebugging(IAbsoluteFilePath projectAbsoluteFilePath)
     {
-        return StartProjectWithoutDebugging(
+        return FormatStartProjectWithoutDebugging(
             projectAbsoluteFilePath.GetAbsoluteFilePathString());
     }
     
-    public static string StartProjectWithoutDebugging(string projectPath)
+    public static string FormatStartProjectWithoutDebugging(string projectPath)
     {
+        projectPath = QuoteParameter(projectPath);
+        
         return $"dotnet run --project {projectPath}";
+    }
+    
+    public static string FormatDotnetNewSln(string solutionName)
+    {
+        solutionName = QuoteParameter(solutionName);
+        
+        return $"{DotnetNewSlnCommand} -o {solutionName}";
+    }
+    
+    private static string QuoteParameter(string parameter)
+    {
+        return $"\"{parameter}\"";
     }
 }

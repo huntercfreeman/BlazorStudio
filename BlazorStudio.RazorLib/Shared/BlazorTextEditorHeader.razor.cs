@@ -5,10 +5,13 @@ using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
+using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.RazorLib.Button;
+using BlazorStudio.RazorLib.DotNetSolutionForm;
 using BlazorStudio.RazorLib.InputFile;
+using BlazorStudio.RazorLib.Notifications;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -42,10 +45,19 @@ public partial class BlazorTextEditorHeader : ComponentBase
 
     private MenuOptionRecord GetMenuOptionNew()
     {
+        var newDotNetSolution = new MenuOptionRecord(
+            ".NET Solution",
+            OpenNewDotNetSolutionDialog);
+        
         return new MenuOptionRecord(
-            "New");
+            "New",
+            SubMenu: new MenuRecord(
+                new []
+                {
+                    newDotNetSolution
+                }.ToImmutableArray()));
     }
-    
+
     private MenuOptionRecord GetMenuOptionOpen()
     {
         var openFile = new MenuOptionRecord(
@@ -98,5 +110,53 @@ public partial class BlazorTextEditorHeader : ComponentBase
     {
         _fileButtonDisplay?.ButtonElementReference?
             .FocusAsync();
+    }
+
+    private void OpenNewDotNetSolutionDialog()
+    {
+        var dialogRecord = new DialogRecord(
+            DialogKey.NewDialogKey(), 
+            "New .NET Solution",
+            typeof(DotNetSolutionFormDisplay),
+            null);
+        
+        Dispatcher.Dispatch(
+            new RegisterDialogRecordAction(
+                dialogRecord));
+    }
+    
+    private void TestNotificationsOnClick()
+    {
+        var notificationInformative = new NotificationRecord(
+            NotificationKey.NewNotificationKey(), 
+            "AaaTest",
+            typeof(CommonInformativeNotificationDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CommonInformativeNotificationDisplay.Message), 
+                    "messageTest"
+                },
+            });
+        
+        var notificationError = new NotificationRecord(
+            NotificationKey.NewNotificationKey(), 
+            "AaaTest",
+            typeof(CommonErrorNotificationDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CommonErrorNotificationDisplay.Message), 
+                    "messageTest"
+                },
+            });
+        
+        Dispatcher.Dispatch(
+            new NotificationState.RegisterNotificationAction(
+                notificationInformative));
+        
+        Dispatcher.Dispatch(
+            new NotificationState.RegisterNotificationAction(
+                notificationError));
     }
 }
