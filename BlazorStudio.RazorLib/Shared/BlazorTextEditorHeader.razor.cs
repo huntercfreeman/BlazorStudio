@@ -128,7 +128,12 @@ public partial class BlazorTextEditorHeader : ComponentBase
                 },
             });
         
-        Dispatcher.Dispatch(notificationInformative);
-        Dispatcher.Dispatch(notificationError);
+        Dispatcher.Dispatch(
+            new NotificationState.RegisterNotificationAction(
+                notificationInformative));
+        
+        Dispatcher.Dispatch(
+            new NotificationState.RegisterNotificationAction(
+                notificationError));
     }
 }
