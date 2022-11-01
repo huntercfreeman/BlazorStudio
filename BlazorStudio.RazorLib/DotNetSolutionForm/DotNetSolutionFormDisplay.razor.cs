@@ -36,7 +36,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
         : _parentDirectoryName;
 
     private string InterpolatedCommand => 
-        $"{DotNetCliFacts.DotnetNewSlnCommand} -o {_solutionName}";
+        DotNetCliFacts.FormatDotnetNewSln(_solutionName);
 
     private void RequestInputFileForParentDirectory()
     {
@@ -72,8 +72,9 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
                 }.ToImmutableArray()));
     }
     
-    private Task StartProgramWithoutDebuggingOnClick()
+    private Task StartNewDotNetSolutionCommandOnClick()
     {
+        var interpolatedCommand = InterpolatedCommand;
         var localSolutionName = _solutionName;
         var localParentDirectoryName = _parentDirectoryName;
 
@@ -92,7 +93,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
                     .BeginSession(terminalCommand);
                 
                 await terminalSession.ExecuteCommand(
-                    DotNetCliFacts.DotnetNewSlnCommand,
+                    interpolatedCommand,
                     Dispatcher);
             },
             new StringBuilder(),

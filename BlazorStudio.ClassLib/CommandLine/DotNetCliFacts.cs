@@ -22,6 +22,13 @@ public static class DotNetCliFacts
         return $"dotnet run --project {projectPath}";
     }
     
+    public static string FormatDotnetNewSln(string solutionName)
+    {
+        solutionName = QuoteParameter(solutionName);
+        
+        return $"{DotnetNewSlnCommand} -o {solutionName}";
+    }
+    
     private static string QuoteParameter(string parameter)
     {
         return $"\"{parameter}\"";
