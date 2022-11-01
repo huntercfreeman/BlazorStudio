@@ -3,9 +3,13 @@
 @{
     var notificationState = NotificationStateWrap.Value;
 
-    foreach (var notification in notificationState.Notifications)
+    for (int i = 0; i < notificationState.Notifications.Count; i++)
     {
+        var index = i;
+        var notification = notificationState.Notifications[index];
+        
         <NotificationDisplay @key="notification.NotificationKey" 
-                             NotificationRecord="notification"/>
+                             NotificationRecord="notification"
+                             Index="index"/>
     }
 }

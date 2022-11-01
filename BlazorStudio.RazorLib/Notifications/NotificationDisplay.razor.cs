@@ -11,6 +11,8 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     
     [Parameter, EditorRequired]
     public NotificationRecord NotificationRecord { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public int Index { get; set; }
 
     private readonly CancellationTokenSource _notificationOverlayCancellationTokenSource = new();
     private readonly TimeSpan _notificationOverlayLifespan = TimeSpan.FromSeconds(5);
