@@ -80,25 +80,19 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
         if (string.IsNullOrWhiteSpace(localSolutionName) ||
             string.IsNullOrWhiteSpace(localParentDirectoryName))
         {
-            
+            return Task.CompletedTask;
         }
         
-        var programExecutionState = ProgramExecutionStateWrap.Value;
-
-        if (programExecutionState.StartupProjectAbsoluteFilePath is null)
-            return Task.CompletedTask;
-        
-        var startProgramWithoutDebugging = new TerminalCommand(
+        var newDotNetSolutionCommand = new TerminalCommand(
             TerminalCommandKey.NewTerminalCommandKey(),
+            _parentDirectoryName,
             async terminalCommand =>
             {
                 var terminalSession = await TerminalSession
                     .BeginSession(terminalCommand);
                 
                 await terminalSession.ExecuteCommand(
-                    DotNetCliFacts
-                        .FormatStartProjectWithoutDebugging(
-                            programExecutionState.StartupProjectAbsoluteFilePath),
+                    DotNetCliFacts.DotnetNewSlnCommand,
                     Dispatcher);
             },
             new StringBuilder(),
@@ -106,7 +100,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
         
         Dispatcher.Dispatch(
             new TerminalStateEffects.QueueTerminalCommandToExecuteAction(
-                startProgramWithoutDebugging));
+                newDotNetSolutionCommand));
         
         return Task.CompletedTask;
     }

@@ -23,6 +23,12 @@ public class TerminalSession
     {
         var process = new Process();
 
+        if (_terminalCommand.WorkingDirectoryAbsoluteFilePathString is not null)
+        {
+            process.StartInfo.WorkingDirectory = 
+                _terminalCommand.WorkingDirectoryAbsoluteFilePathString;   
+        }
+
         var bash = "/bin/bash";
 
         if (File.Exists(bash))
