@@ -35,9 +35,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
                     _notificationOverlayLifespan,
                     _notificationOverlayCancellationTokenSource.Token);
                 
-                Dispatcher.Dispatch(
-                    new NotificationState.DisposeNotificationAction(
-                        NotificationRecord.NotificationKey));
+                DisposeNotification();
             });
         }
         
@@ -62,6 +60,13 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
         styleBuilder.Append($" bottom: {totalBottomOffset}px;");
 
         return styleBuilder.ToString();
+    }
+    
+    private void DisposeNotification()
+    {
+        Dispatcher.Dispatch(
+            new NotificationState.DisposeNotificationAction(
+                NotificationRecord.NotificationKey));
     }
     
     public void Dispose()
