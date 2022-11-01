@@ -15,11 +15,10 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public int Index { get; set; }
 
-    private const int WIDTH_IN_PIXELS = 100;
-    private const int HEIGHT_IN_PIXELS = 100;
+    private const int WIDTH_IN_PIXELS = 350;
+    private const int HEIGHT_IN_PIXELS = 125;
     private const int RIGHT_OFFSET_IN_PIXELS = 15;
     private const int BOTTOM_OFFSET_IN_PIXELS = 15;
-    private const int MARGIN_TOP_IN_PIXELS = 15;
     
     private readonly CancellationTokenSource _notificationOverlayCancellationTokenSource = new();
     private readonly TimeSpan _notificationOverlayLifespan = TimeSpan.FromSeconds(5);
@@ -30,16 +29,16 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            _ = Task.Run(async () =>
-            {
-                await Task.Delay(
-                    _notificationOverlayLifespan,
-                    _notificationOverlayCancellationTokenSource.Token);
-                
-                Dispatcher.Dispatch(
-                    new NotificationState.DisposeNotificationAction(
-                        NotificationRecord.NotificationKey));
-            });
+            // _ = Task.Run(async () =>
+            // {
+            //     await Task.Delay(
+            //         _notificationOverlayLifespan,
+            //         _notificationOverlayCancellationTokenSource.Token);
+            //     
+            //     Dispatcher.Dispatch(
+            //         new NotificationState.DisposeNotificationAction(
+            //             NotificationRecord.NotificationKey));
+            // });
         }
         
         return base.OnAfterRenderAsync(firstRender);
@@ -55,11 +54,9 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
         styleBuilder.Append($" right: {RIGHT_OFFSET_IN_PIXELS}px;");
 
         var bottomOffsetDueToHeight = HEIGHT_IN_PIXELS * Index;
-        var bottomOffsetDueToMarginTop = MARGIN_TOP_IN_PIXELS * Index;
         var bottomOffsetDueToBottomOffset = BOTTOM_OFFSET_IN_PIXELS * (1 + Index);
         
         var totalBottomOffset = bottomOffsetDueToHeight +
-                                bottomOffsetDueToMarginTop +
                                 bottomOffsetDueToBottomOffset;
         
         styleBuilder.Append($" bottom: {totalBottomOffset}px;");

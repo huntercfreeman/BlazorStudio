@@ -514,4 +514,5 @@ em {
 
 .bstudio_notification-body {
     height: calc(100% - var(--bstudio_notification-display-toolbar-height));
+    overflow: auto;
 }
