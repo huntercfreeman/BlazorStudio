@@ -262,7 +262,7 @@ input[type="checkbox"]{
 
 .bstudio_dropdown-display {
     z-index: var(--bstudio_dropdown-display-z-index);
-    position: fixed;
+    position: absolute;
 }
 
 .bstudio_menu-display:focus {
