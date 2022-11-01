@@ -9,6 +9,7 @@ using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.RazorLib.Button;
+using BlazorStudio.RazorLib.DotNetSolutionForm;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.Notifications;
 using BlazorTextEditor.RazorLib;
@@ -44,10 +45,19 @@ public partial class BlazorTextEditorHeader : ComponentBase
 
     private MenuOptionRecord GetMenuOptionNew()
     {
+        var newDotNetSolution = new MenuOptionRecord(
+            ".NET Solution",
+            OpenNewDotNetSolutionDialog);
+        
         return new MenuOptionRecord(
-            "New");
+            "New",
+            SubMenu: new MenuRecord(
+                new []
+                {
+                    newDotNetSolution
+                }.ToImmutableArray()));
     }
-    
+
     private MenuOptionRecord GetMenuOptionOpen()
     {
         var openFile = new MenuOptionRecord(
@@ -102,6 +112,19 @@ public partial class BlazorTextEditorHeader : ComponentBase
             .FocusAsync();
     }
 
+    private void OpenNewDotNetSolutionDialog()
+    {
+        var dialogRecord = new DialogRecord(
+            DialogKey.NewDialogKey(), 
+            "New .NET Solution",
+            typeof(DotNetSolutionFormDisplay),
+            null);
+        
+        Dispatcher.Dispatch(
+            new RegisterDialogRecordAction(
+                dialogRecord));
+    }
+    
     private void TestNotificationsOnClick()
     {
         var notificationInformative = new NotificationRecord(
