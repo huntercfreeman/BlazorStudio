@@ -7,8 +7,8 @@
     @if (DialogRecord.IsResizable)
     {
         <ResizableDisplay @ref="_resizableDisplay"
-                                                                  ElementDimensions="DialogRecord.ElementDimensions"
-                                                                  ReRenderFuncAsync="ReRenderAsync"/>
+                          ElementDimensions="DialogRecord.ElementDimensions"
+                          ReRenderFuncAsync="ReRenderAsync"/>
     }
 
     <div class="bstudio_dialog-display-toolbar"
@@ -17,6 +17,7 @@
             @DialogRecord.Title
         </div>
 
+        @* TODO: Use the <ButtonDisplay>...</ButtonDisplay> instead of class="bstudio_dialog-display-button-entry"*@
         <div class="bstudio_dialog-display-buttons"
              @onmousedown:stopPropagation="true">
             <div class="bstudio_dialog-display-button-entry">

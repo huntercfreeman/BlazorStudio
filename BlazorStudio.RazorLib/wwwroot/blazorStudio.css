@@ -262,7 +262,7 @@ input[type="checkbox"]{
 
 .bstudio_dropdown-display {
     z-index: var(--bstudio_dropdown-display-z-index);
-    position: absolute;
+    position: fixed;
 }
 
 .bstudio_menu-display:focus {
@@ -490,4 +490,27 @@ em {
 .bstudio_startup-controls-display-entry {
     display: flex;
     align-items: center;
+}
+
+.bstudio_notification-display {
+    z-index: var(--bstudio_notification-display-z-index);
+    background-color: var(--bstudio_notification-display-background-color);
+    box-shadow: 0 0 var(--bstudio_notification-display-box-shadow-blur-radius) var(--bstudio_primary-box-shadow-color);
+}
+
+.bstudio_notification-display-toolbar {
+    height: var(--bstudio_notification-display-toolbar-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bstudio_notification-display-toolbar-background-color);
+}
+
+.bstudio_notification-display-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.bstudio_notification-display-body {
+    height: calc(100% - var(--bstudio_notification-display-toolbar-height));
 }

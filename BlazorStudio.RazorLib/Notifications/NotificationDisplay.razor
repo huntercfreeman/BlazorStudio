@@ -1,0 +1,29 @@
+﻿<div class="bstudio_notification">
+    <div class="bstudio_notification-toolbar">
+        <div class="bstudio_notification-title">
+            @NotificationRecord.Title
+        </div>
+
+        <div class="bstudio_notification-control-buttons">
+            
+            <ButtonDisplay>
+                <IconMinimize/>
+            </ButtonDisplay>
+            
+            <ButtonDisplay>
+                <IconMaximize/>
+            </ButtonDisplay>
+            
+            <ButtonDisplay>
+                <IconClose/>
+            </ButtonDisplay>
+        </div>
+    </div>
+
+    <div class="bstudio_notification-body">
+        <CascadingValue Value="NotificationRecord">
+            <DynamicComponent Type="NotificationRecord.RendererType"
+                              Parameters="NotificationRecord.Parameters"/>
+        </CascadingValue>
+    </div>
+</div>

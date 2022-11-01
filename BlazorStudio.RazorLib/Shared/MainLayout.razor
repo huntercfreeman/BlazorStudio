@@ -3,6 +3,8 @@
 @using BlazorStudio.RazorLib.DialogCase
 @using BlazorStudio.RazorLib.DragCase
 @using BlazorStudio.RazorLib.ResizableCase
+@using BlazorStudio.RazorLib.Notifications
+
 @inherits LayoutComponentBase
 
 <ContextBoundary ContextRecord="ContextFacts.GlobalContext"
@@ -11,6 +13,7 @@
 
     <BlazorTextEditorRazorLibInitializer/>
     <DialogInitializer/>
+    <NotificationInitializer/>
     <DragDisplay/>
 
     <BlazorTextEditorHeader/>
