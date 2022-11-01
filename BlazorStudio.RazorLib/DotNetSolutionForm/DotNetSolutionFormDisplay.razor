@@ -26,19 +26,15 @@
             
             <input class="bstudio_input bstudio_input-text"
                    style="height: 2em;"
-                   placeholder="Solution directory"
-                   @bind="_solutionName"
+                   placeholder="Parent directory"
+                   @bind="_parentDirectoryName"
                    @bind:event="oninput"/>
 
-            <ButtonDisplay>
+            <ButtonDisplay OnClickFunc="async () => RequestInputFileForParentDirectory()">
                 <IconFolder/>
             </ButtonDisplay>
         </div>
     </div>
-
-    <ButtonDisplay OnClickFunc="async () => RequestInputFileForParentDirectory()">
-        RequestInputFileForParentDirectory
-    </ButtonDisplay>
 
     <div>
         Solution&nbsp;Name:
@@ -48,7 +44,7 @@
     <div>
         Directory&nbsp;Absolute&nbsp;File&nbsp;Path:
         <div>
-            <em>@SolutionDirectoryAbsoluteFilePathString</em>
+            <em>@ParentDirectoryName</em>
         </div>
     </div>
 

@@ -517,6 +517,10 @@ em {
     overflow: auto;
 }
 
+.bstudio_new-dot-net-solution-form {
+    padding: 5px;
+}
+
 .bstudio_new-dot-net-solution-form-group {
     display: flex;
 }

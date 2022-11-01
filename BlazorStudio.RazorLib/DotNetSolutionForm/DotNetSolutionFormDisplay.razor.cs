@@ -21,30 +21,18 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
     public DialogRecord DialogRecord { get; set; } = null!;
 
     private string _solutionName = string.Empty;
-    private IAbsoluteFilePath? _inputFileDialogSelection;
+    private string _parentDirectoryName = string.Empty;
 
     private string SolutionName => string.IsNullOrWhiteSpace(_solutionName)
         ? "{enter solution name}"
         : _solutionName;
-
-    private string SolutionDirectoryAbsoluteFilePathString => 
-        GetAbsoluteFilePathString();
+    
+    private string ParentDirectoryName => string.IsNullOrWhiteSpace(_parentDirectoryName)
+        ? "{enter parent directory name}"
+        : _parentDirectoryName;
 
     private string InterpolatedCommand => 
         $"{DotNetCliFacts.DotnetNewSlnCommand} -o {_solutionName}";
-
-    private string GetAbsoluteFilePathString()
-    {
-        var builder = new StringBuilder();
-
-        if (_inputFileDialogSelection is null ||
-            !_inputFileDialogSelection.IsDirectory)
-            builder.Append($"{{pick a directory}}{Path.DirectorySeparatorChar}");
-        else
-            builder.Append(_inputFileDialogSelection.GetAbsoluteFilePathString());
-
-        return builder.ToString();
-    }
 
     private void RequestInputFileForParentDirectory()
     {
@@ -53,7 +41,11 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
                 "Directory for new .NET Solution",
                 afp =>
                 {
-                    _inputFileDialogSelection = afp;
+                    if (afp is null)
+                        return Task.CompletedTask;
+                    
+                    _parentDirectoryName = afp.GetAbsoluteFilePathString();
+                    
                     InvokeAsync(StateHasChanged);
 
                     return Task.CompletedTask;
