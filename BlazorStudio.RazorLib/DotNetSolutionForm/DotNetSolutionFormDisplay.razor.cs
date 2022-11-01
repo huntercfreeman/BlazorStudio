@@ -6,7 +6,9 @@ using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
+using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
+using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -14,6 +16,8 @@ namespace BlazorStudio.RazorLib.DotNetSolutionForm;
 
 public partial class DotNetSolutionFormDisplay : ComponentBase
 {
+    [Inject]
+    private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -66,5 +70,44 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
                         "Directory",
                         afp => afp.IsDirectory)
                 }.ToImmutableArray()));
+    }
+    
+    private Task StartProgramWithoutDebuggingOnClick()
+    {
+        var localSolutionName = _solutionName;
+        var localParentDirectoryName = _parentDirectoryName;
+
+        if (string.IsNullOrWhiteSpace(localSolutionName) ||
+            string.IsNullOrWhiteSpace(localParentDirectoryName))
+        {
+            
+        }
+        
+        var programExecutionState = ProgramExecutionStateWrap.Value;
+
+        if (programExecutionState.StartupProjectAbsoluteFilePath is null)
+            return Task.CompletedTask;
+        
+        var startProgramWithoutDebugging = new TerminalCommand(
+            TerminalCommandKey.NewTerminalCommandKey(),
+            async terminalCommand =>
+            {
+                var terminalSession = await TerminalSession
+                    .BeginSession(terminalCommand);
+                
+                await terminalSession.ExecuteCommand(
+                    DotNetCliFacts
+                        .FormatStartProjectWithoutDebugging(
+                            programExecutionState.StartupProjectAbsoluteFilePath),
+                    Dispatcher);
+            },
+            new StringBuilder(),
+            new StringBuilder());
+        
+        Dispatcher.Dispatch(
+            new TerminalStateEffects.QueueTerminalCommandToExecuteAction(
+                startProgramWithoutDebugging));
+        
+        return Task.CompletedTask;
     }
 }
