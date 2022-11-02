@@ -6,7 +6,7 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 [FeatureState]
 public record TerminalState(TerminalCommandKey ActiveTerminalCommandKey)
 {
-    public TerminalState() : this(TerminalCommandKey.Empty)
+    public TerminalState() : this(TerminalCommandFacts.GENERAL_TERMINAL)
     {
         
     }
