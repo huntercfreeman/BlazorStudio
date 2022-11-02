@@ -132,7 +132,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 _newCSharpProjectCancellationTokenSource.Token);
             
             await generalTerminalSession
-                .EnqueueCommandAsync(newDotNetSolutionCommand);
+                .EnqueueCommandAsync(addExistingProjectToSolutionCommand);
         }
     }
 }
