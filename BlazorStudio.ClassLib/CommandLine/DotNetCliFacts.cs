@@ -42,12 +42,12 @@ public static class DotNetCliFacts
     
     public static string AddExistingProjectToSolution(
         string solutionAbsoluteFilePathString, 
-        string cSharpProjectRelativePathToWorkingDirectory)
+        string cSharpProjectPath)
     {
         solutionAbsoluteFilePathString = QuoteValue(solutionAbsoluteFilePathString);
-        cSharpProjectRelativePathToWorkingDirectory = QuoteValue(cSharpProjectRelativePathToWorkingDirectory);
+        cSharpProjectPath = QuoteValue(cSharpProjectPath);
         
-        return $"dotnet sln {solutionAbsoluteFilePathString} add {cSharpProjectRelativePathToWorkingDirectory}";
+        return $"dotnet sln {solutionAbsoluteFilePathString} add {cSharpProjectPath}";
     }
     
     private static string QuoteValue(string parameter)

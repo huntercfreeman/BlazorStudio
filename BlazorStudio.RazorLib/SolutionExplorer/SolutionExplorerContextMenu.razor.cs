@@ -1,9 +1,12 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
+using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeView;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.DotNetSolutionForm;
@@ -16,6 +19,8 @@ namespace BlazorStudio.RazorLib.SolutionExplorer;
 
 public partial class SolutionExplorerContextMenu : ComponentBase
 {
+    [Inject]
+    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     
@@ -67,9 +72,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         
         var addExistingCSharpProject = new MenuOptionRecord(
             "Existing C# Project",
-            () => Dispatcher.Dispatch(
-                new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
-                    treeViewModel.Item)));
+            () => AddExistingProjectToSolution(treeViewModel.Item));
         
         return new[]
         {
@@ -128,5 +131,54 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         Dispatcher.Dispatch(
             new RegisterDialogRecordAction(
                 dialogRecord));
+    }
+    
+    private void AddExistingProjectToSolution(IAbsoluteFilePath solutionAbsoluteFilePath)
+    {
+        Dispatcher.Dispatch(
+            new InputFileState.RequestInputFileStateFormAction(
+                "Existing C# Project to add to solution",
+                async afp =>
+                {
+                    if (afp is null)
+                        return;
+                    
+                    var localInterpolatedAddExistingProjectToSolutionCommand = DotNetCliFacts
+                        .AddExistingProjectToSolution(
+                            solutionAbsoluteFilePath.GetAbsoluteFilePathString(),
+                            afp.GetAbsoluteFilePathString());
+                    
+                    var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
+                        TerminalCommandKey.NewTerminalCommandKey(), 
+                        localInterpolatedAddExistingProjectToSolutionCommand,
+                        null,
+                        CancellationToken.None);
+                    
+                    var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+
+                    await generalTerminalSession
+                        .EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand);
+                },
+                afp =>
+                {
+                    if (afp is null ||
+                        afp.IsDirectory)
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(
+                        afp.ExtensionNoPeriod
+                            .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+                },
+                new[]
+                {
+                    new InputFilePattern(
+                        "C# Project",
+                        afp => 
+                            afp.ExtensionNoPeriod
+                                .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                }.ToImmutableArray()));
     }
 }
