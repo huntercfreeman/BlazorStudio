@@ -10,11 +10,12 @@ using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.DotNetSolutionForm;
 
-public partial class DotNetSolutionFormDisplay : ComponentBase
+public partial class DotNetSolutionFormDisplay : FluxorComponent
 {
     [Inject]
     private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
@@ -26,6 +27,10 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
 
     private string _solutionName = string.Empty;
     private string _parentDirectoryName = string.Empty;
+    private StringBuilder _standardOutBuilder = new();
+    private StringBuilder _standardErrorBuilder = new();
+    private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey = 
+        TerminalCommandKey.NewTerminalCommandKey();
 
     private string SolutionName => string.IsNullOrWhiteSpace(_solutionName)
         ? "{enter solution name}"
@@ -74,6 +79,9 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
     
     private Task StartNewDotNetSolutionCommandOnClick()
     {
+        _standardOutBuilder.Clear();
+        _standardErrorBuilder.Clear();
+        
         var interpolatedCommand = InterpolatedCommand;
         var localSolutionName = _solutionName;
         var localParentDirectoryName = _parentDirectoryName;
@@ -96,8 +104,8 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
                     interpolatedCommand,
                     Dispatcher);
             },
-            new StringBuilder(),
-            new StringBuilder());
+            _standardOutBuilder,
+            _standardErrorBuilder);
         
         Dispatcher.Dispatch(
             new TerminalStateEffects.QueueTerminalCommandToExecuteAction(

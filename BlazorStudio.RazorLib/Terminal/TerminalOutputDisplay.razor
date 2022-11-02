@@ -1,0 +1,8 @@
+@{
+    var terminalCommand = TerminalResultSelection.Value;
+
+    <div class="bstudio_terminal-output-display"
+         title="@(terminalCommand?.StandardError.ToString() ?? string.Empty)">
+        @ParseHttpLinks((terminalCommand?.StandardOut.ToString() ?? string.Empty))
+    </div>        
+}

@@ -532,3 +532,8 @@ em {
 .bstudio_new-dot-net-solution-form-label {
     margin-right: 10px;
 }
+
+.bstudio_terminal-output-display {
+    width: 100%; 
+    overflow-wrap: anywhere;
+}

@@ -39,6 +39,11 @@ public static class ContextFacts
         "Text Editor",
         "text-editor");
     
+    public static readonly ContextRecord TerminalContext = new(
+        ContextKey.NewContextKey(),
+        "Terminal",
+        "terminal");
+    
     public static readonly ImmutableArray<ContextRecord> ContextRecords = new [] 
     {
         MainLayoutHeaderContext,
