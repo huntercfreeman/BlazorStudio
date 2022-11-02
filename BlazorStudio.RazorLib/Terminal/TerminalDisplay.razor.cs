@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Terminal;
 
-public partial class TerminalDisplay : ComponentBase
+public partial class TerminalDisplay : FluxorComponent
 {
-    
+    [Inject]
+    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 }

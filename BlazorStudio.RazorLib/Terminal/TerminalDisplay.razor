@@ -1,4 +1,7 @@
 ﻿@using BlazorStudio.ClassLib.Context
+@using BlazorStudio.ClassLib.Store.TerminalCase
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <ContextBoundary ContextRecord="ContextFacts.TerminalContext"
                  ClassCssString="bstudio_terminal-display"
@@ -11,6 +14,13 @@
     <div class="bstudio_section-body"
          style="width: 100%;">
         
-        <TerminalOutputDisplay/>
+        <div class="bstudio_terminal-tabs-container">
+            @foreach (var terminalCommandKey in TerminalCommandFacts.TERMINAL_COMMAND_KEYS)
+            {
+                <TerminalTab TerminalCommandKey="terminalCommandKey"/>
+            }
+        </div>
+
+        <TerminalOutputDisplay TerminalCommandKey="TerminalStateWrap.Value.ActiveTerminalCommandKey"/>
     </div>
 </ContextBoundary>

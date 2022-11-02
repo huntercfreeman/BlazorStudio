@@ -533,6 +533,10 @@ em {
     margin-right: 10px;
 }
 
+.bstudio_terminal-tabs-container {
+    display: flex;
+}
+
 .bstudio_terminal-output-display {
     width: 100%; 
     overflow-wrap: anywhere;
