@@ -74,28 +74,33 @@ public record TerminalSession
             else
             {
                 _hasTerminalCommandConsumer = true;
-                
-                // If a terminal is not executing a command
-                // it will 'dispose' of the consumer
-                //
-                // thereby a consumer will need to be
-                // made if there isn't one
-                //
-                // Task.Run as to not have a chance of blocking the UI thread?
-                _ = Task.Run(async () =>
-                {
-                    await ConsumeTerminalCommandsAsync();
-                });
             }
         }
         finally
         {
+            // Task.Run was moved to after this Release otherwise deadlock
             _lifeOfTerminalCommandConsumerSemaphoreSlim.Release();
         }
+        
+        // If a terminal is not executing a command
+        // it will 'dispose' of the consumer
+        //
+        // thereby a consumer will need to be
+        // made if there isn't one
+        //
+        // Task.Run as to not have a chance of blocking the UI thread?
+        _ = Task.Run(async () =>
+        {
+            await ConsumeTerminalCommandsAsync();
+        });
     }
     
     private async Task ConsumeTerminalCommandsAsync()
     {
+        // goto is used because the do-while or while loops would have
+        // hard to decipher predicates due to the double if for the semaphore
+        doConsumeLabel:
+        
         if (!_terminalCommandsConcurrentQueue.TryDequeue(out var terminalCommand))
         {
             try
@@ -178,5 +183,7 @@ public record TerminalSession
         {
             process.CancelOutputRead();
         }
+
+        goto doConsumeLabel;
     }
 }

@@ -63,7 +63,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
         var addNewCSharpProject = new MenuOptionRecord(
             "New C# Project",
-            OpenNewCSharpProjectDialog);
+            () => OpenNewCSharpProjectDialog(treeViewModel.Item));
         
         var addExistingCSharpProject = new MenuOptionRecord(
             "Existing C# Project",
@@ -111,13 +111,19 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         };
     }
     
-    private void OpenNewCSharpProjectDialog()
+    private void OpenNewCSharpProjectDialog(IAbsoluteFilePath solutionAbsoluteFilePath)
     {
         var dialogRecord = new DialogRecord(
             DialogKey.NewDialogKey(), 
             "New .NET Solution",
             typeof(CSharpProjectFormDisplay),
-            null);
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CSharpProjectFormDisplay.SolutionAbsoluteFilePath),
+                    solutionAbsoluteFilePath
+                }
+            });
         
         Dispatcher.Dispatch(
             new RegisterDialogRecordAction(
