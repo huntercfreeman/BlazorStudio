@@ -26,7 +26,7 @@ public partial class StartupControlsDisplay : FluxorComponent
             return Task.CompletedTask;
         
         var startProgramWithoutDebugging = new TerminalCommand(
-            TerminalCommandKey.NewTerminalCommandKey(),
+            TerminalCommandFacts.EXECUTION_TERMINAL,
             null,
             async terminalCommand =>
             {

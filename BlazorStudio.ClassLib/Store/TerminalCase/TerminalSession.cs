@@ -11,6 +11,8 @@ public class TerminalSession
     {
         _terminalCommand = terminalCommand;
     }
+    
+    public TerminalSessionKey TerminalSessionKey { get; }
 
     public static async Task<TerminalSession> BeginSession(TerminalCommand terminalCommand)
     {
