@@ -5,20 +5,33 @@ using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
-public partial record TerminalSession
+public record TerminalSession
 {
-    public TerminalSessionKey TerminalSessionKey { get; init; } = 
-        TerminalSessionKey.NewTerminalSessionKey();
-
-    public string? WorkingDirectoryAbsoluteFilePathString { get; init; }
-
-    public ImmutableList<TerminalCommand> TerminalCommandsHistory { get; init; }
-    public TerminalCommandKey CurrentlyExecutingTerminalCommandKey { get; init; }
-
+    private readonly List<TerminalCommand> _terminalCommandsHistory = new();
+    
     /// <summary>
     /// TODO: Prove that standard error is correctly being redirected to standard out
     /// </summary>
-    private Dictionary<TerminalCommandKey, StringBuilder> _standardOutBuilderMap { get; } = new();
+    private readonly Dictionary<TerminalCommandKey, StringBuilder> _standardOutBuilderMap = new();
+
+    public TerminalSession(
+        string? workingDirectoryAbsoluteFilePathString,
+        IDispatcher dispatcher)
+    {
+        WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
+        Dispatcher = dispatcher;
+    }
+
+    public TerminalSessionKey TerminalSessionKey { get; } = 
+        TerminalSessionKey.NewTerminalSessionKey();
+
+    public string? WorkingDirectoryAbsoluteFilePathString { get; private set; }
+    
+    public IDispatcher Dispatcher { get; }
+    
+    public TerminalCommand CurrentlyExecutingTerminalCommand { get; private set; }
+    
+    public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
 
     public string ReadStandardOut()
     {
@@ -34,7 +47,9 @@ public partial record TerminalSession
             .ToString();
     }
     
-    public async Task<TerminalSession> ExecuteCommand(
+    public async Task
+    
+    private async Task<TerminalSession> ExecuteCommandAsync(
         TerminalCommand terminalCommand,
         IDispatcher dispatcher)
     {
