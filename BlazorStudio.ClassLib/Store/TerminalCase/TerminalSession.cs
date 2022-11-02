@@ -35,7 +35,7 @@ public record TerminalSession
     
     public IDispatcher Dispatcher { get; }
     
-    public TerminalCommand CurrentlyExecutingTerminalCommand { get; private set; }
+    public TerminalCommand ActiveTerminalCommand { get; private set; }
     
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
 
@@ -116,6 +116,9 @@ public record TerminalSession
                 _lifeOfTerminalCommandConsumerSemaphoreSlim.Release();
             }
         }
+
+        _terminalCommandsHistory.Add(terminalCommand);
+        ActiveTerminalCommand = terminalCommand;
         
         var process = new Process();
 
