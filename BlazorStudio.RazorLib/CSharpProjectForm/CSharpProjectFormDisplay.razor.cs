@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.CommandLine;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -18,6 +19,9 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
+    
+    [Parameter]
+    public IAbsoluteFilePath? SolutionAbsoluteFilePath { get; set; }
 
     private readonly TerminalCommandKey _newCSharpProjectTerminalCommandKey =
         TerminalCommandKey.NewTerminalCommandKey();
@@ -43,11 +47,17 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         ? "{enter parent directory name}"
         : _parentDirectoryName;
 
-    private string InterpolatedCommand =>
+    private string InterpolatedNewCSharpProjectCommand =>
         DotNetCliFacts.FormatDotnetNewCSharpProject(
             _projectTemplateName,
             _cSharpProjectName,
             _optionalParameters);
+    
+    private string InterpolatedAddExistingProjectToSolutionCommand =>
+        DotNetCliFacts.AddExistingProjectToSolution(
+            SolutionAbsoluteFilePath?.GetAbsoluteFilePathString() 
+                ?? string.Empty,
+            $"{_cSharpProjectName}/{_cSharpProjectName}.csproj");
 
     private void RequestInputFileForParentDirectory()
     {
@@ -85,12 +95,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task StartNewCSharpProjectCommandOnClick()
     {
-        var interpolatedCommand = InterpolatedCommand;
+        var localInterpolatedNewCSharpProjectCommand = InterpolatedNewCSharpProjectCommand;
+        var localInterpolatedAddExistingProjectToSolutionCommand = InterpolatedAddExistingProjectToSolutionCommand;
 
         var localProjectTemplateName = _projectTemplateName;
         var localCSharpProjectName = _cSharpProjectName;
         var localOptionalParameters = _optionalParameters;
         var localParentDirectoryName = _parentDirectoryName;
+        var localSolutionAbsoluteFilePath = SolutionAbsoluteFilePath;
 
         if (string.IsNullOrWhiteSpace(localProjectTemplateName) ||
             string.IsNullOrWhiteSpace(localCSharpProjectName) ||
@@ -101,8 +113,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         var newDotNetSolutionCommand = new TerminalCommand(
             _newCSharpProjectTerminalCommandKey,
-            interpolatedCommand,
-            _parentDirectoryName,
+            localInterpolatedNewCSharpProjectCommand,
+            localParentDirectoryName,
             _newCSharpProjectCancellationTokenSource.Token);
 
         var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
@@ -110,5 +122,17 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         await generalTerminalSession
             .EnqueueCommandAsync(newDotNetSolutionCommand);
+
+        if (SolutionAbsoluteFilePath is not null)
+        {
+            var addExistingProjectToSolutionCommand = new TerminalCommand(
+                _newCSharpProjectTerminalCommandKey,
+                localInterpolatedAddExistingProjectToSolutionCommand,
+                localParentDirectoryName,
+                _newCSharpProjectCancellationTokenSource.Token);
+            
+            await generalTerminalSession
+                .EnqueueCommandAsync(newDotNetSolutionCommand);
+        }
     }
 }

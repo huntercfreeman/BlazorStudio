@@ -40,6 +40,16 @@ public static class DotNetCliFacts
         return $"dotnet new {projectTemplateName} -o {cSharpProjectName} {optionalParameters}";
     }
     
+    public static string AddExistingProjectToSolution(
+        string solutionAbsoluteFilePathString, 
+        string cSharpProjectRelativePathToWorkingDirectory)
+    {
+        solutionAbsoluteFilePathString = QuoteValue(solutionAbsoluteFilePathString);
+        cSharpProjectRelativePathToWorkingDirectory = QuoteValue(cSharpProjectRelativePathToWorkingDirectory);
+        
+        return $"dotnet sln {solutionAbsoluteFilePathString} add {cSharpProjectRelativePathToWorkingDirectory}";
+    }
+    
     private static string QuoteValue(string parameter)
     {
         return $"\"{parameter}\"";
