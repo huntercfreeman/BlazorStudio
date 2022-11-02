@@ -4,4 +4,5 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 public record TerminalCommand(
     TerminalCommandKey TerminalCommandKey,
-    string Command);
+    string Command,
+    CancellationToken CancellationToken = default);

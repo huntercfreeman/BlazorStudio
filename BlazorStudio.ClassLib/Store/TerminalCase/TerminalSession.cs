@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
 using Fluxor;
@@ -8,7 +9,9 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 public record TerminalSession
 {
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
-    
+
+    private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
+
     /// <summary>
     /// TODO: Prove that standard error is correctly being redirected to standard out
     /// </summary>
@@ -22,7 +25,10 @@ public record TerminalSession
         Dispatcher = dispatcher;
     }
 
-    public TerminalSessionKey TerminalSessionKey { get; } = 
+    private readonly SemaphoreSlim _lifeOfTerminalCommandConsumerSemaphoreSlim = new(1, 1);
+    private bool _hasTerminalCommandConsumer;
+    
+    public TerminalSessionKey TerminalSessionKey { get; init; } = 
         TerminalSessionKey.NewTerminalSessionKey();
 
     public string? WorkingDirectoryAbsoluteFilePathString { get; private set; }
@@ -46,13 +52,73 @@ public record TerminalSession
         return _standardOutBuilderMap[specificTerminalCommandKey]
             .ToString();
     }
-    
-    public async Task
-    
-    private async Task<TerminalSession> ExecuteCommandAsync(
-        TerminalCommand terminalCommand,
-        IDispatcher dispatcher)
+
+    public async Task EnqueueCommandAsync(TerminalCommand terminalCommand)
     {
+        _terminalCommandsConcurrentQueue.Enqueue(terminalCommand);
+
+        try
+        {
+            await _lifeOfTerminalCommandConsumerSemaphoreSlim.WaitAsync();
+
+            if (_hasTerminalCommandConsumer)
+            {
+                // Only 1 terminal command can run at a
+                // time foreach terminal session
+                //
+                // thereby only have 1 consumer
+                return;
+            }
+            else
+            {
+                _hasTerminalCommandConsumer = true;
+                
+                // If a terminal is not executing a command
+                // it will 'dispose' of the consumer
+                //
+                // thereby a consumer will need to be
+                // made if there isn't one
+                //
+                // Task.Run as to not have a chance of blocking the UI thread?
+                _ = Task.Run(async () =>
+                {
+                    await ConsumeTerminalCommandsAsync();
+                });
+            }
+        }
+        finally
+        {
+            _lifeOfTerminalCommandConsumerSemaphoreSlim.Release();
+        }
+    }
+    
+    private async Task ConsumeTerminalCommandsAsync()
+    {
+        // outer if(.Any()) is for performance of not having to every loop
+        // await the semaphore
+        //
+        // await semaphore only if it seems like one should dispose of the consumer
+        // and then double check
+        if (!_terminalCommandsConcurrentQueue.Any())
+        {
+            try
+            {
+                await _lifeOfTerminalCommandConsumerSemaphoreSlim.WaitAsync();
+
+                if (!_terminalCommandsConcurrentQueue.Any())
+                {
+                    _hasTerminalCommandConsumer = false;
+                    return;
+                }   
+            }
+            finally
+            {
+                _lifeOfTerminalCommandConsumerSemaphoreSlim.Release();
+            }
+        }
+        
+        
+        
         var process = new Process();
 
         if (WorkingDirectoryAbsoluteFilePathString is not null)

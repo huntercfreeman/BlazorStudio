@@ -20,7 +20,8 @@ public record TerminalSessionsState
         foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
         {
             var terminalSession = new TerminalSession(
-                null)
+                null,
+                dispatcher)
             {
                  TerminalSessionKey = terminalSessionKey
             };
@@ -29,13 +30,5 @@ public record TerminalSessionsState
                 .Add(terminalSessionKey, terminalSession);
         }
     }
-    
-    public record SetWorkingDirectoryAbsoluteFilePathStringAction(
-        TerminalSessionKey TerminalSessionKey,
-        string? WorkingDirectoryAbsoluteFilePathString);
-    
-    public record EnqueueTerminalCommandAction(
-        TerminalSessionKey TerminalSessionKey,
-        TerminalCommand TerminalCommand);
 }
 
