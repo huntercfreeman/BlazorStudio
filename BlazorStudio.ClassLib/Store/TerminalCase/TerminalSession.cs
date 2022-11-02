@@ -119,6 +119,9 @@ public record TerminalSession
             }
         }
 
+        if (terminalCommand.ChangeWorkingDirectoryTo is not null)
+            WorkingDirectoryAbsoluteFilePathString = terminalCommand.ChangeWorkingDirectoryTo;
+
         _terminalCommandsHistory.Add(terminalCommand);
         ActiveTerminalCommand = terminalCommand;
         
