@@ -35,7 +35,7 @@ public partial record TerminalSession
     }
     
     public async Task<TerminalSession> ExecuteCommand(
-        string command,
+        TerminalCommand terminalCommand,
         IDispatcher dispatcher)
     {
         var process = new Process();
@@ -51,12 +51,12 @@ public partial record TerminalSession
         if (File.Exists(bash))
         {
             process.StartInfo.FileName = bash;
-            process.StartInfo.Arguments = $"-c \"{command}\"";
+            process.StartInfo.Arguments = $"-c \"{terminalCommand.Command}\"";
         }
         else
         {
             process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.Arguments = $"/c {command} 2>&1";
+            process.StartInfo.Arguments = $"/c {terminalCommand.Command} 2>&1";
         }
 
         // Start the child process.
@@ -69,24 +69,18 @@ public partial record TerminalSession
 
         void OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            // TODO: Remove this temporary hack to get the UI to rerender am tired and needed a motivation boost from seeing the progress visually
-            _terminalCommand = _terminalCommand with
-            {
-                
-            };
-            
-            _terminalCommand.StandardOut
+            _standardOutBuilderMap[terminalCommand.TerminalCommandKey]
                 .Append(e.Data ?? string.Empty);
-            
-            dispatcher.Dispatch(
-                new ReplaceTerminalResultAction(
-                    _terminalCommand));
         }
 
         process.OutputDataReceived += OutputDataReceived;
         
         try
         {
+            _standardOutBuilderMap.TryAdd(
+                terminalCommand.TerminalCommandKey,
+                new StringBuilder());
+            
             process.Start();
 
             process.BeginOutputReadLine();
