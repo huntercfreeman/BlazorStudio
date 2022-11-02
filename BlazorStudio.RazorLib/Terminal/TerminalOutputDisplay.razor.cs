@@ -7,38 +7,36 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Terminal;
 
-public partial class TerminalOutputDisplay : ComponentBase, IDisposable
+public partial class TerminalOutputDisplay : ComponentBase
 {
     [Inject]
-    private IStateSelection<TerminalResultState, TerminalCommand?> TerminalResultSelection { get; set; } = null!;
+    private IStateSelection<TerminalSessionsState, TerminalSession> TerminalSessionsStateSelection { get; set; } = null!;
 
+    /// <summary>
+    /// <see cref="TerminalSessionKey"/> is used to narrow down the terminal
+    /// session.
+    /// </summary>
     [Parameter, EditorRequired]
-    public TerminalCommandKey TerminalCommandKey { get; set; } = null!;
-    
+    public TerminalSessionKey TerminalSessionKey { get; set; } = null!;
+    /// <summary>
+    /// <see cref="TerminalCommandKey"/> is used to narrow down even further
+    /// to the output of a specific command that was executed in a specific
+    /// terminal session.
+    /// <br/><br/>
+    /// Optional
+    /// </summary>
+    [Parameter]
+    public TerminalCommandKey? TerminalCommandKey { get; set; }
+
     protected override void OnInitialized()
     {
-        TerminalResultSelection
-            .Select(x =>
-            {
-                if (x.TerminalCommandResultMap
-                    .TryGetValue(TerminalCommandKey, out var terminalCommand))
-                {
-                    return terminalCommand;
-                }
-
-                return null;
-            });
-        
-        TerminalResultSelection.SelectedValueChanged += TerminalResultSelectionOnSelectedValueChanged;
+        TerminalSessionsStateSelection
+            .Select(x => 
+                x.TerminalSessionMap[TerminalSessionKey]);
         
         base.OnInitialized();
     }
-
-    private void TerminalResultSelectionOnSelectedValueChanged(object? sender, TerminalCommand? e)
-    {
-        InvokeAsync(StateHasChanged);
-    }
-
+    
     private MarkupString GetAllTextEscaped(string value)
     {
         return (MarkupString)value
@@ -85,10 +83,5 @@ public partial class TerminalOutputDisplay : ComponentBase, IDisposable
             outputBuilder.Append(input.EscapeHtml() + "<br />");
 
         return (MarkupString)(outputBuilder.ToString());
-    }
-
-    public void Dispose()
-    {
-        TerminalResultSelection.SelectedValueChanged -= TerminalResultSelectionOnSelectedValueChanged;
     }
 }
