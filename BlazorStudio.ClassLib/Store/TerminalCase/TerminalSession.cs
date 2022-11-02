@@ -94,18 +94,18 @@ public record TerminalSession
     
     private async Task ConsumeTerminalCommandsAsync()
     {
-        // outer if(.Any()) is for performance of not having to every loop
-        // await the semaphore
-        //
-        // await semaphore only if it seems like one should dispose of the consumer
-        // and then double check
-        if (!_terminalCommandsConcurrentQueue.Any())
+        if (!_terminalCommandsConcurrentQueue.TryDequeue(out var terminalCommand))
         {
             try
             {
                 await _lifeOfTerminalCommandConsumerSemaphoreSlim.WaitAsync();
 
-                if (!_terminalCommandsConcurrentQueue.Any())
+                // duplicate inner if(TryDequeue) is for performance of not having to every loop
+                // await the semaphore
+                //
+                // await semaphore only if it seems like one should dispose of the consumer
+                // and then double check nothing was added in between those times
+                if (!_terminalCommandsConcurrentQueue.TryDequeue(out terminalCommand))
                 {
                     _hasTerminalCommandConsumer = false;
                     return;
@@ -116,8 +116,6 @@ public record TerminalSession
                 _lifeOfTerminalCommandConsumerSemaphoreSlim.Release();
             }
         }
-        
-        
         
         var process = new Process();
 
@@ -172,7 +170,5 @@ public record TerminalSession
         {
             process.CancelOutputRead();
         }
-
-        return this;
     }
 }
