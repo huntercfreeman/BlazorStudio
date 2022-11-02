@@ -10,5 +10,5 @@ namespace BlazorStudio.RazorLib.Terminal;
 public partial class TerminalDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+    private IState<TerminalSessionsState> TerminalStateWrap { get; set; } = null!;
 }

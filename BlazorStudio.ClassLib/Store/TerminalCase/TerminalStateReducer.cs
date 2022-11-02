@@ -5,11 +5,11 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 public class TerminalStateReducer
 {
     [ReducerMethod]
-    public static TerminalState ReduceSetActiveTerminalCommandKeyAction(
-        TerminalState inTerminalState,
-        TerminalState.SetActiveTerminalCommandKeyAction setActiveTerminalCommandKeyAction)
+    public static TerminalSessionsState ReduceSetActiveTerminalCommandKeyAction(
+        TerminalSessionsState inTerminalSessionsState,
+        TerminalSessionsState.SetActiveTerminalCommandKeyAction setActiveTerminalCommandKeyAction)
     {
-        return inTerminalState with
+        return inTerminalSessionsState with
         {
             ActiveTerminalCommandKey = setActiveTerminalCommandKeyAction
                 .TerminalCommandKey

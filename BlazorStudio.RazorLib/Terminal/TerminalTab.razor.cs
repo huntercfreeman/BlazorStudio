@@ -8,7 +8,7 @@ namespace BlazorStudio.RazorLib.Terminal;
 public partial class TerminalTab : FluxorComponent
 {
     [Inject]
-    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+    private IState<TerminalSessionsState> TerminalStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -29,7 +29,7 @@ public partial class TerminalTab : FluxorComponent
     private Task DispatchSetActiveTerminalCommandKeyActionOnClick()
     {
         Dispatcher.Dispatch(
-            new TerminalState.SetActiveTerminalCommandKeyAction(
+            new TerminalSessionsState.SetActiveTerminalCommandKeyAction(
                 TerminalCommandKey));
 
         return Task.CompletedTask;
