@@ -1,0 +1,29 @@
+@{
+    var terminalSession = TerminalSessionsStateSelection.Value;
+
+    <div class="bstudio_terminal-output-display">
+        @{
+            string outputString = string.Empty;
+
+            if (terminalSession is not null)
+            {
+                if (TerminalCommandKey is null)
+                {
+                    // Render out all of the session's standard output
+                    outputString = terminalSession
+                        .ReadStandardOut()
+                            ?? string.Empty;
+                }
+                else
+                {
+                    // Render out ONLY the standard output from the specified command
+                    outputString = terminalSession
+                        .ReadStandardOut(TerminalCommandKey)
+                            ?? string.Empty;
+                }
+            }
+        }
+        
+        @ParseHttpLinks(outputString)
+    </div>        
+}

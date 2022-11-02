@@ -1,8 +1,9 @@
 ﻿@using BlazorStudio.ClassLib.Context
+@using BlazorStudio.ClassLib.Store.TerminalCase
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
+<ContextBoundary ContextRecord="ContextFacts.TerminalContext"
                  ClassCssString="bstudio_terminal-display"
                  StyleCssString="height: 100%; width: 100%;">
 
@@ -12,19 +13,14 @@
 
     <div class="bstudio_section-body"
          style="width: 100%;">
-        Body <ButtonDisplay OnClickFunc="async () => { }">StateHasChanged</ButtonDisplay>
         
-        <div style="width: 100%; overflow-wrap: anywhere;">
-            @{
-                var terminalResultState = TerminalResultStateWrap.Value;
-
-                foreach (var result in TerminalResultStateWrap.Value.TerminalCommandResultMap)
-                {
-                    <div>
-                        @ParseHttpLinks(result.Value.StandardOut.ToString())    
-                    </div>
-                }
+        <div class="bstudio_terminal-tabs-container">
+            @foreach (var terminalCommandKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
+            {
+                <TerminalTab WellKnownTerminalSessionKey="terminalCommandKey"/>
             }
         </div>
+
+        <TerminalOutputDisplay TerminalSessionKey="WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey"/>
     </div>
 </ContextBoundary>

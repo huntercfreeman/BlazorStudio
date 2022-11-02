@@ -431,13 +431,18 @@ em {
     align-items: center;
 }
 
+.bstudio_button:hover {
+    background-color: var(--bstudio_primary-hover-background-color);
+}
+
 .bstudio_button:focus {
     outline: solid var(--bstudio_menu-option-display-focus-outline-size) var(--bstudio_primary-emphasis-foreground-color);
     background-color: var(--bstudio_primary-hover-background-color);
 }
 
-.bstudio_button:hover {
-    background-color: var(--bstudio_primary-hover-background-color);
+.bstudio_button.bstudio_active {
+    background-color: var(--bstudio_active-button-background-color);
+    color: var(--bstudio_active-button-primary-font-color);
 }
 
 .bstudio_button.bstudio_disabled {
@@ -531,4 +536,13 @@ em {
 
 .bstudio_new-dot-net-solution-form-label {
     margin-right: 10px;
+}
+
+.bstudio_terminal-tabs-container {
+    display: flex;
+}
+
+.bstudio_terminal-output-display {
+    width: 100%; 
+    overflow-wrap: anywhere;
 }

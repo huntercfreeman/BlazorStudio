@@ -1,4 +1,8 @@
 ﻿@using BlazorStudio.RazorLib.InputFile
+@using BlazorStudio.RazorLib.Terminal
+@using BlazorStudio.ClassLib.Store.TerminalCase
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_new-dot-net-solution-form">
     
@@ -58,4 +62,7 @@
     <ButtonDisplay OnClickFunc="StartNewDotNetSolutionCommandOnClick">
         Run
     </ButtonDisplay>
+    
+    <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
+                           TerminalCommandKey="_newDotNetSolutionTerminalCommandKey" />
 </div>

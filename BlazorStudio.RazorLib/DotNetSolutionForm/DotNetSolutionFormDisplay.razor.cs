@@ -10,20 +10,26 @@ using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.DotNetSolutionForm;
 
-public partial class DotNetSolutionFormDisplay : ComponentBase
+public partial class DotNetSolutionFormDisplay : FluxorComponent
 {
     [Inject]
-    private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
+    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
 
+    private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey = 
+        TerminalCommandKey.NewTerminalCommandKey();
+
+    private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
+    
     private string _solutionName = string.Empty;
     private string _parentDirectoryName = string.Empty;
 
@@ -72,7 +78,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
                 }.ToImmutableArray()));
     }
     
-    private Task StartNewDotNetSolutionCommandOnClick()
+    private async Task StartNewDotNetSolutionCommandOnClick()
     {
         var interpolatedCommand = InterpolatedCommand;
         var localSolutionName = _solutionName;
@@ -81,28 +87,19 @@ public partial class DotNetSolutionFormDisplay : ComponentBase
         if (string.IsNullOrWhiteSpace(localSolutionName) ||
             string.IsNullOrWhiteSpace(localParentDirectoryName))
         {
-            return Task.CompletedTask;
+            return;
         }
         
         var newDotNetSolutionCommand = new TerminalCommand(
-            TerminalCommandKey.NewTerminalCommandKey(),
+            _newDotNetSolutionTerminalCommandKey,
+            interpolatedCommand,
             _parentDirectoryName,
-            async terminalCommand =>
-            {
-                var terminalSession = await TerminalSession
-                    .BeginSession(terminalCommand);
-                
-                await terminalSession.ExecuteCommand(
-                    interpolatedCommand,
-                    Dispatcher);
-            },
-            new StringBuilder(),
-            new StringBuilder());
+            _newDotNetSolutionCancellationTokenSource.Token);
         
-        Dispatcher.Dispatch(
-            new TerminalStateEffects.QueueTerminalCommandToExecuteAction(
-                newDotNetSolutionCommand));
+        var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
         
-        return Task.CompletedTask;
+        await generalTerminalSession
+            .EnqueueCommandAsync(newDotNetSolutionCommand);
     }
 }

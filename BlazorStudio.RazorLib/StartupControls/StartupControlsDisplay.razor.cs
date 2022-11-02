@@ -16,36 +16,34 @@ public partial class StartupControlsDisplay : FluxorComponent
     [Inject]
     private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
     [Inject]
+    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     
-    private Task StartProgramWithoutDebuggingOnClick()
+    private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey = 
+        TerminalCommandKey.NewTerminalCommandKey();
+
+    private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
+    
+    private async Task StartProgramWithoutDebuggingOnClick()
     {
         var programExecutionState = ProgramExecutionStateWrap.Value;
 
         if (programExecutionState.StartupProjectAbsoluteFilePath is null)
-            return Task.CompletedTask;
+            return;
         
-        var startProgramWithoutDebugging = new TerminalCommand(
-            TerminalCommandKey.NewTerminalCommandKey(),
+        var startProgramWithoutDebuggingCommand = new TerminalCommand(
+            _newDotNetSolutionTerminalCommandKey,
+            DotNetCliFacts
+                .FormatStartProjectWithoutDebugging(
+                    programExecutionState.StartupProjectAbsoluteFilePath),
             null,
-            async terminalCommand =>
-            {
-                var terminalSession = await TerminalSession
-                    .BeginSession(terminalCommand);
-                
-                await terminalSession.ExecuteCommand(
-                    DotNetCliFacts
-                        .FormatStartProjectWithoutDebugging(
-                            programExecutionState.StartupProjectAbsoluteFilePath),
-                    Dispatcher);
-            },
-            new StringBuilder(),
-            new StringBuilder());
+            _newDotNetSolutionCancellationTokenSource.Token);
         
-        Dispatcher.Dispatch(
-            new TerminalStateEffects.QueueTerminalCommandToExecuteAction(
-                startProgramWithoutDebugging));
+        var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
         
-        return Task.CompletedTask;
+        await generalTerminalSession
+            .EnqueueCommandAsync(startProgramWithoutDebuggingCommand);
     }
 }

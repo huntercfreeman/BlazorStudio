@@ -244,7 +244,9 @@ public record InputFileState(
             foreach (var treeViewModel in openedTreeViewModel.Children)
             {
                 treeViewModel.IsDisplayed = treeViewModel.Item.FilenameWithExtension
-                    .Contains(setSearchQueryAction.SearchQuery);
+                    .Contains(
+                        setSearchQueryAction.SearchQuery, 
+                        StringComparison.InvariantCultureIgnoreCase);
             }
 
             return inInputFileState with

@@ -1,9 +1,11 @@
 ﻿namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
-public record TerminalCommandKey(Guid Guid)
+public record TerminalCommandKey(Guid Guid, string? DisplayName)
 {
-    public static TerminalCommandKey NewTerminalCommandKey()
+    public static TerminalCommandKey Empty { get; } = new(Guid.Empty, null);
+    
+    public static TerminalCommandKey NewTerminalCommandKey(string? displayName = null)
     {
-        return new(Guid.NewGuid());
+        return new(Guid.NewGuid(), displayName);
     }
 }
