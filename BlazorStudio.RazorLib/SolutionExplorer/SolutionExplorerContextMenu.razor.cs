@@ -25,6 +25,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         
         switch (treeViewModel.Item.ExtensionNoPeriod)
         {
+            case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
+                menuRecords.AddRange(
+                    GetFileMenuOptions()
+                        .Union(GetDotNetSolutionMenuOptions(treeViewModel)));
+                break;
             case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
                 menuRecords.AddRange(
                     GetFileMenuOptions()
@@ -49,9 +54,33 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
     }
 
-    private MenuOptionRecord[] GetDotNetSolutionMenuOptions()
+    private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
-        return Array.Empty<MenuOptionRecord>();
+        // TODO: Add menu options for non C# projects perhaps a more generic option is good
+
+        var addNewCSharpProject = new MenuOptionRecord(
+            "New C# Project",
+            () => Dispatcher.Dispatch(
+                new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
+                    treeViewModel.Item)));
+        
+        var addExistingCSharpProject = new MenuOptionRecord(
+            "Existing C# Project",
+            () => Dispatcher.Dispatch(
+                new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
+                    treeViewModel.Item)));
+        
+        return new[]
+        {
+            new MenuOptionRecord(
+                "Add",
+                SubMenu: new MenuRecord(
+                    new MenuOptionRecord[]
+                    {
+                        addNewCSharpProject,
+                        addExistingCSharpProject
+                    }.ToImmutableArray())),
+        };
     }
     
     private MenuOptionRecord[] GetCSharpProjectMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
