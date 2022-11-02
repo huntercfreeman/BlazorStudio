@@ -2,8 +2,11 @@
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
+using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.TreeView;
+using BlazorStudio.RazorLib.CSharpProjectForm;
+using BlazorStudio.RazorLib.DotNetSolutionForm;
 using BlazorStudio.RazorLib.TreeView;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -25,6 +28,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         
         switch (treeViewModel.Item.ExtensionNoPeriod)
         {
+            case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
+                menuRecords.AddRange(
+                    GetFileMenuOptions()
+                        .Union(GetDotNetSolutionMenuOptions(treeViewModel)));
+                break;
             case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
                 menuRecords.AddRange(
                     GetFileMenuOptions()
@@ -49,9 +57,31 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
     }
 
-    private MenuOptionRecord[] GetDotNetSolutionMenuOptions()
+    private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
-        return Array.Empty<MenuOptionRecord>();
+        // TODO: Add menu options for non C# projects perhaps a more generic option is good
+
+        var addNewCSharpProject = new MenuOptionRecord(
+            "New C# Project",
+            () => OpenNewCSharpProjectDialog(treeViewModel.Item));
+        
+        var addExistingCSharpProject = new MenuOptionRecord(
+            "Existing C# Project",
+            () => Dispatcher.Dispatch(
+                new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
+                    treeViewModel.Item)));
+        
+        return new[]
+        {
+            new MenuOptionRecord(
+                "Add",
+                SubMenu: new MenuRecord(
+                    new MenuOptionRecord[]
+                    {
+                        addNewCSharpProject,
+                        addExistingCSharpProject
+                    }.ToImmutableArray())),
+        };
     }
     
     private MenuOptionRecord[] GetCSharpProjectMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
@@ -79,5 +109,24 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new MenuOptionRecord(
                 "Rename"),
         };
+    }
+    
+    private void OpenNewCSharpProjectDialog(IAbsoluteFilePath solutionAbsoluteFilePath)
+    {
+        var dialogRecord = new DialogRecord(
+            DialogKey.NewDialogKey(), 
+            "New .NET Solution",
+            typeof(CSharpProjectFormDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CSharpProjectFormDisplay.SolutionAbsoluteFilePath),
+                    solutionAbsoluteFilePath
+                }
+            });
+        
+        Dispatcher.Dispatch(
+            new RegisterDialogRecordAction(
+                dialogRecord));
     }
 }

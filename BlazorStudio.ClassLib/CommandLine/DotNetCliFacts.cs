@@ -3,7 +3,7 @@
 namespace BlazorStudio.ClassLib.CommandLine;
 
 /// <summary>
-/// Any parameters given will be wrapped in quotes internally
+/// Any values given will be wrapped in quotes internally
 /// </summary>
 public static class DotNetCliFacts
 {
@@ -17,19 +17,40 @@ public static class DotNetCliFacts
     
     public static string FormatStartProjectWithoutDebugging(string projectPath)
     {
-        projectPath = QuoteParameter(projectPath);
+        projectPath = QuoteValue(projectPath);
         
         return $"dotnet run --project {projectPath}";
     }
     
     public static string FormatDotnetNewSln(string solutionName)
     {
-        solutionName = QuoteParameter(solutionName);
+        solutionName = QuoteValue(solutionName);
         
         return $"{DotnetNewSlnCommand} -o {solutionName}";
     }
     
-    private static string QuoteParameter(string parameter)
+    public static string FormatDotnetNewCSharpProject(
+        string projectTemplateName, 
+        string cSharpProjectName, 
+        string optionalParameters)
+    {
+        projectTemplateName = QuoteValue(projectTemplateName);
+        cSharpProjectName = QuoteValue(cSharpProjectName);
+        
+        return $"dotnet new {projectTemplateName} -o {cSharpProjectName} {optionalParameters}";
+    }
+    
+    public static string AddExistingProjectToSolution(
+        string solutionAbsoluteFilePathString, 
+        string cSharpProjectRelativePathToWorkingDirectory)
+    {
+        solutionAbsoluteFilePathString = QuoteValue(solutionAbsoluteFilePathString);
+        cSharpProjectRelativePathToWorkingDirectory = QuoteValue(cSharpProjectRelativePathToWorkingDirectory);
+        
+        return $"dotnet sln {solutionAbsoluteFilePathString} add {cSharpProjectRelativePathToWorkingDirectory}";
+    }
+    
+    private static string QuoteValue(string parameter)
     {
         return $"\"{parameter}\"";
     }
