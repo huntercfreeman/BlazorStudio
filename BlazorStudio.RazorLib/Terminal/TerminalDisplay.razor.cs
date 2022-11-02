@@ -11,4 +11,6 @@ public partial class TerminalDisplay : FluxorComponent
 {
     [Inject]
     private IState<TerminalSessionsState> TerminalStateWrap { get; set; } = null!;
+    
+    [Parameter, EditorRequired]
 }

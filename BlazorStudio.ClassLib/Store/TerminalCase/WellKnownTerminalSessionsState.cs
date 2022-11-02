@@ -9,5 +9,5 @@ public record WellKnownTerminalSessionsState(TerminalCommandKey ActiveTerminalCo
     {
     }
 
-    public record SetActiveTerminalCommandKey(TerminalCommandKey TerminalCommandKey);
+    public record SetActiveWellKnownTerminalCommandKey(TerminalCommandKey TerminalCommandKey);
 }

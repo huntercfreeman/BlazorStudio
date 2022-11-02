@@ -8,12 +8,12 @@ namespace BlazorStudio.RazorLib.Terminal;
 public partial class TerminalTab : FluxorComponent
 {
     [Inject]
-    private IState<TerminalSessionsState> TerminalStateWrap { get; set; } = null!;
+    private IState<WellKnownTerminalSessionsState> WellKnownTerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TerminalCommandKey TerminalCommandKey { get; set; } = null!;
+    public TerminalCommandKey WellKnownTerminalCommandKey { get; set; } = null!;
 
     private string CssClassString => 
         $"bstudio_terminal-tab {ActiveTerminalCommandKeyCssClassString}";
@@ -24,13 +24,14 @@ public partial class TerminalTab : FluxorComponent
             : string.Empty;
 
     private bool IsActiveTerminalCommandKey => 
-        TerminalStateWrap.Value.ActiveTerminalCommandKey == TerminalCommandKey;
+        WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalCommandKey == 
+            WellKnownTerminalCommandKey;
 
     private Task DispatchSetActiveTerminalCommandKeyActionOnClick()
     {
         Dispatcher.Dispatch(
-            new TerminalSessionsState.SetActiveTerminalCommandKeyAction(
-                TerminalCommandKey));
+            new WellKnownTerminalSessionsState.SetActiveWellKnownTerminalCommandKey(
+                WellKnownTerminalCommandKey));
 
         return Task.CompletedTask;
     }
