@@ -1,5 +1,6 @@
 ﻿@using BlazorStudio.RazorLib.InputFile
 @using BlazorStudio.RazorLib.Terminal
+@using BlazorStudio.ClassLib.Store.TerminalCase
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -62,5 +63,6 @@
         Run
     </ButtonDisplay>
     
-    <TerminalOutputDisplay TerminalCommandKey="_newDotNetSolutionTerminalCommandKey" />
+    <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
+                           TerminalCommandKey="_newDotNetSolutionTerminalCommandKey" />
 </div>

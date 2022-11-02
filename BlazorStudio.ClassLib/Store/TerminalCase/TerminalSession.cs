@@ -17,12 +17,9 @@ public record TerminalSession
     /// </summary>
     private readonly Dictionary<TerminalCommandKey, StringBuilder> _standardOutBuilderMap = new();
 
-    public TerminalSession(
-        string? workingDirectoryAbsoluteFilePathString,
-        IDispatcher dispatcher)
+    public TerminalSession(string? workingDirectoryAbsoluteFilePathString)
     {
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
-        Dispatcher = dispatcher;
     }
 
     private readonly SemaphoreSlim _lifeOfTerminalCommandConsumerSemaphoreSlim = new(1, 1);
@@ -39,7 +36,7 @@ public record TerminalSession
     
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
 
-    public string ReadStandardOut()
+    public string? ReadStandardOut()
     {
         return string
             .Join(string.Empty, _standardOutBuilderMap
@@ -47,10 +44,15 @@ public record TerminalSession
                 .ToArray());
     }
     
-    public string ReadStandardOut(TerminalCommandKey specificTerminalCommandKey)
+    public string? ReadStandardOut(TerminalCommandKey terminalCommandKey)
     {
-        return _standardOutBuilderMap[specificTerminalCommandKey]
-            .ToString();
+        if (_standardOutBuilderMap
+            .TryGetValue(terminalCommandKey, out var output))
+        {
+            return output.ToString();
+        }
+
+        return null;
     }
 
     public async Task EnqueueCommandAsync(TerminalCommand terminalCommand)

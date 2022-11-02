@@ -10,7 +10,7 @@ namespace BlazorStudio.RazorLib.Terminal;
 public partial class TerminalOutputDisplay : ComponentBase
 {
     [Inject]
-    private IStateSelection<TerminalSessionsState, TerminalSession> TerminalSessionsStateSelection { get; set; } = null!;
+    private IStateSelection<TerminalSessionsState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
 
     /// <summary>
     /// <see cref="TerminalSessionKey"/> is used to narrow down the terminal
@@ -31,8 +31,16 @@ public partial class TerminalOutputDisplay : ComponentBase
     protected override void OnInitialized()
     {
         TerminalSessionsStateSelection
-            .Select(x => 
-                x.TerminalSessionMap[TerminalSessionKey]);
+            .Select(x =>
+            {
+                if (x.TerminalSessionMap
+                    .TryGetValue(TerminalSessionKey, out var terminalSession))
+                {
+                    return terminalSession;
+                }
+
+                return null;
+            });
         
         base.OnInitialized();
     }
