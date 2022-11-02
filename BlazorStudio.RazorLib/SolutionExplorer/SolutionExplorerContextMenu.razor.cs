@@ -2,8 +2,11 @@
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
+using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.TreeView;
+using BlazorStudio.RazorLib.CSharpProjectForm;
+using BlazorStudio.RazorLib.DotNetSolutionForm;
 using BlazorStudio.RazorLib.TreeView;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -60,9 +63,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
         var addNewCSharpProject = new MenuOptionRecord(
             "New C# Project",
-            () => Dispatcher.Dispatch(
-                new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
-                    treeViewModel.Item)));
+            OpenNewCSharpProjectDialog);
         
         var addExistingCSharpProject = new MenuOptionRecord(
             "Existing C# Project",
@@ -108,5 +109,18 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new MenuOptionRecord(
                 "Rename"),
         };
+    }
+    
+    private void OpenNewCSharpProjectDialog()
+    {
+        var dialogRecord = new DialogRecord(
+            DialogKey.NewDialogKey(), 
+            "New .NET Solution",
+            typeof(CSharpProjectFormDisplay),
+            null);
+        
+        Dispatcher.Dispatch(
+            new RegisterDialogRecordAction(
+                dialogRecord));
     }
 }
