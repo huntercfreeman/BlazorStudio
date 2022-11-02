@@ -13,7 +13,7 @@ public partial class TerminalTab : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TerminalCommandKey WellKnownTerminalCommandKey { get; set; } = null!;
+    public TerminalSessionKey WellKnownTerminalSessionKey { get; set; } = null!;
 
     private string CssClassString => 
         $"bstudio_terminal-tab {ActiveTerminalCommandKeyCssClassString}";
@@ -24,14 +24,14 @@ public partial class TerminalTab : FluxorComponent
             : string.Empty;
 
     private bool IsActiveTerminalCommandKey => 
-        WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalCommandKey == 
-            WellKnownTerminalCommandKey;
+        WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey == 
+        WellKnownTerminalSessionKey;
 
     private Task DispatchSetActiveTerminalCommandKeyActionOnClick()
     {
         Dispatcher.Dispatch(
-            new WellKnownTerminalSessionsState.SetActiveWellKnownTerminalCommandKey(
-                WellKnownTerminalCommandKey));
+            new WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey(
+                WellKnownTerminalSessionKey));
 
         return Task.CompletedTask;
     }

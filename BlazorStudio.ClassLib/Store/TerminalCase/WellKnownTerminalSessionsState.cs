@@ -3,11 +3,11 @@ using Fluxor;
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
 [FeatureState]
-public record WellKnownTerminalSessionsState(TerminalCommandKey ActiveTerminalCommandKey)
+public record WellKnownTerminalSessionsState(TerminalSessionKey ActiveTerminalSessionKey)
 {
-    public WellKnownTerminalSessionsState() : this(TerminalCommandKey.Empty)
+    public WellKnownTerminalSessionsState() : this(TerminalSessionKey.Empty)
     {
     }
 
-    public record SetActiveWellKnownTerminalCommandKey(TerminalCommandKey TerminalCommandKey);
+    public record SetActiveWellKnownTerminalSessionKey(TerminalSessionKey TerminalCommandKey);
 }

@@ -7,11 +7,11 @@ public class WellKnownTerminalSessionsStateReducer
     [ReducerMethod]
     public static WellKnownTerminalSessionsState ReduceSetActiveTerminalCommandKeyAction(
         WellKnownTerminalSessionsState inWellKnownTerminalSessionsState,
-        WellKnownTerminalSessionsState.SetActiveWellKnownTerminalCommandKey setActiveWellKnownTerminalCommandKeyAction)
+        WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey setActiveWellKnownTerminalCommandKeyAction)
     {
         return inWellKnownTerminalSessionsState with
         {
-            ActiveTerminalCommandKey = setActiveWellKnownTerminalCommandKeyAction
+            ActiveTerminalSessionKey = setActiveWellKnownTerminalCommandKeyAction
                 .TerminalCommandKey
         };
     }
