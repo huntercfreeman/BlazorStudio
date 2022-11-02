@@ -89,16 +89,15 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         {
             return;
         }
-
-        var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-
         
         var newDotNetSolutionCommand = new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,
             interpolatedCommand,
             _parentDirectoryName,
             _newDotNetSolutionCancellationTokenSource.Token);
+        
+        var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
         
         await generalTerminalSession
             .EnqueueCommandAsync(newDotNetSolutionCommand);
