@@ -34,6 +34,7 @@ public partial class EditorDisplay : FluxorComponent
     
     private readonly SemaphoreSlim _afterOnKeyDownSyntaxHighlightingSemaphoreSlim = new(1, 1);
     private TextEditorDisplay? _textEditorDisplay;
+    private EditorTabsDisplay? _editorTabsDisplay;
 
     private async Task HandleAfterOnKeyDownAsync(
         TextEditorBase textEditor,
@@ -44,6 +45,16 @@ public partial class EditorDisplay : FluxorComponent
         var primaryCursorSnapshot = cursorSnapshots
             .First(x =>
                 x.UserCursor.IsPrimaryCursor);
+
+        // Update the * for all the tabs
+        // that shows if it has been 'modified'.
+        //
+        // TODO: Change the logic for showing * such that
+        // it more accurately represents a file having been modified.
+        //
+        // This is just saying on key press presume it was modified.
+        if (_editorTabsDisplay is not null)
+            _editorTabsDisplay.ForceReloadTabs();
 
         if (keyboardEventArgs.Key == ";" ||
             KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
@@ -86,5 +97,7 @@ public partial class EditorDisplay : FluxorComponent
             content);
         
         Dispatcher.Dispatch(saveFileAction);
+        
+        textEditor.ClearEditBlocks();
     }
 }
