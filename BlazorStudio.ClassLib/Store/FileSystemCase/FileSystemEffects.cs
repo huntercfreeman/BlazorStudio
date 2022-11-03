@@ -13,34 +13,14 @@ public class FileSystemState
     private readonly ICommonComponentRenderers _commonComponentRenderers;
 
     /// <summary>
-    /// One write task can be made at a time
-    /// <br/><br/>
-    /// Many write operations can be processed concurrently however,
-    /// write operations to the SAME file are limited until the previous
-    /// write to that file is finished.
-    /// </summary>
-    private readonly SemaphoreSlim _writeFileSemaphoreSlim = new(1, 1);
-    /// <summary>
-    /// Maintain a Dictionary to map between a "string: absoluteFilePath" and
-    /// the corresponding Task that is a series of ContinueWith() operations.
-    /// <br/><br/>
-    /// TODO: Instead of doing ContinueWith() use a throttle of which
-    /// the most recent "save file" request is processed and the rest are discarded.
-    /// </summary>
-    private readonly Dictionary<string, Task> _writeTaskMap = new();
-
-    /// <summary>
-    /// "string: absoluteFilePath", "Task: writeTask"
+    /// "string: absoluteFilePath"
+    /// <br/>
+    /// "ValueTuple: containing the parameters to <see cref="PerformWriteOperationAsync"/>"
     /// </summary>
     private readonly ConcurrentDictionary<
         string, 
         (string absoluteFilePathString, SaveFileAction saveFileAction, IDispatcher dispatcher)?>
         _concurrentMapToTasksForThrottleByFile = new();
-    
-    private readonly ConcurrentDictionary<
-        string, 
-        (bool hasConsumer, SemaphoreSlim consumerLifeSemaphoreSlim)> 
-        _concurrentMapToConsumerTuplesForThrottleByFile = new();
     
     public FileSystemState(
         IFileSystemProvider fileSystemProvider,
@@ -50,7 +30,7 @@ public class FileSystemState
         _commonComponentRenderers = commonComponentRenderers;
     }
     
-    public record SaveFileAction(IAbsoluteFilePath AbsoluteFilePath, string Content);
+    public record SaveFileAction(IAbsoluteFilePath? AbsoluteFilePath, string Content);
     
     [EffectMethod]
     public async Task HandleSaveFileAction(
@@ -143,7 +123,8 @@ public class FileSystemState
         
         string notificationInformativeMessage;
         
-        if (File.Exists(absoluteFilePathString))
+        if (absoluteFilePathString is not null &&
+            File.Exists(absoluteFilePathString))
         {
             await File.WriteAllTextAsync(
                 absoluteFilePathString,

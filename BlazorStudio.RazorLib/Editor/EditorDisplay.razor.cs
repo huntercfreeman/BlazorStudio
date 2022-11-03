@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.EditorCase;
+using BlazorStudio.ClassLib.Store.FileSystemCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
@@ -71,9 +72,19 @@ public partial class EditorDisplay : FluxorComponent
 
     private void HandleOnSaveRequested(TextEditorBase textEditor)
     {
-        var context = textEditor.GetAllText();
+        var content = textEditor.GetAllText();
         
-        var content = await File
-            .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+        var textEditorResourceMapState = TextEditorResourceMapStateWrap.Value;
+        
+        _ = textEditorResourceMapState.ResourceMap
+            .TryGetValue(
+                textEditor.Key, 
+                out var resource);
+
+        var saveFileAction = new FileSystemState.SaveFileAction(
+            resource,
+            content);
+        
+        Dispatcher.Dispatch(saveFileAction);
     }
 }
