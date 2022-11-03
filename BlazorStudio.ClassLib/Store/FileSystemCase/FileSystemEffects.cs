@@ -32,7 +32,11 @@ public class FileSystemState
     /// <summary>
     /// "string: absoluteFilePath", "Task: writeTask"
     /// </summary>
-    private readonly ConcurrentDictionary<string, Task?> _concurrentMapToTasksForThrottleByFile = new();
+    private readonly ConcurrentDictionary<
+        string, 
+        (string absoluteFilePathString, SaveFileAction saveFileAction, IDispatcher dispatcher)?>
+        _concurrentMapToTasksForThrottleByFile = new();
+    
     private readonly ConcurrentDictionary<
         string, 
         (bool hasConsumer, SemaphoreSlim consumerLifeSemaphoreSlim)> 
@@ -60,8 +64,12 @@ public class FileSystemState
         _ = _concurrentMapToTasksForThrottleByFile
             .AddOrUpdate(absoluteFilePathString,
                 absoluteFilePath =>
-                    Task.Run(async () => 
-                        await PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher)),
+                {
+                    Task.Run(async () =>
+                        await PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher));
+
+                    return null;
+                },
                 (absoluteFilePath, foundExistingValue) =>
                 {
                     if (foundExistingValue is null)
@@ -79,26 +87,50 @@ public class FileSystemState
         SaveFileAction saveFileAction,
         IDispatcher dispatcher)
     {
+        bool isFirstLoop = true;
+        
         // goto is used because the do-while or while loops would have
         // hard to decipher predicates due to the double if for the semaphore
         doConsumeLabel:
 
-        // Take most recent write request and update it to be null
-        var mostRecentWriteRequest = _concurrentMapToTasksForThrottleByFile
-            .AddOrUpdate(absoluteFilePathString,
-                absoluteFilePath =>
-                    Task.Run(async () => 
-                        await PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher)),
-                (absoluteFilePath, foundExistingValue) =>
-                {
-                    if (foundExistingValue is null)
+        (string absoluteFilePathString, 
+            SaveFileAction saveFileAction, 
+            IDispatcher dispatcher)? 
+            writeRequest;
+        
+        if (isFirstLoop)
+        {
+            // Perform the first request
+            writeRequest = (absoluteFilePathString, saveFileAction, dispatcher);
+        }
+        else
+        {
+            // Take most recent write request.
+            //
+            // Then update most recent write request to be
+            // null as to throttle and take the most recent and
+            // discard the in between events.
+            writeRequest = _concurrentMapToTasksForThrottleByFile
+                .AddOrUpdate(absoluteFilePathString,
+                    absoluteFilePath =>
+                        Task.Run(async () => 
+                            await PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher)),
+                    (absoluteFilePath, foundExistingValue) =>
                     {
-                        return Task.Run(async () =>
-                            await PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher));
-                    }
+                        if (foundExistingValue is null)
+                        {
+                            return Task.Run(async () =>
+                                await PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher));
+                        }
                 
-                    return PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher);
-                });
+                        return PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher);
+                    });
+        }
+
+        if (mostRecentWriteRequest is null)
+            return;
+
+        isFirstLoop = false;
         
         if (!_terminalCommandsConcurrentQueue.TryDequeue(out var terminalCommand))
         {
