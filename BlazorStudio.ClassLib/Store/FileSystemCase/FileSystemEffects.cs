@@ -1,0 +1,160 @@
+﻿using System.Collections.Concurrent;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.NotificationCase;
+using BlazorStudio.ClassLib.Store.WorkspaceCase;
+using Fluxor;
+using Microsoft.CodeAnalysis.MSBuild;
+
+namespace BlazorStudio.ClassLib.Store.FileSystemCase;
+
+public class FileSystemState
+{
+    private readonly IFileSystemProvider _fileSystemProvider;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
+
+    /// <summary>
+    /// "string: absoluteFilePath"
+    /// <br/>
+    /// "ValueTuple: containing the parameters to <see cref="PerformWriteOperationAsync"/>"
+    /// </summary>
+    private readonly ConcurrentDictionary<
+        string, 
+        (string absoluteFilePathString, SaveFileAction saveFileAction, IDispatcher dispatcher)?>
+        _concurrentMapToTasksForThrottleByFile = new();
+    
+    public FileSystemState(
+        IFileSystemProvider fileSystemProvider,
+        ICommonComponentRenderers commonComponentRenderers)
+    {
+        _fileSystemProvider = fileSystemProvider;
+        _commonComponentRenderers = commonComponentRenderers;
+    }
+    
+    public record SaveFileAction(IAbsoluteFilePath? AbsoluteFilePath, string Content);
+    
+    [EffectMethod]
+    public async Task HandleSaveFileAction(
+        SaveFileAction saveFileAction,
+        IDispatcher dispatcher)
+    {
+        var absoluteFilePathString = saveFileAction.AbsoluteFilePath
+            .GetAbsoluteFilePathString();
+
+        void FireAndForgetConsumerFirstLoop()
+        {
+            // The first loop relies on the downstream code 'bool isFirstLoop = true;'
+            Task.Run(async () =>
+                await PerformWriteOperationAsync(
+                    absoluteFilePathString, 
+                    saveFileAction, 
+                    dispatcher));
+        }
+
+        // Produce write task and construct consumer if necessary
+        _ = _concurrentMapToTasksForThrottleByFile
+            .AddOrUpdate(absoluteFilePathString,
+                absoluteFilePath =>
+                {
+                    FireAndForgetConsumerFirstLoop();
+                    return null;
+                },
+                (absoluteFilePath, foundExistingValue) =>
+                {
+                    if (foundExistingValue is null)
+                    {
+                        FireAndForgetConsumerFirstLoop();
+                        return null;
+                    }
+                    
+                    return (absoluteFilePathString, saveFileAction, dispatcher);
+                });
+    }
+
+    private async Task PerformWriteOperationAsync(
+        string absoluteFilePathString, 
+        SaveFileAction saveFileAction,
+        IDispatcher dispatcher)
+    {
+        bool isFirstLoop = true;
+        
+        // goto is used because the do-while or while loops would have
+        // hard to decipher predicates due to the double if for the semaphore
+        doConsumeLabel:
+
+        (string absoluteFilePathString, 
+            SaveFileAction saveFileAction, 
+            IDispatcher dispatcher)? 
+            writeRequest;
+        
+        if (isFirstLoop)
+        {
+            // Perform the first request
+            writeRequest = (absoluteFilePathString, saveFileAction, dispatcher);
+        }
+        else
+        {
+            // Take most recent write request.
+            //
+            // Then update most recent write request to be
+            // null as to throttle and take the most recent and
+            // discard the in between events.
+            writeRequest = _concurrentMapToTasksForThrottleByFile
+                .AddOrUpdate(absoluteFilePathString,
+                    absoluteFilePath =>
+                    {
+                        // This should never occur as 
+                        // being in this method is dependent on
+                        // a value having already existed
+                        return null;
+                    },
+                    (absoluteFilePath, foundExistingValue) =>
+                    {
+                        if (foundExistingValue is null)
+                            return null;
+
+                        return foundExistingValue;
+                    });
+        }
+
+        if (writeRequest is null)
+            return;
+
+        isFirstLoop = false;
+        
+        string notificationInformativeMessage;
+        
+        if (absoluteFilePathString is not null &&
+            File.Exists(absoluteFilePathString))
+        {
+            await File.WriteAllTextAsync(
+                absoluteFilePathString,
+                saveFileAction.Content);
+        
+            notificationInformativeMessage = $"successfully saved: {absoluteFilePathString}";
+        }
+        else
+        {
+            // TODO: Save As to make new file
+            notificationInformativeMessage = "File not found. TODO: Save As";
+        }
+        
+        var notificationInformative  = new NotificationRecord(
+            NotificationKey.NewNotificationKey(), 
+            "Save Action",
+            _commonComponentRenderers.InformativeNotificationRenderer,
+            new Dictionary<string, object?>
+            {
+                {
+                    // TODO: make constant for "Message"
+                    "Message", 
+                    notificationInformativeMessage
+                },
+            });
+        
+        dispatcher.Dispatch(
+            new NotificationState.RegisterNotificationAction(
+                notificationInformative));
+
+        goto doConsumeLabel;
+    }
+}

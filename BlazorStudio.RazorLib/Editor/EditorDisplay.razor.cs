@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.EditorCase;
+using BlazorStudio.ClassLib.Store.FileSystemCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
@@ -33,6 +34,7 @@ public partial class EditorDisplay : FluxorComponent
     
     private readonly SemaphoreSlim _afterOnKeyDownSyntaxHighlightingSemaphoreSlim = new(1, 1);
     private TextEditorDisplay? _textEditorDisplay;
+    private EditorTabsDisplay? _editorTabsDisplay;
 
     private async Task HandleAfterOnKeyDownAsync(
         TextEditorBase textEditor,
@@ -43,6 +45,16 @@ public partial class EditorDisplay : FluxorComponent
         var primaryCursorSnapshot = cursorSnapshots
             .First(x =>
                 x.UserCursor.IsPrimaryCursor);
+
+        // Update the * for all the tabs
+        // that shows if it has been 'modified'.
+        //
+        // TODO: Change the logic for showing * such that
+        // it more accurately represents a file having been modified.
+        //
+        // This is just saying on key press presume it was modified.
+        if (_editorTabsDisplay is not null)
+            _editorTabsDisplay.ForceReloadTabs();
 
         if (keyboardEventArgs.Key == ";" ||
             KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
@@ -67,5 +79,25 @@ public partial class EditorDisplay : FluxorComponent
                 _afterOnKeyDownSyntaxHighlightingSemaphoreSlim.Release();
             }
         }
+    }
+
+    private void HandleOnSaveRequested(TextEditorBase textEditor)
+    {
+        var content = textEditor.GetAllText();
+        
+        var textEditorResourceMapState = TextEditorResourceMapStateWrap.Value;
+        
+        _ = textEditorResourceMapState.ResourceMap
+            .TryGetValue(
+                textEditor.Key, 
+                out var resource);
+
+        var saveFileAction = new FileSystemState.SaveFileAction(
+            resource,
+            content);
+        
+        Dispatcher.Dispatch(saveFileAction);
+        
+        textEditor.ClearEditBlocks();
     }
 }

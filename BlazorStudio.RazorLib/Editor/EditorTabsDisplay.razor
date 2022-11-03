@@ -1,0 +1,10 @@
+﻿<div class="bstudio_editor-tabs-bar">
+    @for (var i = 0; i < TextEditorList.Count; i++)
+    {
+        var index = i;
+        var textEditor = TextEditorList[index];
+
+        <EditorTab TabIndex="index"
+                   TextEditor="textEditor"/>
+    }
+</div>

@@ -25,16 +25,8 @@
                 .FirstOrDefault(x =>
                     x.Key == editorState.ActiveTextEditorKey);
 
-            <div class="bstudio_editor-tabs-bar">
-                @for (var i = 0; i < textEditorList.Count; i++)
-                {
-                    var index = i;
-                    var textEditor = textEditorList[index];
-
-                    <EditorTab TabIndex="index"
-                               TextEditor="textEditor"/>
-                }
-            </div>
+            <EditorTabsDisplay @ref="_editorTabsDisplay" 
+                               TextEditorList="textEditorList" />
             
             if (activeTextEditor is not null)
             {
@@ -47,7 +39,8 @@
                                    TextEditorKey="activeTextEditor.Key"
                                    TabIndex="0"
                                    ClassCssString="bstudio_text-editor-display"
-                                   AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync">
+                                   AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync"
+                                   OnSaveRequested="HandleOnSaveRequested">
                     
                     <OnContextMenuRenderFragment>
                         <EditorContextMenu TextEditor="activeTextEditor"
