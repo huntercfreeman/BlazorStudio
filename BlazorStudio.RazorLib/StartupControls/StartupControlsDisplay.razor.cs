@@ -40,10 +40,10 @@ public partial class StartupControlsDisplay : FluxorComponent
             null,
             _newDotNetSolutionCancellationTokenSource.Token);
         
-        var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+        var executionTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+            TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
         
-        await generalTerminalSession
+        await executionTerminalSession
             .EnqueueCommandAsync(startProgramWithoutDebuggingCommand);
     }
 }
