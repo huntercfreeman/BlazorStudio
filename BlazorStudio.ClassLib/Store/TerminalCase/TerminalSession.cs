@@ -38,7 +38,8 @@ public record TerminalSession
     
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
     
-    public bool HasExecutingProcess => _process?.HasExited ?? false;
+    // NOTE: the following did not work => _process?.HasExited ?? false;
+    public bool HasExecutingProcess { get; private set; }
 
     public string? ReadStandardOut()
     {
@@ -200,12 +201,20 @@ public record TerminalSession
             _standardOutBuilderMap.TryAdd(
                 terminalCommand.TerminalCommandKey,
                 new StringBuilder());
-            
-            _process.Start();
+
+            // Process Start
+            {
+                HasExecutingProcess = true;
+                _process.Start();
+            }
 
             _process.BeginOutputReadLine();
-            
-            await _process.WaitForExitAsync();
+
+            // Await Process End
+            {
+                await _process.WaitForExitAsync();
+                HasExecutingProcess = false;
+            }
         }
         finally
         {
