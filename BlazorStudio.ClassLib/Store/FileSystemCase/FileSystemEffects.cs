@@ -60,25 +60,33 @@ public class FileSystemState
         var absoluteFilePathString = saveFileAction.AbsoluteFilePath
             .GetAbsoluteFilePathString();
 
+        void FireAndForgetConsumerFirstLoop()
+        {
+            // The first loop relies on the downstream code 'bool isFirstLoop = true;'
+            Task.Run(async () =>
+                await PerformWriteOperationAsync(
+                    absoluteFilePathString, 
+                    saveFileAction, 
+                    dispatcher));
+        }
+
         // Produce write task and construct consumer if necessary
         _ = _concurrentMapToTasksForThrottleByFile
             .AddOrUpdate(absoluteFilePathString,
                 absoluteFilePath =>
                 {
-                    Task.Run(async () =>
-                        await PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher));
-
+                    FireAndForgetConsumerFirstLoop();
                     return null;
                 },
                 (absoluteFilePath, foundExistingValue) =>
                 {
                     if (foundExistingValue is null)
                     {
-                        return Task.Run(async () =>
-                            await PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher));
+                        FireAndForgetConsumerFirstLoop();
+                        return null;
                     }
                     
-                    return PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher);
+                    return (absoluteFilePathString, saveFileAction, dispatcher);
                 });
     }
 
@@ -113,63 +121,30 @@ public class FileSystemState
             writeRequest = _concurrentMapToTasksForThrottleByFile
                 .AddOrUpdate(absoluteFilePathString,
                     absoluteFilePath =>
-                        Task.Run(async () => 
-                            await PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher)),
+                    {
+                        // This should never occur as 
+                        // being in this method is dependent on
+                        // a value having already existed
+                        return null;
+                    },
                     (absoluteFilePath, foundExistingValue) =>
                     {
                         if (foundExistingValue is null)
-                        {
-                            return Task.Run(async () =>
-                                await PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher));
-                        }
-                
-                        return PerformWriteOperationAsync(absoluteFilePathString, saveFileAction, dispatcher);
+                            return null;
+
+                        return foundExistingValue;
                     });
         }
 
-        if (mostRecentWriteRequest is null)
+        if (writeRequest is null)
             return;
 
         isFirstLoop = false;
-        
-        if (!_terminalCommandsConcurrentQueue.TryDequeue(out var terminalCommand))
-        {
-            try
-            {
-                await _lifeOfTerminalCommandConsumerSemaphoreSlim.WaitAsync();
-
-                // duplicate inner if(TryDequeue) is for performance of not having to every loop
-                // await the semaphore
-                //
-                // await semaphore only if it seems like one should dispose of the consumer
-                // and then double check nothing was added in between those times
-                if (!_terminalCommandsConcurrentQueue.TryDequeue(out terminalCommand))
-                {
-                    _hasTerminalCommandConsumer = false;
-                    return;
-                }   
-            }
-            finally
-            {
-                _lifeOfTerminalCommandConsumerSemaphoreSlim.Release();
-            }
-        }
         
         string notificationInformativeMessage;
         
         if (File.Exists(absoluteFilePathString))
         {
-            try
-            {
-                _writeFileSemaphoreSlim
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            
-            
             await File.WriteAllTextAsync(
                 absoluteFilePathString,
                 saveFileAction.Content);
