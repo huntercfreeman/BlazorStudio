@@ -10,7 +10,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddBlazorTextEditorRazorLibServices(this IServiceCollection services)
     {
-        var commonRendererTypes = new CommonRendererTypes(
+        var commonRendererTypes = new CommonComponentRenderers(
             typeof(InputFileDisplay),
             typeof(CommonInformativeNotificationDisplay),
             typeof(CommonErrorNotificationDisplay));

@@ -68,4 +68,12 @@ public partial class EditorDisplay : FluxorComponent
             }
         }
     }
+
+    private void HandleOnSaveRequested(TextEditorBase textEditor)
+    {
+        var context = textEditor.GetAllText();
+        
+        var content = await File
+            .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+    }
 }

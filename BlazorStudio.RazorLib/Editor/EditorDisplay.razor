@@ -47,7 +47,8 @@
                                    TextEditorKey="activeTextEditor.Key"
                                    TabIndex="0"
                                    ClassCssString="bstudio_text-editor-display"
-                                   AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync">
+                                   AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync"
+                                   OnSaveRequested="HandleOnSaveRequested">
                     
                     <OnContextMenuRenderFragment>
                         <EditorContextMenu TextEditor="activeTextEditor"
