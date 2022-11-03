@@ -10,7 +10,9 @@ public partial class TerminalWellKnownTab : FluxorComponent
     [Inject]
     private IState<WellKnownTerminalSessionsState> WellKnownTerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
-    private IStateSelection<TerminalSessionsState, TerminalSession> TerminalSessionsStateSelection { get; set; } = null!;
+    private IStateSelection<TerminalSessionsState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
+    [Inject]
+    private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -32,8 +34,16 @@ public partial class TerminalWellKnownTab : FluxorComponent
     protected override void OnInitialized()
     {
         TerminalSessionsStateSelection
-            .Select(x => 
-                x.TerminalSessionMap[WellKnownTerminalSessionKey]);
+            .Select(x =>
+            {
+                if (x.TerminalSessionMap.TryGetValue(
+                        WellKnownTerminalSessionKey, out var wellKnownTerminalSession))
+                {
+                    return wellKnownTerminalSession;
+                }
+                
+                return null;
+            });
         
         base.OnInitialized();
     }

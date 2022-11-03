@@ -2,12 +2,14 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
+using BlazorStudio.ClassLib.State;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
-public record TerminalSession
+public class TerminalSession
 {
+    private readonly IDispatcher _dispatcher;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
 
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
@@ -19,8 +21,11 @@ public record TerminalSession
 
     private Process? _process;
     
-    public TerminalSession(string? workingDirectoryAbsoluteFilePathString)
+    public TerminalSession(
+        string? workingDirectoryAbsoluteFilePathString, 
+        IDispatcher dispatcher)
     {
+        _dispatcher = dispatcher;
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
     }
 
@@ -32,16 +37,14 @@ public record TerminalSession
 
     public string? WorkingDirectoryAbsoluteFilePathString { get; private set; }
     
-    public IDispatcher Dispatcher { get; }
-    
     public TerminalCommand ActiveTerminalCommand { get; private set; }
     
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
     
     // NOTE: the following did not work => _process?.HasExited ?? false;
     public bool HasExecutingProcess { get; private set; }
-
-    public string? ReadStandardOut()
+    
+    public string ReadStandardOut()
     {
         return string
             .Join(string.Empty, _standardOutBuilderMap
@@ -187,11 +190,15 @@ public record TerminalSession
         _process.StartInfo.UseShellExecute = false;
         _process.StartInfo.RedirectStandardOutput = true;
         _process.StartInfo.CreateNoWindow = true;
-
+        
         void OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            _standardOutBuilderMap[terminalCommand.TerminalCommandKey]
+            var terminalCommandKey = terminalCommand.TerminalCommandKey;
+
+            _standardOutBuilderMap[terminalCommandKey]
                 .Append(e.Data ?? string.Empty);
+
+            DispatchNewStateKey();
         }
 
         _process.OutputDataReceived += OutputDataReceived;
@@ -205,6 +212,8 @@ public record TerminalSession
             // Process Start
             {
                 HasExecutingProcess = true;
+                DispatchNewStateKey();
+                
                 _process.Start();
             }
 
@@ -213,14 +222,25 @@ public record TerminalSession
             // Await Process End
             {
                 await _process.WaitForExitAsync();
+                
                 HasExecutingProcess = false;
+                DispatchNewStateKey();
             }
         }
         finally
         {
             _process.CancelOutputRead();
+            _process.OutputDataReceived -= OutputDataReceived;
         }
 
         goto doConsumeLabel;
+    }
+
+    private void DispatchNewStateKey()
+    {
+        _dispatcher.Dispatch(
+            new TerminalSessionWasModifiedStateReducer.SetTerminalSessionStateKeyAction(
+                TerminalSessionKey, 
+                StateKey.NewStateKey()));
     }
 }

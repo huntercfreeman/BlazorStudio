@@ -1,5 +1,6 @@
 using System.Text;
 using BlazorStudio.ClassLib.Html;
+using BlazorStudio.ClassLib.State;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -7,10 +8,12 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Terminal;
 
-public partial class TerminalOutputDisplay : ComponentBase
+public partial class TerminalOutputDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TerminalSessionsState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
+    [Inject]
+    private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
 
     /// <summary>
     /// <see cref="TerminalSessionKey"/> is used to narrow down the terminal
@@ -44,7 +47,7 @@ public partial class TerminalOutputDisplay : ComponentBase
         
         base.OnInitialized();
     }
-    
+
     private MarkupString GetAllTextEscaped(string value)
     {
         return (MarkupString)value

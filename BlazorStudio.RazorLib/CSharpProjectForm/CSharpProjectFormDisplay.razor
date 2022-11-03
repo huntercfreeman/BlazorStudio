@@ -5,21 +5,7 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_form">
-    
-    <div class="bstudio_form-group">
-        <div class="bstudio_form-label">
-            Template name:
-        </div>
 
-        <div class="bstudio_form-value">
-            <input class="bstudio_input bstudio_input-text"
-                   style="height: 2em;"
-                   placeholder="Template name"
-                   @bind="_projectTemplateName"
-                   @bind:event="oninput"/>
-        </div>
-    </div>
-    
     <div class="bstudio_form-group">
         <div class="bstudio_form-label">
             Project name:
@@ -33,7 +19,21 @@
                    @bind:event="oninput"/>
         </div>
     </div>
-    
+
+    <div class="bstudio_form-group">
+        <div class="bstudio_form-label">
+            Template name:
+        </div>
+
+        <div class="bstudio_form-value">
+            <input class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   placeholder="Template name"
+                   @bind="_projectTemplateName"
+                   @bind:event="oninput"/>
+        </div>
+    </div>
+
     <div class="bstudio_form-group">
         <div class="bstudio_form-label">
             Optional parameters:
@@ -41,10 +41,10 @@
 
         <div class="bstudio_form-value">
             <input class="bstudio_input bstudio_input-text"
-                       style="height: 2em;"
-                       placeholder="Optional parameters"
-                       @bind="_optionalParameters"
-                       @bind:event="oninput"/>
+                   style="height: 2em;"
+                   placeholder="Optional parameters"
+                   @bind="_optionalParameters"
+                   @bind:event="oninput"/>
         </div>
     </div>
 
@@ -55,7 +55,7 @@
 
         <div class="bstudio_form-value"
              style="display: flex;">
-            
+
             <input class="bstudio_input bstudio_input-text"
                    style="height: 2em;"
                    placeholder="Parent directory"
@@ -69,19 +69,19 @@
     </div>
 
     <div>
-        Template&nbsp;Name:
-        <div>
-            <em>@ProjectTemplateName</em>
-        </div>
-    </div>
-    
-    <div>
         Project&nbsp;Name:
         <div>
             <em>@CSharpProjectName</em>.csproj
         </div>
     </div>
-    
+
+    <div>
+        Template&nbsp;Name:
+        <div>
+            <em>@ProjectTemplateName</em>
+        </div>
+    </div>
+
     <div>
         Optional&nbsp;Parameters:
         <div>
@@ -104,9 +104,9 @@
                 @InterpolatedNewCSharpProjectCommand
                 &nbsp;\
             </em>
-            
+
             <br/>
-            
+
             <em>
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -114,11 +114,11 @@
             </em>
         </div>
     </div>
-    
+
     <ButtonDisplay OnClickFunc="StartNewCSharpProjectCommandOnClick">
         Run
     </ButtonDisplay>
-    
-    <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
-                           TerminalCommandKey="_newCSharpProjectTerminalCommandKey" />
+
+    <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY"
+                           TerminalCommandKey="_newCSharpProjectTerminalCommandKey"/>
 </div>
