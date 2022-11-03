@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Terminal;
 
-public partial class TerminalOutputDisplay : ComponentBase
+public partial class TerminalOutputDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TerminalSessionsState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
@@ -44,7 +44,7 @@ public partial class TerminalOutputDisplay : ComponentBase
         
         base.OnInitialized();
     }
-    
+
     private MarkupString GetAllTextEscaped(string value)
     {
         return (MarkupString)value

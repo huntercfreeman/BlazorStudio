@@ -2,12 +2,14 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
+using BlazorStudio.ClassLib.State;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
-public record TerminalSession
+public record TerminalSession(StateKey StateKey)
 {
+    private readonly IDispatcher _dispatcher;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
 
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
@@ -19,8 +21,12 @@ public record TerminalSession
 
     private Process? _process;
     
-    public TerminalSession(string? workingDirectoryAbsoluteFilePathString)
+    public TerminalSession(
+        string? workingDirectoryAbsoluteFilePathString, 
+        IDispatcher dispatcher)
+            : this(StateKey.NewStateKey())
     {
+        _dispatcher = dispatcher;
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
     }
 
@@ -32,16 +38,14 @@ public record TerminalSession
 
     public string? WorkingDirectoryAbsoluteFilePathString { get; private set; }
     
-    public IDispatcher Dispatcher { get; }
-    
     public TerminalCommand ActiveTerminalCommand { get; private set; }
     
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
     
     // NOTE: the following did not work => _process?.HasExited ?? false;
     public bool HasExecutingProcess { get; private set; }
-
-    public string? ReadStandardOut()
+    
+    public string ReadStandardOut()
     {
         return string
             .Join(string.Empty, _standardOutBuilderMap
@@ -187,11 +191,20 @@ public record TerminalSession
         _process.StartInfo.UseShellExecute = false;
         _process.StartInfo.RedirectStandardOutput = true;
         _process.StartInfo.CreateNoWindow = true;
-
+        
         void OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            _standardOutBuilderMap[terminalCommand.TerminalCommandKey]
+            var terminalCommandKey = terminalCommand.TerminalCommandKey;
+
+            _standardOutBuilderMap[terminalCommandKey]
                 .Append(e.Data ?? string.Empty);
+            
+            _dispatcher.Dispatch(
+                new TerminalSessionsReducer.UpdateTerminalSessionStateKeyAction(
+                    this with
+                    {
+                        StateKey = StateKey.NewStateKey()
+                    }));
         }
 
         _process.OutputDataReceived += OutputDataReceived;
