@@ -7,7 +7,7 @@ using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
 
-public record TerminalSession(StateKey StateKey)
+public class TerminalSession
 {
     private readonly IDispatcher _dispatcher;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
@@ -24,7 +24,6 @@ public record TerminalSession(StateKey StateKey)
     public TerminalSession(
         string? workingDirectoryAbsoluteFilePathString, 
         IDispatcher dispatcher)
-            : this(StateKey.NewStateKey())
     {
         _dispatcher = dispatcher;
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
@@ -198,13 +197,8 @@ public record TerminalSession(StateKey StateKey)
 
             _standardOutBuilderMap[terminalCommandKey]
                 .Append(e.Data ?? string.Empty);
-            
-            _dispatcher.Dispatch(
-                new TerminalSessionsReducer.UpdateTerminalSessionStateKeyAction(
-                    this with
-                    {
-                        StateKey = StateKey.NewStateKey()
-                    }));
+
+            DispatchNewStateKey();
         }
 
         _process.OutputDataReceived += OutputDataReceived;
@@ -218,6 +212,8 @@ public record TerminalSession(StateKey StateKey)
             // Process Start
             {
                 HasExecutingProcess = true;
+                DispatchNewStateKey();
+                
                 _process.Start();
             }
 
@@ -226,14 +222,25 @@ public record TerminalSession(StateKey StateKey)
             // Await Process End
             {
                 await _process.WaitForExitAsync();
+                
                 HasExecutingProcess = false;
+                DispatchNewStateKey();
             }
         }
         finally
         {
             _process.CancelOutputRead();
+            _process.OutputDataReceived -= OutputDataReceived;
         }
 
         goto doConsumeLabel;
+    }
+
+    private void DispatchNewStateKey()
+    {
+        _dispatcher.Dispatch(
+            new TerminalSessionWasModifiedStateReducer.SetTerminalSessionStateKeyAction(
+                TerminalSessionKey, 
+                StateKey.NewStateKey()));
     }
 }

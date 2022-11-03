@@ -1,5 +1,6 @@
 using System.Text;
 using BlazorStudio.ClassLib.Html;
+using BlazorStudio.ClassLib.State;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -11,6 +12,8 @@ public partial class TerminalOutputDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TerminalSessionsState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
+    [Inject]
+    private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
 
     /// <summary>
     /// <see cref="TerminalSessionKey"/> is used to narrow down the terminal
