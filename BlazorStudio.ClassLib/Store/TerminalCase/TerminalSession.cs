@@ -17,6 +17,8 @@ public record TerminalSession
     /// </summary>
     private readonly Dictionary<TerminalCommandKey, StringBuilder> _standardOutBuilderMap = new();
 
+    private Process? _process;
+    
     public TerminalSession(string? workingDirectoryAbsoluteFilePathString)
     {
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
@@ -35,6 +37,9 @@ public record TerminalSession
     public TerminalCommand ActiveTerminalCommand { get; private set; }
     
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
+    
+    // NOTE: the following did not work => _process?.HasExited ?? false;
+    public bool HasExecutingProcess { get; private set; }
 
     public string? ReadStandardOut()
     {
@@ -95,6 +100,30 @@ public record TerminalSession
         });
     }
     
+    public void ClearStandardOut()
+    {
+        // TODO: Rewrite this - see contiguous comment block
+        //
+        // This is awkward but concurrency exceptions I believe might occur
+        // otherwise given the current way the code is written (2022-02-11)
+        //
+        // If one tries to write to standard out dictionary they need a key value entry
+        // to exist or they add one
+        // 
+        // If one sees a key value entry exists they can use the existing StringBuilder
+        // but I am tempted to write _standardOutBuilderMap.Clear() thereby
+        // clearing all the key value pairs as they write to the StringBuilder.
+        foreach (var stringBuilder in _standardOutBuilderMap.Values)
+        {
+            stringBuilder.Clear();
+        }
+    }
+    
+    public void KillProcess()
+    {
+        _process?.Kill(true);
+    }
+    
     private async Task ConsumeTerminalCommandsAsync()
     {
         // goto is used because the do-while or while loops would have
@@ -130,11 +159,11 @@ public record TerminalSession
         _terminalCommandsHistory.Add(terminalCommand);
         ActiveTerminalCommand = terminalCommand;
         
-        var process = new Process();
+        _process = new Process();
 
         if (WorkingDirectoryAbsoluteFilePathString is not null)
         {
-            process.StartInfo.WorkingDirectory = 
+            _process.StartInfo.WorkingDirectory = 
                 WorkingDirectoryAbsoluteFilePathString;   
         }
 
@@ -142,22 +171,22 @@ public record TerminalSession
 
         if (File.Exists(bash))
         {
-            process.StartInfo.FileName = bash;
-            process.StartInfo.Arguments = $"-c \"{terminalCommand.Command}\"";
+            _process.StartInfo.FileName = bash;
+            _process.StartInfo.Arguments = $"-c \"{terminalCommand.Command}\"";
         }
         else
         {
-            process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.Arguments = $"/c {terminalCommand.Command} 2>&1";
+            _process.StartInfo.FileName = "cmd.exe";
+            _process.StartInfo.Arguments = $"/c {terminalCommand.Command} 2>&1";
         }
 
         // Start the child process.
         // 2>&1 combines stdout and stderr
         //process.StartInfo.Arguments = $"";
         // Redirect the output stream of the child process.
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.RedirectStandardOutput = true;
-        process.StartInfo.CreateNoWindow = true;
+        _process.StartInfo.UseShellExecute = false;
+        _process.StartInfo.RedirectStandardOutput = true;
+        _process.StartInfo.CreateNoWindow = true;
 
         void OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
@@ -165,23 +194,31 @@ public record TerminalSession
                 .Append(e.Data ?? string.Empty);
         }
 
-        process.OutputDataReceived += OutputDataReceived;
+        _process.OutputDataReceived += OutputDataReceived;
         
         try
         {
             _standardOutBuilderMap.TryAdd(
                 terminalCommand.TerminalCommandKey,
                 new StringBuilder());
-            
-            process.Start();
 
-            process.BeginOutputReadLine();
-            
-            await process.WaitForExitAsync();
+            // Process Start
+            {
+                HasExecutingProcess = true;
+                _process.Start();
+            }
+
+            _process.BeginOutputReadLine();
+
+            // Await Process End
+            {
+                await _process.WaitForExitAsync();
+                HasExecutingProcess = false;
+            }
         }
         finally
         {
-            process.CancelOutputRead();
+            _process.CancelOutputRead();
         }
 
         goto doConsumeLabel;
