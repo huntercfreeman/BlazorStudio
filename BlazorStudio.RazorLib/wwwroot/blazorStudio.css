@@ -522,24 +522,38 @@ em {
     overflow: auto;
 }
 
-.bstudio_new-dot-net-solution-form {
+.bstudio_form {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
     padding: 5px;
 }
 
-.bstudio_new-dot-net-solution-form-group {
+.bstudio_form-group {
     display: flex;
 }
 
-.bstudio_new-dot-net-solution-form-group:not(:last-of-type) {
+.bstudio_form-group:not(:last-of-type) {
     margin-bottom: 10px;
 }
 
-.bstudio_new-dot-net-solution-form-label {
+.bstudio_form-label {
     margin-right: 10px;
 }
 
 .bstudio_terminal-tabs-container {
     display: flex;
+}
+
+.bstudio_terminal-tab > .bstudio_button {
+    border-radius: 20px;
+    width: 4em;
+    margin-left: 10px;
+    border: 1.5px solid var(--bstudio_primary-border-color);
+}
+
+.bstudio_terminal-tab > .bstudio_button:focus {
+    border: 1.5px solid var(--bstudio_primary-emphasis-foreground-color);
 }
 
 .bstudio_terminal-output-display {

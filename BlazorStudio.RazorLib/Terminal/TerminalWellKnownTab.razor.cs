@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Terminal;
 
-public partial class TerminalTab : FluxorComponent
+public partial class TerminalWellKnownTab : FluxorComponent
 {
     [Inject]
     private IState<WellKnownTerminalSessionsState> WellKnownTerminalSessionsStateWrap { get; set; } = null!;
+    [Inject]
+    private IStateSelection<TerminalSessionsState, TerminalSession> TerminalSessionsStateSelection { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -27,11 +29,36 @@ public partial class TerminalTab : FluxorComponent
         WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey == 
         WellKnownTerminalSessionKey;
 
+    protected override void OnInitialized()
+    {
+        TerminalSessionsStateSelection
+            .Select(x => 
+                x.TerminalSessionMap[WellKnownTerminalSessionKey]);
+        
+        base.OnInitialized();
+    }
+    
     private Task DispatchSetActiveTerminalCommandKeyActionOnClick()
     {
         Dispatcher.Dispatch(
             new WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey(
                 WellKnownTerminalSessionKey));
+
+        return Task.CompletedTask;
+    }
+
+    private Task ClearStandardOutOnClick()
+    {
+        TerminalSessionsStateSelection.Value
+            .ClearStandardOut();
+
+        return Task.CompletedTask;
+    }
+
+    private Task KillProcessOnClick()
+    {
+        TerminalSessionsStateSelection.Value
+            .KillProcess();
 
         return Task.CompletedTask;
     }
