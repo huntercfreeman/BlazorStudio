@@ -17,7 +17,9 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         _fileSystemProvider = fileSystemProvider;
     }
     
-    public MenuOptionRecord NewEmptyFile(IAbsoluteFilePath parentDirectory)
+    public MenuOptionRecord NewEmptyFile(
+        IAbsoluteFilePath parentDirectory,
+        Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
             "New Empty File",
@@ -32,14 +34,14 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitAction),
                     new Action<string>(fileName => 
-                        PerformNewEmptyFileAction(fileName, parentDirectory))
+                        PerformNewEmptyFileAction(fileName, parentDirectory, onAfterCompletion))
                 },
             });
     }
 
-    private void PerformNewEmptyFileAction(
-        string fileName, 
-        IAbsoluteFilePath parentDirectory)
+    private void PerformNewEmptyFileAction(string fileName,
+        IAbsoluteFilePath parentDirectory, 
+        Func<Task> onAfterCompletion)
     {
         var emptyFileAbsoluteFilePathString = parentDirectory.GetAbsoluteFilePathString() +
                                               Path.DirectorySeparatorChar +
@@ -56,6 +58,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 string.Empty,
                 false,
                 true);
+
+            await onAfterCompletion.Invoke();
         });
     }
     /*

@@ -4,7 +4,9 @@ namespace BlazorStudio.ClassLib.Menu;
 
 public interface ICommonMenuOptionsFactory
 {
-    public MenuOptionRecord NewEmptyFile(IAbsoluteFilePath parentDirectory);
+    public MenuOptionRecord NewEmptyFile(
+        IAbsoluteFilePath parentDirectory,
+        Func<Task> onAfterCompletion);
 /*
  * -New
         -Empty File

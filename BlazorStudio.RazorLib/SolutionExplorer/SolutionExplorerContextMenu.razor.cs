@@ -118,7 +118,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-            CommonMenuOptionsFactory.NewEmptyFile(treeViewModel.Item)
+            CommonMenuOptionsFactory.NewEmptyFile(
+                treeViewModel.Item,
+                async () =>
+                {
+                    await treeViewModel.LoadChildrenFuncAsync(treeViewModel);
+                })
         };
     }
     

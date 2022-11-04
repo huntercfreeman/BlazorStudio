@@ -122,7 +122,9 @@ public partial class InputFileContent : FluxorComponent
     {
         return new MenuRecord(new []
         {
-            CommonMenuOptionsFactory.NewEmptyFile(treeViewModel.Item)
+            CommonMenuOptionsFactory.NewEmptyFile(
+                treeViewModel.Item,
+                async () => {})
         }.ToImmutableArray());
     }
 
