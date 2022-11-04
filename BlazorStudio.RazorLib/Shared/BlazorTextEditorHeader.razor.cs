@@ -47,10 +47,12 @@ public partial class BlazorTextEditorHeader : ComponentBase
     {
         var newDotNetSolution = new MenuOptionRecord(
             ".NET Solution",
+            MenuOptionKind.Other,
             OpenNewDotNetSolutionDialog);
         
         return new MenuOptionRecord(
             "New",
+            MenuOptionKind.Other,
             SubMenu: new MenuRecord(
                 new []
                 {
@@ -62,6 +64,7 @@ public partial class BlazorTextEditorHeader : ComponentBase
     {
         var openFile = new MenuOptionRecord(
             "File",
+            MenuOptionKind.Other,
             async () => 
                 await EditorState.ShowInputFileAsync(
                     Dispatcher, 
@@ -70,11 +73,13 @@ public partial class BlazorTextEditorHeader : ComponentBase
         
         var openDirectory = new MenuOptionRecord(
             "Directory",
+            MenuOptionKind.Other,
             async () => 
                 await FolderExplorerState.ShowInputFileAsync(Dispatcher));
         
         var openCSharpProject = new MenuOptionRecord(
             "C# Project - TODO: Adhoc Sln",
+            MenuOptionKind.Other,
             async () => 
                 await EditorState.ShowInputFileAsync(
                     Dispatcher, 
@@ -83,11 +88,13 @@ public partial class BlazorTextEditorHeader : ComponentBase
         
         var openDotNetSolution = new MenuOptionRecord(
             ".NET Solution",
+            MenuOptionKind.Other,
             async () => 
                 await SolutionExplorerState.ShowInputFileAsync(Dispatcher));
 
         return new MenuOptionRecord(
             "Open",
+            MenuOptionKind.Other,
             SubMenu: new MenuRecord(
                 new []
                 {

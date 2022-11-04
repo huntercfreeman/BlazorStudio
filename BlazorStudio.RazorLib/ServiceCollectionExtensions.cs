@@ -1,6 +1,7 @@
 using BlazorStudio.ClassLib;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.RazorLib.Clipboard;
+using BlazorStudio.RazorLib.File;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.Notifications;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,8 @@ public static class ServiceCollectionExtensions
         var commonRendererTypes = new CommonComponentRenderers(
             typeof(InputFileDisplay),
             typeof(CommonInformativeNotificationDisplay),
-            typeof(CommonErrorNotificationDisplay));
+            typeof(CommonErrorNotificationDisplay),
+            typeof(FileFormDisplay));
         
         return services
             .AddBlazorStudioClassLibServices(

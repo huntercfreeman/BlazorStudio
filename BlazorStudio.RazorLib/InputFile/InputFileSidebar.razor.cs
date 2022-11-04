@@ -33,6 +33,7 @@ public partial class InputFileSidebar : FluxorComponent
     {
         var openInTextEditorMenuOption = new MenuOptionRecord(
             "Nothing here TODO: Aaa",
+            MenuOptionKind.Other,
             () => { });
 
         return new MenuRecord(new []

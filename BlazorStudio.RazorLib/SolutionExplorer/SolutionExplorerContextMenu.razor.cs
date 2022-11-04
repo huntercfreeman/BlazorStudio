@@ -68,16 +68,19 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
         var addNewCSharpProject = new MenuOptionRecord(
             "New C# Project",
+            MenuOptionKind.Other,
             () => OpenNewCSharpProjectDialog(treeViewModel.Item));
         
         var addExistingCSharpProject = new MenuOptionRecord(
             "Existing C# Project",
+            MenuOptionKind.Other,
             () => AddExistingProjectToSolution(treeViewModel.Item));
         
         return new[]
         {
             new MenuOptionRecord(
                 "Add",
+                MenuOptionKind.Other,
                 SubMenu: new MenuRecord(
                     new MenuOptionRecord[]
                     {
@@ -93,6 +96,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             new MenuOptionRecord(
                 "Set as Startup Project",
+                MenuOptionKind.Other,
                 () => Dispatcher.Dispatch(
                     new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
                         treeViewModel.Item))),
@@ -104,13 +108,17 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         return new[]
         {
             new MenuOptionRecord(
-                "Copy"),
+                "Copy",
+                MenuOptionKind.Other),
             new MenuOptionRecord(
-                "Cut"),
+                "Cut",
+                MenuOptionKind.Other),
             new MenuOptionRecord(
-                "Delete"),
+                "Delete",
+                MenuOptionKind.Other),
             new MenuOptionRecord(
-                "Rename"),
+                "Rename",
+                MenuOptionKind.Other),
         };
     }
     

@@ -67,12 +67,14 @@ public partial class EditorContextMenu : ComponentBase
 
         var copy = new MenuOptionRecord(
             "Copy",
+            MenuOptionKind.Other,
             () => SelectMenuOption(CopyMenuOption));
 
         menuOptionRecords.Add(copy);
 
         var paste = new MenuOptionRecord(
             "Paste",
+            MenuOptionKind.Other,
             () => SelectMenuOption(PasteMenuOption));
 
         menuOptionRecords.Add(paste);
@@ -80,7 +82,8 @@ public partial class EditorContextMenu : ComponentBase
         if (!menuOptionRecords.Any())
         {
             menuOptionRecords.Add(new MenuOptionRecord(
-                "No Context Menu Options for this item"));
+                "No Context Menu Options for this item",
+                MenuOptionKind.Other));
         }
 
         return new MenuRecord(
