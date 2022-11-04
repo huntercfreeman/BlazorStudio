@@ -23,4 +23,12 @@
             </div>
         </DropdownDisplay>
     }
+    
+    @if (_shouldDisplayWidget)
+    {
+        <CascadingValue Value="MenuOptionRecord">
+            <DynamicComponent Type="MenuOptionRecord.WidgetRendererType"
+                              Parameters="MenuOptionRecord.WidgetParameters"/>
+        </CascadingValue>
+    }
 </div>

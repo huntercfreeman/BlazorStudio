@@ -23,6 +23,7 @@ public partial class MenuOptionDisplay : ComponentBase
     
     private readonly DropdownKey _subMenuDropdownKey = DropdownKey.NewDropdownKey();
     private ElementReference? _menuOptionDisplayElementReference;
+    private bool _shouldDisplayWidget;
 
     private bool IsActive => Index == ActiveMenuOptionRecordIndex;
     private bool HasSubmenuActive => DropdownStatesWrap.Value.ActiveDropdownKeys
@@ -38,8 +39,21 @@ public partial class MenuOptionDisplay : ComponentBase
 
     protected override async Task OnParametersSetAsync()
     {
+        var localHasSubmenuActive = HasSubmenuActive;
+
+        // Close submenu for non active menu option
+        if (!IsActive && localHasSubmenuActive)
+            Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(_subMenuDropdownKey));
+        
+        // Hide widget for non active menu option
+        if (!IsActive && _shouldDisplayWidget)
+        {
+            _shouldDisplayWidget = false;
+        }
+        
+        // Set focus to active menu option
         if (IsActive && 
-            !HasSubmenuActive &&
+            !localHasSubmenuActive &&
             _menuOptionDisplayElementReference.HasValue)
         {
             await _menuOptionDisplayElementReference.Value.FocusAsync();
@@ -55,9 +69,19 @@ public partial class MenuOptionDisplay : ComponentBase
             MenuOptionRecord.OnClick.Invoke();
             Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
         }
-        
+
         if (MenuOptionRecord.SubMenu is not null)
-            Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_subMenuDropdownKey));
+        {
+            if (HasSubmenuActive)
+                Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(_subMenuDropdownKey));
+            else
+                Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_subMenuDropdownKey));
+        }
+
+        if (MenuOptionRecord.WidgetRendererType is not null)
+        {
+            _shouldDisplayWidget = !_shouldDisplayWidget;
+        }
     }
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
