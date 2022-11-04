@@ -296,7 +296,8 @@ input[type="checkbox"]{
     height: var(--bstudio_input-file-display-top-nav-bar-height);
     display: flex;
     align-items: center;
-    background-color: var(--bstudio_body-background-color);
+    background-color: var(--bstudio_tertiary-background-color);
+    color: var(--bstudio_tertiary-foreground-color);
 }
 
 .bstudio_input-file-display-top-nav-bar-buttons {
@@ -388,7 +389,8 @@ input[type="checkbox"]{
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    background-color: var(--bstudio_body-background-color);
+    background-color: var(--bstudio_tertiary-background-color);
+    color: var(--bstudio_tertiary-foreground-color);
 }
 
 .bstudio_input-file-display-bottom-controls-text-input {
@@ -424,7 +426,7 @@ em {
 
 .bstudio_button {
     background-color: var(--bstudio_button-background-color);
-    color: var(--bstudio_primary-font-color);
+    color: var(--bstudio_button-foreground-color);
     border: none;
     display: flex;
     justify-content: center;
