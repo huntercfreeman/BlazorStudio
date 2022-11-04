@@ -43,7 +43,7 @@ public partial class MenuOptionDisplay : ComponentBase
         : string.Empty;
 
     private MenuOptionWidgetParameters MenuOptionWidgetParameters =>
-        new(SetShouldDisplayWidgetAsync, _menuOptionDisplayElementReference);
+        new(SetShouldDisplayWidgetAsync);
 
     protected override async Task OnParametersSetAsync()
     {
