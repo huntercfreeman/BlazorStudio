@@ -42,6 +42,9 @@ public partial class MenuOptionDisplay : ComponentBase
         ? "bstudio_active"
         : string.Empty;
 
+    private MenuOptionWidgetParameters MenuOptionWidgetParameters =>
+        new(SetShouldDisplayWidgetAsync, _menuOptionDisplayElementReference);
+
     protected override async Task OnParametersSetAsync()
     {
         var localHasSubmenuActive = HasSubmenuActive;
@@ -109,6 +112,19 @@ public partial class MenuOptionDisplay : ComponentBase
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
                 HandleOnClick();
                 break;
+        }
+    }
+
+    private async Task SetShouldDisplayWidgetAsync(bool value)
+    {
+        _shouldDisplayWidget = value;
+
+        await InvokeAsync(StateHasChanged);
+
+        if (!value &&
+            _menuOptionDisplayElementReference.HasValue)
+        {
+            await _menuOptionDisplayElementReference.Value.FocusAsync();
         }
     }
 }

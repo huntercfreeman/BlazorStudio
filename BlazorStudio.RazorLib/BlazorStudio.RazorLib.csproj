@@ -158,6 +158,7 @@
         <_ContentIncludedByDefault Remove="Terminal\TerminalTabDisplay.razor" />
         <_ContentIncludedByDefault Remove="Terminal\TerminalTabs.razor" />
         <_ContentIncludedByDefault Remove="Theme\ThemeSelectTreeView.razor" />
+        <_ContentIncludedByDefault Remove="Form\FormWrapper.razor" />
     </ItemGroup>
 
     <ItemGroup>
