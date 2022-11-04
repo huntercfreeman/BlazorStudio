@@ -99,7 +99,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             .Select(x => new TreeViewModel<IAbsoluteFilePath>(
                 new AbsoluteFilePath(x.FilePath, false),
                 true,
-                LoadChildrenAsync));
+                LoadChildrenAsync))
+            .ToList();
+        
+        RestorePreviousStates(
+            treeViewModel.Children,
+            childProjects);
 
         treeViewModel.Children.Clear();
         treeViewModel.Children.AddRange(childProjects);
@@ -160,7 +165,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         var allChildTreeViewModels = 
             foundUniqueDirectories
             .Union(foundDefaultDirectories)
-            .Union(childFileTreeViewModels);
+            .Union(childFileTreeViewModels)
+            .ToList();
+        
+        RestorePreviousStates(
+            treeViewModel.Children,
+            allChildTreeViewModels);
 
         treeViewModel.Children.Clear();
         treeViewModel.Children.AddRange(allChildTreeViewModels);
@@ -188,7 +198,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     LoadChildrenAsync));
 
         var allChildTreeViewModels = childDirectoryTreeViewModels
-            .Union(childFileTreeViewModels);
+            .Union(childFileTreeViewModels)
+            .ToList();
+
+        RestorePreviousStates(
+            treeViewModel.Children,
+            allChildTreeViewModels);
 
         treeViewModel.Children.Clear();
         treeViewModel.Children.AddRange(allChildTreeViewModels);
@@ -201,6 +216,25 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private async Task LoadNestedChildrenAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
     }
+    
+    private void RestorePreviousStates(
+        List<TreeViewModel<IAbsoluteFilePath>> previousChildren,
+        List<TreeViewModel<IAbsoluteFilePath>> nextChildren)
+    {
+        var previousChildrenIsExpandedMap = previousChildren
+            .ToDictionary(
+                x => x.Item.GetAbsoluteFilePathString(),
+                x => x);
+
+        foreach (var nextChild in nextChildren)
+        {
+            if (previousChildrenIsExpandedMap.TryGetValue(
+                    nextChild.Item.GetAbsoluteFilePathString(), out var previousTreeViewModel))
+            {
+                nextChild.RestoreState(previousTreeViewModel);
+            }
+        }
+    } 
     
     private void DispatchSetFolderExplorerStateOnClick()
     {

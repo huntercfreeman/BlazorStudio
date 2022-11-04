@@ -1,4 +1,6 @@
-﻿namespace BlazorStudio.ClassLib.TreeView;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+
+namespace BlazorStudio.ClassLib.TreeView;
 
 public class TreeViewModel<TItem> : ITreeViewModel
 {
@@ -43,5 +45,13 @@ public class TreeViewModel<TItem> : ITreeViewModel
     public void InvokeOnStateChanged(bool setFocus)
     {
         OnStateChanged?.Invoke(this, setFocus);
+    }
+
+    public void RestoreState(TreeViewModel<TItem> previousTreeViewModel)
+    {
+        IsExpanded = previousTreeViewModel.IsExpanded;
+        Children.Clear();
+        Children.AddRange(previousTreeViewModel.Children);
+        IsDisplayed = previousTreeViewModel.IsDisplayed;
     }
 }
