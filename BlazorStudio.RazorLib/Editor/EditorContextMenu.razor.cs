@@ -21,7 +21,7 @@ public partial class EditorContextMenu : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
-    public Func<TextEditorMenuKind, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
+    public Func<TextEditorMenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TextEditorDisplay TextEditorDisplay { get; set; } = null!;
@@ -56,7 +56,7 @@ public partial class EditorContextMenu : ComponentBase
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None);
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
     }
 
     private MenuRecord GetMenuRecord()
@@ -93,7 +93,7 @@ public partial class EditorContextMenu : ComponentBase
     {
         _ = Task.Run(async () =>
         {
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None);
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
             await menuOptionAction();
         });
     }
