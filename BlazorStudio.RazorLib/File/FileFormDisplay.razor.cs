@@ -14,22 +14,15 @@ public partial class FileFormDisplay
     
     [Parameter, EditorRequired]
     public string FileName { get; set; } = string.Empty;
+    [Parameter, EditorRequired]
+    public Action<string> OnAfterSubmitAction { get; set; } = null!;
 
     private string? _previousFileNameParameter;
 
     private string _fileName = string.Empty;
+    
+    public string InputFileName => _fileName;
 
-    private string _aaa = string.Empty;
-    
-    public string Aaa
-    {
-        get => _aaa;
-        set
-        {
-            _aaa = value;
-        }
-    }
-    
     protected override Task OnParametersSetAsync()
     {
         if (_previousFileNameParameter is null ||
@@ -42,8 +35,6 @@ public partial class FileFormDisplay
         return base.OnParametersSetAsync();
     }
 
-    public string InputFileName => _fileName;
-
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (MenuOptionWidgetParameters is not null)
@@ -51,6 +42,10 @@ public partial class FileFormDisplay
             if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
             {
                 await MenuOptionWidgetParameters.SetShouldDisplayWidgetAsync.Invoke(false);
+            }
+            else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+            {
+                OnAfterSubmitAction.Invoke(_fileName);
             }
         }
     }
