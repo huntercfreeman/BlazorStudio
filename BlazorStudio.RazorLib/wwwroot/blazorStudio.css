@@ -214,6 +214,11 @@ input[type="checkbox"]{
     top: 0;
 }
 
+.bstudio_tree-view-display-root {
+    width: max-content;
+    min-width: 100%;
+}
+
 .bstudio_tree-view-display:focus {
     outline: solid var(--bstudio-primary-outline-color) var(--bstudio_tree-view-display-focus-outline-size);
     outline-offset: var(--bstudio_tree-view-display-focus-outline-offset);
@@ -224,6 +229,7 @@ input[type="checkbox"]{
     white-space: nowrap;
     display: flex;
     cursor: default;
+    min-width: 100%;
 }
 
 .bstudio_tree-view-display-title:hover {
