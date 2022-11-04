@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
@@ -141,12 +142,11 @@ public class FileSystemState
         var notificationInformative  = new NotificationRecord(
             NotificationKey.NewNotificationKey(), 
             "Save Action",
-            _commonComponentRenderers.InformativeNotificationRenderer,
+            _commonComponentRenderers.InformativeNotificationRendererType,
             new Dictionary<string, object?>
             {
                 {
-                    // TODO: make constant for "Message"
-                    "Message", 
+                    nameof(IInformativeNotificationRendererType.Message), 
                     notificationInformativeMessage
                 },
             });

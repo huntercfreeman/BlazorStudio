@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+﻿using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Clipboard;
