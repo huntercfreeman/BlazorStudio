@@ -20,4 +20,9 @@ public class RemoteFileSystemProvider : IFileSystemProvider
     {
         throw new NotImplementedException();
     }
+
+    public Task CreateDirectoryAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }

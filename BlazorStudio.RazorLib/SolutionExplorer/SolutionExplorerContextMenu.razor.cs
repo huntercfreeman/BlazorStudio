@@ -120,10 +120,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             CommonMenuOptionsFactory.NewEmptyFile(
                 treeViewModel.Item,
-                async () =>
-                {
-                    await treeViewModel.LoadChildrenFuncAsync(treeViewModel);
-                })
+                async () => await ReloadTreeViewModel(treeViewModel)),
+            CommonMenuOptionsFactory.NewDirectory(
+                treeViewModel.Item,
+                async () => await ReloadTreeViewModel(treeViewModel)),
         };
     }
     
@@ -212,5 +212,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                             afp.ExtensionNoPeriod
                                 .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                 }.ToImmutableArray()));
+    }
+
+    private async Task ReloadTreeViewModel(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    {
+        await treeViewModel.LoadChildrenFuncAsync(treeViewModel);
     }
 }

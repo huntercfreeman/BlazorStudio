@@ -38,6 +38,32 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 },
             });
     }
+    
+    public MenuOptionRecord NewDirectory(
+        IAbsoluteFilePath parentDirectory,
+        Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "New Directory",
+            MenuOptionKind.Create,
+            WidgetRendererType: _commonComponentRenderers.FileFormRendererType,
+            WidgetParameters: new Dictionary<string, object?>
+            {
+                {
+                    nameof(IFileFormRendererType.FileName),
+                    string.Empty
+                },
+                {
+                    nameof(IFileFormRendererType.IsDirectory),
+                    true
+                },
+                {
+                    nameof(IFileFormRendererType.OnAfterSubmitAction),
+                    new Action<string>(directoryName => 
+                        PerformNewDirectoryAction(directoryName, parentDirectory, onAfterCompletion))
+                },
+            });
+    }
 
     private void PerformNewEmptyFileAction(string fileName,
         IAbsoluteFilePath parentDirectory, 
@@ -58,6 +84,27 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 string.Empty,
                 false,
                 true);
+
+            await onAfterCompletion.Invoke();
+        });
+    }
+    
+    private void PerformNewDirectoryAction(string directoryName,
+        IAbsoluteFilePath parentDirectory, 
+        Func<Task> onAfterCompletion)
+    {
+        var directoryAbsoluteFilePathString = parentDirectory.GetAbsoluteFilePathString() +
+                                              Path.DirectorySeparatorChar +
+                                              directoryName;
+
+        var directoryAbsoluteFilePath = new AbsoluteFilePath(
+            directoryAbsoluteFilePathString, 
+            false);
+
+        _ = Task.Run(async () =>
+        {
+            await _fileSystemProvider.CreateDirectoryAsync(
+                directoryAbsoluteFilePath);
 
             await onAfterCompletion.Invoke();
         });

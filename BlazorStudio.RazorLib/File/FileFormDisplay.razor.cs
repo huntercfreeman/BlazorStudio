@@ -16,6 +16,8 @@ public partial class FileFormDisplay
     public string FileName { get; set; } = string.Empty;
     [Parameter, EditorRequired]
     public Action<string> OnAfterSubmitAction { get; set; } = null!;
+    [Parameter]
+    public bool IsDirectory { get; set; }
 
     private string? _previousFileNameParameter;
 

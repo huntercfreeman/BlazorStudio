@@ -7,6 +7,10 @@ public interface ICommonMenuOptionsFactory
     public MenuOptionRecord NewEmptyFile(
         IAbsoluteFilePath parentDirectory,
         Func<Task> onAfterCompletion);
+    
+    public MenuOptionRecord NewDirectory(
+        IAbsoluteFilePath parentDirectory,
+        Func<Task> onAfterCompletion);
 /*
  * -New
         -Empty File
