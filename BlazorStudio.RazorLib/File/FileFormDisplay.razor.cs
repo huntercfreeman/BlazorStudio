@@ -12,6 +12,17 @@ public partial class FileFormDisplay
     private string? _previousFileNameParameter;
 
     private string _fileName = string.Empty;
+
+    private string _aaa = string.Empty;
+    
+    public string Aaa
+    {
+        get => _aaa;
+        set
+        {
+            _aaa = value;
+        }
+    }
     
     protected override Task OnParametersSetAsync()
     {

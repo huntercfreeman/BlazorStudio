@@ -41,15 +41,18 @@ public partial class MenuOptionDisplay : ComponentBase
     {
         var localHasSubmenuActive = HasSubmenuActive;
 
-        // Close submenu for non active menu option
-        if (!IsActive && localHasSubmenuActive)
-            Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(_subMenuDropdownKey));
-        
-        // Hide widget for non active menu option
-        if (!IsActive && _shouldDisplayWidget)
-        {
-            _shouldDisplayWidget = false;
-        }
+        // The following if(s) are not working. They result
+        // in one never being able to open a submenu
+        //
+        // // Close submenu for non active menu option
+        // if (!IsActive && localHasSubmenuActive)
+        //     Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(_subMenuDropdownKey));
+        //
+        // // Hide widget for non active menu option
+        // if (!IsActive && _shouldDisplayWidget)
+        // {
+        //     _shouldDisplayWidget = false;
+        // }
         
         // Set focus to active menu option
         if (IsActive && 

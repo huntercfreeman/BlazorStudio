@@ -56,9 +56,7 @@ public partial class MenuDisplay : ComponentBase
         if (_activeMenuOptionRecordIndex == -1)
         {
             if (_menuDisplayElementReference is not null)
-            {
                 _menuDisplayElementReference.Value.FocusAsync();
-            }
         }
 
         InvokeAsync(StateHasChanged);
