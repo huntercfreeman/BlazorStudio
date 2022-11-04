@@ -45,13 +45,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             {
                 case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                     menuRecords.AddRange(
-                        GetFileMenuOptions()
-                            .Union(GetDotNetSolutionMenuOptions(treeViewModel)));
+                        GetDotNetSolutionMenuOptions(treeViewModel));
                     break;
                 case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
                     menuRecords.AddRange(
-                        GetFileMenuOptions()
-                            .Union(GetCSharpProjectMenuOptions(treeViewModel)));
+                        GetCSharpProjectMenuOptions(treeViewModel));
                     break;
                 default:
                     menuRecords.AddRange(
@@ -103,8 +101,16 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     
     private MenuOptionRecord[] GetCSharpProjectMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
+        var parentDirectory = (IAbsoluteFilePath)treeViewModel.Item.Directories.Last();
+        
         return new[]
         {
+            CommonMenuOptionsFactory.NewEmptyFile(
+                parentDirectory,
+                async () => await ReloadTreeViewModel(treeViewModel)),
+            CommonMenuOptionsFactory.NewDirectory(
+                parentDirectory,
+                async () => await ReloadTreeViewModel(treeViewModel)),
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
