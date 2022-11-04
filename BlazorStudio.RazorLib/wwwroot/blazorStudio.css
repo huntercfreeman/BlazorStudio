@@ -288,6 +288,10 @@ input[type="checkbox"]{
     outline: solid var(--bstudio_menu-option-display-focus-outline-size) var(--bstudio_primary-emphasis-foreground-color);
 }
 
+.bstudio_menu-option-widget {
+    padding-bottom: 10px;
+}
+
 .bstudio_input-file-display {
     height: 100%;
 }

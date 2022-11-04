@@ -36,6 +36,11 @@ public partial class MenuOptionDisplay : ComponentBase
     private string HasSubmenuActiveCssClass => HasSubmenuActive
             ? "bstudio_active"
             : string.Empty;
+    
+    private string HasWidgetActiveCssClass => _shouldDisplayWidget && 
+                                              MenuOptionRecord.WidgetRendererType is not null
+        ? "bstudio_active"
+        : string.Empty;
 
     protected override async Task OnParametersSetAsync()
     {

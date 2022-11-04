@@ -23,6 +23,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public TreeViewDisplayContextMenuEvent<IAbsoluteFilePath> TreeViewDisplayContextMenuEvent { get; set; } = null!;
@@ -30,23 +32,32 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private MenuRecord GetContextMenu(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
         var menuRecords = new List<MenuOptionRecord>();
-        
-        switch (treeViewModel.Item.ExtensionNoPeriod)
+
+        if (treeViewModel.Item.IsDirectory)
         {
-            case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
-                menuRecords.AddRange(
-                    GetFileMenuOptions()
-                        .Union(GetDotNetSolutionMenuOptions(treeViewModel)));
-                break;
-            case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                menuRecords.AddRange(
-                    GetFileMenuOptions()
-                        .Union(GetCSharpProjectMenuOptions(treeViewModel)));
-                break;
-            default:
-                menuRecords.AddRange(
-                    GetFileMenuOptions());
-                break;
+            menuRecords.AddRange(
+                GetFileMenuOptions()
+                    .Union(GetDirectoryMenuOptions(treeViewModel)));
+        }
+        else
+        {
+            switch (treeViewModel.Item.ExtensionNoPeriod)
+            {
+                case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
+                    menuRecords.AddRange(
+                        GetFileMenuOptions()
+                            .Union(GetDotNetSolutionMenuOptions(treeViewModel)));
+                    break;
+                case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
+                    menuRecords.AddRange(
+                        GetFileMenuOptions()
+                            .Union(GetCSharpProjectMenuOptions(treeViewModel)));
+                    break;
+                default:
+                    menuRecords.AddRange(
+                        GetFileMenuOptions());
+                    break;
+            }
         }
         
         return new MenuRecord(
@@ -100,6 +111,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 () => Dispatcher.Dispatch(
                     new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
                         treeViewModel.Item))),
+        };
+    }
+    
+    private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    {
+        return new[]
+        {
+            CommonMenuOptionsFactory.NewEmptyFile(treeViewModel.Item)
         };
     }
     
