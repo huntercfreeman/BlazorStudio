@@ -42,8 +42,9 @@ public partial class MenuOptionDisplay : ComponentBase
         ? "bstudio_active"
         : string.Empty;
 
-    private MenuOptionWidgetParameters MenuOptionWidgetParameters =>
-        new(SetShouldDisplayWidgetAsync);
+    private MenuOptionWidgetParameters MenuOptionWidgetParameters => new(
+        () => HideWidgetAsync(null), 
+        HideWidgetAsync);
 
     protected override async Task OnParametersSetAsync()
     {
@@ -115,16 +116,20 @@ public partial class MenuOptionDisplay : ComponentBase
         }
     }
 
-    private async Task SetShouldDisplayWidgetAsync(bool value)
+    private async Task HideWidgetAsync(Action? onAfterWidgetHidden)
     {
-        _shouldDisplayWidget = value;
-
+        _shouldDisplayWidget = false;
         await InvokeAsync(StateHasChanged);
 
-        if (!value &&
-            _menuOptionDisplayElementReference.HasValue)
+        if (onAfterWidgetHidden is null)
         {
-            await _menuOptionDisplayElementReference.Value.FocusAsync();
+            if (_menuOptionDisplayElementReference.HasValue)
+                await _menuOptionDisplayElementReference.Value.FocusAsync();
+        }
+        else
+        {
+            onAfterWidgetHidden.Invoke();
+            Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
         }
     }
 }

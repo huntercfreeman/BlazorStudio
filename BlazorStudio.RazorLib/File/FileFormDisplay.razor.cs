@@ -41,11 +41,12 @@ public partial class FileFormDisplay
         {
             if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
             {
-                await MenuOptionWidgetParameters.SetShouldDisplayWidgetAsync.Invoke(false);
+                await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
             }
             else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
             {
-                OnAfterSubmitAction.Invoke(_fileName);
+                await MenuOptionWidgetParameters.CompleteWidgetAsync.Invoke(
+                    () => OnAfterSubmitAction.Invoke(_fileName));
             }
         }
     }
