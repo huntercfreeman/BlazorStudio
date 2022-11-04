@@ -12,14 +12,11 @@ public partial class EditorFooter : ComponentBase, IDisposable
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
-    [Parameter]
-    [EditorRequired]
+    [Parameter, EditorRequired]
     public TextEditorBase? TextEditor { get; set; }
-    [Parameter]
-    [EditorRequired]
+    [Parameter, EditorRequired]
     public TextEditorDisplay? TextEditorDisplay { get; set; }
-    [Parameter]
-    [EditorRequired]
+    [Parameter, EditorRequired]
     public IAbsoluteFilePath? AbsoluteFilePath { get; set; }
 
     public void Dispose()

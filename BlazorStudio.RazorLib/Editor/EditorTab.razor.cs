@@ -21,11 +21,9 @@ public partial class EditorTab : FluxorComponent
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
-    [Parameter]
-    [EditorRequired]
+    [Parameter, EditorRequired]
     public TextEditorBase TextEditor { get; set; } = null!;
-    [Parameter]
-    [EditorRequired]
+    [Parameter, EditorRequired]
     public int TabIndex { get; set; }
 
     private string IsActiveCssClass => EditorStateWrap.Value.ActiveTextEditorKey == TextEditor.Key

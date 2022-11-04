@@ -23,11 +23,9 @@ public partial class EditorContextMenu : ComponentBase
     [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
     public Func<TextEditorMenuKind, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
 
-    [Parameter]
-    [EditorRequired]
+    [Parameter, EditorRequired]
     public TextEditorDisplay TextEditorDisplay { get; set; } = null!;
-    [Parameter]
-    [EditorRequired]
+    [Parameter, EditorRequired]
     public TextEditorBase TextEditor { get; set; } = null!;
     
     private ElementReference? _textEditorContextMenuElementReference;
