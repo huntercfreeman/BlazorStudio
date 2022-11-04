@@ -2,6 +2,7 @@ using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.TreeView;
 using BlazorStudio.RazorLib.ResizableCase;
 using BlazorTextEditor.RazorLib;

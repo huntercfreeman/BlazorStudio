@@ -2,5 +2,5 @@
 
 public interface IFileFormRendererType
 {
-    
+    public string FileName { get; set; }
 }

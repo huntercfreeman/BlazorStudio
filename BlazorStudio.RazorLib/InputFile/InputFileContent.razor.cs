@@ -20,6 +20,8 @@ public partial class InputFileContent : FluxorComponent
     private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
@@ -118,14 +120,9 @@ public partial class InputFileContent : FluxorComponent
 
     private MenuRecord GetContextMenu(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
-        var openInTextEditorMenuOption = new MenuOptionRecord(
-            "Nothing here TODO: Aaa",
-            MenuOptionKind.Other,
-            () => { });
-
         return new MenuRecord(new []
         {
-            openInTextEditorMenuOption
+            CommonMenuOptionsFactory.NewEmptyFile(treeViewModel.Item)
         }.ToImmutableArray());
     }
 
