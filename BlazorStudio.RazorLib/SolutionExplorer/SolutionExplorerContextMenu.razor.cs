@@ -1,10 +1,12 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.CommandLine;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
+using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeView;
@@ -25,6 +27,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    [Inject]
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public TreeViewDisplayContextMenuEvent<IAbsoluteFilePath> TreeViewDisplayContextMenuEvent { get; set; } = null!;
@@ -145,9 +149,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-            new MenuOptionRecord(
-                "Copy",
-                MenuOptionKind.Other),
+            CommonMenuOptionsFactory.CopyFile(
+                treeViewModel.Item,
+                () => NotifyCopyCompleted(treeViewModel.Item)),
             new MenuOptionRecord(
                 "Cut",
                 MenuOptionKind.Other),
@@ -159,7 +163,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 MenuOptionKind.Other),
         };
     }
-    
+
     private void OpenNewCSharpProjectDialog(IAbsoluteFilePath solutionAbsoluteFilePath)
     {
         var dialogRecord = new DialogRecord(
@@ -235,5 +239,26 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             return;
         
         await treeViewModel.LoadChildrenFuncAsync(treeViewModel);
+    }
+    
+    private Task NotifyCopyCompleted(IAbsoluteFilePath absoluteFilePath)
+    {
+        var notificationInformative  = new NotificationRecord(
+            NotificationKey.NewNotificationKey(), 
+            "Copy Action",
+            CommonComponentRenderers.InformativeNotificationRendererType,
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(IInformativeNotificationRendererType.Message), 
+                    $"Copied: {absoluteFilePath.FilenameWithExtension}"
+                },
+            });
+        
+        Dispatcher.Dispatch(
+            new NotificationState.RegisterNotificationAction(
+                notificationInformative));
+
+        return Task.CompletedTask;
     }
 }

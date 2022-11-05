@@ -22,6 +22,10 @@ public partial class FileFormDisplay
     private string? _previousFileNameParameter;
 
     private string _fileName = string.Empty;
+
+    private string PlaceholderText => IsDirectory
+        ? "Directory name"
+        : "File name";
     
     public string InputFileName => _fileName;
 

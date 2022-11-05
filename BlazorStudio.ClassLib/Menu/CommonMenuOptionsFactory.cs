@@ -1,6 +1,7 @@
 ﻿using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorTextEditor.RazorLib.Clipboard;
 
 namespace BlazorStudio.ClassLib.Menu;
 
@@ -8,14 +9,30 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 {
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
+    private readonly IClipboardProvider _clipboardProvider;
 
     public CommonMenuOptionsFactory(
         ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider)
+        IFileSystemProvider fileSystemProvider,
+        IClipboardProvider clipboardProvider)
     {
         _commonComponentRenderers = commonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
+        _clipboardProvider = clipboardProvider;
     }
+    
+    
+    /// <summary>
+    /// I am not quite sure how to interact with clipboard when it comes to
+    /// transferring objects.
+    /// <br/><br/>
+    /// For now I will use this identifier but I need to look into what other
+    /// people are doing for this.
+    /// <br/><br/>
+    /// This is used for example when copying the selected TreeViewEntry in the
+    /// solution explorer so it can be pasted later on somewhere else.
+    /// </summary>
+    public const string BlazorStudioClipboardIdentifier = "bstudio_absolute-file-path_";
     
     public MenuOptionRecord NewEmptyFile(
         IAbsoluteFilePath parentDirectory,
@@ -65,7 +82,9 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             });
     }
 
-    public MenuOptionRecord DeleteFile(IAbsoluteFilePath absoluteFilePath, Func<Task> onAfterCompletion)
+    public MenuOptionRecord DeleteFile(
+        IAbsoluteFilePath absoluteFilePath, 
+        Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
             "Delete",
@@ -89,7 +108,20 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             });
     }
 
-    private void PerformNewEmptyFileAction(string fileName,
+    public MenuOptionRecord CopyFile(
+        IAbsoluteFilePath absoluteFilePath,
+        Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "Copy",
+            MenuOptionKind.Update,
+            OnClick: () => PerformCopyFileAction(
+                absoluteFilePath, 
+                onAfterCompletion));
+    }
+
+    private void PerformNewEmptyFileAction(
+        string fileName,
         IAbsoluteFilePath parentDirectory, 
         Func<Task> onAfterCompletion)
     {
@@ -113,7 +145,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         });
     }
     
-    private void PerformNewDirectoryAction(string directoryName,
+    private void PerformNewDirectoryAction(
+        string directoryName,
         IAbsoluteFilePath parentDirectory, 
         Func<Task> onAfterCompletion)
     {
@@ -134,7 +167,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         });
     }
     
-    private void PerformDeleteFileAction(IAbsoluteFilePath absoluteFilePath, 
+    private void PerformDeleteFileAction(
+        IAbsoluteFilePath absoluteFilePath, 
         Func<Task> onAfterCompletion)
     {
         _ = Task.Run(async () =>
@@ -150,6 +184,21 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 await _fileSystemProvider.DeleteFileAsync(
                     absoluteFilePath);
             }
+
+            await onAfterCompletion.Invoke();
+        });
+    }
+    
+    private void PerformCopyFileAction(
+        IAbsoluteFilePath absoluteFilePath, 
+        Func<Task> onAfterCompletion)
+    {
+        _ = Task.Run(async () =>
+        { 
+            await _clipboardProvider
+                .SetClipboard(
+                    BlazorStudioClipboardIdentifier + 
+                    absoluteFilePath.GetAbsoluteFilePathString());
 
             await onAfterCompletion.Invoke();
         });
