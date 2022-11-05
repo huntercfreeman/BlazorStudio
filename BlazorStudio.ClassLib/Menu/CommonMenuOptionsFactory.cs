@@ -141,7 +141,6 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         var emptyFileAbsoluteFilePathString = parentDirectory.GetAbsoluteFilePathString() +
-                                              Path.DirectorySeparatorChar +
                                               fileName;
 
         var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
@@ -166,7 +165,6 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         var directoryAbsoluteFilePathString = parentDirectory.GetAbsoluteFilePathString() +
-                                              Path.DirectorySeparatorChar +
                                               directoryName;
 
         var directoryAbsoluteFilePath = new AbsoluteFilePath(
@@ -278,11 +276,14 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                             
                             try
                             {
+                                var destinationFileName = receivingDirectory.GetAbsoluteFilePathString() +
+                                                  clipboardAbsoluteFilePath.FilenameWithExtension;
+                                
                                 File.Copy(
                                     clipboardAbsoluteFilePath.GetAbsoluteFilePathString(),
-                                    receivingDirectory.GetAbsoluteFilePathString());
+                                    destinationFileName);
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
                                 successfullyPasted = false; 
                             }
