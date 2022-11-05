@@ -40,7 +40,7 @@ public partial class EditorDisplay : FluxorComponent
         TextEditorBase textEditor,
         ImmutableArray<TextEditorCursorSnapshot> cursorSnapshots,
         KeyboardEventArgs keyboardEventArgs,
-        Func<TextEditorMenuKind, Task> setTextEditorMenuKind)
+        Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)
     {
         var primaryCursorSnapshot = cursorSnapshots
             .First(x =>

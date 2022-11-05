@@ -1,7 +1,8 @@
 @using BlazorStudio.ClassLib.Dropdown
 @using BlazorStudio.RazorLib.Dropdown
+@using BlazorStudio.ClassLib.CustomEvents
 
-<div class="bstudio_menu-option-display bstudio_unselectable @IsActiveCssClass"
+<div class="bstudio_menu-option-display bstudio_unselectable @IsActiveCssClass @HasWidgetActiveCssClass"
      tabindex="-1"
      @ref="_menuOptionDisplayElementReference"
      @onclick="HandleOnClick"
@@ -22,5 +23,19 @@
                 <MenuDisplay MenuRecord="MenuOptionRecord.SubMenu" />
             </div>
         </DropdownDisplay>
+    }
+    
+    @if (_shouldDisplayWidget &&
+         MenuOptionRecord.WidgetRendererType is not null)
+    {
+        <div class="bstudio_menu-option-widget" 
+             @onclick:stopPropagation="true"
+             @onkeydown:stopPropagation="true"
+             @oncustomkeydown:stopPropagation="true">
+            <CascadingValue Value="MenuOptionWidgetParameters">
+                <DynamicComponent Type="MenuOptionRecord.WidgetRendererType"
+                                  Parameters="MenuOptionRecord.WidgetParameters"/>
+            </CascadingValue>
+        </div>
     }
 </div>

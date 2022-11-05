@@ -5,6 +5,7 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeView;
+using BlazorStudio.RazorLib.TreeView;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
@@ -29,10 +30,11 @@ public partial class InputFileSidebar : FluxorComponent
     private TreeViewModel<IAbsoluteFilePath> FileSystemTreeViewModelMutablyReferenced => 
         InputFileStateWrap.Value.FileSystemTreeViewModel;
     
-    private MenuRecord GetContextMenu(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private MenuRecord GetContextMenu(TreeViewDisplayContextMenuEvent<IAbsoluteFilePath> treeViewModel)
     {
         var openInTextEditorMenuOption = new MenuOptionRecord(
             "Nothing here TODO: Aaa",
+            MenuOptionKind.Other,
             () => { });
 
         return new MenuRecord(new []

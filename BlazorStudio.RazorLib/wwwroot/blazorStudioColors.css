@@ -39,4 +39,6 @@
     --bstudio_notification-display-toolbar-background-color: rgb(192, 214, 247);
     --bstudio_active-button-background-color: #753282;
     --bstudio_active-button-primary-font-color: var(--bstudio_primary-font-color);
+    --bstudio_tertiary-background-color: red;
+    --bstudio_tertiary-foreground-color: blue;
 }

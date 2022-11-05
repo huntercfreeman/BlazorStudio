@@ -26,4 +26,28 @@ public class LocalFileSystemProvider : IFileSystemProvider
             absoluteFilePath.GetAbsoluteFilePathString(), 
             cancellationToken);
     }
+
+    public Task CreateDirectoryAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default)
+    {
+        Directory.CreateDirectory(absoluteFilePath.GetAbsoluteFilePathString());
+
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteFileAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default)
+    {
+        File.Delete(
+            absoluteFilePath.GetAbsoluteFilePathString());
+        
+        return Task.CompletedTask;
+    }
+    
+    public Task DeleteDirectoryAsync(IAbsoluteFilePath absoluteFilePath, bool recursive, CancellationToken cancellationToken = default)
+    {
+        Directory.Delete(
+            absoluteFilePath.GetAbsoluteFilePathString(),
+            recursive);
+
+        return Task.CompletedTask;
+    }
 }

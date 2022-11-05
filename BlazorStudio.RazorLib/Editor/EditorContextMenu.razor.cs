@@ -21,13 +21,11 @@ public partial class EditorContextMenu : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
-    public Func<TextEditorMenuKind, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
+    public Func<TextEditorMenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
 
-    [Parameter]
-    [EditorRequired]
+    [Parameter, EditorRequired]
     public TextEditorDisplay TextEditorDisplay { get; set; } = null!;
-    [Parameter]
-    [EditorRequired]
+    [Parameter, EditorRequired]
     public TextEditorBase TextEditor { get; set; } = null!;
     
     private ElementReference? _textEditorContextMenuElementReference;
@@ -58,7 +56,7 @@ public partial class EditorContextMenu : ComponentBase
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None);
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
     }
 
     private MenuRecord GetMenuRecord()
@@ -67,12 +65,14 @@ public partial class EditorContextMenu : ComponentBase
 
         var copy = new MenuOptionRecord(
             "Copy",
+            MenuOptionKind.Other,
             () => SelectMenuOption(CopyMenuOption));
 
         menuOptionRecords.Add(copy);
 
         var paste = new MenuOptionRecord(
             "Paste",
+            MenuOptionKind.Other,
             () => SelectMenuOption(PasteMenuOption));
 
         menuOptionRecords.Add(paste);
@@ -80,7 +80,8 @@ public partial class EditorContextMenu : ComponentBase
         if (!menuOptionRecords.Any())
         {
             menuOptionRecords.Add(new MenuOptionRecord(
-                "No Context Menu Options for this item"));
+                "No Context Menu Options for this item",
+                MenuOptionKind.Other));
         }
 
         return new MenuRecord(
@@ -92,7 +93,7 @@ public partial class EditorContextMenu : ComponentBase
     {
         _ = Task.Run(async () =>
         {
-            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None);
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
             await menuOptionAction();
         });
     }

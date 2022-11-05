@@ -28,7 +28,7 @@ namespace BlazorStudio.Photino
                 .SetDevToolsEnabled(true)
                 .SetContextMenuEnabled(true)
                 .SetUseOsDefaultSize(false)
-                .SetSize(2500, 1600)
+                .SetSize(2350, 1600)
                 .SetLeft(100);
 
             AppDomain.CurrentDomain.UnhandledException += (sender, error) =>

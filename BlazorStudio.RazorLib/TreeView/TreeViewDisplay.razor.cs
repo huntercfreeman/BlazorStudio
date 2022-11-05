@@ -44,7 +44,7 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     private bool _rootTreeViewModelHasChanged;
 
     private TreeViewDisplayContextMenuEvent<TItem> ContextMenuEvent => new(
-            TreeViewModel, 
+            this, 
             _contextMenuCapturedMouseEventArgs);
 
     private TreeViewModel<TItem> Root => InternalParameters.GetRootFunc is null
@@ -64,6 +64,10 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
 
     private string RootTabIndex => IsRoot 
         ? "0"
+        : string.Empty;
+    
+    private string RootCssClass => IsRoot 
+        ? "bstudio_tree-view-display-root"
         : string.Empty;
 
     private int TitleTabIndex => IsActiveDescendant

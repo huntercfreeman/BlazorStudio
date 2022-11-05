@@ -9,14 +9,52 @@
      @oncustomkeydown:stopPropagation="true">
 
     <CascadingValue Value="RestoreFocusToThisMenu" Name="ReturnFocusToParentAction">
-        @for (var i = 0; i < MenuRecord.MenuOptions.Length; i++)
-        {
-            var index = i;
-            var menuOption = MenuRecord.MenuOptions[index];
-            
-            <MenuOptionDisplay MenuOptionRecord="@menuOption"
-                               ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
-                               Index="index" />
+        @{
+            if (GroupByMenuOptionKind)
+            {
+                var groups = MenuRecord.MenuOptions
+                    .GroupBy(x => x.MenuOptionKind)
+                    .ToList();
+
+                var cumulativeIndex = 0;
+                
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    var groupIndex = i;
+                    
+                    var group = 
+                        groups[groupIndex];
+                    
+                    var menuOptions = group.ToList();
+                    
+                    for (var j = 0; j < menuOptions.Count; j++)
+                    {
+                        var menuOptionIndex = j;
+                        var menuOption = menuOptions[menuOptionIndex];
+
+                        <MenuOptionDisplay MenuOptionRecord="@menuOption"
+                                           ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
+                                           Index="cumulativeIndex++"/>
+                    }
+
+                    if (groupIndex != groups.Count - 1)
+                    {
+                        <hr/>
+                    }
+                }
+            }
+            else
+            {
+                for (var i = 0; i < MenuRecord.MenuOptions.Length; i++)
+                {
+                    var index = i;
+                    var menuOption = MenuRecord.MenuOptions[index];
+
+                    <MenuOptionDisplay MenuOptionRecord="@menuOption"
+                                       ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
+                                       Index="index"/>
+                }
+            }
         }
     </CascadingValue>
 </div>

@@ -10,4 +10,7 @@ public interface IFileSystemProvider
 {
     public Task WriteFileAsync(IAbsoluteFilePath absoluteFilePath, string content, bool overwrite, bool create, CancellationToken cancellationToken = default);
     public Task<string> ReadFileAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default);
+    public Task CreateDirectoryAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default);
+    public Task DeleteFileAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default);
+    public Task DeleteDirectoryAsync(IAbsoluteFilePath absoluteFilePath, bool recursive, CancellationToken cancellationToken = default);
 }

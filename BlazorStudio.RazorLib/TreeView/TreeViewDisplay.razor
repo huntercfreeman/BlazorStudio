@@ -5,7 +5,7 @@
 
 @typeparam TItem
 
-<div class="bstudio_tree-view-display"
+<div class="bstudio_tree-view-display @RootCssClass"
      tabindex="@RootTabIndex"
      @onkeydown="HandleContainingBoxOnKeyDown"
      @onfocusin="HandleOnFocusIn"
@@ -13,7 +13,7 @@
     
     @if (ShouldShowRoot || !IsRoot)
     {
-        <span class="bstudio_tree-view-display-title bstudio_unselectable @IsActiveDescendantClassCss"
+        <div class="bstudio_tree-view-display-title bstudio_unselectable @IsActiveDescendantClassCss"
               style="@($"padding-left: {PaddingLeft}px;")"
               @onclick="SetActiveDescendantOnClick"
               @onclick:stopPropagation="true"
@@ -57,7 +57,7 @@
                     @ContextMenuEventRenderFragment(ContextMenuEvent)
                 </DropdownDisplay>
             }
-        </span>
+        </div>
     }
 
     <div class="bstudio_tree-view-display-body">

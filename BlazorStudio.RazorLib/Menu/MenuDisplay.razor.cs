@@ -20,8 +20,10 @@ public partial class MenuDisplay : ComponentBase
     
     [Parameter, EditorRequired]
     public MenuRecord MenuRecord { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
     public int InitialActiveMenuOptionRecordIndex { get; set; } = -1;
+    [Parameter]
+    public bool GroupByMenuOptionKind { get; set; } = true;
 
     private ElementReference? _menuDisplayElementReference;
     
@@ -56,9 +58,7 @@ public partial class MenuDisplay : ComponentBase
         if (_activeMenuOptionRecordIndex == -1)
         {
             if (_menuDisplayElementReference is not null)
-            {
                 _menuDisplayElementReference.Value.FocusAsync();
-            }
         }
 
         InvokeAsync(StateHasChanged);

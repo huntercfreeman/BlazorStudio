@@ -214,6 +214,11 @@ input[type="checkbox"]{
     top: 0;
 }
 
+.bstudio_tree-view-display-root {
+    width: max-content;
+    min-width: 100%;
+}
+
 .bstudio_tree-view-display:focus {
     outline: solid var(--bstudio-primary-outline-color) var(--bstudio_tree-view-display-focus-outline-size);
     outline-offset: var(--bstudio_tree-view-display-focus-outline-offset);
@@ -224,6 +229,7 @@ input[type="checkbox"]{
     white-space: nowrap;
     display: flex;
     cursor: default;
+    min-width: 100%;
 }
 
 .bstudio_tree-view-display-title:hover {
@@ -288,6 +294,10 @@ input[type="checkbox"]{
     outline: solid var(--bstudio_menu-option-display-focus-outline-size) var(--bstudio_primary-emphasis-foreground-color);
 }
 
+.bstudio_menu-option-widget {
+    padding-bottom: 10px;
+}
+
 .bstudio_input-file-display {
     height: 100%;
 }
@@ -296,7 +306,8 @@ input[type="checkbox"]{
     height: var(--bstudio_input-file-display-top-nav-bar-height);
     display: flex;
     align-items: center;
-    background-color: var(--bstudio_body-background-color);
+    background-color: var(--bstudio_tertiary-background-color);
+    color: var(--bstudio_tertiary-foreground-color);
 }
 
 .bstudio_input-file-display-top-nav-bar-buttons {
@@ -388,7 +399,8 @@ input[type="checkbox"]{
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    background-color: var(--bstudio_body-background-color);
+    background-color: var(--bstudio_tertiary-background-color);
+    color: var(--bstudio_tertiary-foreground-color);
 }
 
 .bstudio_input-file-display-bottom-controls-text-input {
@@ -424,7 +436,7 @@ em {
 
 .bstudio_button {
     background-color: var(--bstudio_button-background-color);
-    color: var(--bstudio_primary-font-color);
+    color: var(--bstudio_button-foreground-color);
     border: none;
     display: flex;
     justify-content: center;
@@ -559,4 +571,9 @@ em {
 .bstudio_terminal-output-display {
     width: 100%; 
     overflow-wrap: anywhere;
+}
+
+.bstudio_delete-file-form-display {
+    background-color: var(--bstudio_tertiary-background-color);
+    padding: 10px;
 }

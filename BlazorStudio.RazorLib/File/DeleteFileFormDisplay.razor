@@ -1,0 +1,43 @@
+﻿<div class="bstudio_delete-file-form-display"
+     @onkeydown="HandleOnKeyDown">
+
+    <div>
+        @* "Delete" or "Delete Recursively" *@
+        <em>
+            Delete
+            @if (AbsoluteFilePath.IsDirectory)
+            {
+                <text>&nbsp;Recursively</text>
+            }
+        </em>
+
+        :
+        &nbsp;
+
+        <em title="@AbsoluteFilePath.GetAbsoluteFilePathString()">
+            @AbsoluteFilePath.FilenameWithExtension
+        </em>
+
+        @if (AbsoluteFilePath.IsDirectory)
+        {
+            <div>
+                AND
+                <em>
+                    AT LEAST
+                    @_countOfImmediateChildren
+                </em>
+                child files.
+            </div>
+        }
+    </div>
+
+    <div style="display: flex; justify-content: space-between;">
+        <ButtonDisplay OnClickFunc="DeleteFileOnClick">
+            Delete
+        </ButtonDisplay>
+
+        <ButtonDisplay OnClickFunc="CancelOnClick">
+            Cancel
+        </ButtonDisplay>
+    </div>
+</div>

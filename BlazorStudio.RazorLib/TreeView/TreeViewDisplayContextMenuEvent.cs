@@ -14,5 +14,5 @@ namespace BlazorStudio.RazorLib.TreeView;
 /// null.
 /// </summary>
 public record TreeViewDisplayContextMenuEvent<TItem>(
-    TreeViewModel<TItem> TreeViewModel,
+    TreeViewDisplay<TItem> TreeViewDisplay,
     MouseEventArgs? CapturedMouseEventArgs);

@@ -88,6 +88,7 @@ public partial class FolderExplorerDisplay : FluxorComponent
     {
         var openInTextEditorMenuOption = new MenuOptionRecord(
             "Nothing here TODO: Aaa",
+            MenuOptionKind.Other,
             () => { });
 
         return new MenuRecord(new []
