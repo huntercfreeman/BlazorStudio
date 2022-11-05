@@ -78,15 +78,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             menuRecords.ToImmutableArray());
     }
 
-    private string GetStyleForContextMenu(MouseEventArgs? mouseEventArgs)
-    {
-        if (mouseEventArgs is null)
-            return string.Empty;
-
-        return 
-            $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
-    }
-
     private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
         // TODO: Add menu options for non C# projects perhaps a more generic option is good

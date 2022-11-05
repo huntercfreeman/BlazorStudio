@@ -15,19 +15,20 @@
     
     @if (ShouldShowRoot || !IsRoot)
     {
-        <div class="bstudio_tree-view-display-title bstudio_unselectable @IsActiveDescendantClassCss"
-              style="@($"padding-left: {OffsetLeft}px;")"
-              @onclick="SetActiveDescendantOnClick"
-              @onclick:stopPropagation="true"
-              @ondblclick="HandleDoubleClick"
-              @ondblclick:stopPropagation="true"
-              @ref="_titleElementReference"
-              @onkeydown:stopPropagation="true"
-              @oncustomkeydown="HandleTitleOnCustomKeyDown"
-              @oncontextmenu="HandleTitleOnContextMenu"
-              @oncontextmenu:stopPropagation="true"
-              @oncontextmenu:preventDefault="true"
-              tabindex="@TitleTabIndex">
+        <div id="@TreeViewDisplayTitleElementId" 
+             class="bstudio_tree-view-display-title bstudio_unselectable @IsActiveDescendantClassCss"
+             style="@($"padding-left: {OffsetLeft}px;")"
+             @onclick="SetActiveDescendantOnClick"
+             @onclick:stopPropagation="true"
+             @ondblclick="HandleDoubleClick"
+             @ondblclick:stopPropagation="true"
+             @ref="_titleElementReference"
+             @onkeydown:stopPropagation="true"
+             @oncustomkeydown="HandleTitleOnCustomKeyDown"
+             @oncontextmenu="HandleTitleOnContextMenu"
+             @oncontextmenu:stopPropagation="true"
+             @oncontextmenu:preventDefault="true"
+             tabindex="@TitleTabIndex">
             
             @if (TreeViewModel.CanToggleExpandable)
             {

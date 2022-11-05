@@ -97,15 +97,6 @@ public partial class FolderExplorerDisplay : FluxorComponent
         }.ToImmutableArray());
     }
 
-    private string GetStyleForContextMenu(MouseEventArgs? mouseEventArgs)
-    {
-        if (mouseEventArgs is null)
-            return string.Empty;
-
-        return 
-            $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
-    }
-
     protected override void Dispose(bool disposing)
     {
         FolderExplorerStateWrap.StateChanged -= FolderExplorerStateWrapOnStateChanged;

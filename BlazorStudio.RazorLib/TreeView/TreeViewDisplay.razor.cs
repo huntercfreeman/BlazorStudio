@@ -3,10 +3,12 @@ using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.IconCase;
 using BlazorStudio.ClassLib.TreeView;
+using BlazorStudio.RazorLib.JavaScriptObjects;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.TreeView;
 
@@ -16,6 +18,8 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
     private IState<IconState> IconStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public TreeViewModel<TItem> TreeViewModel { get; set; } = null!;
@@ -42,14 +46,17 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
     private TreeViewModel<TItem>? _previousTreeViewModel;
     private ElementReference? _titleElementReference;
     private DropdownKey _contextMenuEventDropdownKey = DropdownKey.NewDropdownKey();
-    private MouseEventArgs? _contextMenuCapturedMouseEventArgs;
+    private ContextMenuFixedPosition _contextMenuFixedPosition = 
+        new(true, 0, 0);
 
     private bool _thinksHasFocus;
     private bool _rootTreeViewModelHasChanged;
 
+    public int OffsetLeft => InternalParameters.Depth * PADDING_LEFT_PER_DEPTH_IN_PIXELS;
+    
     private TreeViewDisplayContextMenuEvent<TItem> ContextMenuEvent => new(
             this, 
-            _contextMenuCapturedMouseEventArgs);
+            _contextMenuFixedPosition);
 
     private TreeViewModel<TItem> Root => InternalParameters.GetRootFunc is null
         ? TreeViewModel
@@ -64,8 +71,6 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
     
     private bool IsRoot => Root.Id == TreeViewModel.Id;
 
-    private int OffsetLeft => InternalParameters.Depth * PADDING_LEFT_PER_DEPTH_IN_PIXELS;
-
     private string RootTabIndex => IsRoot 
         ? "0"
         : string.Empty;
@@ -77,6 +82,9 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
     private int TitleTabIndex => IsActiveDescendant
         ? 0
         : -1;
+
+    private string TreeViewDisplayTitleElementId =>
+        $"bstudio_tree-view-{TreeViewModel.Id}";
 
     protected override Task OnParametersSetAsync()
     {
@@ -366,7 +374,7 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
         }
 
         if (KeyboardKeyFacts.CheckIsContextMenuEvent(customKeyDownEventArgs))
-            HandleTitleOnContextMenu(null);
+            await HandleTitleOnContextMenu(null);
 
         if (TreeViewDisplayOnEventRegistration.AfterKeyDownFuncAsync is not null)
         {
@@ -375,7 +383,7 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
         }
     }
     
-    private void HandleTitleOnContextMenu(MouseEventArgs? mouseEventArgs)
+    private async Task HandleTitleOnContextMenu(MouseEventArgs? mouseEventArgs)
     {
         if (ContextMenuEventRenderFragment is null)
             return;
@@ -385,11 +393,16 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
         if (mouseEventArgs is null ||
             mouseEventArgs.Button != 2)
         {
-            _contextMenuCapturedMouseEventArgs = null;
+            _contextMenuFixedPosition = await JsRuntime.InvokeAsync<ContextMenuFixedPosition>(
+                "blazorStudio.getContextMenuFixedPositionRelativeToElement",
+                TreeViewDisplayTitleElementId);
         }
         else
         {
-            _contextMenuCapturedMouseEventArgs = mouseEventArgs;
+            _contextMenuFixedPosition = new ContextMenuFixedPosition(
+                true,
+                mouseEventArgs.ClientX,
+                mouseEventArgs.ClientY);
         }
         
         Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_contextMenuEventDropdownKey));
