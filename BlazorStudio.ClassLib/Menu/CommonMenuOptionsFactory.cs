@@ -349,12 +349,16 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     /// Looking into copying and pasting a directory
     /// https://stackoverflow.com/questions/58744/copy-the-entire-contents-of-a-directory-in-c-sharp
     /// </summary>
-    public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target) 
+    public static DirectoryInfo CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
     {
-        foreach (DirectoryInfo dir in source.GetDirectories())
-            CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
-        foreach (FileInfo file in source.GetFiles())
-            file.CopyTo(Path.Combine(target.FullName, file.Name));
+        var newDirectoryInfo = target.CreateSubdirectory(source.Name);
+        foreach (var fileInfo in source.GetFiles())
+            fileInfo.CopyTo(Path.Combine(newDirectoryInfo.FullName, fileInfo.Name));
+
+        foreach (var childDirectoryInfo in source.GetDirectories())
+            CopyFilesRecursively(childDirectoryInfo, newDirectoryInfo);
+
+        return newDirectoryInfo;
     }
 
     /*
