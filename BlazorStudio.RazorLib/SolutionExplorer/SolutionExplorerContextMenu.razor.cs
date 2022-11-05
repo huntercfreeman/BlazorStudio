@@ -54,7 +54,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             menuRecords.AddRange(
                 GetFileMenuOptions(treeViewModel, parentTreeViewModel)
-                    .Union(GetDirectoryMenuOptions(treeViewModel)));
+                    .Union(GetDirectoryMenuOptions(treeViewModel))
+                    .Union(GetDebugMenuOptions(treeViewModel)));
         }
         else
         {
@@ -62,15 +63,18 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             {
                 case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                     menuRecords.AddRange(
-                        GetDotNetSolutionMenuOptions(treeViewModel));
+                        GetDotNetSolutionMenuOptions(treeViewModel)
+                            .Union(GetDebugMenuOptions(treeViewModel)));
                     break;
                 case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
                     menuRecords.AddRange(
-                        GetCSharpProjectMenuOptions(treeViewModel));
+                        GetCSharpProjectMenuOptions(treeViewModel)
+                            .Union(GetDebugMenuOptions(treeViewModel)));
                     break;
                 default:
                     menuRecords.AddRange(
-                        GetFileMenuOptions(treeViewModel, parentTreeViewModel));
+                        GetFileMenuOptions(treeViewModel, parentTreeViewModel)
+                            .Union(GetDebugMenuOptions(treeViewModel)));
                     break;
             }
         }
@@ -187,6 +191,17 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             CommonMenuOptionsFactory.RenameFile(
                 treeViewModel.Item.AbsoluteFilePath,
                 async () => await ReloadTreeViewModel(parentTreeViewModel)),
+        };
+    }
+    
+    private MenuOptionRecord[] GetDebugMenuOptions(
+        TreeViewModel<NamespacePath> treeViewModel)
+    {
+        return new[]
+        {
+            new MenuOptionRecord(
+                $"namespace: {treeViewModel.Item.Namespace}",
+                MenuOptionKind.Read)
         };
     }
 

@@ -39,6 +39,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private string _filePath = string.Empty;
     private TreeViewModel<NamespacePath>? _solutionTreeViewModel;
     private TreeViewDisplayOnEventRegistration<NamespacePath> _treeViewDisplayOnEventRegistration = null!;
+
+    private const char NAMESPACE_DELIMITER = '.';
     
     protected override void OnInitialized()
     {
@@ -112,12 +114,17 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             return;
 
         var childProjects = solutionExplorerState.Solution.Projects
-            .Select(x => new TreeViewModel<NamespacePath>(
-                new NamespacePath(
-                    string.Empty, 
-                    new AbsoluteFilePath(x.FilePath, false)),
-                true,
-                LoadChildrenAsync))
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x.FilePath, false);
+                
+                return new TreeViewModel<NamespacePath>(
+                    new NamespacePath(
+                        absoluteFilePath.FileNameNoExtension,
+                        absoluteFilePath),
+                    true,
+                    LoadChildrenAsync);
+            })
             .ToList();
         
         RestorePreviousStates(
@@ -143,13 +150,21 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         var childDirectoryTreeViewModels = Directory
             .GetDirectories(parentAbsoluteFilePathString)
             .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
-            .Select(x => 
-                new TreeViewModel<NamespacePath>(
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x, true);
+
+                var namespaceString = treeViewModel.Item.Namespace +
+                                      NAMESPACE_DELIMITER +
+                                      absoluteFilePath.FileNameNoExtension;
+
+                return new TreeViewModel<NamespacePath>(
                     new NamespacePath(
-                        string.Empty, 
-                        new AbsoluteFilePath(x, true)),
+                        namespaceString,
+                        absoluteFilePath),
                     true,
-                    LoadChildrenAsync));
+                    LoadChildrenAsync);
+            });
         
         var uniqueDirectories = UniqueFileFacts
             .GetUniqueFilesByContainerFileExtension(
@@ -177,13 +192,19 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         var childFileTreeViewModels = Directory
             .GetFiles(parentAbsoluteFilePathString)
             .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-            .Select(x => 
-                new TreeViewModel<NamespacePath>(
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x, false);
+
+                var namespaceString = treeViewModel.Item.Namespace;
+                
+                return new TreeViewModel<NamespacePath>(
                     new NamespacePath(
-                        string.Empty, 
-                        new AbsoluteFilePath(x, false)),
+                        namespaceString,
+                        absoluteFilePath),
                     false,
-                    LoadChildrenAsync));
+                    LoadChildrenAsync);
+            });
         
         var allChildTreeViewModels = 
             foundUniqueDirectories
@@ -206,21 +227,37 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         
         var childDirectoryTreeViewModels = Directory
             .GetDirectories(directoryAbsoluteFilePathString)
-            .Select(x => 
-                new TreeViewModel<NamespacePath>(
-                    new NamespacePath(string.Empty, new AbsoluteFilePath(x, true)),
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x, true);
+
+                var namespaceString = treeViewModel.Item.Namespace +
+                                      NAMESPACE_DELIMITER +
+                                      absoluteFilePath.FileNameNoExtension;
+                
+                return new TreeViewModel<NamespacePath>(
+                    new NamespacePath(
+                        namespaceString, 
+                        absoluteFilePath),
                     true,
-                    LoadChildrenAsync));
+                    LoadChildrenAsync);
+            });
         
         var childFileTreeViewModels = Directory
             .GetFiles(directoryAbsoluteFilePathString)
-            .Select(x => 
-                new TreeViewModel<NamespacePath>(
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x, false);
+
+                var namespaceString = treeViewModel.Item.Namespace;
+                
+                return new TreeViewModel<NamespacePath>(
                     new NamespacePath(
-                        string.Empty, 
-                        new AbsoluteFilePath(x, false)),
+                        namespaceString,
+                        absoluteFilePath),
                     false,
-                    LoadChildrenAsync));
+                    LoadChildrenAsync);
+            });
 
         var allChildTreeViewModels = childDirectoryTreeViewModels
             .Union(childFileTreeViewModels)
