@@ -1,8 +1,13 @@
 ﻿<div class="bstudio_file-form-display"
      @onkeydown="HandleOnKeyDown">
-       <input class="bstudio_input bstudio_input-text"
-              style="height: 2em;"
-              placeholder="@PlaceholderText"
-              @bind="_fileName"
-              @bind:event="oninput"/>    
+    <input class="bstudio_input bstudio_input-text"
+           style="height: 2em;"
+           type="text"
+           placeholder="@PlaceholderText"
+           autocapitalize="none"
+           autocorrect="off"
+           autocomplete="off"
+           spellcheck="false"
+           @bind="_fileName"
+           @bind:event="oninput"/>
 </div>
