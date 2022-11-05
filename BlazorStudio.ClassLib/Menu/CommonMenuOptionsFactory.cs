@@ -256,7 +256,6 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     if (clipboardPhrase.Command == ClipboardFacts.CopyCommand ||
                         clipboardPhrase.Command == ClipboardFacts.CutCommand)
                     {
-                        var successfullyPasted = false;
 
                         IAbsoluteFilePath? clipboardAbsoluteFilePath = null;
                         
@@ -265,32 +264,31 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                             clipboardAbsoluteFilePath = new AbsoluteFilePath(
                                 clipboardPhrase.Value,
                                 true);
-
-                            var pasted = await PerformPasteDirectoryContentAction(
-                                receivingDirectory,
-                                clipboardAbsoluteFilePath);
-
-                            if (pasted)
-                                successfullyPasted = true;
                         }
                         else if (File.Exists(clipboardPhrase.Value))
                         {
                             clipboardAbsoluteFilePath = new AbsoluteFilePath(
                                 clipboardPhrase.Value,
                                 false);
-                        
-                            var pasted = await PerformPasteFileContentAction(
-                                receivingDirectory,
-                                clipboardAbsoluteFilePath);
-                        
-                            if (pasted)
-                                successfullyPasted = true;
                         }
 
-                        if (successfullyPasted &&
-                            clipboardAbsoluteFilePath is not null)
+                        if (clipboardAbsoluteFilePath is not null)
                         {
-                            if (clipboardPhrase.Command == ClipboardFacts.CutCommand)
+                            var successfullyPasted = true;
+                            
+                            try
+                            {
+                                File.Copy(
+                                    clipboardAbsoluteFilePath.GetAbsoluteFilePathString(),
+                                    receivingDirectory.GetAbsoluteFilePathString());
+                            }
+                            catch (Exception)
+                            {
+                                successfullyPasted = false; 
+                            }
+
+                            if (successfullyPasted &&
+                                clipboardPhrase.Command == ClipboardFacts.CutCommand)
                             {
                                 PerformDeleteFileAction(
                                     clipboardAbsoluteFilePath,
@@ -307,17 +305,6 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         });
     }
     
-    private async Task<bool> PerformPasteDirectoryContentAction(
-        IAbsoluteFilePath receivingDirectory,
-        IAbsoluteFilePath directoryFromClipboard)
-    {
-    }
-    
-    private async Task<bool> PerformPasteFileContentAction(
-        IAbsoluteFilePath receivingDirectory,
-        IAbsoluteFilePath fileFromClipboard)
-    {
-    }
     /*
  * -New
         -Empty File
