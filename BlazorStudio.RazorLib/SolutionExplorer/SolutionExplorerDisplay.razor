@@ -33,8 +33,8 @@
                     <TreeViewDisplay TreeViewModel="_solutionTreeViewModel"
                                      TreeViewDisplayOnEventRegistration="_treeViewDisplayOnEventRegistration">
                         <ItemRenderFragment Context="treeViewModel">
-                            <SolutionExplorerIconDisplay AbsoluteFilePath="treeViewModel.Item" />
-                            @treeViewModel.Item.FilenameWithExtension
+                            <SolutionExplorerIconDisplay AbsoluteFilePath="treeViewModel.Item.AbsoluteFilePath" />
+                            @treeViewModel.Item.AbsoluteFilePath.FilenameWithExtension
                         </ItemRenderFragment>
 
                         <ContextMenuEventRenderFragment Context="contextMenuEvent">

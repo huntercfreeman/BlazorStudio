@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -21,7 +22,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     public DialogRecord DialogRecord { get; set; } = null!;
     
     [Parameter]
-    public IAbsoluteFilePath? SolutionAbsoluteFilePath { get; set; }
+    public NamespacePath? SolutionNamespacePath { get; set; }
 
     private readonly TerminalCommandKey _newCSharpProjectTerminalCommandKey =
         TerminalCommandKey.NewTerminalCommandKey();
@@ -55,7 +56,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     
     private string InterpolatedAddExistingProjectToSolutionCommand =>
         DotNetCliFacts.AddExistingProjectToSolution(
-            SolutionAbsoluteFilePath?.GetAbsoluteFilePathString() 
+            SolutionNamespacePath?.AbsoluteFilePath.GetAbsoluteFilePathString() 
                 ?? string.Empty,
             $"{_cSharpProjectName}/{_cSharpProjectName}.csproj");
 
@@ -102,7 +103,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         var localCSharpProjectName = _cSharpProjectName;
         var localOptionalParameters = _optionalParameters;
         var localParentDirectoryName = _parentDirectoryName;
-        var localSolutionAbsoluteFilePath = SolutionAbsoluteFilePath;
+        var localSolutionAbsoluteFilePath = SolutionNamespacePath;
 
         if (string.IsNullOrWhiteSpace(localProjectTemplateName) ||
             string.IsNullOrWhiteSpace(localCSharpProjectName) ||
@@ -123,7 +124,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         await generalTerminalSession
             .EnqueueCommandAsync(newDotNetSolutionCommand);
 
-        if (SolutionAbsoluteFilePath is not null)
+        if (SolutionNamespacePath is not null)
         {
             var addExistingProjectToSolutionCommand = new TerminalCommand(
                 _newCSharpProjectTerminalCommandKey,

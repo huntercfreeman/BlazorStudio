@@ -4,6 +4,7 @@ using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
+using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
@@ -31,16 +32,16 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     
     [Parameter, EditorRequired]
-    public TreeViewDisplayContextMenuEvent<IAbsoluteFilePath> TreeViewDisplayContextMenuEvent { get; set; } = null!;
+    public TreeViewDisplayContextMenuEvent<NamespacePath> TreeViewDisplayContextMenuEvent { get; set; } = null!;
 
     /// <summary>
     /// The program is currently running using Photino locally on the user's computer
     /// therefore this static solution works without leaking any information.
     /// </summary>
-    private static TreeViewModel<IAbsoluteFilePath>? _parentOfCutFile;
+    private static TreeViewModel<NamespacePath>? _parentOfCutFile;
 
     private MenuRecord GetContextMenu(
-        TreeViewDisplayContextMenuEvent<IAbsoluteFilePath> treeViewDisplayContextMenuEvent)
+        TreeViewDisplayContextMenuEvent<NamespacePath> treeViewDisplayContextMenuEvent)
     {
         var menuRecords = new List<MenuOptionRecord>();
         
@@ -49,7 +50,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         var parentTreeViewModel = treeViewDisplayContextMenuEvent
             .TreeViewDisplay.InternalParameters.ParentTreeViewDisplay?.TreeViewModel;
         
-        if (treeViewModel.Item.IsDirectory)
+        if (treeViewModel.Item.AbsoluteFilePath.IsDirectory)
         {
             menuRecords.AddRange(
                 GetFileMenuOptions(treeViewModel, parentTreeViewModel)
@@ -57,7 +58,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         }
         else
         {
-            switch (treeViewModel.Item.ExtensionNoPeriod)
+            switch (treeViewModel.Item.AbsoluteFilePath.ExtensionNoPeriod)
             {
                 case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                     menuRecords.AddRange(
@@ -78,7 +79,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             menuRecords.ToImmutableArray());
     }
 
-    private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewModel<NamespacePath> treeViewModel)
     {
         // TODO: Add menu options for non C# projects perhaps a more generic option is good
 
@@ -106,9 +107,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         };
     }
     
-    private MenuOptionRecord[] GetCSharpProjectMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private MenuOptionRecord[] GetCSharpProjectMenuOptions(TreeViewModel<NamespacePath> treeViewModel)
     {
-        var parentDirectory = (IAbsoluteFilePath)treeViewModel.Item.Directories.Last();
+        var parentDirectory = (IAbsoluteFilePath)treeViewModel.Item.AbsoluteFilePath.Directories.Last();
         
         return new[]
         {
@@ -137,22 +138,22 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 MenuOptionKind.Other,
                 () => Dispatcher.Dispatch(
                     new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
-                        treeViewModel.Item))),
+                        treeViewModel.Item.AbsoluteFilePath))),
         };
     }
     
-    private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewModel<NamespacePath> treeViewModel)
     {
         return new[]
         {
             CommonMenuOptionsFactory.NewEmptyFile(
-                treeViewModel.Item,
+                treeViewModel.Item.AbsoluteFilePath,
                 async () => await ReloadTreeViewModel(treeViewModel)),
             CommonMenuOptionsFactory.NewDirectory(
-                treeViewModel.Item,
+                treeViewModel.Item.AbsoluteFilePath,
                 async () => await ReloadTreeViewModel(treeViewModel)),
             CommonMenuOptionsFactory.PasteClipboard(
-                treeViewModel.Item,
+                treeViewModel.Item.AbsoluteFilePath,
                 async () =>
                 {
                     var localParentOfCutFile = 
@@ -169,27 +170,27 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     }
     
     private MenuOptionRecord[] GetFileMenuOptions(
-        TreeViewModel<IAbsoluteFilePath> treeViewModel,
-        TreeViewModel<IAbsoluteFilePath>? parentTreeViewModel)
+        TreeViewModel<NamespacePath> treeViewModel,
+        TreeViewModel<NamespacePath>? parentTreeViewModel)
     {
         return new[]
         {
             CommonMenuOptionsFactory.CopyFile(
-                treeViewModel.Item,
+                treeViewModel.Item.AbsoluteFilePath,
                 () => NotifyCopyCompleted(treeViewModel.Item)),
             CommonMenuOptionsFactory.CutFile(
-                treeViewModel.Item,
+                treeViewModel.Item.AbsoluteFilePath,
                 () => NotifyCutCompleted(treeViewModel.Item, parentTreeViewModel)),
             CommonMenuOptionsFactory.DeleteFile(
-                treeViewModel.Item,
+                treeViewModel.Item.AbsoluteFilePath,
                 async () => await ReloadTreeViewModel(parentTreeViewModel)),
             CommonMenuOptionsFactory.RenameFile(
-                treeViewModel.Item,
+                treeViewModel.Item.AbsoluteFilePath,
                 async () => await ReloadTreeViewModel(parentTreeViewModel)),
         };
     }
 
-    private void OpenNewCSharpProjectDialog(IAbsoluteFilePath solutionAbsoluteFilePath)
+    private void OpenNewCSharpProjectDialog(NamespacePath solutionNamespacePath)
     {
         var dialogRecord = new DialogRecord(
             DialogKey.NewDialogKey(), 
@@ -198,8 +199,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new Dictionary<string, object?>
             {
                 {
-                    nameof(CSharpProjectFormDisplay.SolutionAbsoluteFilePath),
-                    solutionAbsoluteFilePath
+                    nameof(CSharpProjectFormDisplay.SolutionNamespacePath),
+                    solutionNamespacePath
                 }
             });
         
@@ -208,7 +209,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 dialogRecord));
     }
     
-    private void AddExistingProjectToSolution(IAbsoluteFilePath solutionAbsoluteFilePath)
+    private void AddExistingProjectToSolution(NamespacePath solutionNamespacePath)
     {
         Dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
@@ -220,7 +221,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     
                     var localInterpolatedAddExistingProjectToSolutionCommand = DotNetCliFacts
                         .AddExistingProjectToSolution(
-                            solutionAbsoluteFilePath.GetAbsoluteFilePathString(),
+                            solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
                             afp.GetAbsoluteFilePathString());
                     
                     var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
@@ -258,7 +259,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     }
 
     private async Task ReloadTreeViewModel(
-        TreeViewModel<IAbsoluteFilePath>? treeViewModel)
+        TreeViewModel<NamespacePath>? treeViewModel)
     {
         if (treeViewModel is null)
             return;
@@ -266,7 +267,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         await treeViewModel.LoadChildrenFuncAsync(treeViewModel);
     }
     
-    private Task NotifyCopyCompleted(IAbsoluteFilePath absoluteFilePath)
+    private Task NotifyCopyCompleted(NamespacePath namespacePath)
     {
         var notificationInformative  = new NotificationRecord(
             NotificationKey.NewNotificationKey(), 
@@ -276,7 +277,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             {
                 {
                     nameof(IInformativeNotificationRendererType.Message), 
-                    $"Copied: {absoluteFilePath.FilenameWithExtension}"
+                    $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                 },
             });
         
@@ -288,8 +289,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     }
     
     private Task NotifyCutCompleted(
-        IAbsoluteFilePath absoluteFilePath,
-        TreeViewModel<IAbsoluteFilePath>? parentTreeViewModel)
+        NamespacePath namespacePath,
+        TreeViewModel<NamespacePath>? parentTreeViewModel)
     {
         _parentOfCutFile = parentTreeViewModel;
         
@@ -301,7 +302,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             {
                 {
                     nameof(IInformativeNotificationRendererType.Message), 
-                    $"Cut: {absoluteFilePath.FilenameWithExtension}"
+                    $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                 },
             });
         
