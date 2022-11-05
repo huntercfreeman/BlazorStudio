@@ -32,7 +32,13 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     
     [Parameter, EditorRequired]
     public TreeViewDisplayContextMenuEvent<IAbsoluteFilePath> TreeViewDisplayContextMenuEvent { get; set; } = null!;
-    
+
+    /// <summary>
+    /// The program is currently running using Photino locally on the user's computer
+    /// therefore this static solution works without leaking any information.
+    /// </summary>
+    private static TreeViewModel<IAbsoluteFilePath>? _parentOfCutFile;
+
     private MenuRecord GetContextMenu(
         TreeViewDisplayContextMenuEvent<IAbsoluteFilePath> treeViewDisplayContextMenuEvent)
     {
@@ -142,7 +148,18 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 async () => await ReloadTreeViewModel(treeViewModel)),
             CommonMenuOptionsFactory.PasteClipboard(
                 treeViewModel.Item,
-                async () => await ReloadTreeViewModel(treeViewModel)),
+                async () =>
+                {
+                    var localParentOfCutFile = 
+                        _parentOfCutFile;
+                    
+                    _parentOfCutFile = null;
+                    
+                    if (localParentOfCutFile is not null)
+                        await ReloadTreeViewModel(localParentOfCutFile);
+                    
+                    await ReloadTreeViewModel(treeViewModel);
+                }),
         };
     }
     
@@ -157,7 +174,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 () => NotifyCopyCompleted(treeViewModel.Item)),
             CommonMenuOptionsFactory.CutFile(
                 treeViewModel.Item,
-                () => NotifyCutCompleted(treeViewModel.Item)),
+                () => NotifyCutCompleted(treeViewModel.Item, parentTreeViewModel)),
             CommonMenuOptionsFactory.DeleteFile(
                 treeViewModel.Item,
                 async () => await ReloadTreeViewModel(parentTreeViewModel)),
@@ -265,8 +282,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         return Task.CompletedTask;
     }
     
-    private Task NotifyCutCompleted(IAbsoluteFilePath absoluteFilePath)
+    private Task NotifyCutCompleted(
+        IAbsoluteFilePath absoluteFilePath,
+        TreeViewModel<IAbsoluteFilePath>? parentTreeViewModel)
     {
+        _parentOfCutFile = parentTreeViewModel;
+        
         var notificationInformative  = new NotificationRecord(
             NotificationKey.NewNotificationKey(), 
             "Cut Action",
