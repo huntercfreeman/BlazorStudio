@@ -127,6 +127,20 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             CommonMenuOptionsFactory.NewDirectory(
                 parentDirectory,
                 async () => await ReloadTreeViewModel(treeViewModel)),
+            CommonMenuOptionsFactory.PasteClipboard(
+                parentDirectory,
+                async () =>
+                {
+                    var localParentOfCutFile = 
+                        _parentOfCutFile;
+                    
+                    _parentOfCutFile = null;
+                    
+                    if (localParentOfCutFile is not null)
+                        await ReloadTreeViewModel(localParentOfCutFile);
+                    
+                    await ReloadTreeViewModel(treeViewModel);
+                }),
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
