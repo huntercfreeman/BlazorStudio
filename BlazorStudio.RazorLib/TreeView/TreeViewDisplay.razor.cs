@@ -44,7 +44,7 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     private bool _rootTreeViewModelHasChanged;
 
     private TreeViewDisplayContextMenuEvent<TItem> ContextMenuEvent => new(
-            TreeViewModel, 
+            this, 
             _contextMenuCapturedMouseEventArgs);
 
     private TreeViewModel<TItem> Root => InternalParameters.GetRootFunc is null

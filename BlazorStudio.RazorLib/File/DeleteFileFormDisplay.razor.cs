@@ -34,10 +34,13 @@ public partial class DeleteFileFormDisplay
             
             _previousAbsoluteFilePath = AbsoluteFilePath;
 
-            _countOfImmediateChildren = Directory
-                .EnumerateFileSystemEntries(
-                    AbsoluteFilePath.GetAbsoluteFilePathString())
-                .Count();
+            if (AbsoluteFilePath.IsDirectory)
+            {
+                _countOfImmediateChildren = Directory
+                    .EnumerateFileSystemEntries(
+                        AbsoluteFilePath.GetAbsoluteFilePathString())
+                    .Count();
+            }
         }
         
         return base.OnParametersSetAsync();

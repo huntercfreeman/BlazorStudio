@@ -29,14 +29,20 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Parameter, EditorRequired]
     public TreeViewDisplayContextMenuEvent<IAbsoluteFilePath> TreeViewDisplayContextMenuEvent { get; set; } = null!;
     
-    private MenuRecord GetContextMenu(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private MenuRecord GetContextMenu(
+        TreeViewDisplayContextMenuEvent<IAbsoluteFilePath> treeViewDisplayContextMenuEvent)
     {
         var menuRecords = new List<MenuOptionRecord>();
-
+        
+        // TODO: I don't like what I'm doing here with treeViewDisplayContextMenuEvent it seems verbose perhaps revisit this
+        var treeViewModel = treeViewDisplayContextMenuEvent.TreeViewDisplay.TreeViewModel;
+        var parentTreeViewModel = treeViewDisplayContextMenuEvent
+            .TreeViewDisplay.InternalParameters.ParentTreeViewDisplay?.TreeViewModel;
+        
         if (treeViewModel.Item.IsDirectory)
         {
             menuRecords.AddRange(
-                GetFileMenuOptions(treeViewModel)
+                GetFileMenuOptions(treeViewModel, parentTreeViewModel)
                     .Union(GetDirectoryMenuOptions(treeViewModel)));
         }
         else
@@ -53,7 +59,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     break;
                 default:
                     menuRecords.AddRange(
-                        GetFileMenuOptions(treeViewModel));
+                        GetFileMenuOptions(treeViewModel, parentTreeViewModel));
                     break;
             }
         }
@@ -133,7 +139,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         };
     }
     
-    private MenuOptionRecord[] GetFileMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private MenuOptionRecord[] GetFileMenuOptions(
+        TreeViewModel<IAbsoluteFilePath> treeViewModel,
+        TreeViewModel<IAbsoluteFilePath>? parentTreeViewModel)
     {
         return new[]
         {
@@ -145,7 +153,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 MenuOptionKind.Other),
             CommonMenuOptionsFactory.DeleteFile(
                 treeViewModel.Item,
-                async () => await ReloadTreeViewModel(treeViewModel)),
+                async () => await ReloadTreeViewModel(parentTreeViewModel)),
             new MenuOptionRecord(
                 "Rename",
                 MenuOptionKind.Other),
@@ -220,8 +228,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 }.ToImmutableArray()));
     }
 
-    private async Task ReloadTreeViewModel(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private async Task ReloadTreeViewModel(
+        TreeViewModel<IAbsoluteFilePath>? treeViewModel)
     {
+        if (treeViewModel is null)
+            return;
+        
         await treeViewModel.LoadChildrenFuncAsync(treeViewModel);
     }
 }

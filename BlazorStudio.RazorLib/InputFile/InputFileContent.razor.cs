@@ -118,8 +118,11 @@ public partial class InputFileContent : FluxorComponent
         return Task.CompletedTask;
     }
 
-    private MenuRecord GetContextMenu(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private MenuRecord GetContextMenu(
+        TreeViewDisplayContextMenuEvent<IAbsoluteFilePath> treeViewDisplayContextMenuEvent)
     {
+        var treeViewModel = treeViewDisplayContextMenuEvent.TreeViewDisplay.TreeViewModel;
+        
         return new MenuRecord(new []
         {
             CommonMenuOptionsFactory.NewEmptyFile(
