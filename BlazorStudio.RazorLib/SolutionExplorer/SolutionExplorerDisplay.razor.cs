@@ -86,6 +86,17 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     break;
             }
         }
+
+        // There are some context menu options which
+        // perform a fire and forget task.
+        //
+        // When that task finishes it will tell the TreeViewModel to
+        // reload its children. But the task does not understand how to
+        // rerender the user interface.
+        //
+        // Having this state has changed allows fire and forget tasks
+        // to rerender the user interface.
+        await InvokeAsync(StateHasChanged);
     }
     
     private async Task LoadChildrenForSolutionAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
