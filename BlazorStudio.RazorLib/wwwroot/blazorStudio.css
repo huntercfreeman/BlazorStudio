@@ -53,7 +53,6 @@ input[type="checkbox"]{
 
 .bstudio_section-body {
     padding: var(--bstudio_section-body-padding);
-    font-size: var(--bstudio_section-title-font-size);
     height: calc(100% - var(--bstudio_section-title-height));
     overflow: auto;
 }
@@ -68,7 +67,7 @@ input[type="checkbox"]{
     height: var(--bstudio_editor-tabs-bar-height);
     margin-bottom: 10px;
     overflow-x: auto;
-    font-size: 0.7em;
+    font-size: 0.8em;
 }
 
 .bstudio_editor-tab-display {
@@ -107,7 +106,7 @@ input[type="checkbox"]{
 }
 
 .bstudio_editor-footer {
-    font-size: .7em;
+    font-size: .8em;
     display: flex;
     height: var(--bstudio_editor-footer-height);
     align-items: center;
