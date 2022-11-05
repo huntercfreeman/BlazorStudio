@@ -19,6 +19,10 @@ public interface ICommonMenuOptionsFactory
     public MenuOptionRecord CopyFile(
         IAbsoluteFilePath absoluteFilePath,
         Func<Task> onAfterCompletion);
+    
+    public MenuOptionRecord CutFile(
+        IAbsoluteFilePath absoluteFilePath,
+        Func<Task> onAfterCompletion);
 /*
  * -New
         -Empty File

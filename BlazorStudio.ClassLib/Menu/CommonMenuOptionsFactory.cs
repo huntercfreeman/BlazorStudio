@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.CommonComponents;
+﻿using BlazorStudio.ClassLib.Clipboard;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorTextEditor.RazorLib.Clipboard;
@@ -22,17 +23,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     }
     
     
-    /// <summary>
-    /// I am not quite sure how to interact with clipboard when it comes to
-    /// transferring objects.
-    /// <br/><br/>
-    /// For now I will use this identifier but I need to look into what other
-    /// people are doing for this.
-    /// <br/><br/>
-    /// This is used for example when copying the selected TreeViewEntry in the
-    /// solution explorer so it can be pasted later on somewhere else.
-    /// </summary>
-    public const string BlazorStudioClipboardIdentifier = "bstudio_absolute-file-path_";
+    
     
     public MenuOptionRecord NewEmptyFile(
         IAbsoluteFilePath parentDirectory,
@@ -119,6 +110,18 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 absoluteFilePath, 
                 onAfterCompletion));
     }
+    
+    public MenuOptionRecord CutFile(
+        IAbsoluteFilePath absoluteFilePath,
+        Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "Cut",
+            MenuOptionKind.Update,
+            OnClick: () => PerformCutFileAction(
+                absoluteFilePath, 
+                onAfterCompletion));
+    }
 
     private void PerformNewEmptyFileAction(
         string fileName,
@@ -197,8 +200,27 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         { 
             await _clipboardProvider
                 .SetClipboard(
-                    BlazorStudioClipboardIdentifier + 
-                    absoluteFilePath.GetAbsoluteFilePathString());
+                    ClipboardFacts.FormatPhrase(
+                        ClipboardFacts.CopyCommand,
+                        ClipboardFacts.AbsoluteFilePathDataType,
+                        absoluteFilePath.GetAbsoluteFilePathString()));
+
+            await onAfterCompletion.Invoke();
+        });
+    }
+    
+    private void PerformCutFileAction(
+        IAbsoluteFilePath absoluteFilePath, 
+        Func<Task> onAfterCompletion)
+    {
+        _ = Task.Run(async () =>
+        { 
+            await _clipboardProvider
+                .SetClipboard(
+                    ClipboardFacts.FormatPhrase(
+                        ClipboardFacts.CutCommand,
+                        ClipboardFacts.AbsoluteFilePathDataType,
+                        absoluteFilePath.GetAbsoluteFilePathString()));
 
             await onAfterCompletion.Invoke();
         });

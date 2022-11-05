@@ -152,9 +152,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             CommonMenuOptionsFactory.CopyFile(
                 treeViewModel.Item,
                 () => NotifyCopyCompleted(treeViewModel.Item)),
-            new MenuOptionRecord(
-                "Cut",
-                MenuOptionKind.Other),
+            CommonMenuOptionsFactory.CutFile(
+                treeViewModel.Item,
+                () => NotifyCutCompleted(treeViewModel.Item)),
             CommonMenuOptionsFactory.DeleteFile(
                 treeViewModel.Item,
                 async () => await ReloadTreeViewModel(parentTreeViewModel)),
@@ -246,6 +246,27 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         var notificationInformative  = new NotificationRecord(
             NotificationKey.NewNotificationKey(), 
             "Copy Action",
+            CommonComponentRenderers.InformativeNotificationRendererType,
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(IInformativeNotificationRendererType.Message), 
+                    $"Copied: {absoluteFilePath.FilenameWithExtension}"
+                },
+            });
+        
+        Dispatcher.Dispatch(
+            new NotificationState.RegisterNotificationAction(
+                notificationInformative));
+
+        return Task.CompletedTask;
+    }
+    
+    private Task NotifyCutCompleted(IAbsoluteFilePath absoluteFilePath)
+    {
+        var notificationInformative  = new NotificationRecord(
+            NotificationKey.NewNotificationKey(), 
+            "Cut Action",
             CommonComponentRenderers.InformativeNotificationRendererType,
             new Dictionary<string, object?>
             {
