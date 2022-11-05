@@ -417,11 +417,6 @@ input[type="checkbox"]{
     margin-left: var(--bstudio_input-file-display-bottom-controls-non-text-buttons-margin-left);
 }
 
-em {
-    color: var(--bstudio_primary-emphasis-foreground-color);
-    font-style: normal;
-}
-
 .bstudio_input {
     background-color: var(--bstudio_input-background-color);
     color: var(--bstudio_input-font-color);
@@ -575,4 +570,15 @@ em {
 .bstudio_delete-file-form-display {
     background-color: var(--bstudio_tertiary-background-color);
     padding: 10px;
+}
+
+hr.bstudio_hr {
+    color: var(--bstudio_hr-primary-background-color);
+    height: var(--bstudio_hr-height);
+    margin: var(--bstudio_hr-margin);
+}
+
+em.bstudio_em {
+    color: var(--bstudio_primary-emphasis-foreground-color);
+    font-style: normal;
 }
