@@ -11,6 +11,10 @@ public interface ICommonMenuOptionsFactory
     public MenuOptionRecord NewDirectory(
         IAbsoluteFilePath parentDirectory,
         Func<Task> onAfterCompletion);
+    
+    public MenuOptionRecord DeleteFile(
+        IAbsoluteFilePath absoluteFilePath,
+        Func<Task> onAfterCompletion);
 /*
  * -New
         -Empty File

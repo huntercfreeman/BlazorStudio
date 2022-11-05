@@ -33,4 +33,21 @@ public class LocalFileSystemProvider : IFileSystemProvider
 
         return Task.CompletedTask;
     }
+
+    public Task DeleteFileAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default)
+    {
+        File.Delete(
+            absoluteFilePath.GetAbsoluteFilePathString());
+        
+        return Task.CompletedTask;
+    }
+    
+    public Task DeleteDirectoryAsync(IAbsoluteFilePath absoluteFilePath, bool recursive, CancellationToken cancellationToken = default)
+    {
+        Directory.Delete(
+            absoluteFilePath.GetAbsoluteFilePathString(),
+            recursive);
+
+        return Task.CompletedTask;
+    }
 }

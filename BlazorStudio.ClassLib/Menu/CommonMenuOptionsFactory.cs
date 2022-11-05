@@ -65,6 +65,30 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             });
     }
 
+    public MenuOptionRecord DeleteFile(IAbsoluteFilePath absoluteFilePath, Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "Delete",
+            MenuOptionKind.Delete,
+            WidgetRendererType: _commonComponentRenderers.DeleteFileFormRendererType,
+            WidgetParameters: new Dictionary<string, object?>
+            {
+                {
+                    nameof(IDeleteFileFormRendererType.AbsoluteFilePath),
+                    absoluteFilePath
+                },
+                {
+                    nameof(IDeleteFileFormRendererType.IsDirectory),
+                    true
+                },
+                {
+                    nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
+                    new Action<IAbsoluteFilePath>(afp => 
+                        PerformDeleteFileAction(afp, onAfterCompletion))
+                },
+            });
+    }
+
     private void PerformNewEmptyFileAction(string fileName,
         IAbsoluteFilePath parentDirectory, 
         Func<Task> onAfterCompletion)
@@ -105,6 +129,27 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         {
             await _fileSystemProvider.CreateDirectoryAsync(
                 directoryAbsoluteFilePath);
+
+            await onAfterCompletion.Invoke();
+        });
+    }
+    
+    private void PerformDeleteFileAction(IAbsoluteFilePath absoluteFilePath, 
+        Func<Task> onAfterCompletion)
+    {
+        _ = Task.Run(async () =>
+        {
+            if (absoluteFilePath.IsDirectory)
+            {
+                await _fileSystemProvider.DeleteDirectoryAsync(
+                    absoluteFilePath,
+                    true);    
+            }
+            else
+            {
+                await _fileSystemProvider.DeleteFileAsync(
+                    absoluteFilePath);
+            }
 
             await onAfterCompletion.Invoke();
         });

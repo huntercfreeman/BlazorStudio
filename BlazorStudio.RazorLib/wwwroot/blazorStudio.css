@@ -572,3 +572,8 @@ em {
     width: 100%; 
     overflow-wrap: anywhere;
 }
+
+.bstudio_delete-file-form-display {
+    background-color: var(--bstudio_tertiary-background-color);
+    padding: 10px;
+}

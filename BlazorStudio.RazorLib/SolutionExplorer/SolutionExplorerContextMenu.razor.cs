@@ -36,7 +36,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         if (treeViewModel.Item.IsDirectory)
         {
             menuRecords.AddRange(
-                GetFileMenuOptions()
+                GetFileMenuOptions(treeViewModel)
                     .Union(GetDirectoryMenuOptions(treeViewModel)));
         }
         else
@@ -53,7 +53,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     break;
                 default:
                     menuRecords.AddRange(
-                        GetFileMenuOptions());
+                        GetFileMenuOptions(treeViewModel));
                     break;
             }
         }
@@ -133,7 +133,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         };
     }
     
-    private MenuOptionRecord[] GetFileMenuOptions()
+    private MenuOptionRecord[] GetFileMenuOptions(TreeViewModel<IAbsoluteFilePath> treeViewModel)
     {
         return new[]
         {
@@ -143,9 +143,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new MenuOptionRecord(
                 "Cut",
                 MenuOptionKind.Other),
-            new MenuOptionRecord(
-                "Delete",
-                MenuOptionKind.Other),
+            CommonMenuOptionsFactory.DeleteFile(
+                treeViewModel.Item,
+                async () => await ReloadTreeViewModel(treeViewModel)),
             new MenuOptionRecord(
                 "Rename",
                 MenuOptionKind.Other),

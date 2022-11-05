@@ -16,7 +16,8 @@ public static class ServiceCollectionExtensions
             typeof(InputFileDisplay),
             typeof(CommonInformativeNotificationDisplay),
             typeof(CommonErrorNotificationDisplay),
-            typeof(FileFormDisplay));
+            typeof(FileFormDisplay),
+            typeof(DeleteFileFormDisplay));
         
         return services
             .AddBlazorStudioClassLibServices(

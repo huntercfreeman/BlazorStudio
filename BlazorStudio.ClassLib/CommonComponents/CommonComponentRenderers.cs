@@ -6,7 +6,8 @@ public class CommonComponentRenderers : ICommonComponentRenderers
         Type inputFileRenderer,
         Type informativeNotificationRenderer,
         Type errorNotificationRenderer,
-        Type fileFormRendererType)
+        Type fileFormRendererType,
+        Type deleteFileFormRendererType)
     {
         void ValidateRenderer(Type implementationType, Type interfaceType)
         {
@@ -36,6 +37,10 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             ValidateRenderer(
                 fileFormRendererType, 
                 typeof(IFileFormRendererType));
+            
+            ValidateRenderer(
+                deleteFileFormRendererType, 
+                typeof(IDeleteFileFormRendererType));
         }
 
         // Assign
@@ -43,7 +48,8 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             InputFileRendererType = inputFileRenderer;
             InformativeNotificationRendererType = informativeNotificationRenderer;
             ErrorNotificationRendererType = errorNotificationRenderer;
-            FileFormRendererType = fileFormRendererType;    
+            FileFormRendererType = fileFormRendererType;
+            DeleteFileFormRendererType = deleteFileFormRendererType;
         }
     }
 
@@ -51,4 +57,5 @@ public class CommonComponentRenderers : ICommonComponentRenderers
     public Type InformativeNotificationRendererType { get; }
     public Type ErrorNotificationRendererType { get; }
     public Type FileFormRendererType { get; set; }
+    public Type DeleteFileFormRendererType { get; set; }
 }

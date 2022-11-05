@@ -6,4 +6,5 @@ public interface ICommonComponentRenderers
     public Type InformativeNotificationRendererType { get; }
     public Type ErrorNotificationRendererType { get; }
     public Type FileFormRendererType { get; set; }
+    public Type DeleteFileFormRendererType { get; set; }
 }
