@@ -98,6 +98,34 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 },
             });
     }
+    
+    public MenuOptionRecord RenameFile(
+        IAbsoluteFilePath absoluteFilePath,
+        Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "Rename",
+            MenuOptionKind.Update,
+            WidgetRendererType: _commonComponentRenderers.FileFormRendererType,
+            WidgetParameters: new Dictionary<string, object?>
+            {
+                {
+                    nameof(IFileFormRendererType.FileName),
+                    absoluteFilePath.IsDirectory
+                        ? absoluteFilePath.FileNameNoExtension
+                        : absoluteFilePath.FilenameWithExtension
+                },
+                {
+                    nameof(IFileFormRendererType.IsDirectory),
+                    absoluteFilePath.IsDirectory
+                },
+                {
+                    nameof(IFileFormRendererType.OnAfterSubmitAction),
+                    new Action<string>(nextName => 
+                        PerformRenameAction(absoluteFilePath, nextName, onAfterCompletion))
+                },
+            });
+    }
 
     public MenuOptionRecord CopyFile(
         IAbsoluteFilePath absoluteFilePath,
@@ -330,6 +358,56 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 }
             }
         });
+    }
+    
+    private IAbsoluteFilePath? PerformRenameAction(
+        IAbsoluteFilePath sourceAbsoluteFilePath, 
+        string nextName, 
+        Func<Task> onAfterCompletion)
+    {
+        // If the current and next name match when compared
+        // with case insensitivity
+        if (string.Compare(
+                sourceAbsoluteFilePath.FilenameWithExtension, 
+                nextName, 
+                StringComparison.OrdinalIgnoreCase)
+                    == 0)
+        {
+            var temporaryNextName = Path.GetRandomFileName();
+            
+            var temporaryRenameResult = PerformRenameAction(
+                sourceAbsoluteFilePath, 
+                temporaryNextName, 
+                () => Task.CompletedTask);
+
+            if (temporaryRenameResult is null)
+                return null;
+            else
+                sourceAbsoluteFilePath = temporaryRenameResult;
+        }
+        
+        var sourceAbsoluteFilePathString = sourceAbsoluteFilePath.GetAbsoluteFilePathString();
+        
+        var parentOfSource = (IAbsoluteFilePath)sourceAbsoluteFilePath.Directories.Last();
+
+        var destinationAbsoluteFilePathString = parentOfSource.GetAbsoluteFilePathString() +
+                                  nextName;
+
+        try
+        {
+            System.IO.File.Move(
+                sourceAbsoluteFilePathString, 
+                destinationAbsoluteFilePathString);
+        }
+        catch (Exception e)
+        {
+            // TODO: Dispatch a notification to the user of the error.
+            return null;
+        }
+
+        return new AbsoluteFilePath(
+            destinationAbsoluteFilePathString,
+            sourceAbsoluteFilePath.IsDirectory);
     }
 
     private string RemoveEndingDirectorySeparator(string value)

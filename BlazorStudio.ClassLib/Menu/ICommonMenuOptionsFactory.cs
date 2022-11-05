@@ -24,6 +24,10 @@ public interface ICommonMenuOptionsFactory
         IAbsoluteFilePath absoluteFilePath,
         Func<Task> onAfterCompletion);
     
+    public MenuOptionRecord RenameFile(
+        IAbsoluteFilePath absoluteFilePath,
+        Func<Task> onAfterCompletion);
+    
     public MenuOptionRecord PasteClipboard(
         IAbsoluteFilePath directoryAbsoluteFilePath,
         Func<Task> onAfterCompletion);

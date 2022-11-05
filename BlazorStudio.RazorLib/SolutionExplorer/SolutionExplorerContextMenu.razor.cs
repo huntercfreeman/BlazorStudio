@@ -192,9 +192,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             CommonMenuOptionsFactory.DeleteFile(
                 treeViewModel.Item,
                 async () => await ReloadTreeViewModel(parentTreeViewModel)),
-            new MenuOptionRecord(
-                "Rename",
-                MenuOptionKind.Other),
+            CommonMenuOptionsFactory.RenameFile(
+                treeViewModel.Item,
+                async () => await ReloadTreeViewModel(parentTreeViewModel)),
         };
     }
 
