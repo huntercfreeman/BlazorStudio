@@ -1,4 +1,6 @@
-﻿using BlazorStudio.ClassLib.CommonComponents;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.RazorLib.Menu;
 using Microsoft.AspNetCore.Components;
@@ -15,9 +17,11 @@ public partial class FileFormDisplay
     [Parameter, EditorRequired]
     public string FileName { get; set; } = string.Empty;
     [Parameter, EditorRequired]
-    public Action<string> OnAfterSubmitAction { get; set; } = null!;
+    public Action<string, ImmutableArray<IFileTemplate>> OnAfterSubmitAction { get; set; } = null!;
     [Parameter]
     public bool IsDirectory { get; set; }
+    [Parameter]
+    public bool CheckForTemplates { get; set; }
 
     private string? _previousFileNameParameter;
 
@@ -52,7 +56,9 @@ public partial class FileFormDisplay
             else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
             {
                 await MenuOptionWidgetParameters.CompleteWidgetAsync.Invoke(
-                    () => OnAfterSubmitAction.Invoke(_fileName));
+                    () => OnAfterSubmitAction.Invoke(
+                        _fileName, 
+                        ImmutableArray<IFileTemplate>.Empty));
             }
         }
     }

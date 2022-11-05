@@ -68,6 +68,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             solutionNamespacePath,
             true,
             LoadChildrenAsync);
+        {
+            
+        }
 
         _solutionTreeViewModel.LoadChildrenFuncAsync.Invoke(_solutionTreeViewModel);
     }

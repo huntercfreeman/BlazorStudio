@@ -1,7 +1,10 @@
-﻿using BlazorStudio.ClassLib.Clipboard;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Clipboard;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.FileTemplates;
+using BlazorStudio.ClassLib.Namespaces;
 using BlazorTextEditor.RazorLib.Clipboard;
 
 namespace BlazorStudio.ClassLib.Menu;
@@ -22,9 +25,6 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         _clipboardProvider = clipboardProvider;
     }
     
-    
-    
-    
     public MenuOptionRecord NewEmptyFile(
         IAbsoluteFilePath parentDirectory,
         Func<Task> onAfterCompletion)
@@ -40,9 +40,43 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     string.Empty
                 },
                 {
+                    nameof(IFileFormRendererType.CheckForTemplates),
+                    false
+                },
+                {
                     nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string>(fileName => 
-                        PerformNewEmptyFileAction(fileName, parentDirectory, onAfterCompletion))
+                    new Action<string, ImmutableArray<IFileTemplate>>((fileName, fileTemplates) => 
+                        PerformNewFileAction(
+                            fileName, 
+                            fileTemplates, 
+                            new NamespacePath(string.Empty, parentDirectory), 
+                            onAfterCompletion))
+                },
+            });
+    }
+
+    public MenuOptionRecord NewTemplatedFile(
+        NamespacePath parentDirectory,
+        Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "New Templated File",
+            MenuOptionKind.Create,
+            WidgetRendererType: _commonComponentRenderers.FileFormRendererType,
+            WidgetParameters: new Dictionary<string, object?>
+            {
+                {
+                    nameof(IFileFormRendererType.FileName),
+                    string.Empty
+                },
+                {
+                    nameof(IFileFormRendererType.CheckForTemplates),
+                    true
+                },
+                {
+                    nameof(IFileFormRendererType.OnAfterSubmitAction),
+                    new Action<string, ImmutableArray<IFileTemplate>>((fileName, fileTemplates) => 
+                        PerformNewFileAction(fileName, fileTemplates, parentDirectory, onAfterCompletion))
                 },
             });
     }
@@ -163,25 +197,46 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 onAfterCompletion));
     }
 
-    private void PerformNewEmptyFileAction(
+    private void PerformNewFileAction(
         string fileName,
-        IAbsoluteFilePath parentDirectory, 
+        ImmutableArray<IFileTemplate> fileTemplates,
+        NamespacePath namespacePath, 
         Func<Task> onAfterCompletion)
     {
-        var emptyFileAbsoluteFilePathString = parentDirectory.GetAbsoluteFilePathString() +
-                                              fileName;
-
-        var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
-            emptyFileAbsoluteFilePathString, 
-            false);
-
         _ = Task.Run(async () =>
         {
-            await _fileSystemProvider.WriteFileAsync(
-                emptyFileAbsoluteFilePath,
-                string.Empty,
-                false,
-                true);
+            if (!fileTemplates.Any())
+            {
+                var emptyFileAbsoluteFilePathString = namespacePath.AbsoluteFilePath
+                                                          .GetAbsoluteFilePathString() +
+                                                      fileName;
+
+                var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
+                    emptyFileAbsoluteFilePathString, 
+                    false);
+                
+                await _fileSystemProvider.WriteFileAsync(
+                    emptyFileAbsoluteFilePath,
+                    string.Empty,
+                    false,
+                    true); 
+            }
+            else
+            {
+                foreach (var fileTemplate in fileTemplates)
+                {
+                    var templateResult = fileTemplate.ConstructFileContents.Invoke(
+                        new FileTemplateParameter(
+                            fileName,
+                            namespacePath));
+                    
+                    await _fileSystemProvider.WriteFileAsync(
+                        templateResult.FileNamespacePath.AbsoluteFilePath,
+                        templateResult.Contents,
+                        false,
+                        true); 
+                }
+            }
 
             await onAfterCompletion.Invoke();
         });

@@ -120,6 +120,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             CommonMenuOptionsFactory.NewEmptyFile(
                 parentDirectory,
                 async () => await ReloadTreeViewModel(treeViewModel)),
+            CommonMenuOptionsFactory.NewTemplatedFile(
+                treeViewModel.Item,
+                async () => await ReloadTreeViewModel(treeViewModel)),
             CommonMenuOptionsFactory.NewDirectory(
                 parentDirectory,
                 async () => await ReloadTreeViewModel(treeViewModel)),
@@ -152,6 +155,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             CommonMenuOptionsFactory.NewEmptyFile(
                 treeViewModel.Item.AbsoluteFilePath,
+                async () => await ReloadTreeViewModel(treeViewModel)),
+            CommonMenuOptionsFactory.NewTemplatedFile(
+                treeViewModel.Item,
                 async () => await ReloadTreeViewModel(treeViewModel)),
             CommonMenuOptionsFactory.NewDirectory(
                 treeViewModel.Item.AbsoluteFilePath,
