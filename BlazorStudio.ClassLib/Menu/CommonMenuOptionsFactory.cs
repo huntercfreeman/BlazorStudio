@@ -381,7 +381,10 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 () => Task.CompletedTask);
 
             if (temporaryRenameResult is null)
+            {
+                onAfterCompletion.Invoke();
                 return null;
+            }
             else
                 sourceAbsoluteFilePath = temporaryRenameResult;
         }
@@ -402,9 +405,12 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         catch (Exception e)
         {
             // TODO: Dispatch a notification to the user of the error.
+            onAfterCompletion.Invoke();
             return null;
         }
 
+        onAfterCompletion.Invoke();
+        
         return new AbsoluteFilePath(
             destinationAbsoluteFilePathString,
             sourceAbsoluteFilePath.IsDirectory);
