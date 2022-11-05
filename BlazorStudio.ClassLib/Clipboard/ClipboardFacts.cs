@@ -47,4 +47,55 @@ public static class ClipboardFacts
                FieldDelimiter +
                value;
     }
+
+    public static bool TryParseString(
+        string clipboardContents, 
+        out ClipboardPhrase? clipboardPhrase)
+    {
+        clipboardPhrase = null;
+        
+        if (clipboardContents.StartsWith(ClipboardFacts.Tag))
+        {
+            // Skip Tag
+            clipboardContents = clipboardContents
+                .Substring(ClipboardFacts.Tag.Length);
+            // Skip Delimiter following the Tag
+            clipboardContents = clipboardContents
+                .Substring(ClipboardFacts.FieldDelimiter.Length);
+
+            var nextDelimiter = clipboardContents.IndexOf(
+                ClipboardFacts.FieldDelimiter, 
+                StringComparison.Ordinal);
+            
+            // Take Command
+            var command = clipboardContents
+                .Substring(0, nextDelimiter);
+            
+            clipboardContents = clipboardContents
+                .Substring(nextDelimiter + 1);
+            
+            nextDelimiter = clipboardContents.IndexOf(
+                ClipboardFacts.FieldDelimiter, 
+                StringComparison.Ordinal);
+            
+            // Take DataType
+            var dataType = clipboardContents
+                .Substring(0, nextDelimiter);
+
+            // Value is whatever remains in the string
+            var value = clipboardContents
+                .Substring(nextDelimiter + 1);
+
+            clipboardPhrase = new ClipboardPhrase
+            {
+                Command = command,
+                DataType = dataType,
+                Value = value
+            };
+
+            return true;
+        }
+
+        return false;
+    }
 }

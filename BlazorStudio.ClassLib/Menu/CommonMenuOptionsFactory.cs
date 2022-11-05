@@ -122,6 +122,18 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 absoluteFilePath, 
                 onAfterCompletion));
     }
+    
+    public MenuOptionRecord PasteClipboard(
+        IAbsoluteFilePath directoryAbsoluteFilePath,
+        Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "Paste",
+            MenuOptionKind.Update,
+            OnClick: () => PerformPasteFileAction(
+                directoryAbsoluteFilePath, 
+                onAfterCompletion));
+    }
 
     private void PerformNewEmptyFileAction(
         string fileName,
@@ -224,6 +236,87 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
             await onAfterCompletion.Invoke();
         });
+    }
+    
+    private void PerformPasteFileAction(
+        IAbsoluteFilePath receivingDirectory, 
+        Func<Task> onAfterCompletion)
+    {
+        _ = Task.Run(async () =>
+        {
+            var clipboardContents = await _clipboardProvider
+                .ReadClipboard();
+
+            if (ClipboardFacts.TryParseString(
+                    clipboardContents, out var clipboardPhrase))
+            {
+                if (clipboardPhrase is not null &&
+                    clipboardPhrase.DataType == ClipboardFacts.AbsoluteFilePathDataType)
+                {
+                    if (clipboardPhrase.Command == ClipboardFacts.CopyCommand ||
+                        clipboardPhrase.Command == ClipboardFacts.CutCommand)
+                    {
+                        var successfullyPasted = false;
+
+                        IAbsoluteFilePath? clipboardAbsoluteFilePath = null;
+                        
+                        if (Directory.Exists(clipboardPhrase.Value))
+                        {
+                            clipboardAbsoluteFilePath = new AbsoluteFilePath(
+                                clipboardPhrase.Value,
+                                true);
+
+                            var pasted = await PerformPasteDirectoryContentAction(
+                                receivingDirectory,
+                                clipboardAbsoluteFilePath);
+
+                            if (pasted)
+                                successfullyPasted = true;
+                        }
+                        else if (File.Exists(clipboardPhrase.Value))
+                        {
+                            clipboardAbsoluteFilePath = new AbsoluteFilePath(
+                                clipboardPhrase.Value,
+                                false);
+                        
+                            var pasted = await PerformPasteFileContentAction(
+                                receivingDirectory,
+                                clipboardAbsoluteFilePath);
+                        
+                            if (pasted)
+                                successfullyPasted = true;
+                        }
+
+                        if (successfullyPasted &&
+                            clipboardAbsoluteFilePath is not null)
+                        {
+                            if (clipboardPhrase.Command == ClipboardFacts.CutCommand)
+                            {
+                                PerformDeleteFileAction(
+                                    clipboardAbsoluteFilePath,
+                                    onAfterCompletion);    
+                            }
+                            else
+                            {
+                                await onAfterCompletion.Invoke();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    private async Task<bool> PerformPasteDirectoryContentAction(
+        IAbsoluteFilePath receivingDirectory,
+        IAbsoluteFilePath directoryFromClipboard)
+    {
+    }
+    
+    private async Task<bool> PerformPasteFileContentAction(
+        IAbsoluteFilePath receivingDirectory,
+        IAbsoluteFilePath fileFromClipboard)
+    {
     }
     /*
  * -New

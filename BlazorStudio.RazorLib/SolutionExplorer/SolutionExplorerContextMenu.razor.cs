@@ -140,6 +140,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             CommonMenuOptionsFactory.NewDirectory(
                 treeViewModel.Item,
                 async () => await ReloadTreeViewModel(treeViewModel)),
+            CommonMenuOptionsFactory.PasteClipboard(
+                treeViewModel.Item,
+                async () => await ReloadTreeViewModel(treeViewModel)),
         };
     }
     
@@ -272,7 +275,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             {
                 {
                     nameof(IInformativeNotificationRendererType.Message), 
-                    $"Copied: {absoluteFilePath.FilenameWithExtension}"
+                    $"Cut: {absoluteFilePath.FilenameWithExtension}"
                 },
             });
         

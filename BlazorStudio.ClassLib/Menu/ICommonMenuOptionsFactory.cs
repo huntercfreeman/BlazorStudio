@@ -23,6 +23,10 @@ public interface ICommonMenuOptionsFactory
     public MenuOptionRecord CutFile(
         IAbsoluteFilePath absoluteFilePath,
         Func<Task> onAfterCompletion);
+    
+    public MenuOptionRecord PasteClipboard(
+        IAbsoluteFilePath directoryAbsoluteFilePath,
+        Func<Task> onAfterCompletion);
 /*
  * -New
         -Empty File
