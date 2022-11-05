@@ -248,6 +248,19 @@ input[type="checkbox"]{
     color: var(--bstudio_body-background-color);
 }
 
+.bstudio_tree-view-display-body {
+    position: relative;
+}
+
+.bstudio_tree-view-display-body-border {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: var(--bstudio_hr-height) solid var(--bstudio_hr-primary-background-color);
+    opacity: var(--bstudio_hr-opacity);
+}
+
 .bstudio_header {
     display: flex;
 }
@@ -576,6 +589,7 @@ hr.bstudio_hr {
     color: var(--bstudio_hr-primary-background-color);
     height: var(--bstudio_hr-height);
     margin: var(--bstudio_hr-margin);
+    opacity: var(--bstudio_hr-opacity);
 }
 
 em.bstudio_em {

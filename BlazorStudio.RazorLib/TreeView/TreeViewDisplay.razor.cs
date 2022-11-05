@@ -1,15 +1,19 @@
 using BlazorStudio.ClassLib.CustomEvents;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Store.DropdownCase;
+using BlazorStudio.ClassLib.Store.IconCase;
 using BlazorStudio.ClassLib.TreeView;
 using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.TreeView;
 
-public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
+public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
 {
+    [Inject]
+    private IState<IconState> IconStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     
@@ -60,7 +64,7 @@ public partial class TreeViewDisplay<TItem> : ComponentBase, IDisposable
     
     private bool IsRoot => Root.Id == TreeViewModel.Id;
 
-    private int PaddingLeft => InternalParameters.Depth * PADDING_LEFT_PER_DEPTH_IN_PIXELS;
+    private int OffsetLeft => InternalParameters.Depth * PADDING_LEFT_PER_DEPTH_IN_PIXELS;
 
     private string RootTabIndex => IsRoot 
         ? "0"

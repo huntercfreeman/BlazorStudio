@@ -5,6 +5,8 @@
 
 @typeparam TItem
 
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
 <div class="bstudio_tree-view-display @RootCssClass"
      tabindex="@RootTabIndex"
      @onkeydown="HandleContainingBoxOnKeyDown"
@@ -14,7 +16,7 @@
     @if (ShouldShowRoot || !IsRoot)
     {
         <div class="bstudio_tree-view-display-title bstudio_unselectable @IsActiveDescendantClassCss"
-              style="@($"padding-left: {PaddingLeft}px;")"
+              style="@($"padding-left: {OffsetLeft}px;")"
               @onclick="SetActiveDescendantOnClick"
               @onclick:stopPropagation="true"
               @ondblclick="HandleDoubleClick"
@@ -80,6 +82,13 @@
                                      ShouldShowRoot="ShouldShowRoot"
                                      TreeViewDisplayOnEventRegistration="TreeViewDisplayOnEventRegistration"/>
                 }
+            }
+            
+            if (ShouldShowRoot || !IsRoot)
+            {
+                <div class="bstudio_tree-view-display-body-border"
+                     style="margin-left: @(OffsetLeft + IconStateWrap.Value.IconSizeInPixels / 2.0)px;">
+                </div>
             }
         }
     </div>

@@ -47,6 +47,6 @@
     --bstudio_notification-display-z-index: 15;
     --bstudio_notification-display-box-shadow-blur-radius: 2px;
     --bstudio_notification-display-toolbar-height: 2rem;
-    --bstudio_hr-height: 2px;
+    --bstudio_hr-height: 1.5px;
     --bstudio_hr-margin: 5px 0;
 }
