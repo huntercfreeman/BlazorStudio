@@ -396,11 +396,26 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         var destinationAbsoluteFilePathString = parentOfSource.GetAbsoluteFilePathString() +
                                   nextName;
 
+        sourceAbsoluteFilePathString = RemoveEndingDirectorySeparator(
+            sourceAbsoluteFilePathString);
+        
+        destinationAbsoluteFilePathString = RemoveEndingDirectorySeparator(
+            destinationAbsoluteFilePathString);
+        
         try
         {
-            System.IO.File.Move(
-                sourceAbsoluteFilePathString, 
-                destinationAbsoluteFilePathString);
+            if (sourceAbsoluteFilePath.IsDirectory)
+            {
+                System.IO.Directory.Move(
+                    sourceAbsoluteFilePathString, 
+                    destinationAbsoluteFilePathString);    
+            }
+            else
+            {
+                System.IO.File.Move(
+                    sourceAbsoluteFilePathString, 
+                    destinationAbsoluteFilePathString);
+            }
         }
         catch (Exception e)
         {
