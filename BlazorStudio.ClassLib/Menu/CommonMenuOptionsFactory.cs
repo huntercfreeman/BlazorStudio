@@ -259,6 +259,9 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                         
                         if (Directory.Exists(clipboardPhrase.Value))
                         {
+                            clipboardPhrase.Value = RemoveEndingDirectorySeparator(
+                                clipboardPhrase.Value);
+                            
                             clipboardAbsoluteFilePath = new AbsoluteFilePath(
                                 clipboardPhrase.Value,
                                 true);
@@ -276,12 +279,34 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                             
                             try
                             {
-                                var destinationFileName = receivingDirectory.GetAbsoluteFilePathString() +
-                                                  clipboardAbsoluteFilePath.FilenameWithExtension;
+                                if (clipboardAbsoluteFilePath.IsDirectory)
+                                {
+                                    var clipboardDirectoryInfo =
+                                        new DirectoryInfo(
+                                            clipboardAbsoluteFilePath
+                                                .GetAbsoluteFilePathString());
+                                    
+                                    var receivingDirectoryInfo =
+                                        new DirectoryInfo(
+                                            receivingDirectory
+                                                .GetAbsoluteFilePathString());
+                                    
+                                    CopyFilesRecursively(
+                                        clipboardDirectoryInfo,
+                                        receivingDirectoryInfo);
+                                }
+                                else
+                                {
+                                    var destinationFileName = receivingDirectory.GetAbsoluteFilePathString() +
+                                                              clipboardAbsoluteFilePath.FilenameWithExtension;
                                 
-                                File.Copy(
-                                    clipboardAbsoluteFilePath.GetAbsoluteFilePathString(),
-                                    destinationFileName);
+                                    var sourceAbsoluteFilePathString = clipboardAbsoluteFilePath
+                                        .GetAbsoluteFilePathString();
+                                
+                                    File.Copy(
+                                        sourceAbsoluteFilePathString,
+                                        destinationFileName);
+                                }
                             }
                             catch (Exception e)
                             {
@@ -291,6 +316,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                             if (successfullyPasted &&
                                 clipboardPhrase.Command == ClipboardFacts.CutCommand)
                             {
+                                // TODO: Rerender the parent of the deleted due to cut file
                                 PerformDeleteFileAction(
                                     clipboardAbsoluteFilePath,
                                     onAfterCompletion);    
@@ -305,7 +331,32 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             }
         });
     }
+
+    private string RemoveEndingDirectorySeparator(string value)
+    {
+        if (value.EndsWith(Path.DirectorySeparatorChar) ||
+            value.EndsWith(Path.AltDirectorySeparatorChar))
+        {
+            return value.Substring(
+                0, 
+                value.Length - 1);
+        }
+
+        return value;
+    }
     
+    /// <summary>
+    /// Looking into copying and pasting a directory
+    /// https://stackoverflow.com/questions/58744/copy-the-entire-contents-of-a-directory-in-c-sharp
+    /// </summary>
+    public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target) 
+    {
+        foreach (DirectoryInfo dir in source.GetDirectories())
+            CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+        foreach (FileInfo file in source.GetFiles())
+            file.CopyTo(Path.Combine(target.FullName, file.Name));
+    }
+
     /*
  * -New
         -Empty File
