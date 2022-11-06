@@ -17,7 +17,7 @@ public interface IFileTemplate
     /// <summary>
     /// Func&lt;string filename, bool isApplicable&gt;
     /// <br/><br/>
-    /// Take .Single() to find the IsExactTemplate
+    /// Take .SingleOrDefault() to find the IsExactTemplate
     /// </summary>
     public Func<string, bool> IsExactTemplate { get; }
     /// <summary>

@@ -19,6 +19,12 @@ public partial class FileTemplatesDisplay : ComponentBase
     private ImmutableArray<FileTemplatesFormWrapper> _relatedMatchWrappers = 
         ImmutableArray<FileTemplatesFormWrapper>.Empty;
 
+    public IFileTemplate? ExactMatchFileTemplate => _exactMatchWrapper?.FileTemplate;
+    public ImmutableArray<IFileTemplate>? RelatedMatchFileTemplates => _relatedMatchWrappers
+        .Where(x => x.IsChecked)
+        .Select(x => x.FileTemplate)
+        .ToImmutableArray();
+
     protected override void OnInitialized()
     {
         _fileTemplatesFormWrappers = FileTemplateProvider.FileTemplates
@@ -45,7 +51,10 @@ public partial class FileTemplatesDisplay : ComponentBase
     private void GetRelatedFileTemplates()
     {
         if (_exactMatchWrapper is null)
+        {
+            _relatedMatchWrappers = ImmutableArray<FileTemplatesFormWrapper>.Empty;    
             return;
+        }
 
         var relatedMatches = _exactMatchWrapper
             .FileTemplate.RelatedFileTemplatesFunc.Invoke(FileName);
