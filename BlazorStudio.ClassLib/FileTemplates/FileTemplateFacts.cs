@@ -74,8 +74,7 @@ public static class FileTemplateFacts
         var emptyFileAbsoluteFilePathString = fileTemplateParameter
                                                   .ParentDirectory.AbsoluteFilePath
                                                   .GetAbsoluteFilePathString() +
-                                              fileTemplateParameter.Filename +
-                                              ".cs";
+                                              fileTemplateParameter.Filename;
 
         // Create AbsoluteFilePath as to leverage it for
         // knowing the file extension and other details
@@ -90,7 +89,8 @@ public static class FileTemplateFacts
         var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
                                                      .ParentDirectory.AbsoluteFilePath
                                                      .GetAbsoluteFilePathString() +
-                                                 emptyFileAbsoluteFilePath.FileNameNoExtension;
+                                                 emptyFileAbsoluteFilePath.FileNameNoExtension +
+                                                 ".cs";
         
         var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
             templatedFileFileAbsoluteFilePathString, 
