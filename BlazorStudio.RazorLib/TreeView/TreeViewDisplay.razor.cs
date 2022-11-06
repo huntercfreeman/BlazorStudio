@@ -12,7 +12,7 @@ using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.TreeView;
 
-public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
+public partial class TreeViewDisplay<TItem> : FluxorComponent
 {
     [Inject]
     private IState<IconState> IconStateWrap { get; set; } = null!;
@@ -102,12 +102,6 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
         }
         
         return base.OnParametersSetAsync();
-    }
-
-    public async Task SetFocusAsync()
-    {
-        if (_titleElementReference is not null)
-            await _titleElementReference.Value.FocusAsync();
     }
 
     private InternalParameters<TItem> ConstructInternalParameters(int index)
@@ -453,8 +447,10 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
         }
     }
     
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
         TreeViewModel.OnStateChanged -= TreeViewModelOnStateChanged;
+        
+        base.Dispose(disposing);
     }
 }
