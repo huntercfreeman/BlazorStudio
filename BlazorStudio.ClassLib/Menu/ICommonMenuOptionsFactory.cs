@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Namespaces;
 
 namespace BlazorStudio.ClassLib.Menu;
 
@@ -6,6 +7,10 @@ public interface ICommonMenuOptionsFactory
 {
     public MenuOptionRecord NewEmptyFile(
         IAbsoluteFilePath parentDirectory,
+        Func<Task> onAfterCompletion);
+    
+    public MenuOptionRecord NewTemplatedFile(
+        NamespacePath parentDirectory,
         Func<Task> onAfterCompletion);
     
     public MenuOptionRecord NewDirectory(

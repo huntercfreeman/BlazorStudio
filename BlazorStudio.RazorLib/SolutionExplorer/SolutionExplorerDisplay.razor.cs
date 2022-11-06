@@ -6,6 +6,7 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Menu;
+using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -36,14 +37,16 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     public ElementDimensions SolutionExplorerElementDimensions { get; set; } = null!;
 
     private string _filePath = string.Empty;
-    private TreeViewModel<IAbsoluteFilePath>? _solutionTreeViewModel;
-    private TreeViewDisplayOnEventRegistration<IAbsoluteFilePath> _treeViewDisplayOnEventRegistration = null!;
+    private TreeViewModel<NamespacePath>? _solutionTreeViewModel;
+    private TreeViewDisplayOnEventRegistration<NamespacePath> _treeViewDisplayOnEventRegistration = null!;
+
+    private const char NAMESPACE_DELIMITER = '.';
     
     protected override void OnInitialized()
     {
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrapOnStateChanged;
     
-        _treeViewDisplayOnEventRegistration = new TreeViewDisplayOnEventRegistration<IAbsoluteFilePath>();
+        _treeViewDisplayOnEventRegistration = new TreeViewDisplayOnEventRegistration<NamespacePath>();
         
         _treeViewDisplayOnEventRegistration.AfterClickFuncAsync = AfterClickFuncAsync; 
         _treeViewDisplayOnEventRegistration.AfterDoubleClickFuncAsync = AfterDoubleClickFuncAsync; 
@@ -57,23 +60,30 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         if (SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath is null)
             return;
 
-        _solutionTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
-            SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath,
+        var solutionNamespacePath = new NamespacePath(
+            string.Empty,
+            SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath);
+        
+        _solutionTreeViewModel = new TreeViewModel<NamespacePath>(
+            solutionNamespacePath,
             true,
             LoadChildrenAsync);
+        {
+            
+        }
 
         _solutionTreeViewModel.LoadChildrenFuncAsync.Invoke(_solutionTreeViewModel);
     }
     
-    private async Task LoadChildrenAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private async Task LoadChildrenAsync(TreeViewModel<NamespacePath> treeViewModel)
     {
-        if (treeViewModel.Item.IsDirectory)
+        if (treeViewModel.Item.AbsoluteFilePath.IsDirectory)
         {
             await LoadChildrenForDirectoryAsync(treeViewModel);
         }
         else
         {
-            switch (treeViewModel.Item.ExtensionNoPeriod)
+            switch (treeViewModel.Item.AbsoluteFilePath.ExtensionNoPeriod)
             {
                 case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                     await LoadChildrenForSolutionAsync(treeViewModel);
@@ -99,7 +109,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         await InvokeAsync(StateHasChanged);
     }
     
-    private async Task LoadChildrenForSolutionAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private async Task LoadChildrenForSolutionAsync(TreeViewModel<NamespacePath> treeViewModel)
     {
         var solutionExplorerState = SolutionExplorerStateWrap.Value;
 
@@ -107,10 +117,17 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             return;
 
         var childProjects = solutionExplorerState.Solution.Projects
-            .Select(x => new TreeViewModel<IAbsoluteFilePath>(
-                new AbsoluteFilePath(x.FilePath, false),
-                true,
-                LoadChildrenAsync))
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x.FilePath, false);
+                
+                return new TreeViewModel<NamespacePath>(
+                    new NamespacePath(
+                        absoluteFilePath.FileNameNoExtension,
+                        absoluteFilePath),
+                    true,
+                    LoadChildrenAsync);
+            })
             .ToList();
         
         RestorePreviousStates(
@@ -121,9 +138,10 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         treeViewModel.Children.AddRange(childProjects);
     }
     
-    private async Task LoadChildrenForCSharpProjectAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private async Task LoadChildrenForCSharpProjectAsync(TreeViewModel<NamespacePath> treeViewModel)
     {
-        var parentDirectoryOfCSharpProject = ((IAbsoluteFilePath)treeViewModel.Item.Directories
+        var parentDirectoryOfCSharpProject = ((IAbsoluteFilePath)treeViewModel
+            .Item.AbsoluteFilePath.Directories
             .Last());
 
         var parentAbsoluteFilePathString = parentDirectoryOfCSharpProject
@@ -135,43 +153,61 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         var childDirectoryTreeViewModels = Directory
             .GetDirectories(parentAbsoluteFilePathString)
             .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
-            .Select(x => 
-                new TreeViewModel<IAbsoluteFilePath>(
-                    new AbsoluteFilePath(x, true),
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x, true);
+
+                var namespaceString = treeViewModel.Item.Namespace +
+                                      NAMESPACE_DELIMITER +
+                                      absoluteFilePath.FileNameNoExtension;
+
+                return new TreeViewModel<NamespacePath>(
+                    new NamespacePath(
+                        namespaceString,
+                        absoluteFilePath),
                     true,
-                    LoadChildrenAsync));
+                    LoadChildrenAsync);
+            });
         
         var uniqueDirectories = UniqueFileFacts
             .GetUniqueFilesByContainerFileExtension(
                 ExtensionNoPeriodFacts.C_SHARP_PROJECT);
         
-        var foundUniqueDirectories = new List<TreeViewModel<IAbsoluteFilePath>>();
-        var foundDefaultDirectories = new List<TreeViewModel<IAbsoluteFilePath>>();
+        var foundUniqueDirectories = new List<TreeViewModel<NamespacePath>>();
+        var foundDefaultDirectories = new List<TreeViewModel<NamespacePath>>();
 
         foreach (var directoryTreeViewModel in childDirectoryTreeViewModels)
         {
-            if (uniqueDirectories.Any(unique => directoryTreeViewModel.Item.FileNameNoExtension == unique))
+            if (uniqueDirectories.Any(unique => directoryTreeViewModel.Item.AbsoluteFilePath.FileNameNoExtension == unique))
                 foundUniqueDirectories.Add(directoryTreeViewModel);
             else
                 foundDefaultDirectories.Add(directoryTreeViewModel);
         }
         
         foundUniqueDirectories = foundUniqueDirectories
-            .OrderBy(x => x.Item.FileNameNoExtension)
+            .OrderBy(x => x.Item.AbsoluteFilePath.FileNameNoExtension)
             .ToList();
 
         foundDefaultDirectories = foundDefaultDirectories
-            .OrderBy(x => x.Item.FileNameNoExtension)
+            .OrderBy(x => x.Item.AbsoluteFilePath.FileNameNoExtension)
             .ToList();
         
         var childFileTreeViewModels = Directory
             .GetFiles(parentAbsoluteFilePathString)
             .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-            .Select(x => 
-                new TreeViewModel<IAbsoluteFilePath>(
-                    new AbsoluteFilePath(x, false),
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x, false);
+
+                var namespaceString = treeViewModel.Item.Namespace;
+                
+                return new TreeViewModel<NamespacePath>(
+                    new NamespacePath(
+                        namespaceString,
+                        absoluteFilePath),
                     false,
-                    LoadChildrenAsync));
+                    LoadChildrenAsync);
+            });
         
         var allChildTreeViewModels = 
             foundUniqueDirectories
@@ -187,26 +223,44 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         treeViewModel.Children.AddRange(allChildTreeViewModels);
     }
     
-    private async Task LoadChildrenForDirectoryAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private async Task LoadChildrenForDirectoryAsync(TreeViewModel<NamespacePath> treeViewModel)
     {
-        var directoryAbsoluteFilePathString = treeViewModel.Item
+        var directoryAbsoluteFilePathString = treeViewModel.Item.AbsoluteFilePath
             .GetAbsoluteFilePathString();
         
         var childDirectoryTreeViewModels = Directory
             .GetDirectories(directoryAbsoluteFilePathString)
-            .Select(x => 
-                new TreeViewModel<IAbsoluteFilePath>(
-                    new AbsoluteFilePath(x, true),
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x, true);
+
+                var namespaceString = treeViewModel.Item.Namespace +
+                                      NAMESPACE_DELIMITER +
+                                      absoluteFilePath.FileNameNoExtension;
+                
+                return new TreeViewModel<NamespacePath>(
+                    new NamespacePath(
+                        namespaceString, 
+                        absoluteFilePath),
                     true,
-                    LoadChildrenAsync));
+                    LoadChildrenAsync);
+            });
         
         var childFileTreeViewModels = Directory
             .GetFiles(directoryAbsoluteFilePathString)
-            .Select(x => 
-                new TreeViewModel<IAbsoluteFilePath>(
-                    new AbsoluteFilePath(x, false),
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x, false);
+
+                var namespaceString = treeViewModel.Item.Namespace;
+                
+                return new TreeViewModel<NamespacePath>(
+                    new NamespacePath(
+                        namespaceString,
+                        absoluteFilePath),
                     false,
-                    LoadChildrenAsync));
+                    LoadChildrenAsync);
+            });
 
         var allChildTreeViewModels = childDirectoryTreeViewModels
             .Union(childFileTreeViewModels)
@@ -224,23 +278,24 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     /// This method is used for .razor and .razor.cs codebehinds being nested
     /// in the solution explorer. As well for any other 'codebehind' relationship.
     /// </summary>
-    private async Task LoadNestedChildrenAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
+    private async Task LoadNestedChildrenAsync(TreeViewModel<NamespacePath> treeViewModel)
     {
     }
     
     private void RestorePreviousStates(
-        List<TreeViewModel<IAbsoluteFilePath>> previousChildren,
-        List<TreeViewModel<IAbsoluteFilePath>> nextChildren)
+        List<TreeViewModel<NamespacePath>> previousChildren,
+        List<TreeViewModel<NamespacePath>> nextChildren)
     {
         var previousChildrenIsExpandedMap = previousChildren
             .ToDictionary(
-                x => x.Item.GetAbsoluteFilePathString(),
+                x => x.Item.AbsoluteFilePath.GetAbsoluteFilePathString(),
                 x => x);
 
         foreach (var nextChild in nextChildren)
         {
             if (previousChildrenIsExpandedMap.TryGetValue(
-                    nextChild.Item.GetAbsoluteFilePathString(), out var previousTreeViewModel))
+                    nextChild.Item.AbsoluteFilePath.GetAbsoluteFilePathString(), 
+                    out var previousTreeViewModel))
             {
                 nextChild.RestoreState(previousTreeViewModel);
             }
@@ -259,17 +314,17 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     
     private Task AfterClickFuncAsync(
         MouseEventArgs mouseEventArgs, 
-        TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
+        TreeViewDisplay<NamespacePath> treeViewDisplay)
     {
         return Task.CompletedTask;
     }
     
     private async Task AfterDoubleClickFuncAsync(
         MouseEventArgs mouseEventArgs, 
-        TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
+        TreeViewDisplay<NamespacePath> treeViewDisplay)
     {
         await EditorState.OpenInEditorAsync(
-            treeViewDisplay.TreeViewModel.Item,
+            treeViewDisplay.TreeViewModel.Item.AbsoluteFilePath,
             Dispatcher,
             TextEditorService,
             TextEditorResourceMapStateWrap.Value);
@@ -277,13 +332,13 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     
     private async Task AfterKeyDownFuncAsync(
         CustomKeyDownEventArgs customKeyDownEventArgs, 
-        TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
+        TreeViewDisplay<NamespacePath> treeViewDisplay)
     {
         switch (customKeyDownEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
                 await EditorState.OpenInEditorAsync(
-                    treeViewDisplay.TreeViewModel.Item,
+                    treeViewDisplay.TreeViewModel.Item.AbsoluteFilePath,
                     Dispatcher,
                     TextEditorService,
                     TextEditorResourceMapStateWrap.Value);

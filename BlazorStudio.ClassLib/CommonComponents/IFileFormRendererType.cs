@@ -1,8 +1,12 @@
-﻿namespace BlazorStudio.ClassLib.CommonComponents;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.FileTemplates;
+
+namespace BlazorStudio.ClassLib.CommonComponents;
 
 public interface IFileFormRendererType
 {
     public string FileName { get; set; }
     public bool IsDirectory { get; set; }
-    public Action<string> OnAfterSubmitAction { get; set; }
+    public bool CheckForTemplates { get; set; }
+    public Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>> OnAfterSubmitAction { get; set; }
 }

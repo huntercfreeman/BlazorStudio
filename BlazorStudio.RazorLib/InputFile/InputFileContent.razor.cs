@@ -130,13 +130,4 @@ public partial class InputFileContent : FluxorComponent
                 async () => {})
         }.ToImmutableArray());
     }
-
-    private string GetStyleForContextMenu(MouseEventArgs? mouseEventArgs)
-    {
-        if (mouseEventArgs is null)
-            return string.Empty;
-
-        return 
-            $"position: fixed; left: {mouseEventArgs.ClientX}px; top: {mouseEventArgs.ClientY}px;";
-    }
 }

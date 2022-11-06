@@ -41,4 +41,5 @@
     --bstudio_active-button-primary-font-color: var(--bstudio_primary-font-color);
     --bstudio_tertiary-background-color: var(--bstudio_body-background-color);
     --bstudio_tertiary-foreground-color: var(--bstudio_primary-font-color);
+    --bstudio_hr-primary-background-color: currentColor;
 }

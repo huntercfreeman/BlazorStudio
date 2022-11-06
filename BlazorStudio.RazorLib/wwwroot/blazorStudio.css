@@ -53,7 +53,6 @@ input[type="checkbox"]{
 
 .bstudio_section-body {
     padding: var(--bstudio_section-body-padding);
-    font-size: var(--bstudio_section-title-font-size);
     height: calc(100% - var(--bstudio_section-title-height));
     overflow: auto;
 }
@@ -68,7 +67,7 @@ input[type="checkbox"]{
     height: var(--bstudio_editor-tabs-bar-height);
     margin-bottom: 10px;
     overflow-x: auto;
-    font-size: 0.7em;
+    font-size: 0.8em;
 }
 
 .bstudio_editor-tab-display {
@@ -107,7 +106,7 @@ input[type="checkbox"]{
 }
 
 .bstudio_editor-footer {
-    font-size: .7em;
+    font-size: .8em;
     display: flex;
     height: var(--bstudio_editor-footer-height);
     align-items: center;
@@ -247,6 +246,19 @@ input[type="checkbox"]{
 .bstudio_tree-view-display-expansion:hover {
     background-color: var(--bstudio_primary-font-color);
     color: var(--bstudio_body-background-color);
+}
+
+.bstudio_tree-view-display-body {
+    position: relative;
+}
+
+.bstudio_tree-view-display-body-border {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: var(--bstudio_hr-height) solid var(--bstudio_hr-primary-background-color);
+    opacity: var(--bstudio_hr-opacity);
 }
 
 .bstudio_header {
@@ -418,11 +430,6 @@ input[type="checkbox"]{
     margin-left: var(--bstudio_input-file-display-bottom-controls-non-text-buttons-margin-left);
 }
 
-em {
-    color: var(--bstudio_primary-emphasis-foreground-color);
-    font-style: normal;
-}
-
 .bstudio_input {
     background-color: var(--bstudio_input-background-color);
     color: var(--bstudio_input-font-color);
@@ -576,4 +583,16 @@ em {
 .bstudio_delete-file-form-display {
     background-color: var(--bstudio_tertiary-background-color);
     padding: 10px;
+}
+
+hr.bstudio_hr {
+    color: var(--bstudio_hr-primary-background-color);
+    height: var(--bstudio_hr-height);
+    margin: var(--bstudio_hr-margin);
+    opacity: var(--bstudio_hr-opacity);
+}
+
+em.bstudio_em {
+    color: var(--bstudio_primary-emphasis-foreground-color);
+    font-style: normal;
 }

@@ -32,7 +32,7 @@
 
                     <ContextMenuEventRenderFragment Context="contextMenuEvent">
                         <div class="bstudio_dropdown-display-default-background"
-                             style="@GetStyleForContextMenu(contextMenuEvent.CapturedMouseEventArgs)">
+                             style="@contextMenuEvent.DefaultStyleForContextMenu">
                             <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent.TreeViewModel)"/>
                         </div>
                     </ContextMenuEventRenderFragment>

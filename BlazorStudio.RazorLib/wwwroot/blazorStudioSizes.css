@@ -1,5 +1,5 @@
 :root {
-    --bstudio_section-title-font-size: 1.5rem;
+    --bstudio_section-title-font-size: 1.25em;
     --bstudio_section-title-height: 2rem;
     --bstudio_section-title-padding: 0 5px;
     --bstudio_section-body-padding: 5px;
@@ -47,4 +47,6 @@
     --bstudio_notification-display-z-index: 15;
     --bstudio_notification-display-box-shadow-blur-radius: 2px;
     --bstudio_notification-display-toolbar-height: 2rem;
+    --bstudio_hr-height: 1.5px;
+    --bstudio_hr-margin: 5px 0;
 }

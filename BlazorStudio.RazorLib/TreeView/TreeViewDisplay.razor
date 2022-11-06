@@ -5,6 +5,8 @@
 
 @typeparam TItem
 
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
 <div class="bstudio_tree-view-display @RootCssClass"
      tabindex="@RootTabIndex"
      @onkeydown="HandleContainingBoxOnKeyDown"
@@ -13,19 +15,20 @@
     
     @if (ShouldShowRoot || !IsRoot)
     {
-        <div class="bstudio_tree-view-display-title bstudio_unselectable @IsActiveDescendantClassCss"
-              style="@($"padding-left: {PaddingLeft}px;")"
-              @onclick="SetActiveDescendantOnClick"
-              @onclick:stopPropagation="true"
-              @ondblclick="HandleDoubleClick"
-              @ondblclick:stopPropagation="true"
-              @ref="_titleElementReference"
-              @onkeydown:stopPropagation="true"
-              @oncustomkeydown="HandleTitleOnCustomKeyDown"
-              @oncontextmenu="HandleTitleOnContextMenu"
-              @oncontextmenu:stopPropagation="true"
-              @oncontextmenu:preventDefault="true"
-              tabindex="@TitleTabIndex">
+        <div id="@TreeViewDisplayTitleElementId" 
+             class="bstudio_tree-view-display-title bstudio_unselectable @IsActiveDescendantClassCss"
+             style="@($"padding-left: {OffsetLeft}px;")"
+             @onclick="SetActiveDescendantOnClick"
+             @onclick:stopPropagation="true"
+             @ondblclick="HandleDoubleClick"
+             @ondblclick:stopPropagation="true"
+             @ref="_titleElementReference"
+             @onkeydown:stopPropagation="true"
+             @oncustomkeydown="HandleTitleOnCustomKeyDown"
+             @oncontextmenu="HandleTitleOnContextMenu"
+             @oncontextmenu:stopPropagation="true"
+             @oncontextmenu:preventDefault="true"
+             tabindex="@TitleTabIndex">
             
             @if (TreeViewModel.CanToggleExpandable)
             {
@@ -80,6 +83,13 @@
                                      ShouldShowRoot="ShouldShowRoot"
                                      TreeViewDisplayOnEventRegistration="TreeViewDisplayOnEventRegistration"/>
                 }
+            }
+            
+            if (ShouldShowRoot || !IsRoot)
+            {
+                <div class="bstudio_tree-view-display-body-border"
+                     style="margin-left: @(OffsetLeft + IconStateWrap.Value.IconSizeInPixels / 2.0)px;">
+                </div>
             }
         }
     </div>

@@ -31,7 +31,8 @@
         <div class="bstudio_menu-option-widget" 
              @onclick:stopPropagation="true"
              @onkeydown:stopPropagation="true"
-             @oncustomkeydown:stopPropagation="true">
+             @oncustomkeydown:stopPropagation="true"
+             @oncontextmenu:stopPropagation="true">
             <CascadingValue Value="MenuOptionWidgetParameters">
                 <DynamicComponent Type="MenuOptionRecord.WidgetRendererType"
                                   Parameters="MenuOptionRecord.WidgetParameters"/>

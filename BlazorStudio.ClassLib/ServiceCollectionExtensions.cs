@@ -1,6 +1,7 @@
 ﻿using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.Menu;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Clipboard;
@@ -19,6 +20,7 @@ public static class ServiceCollectionExtensions
         return services
             .AddSingleton<ICommonComponentRenderers>(commonComponentRenderers)
             .AddSingleton<ICommonMenuOptionsFactory, CommonMenuOptionsFactory>()
+            .AddSingleton<IFileTemplateProvider, FileTemplateProvider>()
             .AddTextEditorRazorLibServices(options =>
             {
                 options.InitializeFluxor = false;
