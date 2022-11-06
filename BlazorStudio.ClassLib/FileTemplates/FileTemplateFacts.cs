@@ -12,7 +12,8 @@ public static class FileTemplateFacts
         "bstudio-c-sharp-class",
         FileTemplateKind.CSharp,
         filename => filename.EndsWith(".cs"),
-        filename => ImmutableArray<(IFileTemplate fileTemplate, bool initialCheckedState)>.Empty, 
+        filename => ImmutableArray<IFileTemplate>.Empty,
+        true,
         CSharpClassCreateFileFunc);
     
     public static readonly IFileTemplate RazorMarkup = new FileTemplate(
@@ -20,7 +21,8 @@ public static class FileTemplateFacts
         "bstudio-razor-markup-class",
         FileTemplateKind.Razor,
         filename => filename.EndsWith(".razor"),
-        filename => new[] { (RazorCodebehind, true) }.ToImmutableArray(),
+        filename => new[] { RazorCodebehind }.ToImmutableArray(),
+        true,
         RazorMarkupCreateFileFunc);
 
     public static readonly IFileTemplate RazorCodebehind = new FileTemplate(
@@ -28,7 +30,8 @@ public static class FileTemplateFacts
         "bstudio-razor-codebehind-class",
         FileTemplateKind.Razor,
         filename => filename.EndsWith(".razor.cs"),
-        filename => ImmutableArray<(IFileTemplate fileTemplate, bool initialCheckedState)>.Empty,
+        filename => ImmutableArray<IFileTemplate>.Empty,
+        true,
         RazorCodebehindCreateFileFunc);
     
     /// <summary>

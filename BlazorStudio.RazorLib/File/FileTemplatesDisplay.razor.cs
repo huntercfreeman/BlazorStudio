@@ -1,0 +1,58 @@
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.FileTemplates;
+using Microsoft.AspNetCore.Components;
+
+namespace BlazorStudio.RazorLib.File;
+
+public partial class FileTemplatesDisplay : ComponentBase
+{
+    [Inject]
+    private IFileTemplateProvider FileTemplateProvider { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public string FileName { get; set; } = null!;
+    
+    private ImmutableArray<FileTemplatesFormWrapper> _fileTemplatesFormWrappers = 
+        ImmutableArray<FileTemplatesFormWrapper>.Empty;
+
+    private FileTemplatesFormWrapper? _exactMatchWrapper;
+    private ImmutableArray<FileTemplatesFormWrapper> _relatedMatchWrappers = 
+        ImmutableArray<FileTemplatesFormWrapper>.Empty;
+
+    protected override void OnInitialized()
+    {
+        _fileTemplatesFormWrappers = FileTemplateProvider.FileTemplates
+            .Select(x => new FileTemplatesFormWrapper(x, true))
+            .ToImmutableArray();
+        
+        base.OnInitialized();
+    }
+
+    private class FileTemplatesFormWrapper
+    {
+        public FileTemplatesFormWrapper(
+            IFileTemplate fileTemplate,
+            bool isChecked)
+        {
+            FileTemplate = fileTemplate;
+            IsChecked = isChecked;
+        }
+
+        public IFileTemplate FileTemplate { get; }
+        public bool IsChecked { get; set; }
+    }
+
+    private void GetRelatedFileTemplates()
+    {
+        if (_exactMatchWrapper is null)
+            return;
+
+        var relatedMatches = _exactMatchWrapper
+            .FileTemplate.RelatedFileTemplatesFunc.Invoke(FileName);
+
+        _relatedMatchWrappers = relatedMatches.Select(rel =>
+            _fileTemplatesFormWrappers.First(wrap =>
+                rel.Id == wrap.FileTemplate.Id))
+            .ToImmutableArray();
+    }
+}
