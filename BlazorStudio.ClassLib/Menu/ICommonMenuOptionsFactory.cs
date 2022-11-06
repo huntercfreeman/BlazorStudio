@@ -30,27 +30,10 @@ public interface ICommonMenuOptionsFactory
         Func<Task> onAfterCompletion);
     
     public MenuOptionRecord RenameFile(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsoluteFilePath sourceAbsoluteFilePath,
         Func<Task> onAfterCompletion);
     
     public MenuOptionRecord PasteClipboard(
         IAbsoluteFilePath directoryAbsoluteFilePath,
         Func<Task> onAfterCompletion);
-/*
- * -New
-        -Empty File
-        -Templated File
-            -Add a Codebehind Prompt when applicable
-    -Base file operations
-        -Copy
-        -Delete
-        -Cut
-        -Rename
-    -Base directory operations
-        -Copy
-        -Delete
-        -Cut
-        -Rename
-        -Paste
- */
 }
