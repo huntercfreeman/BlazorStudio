@@ -318,7 +318,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                                  '.' +
                                  ExtensionNoPeriodFacts.C_SHARP_CLASS;
                     
-                    return sibling.Item.AbsoluteFilePath.Ends;
+                    return sibling.Item.AbsoluteFilePath.FilenameWithExtension ==
+                           target;
                 };
                 
                 break;
