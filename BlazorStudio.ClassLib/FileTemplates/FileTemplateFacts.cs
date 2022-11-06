@@ -231,7 +231,7 @@ public static class FileTemplateFacts
                                                      .ParentDirectory.AbsoluteFilePath
                                                      .GetAbsoluteFilePathString() +
                                                  emptyFileAbsoluteFilePath.FileNameNoExtension +
-                                                 ".razor.cs";
+                                                 ".cs";
         
         var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
             templatedFileFileAbsoluteFilePathString, 

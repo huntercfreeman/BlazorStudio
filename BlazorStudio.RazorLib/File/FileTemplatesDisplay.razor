@@ -1,6 +1,6 @@
 ﻿@{
     _exactMatchWrapper = _fileTemplatesFormWrappers
-        .SingleOrDefault(x =>
+        .FirstOrDefault(x =>
             x.FileTemplate.IsExactTemplate.Invoke(FileName));
 
     GetRelatedFileTemplates();
