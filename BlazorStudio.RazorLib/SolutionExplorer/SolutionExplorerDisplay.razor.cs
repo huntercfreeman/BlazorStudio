@@ -313,7 +313,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             {
                 shouldNestFileFunc = sibling =>
                 {
-                    return false;
+                    var target = treeViewModel
+                        .Item.AbsoluteFilePath.FilenameWithExtension +
+                                 '.' +
+                                 ExtensionNoPeriodFacts.C_SHARP_CLASS;
+                    
+                    return sibling.Item.AbsoluteFilePath.Ends;
                 };
                 
                 break;
@@ -322,6 +327,10 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
         if (shouldNestFileFunc is not null)
         {
+            // Deduping and validation will be done in bulk
+            // once all the children nest outside of this method.
+            // See rest of this comment for more information.
+            //
             // When one finds a sibling should be nested it is necessary
             // to ensure the sibling is not already a child thereby
             // added twice.
