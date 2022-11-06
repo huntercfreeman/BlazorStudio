@@ -1,6 +1,7 @@
 ﻿using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
+using BlazorStudio.RazorLib.Button;
 using BlazorStudio.RazorLib.Menu;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -23,6 +24,7 @@ public partial class DeleteFileFormDisplay
     private IAbsoluteFilePath? _previousAbsoluteFilePath;
 
     private int? _countOfImmediateChildren;
+    private ButtonDisplay? _cancelButtonDisplay;
 
     protected override Task OnParametersSetAsync()
     {
@@ -45,7 +47,21 @@ public partial class DeleteFileFormDisplay
         
         return base.OnParametersSetAsync();
     }
-    
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (MenuOptionWidgetParameters is not null && 
+                _cancelButtonDisplay?.ButtonElementReference is not null)
+            {
+                await _cancelButtonDisplay.ButtonElementReference.Value.FocusAsync();
+            }
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (MenuOptionWidgetParameters is not null)
