@@ -20,7 +20,23 @@ public class TreeViewModel<TItem> : ITreeViewModel
     public object UntypedItem => Item;
     public TItem Item { get; set; }
     public Func<TreeViewModel<TItem>, Task> LoadChildrenFuncAsync { get; set; }
+    /// <summary>
+    /// <see cref="Children"/> is being used for example: when filesystem directory
+    /// contains filesystem entries. These are being considered children.
+    /// </summary>
     public List<TreeViewModel<TItem>> Children { get; } = new();
+    /// <summary>
+    /// <see cref="NestedSiblings"/> is being used for when
+    /// a child is removed from the list of its parent
+    /// and instead nested behind a sibling.
+    /// <br/><br/>
+    /// An example of a nested sibling is when a directory contains
+    /// a file named, 'Component.razor' and 'Component.razor.cs'.
+    /// In this situation there is a codebehind file for a razor markup file.
+    /// Therefore the razor markup takes from the parent directory its sibling file,
+    /// the codebehind, and nests the codebehind behind itself.
+    /// </summary>
+    public List<TreeViewModel<TItem>> NestedSiblings { get; } = new();
     public Guid Id { get; } = Guid.NewGuid();
     public bool IsDisplayed { get; set; } = true;
 

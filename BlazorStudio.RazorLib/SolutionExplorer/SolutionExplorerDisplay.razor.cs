@@ -275,6 +275,18 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 child, 
                 nextChildTreeViewModels);
         }
+        
+        // TODO: Once all the children have had their chance
+        // to nest. Make a HashSet<string> of all the children absolute file
+        // path strings.
+        //
+        // Then iterate over every child and check that the child's children
+        // exist in the larger set. Otherwise deleting a codebehind
+        // would result in the .razor file still showing the codebehind as
+        // it erroneously thinks the codebehind still exists.
+        //
+        // Iterate over every child (combine both these loops likely) and
+        // dedupe any absolute file path strings.
 
         treeViewModel.Children.Clear();
         treeViewModel.Children.AddRange(nextChildTreeViewModels);
@@ -310,24 +322,12 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
         if (shouldNestFileFunc is not null)
         {
-            // This childrenHashSet can possibly contain
-            // true children in addition to previously nested
-            // siblings.
-            //
             // When one finds a sibling should be nested it is necessary
             // to ensure the sibling is not already a child thereby
             // added twice.
             //
             // This issue occurs due to the RestorePreviousStates() being
             // called.
-            var childrenAbsoluteFilePathStringHashSet = new HashSet<string>();
-            
-            foreach (var child in treeViewModel.Children)
-            {
-                childrenAbsoluteFilePathStringHashSet
-                    .Add(child.Item.AbsoluteFilePath
-                        .GetAbsoluteFilePathString());
-            }
             
             foreach (var sibling in siblings)
             {
@@ -336,18 +336,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 if (shouldNest &&
                     !sibling.ParentIsSibling)
                 {
-                    if (!childrenAbsoluteFilePathStringHashSet
-                            .Contains(sibling.Item.AbsoluteFilePath
-                                .GetAbsoluteFilePathString()))
-                    {
-                        childrenAbsoluteFilePathStringHashSet
-                            .Add(sibling.Item.AbsoluteFilePath
-                                .GetAbsoluteFilePathString());
-                        
-                        treeViewModel.Children.Add(sibling);
+                    treeViewModel.Children.Add(sibling);
 
-                        sibling.ParentIsSibling = true;
-                    }
+                    sibling.ParentIsSibling = true;
                 }
             }
         }
