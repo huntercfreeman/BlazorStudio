@@ -111,8 +111,12 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string>(directoryName => 
-                        PerformNewDirectoryAction(directoryName, parentDirectory, onAfterCompletion))
+                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
+                        (directoryName, exactMatchFileTemplate, relatedMatchFileTemplates) => 
+                            PerformNewDirectoryAction(
+                                directoryName,
+                                parentDirectory,
+                                onAfterCompletion))
                 },
             });
     }
