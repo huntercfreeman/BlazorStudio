@@ -46,6 +46,9 @@ public partial class MenuOptionDisplay : ComponentBase
         () => HideWidgetAsync(null), 
         HideWidgetAsync);
 
+    private bool DisplayWidget => _shouldDisplayWidget &&
+                                  MenuOptionRecord.WidgetRendererType is not null;
+
     protected override async Task OnParametersSetAsync()
     {
         var localHasSubmenuActive = HasSubmenuActive;
@@ -66,6 +69,7 @@ public partial class MenuOptionDisplay : ComponentBase
         // Set focus to active menu option
         if (IsActive && 
             !localHasSubmenuActive &&
+            !DisplayWidget &&
             _menuOptionDisplayElementReference.HasValue)
         {
             await _menuOptionDisplayElementReference.Value.FocusAsync();

@@ -45,10 +45,27 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         var menuRecords = new List<MenuOptionRecord>();
         
-        // TODO: I don't like what I'm doing here with treeViewDisplayContextMenuEvent it seems verbose perhaps revisit this
-        var treeViewModel = treeViewDisplayContextMenuEvent.TreeViewDisplay.TreeViewModel;
+        var treeViewModel = treeViewDisplayContextMenuEvent
+            .TreeViewDisplay.TreeViewModel;
+        
         var parentTreeViewModel = treeViewDisplayContextMenuEvent
-            .TreeViewDisplay.InternalParameters.ParentTreeViewDisplay?.TreeViewModel;
+            .TreeViewDisplay
+            .InternalParameters
+            .ParentTreeViewDisplay?
+            .TreeViewModel;
+        
+        // If a codebehind was the target of a context menu event
+        // the true parent is 2 levels up instead of the normal 1
+        if (treeViewModel.ParentIsSibling)
+        {
+            parentTreeViewModel = treeViewDisplayContextMenuEvent
+                .TreeViewDisplay
+                .InternalParameters
+                .ParentTreeViewDisplay?
+                .InternalParameters
+                .ParentTreeViewDisplay?
+                .TreeViewModel;
+        }
         
         if (treeViewModel.Item.AbsoluteFilePath.IsDirectory)
         {
@@ -193,21 +210,29 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 () => NotifyCutCompleted(treeViewModel.Item, parentTreeViewModel)),
             CommonMenuOptionsFactory.DeleteFile(
                 treeViewModel.Item.AbsoluteFilePath,
-                async () => await ReloadTreeViewModel(parentTreeViewModel)),
+                async () =>
+                {
+                    treeViewModel.IsDeleted = true;
+                    await ReloadTreeViewModel(parentTreeViewModel);
+                }),
             CommonMenuOptionsFactory.RenameFile(
                 treeViewModel.Item.AbsoluteFilePath,
-                async () => await ReloadTreeViewModel(parentTreeViewModel)),
+                async ()  =>
+                {
+                    treeViewModel.IsDeleted = true;
+                    await ReloadTreeViewModel(parentTreeViewModel);
+                }),
         };
     }
     
     private MenuOptionRecord[] GetDebugMenuOptions(
         TreeViewModel<NamespacePath> treeViewModel)
     {
-        return new[]
+        return new MenuOptionRecord[]
         {
-            new MenuOptionRecord(
-                $"namespace: {treeViewModel.Item.Namespace}",
-                MenuOptionKind.Read)
+            // new MenuOptionRecord(
+            //     $"namespace: {treeViewModel.Item.Namespace}",
+            //     MenuOptionKind.Read)
         };
     }
 

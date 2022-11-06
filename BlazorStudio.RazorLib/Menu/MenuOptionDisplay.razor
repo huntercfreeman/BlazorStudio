@@ -7,32 +7,34 @@
      @ref="_menuOptionDisplayElementReference"
      @onclick="HandleOnClick"
      @onclick:stopPropagation="true"
-     @onkeydown="HandleOnKeyDown">
-    
+     @onkeydown="HandleOnKeyDown"
+     @onkeydown:preventDefault="true">
+
     @MenuOptionRecord.DisplayName
-    
+
     @if (MenuOptionRecord.SubMenu is not null)
     {
-        <IconChevronRight />
-        
+        <IconChevronRight/>
+
         <DropdownDisplay DropdownKey="_subMenuDropdownKey"
                          DropdownPositionKind="DropdownPositionKind.Horizontal"
                          ShouldDisplayOutOfBoundsClickDisplay="false">
-            
+
             <div class="bstudio_dropdown-display-default-background">
-                <MenuDisplay MenuRecord="MenuOptionRecord.SubMenu" />
+                <MenuDisplay MenuRecord="MenuOptionRecord.SubMenu"/>
             </div>
         </DropdownDisplay>
     }
-    
-    @if (_shouldDisplayWidget &&
-         MenuOptionRecord.WidgetRendererType is not null)
+
+    @if (DisplayWidget)
     {
-        <div class="bstudio_menu-option-widget" 
+        <div class="bstudio_menu-option-widget"
              @onclick:stopPropagation="true"
+             @ondblclick:stopPropagation="true"
              @onkeydown:stopPropagation="true"
              @oncustomkeydown:stopPropagation="true"
              @oncontextmenu:stopPropagation="true">
+
             <CascadingValue Value="MenuOptionWidgetParameters">
                 <DynamicComponent Type="MenuOptionRecord.WidgetRendererType"
                                   Parameters="MenuOptionRecord.WidgetParameters"/>

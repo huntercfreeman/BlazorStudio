@@ -92,7 +92,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     await LoadChildrenForCSharpProjectAsync(treeViewModel);
                     break;
                 default:
-                    await LoadNestedChildrenAsync(treeViewModel);
                     break;
             }
         }
@@ -262,24 +261,101 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     LoadChildrenAsync);
             });
 
-        var allChildTreeViewModels = childDirectoryTreeViewModels
+        var nextChildTreeViewModels = childDirectoryTreeViewModels
             .Union(childFileTreeViewModels)
             .ToList();
 
         RestorePreviousStates(
             treeViewModel.Children,
-            allChildTreeViewModels);
+            nextChildTreeViewModels);
+
+        foreach (var child in nextChildTreeViewModels)
+        {
+            await TakeNestableSiblingsAsync(
+                child, 
+                nextChildTreeViewModels);
+        }
+        
+        // TODO: Once all the children have had their chance
+        // to nest. Make a HashSet<string> of all the children absolute file
+        // path strings.
+        //
+        // Then iterate over every child and check that the child's children
+        // exist in the larger set. Otherwise deleting a codebehind
+        // would result in the .razor file still showing the codebehind as
+        // it erroneously thinks the codebehind still exists.
+        //
+        // Iterate over every child (combine both these loops likely) and
+        // dedupe any absolute file path strings.
 
         treeViewModel.Children.Clear();
-        treeViewModel.Children.AddRange(allChildTreeViewModels);
+        treeViewModel.Children.AddRange(nextChildTreeViewModels);
     }
 
     /// <summary>
     /// This method is used for .razor and .razor.cs codebehinds being nested
     /// in the solution explorer. As well for any other 'codebehind' relationship.
+    /// <br/><br/>
+    /// Once a sibling is nested that sibling which was nested
+    /// is removed from their parent's list.
     /// </summary>
-    private async Task LoadNestedChildrenAsync(TreeViewModel<NamespacePath> treeViewModel)
+    private async Task TakeNestableSiblingsAsync(
+        TreeViewModel<NamespacePath> treeViewModel,
+        List<TreeViewModel<NamespacePath>> siblings)
     {
+        // Takes a sibling and returns whether it
+        // should be nested as a "codebehind".
+        Func<TreeViewModel<NamespacePath>, bool>? shouldNestFileFunc = null;
+        
+        switch (treeViewModel.Item.AbsoluteFilePath.ExtensionNoPeriod)
+        {
+            case ExtensionNoPeriodFacts.RAZOR_MARKUP:
+            {
+                shouldNestFileFunc = sibling =>
+                {
+                    var target = treeViewModel
+                        .Item.AbsoluteFilePath.FilenameWithExtension +
+                                 '.' +
+                                 ExtensionNoPeriodFacts.C_SHARP_CLASS;
+                    
+                    return sibling.Item.AbsoluteFilePath.FilenameWithExtension ==
+                           target;
+                };
+                
+                break;
+            }
+        }
+
+        if (shouldNestFileFunc is not null)
+        {
+            // Deduping and validation will be done in bulk
+            // once all the children nest outside of this method.
+            // See rest of this comment for more information.
+            //
+            // When one finds a sibling should be nested it is necessary
+            // to ensure the sibling is not already a child thereby
+            // added twice.
+            //
+            // This issue occurs due to the RestorePreviousStates() being
+            // called.
+            
+            foreach (var sibling in siblings)
+            {
+                var shouldNest = shouldNestFileFunc.Invoke(sibling);
+
+                // First come first serve logic: !sibling.ParentIsSibling
+                // if sibling doesn't already have a siblingParent
+                if (shouldNest &&
+                    !sibling.ParentIsSibling)
+                {
+                    treeViewModel.NestedSiblings.Add(sibling);
+
+                    sibling.ParentIsSibling = true;
+
+                    treeViewModel.CanToggleExpandable = true;
+                }
+            }
+        }
     }
     
     private void RestorePreviousStates(

@@ -27,6 +27,7 @@ public partial class FileFormDisplay
 
     private string _fileName = string.Empty;
     private FileTemplatesDisplay? _fileTemplatesDisplay;
+    private ElementReference? _inputElementReference;
 
     private string PlaceholderText => IsDirectory
         ? "Directory name"
@@ -44,6 +45,20 @@ public partial class FileFormDisplay
         }
         
         return base.OnParametersSetAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (MenuOptionWidgetParameters is not null && 
+                _inputElementReference is not null)
+            {
+                await _inputElementReference.Value.FocusAsync();
+            }
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

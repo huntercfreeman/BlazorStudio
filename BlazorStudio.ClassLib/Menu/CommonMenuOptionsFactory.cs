@@ -148,7 +148,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     }
     
     public MenuOptionRecord RenameFile(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsoluteFilePath sourceAbsoluteFilePath,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
@@ -159,18 +159,22 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             {
                 {
                     nameof(IFileFormRendererType.FileName),
-                    absoluteFilePath.IsDirectory
-                        ? absoluteFilePath.FileNameNoExtension
-                        : absoluteFilePath.FilenameWithExtension
+                    sourceAbsoluteFilePath.IsDirectory
+                        ? sourceAbsoluteFilePath.FileNameNoExtension
+                        : sourceAbsoluteFilePath.FilenameWithExtension
                 },
                 {
                     nameof(IFileFormRendererType.IsDirectory),
-                    absoluteFilePath.IsDirectory
+                    sourceAbsoluteFilePath.IsDirectory
                 },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string>(nextName => 
-                        PerformRenameAction(absoluteFilePath, nextName, onAfterCompletion))
+                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
+                        (nextName, exactMatchFileTemplate, relatedMatchFileTemplates) => 
+                            PerformRenameAction(
+                                sourceAbsoluteFilePath,
+                                nextName,
+                                onAfterCompletion))
                 },
             });
     }

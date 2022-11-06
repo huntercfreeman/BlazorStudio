@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
+using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Namespaces;
 
@@ -11,7 +12,8 @@ public static class FileTemplateFacts
         "C# Class",
         "bstudio-c-sharp-class",
         FileTemplateKind.CSharp,
-        filename => filename.EndsWith(".cs"),
+        filename => filename
+            .EndsWith('.' + ExtensionNoPeriodFacts.C_SHARP_CLASS),
         filename => ImmutableArray<IFileTemplate>.Empty,
         true,
         CSharpClassCreateFileFunc);
@@ -20,7 +22,8 @@ public static class FileTemplateFacts
         "Razor markup",
         "bstudio-razor-markup-class",
         FileTemplateKind.Razor,
-        filename => filename.EndsWith(".razor"),
+        filename => filename
+            .EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP),
         filename => new[] { RazorCodebehind }.ToImmutableArray(),
         true,
         RazorMarkupCreateFileFunc);
@@ -29,7 +32,8 @@ public static class FileTemplateFacts
         "Razor codebehind",
         "bstudio-razor-codebehind-class",
         FileTemplateKind.Razor,
-        filename => filename.EndsWith(".razor.cs"),
+        filename => filename
+            .EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND),
         filename => ImmutableArray<IFileTemplate>.Empty,
         true,
         RazorCodebehindCreateFileFunc);
@@ -90,7 +94,8 @@ public static class FileTemplateFacts
                                                      .ParentDirectory.AbsoluteFilePath
                                                      .GetAbsoluteFilePathString() +
                                                  emptyFileAbsoluteFilePath.FileNameNoExtension +
-                                                 ".cs";
+                                                 '.' +
+                                                 ExtensionNoPeriodFacts.C_SHARP_CLASS;
         
         var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
             templatedFileFileAbsoluteFilePathString, 
@@ -155,7 +160,8 @@ public static class FileTemplateFacts
                                                      .ParentDirectory.AbsoluteFilePath
                                                      .GetAbsoluteFilePathString() +
                                                  emptyFileAbsoluteFilePath.FileNameNoExtension +
-                                                 ".razor";
+                                                 '.' +
+                                                 ExtensionNoPeriodFacts.RAZOR_MARKUP;
         
         var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
             templatedFileFileAbsoluteFilePathString, 
@@ -198,7 +204,9 @@ public static class FileTemplateFacts
                 Environment.NewLine);
             
             templateBuilder.Append(
-                $"public partial class {fileNameNoExtension.Replace(".razor", String.Empty)} : ComponentBase{Environment.NewLine}");
+                $"public partial class" +
+                $" {fileNameNoExtension.Replace('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP, String.Empty)}" +
+                $" : ComponentBase{Environment.NewLine}");
             
             templateBuilder.Append(
                 $"{{{Environment.NewLine}");
@@ -232,10 +240,17 @@ public static class FileTemplateFacts
                                                      .GetAbsoluteFilePathString() +
                                                  emptyFileAbsoluteFilePath.FileNameNoExtension;
 
-        if (templatedFileFileAbsoluteFilePathString.EndsWith(".razor"))
-            templatedFileFileAbsoluteFilePathString += ".cs";
+        if (templatedFileFileAbsoluteFilePathString.EndsWith(
+                '.' + ExtensionNoPeriodFacts.RAZOR_MARKUP))
+        {
+            templatedFileFileAbsoluteFilePathString += 
+                '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS;
+        }
         else
-            templatedFileFileAbsoluteFilePathString += ".razor.cs";
+        {
+            templatedFileFileAbsoluteFilePathString += 
+                '.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND;
+        }
         
         var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
             templatedFileFileAbsoluteFilePathString, 

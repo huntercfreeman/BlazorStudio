@@ -9,7 +9,8 @@
 
 <div class="bstudio_tree-view-display @RootCssClass"
      tabindex="@RootTabIndex"
-     @onkeydown="HandleContainingBoxOnKeyDown"
+     @onkeydown:stopPropagation="true"
+     @oncustomkeydown="HandleContainingBoxOnCustomKeyDown"
      @onfocusin="HandleOnFocusIn"
      @onfocusout="HandleOnFocusOut">
     
@@ -66,22 +67,50 @@
     <div class="bstudio_tree-view-display-body">
         @if (TreeViewModel.IsExpanded || (!ShouldShowRoot && IsRoot))
         {
-            var immutableChildArray = TreeViewModel.Children.ToImmutableArray();
-
-            for (var i = 0; i < immutableChildArray.Length; i++)
             {
-                var index = i;
-                var child = immutableChildArray[index];
+                @* 
+                    NestedSiblings are displayed before children because
+                    there is a mindset that NestedSiblings are 'special' cases
+                    such as a codebehind and should come first in tree view.
+                *@
+                var immutableSiblingsArray = TreeViewModel.NestedSiblings.ToImmutableArray();
 
-                if (child.IsDisplayed)
+                for (var i = 0; i < immutableSiblingsArray.Length; i++)
                 {
-                    <TreeViewDisplay @key="child.Id"
-                                     TreeViewModel="child"
-                                     ItemRenderFragment="ItemRenderFragment"
-                                     InternalParameters="ConstructInternalParameters(index)"
-                                     ContextMenuEventRenderFragment="ContextMenuEventRenderFragment"
-                                     ShouldShowRoot="ShouldShowRoot"
-                                     TreeViewDisplayOnEventRegistration="TreeViewDisplayOnEventRegistration"/>
+                    var index = i;
+                    var child = immutableSiblingsArray[index];
+
+                    if (child.IsDisplayed && child.ParentIsSibling)
+                    {
+                        <TreeViewDisplay @key="child.Id"
+                                         TreeViewModel="child"
+                                         ItemRenderFragment="ItemRenderFragment"
+                                         InternalParameters="ConstructInternalParameters(index)"
+                                         ContextMenuEventRenderFragment="ContextMenuEventRenderFragment"
+                                         ShouldShowRoot="ShouldShowRoot"
+                                         TreeViewDisplayOnEventRegistration="TreeViewDisplayOnEventRegistration"/>
+                    }
+                }
+            }
+
+            {
+                var immutableChildArray = TreeViewModel.Children.ToImmutableArray();
+
+                for (var i = 0; i < immutableChildArray.Length; i++)
+                {
+                    var index = i;
+                    var child = immutableChildArray[index];
+
+                    if (child.IsDisplayed && !child.ParentIsSibling)
+                    {
+                        <TreeViewDisplay @key="child.Id"
+                                         TreeViewModel="child"
+                                         ItemRenderFragment="ItemRenderFragment"
+                                         InternalParameters="ConstructInternalParameters(index)"
+                                         ContextMenuEventRenderFragment="ContextMenuEventRenderFragment"
+                                         ShouldShowRoot="ShouldShowRoot"
+                                         TreeViewDisplayOnEventRegistration="TreeViewDisplayOnEventRegistration"/>
+                    }
                 }
             }
             
