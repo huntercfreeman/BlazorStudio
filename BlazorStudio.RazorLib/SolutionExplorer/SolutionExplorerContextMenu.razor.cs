@@ -45,10 +45,27 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         var menuRecords = new List<MenuOptionRecord>();
         
-        // TODO: I don't like what I'm doing here with treeViewDisplayContextMenuEvent it seems verbose perhaps revisit this
-        var treeViewModel = treeViewDisplayContextMenuEvent.TreeViewDisplay.TreeViewModel;
+        var treeViewModel = treeViewDisplayContextMenuEvent
+            .TreeViewDisplay.TreeViewModel;
+        
         var parentTreeViewModel = treeViewDisplayContextMenuEvent
-            .TreeViewDisplay.InternalParameters.ParentTreeViewDisplay?.TreeViewModel;
+            .TreeViewDisplay
+            .InternalParameters
+            .ParentTreeViewDisplay?
+            .TreeViewModel;
+        
+        // If a codebehind was the target of a context menu event
+        // the true parent is 2 levels up instead of the normal 1
+        if (treeViewModel.ParentIsSibling)
+        {
+            parentTreeViewModel = treeViewDisplayContextMenuEvent
+                .TreeViewDisplay
+                .InternalParameters
+                .ParentTreeViewDisplay?
+                .InternalParameters
+                .ParentTreeViewDisplay?
+                .TreeViewModel;
+        }
         
         if (treeViewModel.Item.AbsoluteFilePath.IsDirectory)
         {
