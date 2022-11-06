@@ -210,10 +210,18 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 () => NotifyCutCompleted(treeViewModel.Item, parentTreeViewModel)),
             CommonMenuOptionsFactory.DeleteFile(
                 treeViewModel.Item.AbsoluteFilePath,
-                async () => await ReloadTreeViewModel(parentTreeViewModel)),
+                async () =>
+                {
+                    treeViewModel.IsDeleted = true;
+                    await ReloadTreeViewModel(parentTreeViewModel);
+                }),
             CommonMenuOptionsFactory.RenameFile(
                 treeViewModel.Item.AbsoluteFilePath,
-                async () => await ReloadTreeViewModel(parentTreeViewModel)),
+                async ()  =>
+                {
+                    treeViewModel.IsDeleted = true;
+                    await ReloadTreeViewModel(parentTreeViewModel);
+                }),
         };
     }
     

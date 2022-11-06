@@ -193,18 +193,26 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent, IDisposable
             await _titleElementReference.Value.FocusAsync();
     }
 
-    private void HandleContainingBoxOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private void HandleContainingBoxOnCustomKeyDown(CustomKeyDownEventArgs customKeyDownEventArgs)
     {
-        switch (keyboardEventArgs.Key)
+        switch (customKeyDownEventArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
             {
+                if (Root.ActiveDescendant is not null &&
+                    (!Root.ActiveDescendant.IsDisplayed ||
+                     Root.ActiveDescendant.IsDeleted))
+                {
+                    Root.ActiveDescendant = null;
+                }
+                
                 if (Root.ActiveDescendant is null)
                 {
                     SetActiveDescendantAndRerender(Root);
                 }
-                else if (Root.ActiveDescendant.IsDisplayed)
+                else if (Root.ActiveDescendant.IsDisplayed &&
+                         !Root.ActiveDescendant.IsDeleted)
                 {
                     SetActiveDescendantAndRerender(Root.ActiveDescendant);
                 }

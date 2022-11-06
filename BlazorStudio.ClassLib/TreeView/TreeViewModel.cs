@@ -59,6 +59,7 @@ public class TreeViewModel<TItem> : ITreeViewModel
     /// This is used when dealing with codebehinds
     /// </summary>
     public bool ParentIsSibling { get; set; }
+    public bool IsDeleted { get; set; }
     public TreeViewModel<TItem>? ActiveDescendant { get; set; }
 
     public event EventHandler<bool>? OnStateChanged;

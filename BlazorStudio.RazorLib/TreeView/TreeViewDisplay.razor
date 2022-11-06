@@ -9,7 +9,8 @@
 
 <div class="bstudio_tree-view-display @RootCssClass"
      tabindex="@RootTabIndex"
-     @onkeydown="HandleContainingBoxOnKeyDown"
+     @onkeydown:stopPropagation="true"
+     @oncustomkeydown="HandleContainingBoxOnCustomKeyDown"
      @onfocusin="HandleOnFocusIn"
      @onfocusout="HandleOnFocusOut">
     
