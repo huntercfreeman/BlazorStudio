@@ -220,11 +220,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private MenuOptionRecord[] GetDebugMenuOptions(
         TreeViewModel<NamespacePath> treeViewModel)
     {
-        return new[]
+        return new MenuOptionRecord[]
         {
-            new MenuOptionRecord(
-                $"namespace: {treeViewModel.Item.Namespace}",
-                MenuOptionKind.Read)
+            // new MenuOptionRecord(
+            //     $"namespace: {treeViewModel.Item.Namespace}",
+            //     MenuOptionKind.Read)
         };
     }
 
