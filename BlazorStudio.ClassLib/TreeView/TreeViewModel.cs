@@ -27,8 +27,10 @@ public class TreeViewModel<TItem> : ITreeViewModel
     public List<TreeViewModel<TItem>> Children { get; } = new();
     /// <summary>
     /// <see cref="NestedSiblings"/> is being used for when
-    /// a child is removed from the list of its parent
-    /// and instead nested behind a sibling.
+    /// a child is marked as 'hidden' from the list of its parent
+    /// and instead nested behind a sibling. 'hidden' marking
+    /// does not remove the child from the parent's list. It
+    /// is a boolean that is used for rendering the user interface.
     /// <br/><br/>
     /// An example of a nested sibling is when a directory contains
     /// a file named, 'Component.razor' and 'Component.razor.cs'.

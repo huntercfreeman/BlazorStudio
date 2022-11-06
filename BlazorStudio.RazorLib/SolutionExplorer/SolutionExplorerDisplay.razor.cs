@@ -333,12 +333,16 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             {
                 var shouldNest = shouldNestFileFunc.Invoke(sibling);
 
+                // First come first serve logic: !sibling.ParentIsSibling
+                // if sibling doesn't already have a siblingParent
                 if (shouldNest &&
                     !sibling.ParentIsSibling)
                 {
-                    treeViewModel.Children.Add(sibling);
+                    treeViewModel.NestedSiblings.Add(sibling);
 
                     sibling.ParentIsSibling = true;
+
+                    treeViewModel.CanToggleExpandable = true;
                 }
             }
         }
