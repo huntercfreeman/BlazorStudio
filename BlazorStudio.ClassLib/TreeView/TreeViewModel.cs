@@ -37,6 +37,10 @@ public class TreeViewModel<TItem> : ITreeViewModel
     }
 
     public bool CanToggleExpandable { get; set; }
+    /// <summary>
+    /// This is used when dealing with codebehinds
+    /// </summary>
+    public bool ParentIsSibling { get; set; }
     public TreeViewModel<TItem>? ActiveDescendant { get; set; }
 
     public event EventHandler<bool>? OnStateChanged;
@@ -53,5 +57,6 @@ public class TreeViewModel<TItem> : ITreeViewModel
         Children.Clear();
         Children.AddRange(previousTreeViewModel.Children);
         IsDisplayed = previousTreeViewModel.IsDisplayed;
+        ParentIsSibling = false;
     }
 }

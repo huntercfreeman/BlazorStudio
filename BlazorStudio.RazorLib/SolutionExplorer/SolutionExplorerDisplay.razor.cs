@@ -92,7 +92,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     await LoadChildrenForCSharpProjectAsync(treeViewModel);
                     break;
                 default:
-                    await LoadNestedChildrenAsync(treeViewModel);
                     break;
             }
         }
@@ -272,7 +271,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
         foreach (var child in nextChildTreeViewModels)
         {
-            await TakeNestableSiblingsAsync(child, nextChildTreeViewModels);
+            await TakeNestableSiblingsAsync(
+                child, 
+                nextChildTreeViewModels);
         }
 
         treeViewModel.Children.Clear();
@@ -290,24 +291,64 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         TreeViewModel<NamespacePath> treeViewModel,
         List<TreeViewModel<NamespacePath>> siblings)
     {
-
-        // Takes a sibling and returns whether it should be
-        // nested as a "codebehind".
-        Func<TreeViewModel<NamespacePath>, bool> shouldNestFileFunc = sibling =>
-            false;
+        // Takes a sibling and returns whether it
+        // should be nested as a "codebehind".
+        Func<TreeViewModel<NamespacePath>, bool>? shouldNestFileFunc = null;
         
         switch (treeViewModel.Item.AbsoluteFilePath.ExtensionNoPeriod)
         {
             case ExtensionNoPeriodFacts.RAZOR_MARKUP:
             {
-                
-                
-                for (int i = nextChildren.Count - 1; i >= 0; i--)
+                shouldNestFileFunc = sibling =>
                 {
-                    var sibling = nextChildren[];
-                }
+                    return false;
+                };
                 
                 break;
+            }
+        }
+
+        if (shouldNestFileFunc is not null)
+        {
+            // This childrenHashSet can possibly contain
+            // true children in addition to previously nested
+            // siblings.
+            //
+            // When one finds a sibling should be nested it is necessary
+            // to ensure the sibling is not already a child thereby
+            // added twice.
+            //
+            // This issue occurs due to the RestorePreviousStates() being
+            // called.
+            var childrenAbsoluteFilePathStringHashSet = new HashSet<string>();
+            
+            foreach (var child in treeViewModel.Children)
+            {
+                childrenAbsoluteFilePathStringHashSet
+                    .Add(child.Item.AbsoluteFilePath
+                        .GetAbsoluteFilePathString());
+            }
+            
+            foreach (var sibling in siblings)
+            {
+                var shouldNest = shouldNestFileFunc.Invoke(sibling);
+
+                if (shouldNest &&
+                    !sibling.ParentIsSibling)
+                {
+                    if (!childrenAbsoluteFilePathStringHashSet
+                            .Contains(sibling.Item.AbsoluteFilePath
+                                .GetAbsoluteFilePathString()))
+                    {
+                        childrenAbsoluteFilePathStringHashSet
+                            .Add(sibling.Item.AbsoluteFilePath
+                                .GetAbsoluteFilePathString());
+                        
+                        treeViewModel.Children.Add(sibling);
+
+                        sibling.ParentIsSibling = true;
+                    }
+                }
             }
         }
     }
