@@ -262,24 +262,54 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                     LoadChildrenAsync);
             });
 
-        var allChildTreeViewModels = childDirectoryTreeViewModels
+        var nextChildTreeViewModels = childDirectoryTreeViewModels
             .Union(childFileTreeViewModels)
             .ToList();
 
         RestorePreviousStates(
             treeViewModel.Children,
-            allChildTreeViewModels);
+            nextChildTreeViewModels);
+
+        foreach (var child in nextChildTreeViewModels)
+        {
+            await TakeNestableSiblingsAsync(child, nextChildTreeViewModels);
+        }
 
         treeViewModel.Children.Clear();
-        treeViewModel.Children.AddRange(allChildTreeViewModels);
+        treeViewModel.Children.AddRange(nextChildTreeViewModels);
     }
 
     /// <summary>
     /// This method is used for .razor and .razor.cs codebehinds being nested
     /// in the solution explorer. As well for any other 'codebehind' relationship.
+    /// <br/><br/>
+    /// Once a sibling is nested that sibling which was nested
+    /// is removed from their parent's list.
     /// </summary>
-    private async Task LoadNestedChildrenAsync(TreeViewModel<NamespacePath> treeViewModel)
+    private async Task TakeNestableSiblingsAsync(
+        TreeViewModel<NamespacePath> treeViewModel,
+        List<TreeViewModel<NamespacePath>> siblings)
     {
+
+        // Takes a sibling and returns whether it should be
+        // nested as a "codebehind".
+        Func<TreeViewModel<NamespacePath>, bool> shouldNestFileFunc = sibling =>
+            false;
+        
+        switch (treeViewModel.Item.AbsoluteFilePath.ExtensionNoPeriod)
+        {
+            case ExtensionNoPeriodFacts.RAZOR_MARKUP:
+            {
+                
+                
+                for (int i = nextChildren.Count - 1; i >= 0; i--)
+                {
+                    var sibling = nextChildren[];
+                }
+                
+                break;
+            }
+        }
     }
     
     private void RestorePreviousStates(
