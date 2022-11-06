@@ -45,12 +45,16 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, ImmutableArray<IFileTemplate>>((fileName, fileTemplates) => 
-                        PerformNewFileAction(
-                            fileName, 
-                            fileTemplates, 
-                            new NamespacePath(string.Empty, parentDirectory), 
-                            onAfterCompletion))
+                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
+                        (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) => 
+                            PerformNewFileAction(
+                                fileName, 
+                                exactMatchFileTemplate, 
+                                relatedMatchFileTemplates, 
+                                new NamespacePath(
+                                    string.Empty, 
+                                    parentDirectory), 
+                                onAfterCompletion))
                 },
             });
     }
@@ -75,8 +79,14 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, ImmutableArray<IFileTemplate>>((fileName, fileTemplates) => 
-                        PerformNewFileAction(fileName, fileTemplates, parentDirectory, onAfterCompletion))
+                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
+                        (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) => 
+                            PerformNewFileAction(
+                                fileName,
+                                exactMatchFileTemplate,
+                                relatedMatchFileTemplates,
+                                parentDirectory,
+                                onAfterCompletion))
                 },
             });
     }
@@ -199,13 +209,14 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
     private void PerformNewFileAction(
         string fileName,
-        ImmutableArray<IFileTemplate> fileTemplates,
+        IFileTemplate? exactMatchFileTemplate,
+        ImmutableArray<IFileTemplate> relatedMatchFileTemplates,
         NamespacePath namespacePath, 
         Func<Task> onAfterCompletion)
     {
         _ = Task.Run(async () =>
         {
-            if (!fileTemplates.Any())
+            if (exactMatchFileTemplate is null)
             {
                 var emptyFileAbsoluteFilePathString = namespacePath.AbsoluteFilePath
                                                           .GetAbsoluteFilePathString() +
@@ -223,7 +234,11 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             }
             else
             {
-                foreach (var fileTemplate in fileTemplates)
+                var allTemplates = new[] { exactMatchFileTemplate }
+                    .Union(relatedMatchFileTemplates)
+                    .ToArray();
+                
+                foreach (var fileTemplate in allTemplates)
                 {
                     var templateResult = fileTemplate.ConstructFileContents.Invoke(
                         new FileTemplateParameter(

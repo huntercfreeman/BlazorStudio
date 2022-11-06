@@ -74,7 +74,8 @@ public static class FileTemplateFacts
         var emptyFileAbsoluteFilePathString = fileTemplateParameter
                                                   .ParentDirectory.AbsoluteFilePath
                                                   .GetAbsoluteFilePathString() +
-                                              fileTemplateParameter.Filename;
+                                              fileTemplateParameter.Filename +
+                                              ".cs";
 
         // Create AbsoluteFilePath as to leverage it for
         // knowing the file extension and other details
@@ -153,7 +154,8 @@ public static class FileTemplateFacts
         var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
                                                      .ParentDirectory.AbsoluteFilePath
                                                      .GetAbsoluteFilePathString() +
-                                                 emptyFileAbsoluteFilePath.FileNameNoExtension;
+                                                 emptyFileAbsoluteFilePath.FileNameNoExtension +
+                                                 ".razor";
         
         var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
             templatedFileFileAbsoluteFilePathString, 
@@ -228,7 +230,8 @@ public static class FileTemplateFacts
         var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
                                                      .ParentDirectory.AbsoluteFilePath
                                                      .GetAbsoluteFilePathString() +
-                                                 emptyFileAbsoluteFilePath.FileNameNoExtension;
+                                                 emptyFileAbsoluteFilePath.FileNameNoExtension +
+                                                 ".razor.cs";
         
         var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
             templatedFileFileAbsoluteFilePathString, 

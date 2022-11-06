@@ -17,7 +17,7 @@ public partial class FileFormDisplay
     [Parameter, EditorRequired]
     public string FileName { get; set; } = string.Empty;
     [Parameter, EditorRequired]
-    public Action<string, ImmutableArray<IFileTemplate>> OnAfterSubmitAction { get; set; } = null!;
+    public Action<string, IFileTemplate, ImmutableArray<IFileTemplate>> OnAfterSubmitAction { get; set; } = null!;
     [Parameter]
     public bool IsDirectory { get; set; }
     [Parameter]
@@ -26,6 +26,7 @@ public partial class FileFormDisplay
     private string? _previousFileNameParameter;
 
     private string _fileName = string.Empty;
+    private FileTemplatesDisplay? _fileTemplatesDisplay;
 
     private string PlaceholderText => IsDirectory
         ? "Directory name"
@@ -58,7 +59,9 @@ public partial class FileFormDisplay
                 await MenuOptionWidgetParameters.CompleteWidgetAsync.Invoke(
                     () => OnAfterSubmitAction.Invoke(
                         _fileName, 
-                        ImmutableArray<IFileTemplate>.Empty));
+                        _fileTemplatesDisplay?.ExactMatchFileTemplate,
+                        _fileTemplatesDisplay?.RelatedMatchFileTemplates 
+                            ?? ImmutableArray<IFileTemplate>.Empty));
             }
         }
     }
