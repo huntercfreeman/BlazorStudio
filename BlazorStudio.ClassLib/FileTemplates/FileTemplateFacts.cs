@@ -198,7 +198,7 @@ public static class FileTemplateFacts
                 Environment.NewLine);
             
             templateBuilder.Append(
-                $"public partial class {fileNameNoExtension} : ComponentBase{Environment.NewLine}");
+                $"public partial class {fileNameNoExtension.Replace(".razor", String.Empty)} : ComponentBase{Environment.NewLine}");
             
             templateBuilder.Append(
                 $"{{{Environment.NewLine}");
@@ -230,8 +230,12 @@ public static class FileTemplateFacts
         var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
                                                      .ParentDirectory.AbsoluteFilePath
                                                      .GetAbsoluteFilePathString() +
-                                                 emptyFileAbsoluteFilePath.FileNameNoExtension +
-                                                 ".cs";
+                                                 emptyFileAbsoluteFilePath.FileNameNoExtension;
+
+        if (templatedFileFileAbsoluteFilePathString.EndsWith(".razor"))
+            templatedFileFileAbsoluteFilePathString += ".cs";
+        else
+            templatedFileFileAbsoluteFilePathString += ".razor.cs";
         
         var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
             templatedFileFileAbsoluteFilePathString, 
