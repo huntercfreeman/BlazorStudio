@@ -5,9 +5,10 @@
      @ref="_menuDisplayElementReference"
      @onclick:stopPropagation="true"
      @ondblclick:stopPropagation="true"
+     @oncustomkeydown:stopPropagation="true"
      @onkeydown:stopPropagation="true"
-     @oncustomkeydown="HandleOnKeyDown"
-     @oncustomkeydown:stopPropagation="true">
+     @onkeydown:preventDefault="true"
+     @onkeydown="HandleOnKeyDown">
 
     <CascadingValue Value="RestoreFocusToThisMenu" Name="ReturnFocusToParentAction">
         @{

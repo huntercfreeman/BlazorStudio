@@ -64,7 +64,7 @@ public partial class MenuDisplay : ComponentBase
         InvokeAsync(StateHasChanged);
     }
 
-    private void HandleOnKeyDown(CustomKeyDownEventArgs customKeyDownEventArgs)
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (MenuRecord.MenuOptions.Length == 0)
         {
@@ -72,7 +72,7 @@ public partial class MenuDisplay : ComponentBase
             return;
         }
         
-        switch (customKeyDownEventArgs.Key)
+        switch (keyboardEventArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
