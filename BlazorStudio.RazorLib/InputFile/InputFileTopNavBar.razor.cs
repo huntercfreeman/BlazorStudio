@@ -4,7 +4,6 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.TreeView;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
@@ -32,10 +31,6 @@ public partial class InputFileTopNavBar : FluxorComponent
                 new InputFileState.SetSearchQueryAction(
                     value));
     }
-
-    private TreeViewModel<IAbsoluteFilePath> SelectionMutablyReferenced => 
-        InputFileStateWrap.Value.OpenedTreeViewModelHistory[
-            InputFileStateWrap.Value.IndexInHistory];
 
     protected override void OnInitialized()
     {

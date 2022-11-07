@@ -12,10 +12,6 @@
         <div>
             (@inputFileState.Message)    
         </div>
-        <div title="@(inputFileState.SelectedTreeViewModel?.Item.GetAbsoluteFilePathString() ?? "(no selection yet)")">
-            @(inputFileState.SelectedTreeViewModel?.Item
-                .FilenameWithExtension ?? "(no selection yet)")
-        </div>
     </div>
     <div class="bstudio_input-file-display-bottom-controls-non-text">
         <div>
@@ -32,10 +28,6 @@
             </select>
         </div>
         <div style="display: flex;">
-            <ButtonDisplay OnClickFunc="FireOnAfterSubmit"
-                           IsDisabled="OnAfterSubmitIsDisabled()">
-                Select
-            </ButtonDisplay>
             <ButtonDisplay OnClickFunc="() => { return Task.CompletedTask; }"
                            IsDisabled="!InputFileState.CanMoveBackwardsInHistory(InputFileStateWrap.Value)">
                 Cancel

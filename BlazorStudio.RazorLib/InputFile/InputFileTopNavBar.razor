@@ -8,25 +8,12 @@
             <IconArrowLeft/>
         </ButtonDisplay>
     
-        <ButtonDisplay OnClickFunc="async () => HandleForwardButtonOnClick()"
-                       IsDisabled="!InputFileState.CanMoveForwardsInHistory(InputFileStateWrap.Value)">
-            <IconArrowRight/>
-        </ButtonDisplay>
-    
         <ButtonDisplay OnClickFunc="async () => HandleUpwardButtonOnClick()">
             <IconArrowUp/>
         </ButtonDisplay>
     </div>
     
     <div class="bstudio_input-file-display-top-nav-bar-address">
-        @{
-            var selectionSafeReference = SelectionMutablyReferenced;
-        }
-        
-        <div class="bstudio_input-file-display-top-nav-bar-address-hierarchy">
-            @selectionSafeReference.Item.GetAbsoluteFilePathString()    
-        </div>
-        
         <ButtonDisplay OnClickFunc="async () => HandleRefreshButtonOnClick()">
             <IconRefresh/>
         </ButtonDisplay>

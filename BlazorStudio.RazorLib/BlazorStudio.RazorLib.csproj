@@ -18,7 +18,7 @@
 
     <ItemGroup>
         <PackageReference Include="Fluxor.Blazor.Web" Version="5.5.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
     </ItemGroup>
 
     <ItemGroup>
@@ -192,6 +192,7 @@
         <UpToDateCheckInput Remove="Terminal\TerminalDisplay.razor" />
         <UpToDateCheckInput Remove="Terminal\TerminalEntryDisplay.razor" />
         <UpToDateCheckInput Remove="Terminal\TerminalSettingsDisplay.razor" />
+        <UpToDateCheckInput Remove="TreeView\TreeViewDisplay.razor" />
         <UpToDateCheckInput Remove="TreeView\TreeViewDisplay.razor" />
     </ItemGroup>
 

@@ -1,7 +1,6 @@
 @using BlazorStudio.ClassLib.Context
 @using BlazorStudio.ClassLib.Store.SolutionExplorer
 @using BlazorStudio.RazorLib.ContextCase
-@using BlazorStudio.RazorLib.TreeView
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -30,17 +29,6 @@
                 }
                 else
                 {
-                    <TreeViewDisplay TreeViewModel="_solutionTreeViewModel"
-                                     TreeViewDisplayOnEventRegistration="_treeViewDisplayOnEventRegistration">
-                        <ItemRenderFragment Context="treeViewModel">
-                            <SolutionExplorerIconDisplay AbsoluteFilePath="treeViewModel.Item.AbsoluteFilePath" />
-                            @treeViewModel.Item.AbsoluteFilePath.FilenameWithExtension
-                        </ItemRenderFragment>
-
-                        <ContextMenuEventRenderFragment Context="contextMenuEvent">
-                            <SolutionExplorerContextMenu TreeViewDisplayContextMenuEvent="contextMenuEvent"/>
-                        </ContextMenuEventRenderFragment>
-                    </TreeViewDisplay>
                 }
             }
         </div>

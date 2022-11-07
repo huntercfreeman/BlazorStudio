@@ -5,7 +5,6 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.TreeView;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
@@ -27,10 +26,6 @@ public partial class InputFileBottomControls : FluxorComponent
 
     private ElementReference? _searchElementReference;
     private string _searchQuery = string.Empty;
-
-    private TreeViewModel<IAbsoluteFilePath> SelectionMutablyReferenced => 
-        InputFileStateWrap.Value.OpenedTreeViewModelHistory[
-            InputFileStateWrap.Value.IndexInHistory];
     
     private void HandleBackButtonOnClick()
     {
@@ -55,32 +50,6 @@ public partial class InputFileBottomControls : FluxorComponent
     private void FocusSearchElementReferenceOnClick()
     {
         _searchElementReference?.FocusAsync();
-    }
-
-    private async Task FireOnAfterSubmit()
-    {
-        var inputFileState = InputFileStateWrap.Value;
-
-        var valid = await inputFileState.SelectionIsValidFunc.Invoke(
-            inputFileState.SelectedTreeViewModel?.Item);
-        
-        if (valid)
-        {
-            if (DialogRecord is not null)
-                Dispatcher.Dispatch(new DisposeDialogRecordAction(DialogRecord));
-            
-            await InputFileStateWrap.Value.OnAfterSubmitFunc
-                .Invoke(inputFileState.SelectedTreeViewModel?.Item);
-        }
-    }
-    
-    private bool OnAfterSubmitIsDisabled()
-    {
-        var inputFileState = InputFileStateWrap.Value;
-
-        return !inputFileState.SelectionIsValidFunc.Invoke(
-            inputFileState.SelectedTreeViewModel?.Item)
-            .Result;
     }
     
     private void SelectInputFilePatternOnChange(ChangeEventArgs changeEventArgs)
