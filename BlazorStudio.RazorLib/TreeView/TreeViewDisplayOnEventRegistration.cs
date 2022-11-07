@@ -6,7 +6,7 @@ namespace BlazorStudio.RazorLib.TreeView;
 
 public class TreeViewDisplayOnEventRegistration<TItem>
 {
-    public Func<CustomKeyDownEventArgs, TreeViewDisplay<TItem>, Task>? 
+    public Func<BsKeyDownEventArgs, TreeViewDisplay<TItem>, Task>? 
         AfterKeyDownFuncAsync { get; set; }
     
     public Func<MouseEventArgs, TreeViewDisplay<TItem>, Task>? 

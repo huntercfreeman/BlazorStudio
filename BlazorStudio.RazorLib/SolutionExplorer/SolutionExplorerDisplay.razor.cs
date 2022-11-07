@@ -407,10 +407,10 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     }
     
     private async Task AfterKeyDownFuncAsync(
-        CustomKeyDownEventArgs customKeyDownEventArgs, 
+        BsKeyDownEventArgs bsKeyDownEventArgs, 
         TreeViewDisplay<NamespacePath> treeViewDisplay)
     {
-        switch (customKeyDownEventArgs.Code)
+        switch (bsKeyDownEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
                 await EditorState.OpenInEditorAsync(

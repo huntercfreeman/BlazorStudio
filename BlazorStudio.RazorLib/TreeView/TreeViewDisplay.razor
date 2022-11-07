@@ -10,7 +10,7 @@
 <div class="bstudio_tree-view-display @RootCssClass"
      tabindex="@RootTabIndex"
      @onkeydown:stopPropagation="true"
-     @oncustomkeydown="HandleContainingBoxOnCustomKeyDown"
+     @onbskeydown="HandleContainingBoxOnBsKeyDown"
      @onfocusin="HandleOnFocusIn"
      @onfocusout="HandleOnFocusOut">
     
@@ -25,7 +25,7 @@
              @ondblclick:stopPropagation="true"
              @ref="_titleElementReference"
              @onkeydown:stopPropagation="true"
-             @oncustomkeydown="HandleTitleOnCustomKeyDown"
+             @onbskeydown="HandleTitleOnBsKeyDown"
              @oncontextmenu="HandleTitleOnContextMenu"
              @oncontextmenu:stopPropagation="true"
              @oncontextmenu:preventDefault="true"

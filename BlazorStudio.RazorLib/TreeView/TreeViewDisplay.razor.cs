@@ -187,9 +187,9 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent
             await _titleElementReference.Value.FocusAsync();
     }
 
-    private void HandleContainingBoxOnCustomKeyDown(CustomKeyDownEventArgs customKeyDownEventArgs)
+    private void HandleContainingBoxOnBsKeyDown(BsKeyDownEventArgs bsKeyDownEventArgs)
     {
-        switch (customKeyDownEventArgs.Key)
+        switch (bsKeyDownEventArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
@@ -223,9 +223,9 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent
         }
     }
 
-    private async Task HandleTitleOnCustomKeyDown(CustomKeyDownEventArgs customKeyDownEventArgs)
+    private async Task HandleTitleOnBsKeyDown(BsKeyDownEventArgs bsKeyDownEventArgs)
     {
-        switch (customKeyDownEventArgs.Key)
+        switch (bsKeyDownEventArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
@@ -336,7 +336,7 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent
             }
             case KeyboardKeyFacts.MovementKeys.HOME:
             {
-                if (customKeyDownEventArgs.CtrlWasPressed)
+                if (bsKeyDownEventArgs.CtrlWasPressed)
                 {
                     if (InternalParameters.ParentTreeViewDisplay is not null)
                     {
@@ -355,7 +355,7 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent
             }
             case KeyboardKeyFacts.MovementKeys.END:
             {
-                if (customKeyDownEventArgs.CtrlWasPressed)
+                if (bsKeyDownEventArgs.CtrlWasPressed)
                 {
                     if (InternalParameters.ParentTreeViewDisplay is not null)
                     {
@@ -375,13 +375,13 @@ public partial class TreeViewDisplay<TItem> : FluxorComponent
             }
         }
 
-        if (KeyboardKeyFacts.CheckIsContextMenuEvent(customKeyDownEventArgs))
+        if (KeyboardKeyFacts.CheckIsContextMenuEvent(bsKeyDownEventArgs))
             await HandleTitleOnContextMenu(null);
 
         if (TreeViewDisplayOnEventRegistration.AfterKeyDownFuncAsync is not null)
         {
             await TreeViewDisplayOnEventRegistration.AfterKeyDownFuncAsync
-                .Invoke(customKeyDownEventArgs, this);
+                .Invoke(bsKeyDownEventArgs, this);
         }
     }
     

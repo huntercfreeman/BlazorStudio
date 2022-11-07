@@ -68,12 +68,12 @@ public partial class InputFileContent : FluxorComponent
     }
     
     private Task AfterKeyDownFuncAsync(
-        CustomKeyDownEventArgs customKeyDownEventArgs, 
+        BsKeyDownEventArgs bsKeyDownEventArgs, 
         TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
     {
-        if (customKeyDownEventArgs.AltWasPressed)
+        if (bsKeyDownEventArgs.AltWasPressed)
         {
-            switch (customKeyDownEventArgs.Key)
+            switch (bsKeyDownEventArgs.Key)
             {
                 case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
                 case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
@@ -100,7 +100,7 @@ public partial class InputFileContent : FluxorComponent
         }
         else
         {
-            switch (customKeyDownEventArgs.Code)
+            switch (bsKeyDownEventArgs.Code)
             {
                 case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
                     Dispatcher.Dispatch(
