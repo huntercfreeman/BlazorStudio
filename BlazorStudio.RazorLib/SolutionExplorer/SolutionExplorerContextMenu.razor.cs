@@ -50,8 +50,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         var treeViewModel = treeViewContextMenuEvent.TreeView;
         var parentTreeViewModel = treeViewModel.Parent;
 
+        var parentTreeViewNamespacePath = parentTreeViewModel as TreeViewNamespacePath;
+        
         if (treeViewModel is not TreeViewNamespacePath treeViewNamespacePath ||
-            parentTreeViewModel is not TreeViewNamespacePath parentTreeViewNamespacePath ||
             treeViewNamespacePath.Item is null)
         {
             return new MenuRecord(new []
