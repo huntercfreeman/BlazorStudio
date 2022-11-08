@@ -102,7 +102,10 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
             
             for (int i = 0; i < newChildren.Count; i++)
             {
-                newChildren[i].IndexAmongSiblings = i;
+                var newChild = newChildren[i];
+                
+                newChild.IndexAmongSiblings = i;
+                newChild.Parent = this;
             }
             
             Children = newChildren;
