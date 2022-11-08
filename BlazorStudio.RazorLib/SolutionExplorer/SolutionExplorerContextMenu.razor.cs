@@ -9,6 +9,7 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
+using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
@@ -36,6 +37,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Parameter, EditorRequired]
     public TreeViewContextMenuEvent TreeViewContextMenuEvent { get; set; } = null!;
 
+    public static readonly DropdownKey ContextMenuEventDropdownKey = DropdownKey.NewDropdownKey();
+    
     /// <summary>
     /// The program is currently running using Photino locally on the user's computer
     /// therefore this static solution works without leaking any information.
@@ -66,8 +69,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         
         if (treeViewNamespacePath.Item.AbsoluteFilePath.IsDirectory)
         {
-            
-            
             menuRecords.AddRange(
                 GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
                     .Union(GetDirectoryMenuOptions(treeViewNamespacePath))
@@ -354,5 +355,19 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 notificationInformative));
 
         return Task.CompletedTask;
+    }
+    
+    public static string GetContextMenuCssStyleString(TreeViewContextMenuEvent? treeViewContextMenuEvent)
+    {
+        if (treeViewContextMenuEvent is null)
+            return "display: none;";
+        
+        var left = 
+            $"left: {treeViewContextMenuEvent.ContextMenuFixedPosition.LeftPositionInPixels}px;";
+        
+        var top = 
+            $"top: {treeViewContextMenuEvent.ContextMenuFixedPosition.TopPositionInPixels}px;";
+
+        return $"{left} {top}";
     }
 }

@@ -1,9 +1,8 @@
 ﻿@using BlazorStudio.RazorLib.OutOfBoundsClick
 @using BlazorStudio.RazorLib.Menu
-                            
-<OutOfBoundsClickDisplay ZIndex="15"
-                         OnClickCallback="_ => TreeViewContextMenuEvent.CloseContextMenu()"/>
+@using BlazorStudio.RazorLib.Dropdown
+@using BlazorStudio.ClassLib.Dropdown
 
-<div class="btv_context-menu-content bstudio_dropdown-display-default-background">
+<div class="bstudio_dropdown-display-default-background">
     <MenuDisplay MenuRecord="GetMenuRecord(TreeViewContextMenuEvent)"/>
 </div>

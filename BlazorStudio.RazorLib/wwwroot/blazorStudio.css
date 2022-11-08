@@ -604,8 +604,7 @@ em.bstudio_em {
 .btv_context-menu-content {
     z-index: var(--bstudio_dropdown-display-z-index);
     position: absolute;
-    width: 100%;
-    height: 100%;
-    padding: 5px;
+    min-width: 100%;
+    min-height: 100%;
     color: var(--bstudio_primary-font-color);
 }

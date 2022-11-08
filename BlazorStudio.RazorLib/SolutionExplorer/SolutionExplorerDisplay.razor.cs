@@ -8,6 +8,7 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Namespaces;
+using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -48,6 +49,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         TreeViewStateKey.NewTreeViewStateKey();
     
     private string _filePath = string.Empty;
+    private TreeViewContextMenuEvent? _mostRecentTreeViewContextMenuEvent;
     
     protected override void OnInitialized()
     {
@@ -89,6 +91,17 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 solutionExplorerNode,
                 solutionExplorerNode));
         }
+    }
+    
+    private async Task OnTreeViewContextMenuFunc(TreeViewContextMenuEvent treeViewContextMenuEvent)
+    {
+        _mostRecentTreeViewContextMenuEvent = treeViewContextMenuEvent;
+        
+        Dispatcher.Dispatch(
+            new AddActiveDropdownKeyAction(
+                SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
+        
+        await InvokeAsync(StateHasChanged);
     }
     
     protected override void Dispose(bool disposing)

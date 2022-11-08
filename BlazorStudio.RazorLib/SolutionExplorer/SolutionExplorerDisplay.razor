@@ -4,6 +4,8 @@
 @using BlazorTreeView.RazorLib
 @using BlazorTreeView.RazorLib.Store.TreeViewCase
 @using BlazorStudio.RazorLib.Menu
+@using BlazorStudio.RazorLib.Dropdown
+@using BlazorStudio.ClassLib.Dropdown
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -33,13 +35,15 @@
                 else
                 {
                     <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"
-                                          CssStyleString="height: 100%;">
-                        
-                        <OnContextMenuRenderFragment Context="treeViewContextMenuEvent">
+                                          CssStyleString="height: 100%;"
+                                          OnContextMenuFunc="OnTreeViewContextMenuFunc"/>
+                    
+                    <DropdownDisplay DropdownKey="SolutionExplorerContextMenu.ContextMenuEventDropdownKey"
+                                     DropdownPositionKind="DropdownPositionKind.Unset"
+                                     CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewContextMenuEvent)">
 
-                            <SolutionExplorerContextMenu TreeViewContextMenuEvent="treeViewContextMenuEvent"/>
-                        </OnContextMenuRenderFragment>
-                    </TreeViewStateDisplay>
+                        <SolutionExplorerContextMenu TreeViewContextMenuEvent="_mostRecentTreeViewContextMenuEvent"/>
+                    </DropdownDisplay>
                 }
             }
         </div>
