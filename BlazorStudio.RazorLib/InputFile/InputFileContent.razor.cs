@@ -38,4 +38,37 @@ public partial class InputFileContent : FluxorComponent
     
     private static readonly TreeViewStateKey TreeViewInputFileContentStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
+    
+    protected override void OnInitialized()
+    {
+        var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            true);
+        
+        var directoryHomeNode = new TreeViewAbsoluteFilePath(
+            directoryHomeAbsoluteFilePath,
+            CommonComponentRenderers)
+        {
+            IsExpandable = true,
+            IsExpanded = false
+        };
+
+        directoryHomeNode.LoadChildrenAsync().Wait();
+        
+        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
+            directoryHomeNode.Children.ToArray());
+
+        var activeNode = adhocRootNode.Children.FirstOrDefault();
+        
+        if (!TreeViewService.TryGetTreeViewState(
+                TreeViewInputFileContentStateKey, out var treeViewState))
+        {
+            TreeViewService.RegisterTreeViewState(new TreeViewState(
+                TreeViewInputFileContentStateKey,
+                adhocRootNode,
+                activeNode));
+        }
+        
+        base.OnInitialized();
+    }
 }

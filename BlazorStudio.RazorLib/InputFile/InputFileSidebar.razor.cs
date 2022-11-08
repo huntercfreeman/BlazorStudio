@@ -62,7 +62,9 @@ public partial class InputFileSidebar : FluxorComponent
             IsExpanded = false
         };
         
-        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc();
+        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
+            directoryHomeNode,
+            directoryRootNode);
         
         if (!TreeViewService.TryGetTreeViewState(
                 TreeViewInputFileSidebarStateKey, out var treeViewState))
@@ -70,21 +72,7 @@ public partial class InputFileSidebar : FluxorComponent
             TreeViewService.RegisterTreeViewState(new TreeViewState(
                 TreeViewInputFileSidebarStateKey,
                 adhocRootNode,
-                null));
-            
-            TreeViewService.AddChildNode(
-                TreeViewInputFileSidebarStateKey,
-                adhocRootNode,
-                directoryHomeNode);
-            
-            TreeViewService.AddChildNode(
-                TreeViewInputFileSidebarStateKey,
-                adhocRootNode,
-                directoryRootNode);
-            
-            TreeViewService.SetActiveNode(
-                TreeViewInputFileSidebarStateKey,
-                directoryHomeNode);
+                directoryHomeNode));
         }
         
         base.OnInitialized();
