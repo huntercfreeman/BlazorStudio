@@ -13,9 +13,9 @@ namespace BlazorStudio.RazorLib.SolutionExplorer;
 
 public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
 {
-    private static ICommonMenuOptionsFactory _commonMenuOptionsFactory;
-    private static ICommonComponentRenderers _commonComponentRenderers;
-    private static IDispatcher _dispatcher;
+    private ICommonMenuOptionsFactory _commonMenuOptionsFactory;
+    private ICommonComponentRenderers _commonComponentRenderers;
+    private IDispatcher _dispatcher;
 
     public SolutionExplorerTreeViewKeymap(
         ICommonMenuOptionsFactory commonMenuOptionsFactory,
@@ -27,37 +27,28 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
         _dispatcher = dispatcher;
     }
     
-    public Func<KeyboardEventArgs, TreeViewCommand?> KeymapFunc { get; } =
-        keyboardEventArgs =>
-        {
-            if (keyboardEventArgs.CtrlKey)
-                return CtrlModifiedKeymap(keyboardEventArgs);
-
-            if (keyboardEventArgs.AltKey)
-                return AltModifiedKeymap(keyboardEventArgs);
-
-            return null;
-        };
-
-    public TreeViewCommand? MapKeyboardEventArgs(
-        KeyboardEventArgs keyboardEventArgs)
+    public bool TryMapKey(
+        KeyboardEventArgs keyboardEventArgs, 
+        out TreeViewCommand? treeViewCommand)
     {
         if (keyboardEventArgs.CtrlKey)
-            return CtrlModifiedKeymap(keyboardEventArgs);
+            return CtrlModifiedKeymap(keyboardEventArgs, out treeViewCommand);
 
         if (keyboardEventArgs.AltKey)
-            return AltModifiedKeymap(keyboardEventArgs);
+            return AltModifiedKeymap(keyboardEventArgs, out treeViewCommand);
 
-        return null;
+        treeViewCommand = null;
+        return false;
     }
 
-    private static TreeViewCommand? CtrlModifiedKeymap(
-        KeyboardEventArgs keyboardEventArgs)
+    private bool CtrlModifiedKeymap(
+        KeyboardEventArgs keyboardEventArgs,
+        out TreeViewCommand? treeViewCommand)
     {
         if (keyboardEventArgs.AltKey)
-            return CtrlAltModifiedKeymap(keyboardEventArgs);
+            return CtrlAltModifiedKeymap(keyboardEventArgs, out treeViewCommand);
 
-        TreeViewCommand command;
+        TreeViewCommand? command = null;
         
         switch (keyboardEventArgs.Key)
         {
@@ -73,43 +64,24 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             // case "a":
             //     command = TreeViewCommandFacts.SelectAll;
             //     break;
-            default:
-                command = null;
-                break;
         }
 
         if (command is null)
         {
             switch (keyboardEventArgs.Code)
             {
+                // Here to illustrate future usage
                 case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                default:
-                    command = null;
                     break;
             }
         }
 
-        return command;
-    }
-
-    private static Task InvokeCopyFile(ITreeViewCommandParameter treeViewCommandParameter)
-    {
-        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
-
-        if (activeNode is null ||
-            activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
-            treeViewNamespacePath.Item is null)
-        {
-            return Task.CompletedTask;
-        }
-
-        var copyFileMenuOption = _commonMenuOptionsFactory.CopyFile(
-            treeViewNamespacePath.Item.AbsoluteFilePath,
-            () => NotifyCopyCompleted(treeViewNamespacePath.Item));
-
-        copyFileMenuOption.OnClick?.Invoke();
+        treeViewCommand = command;
         
-        return Task.CompletedTask;
+        if (treeViewCommand is null)
+            return false;
+        
+        return true;
     }
 
     /// <summary>
@@ -123,24 +95,21 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
     ///     all the possible keyboard modifier
     ///     keys and have a method for each permutation.
     /// </summary>
-    private static TreeViewCommand? AltModifiedKeymap(
-        KeyboardEventArgs keyboardEventArgs)
+    private bool AltModifiedKeymap(KeyboardEventArgs keyboardEventArgs,
+        out TreeViewCommand? treeViewCommand)
     {
-        if (keyboardEventArgs.Key == "a")
-        {
-            // Short term hack to avoid autocomplete keybind being typed.
-        }
-
-        return null;
+        treeViewCommand = null;
+        return false;
     }
 
-    private static TreeViewCommand? CtrlAltModifiedKeymap(
-        KeyboardEventArgs keyboardEventArgs)
+    private bool CtrlAltModifiedKeymap(KeyboardEventArgs keyboardEventArgs,
+        out TreeViewCommand? treeViewCommand)
     {
-        return null;
+        treeViewCommand = null;
+        return false;
     }
     
-    private static Task NotifyCopyCompleted(NamespacePath namespacePath)
+    private Task NotifyCopyCompleted(NamespacePath namespacePath)
     {
         var notificationInformative  = new NotificationRecord(
             NotificationKey.NewNotificationKey(), 
@@ -160,4 +129,24 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
 
         return Task.CompletedTask;
     }
+
+    private Task InvokeCopyFile(ITreeViewCommandParameter treeViewCommandParameter)
+    {
+        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
+
+        if (activeNode is null ||
+            activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
+            treeViewNamespacePath.Item is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        var copyFileMenuOption = _commonMenuOptionsFactory.CopyFile(
+            treeViewNamespacePath.Item.AbsoluteFilePath,
+            () => NotifyCopyCompleted(treeViewNamespacePath.Item));
+
+        copyFileMenuOption.OnClick?.Invoke();
+        
+        return Task.CompletedTask;
+    }   
 }
