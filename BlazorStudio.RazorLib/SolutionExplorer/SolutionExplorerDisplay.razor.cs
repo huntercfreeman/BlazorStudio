@@ -67,10 +67,14 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             solutionNamespacePath,
             new TreeViewRenderer(
                 typeof(TreeViewSolutionExplorerDisplay),
-                new()))
+                new()),
+            new TreeViewRenderer(
+                typeof(TreeViewExceptionDisplay),
+                new()),
+            SolutionExplorerStateWrap)
         {
             IsExpandable = true,
-            IsExpanded = true,
+            IsExpanded = false,
             TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
         };
         
@@ -78,16 +82,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             TreeViewSolutionExplorerStateKey,
             solutionExplorerNode,
             solutionExplorerNode));
-    }
-    
-    private void DispatchSetFolderExplorerStateOnClick()
-    {
-        if (!Directory.Exists(_filePath))
-            throw new DirectoryNotFoundException();
-        
-        Dispatcher.Dispatch(
-            new SetFolderExplorerStateAction(
-                new AbsoluteFilePath(_filePath, true)));
     }
     
     protected override void Dispose(bool disposing)

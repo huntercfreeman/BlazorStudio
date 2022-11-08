@@ -596,3 +596,7 @@ em.bstudio_em {
     color: var(--bstudio_primary-emphasis-foreground-color);
     font-style: normal;
 }
+
+.bstudio_tree-view-exception {
+    color: var(--)
+}
