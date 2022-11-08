@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -19,6 +20,8 @@ public partial class InputFileTopNavBar : FluxorComponent
     private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
     private ElementReference? _searchElementReference;
     private string _searchQuery = string.Empty;
@@ -57,7 +60,8 @@ public partial class InputFileTopNavBar : FluxorComponent
 
     private void HandleUpwardButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction());
+        Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
+            CommonComponentRenderers));
     }
 
     private void HandleRefreshButtonOnClick()

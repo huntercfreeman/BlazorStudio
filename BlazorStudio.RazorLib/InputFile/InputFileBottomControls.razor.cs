@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -20,6 +21,8 @@ public partial class InputFileBottomControls : FluxorComponent
     private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     
     [CascadingParameter]
     public DialogRecord? DialogRecord { get; set; }
@@ -39,7 +42,8 @@ public partial class InputFileBottomControls : FluxorComponent
 
     private void HandleUpwardButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction());
+        Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
+            CommonComponentRenderers));
     }
 
     private void HandleRefreshButtonOnClick()

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.CustomEvents;
 using BlazorStudio.ClassLib.Dimensions;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Menu;
@@ -26,6 +28,8 @@ public partial class InputFileContent : FluxorComponent
     private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
