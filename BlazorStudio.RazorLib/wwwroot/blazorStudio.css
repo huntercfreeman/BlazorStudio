@@ -598,5 +598,12 @@ em.bstudio_em {
 }
 
 .bstudio_tree-view-exception {
-    color: var(--)
+    color: var(--bstudio_error-foreground-color)
+}
+
+.btv_context-menu-content {
+    z-index: var(--bstudio_dropdown-display-z-index);
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }

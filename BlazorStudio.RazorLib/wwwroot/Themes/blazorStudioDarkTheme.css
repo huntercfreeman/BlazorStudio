@@ -45,4 +45,6 @@
     --bstudio_error-foreground-color: #e55d62;
     --btv_outline-color: var(--bstudio-primary-outline-color);
     --btv_active-but-not-focused-background-color: var(--bstudio-primary-active-not-focused-background-color);
+    --btv_context-menu-background-color: red;
+    --btv_context-menu-foreground-color: green;
 }
