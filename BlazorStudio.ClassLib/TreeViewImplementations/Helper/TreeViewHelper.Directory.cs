@@ -6,10 +6,13 @@ namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public async Task<List<TreeView>> LoadChildrenForDirectoryAsync(
-        NamespacePath directoryNamespacePath)
+    public static async Task<List<TreeView>> LoadChildrenForDirectoryAsync(
+        TreeViewNamespacePath treeViewNamespacePath)
     {
-        var directoryAbsoluteFilePathString = directoryNamespacePath.AbsoluteFilePath
+        if (treeViewNamespacePath.Item is null)
+            return new();
+        
+        var directoryAbsoluteFilePathString = treeViewNamespacePath.Item.AbsoluteFilePath
             .GetAbsoluteFilePathString();
         
         var childDirectoryTreeViewModels = Directory
@@ -18,8 +21,8 @@ public partial class TreeViewHelper
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, true);
 
-                var namespaceString = directoryNamespacePath.Namespace +
-                                      ITreeViewHelper.NAMESPACE_DELIMITER +
+                var namespaceString = treeViewNamespacePath.Item.Namespace +
+                                      TreeViewHelper.NAMESPACE_DELIMITER +
                                       absoluteFilePath.FileNameNoExtension;
 
                 var namespacePath = new NamespacePath(
@@ -28,7 +31,8 @@ public partial class TreeViewHelper
 
                 return (TreeView)new TreeViewNamespacePath(
                     namespacePath,
-                    this)
+                    treeViewNamespacePath.CommonComponentRenderers,
+                    treeViewNamespacePath.SolutionExplorerStateWrap)
                 {
                     IsExpandable = true,
                     IsExpanded = false,
@@ -42,7 +46,7 @@ public partial class TreeViewHelper
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, false);
 
-                var namespaceString = directoryNamespacePath.Namespace;
+                var namespaceString = treeViewNamespacePath.Item.Namespace;
                 
                 var namespacePath = new NamespacePath(
                     namespaceString,
@@ -50,7 +54,8 @@ public partial class TreeViewHelper
 
                 return (TreeView)new TreeViewNamespacePath(
                     namespacePath,
-                    this)
+                    treeViewNamespacePath.CommonComponentRenderers,
+                    treeViewNamespacePath.SolutionExplorerStateWrap)
                 {
                     IsExpandable = false,
                     IsExpanded = false,

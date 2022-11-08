@@ -3,9 +3,6 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.Menu;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
-using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Clipboard;
 using BlazorTreeView.RazorLib;
@@ -36,9 +33,6 @@ public static class ServiceCollectionExtensions
                     typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorTreeView.RazorLib.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorStudio.ClassLib.ServiceCollectionExtensions).Assembly))
-            .AddSingleton<ITreeViewHelper>(provider => new TreeViewHelper(
-                provider.GetRequiredService<ICommonComponentRenderers>(),
-                provider.GetRequiredService<IState<SolutionExplorerState>>()))
             .AddScoped<IFileSystemProvider, LocalFileSystemProvider>();
     }
 }

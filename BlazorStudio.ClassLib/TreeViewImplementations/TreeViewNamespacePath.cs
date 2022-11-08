@@ -1,6 +1,5 @@
-﻿using BlazorStudio.ClassLib.FileConstants;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
@@ -11,16 +10,19 @@ namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
 public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
 {
-    private readonly ITreeViewHelper _treeViewHelper;
-
     public TreeViewNamespacePath(
         NamespacePath namespacePath,
-        ITreeViewHelper treeViewHelper)
+        ICommonComponentRenderers commonComponentRenderers,
+        IState<SolutionExplorerState> solutionExplorerStateWrap)
             : base(namespacePath)
     {
-        _treeViewHelper = treeViewHelper;
+        CommonComponentRenderers = commonComponentRenderers;
+        SolutionExplorerStateWrap = solutionExplorerStateWrap;
     }
-    
+ 
+    public ICommonComponentRenderers CommonComponentRenderers { get; }
+    public IState<SolutionExplorerState> SolutionExplorerStateWrap { get; }
+
     public override bool Equals(object? obj)
     {
         if (obj is null ||
@@ -44,11 +46,11 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            _treeViewHelper.CommonComponentRenderers.TreeViewNamespacePathRendererType,
+            CommonComponentRenderers.TreeViewNamespacePathRendererType,
             new Dictionary<string, object?>
             {
                 {
-                    nameof(TreeViewNamespacePath),
+                    nameof(ITreeViewNamespacePathRendererType.TreeViewNamespacePath),
                     this
                 },
             });
@@ -65,20 +67,20 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
             
             if (Item.AbsoluteFilePath.IsDirectory)
             {
-                newChildren = await _treeViewHelper
-                    .LoadChildrenForDirectoryAsync(Item);
+                newChildren = await TreeViewHelper
+                    .LoadChildrenForDirectoryAsync(this);
             }
             else
             {
                 switch (Item.AbsoluteFilePath.ExtensionNoPeriod)
                 {
                     case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
-                        newChildren = await _treeViewHelper
-                            .LoadChildrenForDotNetSolutionAsync(Item);
+                        newChildren = await TreeViewHelper
+                            .LoadChildrenForDotNetSolutionAsync(this);
                         break;
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        newChildren = await _treeViewHelper
-                            .LoadChildrenForCSharpProjectAsync(Item);
+                        newChildren = await TreeViewHelper
+                            .LoadChildrenForCSharpProjectAsync(this);
                         break;
                 }
             }
@@ -111,7 +113,7 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
             {
                 new TreeViewException(
                     exception,
-                    _treeViewHelper)
+                    CommonComponentRenderers)
                 {
                     IsExpandable = false,
                     IsExpanded = false,

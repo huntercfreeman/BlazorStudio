@@ -1,19 +1,18 @@
 ﻿using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 using BlazorTreeView.RazorLib;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
 public class TreeViewException : TreeViewBase<Exception>
 {
-    private readonly ITreeViewHelper _treeViewHelper;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
 
     public TreeViewException(
         Exception? exception,
-        ITreeViewHelper treeViewHelper)
+        ICommonComponentRenderers commonComponentRenderers)
             : base(exception)
     {
-        _treeViewHelper = treeViewHelper;
+        _commonComponentRenderers = commonComponentRenderers;
     }
     
     public override bool Equals(object? obj)
@@ -37,7 +36,7 @@ public class TreeViewException : TreeViewBase<Exception>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            _treeViewHelper.CommonComponentRenderers.TreeViewExceptionRendererType,
+            _commonComponentRenderers.TreeViewExceptionRendererType,
             new Dictionary<string, object?>
             {
                 {

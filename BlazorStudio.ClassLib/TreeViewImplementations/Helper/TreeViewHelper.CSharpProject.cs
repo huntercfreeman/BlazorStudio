@@ -6,12 +6,17 @@ using BlazorTreeView.RazorLib;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
-public partial class TreeViewHelper : ITreeViewHelper
+public partial class TreeViewHelper
 {
-    public async Task<List<TreeView>> LoadChildrenForCSharpProjectAsync(NamespacePath cSharpProjectNamespacePath)
+    public static async Task<List<TreeView>> LoadChildrenForCSharpProjectAsync(
+        TreeViewNamespacePath treeViewNamespacePath)
     {
-        var parentDirectoryOfCSharpProject = (IAbsoluteFilePath)cSharpProjectNamespacePath.AbsoluteFilePath.Directories
-            .Last();
+        if (treeViewNamespacePath.Item is null)
+            return new();
+        
+        var parentDirectoryOfCSharpProject = (IAbsoluteFilePath)
+            treeViewNamespacePath.Item.AbsoluteFilePath.Directories
+                .Last();
 
         var parentAbsoluteFilePathString = parentDirectoryOfCSharpProject
             .GetAbsoluteFilePathString();
@@ -26,15 +31,16 @@ public partial class TreeViewHelper : ITreeViewHelper
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, true);
 
-                var namespaceString = cSharpProjectNamespacePath.Namespace +
-                                      ITreeViewHelper.NAMESPACE_DELIMITER +
+                var namespaceString = treeViewNamespacePath.Item.Namespace +
+                                      NAMESPACE_DELIMITER +
                                       absoluteFilePath.FileNameNoExtension;
                 
                 return new TreeViewNamespacePath(
                     new NamespacePath(
                         namespaceString,
                         absoluteFilePath),
-                    this)
+                    treeViewNamespacePath.CommonComponentRenderers,
+                    treeViewNamespacePath.SolutionExplorerStateWrap)
                 {
                     IsExpandable = true,
                     IsExpanded = false,
@@ -80,13 +86,14 @@ public partial class TreeViewHelper : ITreeViewHelper
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, false);
 
-                var namespaceString = cSharpProjectNamespacePath.Namespace;
+                var namespaceString = treeViewNamespacePath.Item.Namespace;
                 
                 return (TreeView)new TreeViewNamespacePath(
                     new NamespacePath(
                         namespaceString,
                         absoluteFilePath),
-                    this)
+                    treeViewNamespacePath.CommonComponentRenderers,
+                    treeViewNamespacePath.SolutionExplorerStateWrap)
                 {
                     IsExpandable = true,
                     IsExpanded = false,

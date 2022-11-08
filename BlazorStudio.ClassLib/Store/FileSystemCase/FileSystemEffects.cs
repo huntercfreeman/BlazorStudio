@@ -2,9 +2,7 @@
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.NotificationCase;
-using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using Fluxor;
-using Microsoft.CodeAnalysis.MSBuild;
 
 namespace BlazorStudio.ClassLib.Store.FileSystemCase;
 

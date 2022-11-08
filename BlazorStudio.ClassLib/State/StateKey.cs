@@ -1,6 +1,4 @@
-﻿using BlazorStudio.ClassLib.Store.TerminalCase;
-
-namespace BlazorStudio.ClassLib.State;
+﻿namespace BlazorStudio.ClassLib.State;
 
 public record StateKey(Guid Guid)
 {

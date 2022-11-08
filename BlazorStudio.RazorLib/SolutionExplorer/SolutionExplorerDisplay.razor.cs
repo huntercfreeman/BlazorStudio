@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.CustomEvents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileConstants;
@@ -38,7 +39,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private ITreeViewHelper TreeViewHelper { get; set; } = null!;
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions SolutionExplorerElementDimensions { get; set; } = null!;
@@ -68,7 +69,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
         var solutionExplorerNode = new TreeViewNamespacePath(
             solutionNamespacePath,
-            TreeViewHelper)
+            CommonComponentRenderers,
+            SolutionExplorerStateWrap)
         {
             IsExpandable = true,
             IsExpanded = false,

@@ -6,10 +6,10 @@ namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public async Task<List<TreeView>> LoadChildrenForDotNetSolutionAsync(
-        NamespacePath dotNetSolutionNamespacePath)
+    public static async Task<List<TreeView>> LoadChildrenForDotNetSolutionAsync(
+        TreeViewNamespacePath treeViewNamespacePath)
     {
-        var solutionExplorerState = SolutionExplorerStateWrap.Value;
+        var solutionExplorerState = treeViewNamespacePath.SolutionExplorerStateWrap.Value;
 
         if (solutionExplorerState.Solution is null)
             return new();
@@ -27,7 +27,8 @@ public partial class TreeViewHelper
                 
                 return (TreeView)new TreeViewNamespacePath(
                     namespacePath,
-                    this)
+                    treeViewNamespacePath.CommonComponentRenderers,
+                    treeViewNamespacePath.SolutionExplorerStateWrap)
                 {
                     IsExpandable = true,
                     IsExpanded = false,
