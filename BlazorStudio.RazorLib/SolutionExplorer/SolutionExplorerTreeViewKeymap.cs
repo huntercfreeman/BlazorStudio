@@ -103,9 +103,11 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             return Task.CompletedTask;
         }
 
-        _commonMenuOptionsFactory.CopyFile(
+        var copyFileMenuOption = _commonMenuOptionsFactory.CopyFile(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             () => NotifyCopyCompleted(treeViewNamespacePath.Item));
+
+        copyFileMenuOption.OnClick?.Invoke();
         
         return Task.CompletedTask;
     }
