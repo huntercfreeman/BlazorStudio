@@ -42,4 +42,6 @@
     --bstudio_tertiary-background-color: var(--bstudio_body-background-color);
     --bstudio_tertiary-foreground-color: var(--bstudio_primary-font-color);
     --bstudio_hr-primary-background-color: currentColor;
+    --btv_outline-color: var(--bstudio-primary-outline-color);
+    --btv_active-but-not-focused-background-color: var(--bstudio-primary-active-not-focused-background-color);
 }

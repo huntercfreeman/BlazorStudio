@@ -1,6 +1,8 @@
 @using BlazorStudio.ClassLib.Context
 @using BlazorStudio.ClassLib.Store.SolutionExplorer
 @using BlazorStudio.RazorLib.ContextCase
+@using BlazorTreeView.RazorLib
+@using BlazorTreeView.RazorLib.Store.TreeViewCase
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -29,6 +31,7 @@
                 }
                 else
                 {
+                    <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"/>
                 }
             }
         </div>

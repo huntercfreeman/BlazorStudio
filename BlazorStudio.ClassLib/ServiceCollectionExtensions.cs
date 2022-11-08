@@ -5,6 +5,7 @@ using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.Menu;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Clipboard;
+using BlazorTreeView.RazorLib;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,9 +27,11 @@ public static class ServiceCollectionExtensions
                 options.InitializeFluxor = false;
                 options.ClipboardProviderFactory = clipboardProviderDefaultFactory;
             })
+            .AddBlazorTreeViewServices(options => options.InitializeFluxor = false)
             .AddFluxor(options => options
                 .ScanAssemblies(
                     typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
+                    typeof(BlazorTreeView.RazorLib.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorStudio.ClassLib.ServiceCollectionExtensions).Assembly))
             .AddScoped<IFileSystemProvider, LocalFileSystemProvider>();
     }

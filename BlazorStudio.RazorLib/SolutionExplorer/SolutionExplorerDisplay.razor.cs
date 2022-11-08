@@ -12,7 +12,11 @@ using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
+using BlazorStudio.ClassLib.TreeViewImplementations;
+using BlazorStudio.RazorLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
+using BlazorTreeView.RazorLib;
+using BlazorTreeView.RazorLib.Store.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -30,10 +34,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private ITreeViewService TreeViewService { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions SolutionExplorerElementDimensions { get; set; } = null!;
 
+    private static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = 
+        TreeViewStateKey.NewTreeViewStateKey();
+    
     private string _filePath = string.Empty;
 
     private const char NAMESPACE_DELIMITER = '.';
@@ -53,6 +62,22 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         var solutionNamespacePath = new NamespacePath(
             string.Empty,
             SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath);
+
+        var solutionExplorerNode = new TreeViewSolutionExplorer(
+            solutionNamespacePath,
+            new TreeViewRenderer(
+                typeof(TreeViewSolutionExplorerDisplay),
+                new()))
+        {
+            IsExpandable = true,
+            IsExpanded = true,
+            TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+        };
+        
+        TreeViewService.RegisterTreeViewState(new TreeViewState(
+            TreeViewSolutionExplorerStateKey,
+            solutionExplorerNode,
+            solutionExplorerNode));
     }
     
     private void DispatchSetFolderExplorerStateOnClick()
