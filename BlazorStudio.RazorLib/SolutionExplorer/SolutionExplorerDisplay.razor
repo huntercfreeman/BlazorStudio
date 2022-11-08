@@ -3,7 +3,7 @@
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorTreeView.RazorLib
 @using BlazorTreeView.RazorLib.Store.TreeViewCase
-@using BlazorStudio.RazorLib.OutOfBoundsClick
+@using BlazorStudio.RazorLib.Menu
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -36,12 +36,8 @@
                                           CssStyleString="height: 100%;">
                         
                         <OnContextMenuRenderFragment Context="treeViewContextMenuEvent">
-                            <OutOfBoundsClickDisplay ZIndex="15"
-                                                     OnClickCallback="_ => treeViewContextMenuEvent.CloseContextMenu()" />
-                            
-                            <div class="btv_context-menu-content">
-                                Aaaa
-                            </div>
+
+                            <SolutionExplorerContextMenu TreeViewContextMenuEvent="treeViewContextMenuEvent"/>
                         </OnContextMenuRenderFragment>
                     </TreeViewStateDisplay>
                 }
