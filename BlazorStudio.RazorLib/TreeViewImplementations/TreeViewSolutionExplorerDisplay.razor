@@ -1,3 +1,6 @@
-﻿<div>
+﻿@using BlazorStudio.RazorLib.SolutionExplorer
+
+<div>
+    <SolutionExplorerIconDisplay AbsoluteFilePath="TreeViewSolutionExplorer.Item?.AbsoluteFilePath"/>
     @(TreeViewSolutionExplorer.Item?.AbsoluteFilePath.FilenameWithExtension ?? "null")
 </div>
