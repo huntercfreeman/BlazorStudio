@@ -1,10 +1,11 @@
-﻿using BlazorStudio.ClassLib.TreeViewImplementations;
+﻿using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.TreeViewImplementations;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.TreeViewImplementations;
 
-public partial class TreeViewSolutionExplorerDisplay : ComponentBase
+public partial class TreeViewSolutionExplorerDisplay : ComponentBase, ITreeViewNamespacePathRendererType
 {
     [Parameter, EditorRequired]
-    public TreeViewSolutionExplorer TreeViewSolutionExplorer { get; set; } = null!;
+    public TreeViewNamespacePath TreeViewNamespacePath { get; set; } = null!;
 }

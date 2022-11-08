@@ -7,7 +7,9 @@ public class CommonComponentRenderers : ICommonComponentRenderers
         Type informativeNotificationRenderer,
         Type errorNotificationRenderer,
         Type fileFormRendererType,
-        Type deleteFileFormRendererType)
+        Type deleteFileFormRendererType,
+        Type treeViewNamespacePathRendererType,
+        Type treeViewExceptionRendererType)
     {
         void ValidateRenderer(Type implementationType, Type interfaceType)
         {
@@ -41,6 +43,14 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             ValidateRenderer(
                 deleteFileFormRendererType, 
                 typeof(IDeleteFileFormRendererType));
+            
+            ValidateRenderer(
+                treeViewNamespacePathRendererType, 
+                typeof(ITreeViewNamespacePathRendererType));
+            
+            ValidateRenderer(
+                treeViewExceptionRendererType, 
+                typeof(ITreeViewExceptionRendererType));
         }
 
         // Assign
@@ -50,12 +60,16 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             ErrorNotificationRendererType = errorNotificationRenderer;
             FileFormRendererType = fileFormRendererType;
             DeleteFileFormRendererType = deleteFileFormRendererType;
+            TreeViewNamespacePathRendererType = treeViewNamespacePathRendererType;
+            TreeViewExceptionRendererType = treeViewExceptionRendererType;
         }
     }
 
     public Type InputFileRendererType { get; }
     public Type InformativeNotificationRendererType { get; }
     public Type ErrorNotificationRendererType { get; }
-    public Type FileFormRendererType { get; set; }
-    public Type DeleteFileFormRendererType { get; set; }
+    public Type FileFormRendererType { get; }
+    public Type DeleteFileFormRendererType { get; }
+    public Type TreeViewNamespacePathRendererType { get; }
+    public Type TreeViewExceptionRendererType { get; }
 }

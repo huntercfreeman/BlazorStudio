@@ -4,6 +4,7 @@ using BlazorStudio.RazorLib.Clipboard;
 using BlazorStudio.RazorLib.File;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.Notifications;
+using BlazorStudio.RazorLib.TreeViewImplementations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BlazorStudio.RazorLib;
@@ -17,7 +18,9 @@ public static class ServiceCollectionExtensions
             typeof(CommonInformativeNotificationDisplay),
             typeof(CommonErrorNotificationDisplay),
             typeof(FileFormDisplay),
-            typeof(DeleteFileFormDisplay));
+            typeof(DeleteFileFormDisplay),
+            typeof(TreeViewSolutionExplorerDisplay),
+            typeof(TreeViewExceptionDisplay));
         
         return services
             .AddBlazorStudioClassLibServices(

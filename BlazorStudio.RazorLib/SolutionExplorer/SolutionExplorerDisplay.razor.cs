@@ -13,6 +13,7 @@ using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
+using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 using BlazorStudio.RazorLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
 using BlazorTreeView.RazorLib;
@@ -36,6 +37,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private ITreeViewHelper TreeViewHelper { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions SolutionExplorerElementDimensions { get; set; } = null!;
@@ -63,15 +66,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             string.Empty,
             SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath);
 
-        var solutionExplorerNode = new TreeViewSolutionExplorer(
+        var solutionExplorerNode = new TreeViewNamespacePath(
             solutionNamespacePath,
-            new TreeViewRenderer(
-                typeof(TreeViewSolutionExplorerDisplay),
-                new()),
-            new TreeViewRenderer(
-                typeof(TreeViewExceptionDisplay),
-                new()),
-            SolutionExplorerStateWrap)
+            TreeViewHelper)
         {
             IsExpandable = true,
             IsExpanded = false,

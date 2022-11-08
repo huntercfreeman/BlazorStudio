@@ -1,17 +1,19 @@
-﻿using BlazorTreeView.RazorLib;
+﻿using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
+using BlazorTreeView.RazorLib;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
 public class TreeViewException : TreeViewBase<Exception>
 {
-    private readonly TreeViewRenderer _treeViewRenderer;
+    private readonly ITreeViewHelper _treeViewHelper;
 
     public TreeViewException(
         Exception? exception,
-        TreeViewRenderer treeViewRenderer)
+        ITreeViewHelper treeViewHelper)
             : base(exception)
     {
-        _treeViewRenderer = treeViewRenderer;
+        _treeViewHelper = treeViewHelper;
     }
     
     public override bool Equals(object? obj)
@@ -34,16 +36,15 @@ public class TreeViewException : TreeViewBase<Exception>
     
     public override TreeViewRenderer GetTreeViewRenderer()
     {
-        return _treeViewRenderer with
-        {
-            DynamicComponentParameters = new Dictionary<string, object?>
+        return new TreeViewRenderer(
+            _treeViewHelper.CommonComponentRenderers.TreeViewExceptionRendererType,
+            new Dictionary<string, object?>
             {
                 {
-                    nameof(TreeViewException),
+                    nameof(ITreeViewExceptionRendererType.TreeViewException),
                     this
                 },
-            }
-        };
+            });
     }
     
     public override Task LoadChildrenAsync()
