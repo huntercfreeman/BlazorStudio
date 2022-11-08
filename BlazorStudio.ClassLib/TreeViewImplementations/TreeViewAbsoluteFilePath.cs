@@ -44,11 +44,11 @@ public class TreeViewAbsoluteFilePath : TreeViewBase<IAbsoluteFilePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            CommonComponentRenderers.TreeViewNamespacePathRendererType,
+            CommonComponentRenderers.TreeViewAbsoluteFilePathRendererType,
             new Dictionary<string, object?>
             {
                 {
-                    nameof(ITreeViewNamespacePathRendererType.TreeViewNamespacePath),
+                    nameof(ITreeViewAbsoluteFilePathRendererType.TreeViewAbsoluteFilePath),
                     this
                 },
             });

@@ -1,8 +1,13 @@
 ﻿@using BlazorStudio.RazorLib.Menu
 @using BlazorStudio.RazorLib.ResizableCase
+@using BlazorTreeView.RazorLib
+@using BlazorTreeView.RazorLib.Store.TreeViewCase
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_input-file-display-side-bar"
      style="@ElementDimensions.StyleString">
+
+    <TreeViewStateDisplay TreeViewStateKey="TreeViewInputFileSidebarStateKey"
+                          CssStyleString="height: 100%;"/>
 </div>

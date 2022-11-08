@@ -9,4 +9,5 @@ public interface ICommonComponentRenderers
     public Type DeleteFileFormRendererType { get; }
     public Type TreeViewNamespacePathRendererType { get; }
     public Type TreeViewExceptionRendererType { get; }
+    public Type TreeViewAbsoluteFilePathRendererType { get; set; }
 }

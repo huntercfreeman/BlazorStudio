@@ -1,5 +1,6 @@
 using BlazorStudio.ClassLib;
 using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.Clipboard;
 using BlazorStudio.RazorLib.File;
 using BlazorStudio.RazorLib.InputFile;
@@ -19,8 +20,9 @@ public static class ServiceCollectionExtensions
             typeof(CommonErrorNotificationDisplay),
             typeof(FileFormDisplay),
             typeof(DeleteFileFormDisplay),
-            typeof(TreeViewSolutionExplorerDisplay),
-            typeof(TreeViewExceptionDisplay));
+            typeof(TreeViewNamespacePathDisplay),
+            typeof(TreeViewExceptionDisplay),
+            typeof(TreeViewAbsoluteFilePathDisplay));
         
         return services
             .AddBlazorStudioClassLibServices(

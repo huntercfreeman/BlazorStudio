@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.TreeViewImplementations;
 
-public partial class TreeViewSolutionExplorerDisplay : ComponentBase, ITreeViewNamespacePathRendererType
+public partial class TreeViewAbsoluteFilePathDisplay 
+    : ComponentBase, ITreeViewAbsoluteFilePathRendererType
 {
     [Parameter, EditorRequired]
-    public TreeViewNamespacePath TreeViewNamespacePath { get; set; } = null!;
+    public TreeViewAbsoluteFilePath TreeViewAbsoluteFilePath { get; set; } = null!;
 }

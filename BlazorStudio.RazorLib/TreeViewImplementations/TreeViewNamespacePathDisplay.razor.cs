@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.TreeViewImplementations;
 
-public partial class TreeViewExceptionDisplay 
-    : ComponentBase, ITreeViewExceptionRendererType
+public partial class TreeViewNamespacePathDisplay 
+    : ComponentBase, ITreeViewNamespacePathRendererType
 {
     [Parameter, EditorRequired]
-    public TreeViewException TreeViewException { get; set; } = null!;
+    public TreeViewNamespacePath TreeViewNamespacePath { get; set; } = null!;
 }
