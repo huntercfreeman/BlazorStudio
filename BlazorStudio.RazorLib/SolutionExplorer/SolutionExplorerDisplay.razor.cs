@@ -45,7 +45,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Parameter, EditorRequired]
     public ElementDimensions SolutionExplorerElementDimensions { get; set; } = null!;
 
-    private static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = 
+    public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
     
     private string _filePath = string.Empty;

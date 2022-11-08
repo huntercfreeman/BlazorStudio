@@ -33,6 +33,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private ITreeViewService TreeViewService { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public TreeViewContextMenuEvent TreeViewContextMenuEvent { get; set; } = null!;
@@ -307,8 +309,15 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         if (treeViewModel is null)
             return;
-        
+
         await treeViewModel.LoadChildrenAsync();
+        
+        TreeViewService.ReRenderNode(
+            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey, 
+            treeViewModel);
+        
+        TreeViewService.MoveActiveSelectionUp(
+            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey);
     }
     
     private Task NotifyCopyCompleted(NamespacePath namespacePath)
