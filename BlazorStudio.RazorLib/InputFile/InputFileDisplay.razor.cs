@@ -3,8 +3,12 @@ using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
+using BlazorStudio.ClassLib.Namespaces;
+using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.ResizableCase;
 using BlazorTextEditor.RazorLib;
+using BlazorTreeView.RazorLib;
+using BlazorTreeView.RazorLib.Store.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -53,10 +57,10 @@ public partial class InputFileDisplay
     [Parameter]
     public string BodyStyleCssString { get; set; } = null!;
     
-    private ElementDimensions _navMenuElementDimensions = new();
-    private ElementDimensions _contentElementDimensions = new();
+    private readonly ElementDimensions _navMenuElementDimensions = new();
+    private readonly ElementDimensions _contentElementDimensions = new();
     private IAbsoluteFilePath? _selectedAbsoluteFilePath;
-        
+    
     protected override void OnInitialized()
     {
         InitializeElementDimensions();

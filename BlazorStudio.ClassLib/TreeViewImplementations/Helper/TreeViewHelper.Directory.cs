@@ -67,4 +67,50 @@ public partial class TreeViewHelper
             .Union(childFileTreeViewModels)
             .ToList();
     }
+    
+    public static async Task<List<TreeView>> LoadChildrenForDirectoryAsync(
+        TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+    {
+        if (treeViewAbsoluteFilePath.Item is null)
+            return new();
+        
+        var directoryAbsoluteFilePathString = treeViewAbsoluteFilePath.Item
+            .GetAbsoluteFilePathString();
+        
+        var childDirectoryTreeViewModels = Directory
+            .GetDirectories(directoryAbsoluteFilePathString)
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x, true);
+
+                return (TreeView)new TreeViewAbsoluteFilePath(
+                    absoluteFilePath,
+                    treeViewAbsoluteFilePath.CommonComponentRenderers)
+                {
+                    IsExpandable = true,
+                    IsExpanded = false,
+                    TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                };
+            });
+        
+        var childFileTreeViewModels = Directory
+            .GetFiles(directoryAbsoluteFilePathString)
+            .Select(x =>
+            {
+                var absoluteFilePath = new AbsoluteFilePath(x, false);
+
+                return (TreeView)new TreeViewAbsoluteFilePath(
+                    absoluteFilePath,
+                    treeViewAbsoluteFilePath.CommonComponentRenderers)
+                {
+                    IsExpandable = false,
+                    IsExpanded = false,
+                    TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                };
+            });
+
+        return childDirectoryTreeViewModels
+            .Union(childFileTreeViewModels)
+            .ToList();
+    }
 }

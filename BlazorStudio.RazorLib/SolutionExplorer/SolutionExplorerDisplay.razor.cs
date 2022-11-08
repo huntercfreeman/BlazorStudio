@@ -48,8 +48,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         TreeViewStateKey.NewTreeViewStateKey();
     
     private string _filePath = string.Empty;
-
-    private const char NAMESPACE_DELIMITER = '.';
     
     protected override void OnInitialized()
     {
@@ -76,11 +74,21 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             IsExpanded = false,
             TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
         };
-        
-        TreeViewService.RegisterTreeViewState(new TreeViewState(
-            TreeViewSolutionExplorerStateKey,
-            solutionExplorerNode,
-            solutionExplorerNode));
+
+        if (TreeViewService.TryGetTreeViewState(
+                TreeViewSolutionExplorerStateKey, out var treeViewState))
+        {
+            TreeViewService.SetRoot(
+                TreeViewSolutionExplorerStateKey, 
+                solutionExplorerNode);
+        }
+        else
+        {
+            TreeViewService.RegisterTreeViewState(new TreeViewState(
+                TreeViewSolutionExplorerStateKey,
+                solutionExplorerNode,
+                solutionExplorerNode));
+        }
     }
     
     protected override void Dispose(bool disposing)

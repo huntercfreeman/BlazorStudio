@@ -4,7 +4,11 @@ using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Menu;
+using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
+using BlazorStudio.ClassLib.TreeViewImplementations;
+using BlazorTreeView.RazorLib;
+using BlazorTreeView.RazorLib.Store.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -20,9 +24,14 @@ public partial class InputFileContent : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    [Inject]
+    private ITreeViewService TreeViewService { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
     [Parameter, EditorRequired]
     public Action<IAbsoluteFilePath?> SetSelectedAbsoluteFilePath { get; set; } = null!;
+    
+    private static readonly TreeViewStateKey TreeViewInputFileContentStateKey = 
+        TreeViewStateKey.NewTreeViewStateKey();
 }
