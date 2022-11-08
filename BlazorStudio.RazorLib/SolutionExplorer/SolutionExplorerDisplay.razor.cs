@@ -19,6 +19,7 @@ using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 using BlazorStudio.RazorLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
 using BlazorTreeView.RazorLib;
+using BlazorTreeView.RazorLib.Keymap;
 using BlazorTreeView.RazorLib.Store.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -41,6 +42,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions SolutionExplorerElementDimensions { get; set; } = null!;
@@ -50,9 +53,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     
     private string _filePath = string.Empty;
     private TreeViewContextMenuEvent? _mostRecentTreeViewContextMenuEvent;
-    
+    private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap;
+
     protected override void OnInitialized()
     {
+        _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
+            CommonMenuOptionsFactory,
+            CommonComponentRenderers,
+            Dispatcher);
+        
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrapOnStateChanged;
     
         base.OnInitialized();
