@@ -28,10 +28,15 @@
             {
                 <select @onchange="e => SelectedProjectToModifyChanged(e, solutionExplorerState)">
                     @{
+                        <option value="@Guid.Empty"
+                                selected="@(!ValidateSolutionContainsSelectedProject(solutionExplorerState, nuGetPackageManagerState))">
+                            Select a project to modify
+                        </option>
+                        
                         foreach (var project in solutionExplorerState.Solution.Projects)
                         {
                             <option value="@project.Id.Id.ToString()"
-                                    selected="@CheckIsSelected(project, nuGetPackageManagerState)">
+                                    selected="@CheckIfProjectIsSelected(project, nuGetPackageManagerState)">
                                 @project.Name
                             </option>
                         }
