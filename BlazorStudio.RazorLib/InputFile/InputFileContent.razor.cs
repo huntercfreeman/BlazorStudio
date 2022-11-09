@@ -98,6 +98,12 @@ public partial class InputFileContent : FluxorComponent
                 TreeViewInputFileContentStateKey,
                 activeNode);
         }
+
+        var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
+            pseudoRootNode,
+            CommonComponentRenderers);
+        
+        Dispatcher.Dispatch(setOpenedTreeViewModelAction);
     }
 
     private Task TreeViewOnClick(

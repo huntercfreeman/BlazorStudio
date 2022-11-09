@@ -21,7 +21,7 @@ public record InputFileState(
     string Message)
 {
     private InputFileState() : this(
-        0,
+        -1,
         ImmutableList<TreeViewAbsoluteFilePath>.Empty,
         null,
         _ => Task.CompletedTask,
@@ -43,7 +43,7 @@ public record InputFileState(
         TreeViewAbsoluteFilePath? SelectedTreeViewModel);
     
     public record SetOpenedTreeViewModelAction(
-        TreeViewAbsoluteFilePath SelectedTreeViewModel,
+        TreeViewAbsoluteFilePath TreeViewModel,
         ICommonComponentRenderers CommonComponentRenderers);
     
     public record SetSelectedInputFilePatternAction(
@@ -104,11 +104,11 @@ public record InputFileState(
             InputFileState inInputFileState,
             SetOpenedTreeViewModelAction setOpenedTreeViewModelAction)
         {
-            if (setOpenedTreeViewModelAction.SelectedTreeViewModel.Item.IsDirectory)
+            if (setOpenedTreeViewModelAction.TreeViewModel.Item.IsDirectory)
             {
                 return NewOpenedTreeViewModelHistory(
                     inInputFileState,
-                    setOpenedTreeViewModelAction.SelectedTreeViewModel,
+                    setOpenedTreeViewModelAction.TreeViewModel,
                     setOpenedTreeViewModelAction.CommonComponentRenderers);
             }
                 
