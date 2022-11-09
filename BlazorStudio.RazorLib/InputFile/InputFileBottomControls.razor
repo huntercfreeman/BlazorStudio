@@ -31,6 +31,11 @@
             </select>
         </div>
         <div style="display: flex;">
+            <ButtonDisplay OnClickFunc="FireOnAfterSubmit"
+                           IsDisabled="OnAfterSubmitIsDisabled()">
+                Select
+            </ButtonDisplay>
+            
             <ButtonDisplay OnClickFunc="() => { return Task.CompletedTask; }"
                            IsDisabled="!InputFileState.CanMoveBackwardsInHistory(InputFileStateWrap.Value)">
                 Cancel

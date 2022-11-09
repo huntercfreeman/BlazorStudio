@@ -82,4 +82,30 @@ public partial class InputFileBottomControls : FluxorComponent
         
         return selectedAbsoluteFilePath.GetAbsoluteFilePathString();
     }
+    
+    private async Task FireOnAfterSubmit()
+    {
+        var inputFileState = InputFileStateWrap.Value;
+
+        var valid = await inputFileState.SelectionIsValidFunc.Invoke(
+            inputFileState.SelectedTreeViewModel?.Item);
+        
+        if (valid)
+        {
+            if (DialogRecord is not null)
+                Dispatcher.Dispatch(new DisposeDialogRecordAction(DialogRecord));
+            
+            await InputFileStateWrap.Value.OnAfterSubmitFunc
+                .Invoke(inputFileState.SelectedTreeViewModel?.Item);
+        }
+    }
+    
+    private bool OnAfterSubmitIsDisabled()
+    {
+        var inputFileState = InputFileStateWrap.Value;
+
+        return !inputFileState.SelectionIsValidFunc.Invoke(
+                inputFileState.SelectedTreeViewModel?.Item)
+            .Result;
+    }
 }
