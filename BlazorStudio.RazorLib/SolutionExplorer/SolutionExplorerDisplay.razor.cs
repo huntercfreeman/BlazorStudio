@@ -13,6 +13,7 @@ using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
+using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
@@ -34,6 +35,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IState<TextEditorResourceMapState> TextEditorResourceMapStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -58,9 +61,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     protected override void OnInitialized()
     {
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
+            TerminalSessionsStateWrap,
             CommonMenuOptionsFactory,
             CommonComponentRenderers,
-            Dispatcher);
+            Dispatcher,
+            TreeViewService);
         
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrapOnStateChanged;
     

@@ -45,7 +45,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     /// The program is currently running using Photino locally on the user's computer
     /// therefore this static solution works without leaking any information.
     /// </summary>
-    private static TreeView? _parentOfCutFile;
+    public static TreeView? ParentOfCutFile;
     
     private MenuRecord GetMenuRecord(
         TreeViewContextMenuEvent treeViewContextMenuEvent)
@@ -150,9 +150,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 async () =>
                 {
                     var localParentOfCutFile = 
-                        _parentOfCutFile;
+                        ParentOfCutFile;
                     
-                    _parentOfCutFile = null;
+                    ParentOfCutFile = null;
                     
                     if (localParentOfCutFile is not null)
                         await ReloadTreeViewModel(localParentOfCutFile);
@@ -186,9 +186,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 async () =>
                 {
                     var localParentOfCutFile = 
-                        _parentOfCutFile;
+                        ParentOfCutFile;
                     
-                    _parentOfCutFile = null;
+                    ParentOfCutFile = null;
                     
                     if (localParentOfCutFile is not null)
                         await ReloadTreeViewModel(localParentOfCutFile);
@@ -345,7 +345,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         NamespacePath namespacePath,
         TreeViewNamespacePath? parentTreeViewModel)
     {
-        _parentOfCutFile = parentTreeViewModel;
+        ParentOfCutFile = parentTreeViewModel;
         
         var notificationInformative  = new NotificationRecord(
             NotificationKey.NewNotificationKey(), 

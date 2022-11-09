@@ -1,9 +1,12 @@
 ﻿using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.NotificationCase;
+using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
+using BlazorTreeView.RazorLib;
 using BlazorTreeView.RazorLib.Commands;
 using BlazorTreeView.RazorLib.Keymap;
 using Fluxor;
@@ -13,18 +16,24 @@ namespace BlazorStudio.RazorLib.SolutionExplorer;
 
 public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
 {
+    private readonly IState<TerminalSessionsState> _terminalSessionsStateWrap;
     private ICommonMenuOptionsFactory _commonMenuOptionsFactory;
     private ICommonComponentRenderers _commonComponentRenderers;
     private IDispatcher _dispatcher;
+    private readonly ITreeViewService _treeViewService;
 
     public SolutionExplorerTreeViewKeymap(
+        IState<TerminalSessionsState> terminalSessionsStateWrap,
         ICommonMenuOptionsFactory commonMenuOptionsFactory,
         ICommonComponentRenderers commonComponentRenderers,
-        IDispatcher dispatcher)
+        IDispatcher dispatcher,
+        ITreeViewService treeViewService)
     {
+        _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _commonMenuOptionsFactory = commonMenuOptionsFactory;
         _commonComponentRenderers = commonComponentRenderers;
         _dispatcher = dispatcher;
+        _treeViewService = treeViewService;
     }
     
     public bool TryMapKey(
@@ -55,9 +64,9 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             case "c":
                 command = new TreeViewCommand(InvokeCopyFile);
                 break;
-            // case "v":
-            //     command = TreeViewCommandFacts.Paste;
-            //     break;
+            case "v":
+                command = new TreeViewCommand(InvokePasteClipboard);
+                break;
             // case "s":
             //     command = TreeViewCommandFacts.Save;
             //     break;
@@ -148,5 +157,75 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
         copyFileMenuOption.OnClick?.Invoke();
         
         return Task.CompletedTask;
-    }   
+    }  
+    
+    private async Task InvokePasteClipboard(ITreeViewCommandParameter treeViewCommandParameter)
+    {
+        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
+
+        if (activeNode is null ||
+            activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
+            treeViewNamespacePath.Item is null)
+        {
+            return;
+        }
+
+        MenuOptionRecord pasteMenuOptionRecord;
+
+        if (treeViewNamespacePath.Item.AbsoluteFilePath.IsDirectory)
+        {
+            pasteMenuOptionRecord = _commonMenuOptionsFactory.PasteClipboard(
+                treeViewNamespacePath.Item.AbsoluteFilePath,
+                async () =>
+                {
+                    var localParentOfCutFile =
+                        SolutionExplorerContextMenu.ParentOfCutFile;
+
+                    SolutionExplorerContextMenu.ParentOfCutFile = null;
+
+                    if (localParentOfCutFile is not null)
+                        await ReloadTreeViewModel(localParentOfCutFile);
+
+                    await ReloadTreeViewModel(treeViewNamespacePath);
+                });
+        }
+        else
+        {
+            var parentDirectory = (IAbsoluteFilePath)treeViewNamespacePath
+                .Item.AbsoluteFilePath.Directories.Last();
+
+            pasteMenuOptionRecord = _commonMenuOptionsFactory.PasteClipboard(
+                parentDirectory,
+                async () =>
+                {
+                    var localParentOfCutFile =
+                        SolutionExplorerContextMenu.ParentOfCutFile;
+
+                    SolutionExplorerContextMenu.ParentOfCutFile = null;
+
+                    if (localParentOfCutFile is not null)
+                        await ReloadTreeViewModel(localParentOfCutFile);
+
+                    await ReloadTreeViewModel(treeViewNamespacePath);
+                });
+        }
+
+        pasteMenuOptionRecord.OnClick?.Invoke();
+    }
+    
+    private async Task ReloadTreeViewModel(
+        TreeView? treeViewModel)
+    {
+        if (treeViewModel is null)
+            return;
+
+        await treeViewModel.LoadChildrenAsync();
+        
+        _treeViewService.ReRenderNode(
+            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey, 
+            treeViewModel);
+        
+        _treeViewService.MoveActiveSelectionUp(
+            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey);
+    }
 }
