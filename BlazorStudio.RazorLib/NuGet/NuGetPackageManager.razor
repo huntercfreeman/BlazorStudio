@@ -1,5 +1,19 @@
-﻿<h3>NuGetPackageManager</h3>
+﻿@using BlazorStudio.ClassLib.Context
+@using BlazorStudio.ClassLib.Store.TerminalCase
 
-@code {
-    
-}
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<ContextBoundary ContextRecord="ContextFacts.NuGetPackageManagerContext"
+                 ClassCssString="bstudio_nu-get-package-manager-display"
+                 StyleCssString="height: 100%; width: 100%;">
+
+    <div class="bstudio_section-title">
+        NuGet
+    </div>
+
+    <div class="bstudio_section-body"
+         style="width: 100%;">
+        
+        Things regarding NuGet go here
+    </div>
+</ContextBoundary>
