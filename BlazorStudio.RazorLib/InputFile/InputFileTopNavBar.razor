@@ -26,10 +26,7 @@
         <div class="bstudio_input-file-display-top-nav-bar-address-hierarchy">
             @if (inputFileState.IndexInHistory < inputFileState.OpenedTreeViewModelHistory.Count)
             {
-                var openedTreeView = inputFileState.OpenedTreeViewModelHistory[
-                    inputFileState.IndexInHistory];
-                
-                <text>@openedTreeView.Item?.GetAbsoluteFilePathString()</text>
+                <text>@GetOpenedTreeView(inputFileState).Item?.GetAbsoluteFilePathString()</text>
             }
         </div>
         

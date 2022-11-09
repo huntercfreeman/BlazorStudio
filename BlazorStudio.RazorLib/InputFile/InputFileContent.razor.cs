@@ -30,13 +30,16 @@ public partial class InputFileContent : FluxorComponent
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+
+    [CascadingParameter(Name = "SetInputFileContentTreeViewRoot")]
+    public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
     [Parameter, EditorRequired]
     public Action<IAbsoluteFilePath?> SetSelectedAbsoluteFilePath { get; set; } = null!;
     
-    private static readonly TreeViewStateKey TreeViewInputFileContentStateKey = 
+    public static readonly TreeViewStateKey TreeViewInputFileContentStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
 
     private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
@@ -53,57 +56,9 @@ public partial class InputFileContent : FluxorComponent
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             true);
 
-        SetTreeViewRoot(directoryHomeAbsoluteFilePath);
+        SetInputFileContentTreeViewRoot.Invoke(directoryHomeAbsoluteFilePath);
         
         base.OnInitialized();
-    }
-
-    private void SetTreeViewRoot(IAbsoluteFilePath absoluteFilePath)
-    {
-        var pseudoRootNode = new TreeViewAbsoluteFilePath(
-            absoluteFilePath,
-            CommonComponentRenderers)
-        {
-            IsExpandable = true,
-            IsExpanded = false
-        };
-
-        pseudoRootNode.LoadChildrenAsync().Wait();
-        
-        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-            pseudoRootNode.Children.ToArray());
-
-        foreach (var child in adhocRootNode.Children)
-        {
-            child.IsExpandable = false;
-        }
-
-        var activeNode = adhocRootNode.Children.FirstOrDefault();
-        
-        if (!TreeViewService.TryGetTreeViewState(
-                TreeViewInputFileContentStateKey, out var treeViewState))
-        {
-            TreeViewService.RegisterTreeViewState(new TreeViewState(
-                TreeViewInputFileContentStateKey,
-                adhocRootNode,
-                activeNode));
-        }
-        else
-        {
-            TreeViewService.SetRoot(
-                TreeViewInputFileContentStateKey,
-                adhocRootNode);
-            
-            TreeViewService.SetActiveNode(
-                TreeViewInputFileContentStateKey,
-                activeNode);
-        }
-
-        var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
-            pseudoRootNode,
-            CommonComponentRenderers);
-        
-        Dispatcher.Dispatch(setOpenedTreeViewModelAction);
     }
 
     private Task TreeViewOnClick(
@@ -134,7 +89,7 @@ public partial class InputFileContent : FluxorComponent
         }
 
         if (treeViewAbsoluteFilePath.Item != null) 
-            SetTreeViewRoot(treeViewAbsoluteFilePath.Item);
+            SetInputFileContentTreeViewRoot.Invoke(treeViewAbsoluteFilePath.Item);
 
         return Task.CompletedTask;
     }
