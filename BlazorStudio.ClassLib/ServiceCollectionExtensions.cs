@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.Menu;
+using BlazorStudio.ClassLib.Nuget;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Clipboard;
 using BlazorTreeView.RazorLib;
@@ -22,6 +23,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ICommonComponentRenderers>(commonComponentRenderers)
             .AddSingleton<ICommonMenuOptionsFactory, CommonMenuOptionsFactory>()
             .AddSingleton<IFileTemplateProvider, FileTemplateProvider>()
+            .AddSingleton<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
             .AddTextEditorRazorLibServices(options =>
             {
                 options.InitializeFluxor = false;

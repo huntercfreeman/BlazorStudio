@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.Nuget;
 using BlazorStudio.ClassLib.Store.NuGetPackageManagerCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using Fluxor;
@@ -16,6 +17,24 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
+
+    public string NugetQuery
+    {
+        get => NuGetPackageManagerStateWrap.Value.NugetQuery;
+        set => Dispatcher.Dispatch(
+            new NuGetPackageManagerState.SetNugetQueryAction(
+                value));
+    }
+
+    public bool IncludePrerelease
+    {
+        get => NuGetPackageManagerStateWrap.Value.IncludePrerelease;
+        set => Dispatcher.Dispatch(
+            new NuGetPackageManagerState.SetIncludePrereleaseAction(
+                value));
+    }
 
     private void SelectedProjectToModifyChanged(
         ChangeEventArgs changeEventArgs,

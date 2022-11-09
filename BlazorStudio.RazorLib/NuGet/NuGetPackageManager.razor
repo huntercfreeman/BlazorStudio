@@ -45,14 +45,54 @@
 
                 if (nuGetPackageManagerState.SelectedProjectToModify is null)
                 {
-                    <div>Selected Project to Modify is null</div>                    
+                    <div>
+                        <em class="bstudio_em">
+                            {theSelectedProjectWasNotFound}
+                        </em>
+                    </div>
                 }
                 else
                 {
-                    <div>@nuGetPackageManagerState.SelectedProjectToModify.Name</div>
+                    <div>
+                        <em class="bstudio_em">
+                            @nuGetPackageManagerState.SelectedProjectToModify.Name
+                        </em>
+                    </div>
                 }
                 
+                <div>
+                    @NugetPackageManagerProvider.ProviderWebsiteUrlNoFormatting
+                </div>
                 
+                <div>
+                    <span>Query:</span>
+                    <input class="bstudio_input bstudio_input-text"
+                           style="height: 2em;"
+                           placeholder="Nuget query"
+                           @bind="NugetQuery"
+                           @bind:event="oninput"/>
+                </div>
+                
+                <div>
+                    <span>Include prerelease?:</span>
+                    <input class="bstudio_input"
+                           type="checkbox"
+                           @bind="IncludePrerelease" />
+                    
+                    <div>
+                        <em class="bstudio_em">
+                            @IncludePrerelease
+                        </em>
+                    </div>
+                </div>
+                
+                <div>
+                    <em class="bstudio_em">
+                        @NugetQuery
+                        
+                        @NugetPackageManagerProvider.BuildQuery(NugetQuery, true)
+                    </em>
+                </div>
             }
         }
     </div>
