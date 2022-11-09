@@ -22,7 +22,10 @@ In addition to the text based documentation, you may be interested in visiting m
   - `Blazor.Text.Editor.Analysis`
   - `Blazor.Text.Editor`
 - Modify the C# Project references as specified in the previous bullet points.
+- Clone `BlazorTreeView`
+  - The TreeView component is now a separate library and can be cloned from here: [(GitHub link)](https://github.com/huntercfreeman/BlazorTreeView)
 - `BlazorStudio` should now build and run
+- I am considering making use of git submodules but I am still thinking through how to make `BlazorStudio` easy to clone.
 
 ---
 
