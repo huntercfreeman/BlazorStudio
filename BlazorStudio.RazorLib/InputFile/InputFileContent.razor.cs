@@ -38,9 +38,16 @@ public partial class InputFileContent : FluxorComponent
     
     private static readonly TreeViewStateKey TreeViewInputFileContentStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
+
+    private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
     
     protected override void OnInitialized()
     {
+        _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
+        {
+            OnClick = TreeViewOnClick
+        };
+        
         var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             true);
@@ -70,5 +77,22 @@ public partial class InputFileContent : FluxorComponent
         }
         
         base.OnInitialized();
+    }
+
+    private Task TreeViewOnClick(TreeViewMouseEventParameter treeViewMouseEventParameter)
+    {
+        if (treeViewMouseEventParameter.MouseTargetedTreeView 
+            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+        {
+            return Task.CompletedTask;
+        }
+        
+        var setSelectedTreeViewModelAction = 
+            new InputFileState.SetSelectedTreeViewModelAction(
+                treeViewAbsoluteFilePath);
+        
+        Dispatcher.Dispatch(setSelectedTreeViewModelAction);
+        
+        return Task.CompletedTask;
     }
 }

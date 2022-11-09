@@ -72,4 +72,14 @@ public partial class InputFileBottomControls : FluxorComponent
                     pattern));            
         }
     }
+
+    private string GetSelectedTreeViewModelAbsoluteFilePathString(InputFileState inputFileState)
+    {
+        var selectedAbsoluteFilePath = inputFileState.SelectedTreeViewModel?.Item;
+
+        if (selectedAbsoluteFilePath is null)
+            return "Selection is null";
+        
+        return selectedAbsoluteFilePath.GetAbsoluteFilePathString();
+    }
 }
