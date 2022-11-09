@@ -4,6 +4,7 @@
 @using BlazorStudio.RazorLib.DragCase
 @using BlazorStudio.RazorLib.ResizableCase
 @using BlazorStudio.RazorLib.Notifications
+@using BlazorTreeView.RazorLib
 
 @inherits LayoutComponentBase
 
@@ -12,6 +13,7 @@
                  StyleCssString="@($"font-size: {FontStateWrap.Value.FontSizeInPixels}px;")">
 
     <BlazorTextEditorRazorLibInitializer/>
+    <BlazorTreeViewInitializer/>
     <DialogInitializer/>
     <NotificationInitializer/>
     <DragDisplay/>

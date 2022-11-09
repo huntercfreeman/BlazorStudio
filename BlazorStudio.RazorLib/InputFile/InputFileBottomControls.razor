@@ -10,11 +10,10 @@
         @* File name: *@
         @* <input class="bstudio_input"/> *@
         <div>
-            (@inputFileState.Message)    
+            @GetSelectedTreeViewModelAbsoluteFilePathString(inputFileState)    
         </div>
-        <div title="@(inputFileState.SelectedTreeViewModel?.Item.GetAbsoluteFilePathString() ?? "(no selection yet)")">
-            @(inputFileState.SelectedTreeViewModel?.Item
-                .FilenameWithExtension ?? "(no selection yet)")
+        <div>
+            (@inputFileState.Message)    
         </div>
     </div>
     <div class="bstudio_input-file-display-bottom-controls-non-text">
@@ -36,6 +35,7 @@
                            IsDisabled="OnAfterSubmitIsDisabled()">
                 Select
             </ButtonDisplay>
+            
             <ButtonDisplay OnClickFunc="() => { return Task.CompletedTask; }"
                            IsDisabled="!InputFileState.CanMoveBackwardsInHistory(InputFileStateWrap.Value)">
                 Cancel

@@ -1,12 +1,16 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.CustomEvents;
 using BlazorStudio.ClassLib.Dimensions;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Menu;
+using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.TreeView;
-using BlazorStudio.RazorLib.TreeView;
+using BlazorStudio.ClassLib.TreeViewImplementations;
+using BlazorTreeView.RazorLib;
+using BlazorTreeView.RazorLib.Store.TreeViewCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -22,112 +26,71 @@ public partial class InputFileContent : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    [Inject]
+    private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+
+    [CascadingParameter(Name = "SetInputFileContentTreeViewRoot")]
+    public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
     [Parameter, EditorRequired]
     public Action<IAbsoluteFilePath?> SetSelectedAbsoluteFilePath { get; set; } = null!;
-
-    private TreeViewDisplayOnEventRegistration<IAbsoluteFilePath> _treeViewDisplayOnEventRegistration = null!;
     
-    private TreeViewModel<IAbsoluteFilePath> SelectionMutablyReferenced => 
-        InputFileStateWrap.Value.OpenedTreeViewModelHistory[
-            InputFileStateWrap.Value.IndexInHistory];
+    public static readonly TreeViewStateKey TreeViewInputFileContentStateKey = 
+        TreeViewStateKey.NewTreeViewStateKey();
 
+    private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
+    
     protected override void OnInitialized()
     {
-        _treeViewDisplayOnEventRegistration = new TreeViewDisplayOnEventRegistration<IAbsoluteFilePath>();
+        _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
+        {
+            OnClick = TreeViewOnClick,
+            OnDoubleClick = TreeViewOnDoubleClick
+        };
         
-        _treeViewDisplayOnEventRegistration.AfterClickFuncAsync = AfterClickFuncAsync; 
-        _treeViewDisplayOnEventRegistration.AfterDoubleClickFuncAsync = AfterDoubleClickFuncAsync; 
-        _treeViewDisplayOnEventRegistration.AfterKeyDownFuncAsync = AfterKeyDownFuncAsync; 
+        var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            true);
+
+        SetInputFileContentTreeViewRoot.Invoke(directoryHomeAbsoluteFilePath);
         
         base.OnInitialized();
     }
 
-    private Task AfterClickFuncAsync(
-        MouseEventArgs mouseEventArgs, 
-        TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
+    private Task TreeViewOnClick(
+        TreeViewMouseEventParameter treeViewMouseEventParameter)
     {
-        Dispatcher.Dispatch(
-            new InputFileState.SetSelectedTreeViewModelAction(
-                treeViewDisplay.TreeViewModel));
-
-        return Task.CompletedTask;
-    }
-    
-    private Task AfterDoubleClickFuncAsync(
-        MouseEventArgs mouseEventArgs, 
-        TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
-    {
-        Dispatcher.Dispatch(
-            new InputFileState.SetOpenedTreeViewModelAction(
-                treeViewDisplay.TreeViewModel));
-
-        return Task.CompletedTask;
-    }
-    
-    private Task AfterKeyDownFuncAsync(
-        CustomKeyDownEventArgs customKeyDownEventArgs, 
-        TreeViewDisplay<IAbsoluteFilePath> treeViewDisplay)
-    {
-        if (customKeyDownEventArgs.AltWasPressed)
+        if (treeViewMouseEventParameter.MouseTargetedTreeView 
+            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
         {
-            switch (customKeyDownEventArgs.Key)
-            {
-                case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
-                    Dispatcher.Dispatch(
-                        new InputFileState.MoveBackwardsInHistoryAction());
-                    break;
-                case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
-                    Dispatcher.Dispatch(
-                        new InputFileState.SetOpenedTreeViewModelAction(
-                            treeViewDisplay.TreeViewModel));
-                    break;
-                case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
-                    Dispatcher.Dispatch(
-                        new InputFileState.OpenParentDirectoryAction());
-                    break;
-                case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-                case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
-                    Dispatcher.Dispatch(
-                        new InputFileState.MoveForwardsInHistoryAction());
-                    break;
-            }
+            return Task.CompletedTask;
         }
-        else
-        {
-            switch (customKeyDownEventArgs.Code)
-            {
-                case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                    Dispatcher.Dispatch(
-                        new InputFileState.SetOpenedTreeViewModelAction(
-                            treeViewDisplay.TreeViewModel));
-                    break;
-                case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                    Dispatcher.Dispatch(
-                        new InputFileState.SetSelectedTreeViewModelAction(
-                            treeViewDisplay.TreeViewModel));
-                    break;
-            }
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private MenuRecord GetContextMenu(
-        TreeViewDisplayContextMenuEvent<IAbsoluteFilePath> treeViewDisplayContextMenuEvent)
-    {
-        var treeViewModel = treeViewDisplayContextMenuEvent.TreeViewDisplay.TreeViewModel;
         
-        return new MenuRecord(new []
+        var setSelectedTreeViewModelAction = 
+            new InputFileState.SetSelectedTreeViewModelAction(
+                treeViewAbsoluteFilePath);
+        
+        Dispatcher.Dispatch(setSelectedTreeViewModelAction);
+        
+        return Task.CompletedTask;
+    }
+    
+    private Task TreeViewOnDoubleClick(
+        TreeViewMouseEventParameter treeViewMouseEventParameter)
+    {
+        if (treeViewMouseEventParameter.MouseTargetedTreeView 
+                is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
         {
-            CommonMenuOptionsFactory.NewEmptyFile(
-                treeViewModel.Item,
-                async () => {})
-        }.ToImmutableArray());
+            return Task.CompletedTask;
+        }
+
+        if (treeViewAbsoluteFilePath.Item != null) 
+            SetInputFileContentTreeViewRoot.Invoke(treeViewAbsoluteFilePath.Item);
+
+        return Task.CompletedTask;
     }
 }

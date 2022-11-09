@@ -3,9 +3,13 @@ using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
-using BlazorStudio.ClassLib.TreeView;
+using BlazorStudio.ClassLib.Namespaces;
+using BlazorStudio.ClassLib.Store.InputFileCase;
+using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.ResizableCase;
 using BlazorTextEditor.RazorLib;
+using BlazorTreeView.RazorLib;
+using BlazorTreeView.RazorLib.Store.TreeViewCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -17,7 +21,11 @@ public partial class InputFileDisplay
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private ITreeViewService TreeViewService { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
@@ -54,10 +62,10 @@ public partial class InputFileDisplay
     [Parameter]
     public string BodyStyleCssString { get; set; } = null!;
     
-    private ElementDimensions _navMenuElementDimensions = new();
-    private ElementDimensions _contentElementDimensions = new();
+    private readonly ElementDimensions _navMenuElementDimensions = new();
+    private readonly ElementDimensions _contentElementDimensions = new();
     private IAbsoluteFilePath? _selectedAbsoluteFilePath;
-        
+    
     protected override void OnInitialized()
     {
         InitializeElementDimensions();
@@ -102,5 +110,54 @@ public partial class InputFileDisplay
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }
         });
+    }
+    
+    private void SetInputFileContentTreeViewRoot(IAbsoluteFilePath absoluteFilePath)
+    {
+        var pseudoRootNode = new TreeViewAbsoluteFilePath(
+            absoluteFilePath,
+            CommonComponentRenderers)
+        {
+            IsExpandable = true,
+            IsExpanded = false
+        };
+
+        pseudoRootNode.LoadChildrenAsync().Wait();
+        
+        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
+            pseudoRootNode.Children.ToArray());
+
+        foreach (var child in adhocRootNode.Children)
+        {
+            child.IsExpandable = false;
+        }
+
+        var activeNode = adhocRootNode.Children.FirstOrDefault();
+        
+        if (!TreeViewService.TryGetTreeViewState(
+                InputFileContent.TreeViewInputFileContentStateKey, 
+                out var treeViewState))
+        {
+            TreeViewService.RegisterTreeViewState(new TreeViewState(
+                InputFileContent.TreeViewInputFileContentStateKey,
+                adhocRootNode,
+                activeNode));
+        }
+        else
+        {
+            TreeViewService.SetRoot(
+                InputFileContent.TreeViewInputFileContentStateKey,
+                adhocRootNode);
+            
+            TreeViewService.SetActiveNode(
+                InputFileContent.TreeViewInputFileContentStateKey,
+                activeNode);
+        }
+
+        var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
+            pseudoRootNode,
+            CommonComponentRenderers);
+        
+        Dispatcher.Dispatch(setOpenedTreeViewModelAction);
     }
 }

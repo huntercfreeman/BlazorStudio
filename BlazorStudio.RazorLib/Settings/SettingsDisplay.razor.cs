@@ -15,7 +15,37 @@ public partial class SettingsDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    
+
+    private bool _globalShowNewlines;
+    private bool _globalShowWhitespace;
+
+    public bool GlobalShowNewlines
+    {
+        get => _globalShowNewlines;
+        set => TextEditorService.SetShowNewlines(value);
+    }
+
+    public bool GlobalShowWhitespace
+    {
+        get => _globalShowWhitespace;
+        set => TextEditorService.SetShowWhitespace(value);
+    }
+
+    protected override void OnInitialized()
+    {
+        TextEditorService.OnTextEditorStatesChanged += TextEditorServiceOnTextEditorStatesChanged;
+        
+        TextEditorServiceOnTextEditorStatesChanged();
+        
+        base.OnInitialized();
+    }
+
+    private void TextEditorServiceOnTextEditorStatesChanged()
+    {
+        _globalShowNewlines = TextEditorService.GlobalShowNewlines;
+        _globalShowWhitespace = TextEditorService.GlobalShowWhitespace;
+    }
+
     private void DispatchSetThemeStateAction(ThemeRecord themeRecord)
     {
         TextEditorService.SetTheme(themeRecord.ThemeColorKind == ThemeColorKind.Light
@@ -23,5 +53,12 @@ public partial class SettingsDisplay : FluxorComponent
             : ThemeFacts.BlazorTextEditorDark);
 
         Dispatcher.Dispatch(new SetThemeStateAction(themeRecord));
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        TextEditorService.OnTextEditorStatesChanged -= TextEditorServiceOnTextEditorStatesChanged;
+        
+        base.Dispose(disposing);
     }
 }

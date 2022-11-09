@@ -7,7 +7,11 @@ public class CommonComponentRenderers : ICommonComponentRenderers
         Type informativeNotificationRenderer,
         Type errorNotificationRenderer,
         Type fileFormRendererType,
-        Type deleteFileFormRendererType)
+        Type deleteFileFormRendererType,
+        Type treeViewNamespacePathRendererType,
+        Type treeViewExceptionRendererType,
+        Type treeViewAbsoluteFilePathRendererType,
+        Type nuGetPackageManagerRendererType)
     {
         void ValidateRenderer(Type implementationType, Type interfaceType)
         {
@@ -41,6 +45,22 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             ValidateRenderer(
                 deleteFileFormRendererType, 
                 typeof(IDeleteFileFormRendererType));
+            
+            ValidateRenderer(
+                treeViewNamespacePathRendererType, 
+                typeof(ITreeViewNamespacePathRendererType));
+            
+            ValidateRenderer(
+                treeViewExceptionRendererType, 
+                typeof(ITreeViewExceptionRendererType));
+            
+            ValidateRenderer(
+                treeViewAbsoluteFilePathRendererType, 
+                typeof(ITreeViewAbsoluteFilePathRendererType));
+            
+            ValidateRenderer(
+                nuGetPackageManagerRendererType, 
+                typeof(INuGetPackageManagerRendererType));
         }
 
         // Assign
@@ -50,12 +70,20 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             ErrorNotificationRendererType = errorNotificationRenderer;
             FileFormRendererType = fileFormRendererType;
             DeleteFileFormRendererType = deleteFileFormRendererType;
+            TreeViewNamespacePathRendererType = treeViewNamespacePathRendererType;
+            TreeViewExceptionRendererType = treeViewExceptionRendererType;
+            TreeViewAbsoluteFilePathRendererType = treeViewAbsoluteFilePathRendererType;
+            NuGetPackageManagerRendererType = nuGetPackageManagerRendererType;
         }
     }
 
     public Type InputFileRendererType { get; }
     public Type InformativeNotificationRendererType { get; }
     public Type ErrorNotificationRendererType { get; }
-    public Type FileFormRendererType { get; set; }
-    public Type DeleteFileFormRendererType { get; set; }
+    public Type FileFormRendererType { get; }
+    public Type DeleteFileFormRendererType { get; }
+    public Type TreeViewNamespacePathRendererType { get; }
+    public Type TreeViewExceptionRendererType { get; }
+    public Type TreeViewAbsoluteFilePathRendererType { get; set; }
+    public Type NuGetPackageManagerRendererType { get; }
 }

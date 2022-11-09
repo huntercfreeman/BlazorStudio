@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using BlazorStudio.ClassLib.Namespaces;
 
 namespace BlazorStudio.ClassLib.FileTemplates;
 

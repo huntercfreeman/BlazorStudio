@@ -7,7 +7,7 @@
                        IsDisabled="!InputFileState.CanMoveBackwardsInHistory(InputFileStateWrap.Value)">
             <IconArrowLeft/>
         </ButtonDisplay>
-    
+        
         <ButtonDisplay OnClickFunc="async () => HandleForwardButtonOnClick()"
                        IsDisabled="!InputFileState.CanMoveForwardsInHistory(InputFileStateWrap.Value)">
             <IconArrowRight/>
@@ -20,11 +20,14 @@
     
     <div class="bstudio_input-file-display-top-nav-bar-address">
         @{
-            var selectionSafeReference = SelectionMutablyReferenced;
+            var inputFileState = InputFileStateWrap.Value;
         }
         
         <div class="bstudio_input-file-display-top-nav-bar-address-hierarchy">
-            @selectionSafeReference.Item.GetAbsoluteFilePathString()    
+            @if (inputFileState.IndexInHistory < inputFileState.OpenedTreeViewModelHistory.Count)
+            {
+                <text>@GetOpenedTreeView(inputFileState).Item?.GetAbsoluteFilePathString()</text>
+            }
         </div>
         
         <ButtonDisplay OnClickFunc="async () => HandleRefreshButtonOnClick()">

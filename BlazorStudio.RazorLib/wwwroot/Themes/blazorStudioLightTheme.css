@@ -42,4 +42,9 @@
     --bstudio_tertiary-background-color: #f3f0dc;
     --bstudio_tertiary-foreground-color: var(--bstudio_primary-font-color);
     --bstudio_hr-primary-background-color: currentColor;
+    --bstudio_error-foreground-color: red;
+    --btv_outline-color: #33bcec;
+    --btv_active-but-not-focused-background-color: #7f8e93;
+    --btv_context-menu-background-color: red;
+    --btv_context-menu-foreground-color: green;
 }

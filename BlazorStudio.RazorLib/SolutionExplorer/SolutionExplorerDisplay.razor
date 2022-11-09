@@ -1,7 +1,11 @@
 @using BlazorStudio.ClassLib.Context
 @using BlazorStudio.ClassLib.Store.SolutionExplorer
 @using BlazorStudio.RazorLib.ContextCase
-@using BlazorStudio.RazorLib.TreeView
+@using BlazorTreeView.RazorLib
+@using BlazorTreeView.RazorLib.Store.TreeViewCase
+@using BlazorStudio.RazorLib.Menu
+@using BlazorStudio.RazorLib.Dropdown
+@using BlazorStudio.ClassLib.Dropdown
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -30,17 +34,18 @@
                 }
                 else
                 {
-                    <TreeViewDisplay TreeViewModel="_solutionTreeViewModel"
-                                     TreeViewDisplayOnEventRegistration="_treeViewDisplayOnEventRegistration">
-                        <ItemRenderFragment Context="treeViewModel">
-                            <SolutionExplorerIconDisplay AbsoluteFilePath="treeViewModel.Item.AbsoluteFilePath" />
-                            @treeViewModel.Item.AbsoluteFilePath.FilenameWithExtension
-                        </ItemRenderFragment>
+                    <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"
+                                          CssStyleString="height: 100%;"
+                                          OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                          TreeViewKeymap="_solutionExplorerTreeViewKeymap"
+                                          TreeViewMouseEventRegistrar="_treeViewMouseEventRegistrar"/>
+                    
+                    <DropdownDisplay DropdownKey="SolutionExplorerContextMenu.ContextMenuEventDropdownKey"
+                                     DropdownPositionKind="DropdownPositionKind.Unset"
+                                     CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewContextMenuEvent)">
 
-                        <ContextMenuEventRenderFragment Context="contextMenuEvent">
-                            <SolutionExplorerContextMenu TreeViewDisplayContextMenuEvent="contextMenuEvent"/>
-                        </ContextMenuEventRenderFragment>
-                    </TreeViewDisplay>
+                        <SolutionExplorerContextMenu TreeViewContextMenuEvent="_mostRecentTreeViewContextMenuEvent"/>
+                    </DropdownDisplay>
                 }
             }
         </div>

@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Text.Editor.Analysis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Text.Editor.Analysis.Shared", "..\Blazor.Text.Editor.Analysis\Blazor.Text.Editor.Analysis.Shared\Blazor.Text.Editor.Analysis.Shared.csproj", "{EEAFFF41-8FBA-4EEF-9B6F-C4F284BCA398}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorTreeView.RazorLib", "..\IsolateTreeView\BlazorTreeView.RazorLib\BlazorTreeView.RazorLib.csproj", "{EB5E156B-E48F-4111-A500-ADF26826381D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +91,10 @@ Global
 		{EEAFFF41-8FBA-4EEF-9B6F-C4F284BCA398}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEAFFF41-8FBA-4EEF-9B6F-C4F284BCA398}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEAFFF41-8FBA-4EEF-9B6F-C4F284BCA398}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB5E156B-E48F-4111-A500-ADF26826381D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB5E156B-E48F-4111-A500-ADF26826381D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB5E156B-E48F-4111-A500-ADF26826381D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB5E156B-E48F-4111-A500-ADF26826381D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -107,6 +113,7 @@ Global
 		{97A03511-4CA8-44F5-9CD5-F7F0D65313B5} = {BB41DFF8-D30A-4A53-AB15-346DD6606145}
 		{C6B6AA7B-2FAB-4C28-8F7B-37F64C763427} = {BB41DFF8-D30A-4A53-AB15-346DD6606145}
 		{EEAFFF41-8FBA-4EEF-9B6F-C4F284BCA398} = {BB41DFF8-D30A-4A53-AB15-346DD6606145}
+		{EB5E156B-E48F-4111-A500-ADF26826381D} = {9DA1D23C-7323-4F08-9F74-9A038B107AE9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF5C7044-00A3-49F9-8ACD-E80E6B3A3B99}

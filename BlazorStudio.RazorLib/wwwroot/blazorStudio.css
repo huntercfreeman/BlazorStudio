@@ -596,3 +596,27 @@ em.bstudio_em {
     color: var(--bstudio_primary-emphasis-foreground-color);
     font-style: normal;
 }
+
+.bstudio_tree-view-exception {
+    color: var(--bstudio_error-foreground-color)
+}
+
+.btv_context-menu-content {
+    z-index: var(--bstudio_dropdown-display-z-index);
+    position: absolute;
+    min-width: 100%;
+    min-height: 100%;
+    color: var(--bstudio_primary-font-color);
+}
+
+.bstudio_footer-body {
+    height: calc(100% - var(--bstudio_editor-tabs-bar-height));
+}
+
+.bstudio_footer-view-tabs {
+    display: flex;
+    height: var(--bstudio_editor-tabs-bar-height);
+    margin-bottom: 10px;
+    overflow-x: auto;
+    font-size: 0.8em;
+}

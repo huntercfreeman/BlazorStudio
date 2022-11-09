@@ -1,27 +1,13 @@
 ﻿@using BlazorStudio.RazorLib.Menu
-@using BlazorStudio.RazorLib.TreeView
 @using BlazorStudio.RazorLib.ResizableCase
+@using BlazorTreeView.RazorLib
+@using BlazorTreeView.RazorLib.Store.TreeViewCase
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_input-file-display-side-bar"
      style="@ElementDimensions.StyleString">
 
-    @{
-        var fileSystemSafeReference = FileSystemTreeViewModelMutablyReferenced;
-        
-        <TreeViewDisplay TreeViewModel="fileSystemSafeReference"
-                         ShouldShowRoot="false">
-            <ItemRenderFragment Context="treeViewModel">
-                @treeViewModel.Item.FilenameWithExtension
-            </ItemRenderFragment>
-
-            <ContextMenuEventRenderFragment Context="contextMenuEvent">
-                <div class="bstudio_dropdown-display-default-background"
-                     style="@contextMenuEvent.DefaultStyleForContextMenu">
-                    <MenuDisplay MenuRecord="GetContextMenu(contextMenuEvent)"/>
-                </div>
-            </ContextMenuEventRenderFragment>
-        </TreeViewDisplay>
-    }
+    <TreeViewStateDisplay TreeViewStateKey="TreeViewInputFileSidebarStateKey"
+                          CssStyleString="height: 100%;"/>
 </div>

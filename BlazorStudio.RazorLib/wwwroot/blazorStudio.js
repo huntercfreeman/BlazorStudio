@@ -12,7 +12,7 @@ window.blazorStudio = {
     },
 }
 
-Blazor.registerCustomEventType('customkeydown', {
+Blazor.registerCustomEventType('bskeydown', {
     browserEventName: 'keydown',
     createEventArgs: e => {
         if (e.code !== "Tab") {

@@ -5,7 +5,6 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.TreeView;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -24,7 +23,6 @@ public partial class FolderExplorerDisplay : FluxorComponent
     public ElementDimensions FolderExplorerElementDimensions { get; set; } = null!;
 
     private string _filePath = string.Empty;
-    private TreeViewModel<IAbsoluteFilePath>? _rootTreeViewModel;
 
     protected override void OnInitialized()
     {
@@ -37,41 +35,6 @@ public partial class FolderExplorerDisplay : FluxorComponent
     {
         if (FolderExplorerStateWrap.Value.AbsoluteFilePath is null)
             return;
-
-        _rootTreeViewModel = new TreeViewModel<IAbsoluteFilePath>(
-            FolderExplorerStateWrap.Value.AbsoluteFilePath,
-            true,
-            LoadChildrenAsync);
-
-        _rootTreeViewModel.LoadChildrenFuncAsync.Invoke(_rootTreeViewModel);
-    }
-    
-    private Task LoadChildrenAsync(TreeViewModel<IAbsoluteFilePath> treeViewModel)
-    {
-        var absoluteFilePathString = treeViewModel.Item.GetAbsoluteFilePathString();
-
-        var childFiles = Directory
-            .GetFiles(absoluteFilePathString)
-            .OrderBy(filename => filename)
-            .Select(cf => new AbsoluteFilePath(cf, false));
-        
-        var childDirectories = Directory
-            .GetDirectories(absoluteFilePathString)
-            .OrderBy(filename => filename)
-            .Select(cd => new AbsoluteFilePath(cd, true));
-
-        var childTreeViewModels = childDirectories
-            .Union(childFiles)
-            .Select(afp => 
-                new TreeViewModel<IAbsoluteFilePath>(
-                    afp, 
-                    true, 
-                    LoadChildrenAsync));
-
-        treeViewModel.Children.Clear();
-        treeViewModel.Children.AddRange(childTreeViewModels);
-        
-        return Task.CompletedTask;
     }
     
     private void DispatchSetFolderExplorerStateOnClick()
@@ -84,19 +47,6 @@ public partial class FolderExplorerDisplay : FluxorComponent
                 new AbsoluteFilePath(_filePath, true)));
     }
     
-    private MenuRecord GetContextMenu(TreeViewModel<IAbsoluteFilePath> treeViewModel)
-    {
-        var openInTextEditorMenuOption = new MenuOptionRecord(
-            "Nothing here TODO: Aaa",
-            MenuOptionKind.Other,
-            () => { });
-
-        return new MenuRecord(new []
-        {
-            openInTextEditorMenuOption
-        }.ToImmutableArray());
-    }
-
     protected override void Dispose(bool disposing)
     {
         FolderExplorerStateWrap.StateChanged -= FolderExplorerStateWrapOnStateChanged;

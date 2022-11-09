@@ -22,7 +22,9 @@ public partial class DropdownDisplay : FluxorComponent
     public DropdownPositionKind DropdownPositionKind { get; set; } = DropdownPositionKind.Vertical;
     [Parameter]
     public bool ShouldDisplayOutOfBoundsClickDisplay { get; set; } = true;
-
+    [Parameter]
+    public string CssStyleString { get; set; } = string.Empty;
+    
     private bool ShouldDisplay => DropdownStatesWrap.Value.ActiveDropdownKeys
         .Contains(DropdownKey);
     
@@ -34,17 +36,17 @@ public partial class DropdownDisplay : FluxorComponent
         _ => throw new ApplicationException($"The {nameof(DropdownPositionKind)}: {DropdownPositionKind} was unrecognized.") 
     };
 
+    private void ClearAllActiveDropdownKeys(MouseEventArgs mouseEventArgs)
+    {
+        Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
+    }
+    
     protected override void Dispose(bool disposing)
     {
         if (ShouldDisplay)
             Dispatcher.Dispatch(new RemoveActiveDropdownKeyAction(DropdownKey));
         
         base.Dispose(disposing);
-    }
-
-    private void ClearAllActiveDropdownKeys(MouseEventArgs mouseEventArgs)
-    {
-        Dispatcher.Dispatch(new ClearActiveDropdownKeysAction());
     }
 }
 

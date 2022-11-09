@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorTextEditor.RazorLib;

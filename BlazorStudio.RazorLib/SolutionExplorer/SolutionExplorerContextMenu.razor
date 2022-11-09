@@ -1,6 +1,8 @@
-﻿@using BlazorStudio.RazorLib.Menu
+﻿@using BlazorStudio.RazorLib.OutOfBoundsClick
+@using BlazorStudio.RazorLib.Menu
+@using BlazorStudio.RazorLib.Dropdown
+@using BlazorStudio.ClassLib.Dropdown
 
-<div class="bstudio_dropdown-display-default-background"
-     style="@TreeViewDisplayContextMenuEvent.DefaultStyleForContextMenu">
-    <MenuDisplay MenuRecord="GetContextMenu(TreeViewDisplayContextMenuEvent)"/>
+<div class="bstudio_dropdown-display-default-background">
+    <MenuDisplay MenuRecord="GetMenuRecord(TreeViewContextMenuEvent)"/>
 </div>

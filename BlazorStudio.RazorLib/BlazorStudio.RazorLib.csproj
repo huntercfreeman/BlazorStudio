@@ -18,7 +18,7 @@
 
     <ItemGroup>
         <PackageReference Include="Fluxor.Blazor.Web" Version="5.5.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
     </ItemGroup>
 
     <ItemGroup>
@@ -27,6 +27,7 @@
         <ProjectReference Include="..\..\Blazor.Text.Editor.Analysis\JavaScript\Blazor.Text.Editor.Analysis.JavaScript.ClassLib\Blazor.Text.Editor.Analysis.JavaScript.ClassLib.csproj" />
         <ProjectReference Include="..\..\Blazor.Text.Editor.Analysis\Razor\Blazor.Text.Editor.Analysis.Razor.ClassLib\Blazor.Text.Editor.Analysis.Razor.ClassLib.csproj" />
         <ProjectReference Include="..\..\Blazor.Text.Editor.Analysis\TypeScript\Blazor.Text.Editor.Analysis.TypeScript.ClassLib\Blazor.Text.Editor.Analysis.TypeScript.ClassLib.csproj" />
+        <ProjectReference Include="..\..\IsolateTreeView\BlazorTreeView.RazorLib\BlazorTreeView.RazorLib.csproj" />
         <ProjectReference Include="..\BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj" />
     </ItemGroup>
 
@@ -191,6 +192,7 @@
         <UpToDateCheckInput Remove="Terminal\TerminalDisplay.razor" />
         <UpToDateCheckInput Remove="Terminal\TerminalEntryDisplay.razor" />
         <UpToDateCheckInput Remove="Terminal\TerminalSettingsDisplay.razor" />
+        <UpToDateCheckInput Remove="TreeView\TreeViewDisplay.razor" />
         <UpToDateCheckInput Remove="TreeView\TreeViewDisplay.razor" />
     </ItemGroup>
 

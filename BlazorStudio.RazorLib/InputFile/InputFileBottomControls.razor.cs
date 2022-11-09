@@ -1,11 +1,11 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.TreeView;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
@@ -21,16 +21,14 @@ public partial class InputFileBottomControls : FluxorComponent
     private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     
     [CascadingParameter]
     public DialogRecord? DialogRecord { get; set; }
 
     private ElementReference? _searchElementReference;
     private string _searchQuery = string.Empty;
-
-    private TreeViewModel<IAbsoluteFilePath> SelectionMutablyReferenced => 
-        InputFileStateWrap.Value.OpenedTreeViewModelHistory[
-            InputFileStateWrap.Value.IndexInHistory];
     
     private void HandleBackButtonOnClick()
     {
@@ -44,7 +42,8 @@ public partial class InputFileBottomControls : FluxorComponent
 
     private void HandleUpwardButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction());
+        Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
+            CommonComponentRenderers));
     }
 
     private void HandleRefreshButtonOnClick()
@@ -56,7 +55,34 @@ public partial class InputFileBottomControls : FluxorComponent
     {
         _searchElementReference?.FocusAsync();
     }
+    
+    private void SelectInputFilePatternOnChange(ChangeEventArgs changeEventArgs)
+    {
+        var inputFileState = InputFileStateWrap.Value;
+        
+        var patternName = (string)(changeEventArgs.Value ?? string.Empty);
 
+        var pattern = inputFileState.InputFilePatterns
+            .FirstOrDefault(x => x.PatternName == patternName);
+
+        if (pattern is not null)
+        {
+            Dispatcher.Dispatch(
+                new InputFileState.SetSelectedInputFilePatternAction(
+                    pattern));            
+        }
+    }
+
+    private string GetSelectedTreeViewModelAbsoluteFilePathString(InputFileState inputFileState)
+    {
+        var selectedAbsoluteFilePath = inputFileState.SelectedTreeViewModel?.Item;
+
+        if (selectedAbsoluteFilePath is null)
+            return "Selection is null";
+        
+        return selectedAbsoluteFilePath.GetAbsoluteFilePathString();
+    }
+    
     private async Task FireOnAfterSubmit()
     {
         var inputFileState = InputFileStateWrap.Value;
@@ -79,24 +105,7 @@ public partial class InputFileBottomControls : FluxorComponent
         var inputFileState = InputFileStateWrap.Value;
 
         return !inputFileState.SelectionIsValidFunc.Invoke(
-            inputFileState.SelectedTreeViewModel?.Item)
+                inputFileState.SelectedTreeViewModel?.Item)
             .Result;
-    }
-    
-    private void SelectInputFilePatternOnChange(ChangeEventArgs changeEventArgs)
-    {
-        var inputFileState = InputFileStateWrap.Value;
-        
-        var patternName = (string)(changeEventArgs.Value ?? string.Empty);
-
-        var pattern = inputFileState.InputFilePatterns
-            .FirstOrDefault(x => x.PatternName == patternName);
-
-        if (pattern is not null)
-        {
-            Dispatcher.Dispatch(
-                new InputFileState.SetSelectedInputFilePatternAction(
-                    pattern));            
-        }
     }
 }

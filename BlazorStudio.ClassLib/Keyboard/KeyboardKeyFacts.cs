@@ -223,13 +223,13 @@ public static class KeyboardKeyFacts
         return wasShiftF10 || wasAltPeriod;
     }
     
-    public static bool CheckIsContextMenuEvent(CustomKeyDownEventArgs customKeyDownEventArgs)
+    public static bool CheckIsContextMenuEvent(BsKeyDownEventArgs bsKeyDownEventArgs)
     {
         return CheckIsAlternateContextMenuEvent(
-            customKeyDownEventArgs.Key, 
-            customKeyDownEventArgs.Code, 
-            customKeyDownEventArgs.ShiftWasPressed, 
-            customKeyDownEventArgs.AltWasPressed);
+            bsKeyDownEventArgs.Key, 
+            bsKeyDownEventArgs.Code, 
+            bsKeyDownEventArgs.ShiftWasPressed, 
+            bsKeyDownEventArgs.AltWasPressed);
     }
     
     public static bool CheckIsContextMenuEvent(string key, string code, bool shiftWasPressed, bool altWasPressed)

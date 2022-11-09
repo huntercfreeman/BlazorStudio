@@ -44,6 +44,11 @@ public static class ContextFacts
         "Terminal",
         "terminal");
     
+    public static readonly ContextRecord NuGetPackageManagerContext = new(
+        ContextKey.NewContextKey(),
+        "NuGetPackageManager",
+        "nu-get-package-manager");
+    
     public static readonly ImmutableArray<ContextRecord> ContextRecords = new [] 
     {
         MainLayoutHeaderContext,
@@ -51,6 +56,8 @@ public static class ContextFacts
         FolderExplorerContext,
         GlobalContext,
         EditorContext,
-        TextEditorContext
+        TextEditorContext,
+        TerminalContext,
+        NuGetPackageManagerContext
     }.ToImmutableArray();
 }
