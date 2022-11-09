@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.CommonComponents;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Nuget;
 using BlazorStudio.ClassLib.Store.NuGetPackageManagerCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
@@ -35,6 +36,10 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
             new NuGetPackageManagerState.SetIncludePrereleaseAction(
                 value));
     }
+
+    private bool _performingNugetQuery;
+
+    private Exception? _exceptionFromNugetQuery;
 
     private void SelectedProjectToModifyChanged(
         ChangeEventArgs changeEventArgs,
@@ -81,5 +86,41 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
         
         return solutionExplorerState.Solution.ContainsProject(
             nuGetPackageManagerState.SelectedProjectToModify.Id);
+    }
+
+    private async Task SubmitNugetQueryOnClick()
+    {
+        var query = NugetPackageManagerProvider
+            .BuildQuery(NugetQuery, IncludePrerelease);
+        
+        try
+        {
+            _exceptionFromNugetQuery = null;
+            
+            _performingNugetQuery = true;
+            await InvokeAsync(StateHasChanged);
+
+            await Task.Run(async () =>
+            {
+                var localNugetResult =
+                    await NugetPackageManagerProvider
+                        .QueryForNugetPackagesAsync(query);
+
+                var setMostRecentQueryResultAction = 
+                    new NuGetPackageManagerState.SetMostRecentQueryResultAction(
+                        localNugetResult);
+                
+                Dispatcher.Dispatch(setMostRecentQueryResultAction);
+            });
+        }
+        catch (Exception e)
+        {
+            _exceptionFromNugetQuery = e;
+        }
+        finally
+        {
+            _performingNugetQuery = false;
+            await InvokeAsync(StateHasChanged);
+        }
     }
 }

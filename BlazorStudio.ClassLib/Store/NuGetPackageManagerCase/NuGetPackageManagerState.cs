@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Nuget;
+using Fluxor;
 using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.ClassLib.Store.NuGetPackageManagerCase;
@@ -7,10 +9,15 @@ namespace BlazorStudio.ClassLib.Store.NuGetPackageManagerCase;
 public record NuGetPackageManagerState(
     Project? SelectedProjectToModify, 
     string NugetQuery,
-    bool IncludePrerelease)
+    bool IncludePrerelease,
+    ImmutableArray<NugetPackageRecord> MostRecentQueryResult)
 {
     public NuGetPackageManagerState() 
-        : this(default(Project?), string.Empty, true)
+        : this(
+            default(Project?), 
+            string.Empty, 
+            false, 
+            ImmutableArray<NugetPackageRecord>.Empty)
     {
         
     }
@@ -18,6 +25,7 @@ public record NuGetPackageManagerState(
     public record SetSelectedProjectToModifyAction(Project? SelectedProjectToModify);
     public record SetNugetQueryAction(string NugetQuery);
     public record SetIncludePrereleaseAction(bool IncludePrerelease);
+    public record SetMostRecentQueryResultAction(ImmutableArray<NugetPackageRecord> QueryResult);
     
     private class NuGetPackageManagerStateReducer
     {
@@ -54,6 +62,18 @@ public record NuGetPackageManagerState(
             {
                 IncludePrerelease = 
                     setIncludePrereleaseAction.IncludePrerelease
+            };
+        }
+        
+        [ReducerMethod]
+        public static NuGetPackageManagerState ReduceSetMostRecentQueryResultAction(
+            NuGetPackageManagerState inNuGetPackageManagerState,
+            SetMostRecentQueryResultAction setMostRecentQueryResultAction)
+        {
+            return inNuGetPackageManagerState with
+            {
+                MostRecentQueryResult = 
+                    setMostRecentQueryResultAction.QueryResult
             };
         }
     }

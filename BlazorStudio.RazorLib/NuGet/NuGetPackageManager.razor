@@ -138,6 +138,36 @@
                                 .Query)
                         </em>
                     </div>
+                    
+                    <ButtonDisplay OnClickFunc="SubmitNugetQueryOnClick">
+                        Submit
+                    </ButtonDisplay>
+                    
+                    @if (_performingNugetQuery)
+                    {
+                        <IconLoading />
+                    }
+                    
+                    @if (_exceptionFromNugetQuery is not null)
+                    {
+                        <div>@_exceptionFromNugetQuery.Message</div>
+                    }
+                    
+                    <hr/>
+                    
+                    @{
+                        var nugetResult = NuGetPackageManagerStateWrap.Value.MostRecentQueryResult;
+                        
+                        if (NuGetPackageManagerStateWrap.Value.MostRecentQueryResult.Any())
+                        {
+                            foreach (var entry in nugetResult)
+                            {
+                                <div>
+                                    @entry.Title, @entry.Version
+                                </div>
+                            }
+                        }
+                    }
                 </div>
             }
         }
