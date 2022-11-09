@@ -64,12 +64,12 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             case "c":
                 command = new TreeViewCommand(InvokeCopyFile);
                 break;
+            case "x":
+                command = new TreeViewCommand(InvokeCutFile);
+                break;
             case "v":
                 command = new TreeViewCommand(InvokePasteClipboard);
                 break;
-            // case "s":
-            //     command = TreeViewCommandFacts.Save;
-            //     break;
             // case "a":
             //     command = TreeViewCommandFacts.SelectAll;
             //     break;
@@ -129,6 +129,31 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
                 {
                     nameof(IInformativeNotificationRendererType.Message), 
                     $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                },
+            });
+        
+        _dispatcher.Dispatch(
+            new NotificationState.RegisterNotificationAction(
+                notificationInformative));
+
+        return Task.CompletedTask;
+    }
+    
+    private Task NotifyCutCompleted(
+        NamespacePath namespacePath,
+        TreeViewNamespacePath? parentTreeViewModel)
+    {
+        SolutionExplorerContextMenu.ParentOfCutFile = parentTreeViewModel;
+        
+        var notificationInformative  = new NotificationRecord(
+            NotificationKey.NewNotificationKey(), 
+            "Cut Action",
+            _commonComponentRenderers.InformativeNotificationRendererType,
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(IInformativeNotificationRendererType.Message), 
+                    $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                 },
             });
         
@@ -211,6 +236,28 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
         }
 
         pasteMenuOptionRecord.OnClick?.Invoke();
+    }
+    
+    private async Task InvokeCutFile(ITreeViewCommandParameter treeViewCommandParameter)
+    {
+        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
+
+        if (activeNode is null ||
+            activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
+            treeViewNamespacePath.Item is null)
+        {
+            return;
+        }
+
+        var parent = treeViewNamespacePath.Parent as TreeViewNamespacePath;
+
+        MenuOptionRecord cutFileOptionRecord = _commonMenuOptionsFactory.CutFile(
+            treeViewNamespacePath.Item.AbsoluteFilePath,
+            () => NotifyCutCompleted(
+                treeViewNamespacePath.Item, 
+                parent));
+
+        cutFileOptionRecord.OnClick?.Invoke();
     }
     
     private async Task ReloadTreeViewModel(
