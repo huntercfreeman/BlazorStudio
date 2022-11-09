@@ -45,25 +45,33 @@ public partial class InputFileContent : FluxorComponent
     {
         _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
         {
-            OnClick = TreeViewOnClick
+            OnClick = TreeViewOnClick,
+            OnDoubleClick = TreeViewOnDoubleClick
         };
         
         var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             true);
+
+        SetTreeViewRoot(directoryHomeAbsoluteFilePath);
         
-        var directoryHomeNode = new TreeViewAbsoluteFilePath(
-            directoryHomeAbsoluteFilePath,
+        base.OnInitialized();
+    }
+
+    private void SetTreeViewRoot(IAbsoluteFilePath absoluteFilePath)
+    {
+        var pseudoRootNode = new TreeViewAbsoluteFilePath(
+            absoluteFilePath,
             CommonComponentRenderers)
         {
             IsExpandable = true,
             IsExpanded = false
         };
 
-        directoryHomeNode.LoadChildrenAsync().Wait();
+        pseudoRootNode.LoadChildrenAsync().Wait();
         
         var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-            directoryHomeNode.Children.ToArray());
+            pseudoRootNode.Children.ToArray());
 
         foreach (var child in adhocRootNode.Children)
         {
@@ -80,11 +88,20 @@ public partial class InputFileContent : FluxorComponent
                 adhocRootNode,
                 activeNode));
         }
-        
-        base.OnInitialized();
+        else
+        {
+            TreeViewService.SetRoot(
+                TreeViewInputFileContentStateKey,
+                adhocRootNode);
+            
+            TreeViewService.SetActiveNode(
+                TreeViewInputFileContentStateKey,
+                activeNode);
+        }
     }
 
-    private Task TreeViewOnClick(TreeViewMouseEventParameter treeViewMouseEventParameter)
+    private Task TreeViewOnClick(
+        TreeViewMouseEventParameter treeViewMouseEventParameter)
     {
         if (treeViewMouseEventParameter.MouseTargetedTreeView 
             is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
@@ -98,6 +115,21 @@ public partial class InputFileContent : FluxorComponent
         
         Dispatcher.Dispatch(setSelectedTreeViewModelAction);
         
+        return Task.CompletedTask;
+    }
+    
+    private Task TreeViewOnDoubleClick(
+        TreeViewMouseEventParameter treeViewMouseEventParameter)
+    {
+        if (treeViewMouseEventParameter.MouseTargetedTreeView 
+                is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+        {
+            return Task.CompletedTask;
+        }
+
+        if (treeViewAbsoluteFilePath.Item != null) 
+            SetTreeViewRoot(treeViewAbsoluteFilePath.Item);
+
         return Task.CompletedTask;
     }
 }
