@@ -14,6 +14,41 @@
     <div class="bstudio_section-body"
          style="width: 100%;">
         
-        Things regarding NuGet go here
+        @{
+            var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
+            var solutionExplorerState = SolutionExplorerStateWrap.Value;
+
+            if (solutionExplorerState.Solution is null)
+            {
+                <div>
+                    Solution has not yet been chosen
+                </div>
+            }
+            else
+            {
+                <select @onchange="e => SelectedProjectToModifyChanged(e, solutionExplorerState)">
+                    @{
+                        foreach (var project in solutionExplorerState.Solution.Projects)
+                        {
+                            <option value="@project.Id.Id.ToString()"
+                                    selected="@CheckIsSelected(project, nuGetPackageManagerState)">
+                                @project.Name
+                            </option>
+                        }
+                    }
+                </select>
+
+                if (nuGetPackageManagerState.SelectedProjectToModify is null)
+                {
+                    <div>Selected Project to Modify is null</div>                    
+                }
+                else
+                {
+                    <div>@nuGetPackageManagerState.SelectedProjectToModify.Name</div>
+                }
+                
+                
+            }
+        }
     </div>
 </ContextBoundary>
