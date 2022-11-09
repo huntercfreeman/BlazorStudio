@@ -131,39 +131,4 @@ public partial class BlazorTextEditorHeader : ComponentBase
             new RegisterDialogRecordAction(
                 dialogRecord));
     }
-    
-    private void TestNotificationsOnClick()
-    {
-        var notificationInformative = new NotificationRecord(
-            NotificationKey.NewNotificationKey(), 
-            "AaaTest",
-            typeof(CommonInformativeNotificationDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(CommonInformativeNotificationDisplay.Message), 
-                    "messageTest"
-                },
-            });
-        
-        var notificationError = new NotificationRecord(
-            NotificationKey.NewNotificationKey(), 
-            "AaaTest",
-            typeof(CommonErrorNotificationDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(CommonErrorNotificationDisplay.Message), 
-                    "messageTest"
-                },
-            });
-        
-        Dispatcher.Dispatch(
-            new NotificationState.RegisterNotificationAction(
-                notificationInformative));
-        
-        Dispatcher.Dispatch(
-            new NotificationState.RegisterNotificationAction(
-                notificationError));
-    }
 }
