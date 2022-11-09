@@ -65,6 +65,11 @@ public partial class InputFileContent : FluxorComponent
         var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
             directoryHomeNode.Children.ToArray());
 
+        foreach (var child in adhocRootNode.Children)
+        {
+            child.IsExpandable = false;
+        }
+
         var activeNode = adhocRootNode.Children.FirstOrDefault();
         
         if (!TreeViewService.TryGetTreeViewState(
