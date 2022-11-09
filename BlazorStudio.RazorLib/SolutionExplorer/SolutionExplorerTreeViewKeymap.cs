@@ -3,9 +3,12 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Namespaces;
+using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
+using BlazorTextEditor.RazorLib;
 using BlazorTreeView.RazorLib;
 using BlazorTreeView.RazorLib.Commands;
 using BlazorTreeView.RazorLib.Keymap;
@@ -21,25 +24,38 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
     private ICommonComponentRenderers _commonComponentRenderers;
     private IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
+    private readonly ITextEditorService _textEditorService;
+    private readonly IState<TextEditorResourceMapState> _textEditorResourceMapStateWrap;
 
     public SolutionExplorerTreeViewKeymap(
         IState<TerminalSessionsState> terminalSessionsStateWrap,
         ICommonMenuOptionsFactory commonMenuOptionsFactory,
         ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher,
-        ITreeViewService treeViewService)
+        ITreeViewService treeViewService,
+        ITextEditorService textEditorService,
+        IState<TextEditorResourceMapState> textEditorResourceMapStateWrap)
     {
         _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _commonMenuOptionsFactory = commonMenuOptionsFactory;
         _commonComponentRenderers = commonComponentRenderers;
         _dispatcher = dispatcher;
         _treeViewService = treeViewService;
+        _textEditorService = textEditorService;
+        _textEditorResourceMapStateWrap = textEditorResourceMapStateWrap;
     }
     
     public bool TryMapKey(
         KeyboardEventArgs keyboardEventArgs, 
         out TreeViewCommand? treeViewCommand)
     {
+        switch (keyboardEventArgs.Code)
+        {
+            case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
+                treeViewCommand = new TreeViewCommand(InvokeOpenInEditor);
+                return true;
+        }
+        
         if (keyboardEventArgs.CtrlKey)
             return CtrlModifiedKeymap(keyboardEventArgs, out treeViewCommand);
 
@@ -80,7 +96,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             switch (keyboardEventArgs.Code)
             {
                 // Here to illustrate future usage
-                case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
+                case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
                     break;
             }
         }
@@ -258,6 +274,24 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
                 parent));
 
         cutFileOptionRecord.OnClick?.Invoke();
+    }
+    
+    private async Task InvokeOpenInEditor(ITreeViewCommandParameter treeViewCommandParameter)
+    {
+        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
+
+        if (activeNode is null ||
+            activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
+            treeViewNamespacePath.Item is null)
+        {
+            return;
+        }
+        
+        await EditorState.OpenInEditorAsync(
+            treeViewNamespacePath.Item.AbsoluteFilePath,
+            _dispatcher,
+            _textEditorService,
+            _textEditorResourceMapStateWrap.Value);
     }
     
     private async Task ReloadTreeViewModel(

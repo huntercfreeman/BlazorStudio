@@ -66,7 +66,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             CommonMenuOptionsFactory,
             CommonComponentRenderers,
             Dispatcher,
-            TreeViewService);
+            TreeViewService,
+            TextEditorService,
+            TextEditorResourceMapStateWrap);
         
         _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
         {
