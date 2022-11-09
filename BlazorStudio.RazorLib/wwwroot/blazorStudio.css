@@ -608,3 +608,15 @@ em.bstudio_em {
     min-height: 100%;
     color: var(--bstudio_primary-font-color);
 }
+
+.bstudio_footer-body {
+    height: calc(100% - var(--bstudio_editor-tabs-bar-height));
+}
+
+.bstudio_footer-view-tabs {
+    display: flex;
+    height: var(--bstudio_editor-tabs-bar-height);
+    margin-bottom: 10px;
+    overflow-x: auto;
+    font-size: 0.8em;
+}

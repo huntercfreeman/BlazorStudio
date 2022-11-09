@@ -5,6 +5,7 @@ using BlazorStudio.RazorLib.Clipboard;
 using BlazorStudio.RazorLib.File;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.Notifications;
+using BlazorStudio.RazorLib.NuGet;
 using BlazorStudio.RazorLib.TreeViewImplementations;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,7 +23,8 @@ public static class ServiceCollectionExtensions
             typeof(DeleteFileFormDisplay),
             typeof(TreeViewNamespacePathDisplay),
             typeof(TreeViewExceptionDisplay),
-            typeof(TreeViewAbsoluteFilePathDisplay));
+            typeof(TreeViewAbsoluteFilePathDisplay),
+            typeof(NuGetPackageManager));
         
         return services
             .AddBlazorStudioClassLibServices(

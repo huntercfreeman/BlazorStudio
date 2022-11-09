@@ -10,7 +10,8 @@ public class CommonComponentRenderers : ICommonComponentRenderers
         Type deleteFileFormRendererType,
         Type treeViewNamespacePathRendererType,
         Type treeViewExceptionRendererType,
-        Type treeViewAbsoluteFilePathRendererType)
+        Type treeViewAbsoluteFilePathRendererType,
+        Type nuGetPackageManagerRendererType)
     {
         void ValidateRenderer(Type implementationType, Type interfaceType)
         {
@@ -56,6 +57,10 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             ValidateRenderer(
                 treeViewAbsoluteFilePathRendererType, 
                 typeof(ITreeViewAbsoluteFilePathRendererType));
+            
+            ValidateRenderer(
+                nuGetPackageManagerRendererType, 
+                typeof(INuGetPackageManagerRendererType));
         }
 
         // Assign
@@ -68,6 +73,7 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             TreeViewNamespacePathRendererType = treeViewNamespacePathRendererType;
             TreeViewExceptionRendererType = treeViewExceptionRendererType;
             TreeViewAbsoluteFilePathRendererType = treeViewAbsoluteFilePathRendererType;
+            NuGetPackageManagerRendererType = nuGetPackageManagerRendererType;
         }
     }
 
@@ -79,4 +85,5 @@ public class CommonComponentRenderers : ICommonComponentRenderers
     public Type TreeViewNamespacePathRendererType { get; }
     public Type TreeViewExceptionRendererType { get; }
     public Type TreeViewAbsoluteFilePathRendererType { get; set; }
+    public Type NuGetPackageManagerRendererType { get; }
 }
