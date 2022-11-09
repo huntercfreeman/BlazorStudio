@@ -27,89 +27,117 @@
             else
             {
                 <div>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>
+                                Project:
+                            </td>
+                            <td>
+                                <select @onchange="e => SelectedProjectToModifyChanged(e, solutionExplorerState)">
+                                    @{
+                                        <option value="@Guid.Empty"
+                                                selected="@(!ValidateSolutionContainsSelectedProject(solutionExplorerState, nuGetPackageManagerState))">
+                                            Select a project to modify
+                                        </option>
+            
+                                        foreach (var project in solutionExplorerState.Solution.Projects)
+                                        {
+                                            <option value="@project.Id.Id.ToString()"
+                                                    selected="@CheckIfProjectIsSelected(project, nuGetPackageManagerState)">
+                                                @project.Name
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                @if (nuGetPackageManagerState.SelectedProjectToModify is null)
+                                {
+                                    <em class="bstudio_em">
+                                        {theSelectedProjectWasNotFound}
+                                    </em>
+                                }
+                                else
+                                {
+                                    <em class="bstudio_em">
+                                        @nuGetPackageManagerState.SelectedProjectToModify.Name
+                                    </em>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Source:
+                            </td>
+                            <td>
+                                <select>
+                                    <option>TODO: pick provider</option>
+                                </select>
+                            </td>
+                            <td>
+                                <em class="bstudio_em">
+                                    @NugetPackageManagerProvider.ProviderWebsiteUrlNoFormatting
+                                </em>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Search:
+                            </td>
+                            <td>
+                                <input class="bstudio_input bstudio_input-text"
+                                       style="height: 2em;"
+                                       placeholder="Nuget query"
+                                       @bind="NugetQuery"
+                                       @bind:event="oninput"/>
+                            </td>
+                            <td>
+                                <em class="bstudio_em">
+                                    @{
+                                        var localNugetQuery = NugetQuery;
+                                    }
+                                    
+                                    @if (string.IsNullOrWhiteSpace(localNugetQuery))
+                                    {
+                                        <text>{searchNotYetSet}</text>
+                                    }
+                                    else
+                                    {
+                                        <text>@localNugetQuery</text>
+                                    }
+                                </em>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Include prerelease:
+                            </td>
+                            <td>
+                                <input class="bstudio_input"
+                                       type="checkbox"
+                                       @bind="IncludePrerelease" />
+                            </td>
+                            <td>
+                                <em class="bstudio_em">
+                                    @IncludePrerelease
+                                </em>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                     
-
+                    <hr/>
                     
-                    
-                    <span>Project:</span>
-
-                    <select @onchange="e => SelectedProjectToModifyChanged(e, solutionExplorerState)">
-                        @{
-                            <option value="@Guid.Empty"
-                                    selected="@(!ValidateSolutionContainsSelectedProject(solutionExplorerState, nuGetPackageManagerState))">
-                                Select a project to modify
-                            </option>
-
-                            foreach (var project in solutionExplorerState.Solution.Projects)
-                            {
-                                <option value="@project.Id.Id.ToString()"
-                                        selected="@CheckIfProjectIsSelected(project, nuGetPackageManagerState)">
-                                    @project.Name
-                                </option>
-                            }
-                        }
-                    </select>
-
-                    @if (nuGetPackageManagerState.SelectedProjectToModify is null)
-                    {
-                        <em class="bstudio_em">
-                            {theSelectedProjectWasNotFound}
-                        </em>
-                    }
-                    else
-                    {
-                        <em class="bstudio_em">
-                            @nuGetPackageManagerState.SelectedProjectToModify.Name
-                        </em>
-                    }
-                </div>
-                
-                <div>
-                    <span>Source:</span>
-                    <em class="bstudio_em">@NugetPackageManagerProvider.ProviderWebsiteUrlNoFormatting</em>
-                </div>
-                
-                <div>
-                    <span>Search:</span>
-                    <input class="bstudio_input bstudio_input-text"
-                           style="height: 2em;"
-                           placeholder="Nuget query"
-                           @bind="NugetQuery"
-                           @bind:event="oninput"/>
-                    
-                    <em class="bstudio_em">
-                        @{
-                            var localNugetQuery = NugetQuery;
-                        }
+                    <div>
+                        <span>RESULT:</span>
                         
-                        @if (string.IsNullOrWhiteSpace(localNugetQuery))
-                        {
-                            <text>{searchNotYetSet}</text>
-                        }
-                        else
-                        {
-                            <text>@localNugetQuery</text>
-                        }
-                    </em>
-                </div>
-                
-                <div>
-                    <span>Include prerelease?:</span>
-                    <input class="bstudio_input"
-                           type="checkbox"
-                           @bind="IncludePrerelease" />
-                    
-                    <em class="bstudio_em">
-                        @IncludePrerelease
-                    </em>
-                </div>
-                
-                <div>
-                    <em class="bstudio_em">
-                        @(NugetPackageManagerProvider
-                            .BuildQuery(NugetQuery, IncludePrerelease)
-                            .Query)
-                    </em>
+                        <em class="bstudio_em">
+                            @(NugetPackageManagerProvider
+                                .BuildQuery(NugetQuery, IncludePrerelease)
+                                .Query)
+                        </em>
+                    </div>
                 </div>
             }
         }
