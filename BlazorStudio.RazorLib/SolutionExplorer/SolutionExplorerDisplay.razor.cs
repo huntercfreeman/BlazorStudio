@@ -56,7 +56,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     
     private string _filePath = string.Empty;
     private TreeViewContextMenuEvent? _mostRecentTreeViewContextMenuEvent;
-    private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap;
+    private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
+    private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
 
     protected override void OnInitialized()
     {
@@ -66,6 +67,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             CommonComponentRenderers,
             Dispatcher,
             TreeViewService);
+        
+        _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
+        {
+            OnDoubleClick = TreeViewOnDoubleClick
+        };
         
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrapOnStateChanged;
     
@@ -116,6 +122,25 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
         
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task TreeViewOnDoubleClick(
+        TreeViewMouseEventParameter treeViewMouseEventParameter)
+    {
+        if (treeViewMouseEventParameter.MouseTargetedTreeView 
+            is not TreeViewNamespacePath treeViewNamespacePath)
+        {
+            return;
+        }
+
+        if (treeViewNamespacePath.Item is null)
+            return;
+
+        await EditorState.OpenInEditorAsync(
+            treeViewNamespacePath.Item.AbsoluteFilePath,
+            Dispatcher,
+            TextEditorService,
+            TextEditorResourceMapStateWrap.Value);
     }
     
     protected override void Dispose(bool disposing)
