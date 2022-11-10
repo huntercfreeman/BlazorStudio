@@ -25,6 +25,9 @@ public record SolutionExplorerState(
     
     public record RequestSetSolutionExplorerStateAction(
         IAbsoluteFilePath? SolutionAbsoluteFilePath);
+    
+    public record RequestSetSolutionAction(
+        Solution? Solution);
 
     private class SolutionExplorerStateReducer
     {
@@ -54,6 +57,17 @@ public record SolutionExplorerState(
             {
                 PerformingAsynchronousOperation = setPerformingAsynchronousOperationAction
                     .PerformingAsynchronousOperation,
+            };
+        }
+        
+        [ReducerMethod]
+        public SolutionExplorerState ReduceRequestSetSolutionAction(
+            SolutionExplorerState previousSolutionExplorerState,
+            RequestSetSolutionAction requestSetSolutionAction)
+        {
+            return previousSolutionExplorerState with
+            {
+                Solution = requestSetSolutionAction.Solution,
             };
         }
     }

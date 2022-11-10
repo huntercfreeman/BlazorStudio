@@ -80,11 +80,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         base.OnInitialized();
     }
 
-    private void SolutionExplorerStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void SolutionExplorerStateWrapOnStateChanged(object? sender, EventArgs e)
     {
         if (SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath is null)
             return;
-
+        
         var solutionNamespacePath = new NamespacePath(
             string.Empty,
             SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath);
@@ -95,35 +95,20 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             SolutionExplorerStateWrap)
         {
             IsExpandable = true,
-            IsExpanded = false,
+            IsExpanded = true,
             TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
         };
+        
+        await solutionExplorerNode.LoadChildrenAsync();
 
         if (TreeViewService.TryGetTreeViewState(
-                TreeViewSolutionExplorerStateKey, out var treeViewState) &&
+                TreeViewSolutionExplorerStateKey, 
+                out var treeViewState) &&
             treeViewState is not null)
         {
             TreeViewService.SetRoot(
-                TreeViewSolutionExplorerStateKey, 
-                solutionExplorerNode);
-            
-            TreeViewService.SetActiveNode(
-                TreeViewSolutionExplorerStateKey, 
-                solutionExplorerNode);
-            
-            solutionExplorerNode.LoadChildrenAsync().Wait();
-                        
-            TreeViewService.ReRenderNode(
                 TreeViewSolutionExplorerStateKey,
                 solutionExplorerNode);
-            
-            treeViewState.RootNode.LoadChildrenAsync().Wait();
-                        
-            TreeViewService.ReRenderNode(
-                TreeViewSolutionExplorerStateKey,
-                treeViewState.RootNode);
-
-            InvokeAsync(StateHasChanged);
         }
         else
         {

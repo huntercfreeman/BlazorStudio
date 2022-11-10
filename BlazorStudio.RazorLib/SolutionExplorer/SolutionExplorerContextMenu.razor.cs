@@ -13,6 +13,7 @@ using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
+using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.CSharpProjectForm;
@@ -20,6 +21,7 @@ using BlazorStudio.RazorLib.DotNetSolutionForm;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
@@ -27,6 +29,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 {
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -136,7 +140,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
         // likely a .NET Solution
         var treeViewParent = treeViewModel.Parent as TreeViewNamespacePath;
-        
+
+        var solutionExplorerState = SolutionExplorerStateWrap.Value;
+
+        var project = solutionExplorerState.Solution?.Projects
+            .SingleOrDefault(x => x.Name == treeViewModel.Item.AbsoluteFilePath.FileNameNoExtension);
+
         return new[]
         {
             CommonMenuOptionsFactory.NewEmptyFile(
@@ -174,7 +183,22 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
-                async () => await ReloadTreeViewModel(treeViewParent)),
+                async () =>
+                {
+                    if (project is not null)
+                    {
+                        var solution = SolutionExplorerStateWrap.Value.Solution;
+                        
+                        if (solution is not null)
+                        {
+                            var requestSetSolutionExplorerStateAction = 
+                                new SolutionExplorerState.RequestSetSolutionAction(
+                                    solution.RemoveProject(project.Id));
+                            
+                            Dispatcher.Dispatch(requestSetSolutionExplorerStateAction);
+                        }
+                    }
+                }),
         };
     }
     
@@ -314,6 +338,16 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 }.ToImmutableArray()));
     }
 
+    /// <summary>
+    /// This method I believe is causing bugs
+    /// <br/><br/>
+    /// For example, when removing a C# Project the
+    /// solution is reloaded and a new root is made.
+    /// <br/><br/>
+    /// Then there is a timing issue where the new root is made and set
+    /// as the root. But this method erroneously reloads the old root.
+    /// </summary>
+    /// <param name="treeViewModel"></param>
     private async Task ReloadTreeViewModel(
         TreeView? treeViewModel)
     {
