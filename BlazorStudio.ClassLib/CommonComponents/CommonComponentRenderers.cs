@@ -11,7 +11,8 @@ public class CommonComponentRenderers : ICommonComponentRenderers
         Type treeViewNamespacePathRendererType,
         Type treeViewExceptionRendererType,
         Type treeViewAbsoluteFilePathRendererType,
-        Type nuGetPackageManagerRendererType)
+        Type nuGetPackageManagerRendererType,
+        Type removeCSharpProjectFromSolutionRendererType)
     {
         void ValidateRenderer(Type implementationType, Type interfaceType)
         {
@@ -61,6 +62,10 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             ValidateRenderer(
                 nuGetPackageManagerRendererType, 
                 typeof(INuGetPackageManagerRendererType));
+            
+            ValidateRenderer(
+                removeCSharpProjectFromSolutionRendererType, 
+                typeof(IRemoveCSharpProjectFromSolutionRendererType));
         }
 
         // Assign
@@ -74,9 +79,10 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             TreeViewExceptionRendererType = treeViewExceptionRendererType;
             TreeViewAbsoluteFilePathRendererType = treeViewAbsoluteFilePathRendererType;
             NuGetPackageManagerRendererType = nuGetPackageManagerRendererType;
+            RemoveCSharpProjectFromSolutionRendererType = removeCSharpProjectFromSolutionRendererType;
         }
     }
-
+    
     public Type InputFileRendererType { get; }
     public Type InformativeNotificationRendererType { get; }
     public Type ErrorNotificationRendererType { get; }
@@ -86,4 +92,5 @@ public class CommonComponentRenderers : ICommonComponentRenderers
     public Type TreeViewExceptionRendererType { get; }
     public Type TreeViewAbsoluteFilePathRendererType { get; set; }
     public Type NuGetPackageManagerRendererType { get; }
+    public Type RemoveCSharpProjectFromSolutionRendererType { get; }
 }

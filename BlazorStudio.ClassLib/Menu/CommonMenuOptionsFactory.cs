@@ -232,11 +232,23 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         return new MenuOptionRecord(
             "Remove (no files are deleted)",
             MenuOptionKind.Delete,
-            OnClick: () => PerformRemoveCSharpProjectReferenceFromSolutionAction(
-                solutionNode, 
-                projectNode,
-                terminalSession,
-                onAfterCompletion));
+            WidgetRendererType: _commonComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
+            WidgetParameters: new Dictionary<string, object?>
+            {
+                {
+                    nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsoluteFilePath),
+                    projectNode.Item?.AbsoluteFilePath
+                },
+                {
+                    nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
+                    new Action<IAbsoluteFilePath>(afp => 
+                        PerformRemoveCSharpProjectReferenceFromSolutionAction(
+                            solutionNode, 
+                            projectNode,
+                            terminalSession,
+                            onAfterCompletion))
+                },
+            });
     }
 
     private void PerformNewFileAction(
