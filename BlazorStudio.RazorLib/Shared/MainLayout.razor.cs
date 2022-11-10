@@ -2,9 +2,11 @@ using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DragCase;
 using BlazorStudio.ClassLib.Store.FontCase;
+using BlazorStudio.ClassLib.Store.IconCase;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.RazorLib.DialogCase;
 using BlazorStudio.RazorLib.ResizableCase;
+using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -23,6 +25,8 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
 
     private string _message = string.Empty;
     
@@ -96,9 +100,35 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
-            var value = await JsRuntime.InvokeAsync<string>(
+            var fontSizeString = await JsRuntime.InvokeAsync<string>(
                 "blazorStudio.localStorageGetItem",
-                "a");
+                "bstudio_fontSize");
+            
+            var iconSizeString = await JsRuntime.InvokeAsync<string>(
+                "blazorStudio.localStorageGetItem",
+                "bstudio_iconSize");
+            
+            var themeClassCssString = await JsRuntime.InvokeAsync<string>(
+                "blazorStudio.localStorageGetItem",
+                "bstudio_themeClassCssString");
+
+            var matchedThemeRecord = ThemeFacts.DefaultThemeRecords.FirstOrDefault(x => 
+                x.ClassCssString == themeClassCssString);
+
+            if (matchedThemeRecord is not null)
+            {
+                TextEditorService.SetTheme(matchedThemeRecord.ThemeColorKind == ThemeColorKind.Light
+                    ? BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.BlazorTextEditorLight
+                    : BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.BlazorTextEditorDark);
+                
+                Dispatcher.Dispatch(new SetThemeStateAction(matchedThemeRecord));
+            }
+
+            if (int.TryParse(fontSizeString, out var fontSize))
+                Dispatcher.Dispatch(new SetFontSizeInPixelsAction(fontSize));
+            
+            if (int.TryParse(iconSizeString, out var iconSize))
+                Dispatcher.Dispatch(new SetIconSizeInPixelsAction(iconSize));
         }
         
         await base.OnAfterRenderAsync(firstRender);

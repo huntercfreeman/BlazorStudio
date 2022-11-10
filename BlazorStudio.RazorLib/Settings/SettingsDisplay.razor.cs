@@ -1,3 +1,5 @@
+using BlazorStudio.ClassLib.Store.FontCase;
+using BlazorStudio.ClassLib.Store.IconCase;
 using BlazorStudio.ClassLib.Store.LocalStorageCase;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorTextEditor.RazorLib;
@@ -13,6 +15,10 @@ public partial class SettingsDisplay : FluxorComponent
 {
     [Inject]
     private IState<ThemeState> ThemeStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<FontState> FontStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<IconState> IconStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -59,9 +65,21 @@ public partial class SettingsDisplay : FluxorComponent
     
     private Task PersistSettingsLocallyOnClick()
     {
+        var fontSize = FontStateWrap.Value.FontSizeInPixels;
+        var iconSize = IconStateWrap.Value.IconSizeInPixels;
+        var themeClassCssString = ThemeStateWrap.Value.ActiveThemeRecord.ClassCssString;
+        
         Dispatcher.Dispatch(new LocalStorageEffects.LocalStorageSetItemAction(
-            "a",
-            "b"));
+            "bstudio_fontSize",
+            fontSize.ToString()));
+        
+        Dispatcher.Dispatch(new LocalStorageEffects.LocalStorageSetItemAction(
+            "bstudio_iconSize",
+            iconSize.ToString()));
+        
+        Dispatcher.Dispatch(new LocalStorageEffects.LocalStorageSetItemAction(
+            "bstudio_themeClassCssString",
+            themeClassCssString));
 
         return Task.CompletedTask;
     }
