@@ -14,7 +14,7 @@
                  StyleCssString="@($"height: 100% {SolutionExplorerElementDimensions.StyleString}")">
     @{
         var solutionExplorerState = SolutionExplorerStateWrap.Value;
-        
+
         <div class="bstudio_section-title">
             Solution Explorer
             @if (solutionExplorerState.PerformingAsynchronousOperation)
@@ -34,11 +34,16 @@
                 }
                 else
                 {
-                    <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"
-                                          CssStyleString="height: 100%;"
-                                          OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                          TreeViewKeymap="_solutionExplorerTreeViewKeymap"
-                                          TreeViewMouseEventRegistrar="_treeViewMouseEventRegistrar"/>
+                    <CascadingValue Name="BlazorTreeViewIconWidth" Value="IconStateWrap.Value.IconSizeInPixels">
+                        <CascadingValue Name="BlazorTreeViewIconHeight" Value="IconStateWrap.Value.IconSizeInPixels">
+                            <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"
+                                                  CssStyleString="height: 100%;"
+                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                  TreeViewKeymap="_solutionExplorerTreeViewKeymap"
+                                                  TreeViewMouseEventRegistrar="_treeViewMouseEventRegistrar"/>
+                        </CascadingValue>
+                    </CascadingValue>
+
 
                     <DropdownDisplay DropdownKey="SolutionExplorerContextMenu.ContextMenuEventDropdownKey"
                                      DropdownPositionKind="DropdownPositionKind.Unset"
