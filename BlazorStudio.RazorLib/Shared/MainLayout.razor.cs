@@ -7,6 +7,7 @@ using BlazorStudio.RazorLib.DialogCase;
 using BlazorStudio.RazorLib.ResizableCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.Shared;
 
@@ -20,6 +21,8 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private IState<FontState> FontStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     private string _message = string.Empty;
     
@@ -29,7 +32,6 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     
     private bool _previousDragStateWrapShouldDisplay;
 
-    private int _renderCount = 1;
     private ElementDimensions _bodyElementDimensions = new();
     private ElementDimensions _footerElementDimensions = new();
 
@@ -90,6 +92,18 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
         base.OnInitialized();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var value = await JsRuntime.InvokeAsync<string>(
+                "blazorStudio.localStorageGetItem",
+                "a");
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
     private void ThemeStateWrapOnStateChanged(object? sender, EventArgs e)
     {
         InvokeAsync(StateHasChanged);
@@ -98,13 +112,6 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private void FontStateWrapOnStateChanged(object? sender, EventArgs e)
     {
         InvokeAsync(StateHasChanged);
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        _renderCount++;
-    
-        base.OnAfterRender(firstRender);
     }
 
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)

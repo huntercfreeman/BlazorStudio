@@ -1,8 +1,10 @@
+using BlazorStudio.ClassLib.Store.LocalStorageCase;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using ThemeFacts = BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts;
 
 namespace BlazorStudio.RazorLib.Settings;
@@ -53,6 +55,15 @@ public partial class SettingsDisplay : FluxorComponent
             : ThemeFacts.BlazorTextEditorDark);
 
         Dispatcher.Dispatch(new SetThemeStateAction(themeRecord));
+    }
+    
+    private Task PersistSettingsLocallyOnClick()
+    {
+        Dispatcher.Dispatch(new LocalStorageEffects.LocalStorageSetItemAction(
+            "a",
+            "b"));
+
+        return Task.CompletedTask;
     }
 
     protected override void Dispose(bool disposing)

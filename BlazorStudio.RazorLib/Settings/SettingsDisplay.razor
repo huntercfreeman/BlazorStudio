@@ -1,12 +1,23 @@
 @using BlazorStudio.ClassLib.Store.ThemeCase
 @using BlazorStudio.RazorLib.FontSettings
+
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_settings-display">
     Settings Display
     
-    <FontSettingsDisplay />
+    <ButtonDisplay OnClickFunc="PersistSettingsLocallyOnClick">
+        Persist Settings Locally OnClick
+    </ButtonDisplay>
     
+    <FontSettingsDisplay />
+
+    <hr class="bstudio_hr"/>
+
+    <IconSettingsDisplay/>
+    
+    <hr class="bstudio_hr"/>
+
     <div>
         Active Theme:&nbsp;@ThemeStateWrap.Value.ActiveThemeRecord.ClassCssString
     </div>
