@@ -35,6 +35,7 @@ public partial class TreeViewHelper
                     TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                 };
             })
+            .OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsoluteFilePath.FileNameNoExtension)
             .ToList();
 
         return childProjects;

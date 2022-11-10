@@ -315,6 +315,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
                     await generalTerminalSession
                         .EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand);
+                    
+                    Dispatcher.Dispatch(
+                        new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+                            solutionNamespacePath.AbsoluteFilePath));
                 },
                 afp =>
                 {

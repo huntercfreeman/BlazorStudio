@@ -26,6 +26,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
@@ -58,6 +59,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private TreeViewContextMenuEvent? _mostRecentTreeViewContextMenuEvent;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
     private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
+    private Solution? _previousSolution;
 
     protected override void OnInitialized()
     {
@@ -84,6 +86,17 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     {
         if (SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath is null)
             return;
+
+        var solution = SolutionExplorerStateWrap.Value.Solution;
+                
+        if (_previousSolution is not null &&
+            solution is not null &&
+            _previousSolution.GetHashCode() == solution.GetHashCode())
+        {
+            return;
+        }
+
+        _previousSolution = solution;
         
         var solutionNamespacePath = new NamespacePath(
             string.Empty,
