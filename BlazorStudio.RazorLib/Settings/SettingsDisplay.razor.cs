@@ -6,7 +6,6 @@ using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using ThemeFacts = BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts;
 
 namespace BlazorStudio.RazorLib.Settings;
@@ -23,36 +22,6 @@ public partial class SettingsDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-
-    private bool _globalShowNewlines;
-    private bool _globalShowWhitespace;
-
-    public bool GlobalShowNewlines
-    {
-        get => _globalShowNewlines;
-        set => TextEditorService.SetShowNewlines(value);
-    }
-
-    public bool GlobalShowWhitespace
-    {
-        get => _globalShowWhitespace;
-        set => TextEditorService.SetShowWhitespace(value);
-    }
-
-    protected override void OnInitialized()
-    {
-        TextEditorService.OnTextEditorStatesChanged += TextEditorServiceOnTextEditorStatesChanged;
-        
-        TextEditorServiceOnTextEditorStatesChanged();
-        
-        base.OnInitialized();
-    }
-
-    private void TextEditorServiceOnTextEditorStatesChanged()
-    {
-        _globalShowNewlines = TextEditorService.GlobalShowNewlines;
-        _globalShowWhitespace = TextEditorService.GlobalShowWhitespace;
-    }
 
     private void DispatchSetThemeStateAction(ThemeRecord themeRecord)
     {
@@ -82,12 +51,5 @@ public partial class SettingsDisplay : FluxorComponent
             themeClassCssString));
 
         return Task.CompletedTask;
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        TextEditorService.OnTextEditorStatesChanged -= TextEditorServiceOnTextEditorStatesChanged;
-        
-        base.Dispose(disposing);
     }
 }
