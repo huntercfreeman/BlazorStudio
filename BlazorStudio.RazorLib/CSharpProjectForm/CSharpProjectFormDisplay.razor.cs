@@ -62,7 +62,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             _optionalParameters);
     
     private string InterpolatedAddExistingProjectToSolutionCommand =>
-        DotNetCliFacts.AddExistingProjectToSolution(
+        DotNetCliFacts.FormatAddExistingProjectToSolution(
             SolutionNamespacePath?.AbsoluteFilePath.GetAbsoluteFilePathString() 
                 ?? string.Empty,
             $"{_cSharpProjectName}/{_cSharpProjectName}.csproj");

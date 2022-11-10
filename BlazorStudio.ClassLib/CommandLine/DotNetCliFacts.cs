@@ -40,7 +40,7 @@ public static class DotNetCliFacts
         return $"dotnet new {projectTemplateName} -o {cSharpProjectName} {optionalParameters}";
     }
     
-    public static string AddExistingProjectToSolution(
+    public static string FormatAddExistingProjectToSolution(
         string solutionAbsoluteFilePathString, 
         string cSharpProjectPath)
     {
@@ -48,6 +48,16 @@ public static class DotNetCliFacts
         cSharpProjectPath = QuoteValue(cSharpProjectPath);
         
         return $"dotnet sln {solutionAbsoluteFilePathString} add {cSharpProjectPath}";
+    }
+    
+    public static string FormatRemoveCSharpProjectReferenceFromSolutionAction(
+        string solutionAbsoluteFilePathString, 
+        string cSharpProjectAbsoluteFilePathString)
+    {
+        solutionAbsoluteFilePathString = QuoteValue(solutionAbsoluteFilePathString);
+        cSharpProjectAbsoluteFilePathString = QuoteValue(cSharpProjectAbsoluteFilePathString);
+        
+        return $"dotnet sln {solutionAbsoluteFilePathString} remove {cSharpProjectAbsoluteFilePathString}";
     }
     
     private static string QuoteValue(string parameter)

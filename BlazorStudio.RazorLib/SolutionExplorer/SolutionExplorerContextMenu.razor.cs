@@ -133,6 +133,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private MenuOptionRecord[] GetCSharpProjectMenuOptions(TreeViewNamespacePath treeViewModel)
     {
         var parentDirectory = (IAbsoluteFilePath)treeViewModel.Item.AbsoluteFilePath.Directories.Last();
+
+        // likely a .NET Solution
+        var treeViewParent = treeViewModel.Parent as TreeViewNamespacePath;
         
         return new[]
         {
@@ -165,6 +168,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 () => Dispatcher.Dispatch(
                     new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
                         treeViewModel.Item.AbsoluteFilePath))),
+            CommonMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
+                treeViewParent,
+                treeViewModel,
+                async () => await ReloadTreeViewModel(treeViewParent)),
         };
     }
     
@@ -266,7 +273,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         return;
                     
                     var localInterpolatedAddExistingProjectToSolutionCommand = DotNetCliFacts
-                        .AddExistingProjectToSolution(
+                        .FormatAddExistingProjectToSolution(
                             solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
                             afp.GetAbsoluteFilePathString());
                     
