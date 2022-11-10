@@ -105,27 +105,6 @@ input[type="checkbox"]{
     /*color: var(--bstudio_tertiary-hover-font-color);*/
 }
 
-.bstudio_editor-footer {
-    font-size: .8em;
-    display: flex;
-    height: var(--bstudio_editor-footer-height);
-    align-items: center;
-    overflow: auto;
-    white-space: nowrap;
-    border-top: 2px solid var(--bte_text-editor-gutter-border-color);
-    color: var(--bte_primary-font-color);
-    background-color: var(--bte_text-editor-gutter-background-color);
-}
-
-.bstudio_editor-footer-entry {
-    padding-right: 5px;
-}
-
-.bstudio_editor-footer-entry:not(:last-child) {
-    border-right: 2px solid var(--bte_text-editor-caret-row-border-color);
-    margin-right: 5px;
-}
-
 .bstudio_resize-column {
     background-color: var(--bstudio_resize-column-background-color);
     height: 100%;
