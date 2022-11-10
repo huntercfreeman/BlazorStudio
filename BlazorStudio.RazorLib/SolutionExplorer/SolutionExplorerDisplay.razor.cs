@@ -59,8 +59,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private TreeViewContextMenuEvent? _mostRecentTreeViewContextMenuEvent;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
     private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
-    private Solution? _previousSolution;
-
+    
     protected override void OnInitialized()
     {
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
@@ -87,17 +86,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         if (SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath is null)
             return;
 
-        var solution = SolutionExplorerStateWrap.Value.Solution;
-                
-        if (_previousSolution is not null &&
-            solution is not null &&
-            _previousSolution.GetHashCode() == solution.GetHashCode())
-        {
-            return;
-        }
-
-        _previousSolution = solution;
-        
         var solutionNamespacePath = new NamespacePath(
             string.Empty,
             SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath);
@@ -111,7 +99,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             IsExpanded = true,
             TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
         };
-        
+    
         await solutionExplorerNode.LoadChildrenAsync();
 
         if (TreeViewService.TryGetTreeViewState(

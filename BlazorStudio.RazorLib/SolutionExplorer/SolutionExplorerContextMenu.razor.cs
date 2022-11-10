@@ -308,17 +308,31 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         TerminalCommandKey.NewTerminalCommandKey(), 
                         localInterpolatedAddExistingProjectToSolutionCommand,
                         null,
-                        CancellationToken.None);
+                        CancellationToken.None,
+                        async () =>
+                        {
+                            var project = SolutionExplorerStateWrap.Value.Solution?.Projects
+                                .SingleOrDefault(x => 
+                                    x.Name == 
+                                    afp.FileNameNoExtension);
+                    
+                            var solution = SolutionExplorerStateWrap.Value.Solution;
+                        
+                            if (solution is not null)
+                            {
+                                var requestSetSolutionExplorerStateAction = 
+                                    new SolutionExplorerState.RequestSetSolutionAction(
+                                        solution.RemoveProject(project.Id));
+                            
+                                Dispatcher.Dispatch(requestSetSolutionExplorerStateAction);
+                            }
+                        });
                     
                     var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
                     await generalTerminalSession
                         .EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand);
-                    
-                    Dispatcher.Dispatch(
-                        new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                            solutionNamespacePath.AbsoluteFilePath));
                 },
                 afp =>
                 {

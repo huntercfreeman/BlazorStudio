@@ -8,11 +8,14 @@ using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.RazorLib.SolutionExplorer;
 using BlazorTreeView.RazorLib;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.MSBuild;
 
 namespace BlazorStudio.RazorLib.CSharpProjectForm;
 
@@ -20,6 +23,10 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 {
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<WorkspaceState> WorkspaceStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -144,10 +151,32 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     Dispatcher.Dispatch(
                         new DisposeDialogRecordAction(DialogRecord));
 
-                    // Re-open the modified Solution
-                    Dispatcher.Dispatch(
-                        new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                            localSolutionAbsoluteFilePath.AbsoluteFilePath));
+                    // Add the C# project to the workspace
+                    //
+                    // Cannot find another way as of 2022-11-09
+                    // to add the C# project to the workspace
+                    // other than reloading the solution.
+                    {
+                        var mSBuildWorkspace = ((MSBuildWorkspace)WorkspaceStateWrap.Value.Workspace);
+
+                        var solution = SolutionExplorerStateWrap.Value.Solution;
+
+                        if (mSBuildWorkspace is not null &&
+                            solution is not null &&
+                            solution.FilePath is not null)
+                        {
+                            mSBuildWorkspace.CloseSolution();
+                            
+                            solution = await mSBuildWorkspace
+                                .OpenSolutionAsync(solution.FilePath);
+                            
+                            var requestSetSolutionExplorerStateAction = 
+                                new SolutionExplorerState.RequestSetSolutionAction(
+                                    solution);
+                            
+                            Dispatcher.Dispatch(requestSetSolutionExplorerStateAction);
+                        }
+                    }
                 });
             
             await generalTerminalSession
