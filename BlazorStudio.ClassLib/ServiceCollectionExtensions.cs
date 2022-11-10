@@ -28,6 +28,7 @@ public static class ServiceCollectionExtensions
             {
                 options.InitializeFluxor = false;
                 options.ClipboardProviderFactory = clipboardProviderDefaultFactory;
+                options.UseLocalStorageForSettings = true;
             })
             .AddBlazorTreeViewServices(options => options.InitializeFluxor = false)
             .AddFluxor(options => options

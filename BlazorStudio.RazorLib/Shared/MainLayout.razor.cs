@@ -100,6 +100,8 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
+            await TextEditorService.SetTextEditorOptionsFromLocalStorageAsync();
+            
             var fontSizeString = await JsRuntime.InvokeAsync<string>(
                 "blazorStudio.localStorageGetItem",
                 "bstudio_fontSize");
