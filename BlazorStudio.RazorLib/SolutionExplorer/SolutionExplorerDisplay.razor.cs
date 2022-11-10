@@ -100,11 +100,24 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         };
 
         if (TreeViewService.TryGetTreeViewState(
-                TreeViewSolutionExplorerStateKey, out var treeViewState))
+                TreeViewSolutionExplorerStateKey, out var treeViewState) &&
+            treeViewState is not null)
         {
             TreeViewService.SetRoot(
                 TreeViewSolutionExplorerStateKey, 
                 solutionExplorerNode);
+            
+            TreeViewService.SetActiveNode(
+                TreeViewSolutionExplorerStateKey, 
+                solutionExplorerNode);
+            
+            treeViewState.RootNode.LoadChildrenAsync();
+                        
+            TreeViewService.ReRenderNode(
+                SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey,
+                treeViewState.RootNode);
+
+            InvokeAsync(StateHasChanged);
         }
         else
         {
