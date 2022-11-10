@@ -1,17 +1,16 @@
+@using System.Collections.Immutable
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_nuget-package-display">
     
     <div>
         @NugetPackageRecord.Title
-        @NugetPackageRecord.TotalDownloads
+        <span title="Total Downloads">(@($"{NugetPackageRecord.TotalDownloads:N0}") Downloads)</span>
         
         <div style="margin-left: 2ch; padding-left: 5px; border-left: 1px solid var(--bstudio_primary-border-color)">
             <select @onchange="SelectedNugetVersionChanged">
                 @{
-                    var versions = NugetPackageRecord.Versions;
-                    
-                    foreach (var version in versions)
+                    foreach (var version in _nugetPackageVersionsOrdered)
                     {
                         <option value="@version.Version"
                                 selected="@(_nugetPackageVersionString == version.Version)">

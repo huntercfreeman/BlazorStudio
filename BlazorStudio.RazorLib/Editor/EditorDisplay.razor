@@ -51,7 +51,7 @@
                 
                 <TextEditorFooter TextEditor="activeTextEditor"
                                   TextEditorDisplay="_textEditorDisplay"
-                                  Extension="resource.ExtensionNoPeriod"/>
+                                  Extension="@(resource?.ExtensionNoPeriod ?? "null")"/>
             }
             else
             {

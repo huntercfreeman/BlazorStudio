@@ -60,6 +60,18 @@ public static class DotNetCliFacts
         return $"dotnet sln {solutionAbsoluteFilePathString} remove {cSharpProjectAbsoluteFilePathString}";
     }
     
+    public static string FormatAddNugetPackageReferenceToProject(
+        string cSharpProjectAbsoluteFilePathString, 
+        string nugetPackageId,
+        string nugetPackageVersion)
+    {
+        cSharpProjectAbsoluteFilePathString = QuoteValue(cSharpProjectAbsoluteFilePathString);
+        nugetPackageId = QuoteValue(nugetPackageId);
+        nugetPackageVersion = QuoteValue(nugetPackageVersion);
+        
+        return $"dotnet add {cSharpProjectAbsoluteFilePathString} package {nugetPackageId} --version {nugetPackageVersion}";
+    }
+    
     private static string QuoteValue(string parameter)
     {
         return $"\"{parameter}\"";
