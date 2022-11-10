@@ -15,6 +15,7 @@ using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.DotNetSolutionForm;
@@ -22,6 +23,7 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.MSBuild;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
@@ -31,6 +33,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<WorkspaceState> WorkspaceStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -311,20 +315,31 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         CancellationToken.None,
                         async () =>
                         {
-                            var project = SolutionExplorerStateWrap.Value.Solution?.Projects
-                                .SingleOrDefault(x => 
-                                    x.Name == 
-                                    afp.FileNameNoExtension);
-                    
-                            var solution = SolutionExplorerStateWrap.Value.Solution;
-                        
-                            if (solution is not null)
+                            // Add the C# project to the workspace
+                            //
+                            // Cannot find another way as of 2022-11-09
+                            // to add the C# project to the workspace
+                            // other than reloading the solution.
                             {
-                                var requestSetSolutionExplorerStateAction = 
-                                    new SolutionExplorerState.RequestSetSolutionAction(
-                                        solution.RemoveProject(project.Id));
+                                var mSBuildWorkspace = ((MSBuildWorkspace)WorkspaceStateWrap.Value.Workspace);
+
+                                var solution = SolutionExplorerStateWrap.Value.Solution;
+
+                                if (mSBuildWorkspace is not null &&
+                                    solution is not null &&
+                                    solution.FilePath is not null)
+                                {
+                                    mSBuildWorkspace.CloseSolution();
                             
-                                Dispatcher.Dispatch(requestSetSolutionExplorerStateAction);
+                                    solution = await mSBuildWorkspace
+                                        .OpenSolutionAsync(solution.FilePath);
+                            
+                                    var requestSetSolutionExplorerStateAction = 
+                                        new SolutionExplorerState.RequestSetSolutionAction(
+                                            solution);
+                            
+                                    Dispatcher.Dispatch(requestSetSolutionExplorerStateAction);
+                                }
                             }
                         });
                     

@@ -107,9 +107,17 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 out var treeViewState) &&
             treeViewState is not null)
         {
+            await treeViewState.RootNode.LoadChildrenAsync();
+            
+            TreeViewService.ReRenderNode(
+                TreeViewSolutionExplorerStateKey,
+                treeViewState.RootNode);
+            
             TreeViewService.SetRoot(
                 TreeViewSolutionExplorerStateKey,
                 solutionExplorerNode);
+            
+            await InvokeAsync(StateHasChanged);
         }
         else
         {
