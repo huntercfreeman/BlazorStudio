@@ -1,8 +1,10 @@
 using BlazorStudio.ClassLib.Dimensions;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DragCase;
 using BlazorStudio.ClassLib.Store.FontCase;
 using BlazorStudio.ClassLib.Store.IconCase;
+using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.RazorLib.DialogCase;
 using BlazorStudio.RazorLib.ResizableCase;
@@ -131,6 +133,12 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             
             if (int.TryParse(iconSizeString, out var iconSize))
                 Dispatcher.Dispatch(new SetIconSizeInPixelsAction(iconSize));
+
+            if (System.IO.File.Exists("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
+            {
+                Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+                    new AbsoluteFilePath("/home/hunter/Repos/Demos/TestApp/TestApp.sln", false)));
+            }
         }
         
         await base.OnAfterRenderAsync(firstRender);
