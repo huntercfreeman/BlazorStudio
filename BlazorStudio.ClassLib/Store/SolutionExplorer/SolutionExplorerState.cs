@@ -87,8 +87,10 @@ public record SolutionExplorerState(
             {
                 dispatcher.Dispatch(new SetWorkspaceStateAction());
             }
+
+            var mSBuildWorkspace = ((MSBuildWorkspace)_workspaceStateWrap.Value.Workspace);
             
-            var solution = await ((MSBuildWorkspace)_workspaceStateWrap.Value.Workspace)
+            var solution = await mSBuildWorkspace
                 .OpenSolutionAsync(requestSetSolutionExplorerStateAction
                     .SolutionAbsoluteFilePath
                     .GetAbsoluteFilePathString());

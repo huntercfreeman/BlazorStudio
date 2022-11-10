@@ -1,5 +1,6 @@
 ﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
+using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 
 namespace BlazorStudio.ClassLib.Menu;
@@ -41,5 +42,6 @@ public interface ICommonMenuOptionsFactory
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
         TreeViewNamespacePath? solutionNode,
         TreeViewNamespacePath projectNode,
+        TerminalSession terminalSession,
         Func<Task> onAfterCompletion);
 }

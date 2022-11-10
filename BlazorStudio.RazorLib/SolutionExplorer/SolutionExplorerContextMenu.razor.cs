@@ -171,6 +171,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             CommonMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
                 treeViewParent,
                 treeViewModel,
+                TerminalSessionsStateWrap.Value
+                    .TerminalSessionMap[
+                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 async () => await ReloadTreeViewModel(treeViewParent)),
         };
     }

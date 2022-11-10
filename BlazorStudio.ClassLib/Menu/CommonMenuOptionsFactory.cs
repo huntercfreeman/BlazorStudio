@@ -19,20 +19,17 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IClipboardProvider _clipboardProvider;
-    private readonly IState<TerminalSessionsState> _terminalSessionsStateWrap;
     private readonly IDispatcher _dispatcher;
 
     public CommonMenuOptionsFactory(
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IClipboardProvider clipboardProvider,
-        IState<TerminalSessionsState> terminalSessionsStateWrap,
         IDispatcher dispatcher)
     {
         _commonComponentRenderers = commonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _clipboardProvider = clipboardProvider;
-        _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _dispatcher = dispatcher;
     }
     
@@ -229,6 +226,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
         TreeViewNamespacePath? solutionNode,
         TreeViewNamespacePath projectNode,
+        TerminalSession terminalSession,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
@@ -237,6 +235,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             OnClick: () => PerformRemoveCSharpProjectReferenceFromSolutionAction(
                 solutionNode, 
                 projectNode,
+                terminalSession,
                 onAfterCompletion));
     }
 
@@ -534,9 +533,9 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             sourceAbsoluteFilePath.IsDirectory);
     }
     
-    private void PerformRemoveCSharpProjectReferenceFromSolutionAction(
-        TreeViewNamespacePath? solutionNode, 
-        TreeViewNamespacePath? projectNode, 
+    private void PerformRemoveCSharpProjectReferenceFromSolutionAction(TreeViewNamespacePath? solutionNode,
+        TreeViewNamespacePath? projectNode,
+        TerminalSession terminalSession,
         Func<Task> onAfterCompletion)
     {
         _ = Task.Run(async () =>
@@ -566,12 +565,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                             new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
                                 solutionNode.Item.AbsoluteFilePath));
                     });
-                
-                var generalTerminalSession = _terminalSessionsStateWrap.Value
-                    .TerminalSessionMap[
-                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
         
-                await generalTerminalSession
+                await terminalSession
                     .EnqueueCommandAsync(
                         removeCSharpProjectReferenceFromSolutionCommand);
             }

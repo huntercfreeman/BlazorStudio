@@ -111,10 +111,16 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 TreeViewSolutionExplorerStateKey, 
                 solutionExplorerNode);
             
-            treeViewState.RootNode.LoadChildrenAsync();
+            solutionExplorerNode.LoadChildrenAsync().Wait();
                         
             TreeViewService.ReRenderNode(
-                SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey,
+                TreeViewSolutionExplorerStateKey,
+                solutionExplorerNode);
+            
+            treeViewState.RootNode.LoadChildrenAsync().Wait();
+                        
+            TreeViewService.ReRenderNode(
+                TreeViewSolutionExplorerStateKey,
                 treeViewState.RootNode);
 
             InvokeAsync(StateHasChanged);
