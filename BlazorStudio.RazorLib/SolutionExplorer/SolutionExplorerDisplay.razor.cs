@@ -26,6 +26,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
@@ -58,7 +59,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private TreeViewContextMenuEvent? _mostRecentTreeViewContextMenuEvent;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
     private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
-
+    
     protected override void OnInitialized()
     {
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
@@ -80,7 +81,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         base.OnInitialized();
     }
 
-    private void SolutionExplorerStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void SolutionExplorerStateWrapOnStateChanged(object? sender, EventArgs e)
     {
         if (SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath is null)
             return;
@@ -95,16 +96,28 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             SolutionExplorerStateWrap)
         {
             IsExpandable = true,
-            IsExpanded = false,
+            IsExpanded = true,
             TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
         };
+    
+        await solutionExplorerNode.LoadChildrenAsync();
 
         if (TreeViewService.TryGetTreeViewState(
-                TreeViewSolutionExplorerStateKey, out var treeViewState))
-        {
-            TreeViewService.SetRoot(
                 TreeViewSolutionExplorerStateKey, 
+                out var treeViewState) &&
+            treeViewState is not null)
+        {
+            await treeViewState.RootNode.LoadChildrenAsync();
+            
+            TreeViewService.ReRenderNode(
+                TreeViewSolutionExplorerStateKey,
+                treeViewState.RootNode);
+            
+            TreeViewService.SetRoot(
+                TreeViewSolutionExplorerStateKey,
                 solutionExplorerNode);
+            
+            await InvokeAsync(StateHasChanged);
         }
         else
         {

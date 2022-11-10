@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.FileConstants;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -94,7 +95,48 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             _newDotNetSolutionTerminalCommandKey,
             interpolatedCommand,
             _parentDirectoryName,
-            _newDotNetSolutionCancellationTokenSource.Token);
+            _newDotNetSolutionCancellationTokenSource.Token,
+            async () =>
+            {
+                // ContinueWith -> Open the newly created solution
+
+                // Close Dialog
+                Dispatcher.Dispatch(
+                    new DisposeDialogRecordAction(DialogRecord));
+                
+                // Strip ending directory separator if exists
+                {
+                    if (localParentDirectoryName.EndsWith(Path.DirectorySeparatorChar) ||
+                        localParentDirectoryName.EndsWith(Path.AltDirectorySeparatorChar))
+                    {
+                        localParentDirectoryName =
+                            localParentDirectoryName
+                                .Substring(
+                                    0, 
+                                    localParentDirectoryName.Length - 1);
+                    }
+                }
+                
+                var parentDirectoryAbsoluteFilePath = new AbsoluteFilePath(
+                    localParentDirectoryName, 
+                    true);
+
+                var solutionAbsoluteFilePathString =
+                    parentDirectoryAbsoluteFilePath.GetAbsoluteFilePathString() +
+                    localSolutionName +
+                    Path.DirectorySeparatorChar +
+                    localSolutionName +
+                    '.' +
+                    ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
+
+                var solutionAbsoluteFilePath = new AbsoluteFilePath(
+                    solutionAbsoluteFilePathString, 
+                    false);
+
+                Dispatcher.Dispatch(
+                    new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+                        solutionAbsoluteFilePath));
+            });
         
         var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];

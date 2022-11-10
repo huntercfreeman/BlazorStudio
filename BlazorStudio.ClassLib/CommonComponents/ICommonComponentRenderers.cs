@@ -11,4 +11,5 @@ public interface ICommonComponentRenderers
     public Type TreeViewExceptionRendererType { get; }
     public Type TreeViewAbsoluteFilePathRendererType { get; }
     public Type NuGetPackageManagerRendererType { get; }
+    public Type RemoveCSharpProjectFromSolutionRendererType { get; }
 }

@@ -25,6 +25,9 @@ public record SolutionExplorerState(
     
     public record RequestSetSolutionExplorerStateAction(
         IAbsoluteFilePath? SolutionAbsoluteFilePath);
+    
+    public record RequestSetSolutionAction(
+        Solution? Solution);
 
     private class SolutionExplorerStateReducer
     {
@@ -54,6 +57,17 @@ public record SolutionExplorerState(
             {
                 PerformingAsynchronousOperation = setPerformingAsynchronousOperationAction
                     .PerformingAsynchronousOperation,
+            };
+        }
+        
+        [ReducerMethod]
+        public SolutionExplorerState ReduceRequestSetSolutionAction(
+            SolutionExplorerState previousSolutionExplorerState,
+            RequestSetSolutionAction requestSetSolutionAction)
+        {
+            return previousSolutionExplorerState with
+            {
+                Solution = requestSetSolutionAction.Solution,
             };
         }
     }
@@ -87,8 +101,10 @@ public record SolutionExplorerState(
             {
                 dispatcher.Dispatch(new SetWorkspaceStateAction());
             }
+
+            var mSBuildWorkspace = ((MSBuildWorkspace)_workspaceStateWrap.Value.Workspace);
             
-            var solution = await ((MSBuildWorkspace)_workspaceStateWrap.Value.Workspace)
+            var solution = await mSBuildWorkspace
                 .OpenSolutionAsync(requestSetSolutionExplorerStateAction
                     .SolutionAbsoluteFilePath
                     .GetAbsoluteFilePathString());

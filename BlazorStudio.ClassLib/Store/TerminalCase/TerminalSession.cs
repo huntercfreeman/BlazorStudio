@@ -233,6 +233,16 @@ public class TerminalSession
             _process.OutputDataReceived -= OutputDataReceived;
         }
 
+        if (terminalCommand.ContinueWith is not null)
+        {
+            var continueWith = terminalCommand.ContinueWith;
+            
+            _ = Task.Run(async () =>
+            {
+                await continueWith.Invoke();
+            });
+        }
+
         goto doConsumeLabel;
     }
 

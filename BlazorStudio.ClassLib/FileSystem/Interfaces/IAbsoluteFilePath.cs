@@ -1,5 +1,8 @@
 ﻿namespace BlazorStudio.ClassLib.FileSystem.Interfaces;
 
+/// <summary>
+/// TODO: I was not aware of <see cref="System.IO.DirectoryInfo"/> nor <see cref="System.IO.FileInfo"/> when I started this project. I will when I find time remedy this mistake and change over to Microsoft's file system classes.
+/// </summary>
 public interface IAbsoluteFilePath : IFilePath
 {
     /// <summary>

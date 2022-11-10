@@ -51,12 +51,17 @@ public partial class InputFileContent : FluxorComponent
             OnClick = TreeViewOnClick,
             OnDoubleClick = TreeViewOnDoubleClick
         };
-        
-        var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-            true);
 
-        SetInputFileContentTreeViewRoot.Invoke(directoryHomeAbsoluteFilePath);
+        if (!TreeViewService.TryGetTreeViewState(
+                InputFileContent.TreeViewInputFileContentStateKey, 
+                out var treeViewState))
+        {
+            var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                true);
+
+            SetInputFileContentTreeViewRoot.Invoke(directoryHomeAbsoluteFilePath);
+        }
         
         base.OnInitialized();
     }

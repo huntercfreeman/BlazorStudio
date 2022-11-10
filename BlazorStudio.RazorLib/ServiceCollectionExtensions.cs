@@ -2,6 +2,7 @@ using BlazorStudio.ClassLib;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.Clipboard;
+using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.File;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.Notifications;
@@ -24,7 +25,8 @@ public static class ServiceCollectionExtensions
             typeof(TreeViewNamespacePathDisplay),
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewAbsoluteFilePathDisplay),
-            typeof(NuGetPackageManager));
+            typeof(NuGetPackageManager),
+            typeof(RemoveCSharpProjectFromSolutionDisplay));
         
         return services
             .AddBlazorStudioClassLibServices(

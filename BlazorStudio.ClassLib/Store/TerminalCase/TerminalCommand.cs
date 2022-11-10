@@ -4,4 +4,5 @@ public record TerminalCommand(
     TerminalCommandKey TerminalCommandKey,
     string Command,
     string? ChangeWorkingDirectoryTo = null,
-    CancellationToken CancellationToken = default);
+    CancellationToken CancellationToken = default,
+    Func<Task>? ContinueWith = null);

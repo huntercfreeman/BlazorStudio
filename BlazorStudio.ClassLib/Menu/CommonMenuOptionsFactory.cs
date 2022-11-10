@@ -1,11 +1,16 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Clipboard;
+using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.Namespaces;
+using BlazorStudio.ClassLib.Store.SolutionExplorer;
+using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib.Clipboard;
+using Fluxor;
 
 namespace BlazorStudio.ClassLib.Menu;
 
@@ -14,15 +19,18 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IClipboardProvider _clipboardProvider;
+    private readonly IDispatcher _dispatcher;
 
     public CommonMenuOptionsFactory(
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
-        IClipboardProvider clipboardProvider)
+        IClipboardProvider clipboardProvider,
+        IDispatcher dispatcher)
     {
         _commonComponentRenderers = commonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _clipboardProvider = clipboardProvider;
+        _dispatcher = dispatcher;
     }
     
     public MenuOptionRecord NewEmptyFile(
@@ -213,6 +221,34 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             OnClick: () => PerformPasteFileAction(
                 directoryAbsoluteFilePath, 
                 onAfterCompletion));
+    }
+
+    public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
+        TreeViewNamespacePath? solutionNode,
+        TreeViewNamespacePath projectNode,
+        TerminalSession terminalSession,
+        Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "Remove (no files are deleted)",
+            MenuOptionKind.Delete,
+            WidgetRendererType: _commonComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
+            WidgetParameters: new Dictionary<string, object?>
+            {
+                {
+                    nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsoluteFilePath),
+                    projectNode.Item?.AbsoluteFilePath
+                },
+                {
+                    nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
+                    new Action<IAbsoluteFilePath>(afp => 
+                        PerformRemoveCSharpProjectReferenceFromSolutionAction(
+                            solutionNode, 
+                            projectNode,
+                            terminalSession,
+                            onAfterCompletion))
+                },
+            });
     }
 
     private void PerformNewFileAction(
@@ -508,6 +544,48 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             destinationAbsoluteFilePathString,
             sourceAbsoluteFilePath.IsDirectory);
     }
+    
+    private void PerformRemoveCSharpProjectReferenceFromSolutionAction(TreeViewNamespacePath? solutionNode,
+        TreeViewNamespacePath? projectNode,
+        TerminalSession terminalSession,
+        Func<Task> onAfterCompletion)
+    {
+        _ = Task.Run(async () =>
+        { 
+            if (solutionNode?.Item is not null &&
+                projectNode?.Item is not null)
+            {
+                var workingDirectory = (IAbsoluteFilePath)solutionNode
+                    .Item.AbsoluteFilePath.Directories.Last();
+
+                var removeCSharpProjectReferenceFromSolutionCommandString = 
+                    DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(
+                        solutionNode.Item.AbsoluteFilePath
+                            .GetAbsoluteFilePathString(),
+                        projectNode.Item.AbsoluteFilePath
+                            .GetAbsoluteFilePathString());
+            
+                var removeCSharpProjectReferenceFromSolutionCommand = new TerminalCommand(
+                    TerminalCommandKey.NewTerminalCommandKey(), 
+                    removeCSharpProjectReferenceFromSolutionCommandString,
+                    workingDirectory.GetAbsoluteFilePathString(),
+                    CancellationToken.None,
+                    async () =>
+                    {
+                        // Re-open the modified Solution
+                        _dispatcher.Dispatch(
+                            new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+                                solutionNode.Item.AbsoluteFilePath));
+                    });
+        
+                await terminalSession
+                    .EnqueueCommandAsync(
+                        removeCSharpProjectReferenceFromSolutionCommand);
+            }
+
+            await onAfterCompletion.Invoke();
+        });
+    }
 
     private string RemoveEndingDirectorySeparator(string value)
     {
@@ -537,22 +615,4 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
         return newDirectoryInfo;
     }
-
-    /*
- * -New
-        -Empty File
-        -Templated File
-            -Add a Codebehind Prompt when applicable
-    -Base file operations
-        -Copy
-        -Delete
-        -Cut
-        -Rename
-    -Base directory operations
-        -Copy
-        -Delete
-        -Cut
-        -Rename
-        -Paste
- */
 }
