@@ -13,7 +13,7 @@ public partial class IconSettingsDisplay : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private int MINIMUM_ICON_SIZE_IN_PIXELS = 5;
+    private const int MINIMUM_ICON_SIZE_IN_PIXELS = 5;
     
     private int _iconSizeInPixels;
 

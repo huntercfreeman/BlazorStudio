@@ -1,5 +1,6 @@
 @using BlazorStudio.ClassLib.Store.ThemeCase
 @using BlazorStudio.RazorLib.FontSettings
+@using BlazorTextEditor.RazorLib.HelperComponents
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -15,6 +16,11 @@
     <hr class="bstudio_hr"/>
 
     <IconSettingsDisplay/>
+    
+    <hr class="bstudio_hr"/>
+    
+    <TextEditorInputFontSize InputElementCssClassString="bstudio_input"
+                             EmElementCssClassString="bstudio_em"/>
     
     <hr class="bstudio_hr"/>
 
