@@ -1,12 +1,17 @@
 using BlazorStudio.ClassLib.Dimensions;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.DragCase;
 using BlazorStudio.ClassLib.Store.FontCase;
+using BlazorStudio.ClassLib.Store.IconCase;
+using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.ThemeCase;
 using BlazorStudio.RazorLib.DialogCase;
 using BlazorStudio.RazorLib.ResizableCase;
+using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.Shared;
 
@@ -20,6 +25,10 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private IState<FontState> FontStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
 
     private string _message = string.Empty;
     
@@ -29,7 +38,6 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     
     private bool _previousDragStateWrapShouldDisplay;
 
-    private int _renderCount = 1;
     private ElementDimensions _bodyElementDimensions = new();
     private ElementDimensions _footerElementDimensions = new();
 
@@ -90,6 +98,52 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
         base.OnInitialized();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await TextEditorService.SetTextEditorOptionsFromLocalStorageAsync();
+            
+            var fontSizeString = await JsRuntime.InvokeAsync<string>(
+                "blazorStudio.localStorageGetItem",
+                "bstudio_fontSize");
+            
+            var iconSizeString = await JsRuntime.InvokeAsync<string>(
+                "blazorStudio.localStorageGetItem",
+                "bstudio_iconSize");
+            
+            var themeClassCssString = await JsRuntime.InvokeAsync<string>(
+                "blazorStudio.localStorageGetItem",
+                "bstudio_themeClassCssString");
+
+            var matchedThemeRecord = ThemeFacts.DefaultThemeRecords.FirstOrDefault(x => 
+                x.ClassCssString == themeClassCssString);
+
+            if (matchedThemeRecord is not null)
+            {
+                TextEditorService.SetTheme(matchedThemeRecord.ThemeColorKind == ThemeColorKind.Light
+                    ? BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.BlazorTextEditorLight
+                    : BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.BlazorTextEditorDark);
+                
+                Dispatcher.Dispatch(new SetThemeStateAction(matchedThemeRecord));
+            }
+
+            if (int.TryParse(fontSizeString, out var fontSize))
+                Dispatcher.Dispatch(new SetFontSizeInPixelsAction(fontSize));
+            
+            if (int.TryParse(iconSizeString, out var iconSize))
+                Dispatcher.Dispatch(new SetIconSizeInPixelsAction(iconSize));
+
+            if (System.IO.File.Exists("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
+            {
+                Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+                    new AbsoluteFilePath("/home/hunter/Repos/Demos/TestApp/TestApp.sln", false)));
+            }
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
     private void ThemeStateWrapOnStateChanged(object? sender, EventArgs e)
     {
         InvokeAsync(StateHasChanged);
@@ -98,13 +152,6 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private void FontStateWrapOnStateChanged(object? sender, EventArgs e)
     {
         InvokeAsync(StateHasChanged);
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        _renderCount++;
-    
-        base.OnAfterRender(firstRender);
     }
 
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)

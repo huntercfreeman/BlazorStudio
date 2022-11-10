@@ -11,6 +11,7 @@ using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
+using BlazorStudio.ClassLib.Store.IconCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -38,6 +39,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private IState<TextEditorResourceMapState> TextEditorResourceMapStateWrap { get; set; } = null!;
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<IconState> IconStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]

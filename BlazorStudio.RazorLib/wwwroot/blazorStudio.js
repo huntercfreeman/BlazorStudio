@@ -10,6 +10,12 @@ window.blazorStudio = {
             TopPositionInPixels: bounds.top + bounds.height
         }
     },
+    localStorageSetItem: function (key, value) {
+        localStorage.setItem(key, value);
+    },
+    localStorageGetItem: function (key, value) {
+        return localStorage.getItem(key);
+    },
 }
 
 Blazor.registerCustomEventType('bskeydown', {

@@ -3,6 +3,7 @@
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorTextEditor.RazorLib
 @using BlazorTextEditor.RazorLib.TextEditor
+@using BlazorTextEditor.RazorLib.HelperComponents
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -48,9 +49,9 @@
                     </OnContextMenuRenderFragment>
                 </TextEditorDisplay>
                 
-                <EditorFooter TextEditor="activeTextEditor"
-                              TextEditorDisplay="_textEditorDisplay"
-                              AbsoluteFilePath="resource"/>
+                <TextEditorFooter TextEditor="activeTextEditor"
+                                  TextEditorDisplay="_textEditorDisplay"
+                                  Extension="@(resource?.ExtensionNoPeriod ?? "null")"/>
             }
             else
             {

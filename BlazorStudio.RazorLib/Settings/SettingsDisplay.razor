@@ -1,12 +1,29 @@
 @using BlazorStudio.ClassLib.Store.ThemeCase
 @using BlazorStudio.RazorLib.FontSettings
+@using BlazorTextEditor.RazorLib.HelperComponents
+
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_settings-display">
     Settings Display
     
-    <FontSettingsDisplay />
+    <ButtonDisplay OnClickFunc="PersistSettingsLocallyOnClick">
+        Persist Settings Locally OnClick
+    </ButtonDisplay>
     
+    <FontSettingsDisplay />
+
+    <hr class="bstudio_hr"/>
+
+    <IconSettingsDisplay/>
+    
+    <hr class="bstudio_hr"/>
+    
+    <TextEditorInputFontSize InputElementCssClassString="bstudio_input"
+                             EmElementCssClassString="bstudio_em"/>
+    
+    <hr class="bstudio_hr"/>
+
     <div>
         Active Theme:&nbsp;@ThemeStateWrap.Value.ActiveThemeRecord.ClassCssString
     </div>
@@ -19,16 +36,10 @@
             @theme.ClassCssString
         </ButtonDisplay>
     }
-    
+
     <hr class="bstudio_hr"/>
 
-    <div>
-        Show NewLines:&nbsp;
-        <input type="checkbox" @bind="GlobalShowNewlines" />
-    </div>
+    <TextEditorInputShowNewLines/>
+    <TextEditorInputShowWhitespace/>
     
-    <div>
-        Show Whitespace:&nbsp;
-        <input type="checkbox" @bind="GlobalShowWhitespace" />
-    </div>
 </div>

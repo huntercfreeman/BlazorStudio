@@ -162,9 +162,7 @@
                         {
                             foreach (var entry in nugetResult)
                             {
-                                <div>
-                                    @entry.Title, @entry.Version
-                                </div>
+                                <NugetPackageDisplay NugetPackageRecord="entry"/>
                             }
                         }
                     }

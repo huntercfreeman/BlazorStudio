@@ -12,7 +12,7 @@ public partial class FontSettingsDisplay : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private int MINIMUM_FONT_SIZE_IN_PIXELS = 5;
+    private const int MINIMUM_FONT_SIZE_IN_PIXELS = 5;
     
     private int _fontSizeInPixels;
 
