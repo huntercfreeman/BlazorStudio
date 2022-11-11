@@ -34,6 +34,7 @@ public interface ICommonMenuOptionsFactory
     
     public MenuOptionRecord RenameFile(
         IAbsoluteFilePath sourceAbsoluteFilePath,
+        IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
     
     public MenuOptionRecord PasteClipboard(
@@ -44,6 +45,7 @@ public interface ICommonMenuOptionsFactory
         TreeViewNamespacePath? solutionNode,
         TreeViewNamespacePath projectNode,
         TerminalSession terminalSession,
+        IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
     
     public MenuOptionRecord AddProjectToProjectReference(

@@ -22,18 +22,20 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IClipboardProvider _clipboardProvider;
-    private readonly IDispatcher _dispatcher;
 
+    /// <summary>
+    /// I could not get a dependency injected <see cref="IDispatcher"/>
+    /// to work and instead added <see cref="IDispatcher"/> as an argument
+    /// to methods in this file that need an <see cref="IDispatcher"/>
+    /// </summary>
     public CommonMenuOptionsFactory(
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
-        IClipboardProvider clipboardProvider,
-        IDispatcher dispatcher)
+        IClipboardProvider clipboardProvider)
     {
         _commonComponentRenderers = commonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _clipboardProvider = clipboardProvider;
-        _dispatcher = dispatcher;
     }
     
     public MenuOptionRecord NewEmptyFile(
@@ -160,6 +162,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     
     public MenuOptionRecord RenameFile(
         IAbsoluteFilePath sourceAbsoluteFilePath,
+        IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
@@ -185,6 +188,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                             PerformRenameAction(
                                 sourceAbsoluteFilePath,
                                 nextName,
+                                dispatcher,
                                 onAfterCompletion))
                 },
             });
@@ -230,6 +234,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         TreeViewNamespacePath? solutionNode,
         TreeViewNamespacePath projectNode,
         TerminalSession terminalSession,
+        IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
@@ -249,6 +254,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                             solutionNode, 
                             projectNode,
                             terminalSession,
+                            dispatcher,
                             onAfterCompletion))
                 },
             });
@@ -495,7 +501,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     
     private IAbsoluteFilePath? PerformRenameAction(
         IAbsoluteFilePath sourceAbsoluteFilePath, 
-        string nextName, 
+        string nextName,
+        IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
         // If the current and next name match when compared
@@ -511,6 +518,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             var temporaryRenameResult = PerformRenameAction(
                 sourceAbsoluteFilePath, 
                 temporaryNextName, 
+                dispatcher,
                 () => Task.CompletedTask);
 
             if (temporaryRenameResult is null)
@@ -564,7 +572,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     },
                 });
         
-            _dispatcher.Dispatch(
+            dispatcher.Dispatch(
                 new NotificationState.RegisterNotificationAction(
                     notificationError));
             
@@ -582,6 +590,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     private void PerformRemoveCSharpProjectReferenceFromSolutionAction(TreeViewNamespacePath? solutionNode,
         TreeViewNamespacePath? projectNode,
         TerminalSession terminalSession,
+        IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
         _ = Task.Run(async () =>
@@ -607,7 +616,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     async () =>
                     {
                         // Re-open the modified Solution
-                        _dispatcher.Dispatch(
+                        dispatcher.Dispatch(
                             new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
                                 solutionNode.Item.AbsoluteFilePath));
                     });
@@ -623,7 +632,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     
     public void PerformProjectToProjectReferenceAction(TreeViewNamespacePath projectReceivingReference,
         TerminalSession terminalSession,
-        IDispatcher localDispatcher,
+        IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
         _ = Task.Run(async () =>
@@ -666,7 +675,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                     },
                                 });
 
-                            _dispatcher.Dispatch(
+                            dispatcher.Dispatch(
                                 new NotificationState.RegisterNotificationAction(
                                     notificationInformative));
 
@@ -697,7 +706,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                 }.ToImmutableArray());
         
-            localDispatcher.Dispatch(
+            dispatcher.Dispatch(
                 requestInputFileStateFormAction);
         });
     }
