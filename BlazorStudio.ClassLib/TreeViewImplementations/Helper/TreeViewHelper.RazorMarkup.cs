@@ -36,7 +36,7 @@ public partial class TreeViewHelper
                     razorMarkupTreeView.CommonComponentRenderers,
                     razorMarkupTreeView.SolutionExplorerStateWrap)
                 {
-                    IsExpandable = true,
+                    IsExpandable = false,
                     IsExpanded = false,
                     TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                 };

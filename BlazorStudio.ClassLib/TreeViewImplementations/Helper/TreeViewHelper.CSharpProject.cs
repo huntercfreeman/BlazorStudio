@@ -95,7 +95,7 @@ public partial class TreeViewHelper
                     cSharpProjectTreeView.CommonComponentRenderers,
                     cSharpProjectTreeView.SolutionExplorerStateWrap)
                 {
-                    IsExpandable = true,
+                    IsExpandable = false,
                     IsExpanded = false,
                     TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                 };
