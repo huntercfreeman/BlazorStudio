@@ -36,11 +36,13 @@
                 {
                     <CascadingValue Name="BlazorTreeViewIconWidth" Value="IconStateWrap.Value.IconSizeInPixels">
                         <CascadingValue Name="BlazorTreeViewIconHeight" Value="IconStateWrap.Value.IconSizeInPixels">
-                            <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"
-                                                  CssStyleString="height: 100%;"
-                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                                  TreeViewKeymap="_solutionExplorerTreeViewKeymap"
-                                                  TreeViewMouseEventRegistrar="_treeViewMouseEventRegistrar"/>
+                            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                                <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"
+                                                      CssStyleString="height: 100%;"
+                                                      OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                      TreeViewKeymap="_solutionExplorerTreeViewKeymap"
+                                                      TreeViewMouseEventRegistrar="_treeViewMouseEventRegistrar"/>
+                            </CascadingValue>
                         </CascadingValue>
                     </CascadingValue>
 

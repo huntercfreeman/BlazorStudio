@@ -2,6 +2,7 @@
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
+using Fluxor;
 
 namespace BlazorStudio.ClassLib.Menu;
 
@@ -33,6 +34,7 @@ public interface ICommonMenuOptionsFactory
     
     public MenuOptionRecord RenameFile(
         IAbsoluteFilePath sourceAbsoluteFilePath,
+        IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
     
     public MenuOptionRecord PasteClipboard(
@@ -43,5 +45,12 @@ public interface ICommonMenuOptionsFactory
         TreeViewNamespacePath? solutionNode,
         TreeViewNamespacePath projectNode,
         TerminalSession terminalSession,
+        IDispatcher dispatcher,
+        Func<Task> onAfterCompletion);
+    
+    public MenuOptionRecord AddProjectToProjectReference(
+        TreeViewNamespacePath projectReceivingReference,
+        TerminalSession terminalSession,
+        IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
 }

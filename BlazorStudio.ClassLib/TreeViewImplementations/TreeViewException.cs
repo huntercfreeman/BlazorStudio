@@ -50,4 +50,9 @@ public class TreeViewException : TreeViewBase<Exception>
     {
         return Task.CompletedTask;
     }
+
+    public override void RemoveRelatedFilesFromParent(List<TreeView> treeViews)
+    {
+        // This method is meant to do nothing in this case.
+    }
 }

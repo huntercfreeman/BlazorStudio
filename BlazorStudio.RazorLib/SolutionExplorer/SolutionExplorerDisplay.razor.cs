@@ -62,7 +62,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private TreeViewContextMenuEvent? _mostRecentTreeViewContextMenuEvent;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
     private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
-    
+
+    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
+        IconStateWrap.Value.IconSizeInPixels *
+        (2.0/3.0));
+
     protected override void OnInitialized()
     {
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(

@@ -175,6 +175,15 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     
                     await ReloadTreeViewModel(treeViewModel);
                 }),
+            CommonMenuOptionsFactory.AddProjectToProjectReference(
+                treeViewModel,
+                TerminalSessionsStateWrap.Value
+                    .TerminalSessionMap[
+                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
+                Dispatcher,
+                async () =>
+                {
+                }),
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
@@ -187,6 +196,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
+                Dispatcher,
                 async () =>
                 {
                     if (project is not null)
@@ -256,6 +266,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 }),
             CommonMenuOptionsFactory.RenameFile(
                 treeViewModel.Item.AbsoluteFilePath,
+                Dispatcher,
                 async ()  =>
                 {
                     await ReloadTreeViewModel(parentTreeViewModel);

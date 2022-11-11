@@ -111,7 +111,8 @@ public class TreeViewAbsoluteFilePath : TreeViewBase<IAbsoluteFilePath>
         }
     }
 
-    
-    
-    
+    public override void RemoveRelatedFilesFromParent(List<TreeView> treeViews)
+    {
+        // This method is meant to do nothing in this case.
+    }
 }
