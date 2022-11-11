@@ -58,14 +58,21 @@ public partial class TreeViewHelper
 
         razorMarkupTreeView.Children.Clear();
         
-        // .razor files look to remove .razor.cs files
+        // .razor files look to remove .razor.cs and .razor.css files
 
+        var matches = new[]
+        {
+            razorMarkupTreeView.Item.AbsoluteFilePath.FilenameWithExtension +
+                '.' + 
+                ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            razorMarkupTreeView.Item.AbsoluteFilePath.FilenameWithExtension +
+                '.' + 
+                ExtensionNoPeriodFacts.CSS
+        };
+        
         var relatedFile = treeViews.FirstOrDefault(x =>
             x.UntypedItem is NamespacePath namespacePath &&
-            namespacePath.AbsoluteFilePath.FilenameWithExtension ==
-            razorMarkupTreeView.Item.AbsoluteFilePath.FilenameWithExtension +
-            '.' + 
-            ExtensionNoPeriodFacts.C_SHARP_CLASS);
+            matches.Contains(namespacePath.AbsoluteFilePath.FilenameWithExtension));
 
         if (relatedFile is null)
         {
