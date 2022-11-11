@@ -7,12 +7,12 @@ namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 public partial class TreeViewHelper
 {
     public static async Task<List<TreeView>> LoadChildrenForDirectoryAsync(
-        TreeViewNamespacePath treeViewNamespacePath)
+        TreeViewNamespacePath directoryTreeView)
     {
-        if (treeViewNamespacePath.Item is null)
+        if (directoryTreeView.Item is null)
             return new();
         
-        var directoryAbsoluteFilePathString = treeViewNamespacePath.Item.AbsoluteFilePath
+        var directoryAbsoluteFilePathString = directoryTreeView.Item.AbsoluteFilePath
             .GetAbsoluteFilePathString();
         
         var childDirectoryTreeViewModels = Directory
@@ -21,7 +21,7 @@ public partial class TreeViewHelper
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, true);
 
-                var namespaceString = treeViewNamespacePath.Item.Namespace +
+                var namespaceString = directoryTreeView.Item.Namespace +
                                       TreeViewHelper.NAMESPACE_DELIMITER +
                                       absoluteFilePath.FileNameNoExtension;
 
@@ -31,8 +31,8 @@ public partial class TreeViewHelper
 
                 return (TreeView)new TreeViewNamespacePath(
                     namespacePath,
-                    treeViewNamespacePath.CommonComponentRenderers,
-                    treeViewNamespacePath.SolutionExplorerStateWrap)
+                    directoryTreeView.CommonComponentRenderers,
+                    directoryTreeView.SolutionExplorerStateWrap)
                 {
                     IsExpandable = true,
                     IsExpanded = false,
@@ -46,7 +46,7 @@ public partial class TreeViewHelper
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, false);
 
-                var namespaceString = treeViewNamespacePath.Item.Namespace;
+                var namespaceString = directoryTreeView.Item.Namespace;
                 
                 var namespacePath = new NamespacePath(
                     namespaceString,
@@ -54,14 +54,26 @@ public partial class TreeViewHelper
 
                 return (TreeView)new TreeViewNamespacePath(
                     namespacePath,
-                    treeViewNamespacePath.CommonComponentRenderers,
-                    treeViewNamespacePath.SolutionExplorerStateWrap)
+                    directoryTreeView.CommonComponentRenderers,
+                    directoryTreeView.SolutionExplorerStateWrap)
                 {
                     IsExpandable = false,
                     IsExpanded = false,
                     TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                 };
-            });
+            }).ToList();
+
+        var copyOfChildrenToFindRelatedFiles = new List<TreeView>(childFileTreeViewModels);
+        
+        foreach (var child in childFileTreeViewModels)
+        {
+            child.RemoveRelatedFilesFromParent(
+                copyOfChildrenToFindRelatedFiles);
+        }
+
+        // The parent directory gets what is left over after the
+        // children take their respective 'code behinds'
+        childFileTreeViewModels = copyOfChildrenToFindRelatedFiles;
 
         return childDirectoryTreeViewModels
             .Union(childFileTreeViewModels)
@@ -69,12 +81,12 @@ public partial class TreeViewHelper
     }
     
     public static async Task<List<TreeView>> LoadChildrenForDirectoryAsync(
-        TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+        TreeViewAbsoluteFilePath directoryTreeView)
     {
-        if (treeViewAbsoluteFilePath.Item is null)
+        if (directoryTreeView.Item is null)
             return new();
         
-        var directoryAbsoluteFilePathString = treeViewAbsoluteFilePath.Item
+        var directoryAbsoluteFilePathString = directoryTreeView.Item
             .GetAbsoluteFilePathString();
         
         var childDirectoryTreeViewModels = Directory
@@ -85,7 +97,7 @@ public partial class TreeViewHelper
 
                 return (TreeView)new TreeViewAbsoluteFilePath(
                     absoluteFilePath,
-                    treeViewAbsoluteFilePath.CommonComponentRenderers)
+                    directoryTreeView.CommonComponentRenderers)
                 {
                     IsExpandable = true,
                     IsExpanded = false,
@@ -101,7 +113,7 @@ public partial class TreeViewHelper
 
                 return (TreeView)new TreeViewAbsoluteFilePath(
                     absoluteFilePath,
-                    treeViewAbsoluteFilePath.CommonComponentRenderers)
+                    directoryTreeView.CommonComponentRenderers)
                 {
                     IsExpandable = false,
                     IsExpanded = false,

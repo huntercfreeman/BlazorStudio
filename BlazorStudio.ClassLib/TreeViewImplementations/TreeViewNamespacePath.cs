@@ -82,6 +82,10 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
                         newChildren = await TreeViewHelper
                             .LoadChildrenForCSharpProjectAsync(this);
                         break;
+                    case ExtensionNoPeriodFacts.RAZOR_MARKUP:
+                        newChildren = await TreeViewHelper
+                            .LoadChildrenForRazorMarkupAsync(this);
+                        break;
                 }
             }
         
@@ -112,6 +116,8 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
         }
         catch (Exception exception)
         {
+            throw;
+            
             Children = new List<TreeView>
             {
                 new TreeViewException(
@@ -127,7 +133,19 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
         }
     }
 
-    
-    
-    
+    public override void RemoveRelatedFilesFromParent(List<TreeView> treeViews)
+    {
+        if (Item is null)
+        {
+            return;
+        }
+        
+        if (Item.AbsoluteFilePath.ExtensionNoPeriod
+            .EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
+        {
+            TreeViewHelper.RazorMarkupFindRelatedFiles(
+                this, 
+                treeViews);
+        }
+    }
 }
