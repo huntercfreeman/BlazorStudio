@@ -175,6 +175,15 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     
                     await ReloadTreeViewModel(treeViewModel);
                 }),
+            CommonMenuOptionsFactory.AddProjectToProjectReference(
+                treeViewModel,
+                TerminalSessionsStateWrap.Value
+                    .TerminalSessionMap[
+                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
+                Dispatcher,
+                async () =>
+                {
+                }),
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,

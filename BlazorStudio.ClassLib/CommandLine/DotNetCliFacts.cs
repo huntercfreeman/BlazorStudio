@@ -72,6 +72,16 @@ public static class DotNetCliFacts
         return $"dotnet add {cSharpProjectAbsoluteFilePathString} package {nugetPackageId} --version {nugetPackageVersion}";
     }
     
+    public static string FormatAddProjectToProjectReference(
+        string receivingProjectAbsoluteFilePathString, 
+        string referencedProjectAbsoluteFilePathString)
+    {
+        receivingProjectAbsoluteFilePathString = QuoteValue(receivingProjectAbsoluteFilePathString);
+        referencedProjectAbsoluteFilePathString = QuoteValue(referencedProjectAbsoluteFilePathString);
+        
+        return $"dotnet add {receivingProjectAbsoluteFilePathString} reference {referencedProjectAbsoluteFilePathString}";
+    }
+
     private static string QuoteValue(string parameter)
     {
         return $"\"{parameter}\"";

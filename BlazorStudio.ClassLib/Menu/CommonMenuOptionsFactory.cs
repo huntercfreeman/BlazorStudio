@@ -2,10 +2,13 @@
 using BlazorStudio.ClassLib.Clipboard;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.Namespaces;
+using BlazorStudio.ClassLib.Store.InputFileCase;
+using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
@@ -249,6 +252,22 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                             onAfterCompletion))
                 },
             });
+    }
+
+    public MenuOptionRecord AddProjectToProjectReference(
+        TreeViewNamespacePath projectReceivingReference,
+        TerminalSession terminalSession,
+        IDispatcher dispatcher,
+        Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "Add Project Reference",
+            MenuOptionKind.Other,
+            OnClick: () => PerformProjectToProjectReferenceAction(
+                projectReceivingReference,
+                terminalSession,
+                dispatcher,
+                onAfterCompletion));
     }
 
     private void PerformNewFileAction(
@@ -533,7 +552,22 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         }
         catch (Exception e)
         {
-            // TODO: Dispatch a notification to the user of the error.
+            var notificationError  = new NotificationRecord(
+                NotificationKey.NewNotificationKey(), 
+                "Rename Action",
+                _commonComponentRenderers.ErrorNotificationRendererType,
+                new Dictionary<string, object?>
+                {
+                    {
+                        nameof(IErrorNotificationRendererType.Message), 
+                        $"ERROR: {e.Message}"
+                    },
+                });
+        
+            _dispatcher.Dispatch(
+                new NotificationState.RegisterNotificationAction(
+                    notificationError));
+            
             onAfterCompletion.Invoke();
             return null;
         }
@@ -584,6 +618,87 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             }
 
             await onAfterCompletion.Invoke();
+        });
+    }
+    
+    public void PerformProjectToProjectReferenceAction(TreeViewNamespacePath projectReceivingReference,
+        TerminalSession terminalSession,
+        IDispatcher localDispatcher,
+        Func<Task> onAfterCompletion)
+    {
+        _ = Task.Run(async () =>
+        {
+            if (projectReceivingReference.Item is null)
+            {
+                await onAfterCompletion.Invoke();
+                return;
+            }
+
+            var requestInputFileStateFormAction = new InputFileState.RequestInputFileStateFormAction(
+                $"Add Project reference to {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}",
+                async referencedProject =>
+                {
+                    if (referencedProject is null)
+                        return;
+
+                    var interpolatedCommand = DotNetCliFacts
+                        .FormatAddProjectToProjectReference(
+                            projectReceivingReference.Item.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                            referencedProject.GetAbsoluteFilePathString());
+
+                    var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
+                        TerminalCommandKey.NewTerminalCommandKey(),
+                        interpolatedCommand,
+                        null,
+                        CancellationToken.None,
+                        async () =>
+                        {
+                            var notificationInformative = new NotificationRecord(
+                                NotificationKey.NewNotificationKey(),
+                                "Add Project Reference",
+                                _commonComponentRenderers.InformativeNotificationRendererType,
+                                new Dictionary<string, object?>
+                                {
+                                    {
+                                        nameof(IInformativeNotificationRendererType.Message),
+                                        $"Modified {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}" +
+                                        $" to have a reference to {referencedProject.FilenameWithExtension}"
+                                    },
+                                });
+
+                            _dispatcher.Dispatch(
+                                new NotificationState.RegisterNotificationAction(
+                                    notificationInformative));
+
+                            await onAfterCompletion.Invoke();
+                        });
+
+                    await terminalSession
+                        .EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand);
+                },
+                afp =>
+                {
+                    if (afp is null ||
+                        afp.IsDirectory)
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(
+                        afp.ExtensionNoPeriod
+                            .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+                },
+                new[]
+                {
+                    new InputFilePattern(
+                        "C# Project",
+                        afp =>
+                            afp.ExtensionNoPeriod
+                                .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                }.ToImmutableArray());
+        
+            localDispatcher.Dispatch(
+                requestInputFileStateFormAction);
         });
     }
 
