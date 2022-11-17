@@ -89,9 +89,17 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             switch (treeViewNamespacePath.Item.AbsoluteFilePath.ExtensionNoPeriod)
             {
                 case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
-                    menuRecords.AddRange(
-                        GetDotNetSolutionMenuOptions(treeViewNamespacePath)
-                            .Union(GetDebugMenuOptions(treeViewNamespacePath)));
+                    if (treeViewNamespacePath.Parent is null ||
+                        treeViewNamespacePath.Parent is TreeViewAdhoc)
+                    {
+                        menuRecords.AddRange(
+                            GetDotNetSolutionMenuOptions(treeViewNamespacePath)
+                                .Union(GetDebugMenuOptions(treeViewNamespacePath)));
+                    }
+                    else
+                    {
+                        goto default;
+                    }
                     break;
                 case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
                     menuRecords.AddRange(
