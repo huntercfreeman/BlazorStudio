@@ -60,11 +60,6 @@ public partial class NugetPackageDisplay : FluxorComponent
         base.OnParametersSet();
     }
 
-    private async Task AddNugetPackageReferenceOnClick()
-    {
-        await StartNewDotNetSolutionCommandOnClick();
-    }
-
     private void SelectedNugetVersionChanged(ChangeEventArgs changeEventArgs)
     {
         _nugetPackageVersionString = changeEventArgs.Value?.ToString() ?? string.Empty;
@@ -83,7 +78,7 @@ public partial class NugetPackageDisplay : FluxorComponent
             nuGetPackageManagerState.SelectedProjectToModify.Id);
     }
     
-    private async Task StartNewDotNetSolutionCommandOnClick()
+    private async Task AddNugetPackageReferenceOnClick()
     {
         var targetProject = NuGetPackageManagerStateWrap.Value.SelectedProjectToModify;
         var targetNugetPackage = NugetPackageRecord;
