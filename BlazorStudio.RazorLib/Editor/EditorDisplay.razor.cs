@@ -36,51 +36,6 @@ public partial class EditorDisplay : FluxorComponent
     private TextEditorDisplay? _textEditorDisplay;
     private EditorTabsDisplay? _editorTabsDisplay;
 
-    private async Task HandleAfterOnKeyDownAsync(
-        TextEditorBase textEditor,
-        ImmutableArray<TextEditorCursorSnapshot> cursorSnapshots,
-        KeyboardEventArgs keyboardEventArgs,
-        Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)
-    {
-        var primaryCursorSnapshot = cursorSnapshots
-            .First(x =>
-                x.UserCursor.IsPrimaryCursor);
-
-        // Update the * for all the tabs
-        // that shows if it has been 'modified'.
-        //
-        // TODO: Change the logic for showing * such that
-        // it more accurately represents a file having been modified.
-        //
-        // This is just saying on key press presume it was modified.
-        if (_editorTabsDisplay is not null)
-            _editorTabsDisplay.ForceReloadTabs();
-
-        if (keyboardEventArgs.Key == ";" ||
-            KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
-            (keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "v"))
-        {
-            // Syntax Highlighting
-
-            var success = await _afterOnKeyDownSyntaxHighlightingSemaphoreSlim
-                .WaitAsync(TimeSpan.Zero);
-
-            if (!success)
-                return;
-
-            try
-            {
-                await textEditor.ApplySyntaxHighlightingAsync();
-
-                await InvokeAsync(StateHasChanged);
-            }
-            finally
-            {
-                _afterOnKeyDownSyntaxHighlightingSemaphoreSlim.Release();
-            }
-        }
-    }
-
     private void HandleOnSaveRequested(TextEditorBase textEditor)
     {
         var content = textEditor.GetAllText();
