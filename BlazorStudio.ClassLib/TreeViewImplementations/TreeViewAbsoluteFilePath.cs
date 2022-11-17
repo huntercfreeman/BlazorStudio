@@ -1,11 +1,7 @@
 ﻿using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Namespaces;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
-using BlazorTreeView.RazorLib;
-using Fluxor;
+using BlazorTextEditor.RazorLib.TreeView;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 

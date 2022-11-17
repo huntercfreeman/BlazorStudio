@@ -1,15 +1,12 @@
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
-using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Menu;
-using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.ResizableCase;
 using BlazorTextEditor.RazorLib;
-using BlazorTreeView.RazorLib;
-using BlazorTreeView.RazorLib.Store.TreeViewCase;
+using BlazorTextEditor.RazorLib.Store.TreeViewCase;
+using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 

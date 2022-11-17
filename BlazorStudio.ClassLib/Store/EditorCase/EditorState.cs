@@ -138,7 +138,7 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
 
             await textEditor.ApplySyntaxHighlightingAsync();
             
-            textEditorService.RegisterTextEditor(
+            textEditorService.RegisterCustomTextEditor(
                 textEditor);
         }
 

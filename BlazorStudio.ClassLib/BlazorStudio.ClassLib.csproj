@@ -17,11 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Blazor.Text.Editor.Analysis\CSharp\Blazor.Text.Editor.Analysis.CSharp.ClassLib\Blazor.Text.Editor.Analysis.CSharp.ClassLib.csproj" />
-        <ProjectReference Include="..\..\Blazor.Text.Editor.Analysis\Html\Blazor.Text.Editor.Analysis.Html.ClassLib\Blazor.Text.Editor.Analysis.Html.ClassLib.csproj" />
-        <ProjectReference Include="..\..\Blazor.Text.Editor.Analysis\Razor\Blazor.Text.Editor.Analysis.Razor.ClassLib\Blazor.Text.Editor.Analysis.Razor.ClassLib.csproj" />
-        <ProjectReference Include="..\..\Blazor.Text.Editor\BlazorTextEditor.RazorLib\BlazorTextEditor.RazorLib.csproj" />
-        <ProjectReference Include="..\..\BlazorTreeView\BlazorTreeView.RazorLib\BlazorTreeView.RazorLib.csproj" />
+      <ProjectReference Include="..\..\Blazor.Text.Editor\BlazorTextEditor.RazorLib\BlazorTextEditor.RazorLib.csproj" />
     </ItemGroup>
 
 </Project>

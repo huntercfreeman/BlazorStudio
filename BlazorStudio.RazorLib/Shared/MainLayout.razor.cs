@@ -122,8 +122,8 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             if (matchedThemeRecord is not null)
             {
                 TextEditorService.SetTheme(matchedThemeRecord.ThemeColorKind == ThemeColorKind.Light
-                    ? BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.BlazorTextEditorLight
-                    : BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.BlazorTextEditorDark);
+                    ? BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.VisualStudioLightClone
+                    : BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.VisualStudioDarkClone);
                 
                 Dispatcher.Dispatch(new SetThemeStateAction(matchedThemeRecord));
             }

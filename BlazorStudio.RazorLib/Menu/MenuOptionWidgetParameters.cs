@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-
-namespace BlazorStudio.RazorLib.Menu;
+﻿namespace BlazorStudio.RazorLib.Menu;
 
 public class MenuOptionWidgetParameters
 {

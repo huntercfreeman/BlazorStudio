@@ -1,5 +1,4 @@
 ﻿using BlazorStudio.ClassLib.Menu;
-using BlazorTreeView.RazorLib;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.CommandLine;
@@ -19,6 +18,7 @@ using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.DotNetSolutionForm;
+using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;

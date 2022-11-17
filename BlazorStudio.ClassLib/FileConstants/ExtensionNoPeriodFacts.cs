@@ -1,7 +1,7 @@
-﻿using Blazor.Text.Editor.Analysis.CSharp.ClassLib;
-using Blazor.Text.Editor.Analysis.Html.ClassLib;
-using Blazor.Text.Editor.Analysis.Html.ClassLib.Decoration;
-using Blazor.Text.Editor.Analysis.Razor.ClassLib;
+﻿using BlazorTextEditor.RazorLib.Analysis.CSharp;
+using BlazorTextEditor.RazorLib.Analysis.Html;
+using BlazorTextEditor.RazorLib.Analysis.Html.Decoration;
+using BlazorTextEditor.RazorLib.Analysis.Razor;
 using BlazorTextEditor.RazorLib.Decoration;
 using BlazorTextEditor.RazorLib.Lexing;
 

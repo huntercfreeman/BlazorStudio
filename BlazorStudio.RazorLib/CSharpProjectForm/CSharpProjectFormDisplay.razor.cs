@@ -1,20 +1,15 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.CommandLine;
-using BlazorStudio.ClassLib.FileConstants;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
-using BlazorStudio.RazorLib.SolutionExplorer;
-using BlazorTreeView.RazorLib;
+using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 
 namespace BlazorStudio.RazorLib.CSharpProjectForm;

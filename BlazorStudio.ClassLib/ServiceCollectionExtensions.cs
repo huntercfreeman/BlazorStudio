@@ -6,7 +6,7 @@ using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Nuget;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Clipboard;
-using BlazorTreeView.RazorLib;
+using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,17 +24,14 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ICommonMenuOptionsFactory, CommonMenuOptionsFactory>()
             .AddSingleton<IFileTemplateProvider, FileTemplateProvider>()
             .AddSingleton<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
-            .AddTextEditorRazorLibServices(options =>
+            .AddBlazorTextEditor(options =>
             {
                 options.InitializeFluxor = false;
                 options.ClipboardProviderFactory = clipboardProviderDefaultFactory;
-                options.UseLocalStorageForSettings = true;
             })
-            .AddBlazorTreeViewServices(options => options.InitializeFluxor = false)
             .AddFluxor(options => options
                 .ScanAssemblies(
                     typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
-                    typeof(BlazorTreeView.RazorLib.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorStudio.ClassLib.ServiceCollectionExtensions).Assembly))
             .AddScoped<IFileSystemProvider, LocalFileSystemProvider>();
     }
