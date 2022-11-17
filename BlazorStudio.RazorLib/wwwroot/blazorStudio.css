@@ -482,7 +482,7 @@ input[type="checkbox"]{
 }
 
 .bstudio_text-editor-display {
-    height: var(--bstudio_text-editor-display-height);
+    height: var(--bstudio_text-editor-display-height) !important;
 }
 
 .bstudio_startup-controls-display {

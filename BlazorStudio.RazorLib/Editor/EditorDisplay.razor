@@ -41,17 +41,7 @@
                                    TabIndex="0"
                                    ClassCssString="bstudio_text-editor-display"
                                    AfterOnKeyDownAsync="HandleAfterOnKeyDownAsync"
-                                   OnSaveRequested="HandleOnSaveRequested">
-                    
-                    <OnContextMenuRenderFragment>
-                        <EditorContextMenu TextEditor="activeTextEditor"
-                                           TextEditorDisplay="_textEditorDisplay"/>
-                    </OnContextMenuRenderFragment>
-                </TextEditorDisplay>
-                
-                <TextEditorFooter TextEditor="activeTextEditor"
-                                  TextEditorDisplay="_textEditorDisplay"
-                                  Extension="@(resource?.ExtensionNoPeriod ?? "null")"/>
+                                   OnSaveRequested="HandleOnSaveRequested"/>
             }
             else
             {
