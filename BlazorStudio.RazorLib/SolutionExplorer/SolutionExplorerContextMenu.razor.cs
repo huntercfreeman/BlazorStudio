@@ -1,5 +1,4 @@
 ﻿using BlazorStudio.ClassLib.Menu;
-using BlazorTreeView.RazorLib;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.CommandLine;
@@ -19,6 +18,7 @@ using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.DotNetSolutionForm;
+using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -89,9 +89,17 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             switch (treeViewNamespacePath.Item.AbsoluteFilePath.ExtensionNoPeriod)
             {
                 case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
-                    menuRecords.AddRange(
-                        GetDotNetSolutionMenuOptions(treeViewNamespacePath)
-                            .Union(GetDebugMenuOptions(treeViewNamespacePath)));
+                    if (treeViewNamespacePath.Parent is null ||
+                        treeViewNamespacePath.Parent is TreeViewAdhoc)
+                    {
+                        menuRecords.AddRange(
+                            GetDotNetSolutionMenuOptions(treeViewNamespacePath)
+                                .Union(GetDebugMenuOptions(treeViewNamespacePath)));
+                    }
+                    else
+                    {
+                        goto default;
+                    }
                     break;
                 case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
                     menuRecords.AddRange(

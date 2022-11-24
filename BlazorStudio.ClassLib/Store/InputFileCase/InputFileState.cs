@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;

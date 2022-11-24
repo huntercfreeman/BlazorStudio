@@ -37,7 +37,7 @@
     --bstudio_input-file-display-top-nav-bar-address-hierarchy-width: calc(100% - var(--bstudio_input-file-display-top-nav-bar-buttons-width) - var(--bstudio_input-file-display-top-nav-bar-search-width));
     --bstudio_editor-tabs-bar-height: 2.6rem;
     --bstudio_editor-tabs-bar-margin-bottom: 10px;
-    --bstudio_text-editor-display-height: calc(100% - var(--bte_text-editor-footer-height) - var(--bstudio_editor-tabs-bar-height) - var(--bstudio_editor-tabs-bar-margin-bottom));
+    --bstudio_text-editor-display-height: calc(100% - var(--bstudio_editor-tabs-bar-height) - var(--bstudio_editor-tabs-bar-margin-bottom));
     --bstudio_input-file-display-bottom-controls-non-text-width: 12rem;
     --bstudio_input-file-display-bottom-controls-non-text-margin-left: 15px;
     --bstudio_input-file-display-bottom-controls-non-text-buttons-margin-left: 15px;

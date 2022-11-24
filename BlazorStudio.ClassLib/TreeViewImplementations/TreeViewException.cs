@@ -1,5 +1,5 @@
 ﻿using BlazorStudio.ClassLib.CommonComponents;
-using BlazorTreeView.RazorLib;
+using BlazorTextEditor.RazorLib.TreeView;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 

@@ -9,9 +9,9 @@ using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
-using BlazorTreeView.RazorLib;
-using BlazorTreeView.RazorLib.Commands;
-using BlazorTreeView.RazorLib.Keymap;
+using BlazorTextEditor.RazorLib.TreeView;
+using BlazorTextEditor.RazorLib.TreeView.Commands;
+using BlazorTextEditor.RazorLib.TreeView.Keymap;
 using Fluxor;
 using Microsoft.AspNetCore.Components.Web;
 

@@ -3,7 +3,7 @@ using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
-using BlazorTreeView.RazorLib;
+using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;

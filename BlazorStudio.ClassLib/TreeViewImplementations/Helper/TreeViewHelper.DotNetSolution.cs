@@ -1,6 +1,6 @@
 ﻿using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Namespaces;
-using BlazorTreeView.RazorLib;
+using BlazorTextEditor.RazorLib.TreeView;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
