@@ -34,7 +34,7 @@ public static class ExtensionNoPeriodFacts
         C_SHARP_CLASS => new TextEditorCSharpLexer(),
         RAZOR_CODEBEHIND => new TextEditorCSharpLexer(), 
         RAZOR_MARKUP => new TextEditorRazorLexer(),
-        _ => new LexerDefault()
+        _ => new TextEditorLexerDefault(),
     };
 
     public static IDecorationMapper GetDecorationMapper(string extensionNoPeriod) => extensionNoPeriod switch
@@ -45,6 +45,6 @@ public static class ExtensionNoPeriodFacts
         C_SHARP_CLASS => new TextEditorCSharpDecorationMapper(),
         RAZOR_CODEBEHIND => new TextEditorCSharpDecorationMapper(),
         RAZOR_MARKUP => new TextEditorHtmlDecorationMapper(),
-        _ => new DecorationMapperDefault()
+        _ => new TextEditorDecorationMapperDefault(),
     };
 }
