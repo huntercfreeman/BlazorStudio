@@ -17,7 +17,7 @@ public partial class BlazorTextEditorRazorLibInitializer : ComponentBase
     
     protected override void OnInitialized()
     {
-        TextEditorService.SetTheme(ThemeFacts.VisualStudioDarkClone);
+        TextEditorService.SetTheme(ThemeFacts.Unset);
         
         foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
         {
