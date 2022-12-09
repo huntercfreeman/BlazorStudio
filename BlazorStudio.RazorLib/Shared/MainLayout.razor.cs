@@ -123,7 +123,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             {
                 TextEditorService.SetTheme(matchedThemeRecord.ThemeColorKind == ThemeColorKind.Light
                     ? BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.VisualStudioLightClone
-                    : BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.VisualStudioDarkClone);
+                    : BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.Unset);
                 
                 Dispatcher.Dispatch(new SetThemeStateAction(matchedThemeRecord));
             }

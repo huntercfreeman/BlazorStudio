@@ -1,7 +1,19 @@
 ﻿using BlazorTextEditor.RazorLib.Analysis.CSharp;
+using BlazorTextEditor.RazorLib.Analysis.CSharp.Decoration;
+using BlazorTextEditor.RazorLib.Analysis.CSharp.SyntaxActors;
+using BlazorTextEditor.RazorLib.Analysis.Css.Decoration;
+using BlazorTextEditor.RazorLib.Analysis.Css.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.Html;
 using BlazorTextEditor.RazorLib.Analysis.Html.Decoration;
+using BlazorTextEditor.RazorLib.Analysis.Html.SyntaxActors;
+using BlazorTextEditor.RazorLib.Analysis.JavaScript.Decoration;
+using BlazorTextEditor.RazorLib.Analysis.JavaScript.SyntaxActors;
+using BlazorTextEditor.RazorLib.Analysis.Json.Decoration;
+using BlazorTextEditor.RazorLib.Analysis.Json.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.Razor;
+using BlazorTextEditor.RazorLib.Analysis.Razor.SyntaxActors;
+using BlazorTextEditor.RazorLib.Analysis.TypeScript.Decoration;
+using BlazorTextEditor.RazorLib.Analysis.TypeScript.SyntaxActors;
 using BlazorTextEditor.RazorLib.Decoration;
 using BlazorTextEditor.RazorLib.Lexing;
 
@@ -34,6 +46,11 @@ public static class ExtensionNoPeriodFacts
         C_SHARP_CLASS => new TextEditorCSharpLexer(),
         RAZOR_CODEBEHIND => new TextEditorCSharpLexer(), 
         RAZOR_MARKUP => new TextEditorRazorLexer(),
+        CSHTML_CLASS => new TextEditorRazorLexer(),
+        CSS => new TextEditorCssLexer(),
+        JAVA_SCRIPT => new TextEditorJavaScriptLexer(),
+        JSON => new TextEditorJsonLexer(),
+        TYPE_SCRIPT => new TextEditorTypeScriptLexer(),
         _ => new TextEditorLexerDefault(),
     };
 
@@ -45,6 +62,11 @@ public static class ExtensionNoPeriodFacts
         C_SHARP_CLASS => new TextEditorCSharpDecorationMapper(),
         RAZOR_CODEBEHIND => new TextEditorCSharpDecorationMapper(),
         RAZOR_MARKUP => new TextEditorHtmlDecorationMapper(),
+        CSHTML_CLASS => new TextEditorHtmlDecorationMapper(),
+        CSS => new TextEditorCssDecorationMapper(),
+        JAVA_SCRIPT => new TextEditorJavaScriptDecorationMapper(),
+        JSON => new TextEditorJsonDecorationMapper(),
+        TYPE_SCRIPT => new TextEditorTypeScriptDecorationMapper(),
         _ => new TextEditorDecorationMapperDefault(),
     };
 }
