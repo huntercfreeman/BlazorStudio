@@ -1,12 +1,11 @@
-﻿using BlazorStudio.ClassLib.CommonComponents;
+﻿using BlazorALaCarte.Shared.Clipboard;
+using BlazorALaCarte.Shared.Menu;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileTemplates;
-using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Nuget;
 using BlazorTextEditor.RazorLib;
-using BlazorTextEditor.RazorLib.Clipboard;
-using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,7 +20,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddSingleton<ICommonComponentRenderers>(commonComponentRenderers)
-            .AddSingleton<ICommonMenuOptionsFactory, CommonMenuOptionsFactory>()
+            .AddSingleton<BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory, BlazorStudio.ClassLib.Menu.CommonMenuOptionsFactory>()
             .AddSingleton<IFileTemplateProvider, FileTemplateProvider>()
             .AddSingleton<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
             .AddBlazorTextEditor(options =>
@@ -31,6 +30,10 @@ public static class ServiceCollectionExtensions
             })
             .AddFluxor(options => options
                 .ScanAssemblies(
+                    typeof(ServiceCollectionExtensions).Assembly,
+                    typeof(BlazorALaCarte.Shared.Installation.ServiceCollectionExtensions).Assembly,
+                    typeof(BlazorALaCarte.DialogNotification.Installation.ServiceCollectionExtensions).Assembly, 
+                    typeof(BlazorALaCarte.TreeView.Installation.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorStudio.ClassLib.ServiceCollectionExtensions).Assembly))
             .AddScoped<IFileSystemProvider, LocalFileSystemProvider>();

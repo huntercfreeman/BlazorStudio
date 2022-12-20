@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
+using BlazorALaCarte.DialogNotification.NotificationCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Store.NotificationCase;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.FileSystemCase;
@@ -150,7 +150,7 @@ public class FileSystemState
             });
         
         dispatcher.Dispatch(
-            new NotificationState.RegisterNotificationAction(
+            new NotificationsState.RegisterNotificationRecordAction(
                 notificationInformative));
 
         goto doConsumeLabel;

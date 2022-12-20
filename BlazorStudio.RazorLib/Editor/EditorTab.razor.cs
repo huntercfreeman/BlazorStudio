@@ -1,4 +1,4 @@
-﻿using BlazorStudio.ClassLib.Keyboard;
+﻿using BlazorALaCarte.Shared.Keyboard;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorTextEditor.RazorLib;

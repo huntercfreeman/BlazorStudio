@@ -1,8 +1,8 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+﻿using BlazorALaCarte.Shared.Facts;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorTextEditor.RazorLib;
-using BlazorTextEditor.RazorLib.Store.ThemeCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -17,7 +17,7 @@ public partial class BlazorTextEditorRazorLibInitializer : ComponentBase
     
     protected override void OnInitialized()
     {
-        TextEditorService.SetTheme(ThemeFacts.Unset);
+        TextEditorService.SetTheme(ThemeFacts.VisualStudioDarkThemeClone);
         
         foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
         {

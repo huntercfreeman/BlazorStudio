@@ -1,8 +1,9 @@
 ﻿using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification;
+using BlazorALaCarte.DialogNotification.Store;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -98,7 +99,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
                 // Close Dialog
                 Dispatcher.Dispatch(
-                    new DisposeDialogRecordAction(DialogRecord));
+                    new DialogsState.DisposeDialogRecordAction(DialogRecord.DialogKey));
                 
                 // Strip ending directory separator if exists
                 {

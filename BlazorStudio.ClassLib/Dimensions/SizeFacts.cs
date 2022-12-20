@@ -1,4 +1,6 @@
-﻿namespace BlazorStudio.ClassLib.Dimensions;
+﻿using BlazorALaCarte.Shared.Dimensions;
+
+namespace BlazorStudio.ClassLib.Dimensions;
 
 public static class SizeFacts
 {

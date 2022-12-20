@@ -1,5 +1,6 @@
-﻿using BlazorStudio.ClassLib.Dimensions;
-using BlazorStudio.RazorLib.ResizableCase;
+﻿using BlazorALaCarte.Shared.Dimensions;
+using BlazorALaCarte.Shared.Resize;
+using BlazorStudio.ClassLib.Dimensions;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Shared;

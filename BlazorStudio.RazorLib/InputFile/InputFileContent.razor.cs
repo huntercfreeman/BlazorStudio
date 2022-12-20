@@ -1,16 +1,16 @@
 ﻿using System.Collections.Immutable;
+using BlazorALaCarte.Shared.Dimensions;
+using BlazorALaCarte.Shared.Menu;
+using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.TreeViewCase;
 using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.CustomEvents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorTextEditor.RazorLib.Store.TreeViewCase;
-using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -25,7 +25,7 @@ public partial class InputFileContent : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    private BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]

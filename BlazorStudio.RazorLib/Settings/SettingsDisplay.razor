@@ -1,4 +1,3 @@
-@using BlazorStudio.ClassLib.Store.ThemeCase
 @using BlazorStudio.RazorLib.FontSettings
 @using BlazorTextEditor.RazorLib.HelperComponents
 
@@ -24,17 +23,18 @@
     <hr class="bstudio_hr"/>
 
     <div>
-        Active Theme:&nbsp;@ThemeStateWrap.Value.ActiveThemeRecord.ClassCssString
+        Active Theme:&nbsp;@ThemeStateWrap.Value.ActiveThemeRecord.CssClassString
     </div>
     
     <hr class="bstudio_hr"/>
     
-    @foreach (var theme in ThemeFacts.DefaultThemeRecords)
-    {
-        <ButtonDisplay OnClickFunc="async () => DispatchSetThemeStateAction(theme)">
-            @theme.ClassCssString
-        </ButtonDisplay>
-    }
+    @* TODO: BlazorALaCarte *@
+    @* @foreach (var theme in ThemeFacts.DefaultThemeRecords) *@
+    @* { *@
+    @*     <ButtonDisplay OnClickFunc="async () => DispatchSetThemeStateAction(theme)"> *@
+    @*         @theme.ClassCssString *@
+    @*     </ButtonDisplay> *@
+    @* } *@
 
     <hr class="bstudio_hr"/>
 

@@ -1,17 +1,17 @@
-﻿using BlazorStudio.ClassLib.CommonComponents;
+﻿using BlazorALaCarte.DialogNotification.NotificationCase;
+using BlazorALaCarte.Shared.Keyboard;
+using BlazorALaCarte.Shared.Menu;
+using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.Commands;
+using BlazorALaCarte.TreeView.Keymap;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Keyboard;
-using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.EditorCase;
-using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
-using BlazorTextEditor.RazorLib.TreeView;
-using BlazorTextEditor.RazorLib.TreeView.Commands;
-using BlazorTextEditor.RazorLib.TreeView.Keymap;
 using Fluxor;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -20,7 +20,7 @@ namespace BlazorStudio.RazorLib.SolutionExplorer;
 public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
 {
     private readonly IState<TerminalSessionsState> _terminalSessionsStateWrap;
-    private ICommonMenuOptionsFactory _commonMenuOptionsFactory;
+    private BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory _commonMenuOptionsFactory;
     private ICommonComponentRenderers _commonComponentRenderers;
     private IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
@@ -29,7 +29,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
 
     public SolutionExplorerTreeViewKeymap(
         IState<TerminalSessionsState> terminalSessionsStateWrap,
-        ICommonMenuOptionsFactory commonMenuOptionsFactory,
+        BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory commonMenuOptionsFactory,
         ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher,
         ITreeViewService treeViewService,
@@ -149,7 +149,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             });
         
         _dispatcher.Dispatch(
-            new NotificationState.RegisterNotificationAction(
+            new NotificationsState.RegisterNotificationRecordAction(
                 notificationInformative));
 
         return Task.CompletedTask;
@@ -174,7 +174,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             });
         
         _dispatcher.Dispatch(
-            new NotificationState.RegisterNotificationAction(
+            new NotificationsState.RegisterNotificationRecordAction(
                 notificationInformative));
 
         return Task.CompletedTask;

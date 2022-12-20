@@ -1,17 +1,19 @@
 using System.Collections.Immutable;
+using BlazorALaCarte.Shared.Dimensions;
+using BlazorALaCarte.Shared.DropdownCase;
+using BlazorALaCarte.Shared.IconCase;
+using BlazorALaCarte.Shared.Menu;
+using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.TreeViewCase;
 using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.CustomEvents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Keyboard;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Namespaces;
-using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
-using BlazorStudio.ClassLib.Store.IconCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -20,8 +22,6 @@ using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 using BlazorStudio.RazorLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
-using BlazorTextEditor.RazorLib.Store.TreeViewCase;
-using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -49,7 +49,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    private BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions SolutionExplorerElementDimensions { get; set; } = null!;
@@ -99,10 +99,10 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         var solutionExplorerNode = new TreeViewNamespacePath(
             solutionNamespacePath,
             CommonComponentRenderers,
-            SolutionExplorerStateWrap)
+            SolutionExplorerStateWrap,
+            true,
+            true)
         {
-            IsExpandable = true,
-            IsExpanded = true,
             TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
         };
     
@@ -139,7 +139,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         _mostRecentTreeViewContextMenuEvent = treeViewContextMenuEvent;
         
         Dispatcher.Dispatch(
-            new AddActiveDropdownKeyAction(
+            new DropdownsState.AddActiveDropdownKeyAction(
                 SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
         
         await InvokeAsync(StateHasChanged);

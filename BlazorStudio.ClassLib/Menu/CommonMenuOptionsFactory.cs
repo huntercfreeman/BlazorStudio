@@ -1,4 +1,7 @@
 ﻿using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification.NotificationCase;
+using BlazorALaCarte.Shared.Clipboard;
+using BlazorALaCarte.Shared.Menu;
 using BlazorStudio.ClassLib.Clipboard;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
@@ -8,11 +11,9 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorTextEditor.RazorLib.Clipboard;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Menu;
@@ -573,7 +574,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 });
         
             dispatcher.Dispatch(
-                new NotificationState.RegisterNotificationAction(
+                new NotificationsState.RegisterNotificationRecordAction(
                     notificationError));
             
             onAfterCompletion.Invoke();
@@ -676,7 +677,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 });
 
                             dispatcher.Dispatch(
-                                new NotificationState.RegisterNotificationAction(
+                                new NotificationsState.RegisterNotificationRecordAction(
                                     notificationInformative));
 
                             await onAfterCompletion.Invoke();

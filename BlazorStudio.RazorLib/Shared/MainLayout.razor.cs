@@ -1,13 +1,16 @@
+using BlazorALaCarte.DialogNotification;
+using BlazorALaCarte.DialogNotification.Store;
+using BlazorALaCarte.Shared.Dimensions;
+using BlazorALaCarte.Shared.DragCase;
+using BlazorALaCarte.Shared.Facts;
+using BlazorALaCarte.Shared.IconCase;
+using BlazorALaCarte.Shared.Resize;
+using BlazorALaCarte.Shared.Store;
+using BlazorALaCarte.Shared.Theme;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.Store.DialogCase;
-using BlazorStudio.ClassLib.Store.DragCase;
 using BlazorStudio.ClassLib.Store.FontCase;
-using BlazorStudio.ClassLib.Store.IconCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
-using BlazorStudio.ClassLib.Store.ThemeCase;
-using BlazorStudio.RazorLib.DialogCase;
-using BlazorStudio.RazorLib.ResizableCase;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -116,17 +119,18 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
                 "blazorStudio.localStorageGetItem",
                 "bstudio_themeClassCssString");
 
-            var matchedThemeRecord = ThemeFacts.DefaultThemeRecords.FirstOrDefault(x => 
-                x.ClassCssString == themeClassCssString);
-
-            if (matchedThemeRecord is not null)
-            {
-                TextEditorService.SetTheme(matchedThemeRecord.ThemeColorKind == ThemeColorKind.Light
-                    ? BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.VisualStudioLightClone
-                    : BlazorTextEditor.RazorLib.Store.ThemeCase.ThemeFacts.Unset);
-                
-                Dispatcher.Dispatch(new SetThemeStateAction(matchedThemeRecord));
-            }
+            // TODO: BlazorALaCarte
+            // var matchedThemeRecord = ThemeFacts.DefaultThemeRecords.FirstOrDefault(x => 
+            //     x.ClassCssString == themeClassCssString);
+            //
+            // if (matchedThemeRecord is not null)
+            // {
+            //     TextEditorService.SetTheme(matchedThemeRecord.ThemeColorKind == ThemeColorKind.Light
+            //         ? ThemeFacts.VisualStudioLightThemeClone
+            //         : ThemeFacts.VisualStudioDarkThemeClone);
+            //     
+            //     Dispatcher.Dispatch(new SetThemeStateAction(matchedThemeRecord));
+            // }
 
             if (int.TryParse(fontSizeString, out var fontSize))
                 Dispatcher.Dispatch(new SetFontSizeInPixelsAction(fontSize));
@@ -165,7 +169,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
 
     private void OpenDialogOnClick()
     {
-        Dispatcher.Dispatch(new RegisterDialogRecordAction(new DialogRecord(
+        Dispatcher.Dispatch(new DialogsState.RegisterDialogRecordAction(new DialogRecord(
             DialogKey.NewDialogKey(), 
             "Example",
             typeof(ExampleDialog),

@@ -1,12 +1,11 @@
 using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification.NotificationCase;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Nuget;
-using BlazorStudio.ClassLib.Store.DialogCase;
-using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.NuGetPackageManagerCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -121,7 +120,7 @@ public partial class NugetPackageDisplay : FluxorComponent
                     });
         
                 Dispatcher.Dispatch(
-                    new NotificationState.RegisterNotificationAction(
+                    new NotificationsState.RegisterNotificationRecordAction(
                         notificationInformative));
             });
         

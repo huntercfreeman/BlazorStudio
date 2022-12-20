@@ -1,10 +1,10 @@
+using BlazorALaCarte.DialogNotification;
 using BlazorStudio.ClassLib;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.RazorLib.Clipboard;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.File;
 using BlazorStudio.RazorLib.InputFile;
-using BlazorStudio.RazorLib.Notifications;
 using BlazorStudio.RazorLib.NuGet;
 using BlazorStudio.RazorLib.TreeViewImplementations;
 using Microsoft.Extensions.DependencyInjection;
