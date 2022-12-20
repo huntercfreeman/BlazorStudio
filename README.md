@@ -8,24 +8,10 @@ In addition to the text based documentation, you may be interested in visiting m
 
 ## Cloning and locally running the repo
 
+- Previous versions of `BlazorStudio` were difficult to clone. I am currently finishing up making the changes so that `BlazorStudio` is 'plug and play' or 'clone and run'. The final change I need to make is publishing the next version of the Blazor.Text.Editor NuGet Package which will be done on `2022-12-23`.
+- Until `2022-12-23` BlazorStudio will be referencing a Blazor.Text.Editor NuGet Package version that has not been published yet, I only have it locally on my computer.
 - Clone `BlazorStudio` [(GitHub link)](https://github.com/huntercfreeman/BlazorStudio)
 ![cloneBlazorStudio.gif](/Images/RootREADME/cloneBlazorStudio.gif)
-- `BlazorStudio` references the source code of two nuget packages directly.
-  - Clone `Blazor.Text.Editor` [(GitHub link)](https://github.com/huntercfreeman/Blazor.Text.Editor)
-  ![cloneBlazorTextEditor.gif](/Images/RootREADME/cloneBlazorTextEditor.gif)
-  - Clone `Blazor.Text.Editor.Analysis` [(GitHub link)](https://github.com/huntercfreeman/Blazor.Text.Editor.Analysis)
-  ![cloneBlazorTextEditorAnalysis.gif](/Images/RootREADME/cloneBlazorTextEditorAnalysis.gif)
-- `Blazor.Text.Editor.Analysis` needs to reference where you cloned
-  - `Blazor.Text.Editor`
-  ![blazorTextEditorAnalysisNeedsRef.gif](/Images/RootREADME/blazorTextEditorAnalysisNeedsRef.gif)
-- `BlazorStudio` needs to reference where you cloned 
-  - `Blazor.Text.Editor.Analysis`
-  - `Blazor.Text.Editor`
-- Modify the C# Project references as specified in the previous bullet points.
-- Clone `BlazorTreeView`
-  - The TreeView component is now a separate library and can be cloned from here: [(GitHub link)](https://github.com/huntercfreeman/BlazorTreeView)
-- `BlazorStudio` should now build and run
-- I am considering making use of git submodules but I am still thinking through how to make `BlazorStudio` easy to clone.
 
 ---
 
