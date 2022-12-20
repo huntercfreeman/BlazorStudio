@@ -1,16 +1,19 @@
 ﻿using BlazorStudio.ClassLib.Menu;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification;
+using BlazorALaCarte.DialogNotification.NotificationCase;
+using BlazorALaCarte.DialogNotification.Store;
+using BlazorALaCarte.Shared.Dropdown;
+using BlazorALaCarte.Shared.Menu;
+using BlazorALaCarte.TreeView;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Namespaces;
-using BlazorStudio.ClassLib.Store.DialogCase;
-using BlazorStudio.ClassLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -18,7 +21,6 @@ using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.DotNetSolutionForm;
-using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -38,7 +40,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    private BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
@@ -308,7 +310,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             });
         
         Dispatcher.Dispatch(
-            new RegisterDialogRecordAction(
+            new DialogsState.RegisterDialogRecordAction(
                 dialogRecord));
     }
     
@@ -429,9 +431,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                 },
             });
-        
+
         Dispatcher.Dispatch(
-            new NotificationState.RegisterNotificationAction(
+            new NotificationsState.RegisterNotificationRecordAction(
                 notificationInformative));
 
         return Task.CompletedTask;
@@ -456,7 +458,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             });
         
         Dispatcher.Dispatch(
-            new NotificationState.RegisterNotificationAction(
+            new NotificationsState.RegisterNotificationRecordAction(
                 notificationInformative));
 
         return Task.CompletedTask;

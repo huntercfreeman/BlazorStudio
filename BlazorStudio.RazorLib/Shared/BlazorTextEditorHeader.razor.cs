@@ -1,17 +1,17 @@
 using System.Collections.Immutable;
-using BlazorStudio.ClassLib.Menu;
-using BlazorStudio.ClassLib.Store.DialogCase;
-using BlazorStudio.ClassLib.Store.DropdownCase;
+using BlazorALaCarte.DialogNotification;
+using BlazorALaCarte.DialogNotification.Store;
+using BlazorALaCarte.Shared.Dropdown;
+using BlazorALaCarte.Shared.DropdownCase;
+using BlazorALaCarte.Shared.Menu;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.RazorLib.Button;
 using BlazorStudio.RazorLib.DotNetSolutionForm;
 using BlazorStudio.RazorLib.InputFile;
-using BlazorStudio.RazorLib.Notifications;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -107,7 +107,7 @@ public partial class BlazorTextEditorHeader : ComponentBase
 
     private void AddActiveFileDropdown()
     {
-        Dispatcher.Dispatch(new AddActiveDropdownKeyAction(_dropdownKeyFileDropdown));
+        Dispatcher.Dispatch(new DropdownsState.AddActiveDropdownKeyAction(_dropdownKeyFileDropdown));
     }
     
     /// <summary>
@@ -128,7 +128,7 @@ public partial class BlazorTextEditorHeader : ComponentBase
             null);
         
         Dispatcher.Dispatch(
-            new RegisterDialogRecordAction(
+            new DialogsState.RegisterDialogRecordAction(
                 dialogRecord));
     }
 }

@@ -1,12 +1,13 @@
 using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification;
+using BlazorALaCarte.DialogNotification.Store;
+using BlazorALaCarte.TreeView;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.Namespaces;
-using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
-using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -144,7 +145,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 {
                     // Close Dialog
                     Dispatcher.Dispatch(
-                        new DisposeDialogRecordAction(DialogRecord));
+                        new DialogsState.DisposeDialogRecordAction(DialogRecord.DialogKey));
 
                     // Add the C# project to the workspace
                     //

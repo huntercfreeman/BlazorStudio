@@ -1,6 +1,6 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+﻿using BlazorALaCarte.TreeView;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Namespaces;
-using BlazorTextEditor.RazorLib.TreeView;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
@@ -32,10 +32,10 @@ public partial class TreeViewHelper
                 return (TreeView)new TreeViewNamespacePath(
                     namespacePath,
                     directoryTreeView.CommonComponentRenderers,
-                    directoryTreeView.SolutionExplorerStateWrap)
+                    directoryTreeView.SolutionExplorerStateWrap,
+                    true,
+                    false)
                 {
-                    IsExpandable = true,
-                    IsExpanded = false,
                     TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                 };
             });
@@ -55,10 +55,10 @@ public partial class TreeViewHelper
                 return (TreeView)new TreeViewNamespacePath(
                     namespacePath,
                     directoryTreeView.CommonComponentRenderers,
-                    directoryTreeView.SolutionExplorerStateWrap)
+                    directoryTreeView.SolutionExplorerStateWrap,
+                    false,
+                    false)
                 {
-                    IsExpandable = false,
-                    IsExpanded = false,
                     TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                 };
             }).ToList();
@@ -97,10 +97,10 @@ public partial class TreeViewHelper
 
                 return (TreeView)new TreeViewAbsoluteFilePath(
                     absoluteFilePath,
-                    directoryTreeView.CommonComponentRenderers)
+                    directoryTreeView.CommonComponentRenderers,
+                    true,
+                    false)
                 {
-                    IsExpandable = true,
-                    IsExpanded = false,
                     TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                 };
             });
@@ -113,10 +113,10 @@ public partial class TreeViewHelper
 
                 return (TreeView)new TreeViewAbsoluteFilePath(
                     absoluteFilePath,
-                    directoryTreeView.CommonComponentRenderers)
+                    directoryTreeView.CommonComponentRenderers,
+                    false,
+                    false)
                 {
-                    IsExpandable = false,
-                    IsExpanded = false,
                     TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                 };
             });

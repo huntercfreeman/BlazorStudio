@@ -1,4 +1,4 @@
-using BlazorStudio.ClassLib.Dimensions;
+using BlazorALaCarte.Shared.Dimensions;
 using BlazorStudio.ClassLib.Store.FooterCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;

@@ -1,6 +1,6 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+﻿using BlazorALaCarte.TreeView;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Namespaces;
-using BlazorTextEditor.RazorLib.TreeView;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
@@ -28,10 +28,10 @@ public partial class TreeViewHelper
                 return (TreeView)new TreeViewNamespacePath(
                     namespacePath,
                     dotNetSolutionTreeView.CommonComponentRenderers,
-                    dotNetSolutionTreeView.SolutionExplorerStateWrap)
+                    dotNetSolutionTreeView.SolutionExplorerStateWrap,
+                    true,
+                    false)
                 {
-                    IsExpandable = true,
-                    IsExpanded = false,
                     TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                 };
             })

@@ -1,9 +1,9 @@
-﻿using BlazorStudio.ClassLib.CommonComponents;
+﻿using BlazorALaCarte.TreeView;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
-using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
@@ -13,8 +13,13 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
     public TreeViewNamespacePath(
         NamespacePath namespacePath,
         ICommonComponentRenderers commonComponentRenderers,
-        IState<SolutionExplorerState> solutionExplorerStateWrap)
-            : base(namespacePath)
+        IState<SolutionExplorerState> solutionExplorerStateWrap,
+        bool isExpandable,
+        bool isExpanded)
+            : base(
+                namespacePath,
+                isExpandable,
+                isExpanded)
     {
         CommonComponentRenderers = commonComponentRenderers;
         SolutionExplorerStateWrap = solutionExplorerStateWrap;
@@ -122,10 +127,10 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
             {
                 new TreeViewException(
                     exception,
-                    CommonComponentRenderers)
+                    CommonComponentRenderers,
+                    false,
+                    false)
                 {
-                    IsExpandable = false,
-                    IsExpanded = false,
                     Parent = this,
                     IndexAmongSiblings = 0,
                 }

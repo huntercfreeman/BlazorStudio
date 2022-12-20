@@ -1,7 +1,8 @@
 ﻿using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification;
+using BlazorALaCarte.DialogNotification.Store;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using Fluxor;
 
@@ -178,7 +179,9 @@ public record InputFileState(
                 
                 parentDirectoryTreeViewModel = new TreeViewAbsoluteFilePath(
                     (IAbsoluteFilePath)parentDirectoryAbsoluteFilePath, 
-                    openParentDirectoryAction.CommonComponentRenderers);
+                    openParentDirectoryAction.CommonComponentRenderers,
+                    false,
+                    true);
 
                 parentDirectoryTreeViewModel.LoadChildrenAsync().Wait();  
             }
@@ -241,7 +244,9 @@ public record InputFileState(
         {
             var selectionClone = new TreeViewAbsoluteFilePath(
                 selectedTreeViewModel.Item,
-                commonComponentRenderers);
+                commonComponentRenderers,
+                false,
+                true);
 
             selectionClone.LoadChildrenAsync().Wait();
 
@@ -303,7 +308,7 @@ public record InputFileState(
                 null); 
             
             dispatcher.Dispatch(
-                new RegisterDialogRecordAction(
+                new DialogsState.RegisterDialogRecordAction(
                     inputFileDialog));
 
             return Task.CompletedTask;

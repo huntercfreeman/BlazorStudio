@@ -1,15 +1,14 @@
 @using BlazorStudio.ClassLib.Context
 @using BlazorStudio.RazorLib.ContextCase
-@using BlazorStudio.RazorLib.DialogCase
-@using BlazorStudio.RazorLib.DragCase
-@using BlazorStudio.RazorLib.ResizableCase
-@using BlazorStudio.RazorLib.Notifications
 @using BlazorTextEditor.RazorLib
+@using BlazorALaCarte.DialogNotification.Installation
+@using BlazorALaCarte.Shared.Drag
+@using BlazorALaCarte.Shared.Resize
 
 @inherits LayoutComponentBase
 
 <ContextBoundary ContextRecord="ContextFacts.GlobalContext"
-                 ClassCssString="@($"bstudio_main-layout {UnselectableClassCss} {ThemeStateWrap.Value.ActiveThemeRecord.ClassCssString}")"
+                 ClassCssString="@($"bstudio_main-layout {UnselectableClassCss} {ThemeStateWrap.Value.ActiveThemeRecord.CssClassString}")"
                  StyleCssString="@($"font-size: {FontStateWrap.Value.FontSizeInPixels}px;")">
 
     <BlazorTextEditorRazorLibInitializer/>

@@ -1,8 +1,8 @@
-﻿using BlazorStudio.ClassLib.FileConstants;
+﻿using BlazorALaCarte.TreeView;
+using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
-using BlazorTextEditor.RazorLib.TreeView;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
@@ -40,10 +40,10 @@ public partial class TreeViewHelper
                         namespaceString,
                         absoluteFilePath),
                     cSharpProjectTreeView.CommonComponentRenderers,
-                    cSharpProjectTreeView.SolutionExplorerStateWrap)
+                    cSharpProjectTreeView.SolutionExplorerStateWrap,
+                    true,
+                    false)
                 {
-                    IsExpandable = true,
-                    IsExpanded = false,
                     TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                 };
             });
@@ -93,10 +93,10 @@ public partial class TreeViewHelper
                         namespaceString,
                         absoluteFilePath),
                     cSharpProjectTreeView.CommonComponentRenderers,
-                    cSharpProjectTreeView.SolutionExplorerStateWrap)
+                    cSharpProjectTreeView.SolutionExplorerStateWrap,
+                    false,
+                    false)
                 {
-                    IsExpandable = false,
-                    IsExpanded = false,
                     TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                 };
             });

@@ -1,7 +1,7 @@
-﻿using BlazorStudio.ClassLib.CommonComponents;
+﻿using BlazorALaCarte.TreeView;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
-using BlazorTextEditor.RazorLib.TreeView;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
@@ -9,8 +9,13 @@ public class TreeViewAbsoluteFilePath : TreeViewBase<IAbsoluteFilePath>
 {
     public TreeViewAbsoluteFilePath(
         IAbsoluteFilePath absoluteFilePath,
-        ICommonComponentRenderers commonComponentRenderers)
-            : base(absoluteFilePath)
+        ICommonComponentRenderers commonComponentRenderers,
+        bool isExpandable,
+        bool isExpanded)
+            : base(
+                absoluteFilePath,
+                isExpandable,
+                isExpanded)
     {
         CommonComponentRenderers = commonComponentRenderers;
     }
@@ -96,10 +101,10 @@ public class TreeViewAbsoluteFilePath : TreeViewBase<IAbsoluteFilePath>
             {
                 new TreeViewException(
                     exception,
-                    CommonComponentRenderers)
+                    CommonComponentRenderers,
+                    false,
+                    false)
                 {
-                    IsExpandable = false,
-                    IsExpanded = false,
                     Parent = this,
                     IndexAmongSiblings = 0,
                 }

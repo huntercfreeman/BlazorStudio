@@ -1,5 +1,5 @@
-﻿using BlazorStudio.ClassLib.CommonComponents;
-using BlazorTextEditor.RazorLib.TreeView;
+﻿using BlazorALaCarte.TreeView;
+using BlazorStudio.ClassLib.CommonComponents;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
@@ -9,8 +9,13 @@ public class TreeViewException : TreeViewBase<Exception>
 
     public TreeViewException(
         Exception? exception,
-        ICommonComponentRenderers commonComponentRenderers)
-            : base(exception)
+        ICommonComponentRenderers commonComponentRenderers,
+        bool isExpandable,
+        bool isExpanded)
+            : base(
+                exception,
+                isExpandable,
+                isExpanded)
     {
         _commonComponentRenderers = commonComponentRenderers;
     }

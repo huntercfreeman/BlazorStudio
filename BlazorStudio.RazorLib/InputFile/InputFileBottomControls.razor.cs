@@ -1,10 +1,9 @@
 ﻿using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification;
+using BlazorALaCarte.DialogNotification.Store;
 using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Menu;
-using BlazorStudio.ClassLib.Store.DialogCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.TextEditor;
@@ -93,7 +92,7 @@ public partial class InputFileBottomControls : FluxorComponent
         if (valid)
         {
             if (DialogRecord is not null)
-                Dispatcher.Dispatch(new DisposeDialogRecordAction(DialogRecord));
+                Dispatcher.Dispatch(new DialogsState.DisposeDialogRecordAction(DialogRecord.DialogKey));
             
             await InputFileStateWrap.Value.OnAfterSubmitFunc
                 .Invoke(inputFileState.SelectedTreeViewModel?.Item);

@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
-using BlazorStudio.ClassLib.Dimensions;
-using BlazorStudio.ClassLib.Keyboard;
+using BlazorALaCarte.Shared.Dimensions;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FileSystemCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;

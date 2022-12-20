@@ -1,12 +1,12 @@
+using BlazorALaCarte.Shared.Dimensions;
+using BlazorALaCarte.Shared.Resize;
+using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.TreeViewCase;
 using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorStudio.RazorLib.ResizableCase;
 using BlazorTextEditor.RazorLib;
-using BlazorTextEditor.RazorLib.Store.TreeViewCase;
-using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -113,11 +113,9 @@ public partial class InputFileDisplay
     {
         var pseudoRootNode = new TreeViewAbsoluteFilePath(
             absoluteFilePath,
-            CommonComponentRenderers)
-        {
-            IsExpandable = true,
-            IsExpanded = false
-        };
+            CommonComponentRenderers,
+            true,
+            false);
 
         pseudoRootNode.LoadChildrenAsync().Wait();
         

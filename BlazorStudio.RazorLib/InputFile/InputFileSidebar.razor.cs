@@ -1,4 +1,7 @@
 ﻿using System.Collections.Immutable;
+using BlazorALaCarte.Shared.Dimensions;
+using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.TreeViewCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
@@ -7,9 +10,7 @@ using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
-using BlazorTextEditor.RazorLib.Store.TreeViewCase;
 using BlazorTextEditor.RazorLib.TextEditor;
-using BlazorTextEditor.RazorLib.TreeView;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -44,11 +45,9 @@ public partial class InputFileSidebar : FluxorComponent
         
         var directoryHomeNode = new TreeViewAbsoluteFilePath(
             directoryHomeAbsoluteFilePath,
-            CommonComponentRenderers)
-        {
-            IsExpandable = true,
-            IsExpanded = false
-        };
+            CommonComponentRenderers,
+            true,
+            false);
         
         var directoryRootAbsoluteFilePath = new AbsoluteFilePath(
             "/",
@@ -56,11 +55,9 @@ public partial class InputFileSidebar : FluxorComponent
 
         var directoryRootNode = new TreeViewAbsoluteFilePath(
             directoryRootAbsoluteFilePath,
-            CommonComponentRenderers)
-        {
-            IsExpandable = true,
-            IsExpanded = false
-        };
+            CommonComponentRenderers,
+            true,
+            false);
         
         var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
             directoryHomeNode,

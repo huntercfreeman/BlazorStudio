@@ -1,4 +1,4 @@
-﻿using BlazorTextEditor.RazorLib.Clipboard;
+﻿using BlazorALaCarte.Shared.Clipboard;
 
 namespace BlazorStudio.RazorLib.Clipboard;
 
