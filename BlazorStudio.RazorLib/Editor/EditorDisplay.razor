@@ -16,38 +16,6 @@
     </div>
 
     <div class="bstudio_section-body">
-        @{
-            var editorState = EditorStateWrap.Value;
-            var textEditorResourceMapState = TextEditorResourceMapStateWrap.Value;
-
-            var textEditorList = TextEditorService.TextEditorStates.TextEditorList;
-            
-            var activeTextEditor = textEditorList
-                .FirstOrDefault(x =>
-                    x.Key == editorState.ActiveTextEditorKey);
-
-            <EditorTabsDisplay @ref="_editorTabsDisplay" 
-                               TextEditorList="textEditorList" />
-            
-            if (activeTextEditor is not null)
-            {
-                _ = textEditorResourceMapState.ResourceMap
-                    .TryGetValue(
-                        activeTextEditor.Key, 
-                        out var resource);
-
-                <TextEditorDisplay @ref="_textEditorDisplay"
-                                   TextEditorKey="activeTextEditor.Key"
-                                   TabIndex="0"
-                                   ClassCssString="bstudio_text-editor-display"
-                                   OnSaveRequested="HandleOnSaveRequested"/>
-            }
-            else
-            {
-                <ButtonDisplay OnClickFunc="async () => await EditorState.ShowInputFileAsync(Dispatcher, TextEditorService, textEditorResourceMapState)">
-                    Open File
-                </ButtonDisplay>
-            }
-        }
+        <TextEditorGroupDisplay TextEditorGroupKey="EditorState.EDITOR_TEXT_EDITOR_GROUP_KEY"/>
     </div>
 </ContextBoundary>

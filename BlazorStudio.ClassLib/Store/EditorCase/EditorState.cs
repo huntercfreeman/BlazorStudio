@@ -1,9 +1,12 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.FileSystemCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorTextEditor.RazorLib;
+using BlazorTextEditor.RazorLib.Store.TextEditorCase.Group;
+using BlazorTextEditor.RazorLib.Store.TextEditorCase.ViewModels;
 using BlazorTextEditor.RazorLib.TextEditor;
 using Fluxor;
 
@@ -12,6 +15,8 @@ namespace BlazorStudio.ClassLib.Store.EditorCase;
 [FeatureState]
 public record EditorState(TextEditorKey? ActiveTextEditorKey)
 {
+    public static readonly TextEditorGroupKey EDITOR_TEXT_EDITOR_GROUP_KEY = TextEditorGroupKey.NewTextEditorGroupKey();
+    
     public EditorState() : this(TextEditorKey.Empty)
     {
     }
@@ -74,6 +79,8 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
         ITextEditorService textEditorService,
         TextEditorResourceMapState textEditorResourceMapState)
     {
+        textEditorService.RegisterGroup(EDITOR_TEXT_EDITOR_GROUP_KEY);
+        
         if (absoluteFilePath is null)
         {
             dispatcher.Dispatch(
@@ -124,6 +131,8 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
                 .ReadAllTextAsync(inputFileAbsoluteFilePathString);
 
             var textEditor = new TextEditorBase(
+                inputFileAbsoluteFilePathString,
+                absoluteFilePath.ExtensionNoPeriod,
                 content,
                 ExtensionNoPeriodFacts.GetLexer(absoluteFilePath.ExtensionNoPeriod),
                 ExtensionNoPeriodFacts.GetDecorationMapper(absoluteFilePath.ExtensionNoPeriod),
@@ -135,6 +144,37 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
                 new TextEditorResourceMapState.SetTextEditorResourceAction(
                     textEditorKey,
                     absoluteFilePath));
+
+            var textEditorViewModelKey = TextEditorViewModelKey.NewTextEditorViewModelKey();
+            
+            textEditorService.RegisterViewModel(
+                textEditorViewModelKey,
+                textEditorKey);
+            
+            void HandleOnSaveRequested(TextEditorBase textEditor)
+            {
+                _ = textEditorResourceMapState.ResourceMap
+                    .TryGetValue(
+                        textEditor.Key, 
+                        out var resource);
+
+                var saveFileAction = new FileSystemState.SaveFileAction(
+                    resource,
+                    content);
+        
+                dispatcher.Dispatch(saveFileAction);
+        
+                textEditor.ClearEditBlocks();
+            }
+            
+            textEditorService.SetViewModelWith(
+                textEditorViewModelKey,
+                textEditorViewModel => textEditorViewModel with
+                {
+                    OnSaveRequested = HandleOnSaveRequested
+                });
+            
+            textEditorService.AddViewModelToGroup(EDITOR_TEXT_EDITOR_GROUP_KEY, textEditorViewModelKey);
 
             await textEditor.ApplySyntaxHighlightingAsync();
             
