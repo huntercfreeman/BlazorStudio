@@ -125,7 +125,10 @@ public partial class BlazorTextEditorHeader : ComponentBase
             DialogKey.NewDialogKey(), 
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
-            null);
+            null)
+        {
+            IsResizable = true
+        };
         
         Dispatcher.Dispatch(
             new DialogsState.RegisterDialogRecordAction(

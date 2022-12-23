@@ -305,7 +305,10 @@ public record InputFileState(
                 DialogFacts.InputFileDialogKey,
                 "Input File",
                 _commonComponentRenderers.InputFileRendererType,
-                null); 
+                null)
+            {
+                IsResizable = true
+            }; 
             
             dispatcher.Dispatch(
                 new DialogsState.RegisterDialogRecordAction(

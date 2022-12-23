@@ -306,7 +306,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     nameof(CSharpProjectFormDisplay.SolutionNamespacePath),
                     solutionNamespacePath
                 }
-            });
+            })
+        {
+            IsResizable = true
+        };
         
         Dispatcher.Dispatch(
             new DialogsState.RegisterDialogRecordAction(

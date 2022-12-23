@@ -169,14 +169,19 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
 
     private void OpenDialogOnClick()
     {
-        Dispatcher.Dispatch(new DialogsState.RegisterDialogRecordAction(new DialogRecord(
-            DialogKey.NewDialogKey(), 
+        var dialogRecord = new DialogRecord(
+            DialogKey.NewDialogKey(),
             "Example",
             typeof(ExampleDialog),
             new Dictionary<string, object?>
             {
                 { nameof(ExampleDialog.Message), _message }
-            })));
+            })
+        {
+            IsResizable = true
+        };
+        
+        Dispatcher.Dispatch(new DialogsState.RegisterDialogRecordAction(dialogRecord));
     }
     
     private async Task ReRenderAsync()
