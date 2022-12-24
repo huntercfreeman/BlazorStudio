@@ -1,0 +1,32 @@
+:root {
+    --balc_resize-column-background-color: #d7d7d7;
+    --balc_resize-row-background-color: #d7d7d7;
+    --balc_icon-solution-font-color: #a074c4;
+    --balc_icon-project-font-color: #88d184;
+    --balc_icon-razor-font-color: #c586c0;
+    --balc_icon-folder-font-color: #d7ab69;
+    --balc_icon-json-font-color: #cbc638;
+    --balc_icon-c-sharp-class-font-color: #519aba;
+    --balc_icon-cshtml-font-color: #c586c0;
+    --balc_icon-css-font-color: #e36a6e;
+    --balc_icon-js-font-color: #519aba;
+    --balc_icon-ts-font-color: #37b38b;
+    --balc_icon-start-without-debugging-font-color: #37b38b;
+}
+
+.balc_visual-studio-light-theme-clone {
+
+    --balc_resize-column-background-color: black;
+    --balc_resize-row-background-color: black;
+    --balc_icon-solution-font-color: #8f38d6;
+    --balc_icon-project-font-color: #23d519;
+    --balc_icon-razor-font-color: #c509db;
+    --balc_icon-folder-font-color: #a46d00;
+    --balc_icon-json-font-color: #beb106;
+    --balc_icon-c-sharp-class-font-color: #2B91AF;
+    --balc_icon-cshtml-font-color: #c509db;
+    --balc_icon-css-font-color: #de4b50;
+    --balc_icon-js-font-color: #519aba;
+    --balc_icon-ts-font-color: #37b38b;
+    --balc_icon-start-without-debugging-font-color: #37b38b;
+}
