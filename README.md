@@ -8,10 +8,12 @@ In addition to the text based documentation, you may be interested in visiting m
 
 ## Cloning and locally running the repo
 
-- Previous versions of `BlazorStudio` were difficult to clone. I am currently finishing up making the changes so that `BlazorStudio` is 'plug and play' or 'clone and run'. The final change I need to make is publishing the next version of the Blazor.Text.Editor NuGet Package which will be done on `2022-12-23`.
-- Until `2022-12-23` BlazorStudio will be referencing a Blazor.Text.Editor NuGet Package version that has not been published yet, I only have it locally on my computer.
-- Clone `BlazorStudio` [(GitHub link)](https://github.com/huntercfreeman/BlazorStudio)
-![cloneBlazorStudio.gif](/Images/RootREADME/cloneBlazorStudio.gif)
+BlazorStudio is "plug and play" or "clone and run" that is to say. So, just 
+- Clone the source code 
+- Run the C# Project named `BlazorStudio.Photino`
+
+as shown in the following gif.
+![cloneBlazorStudio.gif](/Images/RootREADME/cloneGif.gif)
 
 ---
 
