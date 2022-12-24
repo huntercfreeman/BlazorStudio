@@ -1,10 +1,13 @@
 @using BlazorStudio.RazorLib.FontSettings
 @using BlazorTextEditor.RazorLib.HelperComponents
+@using BlazorALaCarte.Shared.Settings
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_settings-display">
     Settings Display
+    
+    <ThemeSelectTheme/>
     
     <ButtonDisplay OnClickFunc="PersistSettingsLocallyOnClick">
         Persist Settings Locally OnClick
@@ -12,33 +15,18 @@
     
     <FontSettingsDisplay />
 
-    <hr class="bstudio_hr"/>
+    <hr class="balc_hr"/>
 
     <IconSettingsDisplay/>
     
-    <hr class="bstudio_hr"/>
+    <hr class="balc_hr"/>
     
-    <TextEditorInputFontSize InputElementCssClassString="bstudio_input"/>
-    
-    <hr class="bstudio_hr"/>
-
     <div>
         Active Theme:&nbsp;@ThemeStateWrap.Value.ActiveThemeRecord.CssClassString
     </div>
     
-    <hr class="bstudio_hr"/>
-    
-    @* TODO: BlazorALaCarte *@
-    @* @foreach (var theme in ThemeFacts.DefaultThemeRecords) *@
-    @* { *@
-    @*     <ButtonDisplay OnClickFunc="async () => DispatchSetThemeStateAction(theme)"> *@
-    @*         @theme.ClassCssString *@
-    @*     </ButtonDisplay> *@
-    @* } *@
+    <hr class="balc_hr"/>
 
-    <hr class="bstudio_hr"/>
-
-    <TextEditorInputShowNewLines/>
-    <TextEditorInputShowWhitespace/>
+    <TextEditorSettings/>
     
 </div>

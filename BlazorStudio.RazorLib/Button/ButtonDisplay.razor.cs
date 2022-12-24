@@ -22,7 +22,7 @@ public partial class ButtonDisplay : ComponentBase
     public ElementReference? ButtonElementReference => _buttonElementReference;
     
     private string IsDisabledCssClass => IsDisabled
-        ? "bstudio_disabled"
+        ? "balc_disabled"
         : string.Empty;
 
     public async Task FireOnClickAction()
