@@ -27,7 +27,7 @@ public partial class EditorTab : FluxorComponent
     public int TabIndex { get; set; }
 
     private string IsActiveCssClass => EditorStateWrap.Value.ActiveTextEditorKey == TextEditor.Key
-        ? "bstudio_active"
+        ? "balc_active"
         : string.Empty;
 
     private void DispatchSetActiveTextEditorKeyAction()

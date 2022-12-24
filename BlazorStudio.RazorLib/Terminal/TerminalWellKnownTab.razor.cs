@@ -24,7 +24,7 @@ public partial class TerminalWellKnownTab : FluxorComponent
     
     private string ActiveTerminalCommandKeyCssClassString => 
         IsActiveTerminalCommandKey
-            ? "bstudio_active"
+            ? "balc_active"
             : string.Empty;
 
     private bool IsActiveTerminalCommandKey => 

@@ -3,7 +3,7 @@
 
     <div>
         @* "Delete" or "Delete Recursively" *@
-        <em class="bstudio_em">
+        <em class="balc_em">
             Delete
             @if (AbsoluteFilePath.IsDirectory)
             {
@@ -14,7 +14,7 @@
         :
         &nbsp;
 
-        <em class="bstudio_em" title="@AbsoluteFilePath.GetAbsoluteFilePathString()">
+        <em class="balc_em" title="@AbsoluteFilePath.GetAbsoluteFilePathString()">
             @AbsoluteFilePath.FilenameWithExtension
         </em>
 
@@ -22,7 +22,7 @@
         {
             <div>
                 AND
-                <em class="bstudio_em">
+                <em class="balc_em">
                     AT LEAST
                     @_countOfImmediateChildren
                 </em>
