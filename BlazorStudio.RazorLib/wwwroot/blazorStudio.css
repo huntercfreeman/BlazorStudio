@@ -16,7 +16,7 @@ input[type="checkbox"]{
     background-color: var(--bstudio_header-background-color);
 }
 
-.bstudio_header .bstudio_button {
+.bstudio_header .balc_button {
     height: 100%;
     margin-left: 15px;
 }
@@ -100,7 +100,7 @@ input[type="checkbox"]{
     width: var(--bstudio_input-file-display-top-nav-bar-search-width);
 }
 
-.bstudio_input-file-search-button.bstudio_button {
+.bstudio_input-file-search-button.balc_button {
     background-color: var(--bstudio_input-background-color);
     color: var(--bstudio_input-font-color);
     letter-spacing: normal;
@@ -173,7 +173,7 @@ input[type="checkbox"]{
     width: var(--bstudio_input-file-display-bottom-controls-non-text-width);
 }
 
-.bstudio_input-file-display-bottom-controls-non-text .bstudio_button:not(:first-of-type) {
+.bstudio_input-file-display-bottom-controls-non-text .balc_button:not(:first-of-type) {
     margin-left: var(--bstudio_input-file-display-bottom-controls-non-text-buttons-margin-left);
 }
 
@@ -223,22 +223,25 @@ input[type="checkbox"]{
 
 .bstudio_terminal-tabs-container {
     display: flex;
+    height: var(--balc_tabs-bar-height);
 }
 
-.bstudio_terminal-tab > .bstudio_button {
+.bstudio_terminal-tab > .balc_button {
     border-radius: 20px;
     width: 4em;
     margin-left: 10px;
     border: 1.5px solid var(--balc_primary-border-color);
 }
 
-.bstudio_terminal-tab > .bstudio_button:focus {
+.bstudio_terminal-tab > .balc_button:focus {
     border: 1.5px solid var(--balc_primary-emphasis-foreground-color);
 }
 
 .bstudio_terminal-output-display {
     width: 100%; 
+    height: calc(100% - var(--balc_tabs-bar-height));
     overflow-wrap: anywhere;
+    overflow: auto;
 }
 
 .bstudio_delete-file-form-display {
@@ -259,12 +262,12 @@ em.balc_em {
 }
 
 .bstudio_footer-body {
-    height: calc(100% - var(--bstudio_editor-tabs-bar-height));
+    height: calc(100% - var(--balc_tabs-bar-height));
 }
 
 .bstudio_footer-view-tabs {
     display: flex;
-    height: var(--bstudio_editor-tabs-bar-height);
+    height: var(--balc_tabs-bar-height);
     margin-bottom: 10px;
     overflow-x: auto;
     font-size: 0.8em;
