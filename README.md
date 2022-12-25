@@ -87,7 +87,7 @@ Themes
 ![textEditor](/Images/themes.gif)
 
 Why Am I Making this IDE?
-- I'm making this IDE because I enjoy doing so. I imagine Sisyphus as happy.
+- I'm making this IDE because I enjoy doing so. I imagine Sisyphus happy.
 ![textEditor](/Images/clipart3420085.png)
 
 ## Resources I found helpful
