@@ -3,7 +3,6 @@ using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.FileSystemCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Store.TextEditorCase.Group;
 using BlazorTextEditor.RazorLib.Store.TextEditorCase.ViewModels;
@@ -12,35 +11,13 @@ using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.EditorCase;
 
-[FeatureState]
-public record EditorState(TextEditorKey? ActiveTextEditorKey)
+public class EditorState
 {
     public static readonly TextEditorGroupKey EDITOR_TEXT_EDITOR_GROUP_KEY = TextEditorGroupKey.NewTextEditorGroupKey();
     
-    public EditorState() : this(TextEditorKey.Empty)
-    {
-    }
-
-    public record SetActiveTextEditorKeyAction(TextEditorKey? TextEditorKey);
-
-    public class EditorStateReducer
-    {
-        [ReducerMethod]
-        public static EditorState ReduceSetActiveTextEditorKeyAction(
-            EditorState inEditorState,
-            SetActiveTextEditorKeyAction setActiveTextEditorKeyAction)
-        {
-            return inEditorState with
-            {
-                ActiveTextEditorKey = setActiveTextEditorKeyAction.TextEditorKey
-            };
-        }
-    }
-
     public static Task ShowInputFileAsync(
         IDispatcher dispatcher,
-        ITextEditorService textEditorService,
-        TextEditorResourceMapState textEditorResourceMapState)
+        ITextEditorService textEditorService)
     {
         dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
@@ -50,8 +27,7 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
                     await OpenInEditorAsync(
                         afp, 
                         dispatcher, 
-                        textEditorService, 
-                        textEditorResourceMapState);
+                        textEditorService);
                 },
                 afp =>
                 {
@@ -76,61 +52,31 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
     public static async Task OpenInEditorAsync(
         IAbsoluteFilePath? absoluteFilePath,
         IDispatcher dispatcher,
-        ITextEditorService textEditorService,
-        TextEditorResourceMapState textEditorResourceMapState)
+        ITextEditorService textEditorService)
     {
-        textEditorService.RegisterGroup(EDITOR_TEXT_EDITOR_GROUP_KEY);
-        
-        if (absoluteFilePath is null)
+        if (absoluteFilePath is null ||
+            absoluteFilePath.IsDirectory)
         {
-            dispatcher.Dispatch(
-                new SetActiveTextEditorKeyAction(null));
-
             return;
         }
-
-        if (absoluteFilePath.IsDirectory)
-            return;
         
+        textEditorService.RegisterGroup(EDITOR_TEXT_EDITOR_GROUP_KEY);
+
         var inputFileAbsoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
 
-        KeyValuePair<TextEditorKey, IAbsoluteFilePath>? existingResourceMapPair = null;
+        var textEditorBase = textEditorService
+            .GetTextEditorBaseOrDefaultByResourceUri(inputFileAbsoluteFilePathString);
 
-        foreach (var kvp in textEditorResourceMapState.ResourceMap)
-        {
-            if (kvp.Value.GetAbsoluteFilePathString() == inputFileAbsoluteFilePathString)
-            {
-                existingResourceMapPair = kvp;
-            }
-        }
-
-        var textEditorKey = existingResourceMapPair?.Key ?? 
-                            TextEditorKey.NewTextEditorKey();
-
-        // If a text editor for the file used to exist but
-        // the resource was not disposed of
-        if (existingResourceMapPair is not null && 
-            textEditorService.TextEditorStates.TextEditorList
-                .All(x => 
-                    x.Key != existingResourceMapPair.Value.Key))
-        {
-            dispatcher.Dispatch(
-                new TextEditorResourceMapState.RemoveTextEditorResourceAction(
-                    existingResourceMapPair.Value.Key!));
-
-            // Set existingResourceMapPair to null
-            // so the next if statement outside of this block
-            // will create a new text editor
-            existingResourceMapPair = null;
-        }
+        var textEditorKey = textEditorBase?.Key ?? TextEditorKey.Empty;
         
-        // If a new text editor is needed
-        if (existingResourceMapPair is null)
+        if (textEditorBase is null)
         {
+            textEditorKey = TextEditorKey.NewTextEditorKey();
+            
             var content = await File
                 .ReadAllTextAsync(inputFileAbsoluteFilePathString);
 
-            var textEditor = new TextEditorBase(
+            textEditorBase = new TextEditorBase(
                 inputFileAbsoluteFilePathString,
                 absoluteFilePath.ExtensionNoPeriod,
                 content,
@@ -140,46 +86,54 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
                 textEditorKey
             );
             
-            dispatcher.Dispatch(
-                new TextEditorResourceMapState.SetTextEditorResourceAction(
-                    textEditorKey,
-                    absoluteFilePath));
+            textEditorService.RegisterCustomTextEditor(textEditorBase);
 
-            var textEditorViewModelKey = TextEditorViewModelKey.NewTextEditorViewModelKey();
+            textEditorKey = textEditorBase.Key;
+            
+            await textEditorBase.ApplySyntaxHighlightingAsync();
+        }
+
+        var viewModel = textEditorService
+            .GetViewModelsForTextEditorBase(textEditorBase.Key)
+            .FirstOrDefault();
+
+        var viewModelKey = viewModel?.TextEditorViewModelKey ?? TextEditorViewModelKey.Empty;
+
+        if (viewModel is null)
+        {
+            viewModelKey = TextEditorViewModelKey.NewTextEditorViewModelKey();
             
             textEditorService.RegisterViewModel(
-                textEditorViewModelKey,
+                viewModelKey,
                 textEditorKey);
             
-            void HandleOnSaveRequested(TextEditorBase innerTextEditor)
-            {
-                var innerContent = innerTextEditor.GetAllText();
-                
-                var saveFileAction = new FileSystemState.SaveFileAction(
-                    absoluteFilePath,
-                    innerContent);
-        
-                dispatcher.Dispatch(saveFileAction);
-        
-                innerTextEditor.ClearEditBlocks();
-            }
-            
             textEditorService.SetViewModelWith(
-                textEditorViewModelKey,
+                viewModelKey,
                 textEditorViewModel => textEditorViewModel with
                 {
                     OnSaveRequested = HandleOnSaveRequested
                 });
-            
-            textEditorService.AddViewModelToGroup(EDITOR_TEXT_EDITOR_GROUP_KEY, textEditorViewModelKey);
-
-            await textEditor.ApplySyntaxHighlightingAsync();
-            
-            textEditorService.RegisterCustomTextEditor(
-                textEditor);
         }
+            
+        textEditorService.AddViewModelToGroup(
+            EDITOR_TEXT_EDITOR_GROUP_KEY,
+            viewModelKey);
+        
+        textEditorService.SetActiveViewModelOfGroup(
+            EDITOR_TEXT_EDITOR_GROUP_KEY,
+            viewModelKey);
 
-        dispatcher.Dispatch(
-            new SetActiveTextEditorKeyAction(textEditorKey));
+        void HandleOnSaveRequested(TextEditorBase innerTextEditor)
+        {
+            var innerContent = innerTextEditor.GetAllText();
+                
+            var saveFileAction = new FileSystemState.SaveFileAction(
+                absoluteFilePath,
+                innerContent);
+        
+            dispatcher.Dispatch(saveFileAction);
+        
+            innerTextEditor.ClearEditBlocks();
+        }
     }
 }
