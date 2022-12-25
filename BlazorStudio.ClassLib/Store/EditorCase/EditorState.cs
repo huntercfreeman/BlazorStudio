@@ -151,20 +151,15 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
                 textEditorViewModelKey,
                 textEditorKey);
             
-            void HandleOnSaveRequested(TextEditorBase textEditor)
+            void HandleOnSaveRequested(TextEditorBase innerTextEditor)
             {
-                _ = textEditorResourceMapState.ResourceMap
-                    .TryGetValue(
-                        textEditor.Key, 
-                        out var resource);
-
                 var saveFileAction = new FileSystemState.SaveFileAction(
-                    resource,
+                    absoluteFilePath,
                     content);
         
                 dispatcher.Dispatch(saveFileAction);
         
-                textEditor.ClearEditBlocks();
+                innerTextEditor.ClearEditBlocks();
             }
             
             textEditorService.SetViewModelWith(
