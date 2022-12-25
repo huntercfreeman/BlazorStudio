@@ -153,9 +153,11 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
             
             void HandleOnSaveRequested(TextEditorBase innerTextEditor)
             {
+                var innerContent = innerTextEditor.GetAllText();
+                
                 var saveFileAction = new FileSystemState.SaveFileAction(
                     absoluteFilePath,
-                    content);
+                    innerContent);
         
                 dispatcher.Dispatch(saveFileAction);
         

@@ -29,7 +29,7 @@ public class FileSystemState
         _commonComponentRenderers = commonComponentRenderers;
     }
     
-    public record SaveFileAction(IAbsoluteFilePath? AbsoluteFilePath, string Content);
+    public record SaveFileAction(IAbsoluteFilePath AbsoluteFilePath, string Content);
     
     [EffectMethod]
     public async Task HandleSaveFileAction(
