@@ -26,7 +26,7 @@ Generic TreeView Blazor Component
 - Keyboard support for movement: { ArrowLeft, ArrowDown, ArrowUp, ArrowRight, Home, End }
 - Maintains the expanded state of child nodes when collapsing their parent and then expanding it again.
 - Maintains the state of the TreeView decoupled from the lifecycle of the Blazor Component itself.
-- To minimize size of the post, the gif of the "Solution Explorer" serves to be the gif of the "Generic TreeView" as the solution explorer is a usage of it.
+- To minimize size of this README, the gif of the "Solution Explorer" serves to be the gif of the "Generic TreeView" as the solution explorer is a usage of it.
 
 Solution Explorer
 - Tracks the file system default namespace.
@@ -52,7 +52,7 @@ NuGet Package Manager
 - List out the results of the HTTP request.
 - Allow for picking of the version number foreach of the results individually.
 - Button to add the NuGet Package at the selected version to the chosen Project.
-- The gif for this will be the gif at the start of this file where I showcase its usage as to decrease how large this post is.
+- The gif for this will be the gif at the start of this file where I showcase its usage as to decrease how large this README is.
 
 Text Editor
 - Has its own public repository and is a NuGet Package itself. Find source code at: https://github.com/huntercfreeman/Blazor.Text.Editor 
