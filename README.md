@@ -34,7 +34,8 @@ Solution Explorer
 - Create codebehinds for Blazor components with the 'partial', 'ComponentBase', and 'using' automatically.
 - Display unique icons for unique folders. Example: "wwwroot" is a globe, and "Properties" is a settings gear.
 - Context Menu contains: Copy, Cut, Rename, Paste, Delete, "New Empty File", "New Templated File", and "New Directory".
-- For C# Projects Context Menu also gets: "Add Project Reference", "Set As Startup Project", and "Remove (no files are deleted)"
+- For .NET Solutions the Context Menu also gets: "Add New C# Project", and "Add Existing C# Project"
+- For C# Projects the Context Menu also gets: "Add Project Reference", "Set As Startup Project", and "Remove (no files are deleted)"
 - Nesting of 'codebehind' like files. So nesting "MyComponent.razor.cs" behind "MyComponent.razor".
 ![solutionExplorer](/Images/solutionExplorer.gif)
 
