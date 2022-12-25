@@ -1,5 +1,6 @@
 # Blazor Studio (Not yet released)
 A free and open source IDE written using .NET - a Photino host, Blazor UI, and C#
+![cloneBlazorStudio.gif](/Images/RootREADME/cloneGifUsage.gif)
 
 # Documentation
 In addition to the text based documentation, you may be interested in visiting my [youtube channel](https://www.youtube.com/channel/UCzhWhqYVP40as1MFUesQM9w). I make videos about this repository there.
@@ -13,7 +14,7 @@ BlazorStudio is "plug and play" or "clone and run" that is to say. So, just
 - Run the C# Project named `BlazorStudio.Photino`
 
 as shown in the following gif.
-![cloneBlazorStudio.gif](/Images/RootREADME/cloneGif.gif)
+![cloneBlazorStudio.gif](/Images/RootREADME/cloneGifIntro.gif)
 
 ---
 
