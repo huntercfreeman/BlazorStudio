@@ -571,7 +571,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                         nameof(IErrorNotificationRendererType.Message), 
                         $"ERROR: {e.Message}"
                     },
-                });
+                },
+                TimeSpan.FromSeconds(15));
         
             dispatcher.Dispatch(
                 new NotificationsState.RegisterNotificationRecordAction(
@@ -674,7 +675,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                         $"Modified {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}" +
                                         $" to have a reference to {referencedProject.FilenameWithExtension}"
                                     },
-                                });
+                                },
+                                TimeSpan.FromSeconds(7));
 
                             dispatcher.Dispatch(
                                 new NotificationsState.RegisterNotificationRecordAction(

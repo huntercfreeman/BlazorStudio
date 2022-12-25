@@ -249,6 +249,11 @@ input[type="checkbox"]{
     padding: 10px;
 }
 
+.bstudio_boolean-prompt-or-cancel {
+    background-color: var(--balc_tertiary-background-color);
+    padding: 10px;
+}
+
 hr.balc_hr {
     color: var(--balc_hr-primary-background-color);
     height: var(--balc_hr-height);

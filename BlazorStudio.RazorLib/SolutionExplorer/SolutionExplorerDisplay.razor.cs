@@ -156,7 +156,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         await EditorState.OpenInEditorAsync(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             Dispatcher,
-            TextEditorService);
+            TextEditorService,
+            CommonComponentRenderers);
     }
     
     protected override void Dispose(bool disposing)

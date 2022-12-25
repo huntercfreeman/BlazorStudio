@@ -432,7 +432,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     nameof(IInformativeNotificationRendererType.Message), 
                     $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                 },
-            });
+            },
+            TimeSpan.FromSeconds(3));
 
         Dispatcher.Dispatch(
             new NotificationsState.RegisterNotificationRecordAction(
@@ -457,7 +458,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     nameof(IInformativeNotificationRendererType.Message), 
                     $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                 },
-            });
+            },
+            TimeSpan.FromSeconds(3));
         
         Dispatcher.Dispatch(
             new NotificationsState.RegisterNotificationRecordAction(

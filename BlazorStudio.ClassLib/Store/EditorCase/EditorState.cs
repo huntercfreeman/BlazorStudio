@@ -1,4 +1,6 @@
 ﻿using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification.NotificationCase;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.FileSystemCase;
@@ -17,7 +19,8 @@ public class EditorState
     
     public static Task ShowInputFileAsync(
         IDispatcher dispatcher,
-        ITextEditorService textEditorService)
+        ITextEditorService textEditorService,
+        ICommonComponentRenderers commonComponentRenderers)
     {
         dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
@@ -27,7 +30,8 @@ public class EditorState
                     await OpenInEditorAsync(
                         afp, 
                         dispatcher, 
-                        textEditorService);
+                        textEditorService,
+                        commonComponentRenderers);
                 },
                 afp =>
                 {
@@ -52,7 +56,8 @@ public class EditorState
     public static async Task OpenInEditorAsync(
         IAbsoluteFilePath? absoluteFilePath,
         IDispatcher dispatcher,
-        ITextEditorService textEditorService)
+        ITextEditorService textEditorService,
+        ICommonComponentRenderers commonComponentRenderers)
     {
         if (absoluteFilePath is null ||
             absoluteFilePath.IsDirectory)
@@ -72,12 +77,15 @@ public class EditorState
         if (textEditorBase is null)
         {
             textEditorKey = TextEditorKey.NewTextEditorKey();
+
+            var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
             
             var content = await File
                 .ReadAllTextAsync(inputFileAbsoluteFilePathString);
 
             textEditorBase = new TextEditorBase(
                 inputFileAbsoluteFilePathString,
+                fileLastWriteTime,
                 absoluteFilePath.ExtensionNoPeriod,
                 content,
                 ExtensionNoPeriodFacts.GetLexer(absoluteFilePath.ExtensionNoPeriod),
@@ -91,6 +99,66 @@ public class EditorState
             textEditorKey = textEditorBase.Key;
             
             await textEditorBase.ApplySyntaxHighlightingAsync();
+        }
+        else
+        {
+            var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
+
+            if (fileLastWriteTime > textEditorBase.ResourceLastWriteTime)
+            {
+                var notificationInformativeKey = NotificationKey.NewNotificationKey();
+                
+                var notificationInformative  = new NotificationRecord(
+                    notificationInformativeKey, 
+                    "File contents were modified on disk",
+                    commonComponentRenderers.BooleanPromptOrCancelRendererType,
+                    new Dictionary<string, object?>
+                    {
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.Message), 
+                            "File contents were modified on disk"
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride), 
+                            "Reload"
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction), 
+                            new Action(() =>
+                            {
+                                _ = Task.Run(async () =>
+                                {
+                                    dispatcher.Dispatch(
+                                        new NotificationsState.DisposeNotificationRecordAction(
+                                            notificationInformativeKey));
+                                    
+                                    var content = await File
+                                        .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+                                
+                                    textEditorService.ReloadTextEditorBase(
+                                        textEditorKey,
+                                        content);
+                                
+                                    await textEditorBase.ApplySyntaxHighlightingAsync();
+                                });
+                            })
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction), 
+                            new Action(() =>
+                            {
+                                dispatcher.Dispatch(
+                                    new NotificationsState.DisposeNotificationRecordAction(
+                                        notificationInformativeKey));
+                            })
+                        },
+                    },
+                    TimeSpan.FromSeconds(20));
+        
+                dispatcher.Dispatch(
+                    new NotificationsState.RegisterNotificationRecordAction(
+                        notificationInformative));
+            }
         }
 
         var viewModel = textEditorService
@@ -130,10 +198,19 @@ public class EditorState
                 
             var saveFileAction = new FileSystemState.SaveFileAction(
                 absoluteFilePath,
-                innerContent);
+                innerContent,
+                () =>
+                {
+                    var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
+            
+                    textEditorService.SetResourceData(
+                        textEditorBase.Key,
+                        textEditorBase.ResourceUri,
+                        fileLastWriteTime);
+                });
         
             dispatcher.Dispatch(saveFileAction);
-        
+            
             innerTextEditor.ClearEditBlocks();
         }
     }

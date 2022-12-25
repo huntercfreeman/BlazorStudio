@@ -142,7 +142,8 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
                     nameof(IInformativeNotificationRendererType.Message), 
                     $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                 },
-            });
+            },
+            TimeSpan.FromSeconds(3));
         
         _dispatcher.Dispatch(
             new NotificationsState.RegisterNotificationRecordAction(
@@ -167,7 +168,8 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
                     nameof(IInformativeNotificationRendererType.Message), 
                     $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                 },
-            });
+            },
+            TimeSpan.FromSeconds(3));
         
         _dispatcher.Dispatch(
             new NotificationsState.RegisterNotificationRecordAction(
@@ -286,7 +288,8 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
         await EditorState.OpenInEditorAsync(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             _dispatcher,
-            _textEditorService);
+            _textEditorService,
+            _commonComponentRenderers);
     }
     
     private async Task ReloadTreeViewModel(

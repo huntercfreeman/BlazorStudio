@@ -4,6 +4,7 @@ using BlazorALaCarte.DialogNotification.Store;
 using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.DropdownCase;
 using BlazorALaCarte.Shared.Menu;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -23,6 +24,8 @@ public partial class BlazorTextEditorHeader : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     
     private DropdownKey _dropdownKeyFileDropdown = DropdownKey.NewDropdownKey();
     private MenuRecord _fileMenu = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -65,7 +68,8 @@ public partial class BlazorTextEditorHeader : ComponentBase
             async () => 
                 await EditorState.ShowInputFileAsync(
                     Dispatcher, 
-                    TextEditorService));
+                    TextEditorService,
+                    CommonComponentRenderers));
         
         var openDirectory = new MenuOptionRecord(
             "Directory",
@@ -79,7 +83,8 @@ public partial class BlazorTextEditorHeader : ComponentBase
             async () => 
                 await EditorState.ShowInputFileAsync(
                     Dispatcher, 
-                    TextEditorService));
+                    TextEditorService,
+                    CommonComponentRenderers));
         
         var openDotNetSolution = new MenuOptionRecord(
             ".NET Solution",
