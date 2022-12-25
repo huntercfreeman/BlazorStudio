@@ -13,7 +13,7 @@ namespace BlazorStudio.ClassLib.Store.EditorCase;
 
 public class EditorState
 {
-    public static readonly TextEditorGroupKey EDITOR_TEXT_EDITOR_GROUP_KEY = TextEditorGroupKey.NewTextEditorGroupKey();
+    public static readonly TextEditorGroupKey EditorTextEditorGroupKey = TextEditorGroupKey.NewTextEditorGroupKey();
     
     public static Task ShowInputFileAsync(
         IDispatcher dispatcher,
@@ -60,7 +60,7 @@ public class EditorState
             return;
         }
         
-        textEditorService.RegisterGroup(EDITOR_TEXT_EDITOR_GROUP_KEY);
+        textEditorService.RegisterGroup(EditorTextEditorGroupKey);
 
         var inputFileAbsoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
 
@@ -111,16 +111,17 @@ public class EditorState
                 viewModelKey,
                 textEditorViewModel => textEditorViewModel with
                 {
-                    OnSaveRequested = HandleOnSaveRequested
+                    OnSaveRequested = HandleOnSaveRequested,
+                    GetTabDisplayNameFunc = _ => absoluteFilePath.FilenameWithExtension
                 });
         }
             
         textEditorService.AddViewModelToGroup(
-            EDITOR_TEXT_EDITOR_GROUP_KEY,
+            EditorTextEditorGroupKey,
             viewModelKey);
         
         textEditorService.SetActiveViewModelOfGroup(
-            EDITOR_TEXT_EDITOR_GROUP_KEY,
+            EditorTextEditorGroupKey,
             viewModelKey);
 
         void HandleOnSaveRequested(TextEditorBase innerTextEditor)
