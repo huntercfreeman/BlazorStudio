@@ -117,7 +117,8 @@ public partial class NugetPackageDisplay : FluxorComponent
                             nameof(IInformativeNotificationRendererType.Message), 
                             $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject}"
                         },
-                    });
+                    },
+                    TimeSpan.FromSeconds(6));
         
                 Dispatcher.Dispatch(
                     new NotificationsState.RegisterNotificationRecordAction(

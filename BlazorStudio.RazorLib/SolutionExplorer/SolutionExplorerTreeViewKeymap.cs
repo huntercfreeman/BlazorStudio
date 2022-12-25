@@ -9,7 +9,6 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
-using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
@@ -25,7 +24,6 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
     private IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
     private readonly ITextEditorService _textEditorService;
-    private readonly IState<TextEditorResourceMapState> _textEditorResourceMapStateWrap;
 
     public SolutionExplorerTreeViewKeymap(
         IState<TerminalSessionsState> terminalSessionsStateWrap,
@@ -33,8 +31,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
         ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher,
         ITreeViewService treeViewService,
-        ITextEditorService textEditorService,
-        IState<TextEditorResourceMapState> textEditorResourceMapStateWrap)
+        ITextEditorService textEditorService)
     {
         _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _commonMenuOptionsFactory = commonMenuOptionsFactory;
@@ -42,7 +39,6 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
         _dispatcher = dispatcher;
         _treeViewService = treeViewService;
         _textEditorService = textEditorService;
-        _textEditorResourceMapStateWrap = textEditorResourceMapStateWrap;
     }
     
     public bool TryMapKey(
@@ -146,7 +142,8 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
                     nameof(IInformativeNotificationRendererType.Message), 
                     $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                 },
-            });
+            },
+            TimeSpan.FromSeconds(3));
         
         _dispatcher.Dispatch(
             new NotificationsState.RegisterNotificationRecordAction(
@@ -171,7 +168,8 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
                     nameof(IInformativeNotificationRendererType.Message), 
                     $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                 },
-            });
+            },
+            TimeSpan.FromSeconds(3));
         
         _dispatcher.Dispatch(
             new NotificationsState.RegisterNotificationRecordAction(
@@ -291,7 +289,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             treeViewNamespacePath.Item.AbsoluteFilePath,
             _dispatcher,
             _textEditorService,
-            _textEditorResourceMapStateWrap.Value);
+            _commonComponentRenderers);
     }
     
     private async Task ReloadTreeViewModel(

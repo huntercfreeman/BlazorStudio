@@ -29,7 +29,10 @@ public class FileSystemState
         _commonComponentRenderers = commonComponentRenderers;
     }
     
-    public record SaveFileAction(IAbsoluteFilePath? AbsoluteFilePath, string Content);
+    public record SaveFileAction(
+        IAbsoluteFilePath AbsoluteFilePath,
+        string Content,
+        Action OnAfterSaveCompleted);
     
     [EffectMethod]
     public async Task HandleSaveFileAction(
@@ -147,11 +150,14 @@ public class FileSystemState
                     nameof(IInformativeNotificationRendererType.Message), 
                     notificationInformativeMessage
                 },
-            });
+            },
+            TimeSpan.FromSeconds(5));
         
         dispatcher.Dispatch(
             new NotificationsState.RegisterNotificationRecordAction(
                 notificationInformative));
+        
+        saveFileAction.OnAfterSaveCompleted?.Invoke();
 
         goto doConsumeLabel;
     }

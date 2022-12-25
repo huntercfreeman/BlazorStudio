@@ -12,7 +12,8 @@ public class CommonComponentRenderers : ICommonComponentRenderers
         Type treeViewExceptionRendererType,
         Type treeViewAbsoluteFilePathRendererType,
         Type nuGetPackageManagerRendererType,
-        Type removeCSharpProjectFromSolutionRendererType)
+        Type removeCSharpProjectFromSolutionRendererType,
+        Type booleanPromptOrCancelRendererType)
     {
         void ValidateRenderer(Type implementationType, Type interfaceType)
         {
@@ -66,6 +67,10 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             ValidateRenderer(
                 removeCSharpProjectFromSolutionRendererType, 
                 typeof(IRemoveCSharpProjectFromSolutionRendererType));
+            
+            ValidateRenderer(
+                booleanPromptOrCancelRendererType, 
+                typeof(IBooleanPromptOrCancelRendererType));
         }
 
         // Assign
@@ -80,9 +85,10 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             TreeViewAbsoluteFilePathRendererType = treeViewAbsoluteFilePathRendererType;
             NuGetPackageManagerRendererType = nuGetPackageManagerRendererType;
             RemoveCSharpProjectFromSolutionRendererType = removeCSharpProjectFromSolutionRendererType;
+            BooleanPromptOrCancelRendererType = booleanPromptOrCancelRendererType;
         }
     }
-    
+
     public Type InputFileRendererType { get; }
     public Type InformativeNotificationRendererType { get; }
     public Type ErrorNotificationRendererType { get; }
@@ -90,7 +96,8 @@ public class CommonComponentRenderers : ICommonComponentRenderers
     public Type DeleteFileFormRendererType { get; }
     public Type TreeViewNamespacePathRendererType { get; }
     public Type TreeViewExceptionRendererType { get; }
-    public Type TreeViewAbsoluteFilePathRendererType { get; set; }
+    public Type TreeViewAbsoluteFilePathRendererType { get; }
     public Type NuGetPackageManagerRendererType { get; }
     public Type RemoveCSharpProjectFromSolutionRendererType { get; }
+    public Type BooleanPromptOrCancelRendererType { get; }
 }

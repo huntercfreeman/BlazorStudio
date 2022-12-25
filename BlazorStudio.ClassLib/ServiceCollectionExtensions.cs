@@ -1,5 +1,5 @@
 ﻿using BlazorALaCarte.Shared.Clipboard;
-using BlazorALaCarte.Shared.Menu;
+using BlazorALaCarte.Shared.Facts;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -23,10 +23,14 @@ public static class ServiceCollectionExtensions
             .AddSingleton<BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory, BlazorStudio.ClassLib.Menu.CommonMenuOptionsFactory>()
             .AddSingleton<IFileTemplateProvider, FileTemplateProvider>()
             .AddSingleton<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
-            .AddBlazorTextEditor(options =>
+            .AddBlazorTextEditor(configureTextEditorServiceOptions =>
             {
-                options.InitializeFluxor = false;
-                options.ClipboardProviderFactory = clipboardProviderDefaultFactory;
+                configureTextEditorServiceOptions.InitializeFluxor = false;
+                configureTextEditorServiceOptions.ClipboardProviderFactory = clipboardProviderDefaultFactory;
+            },
+            themeOptions =>
+            {
+                themeOptions.InitialThemeKey = ThemeFacts.VisualStudioLightThemeClone.ThemeKey;
             })
             .AddFluxor(options => options
                 .ScanAssemblies(

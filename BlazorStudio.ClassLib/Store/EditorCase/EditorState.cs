@@ -1,9 +1,10 @@
 ﻿using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification.NotificationCase;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.FileSystemCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Store.TextEditorCase.Group;
 using BlazorTextEditor.RazorLib.Store.TextEditorCase.ViewModels;
@@ -12,35 +13,14 @@ using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.EditorCase;
 
-[FeatureState]
-public record EditorState(TextEditorKey? ActiveTextEditorKey)
+public class EditorState
 {
-    public static readonly TextEditorGroupKey EDITOR_TEXT_EDITOR_GROUP_KEY = TextEditorGroupKey.NewTextEditorGroupKey();
+    public static readonly TextEditorGroupKey EditorTextEditorGroupKey = TextEditorGroupKey.NewTextEditorGroupKey();
     
-    public EditorState() : this(TextEditorKey.Empty)
-    {
-    }
-
-    public record SetActiveTextEditorKeyAction(TextEditorKey? TextEditorKey);
-
-    public class EditorStateReducer
-    {
-        [ReducerMethod]
-        public static EditorState ReduceSetActiveTextEditorKeyAction(
-            EditorState inEditorState,
-            SetActiveTextEditorKeyAction setActiveTextEditorKeyAction)
-        {
-            return inEditorState with
-            {
-                ActiveTextEditorKey = setActiveTextEditorKeyAction.TextEditorKey
-            };
-        }
-    }
-
     public static Task ShowInputFileAsync(
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
-        TextEditorResourceMapState textEditorResourceMapState)
+        ICommonComponentRenderers commonComponentRenderers)
     {
         dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
@@ -50,8 +30,8 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
                     await OpenInEditorAsync(
                         afp, 
                         dispatcher, 
-                        textEditorService, 
-                        textEditorResourceMapState);
+                        textEditorService,
+                        commonComponentRenderers);
                 },
                 afp =>
                 {
@@ -77,61 +57,35 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
         IAbsoluteFilePath? absoluteFilePath,
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
-        TextEditorResourceMapState textEditorResourceMapState)
+        ICommonComponentRenderers commonComponentRenderers)
     {
-        textEditorService.RegisterGroup(EDITOR_TEXT_EDITOR_GROUP_KEY);
-        
-        if (absoluteFilePath is null)
+        if (absoluteFilePath is null ||
+            absoluteFilePath.IsDirectory)
         {
-            dispatcher.Dispatch(
-                new SetActiveTextEditorKeyAction(null));
-
             return;
         }
-
-        if (absoluteFilePath.IsDirectory)
-            return;
         
+        textEditorService.RegisterGroup(EditorTextEditorGroupKey);
+
         var inputFileAbsoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
 
-        KeyValuePair<TextEditorKey, IAbsoluteFilePath>? existingResourceMapPair = null;
+        var textEditorBase = textEditorService
+            .GetTextEditorBaseOrDefaultByResourceUri(inputFileAbsoluteFilePathString);
 
-        foreach (var kvp in textEditorResourceMapState.ResourceMap)
-        {
-            if (kvp.Value.GetAbsoluteFilePathString() == inputFileAbsoluteFilePathString)
-            {
-                existingResourceMapPair = kvp;
-            }
-        }
-
-        var textEditorKey = existingResourceMapPair?.Key ?? 
-                            TextEditorKey.NewTextEditorKey();
-
-        // If a text editor for the file used to exist but
-        // the resource was not disposed of
-        if (existingResourceMapPair is not null && 
-            textEditorService.TextEditorStates.TextEditorList
-                .All(x => 
-                    x.Key != existingResourceMapPair.Value.Key))
-        {
-            dispatcher.Dispatch(
-                new TextEditorResourceMapState.RemoveTextEditorResourceAction(
-                    existingResourceMapPair.Value.Key!));
-
-            // Set existingResourceMapPair to null
-            // so the next if statement outside of this block
-            // will create a new text editor
-            existingResourceMapPair = null;
-        }
+        var textEditorKey = textEditorBase?.Key ?? TextEditorKey.Empty;
         
-        // If a new text editor is needed
-        if (existingResourceMapPair is null)
+        if (textEditorBase is null)
         {
+            textEditorKey = TextEditorKey.NewTextEditorKey();
+
+            var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
+            
             var content = await File
                 .ReadAllTextAsync(inputFileAbsoluteFilePathString);
 
-            var textEditor = new TextEditorBase(
+            textEditorBase = new TextEditorBase(
                 inputFileAbsoluteFilePathString,
+                fileLastWriteTime,
                 absoluteFilePath.ExtensionNoPeriod,
                 content,
                 ExtensionNoPeriodFacts.GetLexer(absoluteFilePath.ExtensionNoPeriod),
@@ -140,49 +94,124 @@ public record EditorState(TextEditorKey? ActiveTextEditorKey)
                 textEditorKey
             );
             
-            dispatcher.Dispatch(
-                new TextEditorResourceMapState.SetTextEditorResourceAction(
-                    textEditorKey,
-                    absoluteFilePath));
+            textEditorService.RegisterCustomTextEditor(textEditorBase);
 
-            var textEditorViewModelKey = TextEditorViewModelKey.NewTextEditorViewModelKey();
+            textEditorKey = textEditorBase.Key;
             
-            textEditorService.RegisterViewModel(
-                textEditorViewModelKey,
-                textEditorKey);
-            
-            void HandleOnSaveRequested(TextEditorBase textEditor)
+            await textEditorBase.ApplySyntaxHighlightingAsync();
+        }
+        else
+        {
+            var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
+
+            if (fileLastWriteTime > textEditorBase.ResourceLastWriteTime)
             {
-                _ = textEditorResourceMapState.ResourceMap
-                    .TryGetValue(
-                        textEditor.Key, 
-                        out var resource);
-
-                var saveFileAction = new FileSystemState.SaveFileAction(
-                    resource,
-                    content);
+                var notificationInformativeKey = NotificationKey.NewNotificationKey();
+                
+                var notificationInformative  = new NotificationRecord(
+                    notificationInformativeKey, 
+                    "File contents were modified on disk",
+                    commonComponentRenderers.BooleanPromptOrCancelRendererType,
+                    new Dictionary<string, object?>
+                    {
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.Message), 
+                            "File contents were modified on disk"
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride), 
+                            "Reload"
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction), 
+                            new Action(() =>
+                            {
+                                _ = Task.Run(async () =>
+                                {
+                                    dispatcher.Dispatch(
+                                        new NotificationsState.DisposeNotificationRecordAction(
+                                            notificationInformativeKey));
+                                    
+                                    var content = await File
+                                        .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+                                
+                                    textEditorService.ReloadTextEditorBase(
+                                        textEditorKey,
+                                        content);
+                                
+                                    await textEditorBase.ApplySyntaxHighlightingAsync();
+                                });
+                            })
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction), 
+                            new Action(() =>
+                            {
+                                dispatcher.Dispatch(
+                                    new NotificationsState.DisposeNotificationRecordAction(
+                                        notificationInformativeKey));
+                            })
+                        },
+                    },
+                    TimeSpan.FromSeconds(20));
         
-                dispatcher.Dispatch(saveFileAction);
-        
-                textEditor.ClearEditBlocks();
+                dispatcher.Dispatch(
+                    new NotificationsState.RegisterNotificationRecordAction(
+                        notificationInformative));
             }
-            
-            textEditorService.SetViewModelWith(
-                textEditorViewModelKey,
-                textEditorViewModel => textEditorViewModel with
-                {
-                    OnSaveRequested = HandleOnSaveRequested
-                });
-            
-            textEditorService.AddViewModelToGroup(EDITOR_TEXT_EDITOR_GROUP_KEY, textEditorViewModelKey);
-
-            await textEditor.ApplySyntaxHighlightingAsync();
-            
-            textEditorService.RegisterCustomTextEditor(
-                textEditor);
         }
 
-        dispatcher.Dispatch(
-            new SetActiveTextEditorKeyAction(textEditorKey));
+        var viewModel = textEditorService
+            .GetViewModelsForTextEditorBase(textEditorBase.Key)
+            .FirstOrDefault();
+
+        var viewModelKey = viewModel?.TextEditorViewModelKey ?? TextEditorViewModelKey.Empty;
+
+        if (viewModel is null)
+        {
+            viewModelKey = TextEditorViewModelKey.NewTextEditorViewModelKey();
+            
+            textEditorService.RegisterViewModel(
+                viewModelKey,
+                textEditorKey);
+            
+            textEditorService.SetViewModelWith(
+                viewModelKey,
+                textEditorViewModel => textEditorViewModel with
+                {
+                    OnSaveRequested = HandleOnSaveRequested,
+                    GetTabDisplayNameFunc = _ => absoluteFilePath.FilenameWithExtension
+                });
+        }
+            
+        textEditorService.AddViewModelToGroup(
+            EditorTextEditorGroupKey,
+            viewModelKey);
+        
+        textEditorService.SetActiveViewModelOfGroup(
+            EditorTextEditorGroupKey,
+            viewModelKey);
+
+        void HandleOnSaveRequested(TextEditorBase innerTextEditor)
+        {
+            var innerContent = innerTextEditor.GetAllText();
+                
+            var saveFileAction = new FileSystemState.SaveFileAction(
+                absoluteFilePath,
+                innerContent,
+                () =>
+                {
+                    var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
+            
+                    textEditorService.SetResourceData(
+                        textEditorBase.Key,
+                        textEditorBase.ResourceUri,
+                        fileLastWriteTime);
+                });
+        
+            dispatcher.Dispatch(saveFileAction);
+            
+            innerTextEditor.ClearEditBlocks();
+        }
     }
 }

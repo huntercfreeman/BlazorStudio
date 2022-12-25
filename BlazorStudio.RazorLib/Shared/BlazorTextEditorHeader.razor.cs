@@ -4,11 +4,11 @@ using BlazorALaCarte.DialogNotification.Store;
 using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.DropdownCase;
 using BlazorALaCarte.Shared.Menu;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
-using BlazorStudio.ClassLib.Store.TextEditorResourceMapCase;
 using BlazorStudio.RazorLib.Button;
 using BlazorStudio.RazorLib.DotNetSolutionForm;
 using BlazorStudio.RazorLib.InputFile;
@@ -21,11 +21,11 @@ namespace BlazorStudio.RazorLib.Shared;
 public partial class BlazorTextEditorHeader : ComponentBase
 {
     [Inject]
-    private IState<TextEditorResourceMapState> TextEditorResourceMapStateWrap { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     
     private DropdownKey _dropdownKeyFileDropdown = DropdownKey.NewDropdownKey();
     private MenuRecord _fileMenu = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -68,8 +68,8 @@ public partial class BlazorTextEditorHeader : ComponentBase
             async () => 
                 await EditorState.ShowInputFileAsync(
                     Dispatcher, 
-                    TextEditorService, 
-                    TextEditorResourceMapStateWrap.Value));
+                    TextEditorService,
+                    CommonComponentRenderers));
         
         var openDirectory = new MenuOptionRecord(
             "Directory",
@@ -83,8 +83,8 @@ public partial class BlazorTextEditorHeader : ComponentBase
             async () => 
                 await EditorState.ShowInputFileAsync(
                     Dispatcher, 
-                    TextEditorService, 
-                    TextEditorResourceMapStateWrap.Value));
+                    TextEditorService,
+                    CommonComponentRenderers));
         
         var openDotNetSolution = new MenuOptionRecord(
             ".NET Solution",

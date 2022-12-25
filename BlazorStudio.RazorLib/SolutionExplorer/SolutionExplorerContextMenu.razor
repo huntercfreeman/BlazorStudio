@@ -1,3 +1,5 @@
 ﻿@using BlazorALaCarte.Shared.Menu
 
-<MenuDisplay MenuRecord="GetMenuRecord(TreeViewContextMenuEvent)"/>
+<CascadingValue Name="ReturnFocusToParentAction" Value="@(new Action(() => TreeViewContextMenuEvent.CloseContextMenu.Invoke()))">
+    <MenuDisplay MenuRecord="GetMenuRecord(TreeViewContextMenuEvent)"/>
+</CascadingValue>
