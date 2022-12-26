@@ -55,8 +55,18 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
         
         switch (keyboardEventArgs.Key)
         {
+            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+                command = new TreeViewCommand(HandleBackButtonOnClick);
+                break;
             case KeyboardKeyFacts.MovementKeys.ARROW_UP:
                 command = new TreeViewCommand(HandleUpwardButtonOnClick);
+                break;
+            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+                command = new TreeViewCommand(HandleForwardButtonOnClick);
+                break;
+            case "F5":
+            case "f5":
+                command = new TreeViewCommand(HandleRefreshButtonOnClick);
                 break;
         }
 
@@ -81,6 +91,26 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
         _setInputFileContentTreeViewRoot.Invoke(treeViewAbsoluteFilePath.Item);
     }
     
+    private Task HandleBackButtonOnClick(
+        ITreeViewCommandParameter treeViewCommandParameter)
+    {
+        _dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
+
+        ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
+        
+        return Task.CompletedTask;
+    }
+    
+    private Task HandleForwardButtonOnClick(
+        ITreeViewCommandParameter treeViewCommandParameter)
+    {
+        _dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
+        
+        ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
+        
+        return Task.CompletedTask;
+    }
+
     private Task HandleUpwardButtonOnClick(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
@@ -89,6 +119,16 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
         
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
 
+        return Task.CompletedTask;
+    }
+
+    private Task HandleRefreshButtonOnClick(
+        ITreeViewCommandParameter treeViewCommandParameter)
+    {
+        _dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction());
+        
+        ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
+        
         return Task.CompletedTask;
     }
     
