@@ -277,3 +277,8 @@ em.balc_em {
     overflow-x: auto;
     font-size: 0.8em;
 }
+
+button.bstudio_input-file-address-hierarchy-entry {
+    color: var(--balc_primary-emphasis-foreground-color);
+    background-color: var(--balc_tertiary-background-color);
+}

@@ -64,8 +64,7 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
                 command = new TreeViewCommand(HandleForwardButtonOnClick);
                 break;
-            case "F5":
-            case "f5":
+            case "r":
                 command = new TreeViewCommand(HandleRefreshButtonOnClick);
                 break;
         }

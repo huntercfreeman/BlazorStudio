@@ -107,4 +107,12 @@ public partial class InputFileBottomControls : FluxorComponent
                 inputFileState.SelectedTreeViewModel?.Item)
             .Result;
     }
+    
+    private Task CancelOnClick()
+    {
+        if (DialogRecord is not null)
+            Dispatcher.Dispatch(new DialogsState.DisposeDialogRecordAction(DialogRecord.DialogKey));
+
+        return Task.CompletedTask;
+    }
 }
