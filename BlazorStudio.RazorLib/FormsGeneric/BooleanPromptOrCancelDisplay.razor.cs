@@ -1,8 +1,6 @@
 ﻿using BlazorALaCarte.Shared.Keyboard;
 using BlazorALaCarte.Shared.Menu;
 using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.RazorLib.Button;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;

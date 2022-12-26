@@ -43,7 +43,8 @@ public partial class InputFileContent : FluxorComponent
         TreeViewStateKey.NewTreeViewStateKey();
 
     private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
-    
+    private InputFileTreeViewKeymap _inputFileTreeViewKeymap = null!;
+
     protected override void OnInitialized()
     {
         _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
@@ -51,6 +52,12 @@ public partial class InputFileContent : FluxorComponent
             OnClick = TreeViewOnClick,
             OnDoubleClick = TreeViewOnDoubleClick
         };
+
+        _inputFileTreeViewKeymap = new InputFileTreeViewKeymap(
+            InputFileStateWrap,
+            Dispatcher,
+            CommonComponentRenderers,
+            SetInputFileContentTreeViewRoot);
 
         if (!TreeViewService.TryGetTreeViewState(
                 InputFileContent.TreeViewInputFileContentStateKey, 
