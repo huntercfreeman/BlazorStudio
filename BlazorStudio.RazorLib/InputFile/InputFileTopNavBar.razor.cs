@@ -157,14 +157,6 @@ public partial class InputFileTopNavBar : FluxorComponent
         _showInputTextEditForAddress = false;
         InvokeAsync(StateHasChanged);
     }
-    //
-    // private void TopNavbarAddressHierarchyOnKeyDown(KeyboardEventArgs keyboardEventArgs)
-    // {
-    //     if (keyboardEventArgs.Key == )
-    //     {
-    //         
-    //     }
-    // }
     
     protected override void Dispose(bool disposing)
     {
