@@ -4,11 +4,46 @@
         var displayText = TreeViewAbsoluteFilePath.Item?.FilenameWithExtension ?? "null";
     }
     
-    @if (!String.IsNullOrWhiteSpace(SearchQuery) && 
-         displayText.Contains(SearchQuery, StringComparison.InvariantCultureIgnoreCase))
+    @if (!String.IsNullOrWhiteSpace(SearchQuery))
     {
-        @: matched
-    }
+        var indexOfSearchQuery = displayText.IndexOf(
+            SearchQuery,
+            StringComparison.InvariantCultureIgnoreCase);
 
-    @displayText
+        if (indexOfSearchQuery == -1)
+        {
+            @: @displayText
+        }
+        else
+        {
+            string splitStart = string.Empty;
+            string splitMiddle = string.Empty;
+            string splitEnd = string.Empty;
+
+            if (indexOfSearchQuery > 0)
+            {
+                splitStart = displayText.Substring(
+                    0,
+                    indexOfSearchQuery);
+            }
+            
+            splitMiddle = displayText.Substring(
+                indexOfSearchQuery, 
+                SearchQuery.Length);
+
+            var remainingIndices = displayText.Length - indexOfSearchQuery - SearchQuery.Length;
+            
+            if (remainingIndices > 0)
+            {
+                splitEnd = displayText.Substring(
+                    indexOfSearchQuery + SearchQuery.Length);
+            }
+            
+            <text>@splitStart<span class="bstudio_search-match">@splitMiddle</span>@splitEnd</text>
+        }
+    }
+    else
+    {
+        @: @displayText
+    }
 </div>

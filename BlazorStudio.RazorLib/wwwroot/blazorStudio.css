@@ -286,3 +286,7 @@ button.bstudio_input-file-address-hierarchy-entry {
     color: var(--balc_primary-emphasis-foreground-color);
     background-color: var(--balc_tertiary-background-color);
 }
+
+.bstudio_search-match {
+    background-color: yellow;
+}
