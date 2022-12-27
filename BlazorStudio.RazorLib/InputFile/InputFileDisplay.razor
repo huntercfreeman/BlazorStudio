@@ -7,26 +7,32 @@
         @HeaderRenderFragment(_selectedAbsoluteFilePath)
     }
     
+    @{
+        _searchMatchTuples = new();
+    }
+    
     <CascadingValue Name="SetInputFileContentTreeViewRoot" Value="SetInputFileContentTreeViewRoot">
         <CascadingValue Value="_treeViewMouseEventRegistrar">
             <CascadingValue Value="_inputFileTreeViewKeymap">
-                <InputFileTopNavBar @ref="_inputFileTopNavBarComponent"/>
-                
-                <div class="bstudio_input-file-display-body @BodyClassCssString"
-                     style="@BodyStyleCssString">
+                <CascadingValue Name="SearchMatchTuples" Value="_searchMatchTuples">
+                    <InputFileTopNavBar @ref="_inputFileTopNavBarComponent"/>
+                    
+                    <div class="bstudio_input-file-display-body @BodyClassCssString"
+                         style="@BodyStyleCssString">
 
-                    <InputFileSidebar ElementDimensions="_navMenuElementDimensions"
-                                      SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm"/>
+                        <InputFileSidebar ElementDimensions="_navMenuElementDimensions"
+                                          SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm"/>
 
-                    <ResizableColumn LeftElementDimensions="_navMenuElementDimensions"
-                                     RightElementDimensions="_contentElementDimensions"
-                                     ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)"/>
+                        <ResizableColumn LeftElementDimensions="_navMenuElementDimensions"
+                                         RightElementDimensions="_contentElementDimensions"
+                                         ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)"/>
 
-                    <InputFileContent ElementDimensions="_contentElementDimensions"
-                                      SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm" />
-                </div>
-                
-                <InputFileBottomControls />
+                        <InputFileContent ElementDimensions="_contentElementDimensions"
+                                          SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm" />
+                    </div>
+                    
+                    <InputFileBottomControls />
+                </CascadingValue>
             </CascadingValue>
         </CascadingValue>
     </CascadingValue>

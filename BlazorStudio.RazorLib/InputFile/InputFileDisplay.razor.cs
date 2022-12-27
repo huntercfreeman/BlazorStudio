@@ -69,6 +69,16 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private InputFileTreeViewKeymap _inputFileTreeViewKeymap = null!;
     private InputFileTopNavBar? _inputFileTopNavBarComponent;
 
+    /// <summary>
+    /// <see cref="_searchMatchTuples"/> feels a bit hacky.
+    /// It is currently being used to track what TreeView nodes are both
+    /// displayed on the UI and part of the user's search result.
+    ///
+    /// A presumption that any mutations to the HashSet are done
+    /// via the UI thread. Therefore concurrency is not an issue.
+    /// </summary>
+    private List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)> _searchMatchTuples = new();
+
     public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
     
     protected override void OnInitialized()
@@ -80,11 +90,14 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         };
 
         _inputFileTreeViewKeymap = new InputFileTreeViewKeymap(
+            InputFileContent.TreeViewInputFileContentStateKey,
+            TreeViewService,
             InputFileStateWrap,
             Dispatcher,
             CommonComponentRenderers,
             SetInputFileContentTreeViewRoot,
-            async () => SearchElementReference?.FocusAsync());
+            async () => SearchElementReference?.FocusAsync(),
+            () => _searchMatchTuples);
         
         InitializeElementDimensions();
         

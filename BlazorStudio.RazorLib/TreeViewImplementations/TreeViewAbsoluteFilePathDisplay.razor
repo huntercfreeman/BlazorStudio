@@ -16,6 +16,14 @@
         }
         else
         {
+            var localSearchMatchTuples = SearchMatchTuples;
+
+            if (localSearchMatchTuples is not null)
+            {
+                localSearchMatchTuples.Add(
+                    (TreeViewState.TreeViewStateKey, TreeViewAbsoluteFilePath));
+            }
+            
             string splitStart = string.Empty;
             string splitMiddle = string.Empty;
             string splitEnd = string.Empty;

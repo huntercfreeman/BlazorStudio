@@ -1,6 +1,8 @@
 ﻿using BlazorALaCarte.Shared.Keyboard;
+using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.Commands;
 using BlazorALaCarte.TreeView.Keymap;
+using BlazorALaCarte.TreeView.TreeViewCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -12,24 +14,32 @@ namespace BlazorStudio.RazorLib.InputFile;
 
 public class InputFileTreeViewKeymap : ITreeViewKeymap
 {
+    private readonly TreeViewStateKey _treeViewStateKey;
+    private readonly ITreeViewService _treeViewService;
     private readonly IState<InputFileState> _inputFileStateWrap;
     private readonly IDispatcher _dispatcher;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly Action<IAbsoluteFilePath> _setInputFileContentTreeViewRoot;
     private readonly Func<Task> _focusSearchInputElementFunc;
+    private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> _getSearchMatchTuplesFunc;
 
-    public InputFileTreeViewKeymap(
+    public InputFileTreeViewKeymap(TreeViewStateKey treeViewStateKey,
+        ITreeViewService treeViewService,
         IState<InputFileState> inputFileStateWrap,
         IDispatcher dispatcher,
         ICommonComponentRenderers commonComponentRenderers,
         Action<IAbsoluteFilePath> setInputFileContentTreeViewRoot,
-        Func<Task> focusSearchInputElementFunc)
+        Func<Task> focusSearchInputElementFunc,
+        Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> getSearchMatchTuplesFunc)
     {
+        _treeViewStateKey = treeViewStateKey;
+        _treeViewService = treeViewService;
         _inputFileStateWrap = inputFileStateWrap;
         _dispatcher = dispatcher;
         _commonComponentRenderers = commonComponentRenderers;
         _setInputFileContentTreeViewRoot = setInputFileContentTreeViewRoot;
         _focusSearchInputElementFunc = focusSearchInputElementFunc;
+        _getSearchMatchTuplesFunc = getSearchMatchTuplesFunc;
     }
     
     public bool TryMapKey(
@@ -58,6 +68,14 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
             case "?":
                 treeViewCommand = new TreeViewCommand(MoveFocusToSearchBar);
                 return true;
+            // TODO: Add move to next match and move to previous match
+            //
+            // case "*":
+            //     treeViewCommand = new TreeViewCommand(SetNextMatchAsActiveTreeViewNode);
+            //     return true;
+            // case "#":
+            //     treeViewCommand = new TreeViewCommand(SetPreviousMatchAsActiveTreeViewNode);
+            //     return true;
         }
 
         if (keyboardEventArgs.AltKey)
