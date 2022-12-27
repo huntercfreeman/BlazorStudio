@@ -121,8 +121,6 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
         }
         catch (Exception exception)
         {
-            throw;
-            
             Children = new List<TreeView>
             {
                 new TreeViewException(

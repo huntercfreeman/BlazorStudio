@@ -17,6 +17,7 @@ public partial class TreeViewHelper
         
         var childDirectoryTreeViewModels = Directory
             .GetDirectories(directoryAbsoluteFilePathString)
+            .OrderBy(filePathString => filePathString)
             .Select(x =>
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, true);
@@ -42,6 +43,7 @@ public partial class TreeViewHelper
         
         var childFileTreeViewModels = Directory
             .GetFiles(directoryAbsoluteFilePathString)
+            .OrderBy(filePathString => filePathString)
             .Select(x =>
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, false);
@@ -91,6 +93,7 @@ public partial class TreeViewHelper
         
         var childDirectoryTreeViewModels = Directory
             .GetDirectories(directoryAbsoluteFilePathString)
+            .OrderBy(filePathString => filePathString)
             .Select(x =>
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, true);
@@ -107,6 +110,7 @@ public partial class TreeViewHelper
         
         var childFileTreeViewModels = Directory
             .GetFiles(directoryAbsoluteFilePathString)
+            .OrderBy(filePathString => filePathString)
             .Select(x =>
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, false);

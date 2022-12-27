@@ -7,6 +7,7 @@
            class="bstudio_input bstudio_input-file-search-input"/>
 
     <button @onclick="OnEscapeKeyDownCallback.Invoke"
+            @onclick:stopPropagation="true"
             class="balc_button">
         Cancel
     </button>
