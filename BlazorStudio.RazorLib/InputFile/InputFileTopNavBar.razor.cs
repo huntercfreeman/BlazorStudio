@@ -103,8 +103,6 @@ public partial class InputFileTopNavBar : FluxorComponent
     
     private void InputFileEditAddressOnFocusOutCallback(string address)
     {
-        _showInputTextEditForAddress = false;
-
         if (address.EndsWith(Path.DirectorySeparatorChar) ||
             address.EndsWith(Path.AltDirectorySeparatorChar))
         {
@@ -112,32 +110,52 @@ public partial class InputFileTopNavBar : FluxorComponent
                 0,
                 address.Length - 1);
         }
-        
-        if (Directory.Exists(address))
+
+        try
         {
+            if (!Directory.Exists(address))
+            {
+                if (System.IO.File.Exists(address))
+                {
+                    throw new ApplicationException(
+                        $"Address provided was a file. Provide a directory instead. {address}");
+                }
+                
+                throw new ApplicationException(
+                    $"Address provided does not exist. {address}");
+            }
+            
             var absoluteFilePath = new AbsoluteFilePath(address, true);
+            
+            _showInputTextEditForAddress = false;
             
             SetInputFileContentTreeViewRoot.Invoke(absoluteFilePath);
         }
-        else
+        catch (Exception exception)
         {
             var errorNotification = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
-                "Directory does not exist",
+                $"ERROR: {nameof(InputFileTopNavBar)}",
                 CommonComponentRenderers.ErrorNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                     {
                         nameof(IErrorNotificationRendererType.Message),
-                        address
+                        exception.ToString()
                     }
                 },
-                TimeSpan.FromSeconds(7));
+                TimeSpan.FromSeconds(12));
             
             Dispatcher.Dispatch(
                 new NotificationsState.RegisterNotificationRecordAction(
                     errorNotification));
         }
+    }
+    
+    private void HideInputFileEditAddress()
+    {
+        _showInputTextEditForAddress = false;
+        InvokeAsync(StateHasChanged);
     }
     
     protected override void Dispose(bool disposing)

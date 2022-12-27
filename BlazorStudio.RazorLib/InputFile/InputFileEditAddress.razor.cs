@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BlazorALaCarte.Shared.Keyboard;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
@@ -8,9 +10,12 @@ public partial class InputFileEditAddress : ComponentBase
     public string InitialInputValue { get; set; } = null!;
     [Parameter, EditorRequired]
     public Action<string> OnFocusOutCallback { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Action OnEscapeKeyDownCallback { get; set; } = null!;
 
     private string _editForAddressValue = string.Empty;
     private ElementReference? _inputTextEditForAddressElementReference;
+    private bool _isCancelled;
 
     protected override void OnInitialized()
     {
@@ -31,6 +36,21 @@ public partial class InputFileEditAddress : ComponentBase
 
     private void InputTextEditForAddressOnFocusOut()
     {
-        OnFocusOutCallback.Invoke(_editForAddressValue);
+        if (!_isCancelled)
+            OnFocusOutCallback.Invoke(_editForAddressValue);
+    }
+
+    private void InputTextEditForAddressOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
+        {
+            _isCancelled = true;
+            
+            OnEscapeKeyDownCallback.Invoke();
+        }
+        else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+        {
+            InputTextEditForAddressOnFocusOut();
+        }
     }
 }
