@@ -1,3 +1,14 @@
 ﻿<div>
-    @(TreeViewAbsoluteFilePath.Item?.FilenameWithExtension ?? "null")
+    
+    @{
+        var displayText = TreeViewAbsoluteFilePath.Item?.FilenameWithExtension ?? "null";
+    }
+    
+    @if (!String.IsNullOrWhiteSpace(SearchQuery) && 
+         displayText.Contains(SearchQuery, StringComparison.InvariantCultureIgnoreCase))
+    {
+        @: matched
+    }
+
+    @displayText
 </div>
