@@ -288,5 +288,5 @@ button.bstudio_input-file-address-hierarchy-entry {
 }
 
 .bstudio_search-match {
-    background-color: yellow;
+    background-color: var(--balc_primary-emphasis-foreground-color);
 }
