@@ -16,17 +16,20 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
     private readonly IDispatcher _dispatcher;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly Action<IAbsoluteFilePath> _setInputFileContentTreeViewRoot;
+    private readonly Func<Task> _focusSearchInputElementFunc;
 
     public InputFileTreeViewKeymap(
         IState<InputFileState> inputFileStateWrap,
         IDispatcher dispatcher,
         ICommonComponentRenderers commonComponentRenderers,
-        Action<IAbsoluteFilePath> setInputFileContentTreeViewRoot)
+        Action<IAbsoluteFilePath> setInputFileContentTreeViewRoot,
+        Func<Task> focusSearchInputElementFunc)
     {
         _inputFileStateWrap = inputFileStateWrap;
         _dispatcher = dispatcher;
         _commonComponentRenderers = commonComponentRenderers;
         _setInputFileContentTreeViewRoot = setInputFileContentTreeViewRoot;
+        _focusSearchInputElementFunc = focusSearchInputElementFunc;
     }
     
     public bool TryMapKey(
@@ -40,6 +43,20 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
                 return true;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
                 treeViewCommand = new TreeViewCommand(SetSelectedTreeViewModel);
+                return true;
+        }
+
+        switch (keyboardEventArgs.Key)
+        {
+            // Tried to have { "Ctrl" + "f" } => MoveFocusToSearchBar
+            // however, the webview was ending up taking over
+            // and displaying its search bar with focus being set to it.
+            //
+            // Doing preventDefault just for this one case would be a can of
+            // worms as JSInterop is needed, as well a custom Blazor event.
+            case "/":
+            case "?":
+                treeViewCommand = new TreeViewCommand(MoveFocusToSearchBar);
                 return true;
         }
 
@@ -166,5 +183,11 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
         _dispatcher.Dispatch(setSelectedTreeViewModelAction);
         
         return Task.CompletedTask;
+    }
+    
+    private async Task MoveFocusToSearchBar(
+        ITreeViewCommandParameter treeViewCommandParameter)
+    {
+        await _focusSearchInputElementFunc.Invoke();
     }
 }

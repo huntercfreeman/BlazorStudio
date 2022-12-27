@@ -10,14 +10,13 @@
     <CascadingValue Name="SetInputFileContentTreeViewRoot" Value="SetInputFileContentTreeViewRoot">
         <CascadingValue Value="_treeViewMouseEventRegistrar">
             <CascadingValue Value="_inputFileTreeViewKeymap">
-                <InputFileTopNavBar />
+                <InputFileTopNavBar @ref="_inputFileTopNavBarComponent"/>
                 
                 <div class="bstudio_input-file-display-body @BodyClassCssString"
                      style="@BodyStyleCssString">
 
                     <InputFileSidebar ElementDimensions="_navMenuElementDimensions"
-                                      SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm"
-                                      />
+                                      SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm"/>
 
                     <ResizableColumn LeftElementDimensions="_navMenuElementDimensions"
                                      RightElementDimensions="_contentElementDimensions"

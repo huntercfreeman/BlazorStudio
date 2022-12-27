@@ -26,7 +26,7 @@ public partial class InputFileTopNavBar : FluxorComponent
     [CascadingParameter(Name="SetInputFileContentTreeViewRoot")]
     public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
     
-    private ElementReference? _searchElementReference;
+    public ElementReference? SearchElementReference { get; private set; }
     private string _searchQuery = string.Empty;
     private bool _showInputTextEditForAddress;
 
@@ -83,7 +83,7 @@ public partial class InputFileTopNavBar : FluxorComponent
 
     private void FocusSearchElementReferenceOnClick()
     {
-        _searchElementReference?.FocusAsync();
+        SearchElementReference?.FocusAsync();
     }
 
     private TreeViewAbsoluteFilePath GetOpenedTreeView(InputFileState inputFileState)

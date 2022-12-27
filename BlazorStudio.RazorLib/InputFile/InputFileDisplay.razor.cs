@@ -67,6 +67,9 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private IAbsoluteFilePath? _selectedAbsoluteFilePath;
     private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
     private InputFileTreeViewKeymap _inputFileTreeViewKeymap = null!;
+    private InputFileTopNavBar? _inputFileTopNavBarComponent;
+
+    public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
     
     protected override void OnInitialized()
     {
@@ -80,7 +83,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             InputFileStateWrap,
             Dispatcher,
             CommonComponentRenderers,
-            SetInputFileContentTreeViewRoot);
+            SetInputFileContentTreeViewRoot,
+            async () => SearchElementReference?.FocusAsync());
         
         InitializeElementDimensions();
         
