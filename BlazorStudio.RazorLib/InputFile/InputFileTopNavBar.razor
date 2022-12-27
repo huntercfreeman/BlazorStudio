@@ -29,7 +29,7 @@
         }
         
         <div class="bstudio_input-file-display-top-nav-bar-address-hierarchy"
-             @ondblclick="() => _showInputTextEditForAddress = true">
+             @onclick="() => _showInputTextEditForAddress = true">
 
             @if (inputFileState.IndexInHistory < inputFileState.OpenedTreeViewModelHistory.Count)
             {
@@ -42,11 +42,6 @@
                         <InputFileEditAddress InitialInputValue="@openedTreeView.Item.GetAbsoluteFilePathString()"
                                               OnFocusOutCallback="InputFileEditAddressOnFocusOutCallback"
                                               OnEscapeKeyDownCallback="HideInputFileEditAddress"/>
-                        
-                        <button @onclick="HideInputFileEditAddress"
-                                class="balc_button">
-                            Cancel
-                        </button>
                     }
                     else
                     {

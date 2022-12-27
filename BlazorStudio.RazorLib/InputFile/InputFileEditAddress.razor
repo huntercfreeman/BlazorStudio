@@ -1,5 +1,13 @@
-﻿<input @ref="_inputTextEditForAddressElementReference"
-       @bind="_editForAddressValue"
-       @onfocusout="InputTextEditForAddressOnFocusOut"
-       @onkeydown="InputTextEditForAddressOnKeyDown"
-       class="bstudio_input bstudio_input-file-search-input"/>
+﻿<div class="bstudio_input-file-edit-address"
+     @onfocusout="InputTextEditForAddressOnFocusOut">
+    
+    <input @ref="_inputTextEditForAddressElementReference"
+           @bind="_editForAddressValue"
+           @onkeydown="InputTextEditForAddressOnKeyDown"
+           class="bstudio_input bstudio_input-file-search-input"/>
+
+    <button @onclick="OnEscapeKeyDownCallback.Invoke"
+            class="balc_button">
+        Cancel
+    </button>
+</div>

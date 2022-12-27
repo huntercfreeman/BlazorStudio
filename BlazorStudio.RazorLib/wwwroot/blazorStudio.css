@@ -92,6 +92,10 @@ input[type="checkbox"]{
     height: 100%;
 }
 
+.bstudio_input-file-edit-address {
+    display: flex;
+}
+
 .bstudio_input-file-display-top-nav-bar-search {
     margin: 0 10px;
     display: flex;
