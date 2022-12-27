@@ -31,6 +31,10 @@ public partial class InputFileSidebar : FluxorComponent
     
     [CascadingParameter(Name = "SetInputFileContentTreeViewRoot")]
     public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
+    [CascadingParameter]
+    public TreeViewMouseEventRegistrar TreeViewMouseEventRegistrar { get; set; } = null!;
+    [CascadingParameter]
+    public InputFileTreeViewKeymap InputFileTreeViewKeymap { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
@@ -39,23 +43,9 @@ public partial class InputFileSidebar : FluxorComponent
     
     private static readonly TreeViewStateKey TreeViewInputFileSidebarStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
-    
-    private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
-    private InputFileTreeViewKeymap _inputFileTreeViewKeymap = null!;
 
     protected override void OnInitialized()
     {
-        _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
-        {
-            OnDoubleClick = TreeViewOnDoubleClick
-        };
-
-        _inputFileTreeViewKeymap = new InputFileTreeViewKeymap(
-            InputFileStateWrap,
-            Dispatcher,
-            CommonComponentRenderers,
-            SetInputFileContentTreeViewRoot);
-        
         var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             true);
@@ -90,20 +80,5 @@ public partial class InputFileSidebar : FluxorComponent
         }
         
         base.OnInitialized();
-    }
-    
-    private Task TreeViewOnDoubleClick(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
-    {
-        if (treeViewMouseEventParameter.MouseTargetedTreeView 
-            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
-        {
-            return Task.CompletedTask;
-        }
-
-        if (treeViewAbsoluteFilePath.Item != null) 
-            SetInputFileContentTreeViewRoot.Invoke(treeViewAbsoluteFilePath.Item);
-
-        return Task.CompletedTask;
     }
 }

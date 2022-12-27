@@ -38,6 +38,9 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
                 treeViewCommand = new TreeViewCommand(SetInputFileContentTreeViewRoot);
                 return true;
+            case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
+                treeViewCommand = new TreeViewCommand(SetSelectedTreeViewModel);
+                return true;
         }
 
         if (keyboardEventArgs.AltKey)
@@ -144,5 +147,24 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
         
         if (openedTreeView.Item is not null)
             _setInputFileContentTreeViewRoot.Invoke(openedTreeView.Item);
+    }
+    
+    private Task SetSelectedTreeViewModel(
+        ITreeViewCommandParameter treeViewCommandParameter)
+    {
+        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
+        
+        var treeViewAbsoluteFilePath = activeNode as TreeViewAbsoluteFilePath;
+        
+        if (treeViewAbsoluteFilePath is null)
+            return Task.CompletedTask;
+        
+        var setSelectedTreeViewModelAction = 
+            new InputFileState.SetSelectedTreeViewModelAction(
+                treeViewAbsoluteFilePath);
+        
+        _dispatcher.Dispatch(setSelectedTreeViewModelAction);
+        
+        return Task.CompletedTask;
     }
 }

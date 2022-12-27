@@ -1,4 +1,5 @@
 @using BlazorALaCarte.Shared.Resize
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_input-file-display">
     @if (HeaderRenderFragment is not null)
@@ -7,24 +8,28 @@
     }
     
     <CascadingValue Name="SetInputFileContentTreeViewRoot" Value="SetInputFileContentTreeViewRoot">
-        <InputFileTopNavBar />
-        
-        <div class="bstudio_input-file-display-body @BodyClassCssString"
-             style="@BodyStyleCssString">
+        <CascadingValue Value="_treeViewMouseEventRegistrar">
+            <CascadingValue Value="_inputFileTreeViewKeymap">
+                <InputFileTopNavBar />
+                
+                <div class="bstudio_input-file-display-body @BodyClassCssString"
+                     style="@BodyStyleCssString">
 
-            <InputFileSidebar ElementDimensions="_navMenuElementDimensions"
-                              SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm"
-                              />
+                    <InputFileSidebar ElementDimensions="_navMenuElementDimensions"
+                                      SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm"
+                                      />
 
-            <ResizableColumn LeftElementDimensions="_navMenuElementDimensions"
-                             RightElementDimensions="_contentElementDimensions"
-                             ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)"/>
+                    <ResizableColumn LeftElementDimensions="_navMenuElementDimensions"
+                                     RightElementDimensions="_contentElementDimensions"
+                                     ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)"/>
 
-            <InputFileContent ElementDimensions="_contentElementDimensions"
-                              SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm" />
-        </div>
-        
-        <InputFileBottomControls />
+                    <InputFileContent ElementDimensions="_contentElementDimensions"
+                                      SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm" />
+                </div>
+                
+                <InputFileBottomControls />
+            </CascadingValue>
+        </CascadingValue>
     </CascadingValue>
 
     @if (FooterRenderFragment is not null)
