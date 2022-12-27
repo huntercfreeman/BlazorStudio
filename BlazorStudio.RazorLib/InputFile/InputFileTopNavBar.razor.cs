@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification.NotificationCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -27,6 +28,7 @@ public partial class InputFileTopNavBar : FluxorComponent
     
     private ElementReference? _searchElementReference;
     private string _searchQuery = string.Empty;
+    private bool _showInputTextEditForAddress;
 
     public string SearchQuery
     {
@@ -98,7 +100,46 @@ public partial class InputFileTopNavBar : FluxorComponent
         if (openedTreeView.Item is not null)
             SetInputFileContentTreeViewRoot.Invoke(openedTreeView.Item);
     }
+    
+    private void InputFileEditAddressOnFocusOutCallback(string address)
+    {
+        _showInputTextEditForAddress = false;
 
+        if (address.EndsWith(Path.DirectorySeparatorChar) ||
+            address.EndsWith(Path.AltDirectorySeparatorChar))
+        {
+            address = address.Substring(
+                0,
+                address.Length - 1);
+        }
+        
+        if (Directory.Exists(address))
+        {
+            var absoluteFilePath = new AbsoluteFilePath(address, true);
+            
+            SetInputFileContentTreeViewRoot.Invoke(absoluteFilePath);
+        }
+        else
+        {
+            var errorNotification = new NotificationRecord(
+                NotificationKey.NewNotificationKey(),
+                "Directory does not exist",
+                CommonComponentRenderers.ErrorNotificationRendererType,
+                new Dictionary<string, object?>
+                {
+                    {
+                        nameof(IErrorNotificationRendererType.Message),
+                        address
+                    }
+                },
+                TimeSpan.FromSeconds(7));
+            
+            Dispatcher.Dispatch(
+                new NotificationsState.RegisterNotificationRecordAction(
+                    errorNotification));
+        }
+    }
+    
     protected override void Dispose(bool disposing)
     {
         InputFileStateWrap.StateChanged -= InputFileStateWrapOnStateChanged;
