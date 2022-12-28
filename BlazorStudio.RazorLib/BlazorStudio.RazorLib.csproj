@@ -11,7 +11,6 @@
         <Content Remove="wwwroot\Themes\README.md" />
     </ItemGroup>
 
-
     <ItemGroup>
         <SupportedPlatform Include="browser" />
     </ItemGroup>
@@ -23,11 +22,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Icons\IconLoading.razor" />
-      <_ContentIncludedByDefault Remove="Icons\IconSettingsDisplay.razor" />
     </ItemGroup>
 
 </Project>
