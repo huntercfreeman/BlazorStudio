@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification.Notification;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -25,8 +26,9 @@ public partial class InputFileTopNavBar : FluxorComponent
     [CascadingParameter(Name="SetInputFileContentTreeViewRoot")]
     public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
     
-    private ElementReference? _searchElementReference;
+    public ElementReference? SearchElementReference { get; private set; }
     private string _searchQuery = string.Empty;
+    private bool _showInputTextEditForAddress;
 
     public string SearchQuery
     {
@@ -81,7 +83,7 @@ public partial class InputFileTopNavBar : FluxorComponent
 
     private void FocusSearchElementReferenceOnClick()
     {
-        _searchElementReference?.FocusAsync();
+        SearchElementReference?.FocusAsync();
     }
 
     private TreeViewAbsoluteFilePath GetOpenedTreeView(InputFileState inputFileState)
@@ -98,7 +100,64 @@ public partial class InputFileTopNavBar : FluxorComponent
         if (openedTreeView.Item is not null)
             SetInputFileContentTreeViewRoot.Invoke(openedTreeView.Item);
     }
+    
+    private void InputFileEditAddressOnFocusOutCallback(string address)
+    {
+        if (address.EndsWith(Path.DirectorySeparatorChar) ||
+            address.EndsWith(Path.AltDirectorySeparatorChar))
+        {
+            address = address.Substring(
+                0,
+                address.Length - 1);
+        }
 
+        try
+        {
+            if (!Directory.Exists(address))
+            {
+                if (System.IO.File.Exists(address))
+                {
+                    throw new ApplicationException(
+                        $"Address provided was a file. Provide a directory instead. {address}");
+                }
+                
+                throw new ApplicationException(
+                    $"Address provided does not exist. {address}");
+            }
+            
+            var absoluteFilePath = new AbsoluteFilePath(address, true);
+            
+            _showInputTextEditForAddress = false;
+            
+            SetInputFileContentTreeViewRoot.Invoke(absoluteFilePath);
+        }
+        catch (Exception exception)
+        {
+            var errorNotification = new NotificationRecord(
+                NotificationKey.NewNotificationKey(),
+                $"ERROR: {nameof(InputFileTopNavBar)}",
+                CommonComponentRenderers.ErrorNotificationRendererType,
+                new Dictionary<string, object?>
+                {
+                    {
+                        nameof(IErrorNotificationRendererType.Message),
+                        exception.ToString()
+                    }
+                },
+                TimeSpan.FromSeconds(12));
+            
+            Dispatcher.Dispatch(
+                new NotificationsState.RegisterNotificationRecordAction(
+                    errorNotification));
+        }
+    }
+    
+    private void HideInputFileEditAddress()
+    {
+        _showInputTextEditForAddress = false;
+        InvokeAsync(StateHasChanged);
+    }
+    
     protected override void Dispose(bool disposing)
     {
         InputFileStateWrap.StateChanged -= InputFileStateWrapOnStateChanged;

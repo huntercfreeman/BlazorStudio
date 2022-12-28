@@ -1,4 +1,5 @@
 ﻿@using BlazorStudio.ClassLib.Store.InputFileCase
+@using BlazorStudio.ClassLib.FileSystem.Interfaces
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_input-file-display-top-nav-bar">
@@ -16,6 +17,10 @@
         <ButtonDisplay OnClickFunc="async () => HandleUpwardButtonOnClick()">
             <IconArrowUp/>
         </ButtonDisplay>
+        
+        <ButtonDisplay OnClickFunc="async () => HandleRefreshButtonOnClick()">
+            <IconRefresh/>
+        </ButtonDisplay>
     </div>
     
     <div class="bstudio_input-file-display-top-nav-bar-address">
@@ -23,16 +28,36 @@
             var inputFileState = InputFileStateWrap.Value;
         }
         
-        <div class="bstudio_input-file-display-top-nav-bar-address-hierarchy">
+        <div class="bstudio_input-file-display-top-nav-bar-address-hierarchy"
+             @onclick="() => _showInputTextEditForAddress = true">
+
             @if (inputFileState.IndexInHistory < inputFileState.OpenedTreeViewModelHistory.Count)
             {
-                <text>@GetOpenedTreeView(inputFileState).Item?.GetAbsoluteFilePathString()</text>
+                var openedTreeView = GetOpenedTreeView(inputFileState);
+
+                if (openedTreeView.Item is not null)
+                {
+                    if (_showInputTextEditForAddress)
+                    {
+                        <InputFileEditAddress InitialInputValue="@openedTreeView.Item.GetAbsoluteFilePathString()"
+                                              OnFocusOutCallback="InputFileEditAddressOnFocusOutCallback"
+                                              OnEscapeKeyDownCallback="HideInputFileEditAddress"/>
+                    }
+                    else
+                    {
+                        foreach (var directory in openedTreeView.Item.Directories)
+                        {
+                            if (directory is IAbsoluteFilePath absoluteFilePath)
+                            {
+                                <InputFileAddressHierarchyEntry AbsoluteFilePath="absoluteFilePath"/>
+                            }
+                        }
+
+                        <InputFileAddressHierarchyEntry AbsoluteFilePath="openedTreeView.Item"/>
+                    }
+                }
             }
         </div>
-        
-        <ButtonDisplay OnClickFunc="async () => HandleRefreshButtonOnClick()">
-            <IconRefresh/>
-        </ButtonDisplay>
     </div>
     
     <div class="bstudio_input-file-display-top-nav-bar-search">
@@ -41,7 +66,7 @@
             <IconSearch/>
         </ButtonDisplay>
         
-        <input @ref="_searchElementReference"
+        <input @ref="SearchElementReference"
                @bind="SearchQuery"
                @bind:event="oninput"
                class="bstudio_input bstudio_input-file-search-input"/>

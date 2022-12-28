@@ -26,6 +26,7 @@ public partial class TreeViewHelper
         
         var childDirectoryTreeViewModels = Directory
             .GetDirectories(parentAbsoluteFilePathString)
+            .OrderBy(filePathString => filePathString)
             .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
             .Select(x =>
             {
@@ -81,6 +82,7 @@ public partial class TreeViewHelper
         
         var childFileTreeViewModels = Directory
             .GetFiles(parentAbsoluteFilePathString)
+            .OrderBy(filePathString => filePathString)
             .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             .Select(x =>
             {

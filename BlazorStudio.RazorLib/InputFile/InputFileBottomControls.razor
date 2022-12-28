@@ -6,9 +6,6 @@
         var inputFileState = InputFileStateWrap.Value;
     }
     <div class="bstudio_input-file-display-bottom-controls-text-input">
-        @* TODO: allow input text html element *@
-        @* File name: *@
-        @* <input class="bstudio_input"/> *@
         <div>
             @GetSelectedTreeViewModelAbsoluteFilePathString(inputFileState)    
         </div>
@@ -36,8 +33,7 @@
                 Select
             </ButtonDisplay>
             
-            <ButtonDisplay OnClickFunc="() => { return Task.CompletedTask; }"
-                           IsDisabled="!InputFileState.CanMoveBackwardsInHistory(InputFileStateWrap.Value)">
+            <ButtonDisplay OnClickFunc="CancelOnClick">
                 Cancel
             </ButtonDisplay>
         </div>

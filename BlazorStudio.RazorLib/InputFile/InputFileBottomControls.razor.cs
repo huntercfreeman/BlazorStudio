@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification;
-using BlazorALaCarte.DialogNotification.Store;
+using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -106,5 +106,13 @@ public partial class InputFileBottomControls : FluxorComponent
         return !inputFileState.SelectionIsValidFunc.Invoke(
                 inputFileState.SelectedTreeViewModel?.Item)
             .Result;
+    }
+    
+    private Task CancelOnClick()
+    {
+        if (DialogRecord is not null)
+            Dispatcher.Dispatch(new DialogsState.DisposeDialogRecordAction(DialogRecord.DialogKey));
+
+        return Task.CompletedTask;
     }
 }

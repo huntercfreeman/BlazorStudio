@@ -1,6 +1,4 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
-
-namespace BlazorStudio.ClassLib.CommonComponents;
+﻿namespace BlazorStudio.ClassLib.CommonComponents;
 
 public interface IBooleanPromptOrCancelRendererType
 {

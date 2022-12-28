@@ -1,32 +1,39 @@
 @using BlazorStudio.RazorLib.FontSettings
 @using BlazorTextEditor.RazorLib.HelperComponents
-@using BlazorALaCarte.Shared.Settings
+@using BlazorALaCarte.Shared.Theme
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_settings-display">
-    Settings Display
     
-    <ThemeSelectTheme/>
+    <div class="bstudio_settings-group">
+        <h3>
+            Appearance
+            
+            <ButtonDisplay OnClickFunc="PersistSettingsLocallyOnClick"
+                           CssStyleString="display: inline; font-size: 1rem;">
+                Save Appearance Settings
+            </ButtonDisplay>
+        </h3>
+        
+        <div style="margin-top: 7px;"></div>
+        <ThemeSelectTheme InputElementCssClass="bstudio_input"/>
     
-    <ButtonDisplay OnClickFunc="PersistSettingsLocallyOnClick">
-        Persist Settings Locally OnClick
-    </ButtonDisplay>
+        <div style="margin-top: 7px;"></div>
+        <FontSettingsDisplay/>
     
-    <FontSettingsDisplay />
-
-    <hr class="balc_hr"/>
-
-    <IconSettingsDisplay/>
-    
-    <hr class="balc_hr"/>
-    
-    <div>
-        Active Theme:&nbsp;@ThemeStateWrap.Value.ActiveThemeRecord.CssClassString
+        <div style="margin-top: 7px;"></div>
+        <IconSettingsDisplay InputElementCssClass="bstudio_input"/>
     </div>
-    
-    <hr class="balc_hr"/>
 
-    <TextEditorSettings/>
-    
+    <div class="bstudio_settings-group">
+        <h3>
+            Editor
+            
+            <span style="font-size: 1rem;">(these settings auto-save on change)</span>
+        </h3>
+        
+        <TextEditorSettings InputElementCssClass="bstudio_input"/>
+    </div>
+
 </div>

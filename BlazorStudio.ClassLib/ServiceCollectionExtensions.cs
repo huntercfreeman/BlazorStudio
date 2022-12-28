@@ -30,7 +30,7 @@ public static class ServiceCollectionExtensions
             },
             themeOptions =>
             {
-                themeOptions.InitialThemeKey = ThemeFacts.VisualStudioLightThemeClone.ThemeKey;
+                themeOptions.InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.ThemeKey;
             })
             .AddFluxor(options => options
                 .ScanAssemblies(

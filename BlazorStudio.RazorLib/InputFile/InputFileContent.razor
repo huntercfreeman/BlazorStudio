@@ -5,7 +5,10 @@
 <div class="bstudio_input-file-display-content"
      style="@ElementDimensions.StyleString">
     
-    <TreeViewStateDisplay TreeViewStateKey="TreeViewInputFileContentStateKey"
-                          CssStyleString="height: 100%;"
-                          TreeViewMouseEventRegistrar="_treeViewMouseEventRegistrar"/>
+    <CascadingValue Name="SearchQuery" Value="InputFileStateWrap.Value.SearchQuery">
+        <TreeViewStateDisplay TreeViewStateKey="TreeViewInputFileContentStateKey"
+                              CssStyleString="height: 100%;"
+                              TreeViewMouseEventRegistrar="TreeViewMouseEventRegistrar"
+                              TreeViewKeymap="InputFileTreeViewKeymap"/>
+    </CascadingValue>
 </div>

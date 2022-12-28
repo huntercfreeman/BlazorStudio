@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using BlazorALaCarte.Shared.Dimensions;
-using BlazorALaCarte.Shared.DropdownCase;
-using BlazorALaCarte.Shared.IconCase;
+using BlazorALaCarte.Shared.Dropdown;
+using BlazorALaCarte.Shared.Icons;
 using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.TreeViewCase;

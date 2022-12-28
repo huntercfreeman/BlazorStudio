@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification;
-using BlazorALaCarte.DialogNotification.NotificationCase;
-using BlazorALaCarte.DialogNotification.Store;
+using BlazorALaCarte.DialogNotification.Dialog;
+using BlazorALaCarte.DialogNotification.Notification;
 using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.TreeView;

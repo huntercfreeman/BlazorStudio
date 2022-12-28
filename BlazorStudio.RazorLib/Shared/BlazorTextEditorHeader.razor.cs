@@ -1,8 +1,7 @@
 using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification;
-using BlazorALaCarte.DialogNotification.Store;
+using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.Shared.Dropdown;
-using BlazorALaCarte.Shared.DropdownCase;
 using BlazorALaCarte.Shared.Menu;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Store.EditorCase;

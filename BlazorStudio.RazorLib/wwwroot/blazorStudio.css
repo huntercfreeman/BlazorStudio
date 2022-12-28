@@ -92,6 +92,10 @@ input[type="checkbox"]{
     height: 100%;
 }
 
+.bstudio_input-file-edit-address {
+    display: flex;
+}
+
 .bstudio_input-file-display-top-nav-bar-search {
     margin: 0 10px;
     display: flex;
@@ -276,4 +280,22 @@ em.balc_em {
     margin-bottom: 10px;
     overflow-x: auto;
     font-size: 0.8em;
+}
+
+button.bstudio_input-file-address-hierarchy-entry {
+    color: var(--balc_primary-emphasis-foreground-color);
+    background-color: var(--balc_tertiary-background-color);
+}
+
+.bstudio_search-match {
+    background-color: var(--balc_primary-emphasis-foreground-color);
+}
+
+.bstudio_settings-group {
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 25px;
+    border: 2px solid var(--balc_primary-border-color);
 }

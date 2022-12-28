@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using BlazorALaCarte.DialogNotification.NotificationCase;
+using BlazorALaCarte.DialogNotification.Notification;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;

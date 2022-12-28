@@ -33,6 +33,10 @@ public partial class InputFileContent : FluxorComponent
 
     [CascadingParameter(Name = "SetInputFileContentTreeViewRoot")]
     public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
+    [CascadingParameter]
+    public TreeViewMouseEventRegistrar TreeViewMouseEventRegistrar { get; set; } = null!;
+    [CascadingParameter]
+    public InputFileTreeViewKeymap InputFileTreeViewKeymap { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
@@ -42,16 +46,8 @@ public partial class InputFileContent : FluxorComponent
     public static readonly TreeViewStateKey TreeViewInputFileContentStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
 
-    private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
-    
     protected override void OnInitialized()
     {
-        _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
-        {
-            OnClick = TreeViewOnClick,
-            OnDoubleClick = TreeViewOnDoubleClick
-        };
-
         if (!TreeViewService.TryGetTreeViewState(
                 InputFileContent.TreeViewInputFileContentStateKey, 
                 out var treeViewState))
@@ -64,38 +60,5 @@ public partial class InputFileContent : FluxorComponent
         }
         
         base.OnInitialized();
-    }
-
-    private Task TreeViewOnClick(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
-    {
-        if (treeViewMouseEventParameter.MouseTargetedTreeView 
-            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
-        {
-            return Task.CompletedTask;
-        }
-        
-        var setSelectedTreeViewModelAction = 
-            new InputFileState.SetSelectedTreeViewModelAction(
-                treeViewAbsoluteFilePath);
-        
-        Dispatcher.Dispatch(setSelectedTreeViewModelAction);
-        
-        return Task.CompletedTask;
-    }
-    
-    private Task TreeViewOnDoubleClick(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
-    {
-        if (treeViewMouseEventParameter.MouseTargetedTreeView 
-                is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
-        {
-            return Task.CompletedTask;
-        }
-
-        if (treeViewAbsoluteFilePath.Item != null) 
-            SetInputFileContentTreeViewRoot.Invoke(treeViewAbsoluteFilePath.Item);
-
-        return Task.CompletedTask;
     }
 }

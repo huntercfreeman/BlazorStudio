@@ -8,12 +8,12 @@ using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
-public partial class InputFileDisplay
-    : ComponentBase, IInputFileRendererType
+public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
@@ -23,6 +23,8 @@ public partial class InputFileDisplay
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
@@ -61,10 +63,42 @@ public partial class InputFileDisplay
     
     private readonly ElementDimensions _navMenuElementDimensions = new();
     private readonly ElementDimensions _contentElementDimensions = new();
+    
     private IAbsoluteFilePath? _selectedAbsoluteFilePath;
+    private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
+    private InputFileTreeViewKeymap _inputFileTreeViewKeymap = null!;
+    private InputFileTopNavBar? _inputFileTopNavBarComponent;
+
+    /// <summary>
+    /// <see cref="_searchMatchTuples"/> feels a bit hacky.
+    /// It is currently being used to track what TreeView nodes are both
+    /// displayed on the UI and part of the user's search result.
+    ///
+    /// A presumption that any mutations to the HashSet are done
+    /// via the UI thread. Therefore concurrency is not an issue.
+    /// </summary>
+    private List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)> _searchMatchTuples = new();
+
+    public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
     
     protected override void OnInitialized()
     {
+        _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
+        {
+            OnClick = TreeViewOnClick,
+            OnDoubleClick = TreeViewOnDoubleClick
+        };
+
+        _inputFileTreeViewKeymap = new InputFileTreeViewKeymap(
+            InputFileContent.TreeViewInputFileContentStateKey,
+            TreeViewService,
+            InputFileStateWrap,
+            Dispatcher,
+            CommonComponentRenderers,
+            SetInputFileContentTreeViewRoot,
+            async () => SearchElementReference?.FocusAsync(),
+            () => _searchMatchTuples);
+        
         InitializeElementDimensions();
         
         base.OnInitialized();
@@ -154,5 +188,38 @@ public partial class InputFileDisplay
             CommonComponentRenderers);
         
         Dispatcher.Dispatch(setOpenedTreeViewModelAction);
+    }
+    
+    private Task TreeViewOnClick(
+        TreeViewMouseEventParameter treeViewMouseEventParameter)
+    {
+        if (treeViewMouseEventParameter.MouseTargetedTreeView 
+            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+        {
+            return Task.CompletedTask;
+        }
+        
+        var setSelectedTreeViewModelAction = 
+            new InputFileState.SetSelectedTreeViewModelAction(
+                treeViewAbsoluteFilePath);
+        
+        Dispatcher.Dispatch(setSelectedTreeViewModelAction);
+        
+        return Task.CompletedTask;
+    }
+    
+    private Task TreeViewOnDoubleClick(
+        TreeViewMouseEventParameter treeViewMouseEventParameter)
+    {
+        if (treeViewMouseEventParameter.MouseTargetedTreeView 
+            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+        {
+            return Task.CompletedTask;
+        }
+
+        if (treeViewAbsoluteFilePath.Item != null) 
+            SetInputFileContentTreeViewRoot(treeViewAbsoluteFilePath.Item);
+
+        return Task.CompletedTask;
     }
 }

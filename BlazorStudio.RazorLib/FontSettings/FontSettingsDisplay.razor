@@ -1,15 +1,8 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_font-settings-display">
-    Font-Size:&nbsp;
+    Font-Size (px):&nbsp;
     <input type="number"
            @bind="FontSizeInPixels"
            class="bstudio_input" />
-    
-    <div>
-        font-size&nbsp;value:&nbsp;
-        <em class="balc_em">
-            @(FontStateWrap.Value.FontSizeInPixels)px
-        </em>
-    </div>
 </div>

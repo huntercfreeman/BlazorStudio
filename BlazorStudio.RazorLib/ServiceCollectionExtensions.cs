@@ -1,4 +1,5 @@
 using BlazorALaCarte.DialogNotification;
+using BlazorALaCarte.DialogNotification.Notification;
 using BlazorStudio.ClassLib;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.RazorLib.Clipboard;
