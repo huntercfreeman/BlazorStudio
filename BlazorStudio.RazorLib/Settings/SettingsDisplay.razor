@@ -5,28 +5,29 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_settings-display">
-    Settings Display
     
-    <ThemeSelectTheme/>
+    <div class="bstudio_settings-group">
+        <h3>Appearance</h3>
+        
+        <div style="margin-top: 7px;"></div>
+        <ThemeSelectTheme/>
     
-    <ButtonDisplay OnClickFunc="PersistSettingsLocallyOnClick">
-        Persist Settings Locally OnClick
-    </ButtonDisplay>
+        <div style="margin-top: 7px;"></div>
+        <ButtonDisplay OnClickFunc="PersistSettingsLocallyOnClick">
+            Persist Settings Locally OnClick
+        </ButtonDisplay>
     
-    <FontSettingsDisplay />
-
-    <hr class="balc_hr"/>
-
-    <IconSettingsDisplay/>
+        <div style="margin-top: 7px;"></div>
+        <FontSettingsDisplay/>
     
-    <hr class="balc_hr"/>
-    
-    <div>
-        Active Theme:&nbsp;@ThemeStateWrap.Value.ActiveThemeRecord.CssClassString
+        <div style="margin-top: 7px;"></div>
+        <IconSettingsDisplay/>
     </div>
-    
-    <hr class="balc_hr"/>
 
-    <TextEditorSettings/>
-    
+    <div class="bstudio_settings-group">
+        <h3>Editor</h3>
+        
+        <TextEditorSettings/>
+    </div>
+
 </div>

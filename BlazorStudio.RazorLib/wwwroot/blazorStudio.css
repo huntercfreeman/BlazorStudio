@@ -291,3 +291,11 @@ button.bstudio_input-file-address-hierarchy-entry {
     background-color: var(--balc_primary-emphasis-foreground-color);
 }
 
+.bstudio_settings-group {
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border: 2px solid var(--balc_primary-border-color);
+}
