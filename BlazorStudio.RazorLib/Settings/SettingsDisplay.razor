@@ -1,6 +1,6 @@
 @using BlazorStudio.RazorLib.FontSettings
 @using BlazorTextEditor.RazorLib.HelperComponents
-@using BlazorALaCarte.Shared.Settings
+@using BlazorALaCarte.Shared.Theme
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -33,7 +33,7 @@
             <span style="font-size: 1rem;">(these settings auto-save on change)</span>
         </h3>
         
-        <TextEditorSettings/>
+        <TextEditorSettings InputElementCssClass="bstudio_input"/>
     </div>
 
 </div>
