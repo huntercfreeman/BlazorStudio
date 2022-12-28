@@ -1,4 +1,4 @@
-﻿using BlazorALaCarte.DialogNotification.NotificationCase;
+﻿using BlazorALaCarte.DialogNotification.Notification;
 using BlazorALaCarte.Shared.Keyboard;
 using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.TreeView;

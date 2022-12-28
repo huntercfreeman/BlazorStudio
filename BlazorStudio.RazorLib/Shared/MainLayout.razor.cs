@@ -1,9 +1,9 @@
 using BlazorALaCarte.DialogNotification;
-using BlazorALaCarte.DialogNotification.Store;
+using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.Shared.Dimensions;
-using BlazorALaCarte.Shared.DragCase;
+using BlazorALaCarte.Shared.Drag;
 using BlazorALaCarte.Shared.Facts;
-using BlazorALaCarte.Shared.IconCase;
+using BlazorALaCarte.Shared.Icons;
 using BlazorALaCarte.Shared.Resize;
 using BlazorALaCarte.Shared.Store;
 using BlazorALaCarte.Shared.Theme;
@@ -165,23 +165,6 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             _previousDragStateWrapShouldDisplay = DragStateWrap.Value.ShouldDisplay;
             await InvokeAsync(StateHasChanged);
         }
-    }
-
-    private void OpenDialogOnClick()
-    {
-        var dialogRecord = new DialogRecord(
-            DialogKey.NewDialogKey(),
-            "Example",
-            typeof(ExampleDialog),
-            new Dictionary<string, object?>
-            {
-                { nameof(ExampleDialog.Message), _message }
-            })
-        {
-            IsResizable = true
-        };
-        
-        Dispatcher.Dispatch(new DialogsState.RegisterDialogRecordAction(dialogRecord));
     }
     
     private async Task ReRenderAsync()

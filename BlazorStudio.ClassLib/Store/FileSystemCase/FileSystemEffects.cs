@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using BlazorALaCarte.DialogNotification.NotificationCase;
+using BlazorALaCarte.DialogNotification.Notification;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using Fluxor;

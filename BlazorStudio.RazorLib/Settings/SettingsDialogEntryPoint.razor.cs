@@ -1,5 +1,5 @@
 using BlazorALaCarte.DialogNotification;
-using BlazorALaCarte.DialogNotification.Store;
+using BlazorALaCarte.DialogNotification.Dialog;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 

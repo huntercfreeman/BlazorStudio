@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using BlazorALaCarte.DialogNotification.NotificationCase;
+using BlazorALaCarte.DialogNotification.Notification;
 using BlazorALaCarte.Shared.Clipboard;
 using BlazorALaCarte.Shared.Menu;
 using BlazorStudio.ClassLib.Clipboard;

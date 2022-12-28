@@ -1,5 +1,5 @@
 using BlazorALaCarte.Shared.Facts;
-using BlazorALaCarte.Shared.IconCase;
+using BlazorALaCarte.Shared.Icons;
 using BlazorALaCarte.Shared.Store;
 using BlazorALaCarte.Shared.Theme;
 using BlazorStudio.ClassLib.Store.FontCase;
