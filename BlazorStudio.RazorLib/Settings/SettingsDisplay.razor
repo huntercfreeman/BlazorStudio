@@ -7,15 +7,17 @@
 <div class="bstudio_settings-display">
     
     <div class="bstudio_settings-group">
-        <h3>Appearance</h3>
+        <h3>
+            Appearance
+            
+            <ButtonDisplay OnClickFunc="PersistSettingsLocallyOnClick"
+                           CssStyleString="display: inline; font-size: 1rem;">
+                Save Appearance Settings
+            </ButtonDisplay>
+        </h3>
         
         <div style="margin-top: 7px;"></div>
         <ThemeSelectTheme/>
-    
-        <div style="margin-top: 7px;"></div>
-        <ButtonDisplay OnClickFunc="PersistSettingsLocallyOnClick">
-            Persist Settings Locally OnClick
-        </ButtonDisplay>
     
         <div style="margin-top: 7px;"></div>
         <FontSettingsDisplay/>
@@ -25,7 +27,11 @@
     </div>
 
     <div class="bstudio_settings-group">
-        <h3>Editor</h3>
+        <h3>
+            Editor
+            
+            <span style="font-size: 1rem;">(these settings auto-save on change)</span>
+        </h3>
         
         <TextEditorSettings/>
     </div>
