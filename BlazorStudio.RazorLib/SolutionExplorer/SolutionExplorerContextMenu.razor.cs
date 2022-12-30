@@ -474,10 +474,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             return "display: none;";
         
         var left = 
-            $"left: {treeViewContextMenuEvent.ContextMenuFixedPosition.LeftPositionInPixels}px;";
+            $"left: {treeViewContextMenuEvent.ContextMenuFixedPosition.LeftPositionInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture)}px;";
         
         var top = 
-            $"top: {treeViewContextMenuEvent.ContextMenuFixedPosition.TopPositionInPixels}px;";
+            $"top: {treeViewContextMenuEvent.ContextMenuFixedPosition.TopPositionInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture)}px;";
 
         return $"{left} {top}";
     }
