@@ -298,7 +298,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         var dialogRecord = new DialogRecord(
             DialogKey.NewDialogKey(), 
-            "New .NET Solution",
+            "New C# Project",
             typeof(CSharpProjectFormDisplay),
             new Dictionary<string, object?>
             {

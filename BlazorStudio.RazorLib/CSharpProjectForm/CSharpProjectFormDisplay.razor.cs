@@ -70,11 +70,11 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 ?? string.Empty,
             $"{_cSharpProjectName}/{_cSharpProjectName}.csproj");
 
-    private void RequestInputFileForParentDirectory()
+    private void RequestInputFileForParentDirectory(string message)
     {
         Dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
-                "Directory for new .NET Solution",
+                message,
                 afp =>
                 {
                     if (afp is null)

@@ -192,6 +192,10 @@ input[type="checkbox"]{
     box-shadow: 0 0 var(--bstudio_input-focus-box-shadow-blur-radius) var(--balc_primary-emphasis-foreground-color);
 }
 
+.bstudio_input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #8c8c8c;
+}
+
 .bstudio_text-editor-display {
     height: var(--bstudio_text-editor-display-height) !important;
 }
