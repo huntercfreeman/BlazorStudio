@@ -303,3 +303,7 @@ button.bstudio_input-file-address-hierarchy-entry {
     margin-bottom: 25px;
     border: 2px solid var(--balc_primary-border-color);
 }
+
+.bte_text-editor-input-cursor-size .bte_text-editor {
+    min-height: initial;
+}
