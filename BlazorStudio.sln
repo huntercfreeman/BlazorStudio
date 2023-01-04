@@ -19,14 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BlazorStudio", "BlazorStudi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{9DA1D23C-7323-4F08-9F74-9A038B107AE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorTextEditor.RazorLib", "..\Blazor.Text.Editor\BlazorTextEditor.RazorLib\BlazorTextEditor.RazorLib.csproj", "{676B48BF-15C2-4CD0-BF5F-A901F6054C7F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorALaCarte.Shared", "..\BlazorALaCarte\BlazorALaCarte.Shared\BlazorALaCarte.Shared\BlazorALaCarte.Shared.csproj", "{42F546F5-095D-4EC8-885C-79FCF8C42603}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorALaCarte.TreeView", "..\BlazorALaCarte\BlazorALaCarte.TreeView\BlazorALaCarte.TreeView\BlazorALaCarte.TreeView.csproj", "{70DDEE98-959C-411B-96BB-BB72F73EFFEA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorALaCarte.DialogNotification", "..\BlazorALaCarte\BlazorALaCarte.DialogNotification\BlazorALaCarte.DialogNotification\BlazorALaCarte.DialogNotification.csproj", "{4A4F42D9-ED48-47D5-928D-AA91B3B54803}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,22 +45,6 @@ Global
 		{84896F88-B2AB-4633-861E-B4F1B5299D80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84896F88-B2AB-4633-861E-B4F1B5299D80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84896F88-B2AB-4633-861E-B4F1B5299D80}.Release|Any CPU.Build.0 = Release|Any CPU
-		{676B48BF-15C2-4CD0-BF5F-A901F6054C7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{676B48BF-15C2-4CD0-BF5F-A901F6054C7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{676B48BF-15C2-4CD0-BF5F-A901F6054C7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{676B48BF-15C2-4CD0-BF5F-A901F6054C7F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{42F546F5-095D-4EC8-885C-79FCF8C42603}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42F546F5-095D-4EC8-885C-79FCF8C42603}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42F546F5-095D-4EC8-885C-79FCF8C42603}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42F546F5-095D-4EC8-885C-79FCF8C42603}.Release|Any CPU.Build.0 = Release|Any CPU
-		{70DDEE98-959C-411B-96BB-BB72F73EFFEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{70DDEE98-959C-411B-96BB-BB72F73EFFEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{70DDEE98-959C-411B-96BB-BB72F73EFFEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{70DDEE98-959C-411B-96BB-BB72F73EFFEA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4A4F42D9-ED48-47D5-928D-AA91B3B54803}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A4F42D9-ED48-47D5-928D-AA91B3B54803}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4A4F42D9-ED48-47D5-928D-AA91B3B54803}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A4F42D9-ED48-47D5-928D-AA91B3B54803}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,10 +55,6 @@ Global
 		{1C9FBAEC-12DE-488A-9A8F-2DC5377FC9E8} = {F9E1080F-281E-4776-BEB0-9DD3165B6B2A}
 		{94EB1E96-1529-4B1F-86C9-7C85EA59C59A} = {F9E1080F-281E-4776-BEB0-9DD3165B6B2A}
 		{84896F88-B2AB-4633-861E-B4F1B5299D80} = {9DA1D23C-7323-4F08-9F74-9A038B107AE9}
-		{676B48BF-15C2-4CD0-BF5F-A901F6054C7F} = {9DA1D23C-7323-4F08-9F74-9A038B107AE9}
-		{42F546F5-095D-4EC8-885C-79FCF8C42603} = {9DA1D23C-7323-4F08-9F74-9A038B107AE9}
-		{70DDEE98-959C-411B-96BB-BB72F73EFFEA} = {9DA1D23C-7323-4F08-9F74-9A038B107AE9}
-		{4A4F42D9-ED48-47D5-928D-AA91B3B54803} = {9DA1D23C-7323-4F08-9F74-9A038B107AE9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF5C7044-00A3-49F9-8ACD-E80E6B3A3B99}
