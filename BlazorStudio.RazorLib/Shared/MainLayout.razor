@@ -9,7 +9,7 @@
 
 <ContextBoundary ContextRecord="ContextFacts.GlobalContext"
                  ClassCssString="@($"bstudio_main-layout {UnselectableClassCss} {ThemeStateWrap.Value.ActiveThemeRecord.CssClassString}")"
-                 StyleCssString="@($"font-size: {FontStateWrap.Value.FontSizeInPixels}px;")">
+                 StyleCssString="@($"font-size: {FontStateWrap.Value.FontSizeInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture)}px;")">
 
     <BlazorTextEditorRazorLibInitializer/>
     <DialogInitializer/>
