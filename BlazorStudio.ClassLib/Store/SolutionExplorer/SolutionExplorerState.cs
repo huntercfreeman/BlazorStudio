@@ -115,6 +115,13 @@ public record SolutionExplorerState(
                         .SolutionAbsoluteFilePath,
                     solution,
                     false));
+            
+            dispatcher.Dispatch(
+                new SetSolutionExplorerStateAction(
+                    requestSetSolutionExplorerStateAction
+                        .SolutionAbsoluteFilePath,
+                    solution,
+                    false));
         }
     }
     
