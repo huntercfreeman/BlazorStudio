@@ -27,12 +27,28 @@
         else
         {
             <div>
+                @if (gitState.GitFolderAbsoluteFilePath is null)
+                {
+                    <div>gitState.GitFolderAbsoluteFilePath is null</div>
+                }
+                else
+                {
+                    <div>@gitState.GitFolderAbsoluteFilePath</div>
+                }
+                
                 @if (gitState.MostRecentTryFindGitFolderInDirectoryAction is not null)
                 {
                     <span>
                         MostRecentTryFindGitFolderInDirectoryAction:&nbsp;
                         @gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString()
                     </span>
+
+                    if (gitState.GitFolderAbsoluteFilePath is null)
+                    {
+                        <button class="balc_button">
+                            Git Init
+                        </button>
+                    }
                 }
                 else
                 {
@@ -40,16 +56,6 @@
                         gitState.MostRecentTryFindGitFolderInDirectoryAction is null
                     </div>
                 }
-            </div>
-            
-            <div>
-                <label for="Aaa">Path</label>
-                
-                <input id="Aaa"/>
-                
-                <button class="balc_button">
-                    Aaa
-                </button>
             </div>
         }
     </div>
