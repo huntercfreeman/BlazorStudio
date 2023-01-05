@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.GitCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using Fluxor;
@@ -115,13 +116,15 @@ public record SolutionExplorerState(
                         .SolutionAbsoluteFilePath,
                     solution,
                     false));
-            
-            dispatcher.Dispatch(
-                new SetSolutionExplorerStateAction(
-                    requestSetSolutionExplorerStateAction
-                        .SolutionAbsoluteFilePath,
-                    solution,
-                    false));
+
+            if (requestSetSolutionExplorerStateAction
+                    .SolutionAbsoluteFilePath.Directories.Last() 
+                is IAbsoluteFilePath parentDirectory)
+            {
+                dispatcher.Dispatch(
+                    new GitState.TryFindGitFolderInDirectoryAction(
+                        parentDirectory));
+            }
         }
     }
     

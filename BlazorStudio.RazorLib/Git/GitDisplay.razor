@@ -27,6 +27,22 @@
         else
         {
             <div>
+                @if (gitState.MostRecentTryFindGitFolderInDirectoryAction is not null)
+                {
+                    <span>
+                        MostRecentTryFindGitFolderInDirectoryAction:&nbsp;
+                        @gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString()
+                    </span>
+                }
+                else
+                {
+                    <div>
+                        gitState.MostRecentTryFindGitFolderInDirectoryAction is null
+                    </div>
+                }
+            </div>
+            
+            <div>
                 <label for="Aaa">Path</label>
                 
                 <input id="Aaa"/>

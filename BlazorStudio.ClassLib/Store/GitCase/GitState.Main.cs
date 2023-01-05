@@ -12,9 +12,13 @@ namespace BlazorStudio.ClassLib.Store.GitCase;
 ///     --The folder which is user selected.<br/>
 /// </summary>
 [FeatureState]
-public partial  record GitState(IAbsoluteFilePath? GitFolderAbsoluteFilePath)
+public partial record GitState(
+    IAbsoluteFilePath? GitFolderAbsoluteFilePath,
+    GitState.TryFindGitFolderInDirectoryAction? MostRecentTryFindGitFolderInDirectoryAction)
 {
-    public GitState() : this(default(IAbsoluteFilePath?))
+    public GitState() : this(
+        default(IAbsoluteFilePath?),
+        default(GitState.TryFindGitFolderInDirectoryAction?))
     {
         
     }

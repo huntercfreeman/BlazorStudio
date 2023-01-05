@@ -44,11 +44,16 @@ public partial record GitState
                 
                 return previousGitState with
                 {
-                    GitFolderAbsoluteFilePath = gitFolderAbsoluteFilePath
+                    GitFolderAbsoluteFilePath = gitFolderAbsoluteFilePath,
+                    MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
                 };
             }
 
-            return previousGitState;
+            return previousGitState with
+            {
+                GitFolderAbsoluteFilePath = null,
+                MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
+            };
         }
     }
 }
