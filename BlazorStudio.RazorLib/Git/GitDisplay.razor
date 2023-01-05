@@ -1,0 +1,40 @@
+﻿@using BlazorStudio.ClassLib.Context
+@using Microsoft.AspNetCore.Components
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<ContextBoundary ContextRecord="ContextFacts.GitContext"
+                 ClassCssString="bstudio_git-display"
+                 StyleCssString="height: 100%; width: 100%;">
+
+    @{
+        var gitState = GitStateWrap.Value;
+    }
+    
+    <div class="bstudio_section-title">
+        Git
+    </div>
+
+    <div class="bstudio_section-body"
+         style="width: 100%;">
+        
+        @if (gitState.GitFolderAbsoluteFilePath is not null)
+        {
+            <text>
+                @gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()
+            </text>
+        }
+        else
+        {
+            <div>
+                <label for="Aaa">Path</label>
+                
+                <input id="Aaa"/>
+                
+                <button class="balc_button">
+                    Aaa
+                </button>
+            </div>
+        }
+    </div>
+</ContextBoundary>

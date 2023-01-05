@@ -5,6 +5,7 @@ using BlazorStudio.RazorLib.Clipboard;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.File;
 using BlazorStudio.RazorLib.FormsGeneric;
+using BlazorStudio.RazorLib.Git;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.NuGet;
 using BlazorStudio.RazorLib.TreeViewImplementations;
@@ -26,6 +27,7 @@ public static class ServiceCollectionExtensions
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewAbsoluteFilePathDisplay),
             typeof(NuGetPackageManager),
+            typeof(GitDisplay),
             typeof(RemoveCSharpProjectFromSolutionDisplay),
             typeof(BooleanPromptOrCancelDisplay));
         

@@ -12,6 +12,7 @@ public class CommonComponentRenderers : ICommonComponentRenderers
         Type treeViewExceptionRendererType,
         Type treeViewAbsoluteFilePathRendererType,
         Type nuGetPackageManagerRendererType,
+        Type gitDisplayRendererType,
         Type removeCSharpProjectFromSolutionRendererType,
         Type booleanPromptOrCancelRendererType)
     {
@@ -65,6 +66,10 @@ public class CommonComponentRenderers : ICommonComponentRenderers
                 typeof(INuGetPackageManagerRendererType));
             
             ValidateRenderer(
+                gitDisplayRendererType, 
+                typeof(IGitDisplayRendererType));
+            
+            ValidateRenderer(
                 removeCSharpProjectFromSolutionRendererType, 
                 typeof(IRemoveCSharpProjectFromSolutionRendererType));
             
@@ -84,6 +89,7 @@ public class CommonComponentRenderers : ICommonComponentRenderers
             TreeViewExceptionRendererType = treeViewExceptionRendererType;
             TreeViewAbsoluteFilePathRendererType = treeViewAbsoluteFilePathRendererType;
             NuGetPackageManagerRendererType = nuGetPackageManagerRendererType;
+            GitDisplayRendererType = gitDisplayRendererType;
             RemoveCSharpProjectFromSolutionRendererType = removeCSharpProjectFromSolutionRendererType;
             BooleanPromptOrCancelRendererType = booleanPromptOrCancelRendererType;
         }
@@ -98,6 +104,7 @@ public class CommonComponentRenderers : ICommonComponentRenderers
     public Type TreeViewExceptionRendererType { get; }
     public Type TreeViewAbsoluteFilePathRendererType { get; }
     public Type NuGetPackageManagerRendererType { get; }
+    public Type GitDisplayRendererType { get; }
     public Type RemoveCSharpProjectFromSolutionRendererType { get; }
     public Type BooleanPromptOrCancelRendererType { get; }
 }

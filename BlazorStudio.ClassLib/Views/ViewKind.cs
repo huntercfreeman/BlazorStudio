@@ -3,5 +3,6 @@
 public enum ViewKind
 {
     Terminals,
-    NugetPackageManager
+    NugetPackageManager,
+    GitDisplay,
 }

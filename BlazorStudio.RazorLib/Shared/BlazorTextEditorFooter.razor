@@ -3,6 +3,7 @@
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorStudio.RazorLib.Terminal
 @using BlazorStudio.RazorLib.NuGet
+@using BlazorStudio.RazorLib.Git
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -21,6 +22,9 @@
                     break;
                 case ViewKind.NugetPackageManager:
                     <NuGetPackageManager/>
+                    break;
+                case ViewKind.GitDisplay:
+                    <GitDisplay/>
                     break;
             }
         }
