@@ -8,27 +8,12 @@
         .FirstOrDefault(x => x.PanelRecordKey == PanelRecordKey);
 }
 
-<div class="bstudio_panel">
+<div class="bstudio_panel @PanelPositionCssClass">
     
     @if (panelRecord is not null)
     {
         <div>
-            The
-            
-            @if (PanelFacts.LeftPanelRecordKey == PanelRecordKey)
-            {
-                @:left
-            }
-            else if (PanelFacts.RightPanelRecordKey == PanelRecordKey)
-            {
-                @:right
-            }
-            else if (PanelFacts.BottomPanelRecordKey == PanelRecordKey)
-            {
-                @:bottom
-            }
-            
-            PanelRecord was found
+            @PanelPositionCssClass
         </div>        
     }
     else

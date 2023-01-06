@@ -13,4 +13,26 @@ public partial class PanelDisplay : FluxorComponent
     
     [Parameter, EditorRequired]
     public PanelRecordKey PanelRecordKey { get; set; } = null!;
+
+    public string PanelPositionCssClass => GetPanelPositionCssClass();
+    
+    public string GetPanelPositionCssClass()
+    {
+        var position = string.Empty;
+        
+        if (PanelFacts.LeftPanelRecordKey == PanelRecordKey)
+        {
+            return "left";
+        }
+        else if (PanelFacts.RightPanelRecordKey == PanelRecordKey)
+        {
+            return "right";
+        }
+        else if (PanelFacts.BottomPanelRecordKey == PanelRecordKey)
+        {
+            return "bottom";
+        }
+
+        return $"bstudio_panel_{position}";
+    }
 }

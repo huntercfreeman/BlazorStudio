@@ -4,6 +4,8 @@
 @using BlazorALaCarte.DialogNotification.Installation
 @using BlazorALaCarte.Shared.Drag
 @using BlazorALaCarte.Shared.Resize
+@using BlazorStudio.ClassLib.Panel
+@using BlazorStudio.RazorLib.Panel
 
 @inherits LayoutComponentBase
 
@@ -24,5 +26,6 @@
                   BottomElementDimensions="_footerElementDimensions"
                   ReRenderFuncAsync="ReRenderAsync"/>
 
-    <BlazorTextEditorFooter FooterElementDimensions="_footerElementDimensions"/>
+    <PanelDisplay PanelRecordKey="PanelFacts.BottomPanelRecordKey"/>
+    
 </ContextBoundary>

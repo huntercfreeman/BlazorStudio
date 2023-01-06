@@ -1,11 +1,13 @@
 @using BlazorStudio.RazorLib.Editor
 @using BlazorStudio.RazorLib.FolderExplorer
 @using BlazorALaCarte.Shared.Resize
+@using BlazorStudio.ClassLib.Panel
+@using BlazorStudio.RazorLib.Panel
 
 <div class="bstudio_body"
      style="@BodyElementDimensions.StyleString">
     
-    <BlazorTextEditorExplorers ExplorersElementDimensions="_explorersElementDimensions"/>
+    <PanelDisplay PanelRecordKey="PanelFacts.LeftPanelRecordKey"/>
 
     <ResizableColumn LeftElementDimensions="_explorersElementDimensions"
                      RightElementDimensions="_editorElementDimensions"
@@ -13,5 +15,9 @@
 
     <EditorDisplay EditorElementDimensions="_editorElementDimensions"/>
     
-    <EditorDisplay EditorElementDimensions="_editorElementDimensions"/>
+    <ResizableColumn LeftElementDimensions="_explorersElementDimensions"
+                         RightElementDimensions="_editorElementDimensions"
+                         ReRenderFuncAsync="ReRenderAsync"/>
+    
+    <PanelDisplay PanelRecordKey="PanelFacts.RightPanelRecordKey"/>
 </div>
