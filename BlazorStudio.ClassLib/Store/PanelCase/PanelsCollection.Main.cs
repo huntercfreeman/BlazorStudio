@@ -9,7 +9,29 @@ public partial record PanelsCollection
 {
     public PanelsCollection()
     {
-        PanelRecordsList = ImmutableArray<PanelRecord>.Empty;
+        var leftPanel = new PanelRecord(
+            PanelFacts.LeftPanelRecordKey,
+            PanelTabKey.Empty,
+            ImmutableArray<PanelTab>.Empty);
+        
+        var rightPanel = new PanelRecord(
+            PanelFacts.RightPanelRecordKey,
+            PanelTabKey.Empty,
+            ImmutableArray<PanelTab>.Empty);
+        
+        var bottomPanel = new PanelRecord(
+            PanelFacts.BottomPanelRecordKey,
+            PanelTabKey.Empty,
+            ImmutableArray<PanelTab>.Empty);
+        
+        var initialPanels = new PanelRecord[]
+        {
+            leftPanel,
+            rightPanel,
+            bottomPanel,
+        }.ToImmutableArray();
+        
+        PanelRecordsList = initialPanels;
     }
 
     public ImmutableArray<PanelRecord> PanelRecordsList { get; init; }

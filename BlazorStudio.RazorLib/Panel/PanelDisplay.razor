@@ -1,0 +1,40 @@
+﻿@using BlazorStudio.ClassLib.Panel
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var panelsCollection = PanelsCollectionWrap.Value;
+
+    var panelRecord = panelsCollection.PanelRecordsList
+        .FirstOrDefault(x => x.PanelRecordKey == PanelRecordKey);
+}
+
+<div class="bstudio_panel">
+    
+    @if (panelRecord is not null)
+    {
+        <div>
+            The
+            
+            @if (PanelFacts.LeftPanelRecordKey == PanelRecordKey)
+            {
+                @:left
+            }
+            else if (PanelFacts.RightPanelRecordKey == PanelRecordKey)
+            {
+                @:right
+            }
+            else if (PanelFacts.BottomPanelRecordKey == PanelRecordKey)
+            {
+                @:bottom
+            }
+            
+            PanelRecord was found
+        </div>        
+    }
+    else
+    {
+        <div>
+            PanelRecord was null
+        </div>
+    }
+</div>
