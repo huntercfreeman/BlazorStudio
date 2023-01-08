@@ -311,3 +311,18 @@ button.bstudio_input-file-address-hierarchy-entry {
 .bstudio_panel {
     display: flex;
 }
+
+.bstudio_panel_left .bstudio_panel-tabs .bstudio_panel-tab {
+    padding: 1px;
+}
+
+.bstudio_panel_left .bstudio_panel-tabs .bstudio_panel-tab span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+    font-size: 0.7em;
+}
