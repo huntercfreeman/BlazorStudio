@@ -315,6 +315,8 @@ button.bstudio_input-file-address-hierarchy-entry {
 .bstudio_panel-tab {
     padding: 1px;
     font-size: var(--bstudio_panel-tabs-font-size);
+    display: inline-flex !important;
+    border: none !important;
 }
 
 .bstudio_panel_left .bstudio_panel-tabs .bstudio_panel-tab span {
@@ -362,4 +364,8 @@ button.bstudio_input-file-address-hierarchy-entry {
 
 .bstudio_panel_bottom .bstudio_panel-body {
     height: calc(100% - var(--bstudio_panel-tabs-font-size) - var(--bstudio_panel-tabs-margin) - var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_bottom .bstudio_panel-tab:not(:first-of-type) {
+    border-left: 2px solid var(--balc_primary-border-color) !important;
 }
