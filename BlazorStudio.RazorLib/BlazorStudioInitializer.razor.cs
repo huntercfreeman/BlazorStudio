@@ -75,6 +75,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var solutionExplorerPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             leftPanel.ElementDimensions,
+            new(),
             typeof(SolutionExplorerDisplay),
             typeof(IconFolder),
             "Solution Explorer");
@@ -90,6 +91,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var folderExplorerPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             leftPanel.ElementDimensions,
+            new(),
             typeof(FolderExplorerDisplay),
             typeof(IconFolder),
             "Folder Explorer");
@@ -101,6 +103,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var gitChangesPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             leftPanel.ElementDimensions,
+            new(),
             typeof(FolderExplorerDisplay),
             typeof(IconFolder),
             "Git Changes");
@@ -117,6 +120,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var notificationsPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             rightPanel.ElementDimensions,
+            new(),
             typeof(NotificationHistoryDisplay),
             typeof(IconFolder),
             "Notifications");
@@ -133,6 +137,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var gitPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
+            new(),
             typeof(TerminalDisplay),
             typeof(IconFolder),
             "Git");
@@ -144,6 +149,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var buildPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
+            new(),
             typeof(TerminalDisplay),
             typeof(IconFolder),
             "Build");
@@ -155,6 +161,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var terminalPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
+            new(),
             typeof(TerminalDisplay),
             typeof(IconFolder),
             "Terminal");
@@ -166,6 +173,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var nuGetPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
+            new(),
             typeof(NuGetPackageManager),
             typeof(IconFolder),
             "NuGet");
@@ -181,6 +189,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var unitTestsPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
+            new(),
             typeof(TerminalDisplay),
             typeof(IconFolder),
             "Unit Tests");
@@ -192,6 +201,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var problemsPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
+            new(),
             typeof(TerminalDisplay),
             typeof(IconFolder),
             "Problems");

@@ -325,6 +325,11 @@ button.bstudio_input-file-address-hierarchy-entry {
     height: 50%;
     position: absolute;
     left: 0;
+    z-index: 100;
+}
+
+.bstudio_panel-tab-dropzone:hover {
+    background-color: orange;
 }
 
 .bstudio_panel-tab-dropzone-top {
@@ -335,6 +340,12 @@ button.bstudio_input-file-address-hierarchy-entry {
 .bstudio_panel-tab-dropzone-bottom {
     top: 50%;
     background-color: mediumpurple;
+}
+
+.bstudio_panel-tab-drag-display {
+    position: fixed;
+    min-width: 100px;
+    min-height: 100px;
 }
 
 .bstudio_panel_left .bstudio_panel-tabs .bstudio_panel-tab span {

@@ -1,4 +1,6 @@
-﻿using BlazorALaCarte.Shared.Drag;
+﻿using BlazorALaCarte.Shared.Dimensions;
+using BlazorALaCarte.Shared.Drag;
+using BlazorALaCarte.Shared.Resize;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
 using Fluxor;
@@ -53,10 +55,54 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
             PanelTab.PanelTabKey));
     }
     
-    private Task HandleOnMouseDownAsync(MouseEventArgs arg)
+    private Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
     {
         _thinksLeftMouseButtonIsDown = true;
-        SubscribeToDragEventForScrolling();
+
+        return Task.CompletedTask;
+    }
+    
+    private Task HandleOnMouseOutAsync(MouseEventArgs mouseEventArgs)
+    {
+        if (_thinksLeftMouseButtonIsDown && 
+            !PanelsCollectionWrap.Value.ThinksIsBeingDragged)
+        {
+            var leftDimensionAttribute = PanelTab.BeingDraggedDimensions.DimensionAttributes
+                .First(x => 
+                    x.DimensionAttributeKind == DimensionAttributeKind.Left);
+
+            leftDimensionAttribute.DimensionUnits.Clear();
+
+            leftDimensionAttribute.DimensionUnits.Add(new DimensionUnit
+            {
+                Value = mouseEventArgs.ClientX,
+                DimensionUnitKind = DimensionUnitKind.Pixels
+            });
+            
+            var topDimensionAttribute = PanelTab.BeingDraggedDimensions.DimensionAttributes
+                .First(x => 
+                    x.DimensionAttributeKind == DimensionAttributeKind.Top);
+            
+            topDimensionAttribute.DimensionUnits.Clear();
+            
+            topDimensionAttribute.DimensionUnits.Add(new DimensionUnit
+            {
+                Value = mouseEventArgs.ClientY,
+                DimensionUnitKind = DimensionUnitKind.Pixels
+            });
+
+            PanelTab.BeingDraggedDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+            PanelTab.IsBeingDragged = true;
+                
+            SubscribeToDragEventForScrolling();
+        }
+
+        return Task.CompletedTask;
+    }
+    
+    private Task HandleOnMouseUpAsync(MouseEventArgs mouseEventArgs)
+    {
+        _thinksLeftMouseButtonIsDown = false;
 
         return Task.CompletedTask;
     }
@@ -67,6 +113,9 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
         {
             _dragEventHandler = null;
             _previousDragMouseEventArgs = null;
+            _thinksLeftMouseButtonIsDown = false;
+            Dispatcher.Dispatch(new PanelsCollection.SetThinksIsBeingDraggedAction(false));
+            PanelTab.IsBeingDragged = false;
         }
         else
         {
@@ -110,10 +159,16 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
             if (_thinksLeftMouseButtonIsDown &&
                 (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
             {
+                ResizeService.Move(
+                    PanelTab.BeingDraggedDimensions,
+                    mouseEventArgsTuple.firstMouseEventArgs,
+                    mouseEventArgsTuple.secondMouseEventArgs);
             }
             else
             {
                 _thinksLeftMouseButtonIsDown = false;
+                Dispatcher.Dispatch(new PanelsCollection.SetThinksIsBeingDraggedAction(false));
+                PanelTab.IsBeingDragged = false;
             }
     
             await Task.Delay(_onMouseMoveDelay);

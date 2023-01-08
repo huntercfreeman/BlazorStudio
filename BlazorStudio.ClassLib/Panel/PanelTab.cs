@@ -9,6 +9,10 @@ namespace BlazorStudio.ClassLib.Panel;
 public record PanelTab(
     PanelTabKey PanelTabKey,
     ElementDimensions ElementDimensions,
+    ElementDimensions BeingDraggedDimensions,
     Type ContentRendererType,
     Type IconRendererType,
-    string DisplayName);
+    string DisplayName)
+{
+    public bool IsBeingDragged { get; set; }
+}
