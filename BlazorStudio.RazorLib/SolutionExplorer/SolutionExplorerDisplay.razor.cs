@@ -48,9 +48,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     
-    [Parameter, EditorRequired]
-    public ElementDimensions SolutionExplorerElementDimensions { get; set; } = null!;
-
     public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
     

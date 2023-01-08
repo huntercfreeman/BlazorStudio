@@ -6,6 +6,15 @@
 
     var panelRecord = panelsCollection.PanelRecordsList
         .FirstOrDefault(x => x.PanelRecordKey == PanelRecordKey);
+
+    PanelTab? activePanelTab = null;
+
+    if (panelRecord is not null)
+    {
+        activePanelTab = panelRecord.PanelTabs
+            .FirstOrDefault(x =>
+                x.PanelTabKey == panelRecord.ActivePanelTabKey);
+    }
 }
 
 <div class="bstudio_panel @PanelPositionCssClass @CssClassString"
@@ -23,22 +32,10 @@
     </div>
     
     <div class="bstudio_panel-body">
-        <div class="bstudio_section-title">
-            @if (panelRecord is not null)
-            {
-                var activePanelTab = panelRecord.PanelTabs
-                    .FirstOrDefault(x =>
-                        x.PanelTabKey == panelRecord.ActivePanelTabKey);
-                
-                <text>
-                    @(activePanelTab?.DisplayName ?? "no active tab")
-                </text>
-            }
-        </div>
-    
-        <div class="bstudio_section-body">
-            Panel Body
-        </div>
+        @if (activePanelTab is not null)
+        {
+            <DynamicComponent Type="activePanelTab.ContentRendererType"/>
+        }
     </div>
     
 </div>
