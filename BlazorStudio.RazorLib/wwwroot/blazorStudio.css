@@ -317,6 +317,24 @@ button.bstudio_input-file-address-hierarchy-entry {
     font-size: var(--bstudio_panel-tabs-font-size);
     display: inline-flex !important;
     border: none !important;
+    position: relative;
+}
+
+.bstudio_panel-tab-dropzone {
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    left: 0;
+}
+
+.bstudio_panel-tab-dropzone-top {
+    top: 0;
+    background-color: aqua;
+}
+
+.bstudio_panel-tab-dropzone-bottom {
+    top: 50%;
+    background-color: mediumpurple;
 }
 
 .bstudio_panel_left .bstudio_panel-tabs .bstudio_panel-tab span {

@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.Store.PanelCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Panel;
 
@@ -17,8 +18,8 @@ public partial class PanelDisplay : FluxorComponent
     public string CssClassString { get; set; } = null!;
 
     public string PanelPositionCssClass => GetPanelPositionCssClass();
-    
-    public string GetPanelPositionCssClass()
+
+    private string GetPanelPositionCssClass()
     {
         var position = string.Empty;
         

@@ -135,5 +135,16 @@ public partial record PanelsCollection
                 PanelRecordsList = nextPanelsList
             };
         }
+        
+        [ReducerMethod]
+        public static PanelsCollection ReduceSetThinksIsBeingDraggedAction(
+            PanelsCollection previousPanelsCollection,
+            SetThinksIsBeingDraggedAction setThinksIsBeingDraggedAction)
+        {
+            return previousPanelsCollection with
+            {
+                ThinksIsBeingDragged = setThinksIsBeingDraggedAction.ThinksIsBeingDragged
+            };
+        }
     }
 }

@@ -8,9 +8,13 @@ using Fluxor;
 namespace BlazorStudio.ClassLib.Store.PanelCase;
 
 [FeatureState]
-public partial record PanelsCollection
+public partial record PanelsCollection(
+    ImmutableArray<PanelRecord> PanelRecordsList,
+    bool ThinksIsBeingDragged)
 {
-    public PanelsCollection()
+    public PanelsCollection() : this(
+        ImmutableArray<PanelRecord>.Empty,
+        false)
     {
         var leftPanel = ConstructLeftPanel();
 
@@ -26,8 +30,6 @@ public partial record PanelsCollection
         }.ToImmutableArray();
     }
 
-    public ImmutableArray<PanelRecord> PanelRecordsList { get; init; }
-    
     private PanelRecord ConstructLeftPanel()
     {
         var leftPanel = new PanelRecord(

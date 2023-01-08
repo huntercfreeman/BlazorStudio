@@ -1,6 +1,22 @@
 ﻿<button class="bstudio_panel-tab balc_button balc_tab @IsActiveCssClassString"
-        @onclick="DispatchSetActivePanelTabActionOnClick">
+        @onclick="DispatchSetActivePanelTabActionOnClick"
+        @onmousedown:stopPropagation="true"
+        @onmousedown="HandleOnMouseDownAsync">
     <span>
         @PanelTab.DisplayName
+        
+        @if (_thinksLeftMouseButtonIsDown)
+        {
+            <span>_thinksLeftMouseButtonIsDown</span>
+        }
+        
+        @if (PanelsCollectionWrap.Value.ThinksIsBeingDragged)
+        {
+            <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-top">
+            </div>
+            
+            <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-bottom">
+            </div>
+        }
     </span>
 </button>

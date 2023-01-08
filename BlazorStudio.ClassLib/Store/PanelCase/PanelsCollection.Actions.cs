@@ -11,4 +11,6 @@ public partial record PanelsCollection
     public record DisposePanelTabAction(PanelRecordKey PanelRecordKey, PanelTabKey PanelTabKey);
     
     public record SetActivePanelTabAction(PanelRecordKey PanelRecordKey, PanelTabKey PanelTabKey);
+    
+    public record SetThinksIsBeingDraggedAction(bool ThinksIsBeingDragged);
 }
