@@ -314,7 +314,7 @@ button.bstudio_input-file-address-hierarchy-entry {
 
 .bstudio_panel-tab {
     padding: 1px;
-    font-size: 0.7em;
+    font-size: var(--bstudio_panel-tabs-font-size);
 }
 
 .bstudio_panel_left .bstudio_panel-tabs .bstudio_panel-tab span {
@@ -338,4 +338,28 @@ button.bstudio_input-file-address-hierarchy-entry {
 
 .bstudio_panel_bottom {
     flex-direction: column-reverse;
+}
+
+.bstudio_panel_left .bstudio_panel-tabs {
+    width: calc(var(--bstudio_panel-tabs-font-size) + var(--bstudio_panel-tabs-margin) + var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_left .bstudio_panel-body {
+    width: calc(100% - var(--bstudio_panel-tabs-font-size) - var(--bstudio_panel-tabs-margin) - var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_right .bstudio_panel-tabs {
+    width: calc(var(--bstudio_panel-tabs-font-size) + var(--bstudio_panel-tabs-margin) + var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_right .bstudio_panel-body {
+    width: calc(100% - var(--bstudio_panel-tabs-font-size) - var(--bstudio_panel-tabs-margin) - var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_bottom .bstudio_panel-tabs {
+    height: calc(var(--bstudio_panel-tabs-font-size) + var(--bstudio_panel-tabs-margin) + var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_bottom .bstudio_panel-body {
+    height: calc(100% - var(--bstudio_panel-tabs-font-size) - var(--bstudio_panel-tabs-margin) - var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }

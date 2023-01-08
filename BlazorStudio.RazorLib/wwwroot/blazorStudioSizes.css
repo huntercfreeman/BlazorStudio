@@ -26,4 +26,7 @@
     --bstudio_input-file-display-bottom-controls-non-text-buttons-margin-left: 15px;
     --bstudio_input-file-display-bottom-controls-text-input-width: calc(100% - var(--bstudio_input-file-display-bottom-controls-non-text-width) - var(--bstudio_input-file-display-bottom-controls-non-text-margin-left));
     --bstudio_input-file-display-bottom-controls-text-input-padding-left: 5px;
+    --bstudio_panel-tabs-font-size: 0.7em;
+    --bstudio_panel-tabs-margin: 4px;
+    --bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo: 0.7em;
 }
