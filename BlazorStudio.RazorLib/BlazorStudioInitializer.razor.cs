@@ -60,6 +60,13 @@ public partial class BlazorStudioInitializer : ComponentBase
 
     private void InitializePanelTabs()
     {
+        InitializeLeftPanelTabs();
+        InitializeRightPanelTabs();
+        InitializeBottomPanelTabs();
+    }
+    
+    private void InitializeLeftPanelTabs()
+    {
         var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsCollectionWrap.Value);
 
         var solutionExplorerPanelTab = new PanelTab(
@@ -94,5 +101,92 @@ public partial class BlazorStudioInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             leftPanel.PanelRecordKey,
             gitChangesPanelTab));
+    }
+    
+    private void InitializeRightPanelTabs()
+    {
+        var rightPanel = PanelFacts.GetRightPanelRecord(PanelsCollectionWrap.Value);
+
+        var notificationsPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            rightPanel.ElementDimensions,
+            typeof(SolutionExplorerDisplay),
+            typeof(IconFolder),
+            "Notifications");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            rightPanel.PanelRecordKey,
+            notificationsPanelTab));
+    }
+    
+    private void InitializeBottomPanelTabs()
+    {
+        var bottomPanel = PanelFacts.GetBottomPanelRecord(PanelsCollectionWrap.Value);
+
+        var gitPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            bottomPanel.ElementDimensions,
+            typeof(SolutionExplorerDisplay),
+            typeof(IconFolder),
+            "Git");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            bottomPanel.PanelRecordKey,
+            gitPanelTab));
+        
+        var buildPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            bottomPanel.ElementDimensions,
+            typeof(SolutionExplorerDisplay),
+            typeof(IconFolder),
+            "Build");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            bottomPanel.PanelRecordKey,
+            buildPanelTab));
+        
+        var terminalPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            bottomPanel.ElementDimensions,
+            typeof(SolutionExplorerDisplay),
+            typeof(IconFolder),
+            "Terminal");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            bottomPanel.PanelRecordKey,
+            terminalPanelTab));
+        
+        var nuGetPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            bottomPanel.ElementDimensions,
+            typeof(SolutionExplorerDisplay),
+            typeof(IconFolder),
+            "NuGet");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            bottomPanel.PanelRecordKey,
+            nuGetPanelTab));
+        
+        var unitTestsPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            bottomPanel.ElementDimensions,
+            typeof(SolutionExplorerDisplay),
+            typeof(IconFolder),
+            "Unit Tests");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            bottomPanel.PanelRecordKey,
+            unitTestsPanelTab));
+        
+        var problemsPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            bottomPanel.ElementDimensions,
+            typeof(SolutionExplorerDisplay),
+            typeof(IconFolder),
+            "Problems");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            bottomPanel.PanelRecordKey,
+            problemsPanelTab));
     }
 }
