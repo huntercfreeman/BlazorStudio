@@ -64,8 +64,8 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
     
     private Task HandleOnMouseOutAsync(MouseEventArgs mouseEventArgs)
     {
-        if (_thinksLeftMouseButtonIsDown && 
-            !PanelsCollectionWrap.Value.ThinksIsBeingDragged)
+        if (_thinksLeftMouseButtonIsDown &&
+            (PanelsCollectionWrap.Value.PanelDragEventArgs is null))
         {
             var leftDimensionAttribute = PanelTab.BeingDraggedDimensions.DimensionAttributes
                 .First(x => 
@@ -107,6 +107,42 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
         return Task.CompletedTask;
     }
     
+    private Task TopDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
+    {
+        var panelDragEventArgs = PanelsCollectionWrap.Value.PanelDragEventArgs;
+
+        if (panelDragEventArgs is not null)
+        {
+            Dispatcher.Dispatch(new PanelsCollection.DisposePanelTabAction(
+                panelDragEventArgs.Value.ParentPanelRecord.PanelRecordKey,
+                panelDragEventArgs.Value.TagDragTarget.PanelTabKey));
+            
+            Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+                PanelRecord.PanelRecordKey,
+                panelDragEventArgs.Value.TagDragTarget));
+        }
+
+        return Task.CompletedTask;
+    }
+    
+    private Task BottomDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
+    {
+        var panelDragEventArgs = PanelsCollectionWrap.Value.PanelDragEventArgs;
+
+        if (panelDragEventArgs is not null)
+        {
+            Dispatcher.Dispatch(new PanelsCollection.DisposePanelTabAction(
+                panelDragEventArgs.Value.ParentPanelRecord.PanelRecordKey,
+                panelDragEventArgs.Value.TagDragTarget.PanelTabKey));
+            
+            Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+                PanelRecord.PanelRecordKey,
+                panelDragEventArgs.Value.TagDragTarget));
+        }
+
+        return Task.CompletedTask;
+    }
+    
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
     {
         if (!DragStateWrap.Value.ShouldDisplay)
@@ -114,7 +150,7 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
             _dragEventHandler = null;
             _previousDragMouseEventArgs = null;
             _thinksLeftMouseButtonIsDown = false;
-            Dispatcher.Dispatch(new PanelsCollection.SetThinksIsBeingDraggedAction(false));
+            Dispatcher.Dispatch(new PanelsCollection.SetPanelDragEventArgsAction(null));
             PanelTab.IsBeingDragged = false;
         }
         else
@@ -139,7 +175,9 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
     {
         _dragEventHandler = DragEventHandlerScrollAsync;
         
-        Dispatcher.Dispatch(new PanelsCollection.SetThinksIsBeingDraggedAction(true));
+        Dispatcher.Dispatch(new PanelsCollection.SetPanelDragEventArgsAction(
+            (PanelTab, PanelRecord)));
+        
         Dispatcher.Dispatch(new SetDragStateAction(true, null));
     }
     
@@ -167,7 +205,7 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
             else
             {
                 _thinksLeftMouseButtonIsDown = false;
-                Dispatcher.Dispatch(new PanelsCollection.SetThinksIsBeingDraggedAction(false));
+                Dispatcher.Dispatch(new PanelsCollection.SetPanelDragEventArgsAction(null));
                 PanelTab.IsBeingDragged = false;
             }
     

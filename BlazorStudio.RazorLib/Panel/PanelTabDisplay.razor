@@ -8,12 +8,16 @@
     <span>
         @PanelTab.DisplayName
         
-        @if (PanelsCollectionWrap.Value.ThinksIsBeingDragged)
+        @if (PanelsCollectionWrap.Value.PanelDragEventArgs is not null)
         {
-            <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-top">
+            <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-top"
+                 @onmouseup:stopPropagation="true"
+                 @onmouseup="TopDropzoneOnMouseUp">
             </div>
             
-            <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-bottom">
+            <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-bottom"
+                 @onmouseup:stopPropagation="true"
+                 @onmouseup="BottomDropzoneOnMouseUp">
             </div>
         }
     </span>

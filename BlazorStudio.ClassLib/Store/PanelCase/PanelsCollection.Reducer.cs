@@ -137,13 +137,13 @@ public partial record PanelsCollection
         }
         
         [ReducerMethod]
-        public static PanelsCollection ReduceSetThinksIsBeingDraggedAction(
+        public static PanelsCollection ReduceSetPanelDragEventArgsAction(
             PanelsCollection previousPanelsCollection,
-            SetThinksIsBeingDraggedAction setThinksIsBeingDraggedAction)
+            SetPanelDragEventArgsAction setPanelDragEventArgsAction)
         {
             return previousPanelsCollection with
             {
-                ThinksIsBeingDragged = setThinksIsBeingDraggedAction.ThinksIsBeingDragged
+                PanelDragEventArgs = setPanelDragEventArgsAction.PanelDragEventArgs
             };
         }
     }

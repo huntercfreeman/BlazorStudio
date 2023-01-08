@@ -9,12 +9,10 @@ namespace BlazorStudio.ClassLib.Store.PanelCase;
 
 [FeatureState]
 public partial record PanelsCollection(
-    ImmutableArray<PanelRecord> PanelRecordsList,
-    bool ThinksIsBeingDragged)
+    ImmutableArray<PanelRecord> PanelRecordsList)
 {
     public PanelsCollection() : this(
-        ImmutableArray<PanelRecord>.Empty,
-        false)
+        ImmutableArray<PanelRecord>.Empty)
     {
         var leftPanel = ConstructLeftPanel();
 
@@ -30,6 +28,8 @@ public partial record PanelsCollection(
         }.ToImmutableArray();
     }
 
+    public (PanelTab TagDragTarget, PanelRecord ParentPanelRecord)? PanelDragEventArgs { get; set; }
+    
     private PanelRecord ConstructLeftPanel()
     {
         var leftPanel = new PanelRecord(

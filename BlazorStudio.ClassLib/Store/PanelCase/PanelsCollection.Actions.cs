@@ -12,5 +12,5 @@ public partial record PanelsCollection
     
     public record SetActivePanelTabAction(PanelRecordKey PanelRecordKey, PanelTabKey PanelTabKey);
     
-    public record SetThinksIsBeingDraggedAction(bool ThinksIsBeingDragged);
+    public record SetPanelDragEventArgsAction((PanelTab TagDragTarget, PanelRecord ParentPanelRecord)? PanelDragEventArgs);
 }
