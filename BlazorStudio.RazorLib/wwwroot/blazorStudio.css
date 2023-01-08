@@ -344,8 +344,10 @@ button.bstudio_input-file-address-hierarchy-entry {
 
 .bstudio_panel-tab-drag-display {
     position: fixed;
-    min-width: 100px;
-    min-height: 100px;
+    min-width: 10ch;
+    min-height: 2em;
+    background-color: var(--balc_tertiary-background-color);
+    color: var(--balc_tertiary-foreground-color);
 }
 
 .bstudio_panel_left .bstudio_panel-tabs .bstudio_panel-tab span {
