@@ -5,6 +5,7 @@ using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorStudio.RazorLib.FolderExplorer;
 using BlazorStudio.RazorLib.SolutionExplorer;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
@@ -71,5 +72,27 @@ public partial class BlazorStudioInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             leftPanel.PanelRecordKey,
             solutionExplorerPanelTab));
+        
+        var folderExplorerPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            leftPanel.ElementDimensions,
+            typeof(FolderExplorerDisplay),
+            typeof(IconFolder),
+            "Folder Explorer");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            leftPanel.PanelRecordKey,
+            folderExplorerPanelTab));
+        
+        var gitChangesPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            leftPanel.ElementDimensions,
+            typeof(FolderExplorerDisplay),
+            typeof(IconFolder),
+            "Git Changes");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            leftPanel.PanelRecordKey,
+            gitChangesPanelTab));
     }
 }
