@@ -9,14 +9,14 @@
     
     <PanelDisplay PanelRecordKey="PanelFacts.LeftPanelRecordKey"/>
 
-    <ResizableColumn LeftElementDimensions="_explorersElementDimensions"
+    <ResizableColumn LeftElementDimensions="@PanelFacts.GetLeftPanelRecord(PanelsCollectionWrap.Value).ElementDimensions"
                      RightElementDimensions="_editorElementDimensions"
                      ReRenderFuncAsync="ReRenderAsync"/>
 
     <EditorDisplay EditorElementDimensions="_editorElementDimensions"/>
     
-    <ResizableColumn LeftElementDimensions="_explorersElementDimensions"
-                         RightElementDimensions="_editorElementDimensions"
+    <ResizableColumn LeftElementDimensions="_editorElementDimensions"
+                         RightElementDimensions="@PanelFacts.GetRightPanelRecord(PanelsCollectionWrap.Value).ElementDimensions"
                          ReRenderFuncAsync="ReRenderAsync"/>
     
     <PanelDisplay PanelRecordKey="PanelFacts.RightPanelRecordKey"/>

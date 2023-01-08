@@ -9,7 +9,9 @@ using BlazorALaCarte.Shared.Store;
 using BlazorALaCarte.Shared.Theme;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.FontCase;
+using BlazorStudio.ClassLib.Store.PanelCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
@@ -26,6 +28,8 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private IState<ThemeState> ThemeStateWrap { get; set; } = null!;
     [Inject]
     private IState<FontState> FontStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -58,30 +62,6 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             new DimensionUnit
             {
                 Value = 78,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            },
-            new DimensionUnit
-            {
-                Value = SizeFacts.Bstudio.Header.Height.Value / 2,
-                DimensionUnitKind = SizeFacts.Bstudio.Header.Height.DimensionUnitKind,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
-
-        var footerHeight = _footerElementDimensions.DimensionAttributes
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-        
-        footerHeight.DimensionUnits.AddRange(new []
-        {
-            new DimensionUnit
-            {
-                Value = 22,
                 DimensionUnitKind = DimensionUnitKind.Percentage
             },
             new DimensionUnit

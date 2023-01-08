@@ -8,18 +8,26 @@
         .FirstOrDefault(x => x.PanelRecordKey == PanelRecordKey);
 }
 
-<div class="bstudio_panel @PanelPositionCssClass">
+<div class="bstudio_panel @PanelPositionCssClass @CssClassString"
+     style="@(panelRecord?.ElementDimensions.StyleString ?? string.Empty)">
     
-    @if (panelRecord is not null)
-    {
-        <div>
-            @PanelPositionCssClass
-        </div>        
-    }
-    else
-    {
-        <div>
-            PanelRecord was null
-        </div>
-    }
+    <div class="bstudio_section-title">
+        @if (panelRecord is not null)
+        {
+            <text>
+                Panel @PanelPositionCssClass        
+            </text>
+        }
+        else
+        {
+            <text>
+                PanelRecord was null        
+            </text>
+        }
+    </div>
+
+    <div class="bstudio_section-body">
+        Panel Body
+    </div>
+    
 </div>

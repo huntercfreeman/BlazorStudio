@@ -13,6 +13,8 @@ public partial class PanelDisplay : FluxorComponent
     
     [Parameter, EditorRequired]
     public PanelRecordKey PanelRecordKey { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public string CssClassString { get; set; } = null!;
 
     public string PanelPositionCssClass => GetPanelPositionCssClass();
     
