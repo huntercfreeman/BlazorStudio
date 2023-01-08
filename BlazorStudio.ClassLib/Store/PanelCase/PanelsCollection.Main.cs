@@ -12,32 +12,87 @@ public partial record PanelsCollection
 {
     public PanelsCollection()
     {
+        var leftPanel = ConstructLeftPanel();
+
+        var rightPanel = ConstructRightPanel();
+
+        var bottomPanel = ConstructBottomPanel();
+        
+        PanelRecordsList = new[]
+        {
+            leftPanel,
+            rightPanel,
+            bottomPanel,
+        }.ToImmutableArray();
+    }
+
+    public ImmutableArray<PanelRecord> PanelRecordsList { get; init; }
+    
+    private PanelRecord ConstructLeftPanel()
+    {
         var leftPanel = new PanelRecord(
             PanelFacts.LeftPanelRecordKey,
             PanelTabKey.Empty,
             new ElementDimensions(),
             ImmutableArray<PanelTab>.Empty);
         
+        var leftPanelWidth = leftPanel.ElementDimensions.DimensionAttributes
+            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
+        
+        leftPanelWidth.DimensionUnits.AddRange(new []
+        {
+            new DimensionUnit
+            {
+                Value = 30,
+                DimensionUnitKind = DimensionUnitKind.Percentage
+            },
+            new DimensionUnit
+            {
+                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract
+            }
+        });
+
+        return leftPanel;
+    }
+    
+    private PanelRecord ConstructRightPanel()
+    {
         var rightPanel = new PanelRecord(
             PanelFacts.RightPanelRecordKey,
             PanelTabKey.Empty,
             new ElementDimensions(),
             ImmutableArray<PanelTab>.Empty);
         
+        var rightPanelWidth = rightPanel.ElementDimensions.DimensionAttributes
+            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
+        
+        rightPanelWidth.DimensionUnits.AddRange(new []
+        {
+            new DimensionUnit
+            {
+                Value = 70,
+                DimensionUnitKind = DimensionUnitKind.Percentage
+            },
+            new DimensionUnit
+            {
+                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract
+            }
+        });
+        
+        return rightPanel;
+    }
+    
+    private PanelRecord ConstructBottomPanel()
+    {
         var bottomPanel = new PanelRecord(
             PanelFacts.BottomPanelRecordKey,
             PanelTabKey.Empty,
             new ElementDimensions(),
             ImmutableArray<PanelTab>.Empty);
-        
-        var initialPanels = new PanelRecord[]
-        {
-            leftPanel,
-            rightPanel,
-            bottomPanel,
-        }.ToImmutableArray();
-        
-        PanelRecordsList = initialPanels;
         
         var bottomPanelHeight = bottomPanel.ElementDimensions.DimensionAttributes
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
@@ -62,43 +117,7 @@ public partial record PanelsCollection
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }
         });
-        
-        var leftPanelWidth = leftPanel.ElementDimensions.DimensionAttributes
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-        
-        leftPanelWidth.DimensionUnits.AddRange(new []
-        {
-            new DimensionUnit
-            {
-                Value = 30,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
 
-        var rightPanelWidth = rightPanel.ElementDimensions.DimensionAttributes
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-        
-        rightPanelWidth.DimensionUnits.AddRange(new []
-        {
-            new DimensionUnit
-            {
-                Value = 70,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
+        return bottomPanel;
     }
-
-    public ImmutableArray<PanelRecord> PanelRecordsList { get; init; }
 }

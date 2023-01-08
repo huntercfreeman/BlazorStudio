@@ -11,23 +11,35 @@
 <div class="bstudio_panel @PanelPositionCssClass @CssClassString"
      style="@(panelRecord?.ElementDimensions.StyleString ?? string.Empty)">
     
-    <div class="bstudio_section-title">
+    <div class="bstudio_panel-tabs">
         @if (panelRecord is not null)
         {
-            <text>
-                Panel @PanelPositionCssClass        
-            </text>
-        }
-        else
-        {
-            <text>
-                PanelRecord was null        
-            </text>
+            foreach (var panelTab in panelRecord.PanelTabs)
+            {
+                <PanelTabDisplay PanelTab="panelTab"/>
+            }
         }
     </div>
-
-    <div class="bstudio_section-body">
-        Panel Body
+    
+    <div class="bstudio_panel-body">
+        <div class="bstudio_section-title">
+            @if (panelRecord is not null)
+            {
+                <text>
+                    Panel @PanelPositionCssClass        
+                </text>
+            }
+            else
+            {
+                <text>
+                    PanelRecord was null        
+                </text>
+            }
+        </div>
+    
+        <div class="bstudio_section-body">
+            Panel Body
+        </div>
     </div>
     
 </div>

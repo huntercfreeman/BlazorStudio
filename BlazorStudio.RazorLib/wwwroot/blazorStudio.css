@@ -307,3 +307,7 @@ button.bstudio_input-file-address-hierarchy-entry {
 .bte_text-editor-input-cursor-size .bte_text-editor {
     min-height: initial;
 }
+
+.bstudio_panel {
+    display: flex;
+}

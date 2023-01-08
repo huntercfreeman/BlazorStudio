@@ -24,15 +24,15 @@ public partial class PanelDisplay : FluxorComponent
         
         if (PanelFacts.LeftPanelRecordKey == PanelRecordKey)
         {
-            return "left";
+            position = "left";
         }
         else if (PanelFacts.RightPanelRecordKey == PanelRecordKey)
         {
-            return "right";
+            position = "right";
         }
         else if (PanelFacts.BottomPanelRecordKey == PanelRecordKey)
         {
-            return "bottom";
+            position = "bottom";
         }
 
         return $"bstudio_panel_{position}";

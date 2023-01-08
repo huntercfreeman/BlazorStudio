@@ -1,15 +1,21 @@
 ﻿using BlazorALaCarte.Shared.Facts;
+using BlazorALaCarte.Shared.Icons.Codicon;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.Panel;
+using BlazorStudio.ClassLib.Store.PanelCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorStudio.RazorLib.SolutionExplorer;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib;
 
-public partial class BlazorTextEditorRazorLibInitializer : ComponentBase
+public partial class BlazorStudioInitializer : ComponentBase
 {
+    [Inject]
+    private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -45,7 +51,25 @@ public partial class BlazorTextEditorRazorLibInitializer : ComponentBase
                     testSolutionExplorer));
             }
         }
+
+        InitializePanelTabs();
         
         base.OnInitialized();
+    }
+
+    private void InitializePanelTabs()
+    {
+        var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsCollectionWrap.Value);
+
+        var solutionExplorerPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            leftPanel.ElementDimensions,
+            typeof(SolutionExplorerDisplay),
+            typeof(IconFolder),
+            "Solution Explorer");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            leftPanel.PanelRecordKey,
+            solutionExplorerPanelTab));
     }
 }
