@@ -25,14 +25,12 @@
         <div class="bstudio_section-title">
             @if (panelRecord is not null)
             {
+                var activePanelTab = panelRecord.PanelTabs
+                    .FirstOrDefault(x =>
+                        x.PanelTabKey == panelRecord.ActivePanelTabKey);
+                
                 <text>
-                    Panel @PanelPositionCssClass        
-                </text>
-            }
-            else
-            {
-                <text>
-                    PanelRecord was null        
+                    @(activePanelTab?.DisplayName ?? "no active tab")
                 </text>
             }
         </div>
