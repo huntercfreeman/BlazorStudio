@@ -6,7 +6,9 @@ using BlazorStudio.ClassLib.Store.PanelCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.RazorLib.FolderExplorer;
+using BlazorStudio.RazorLib.NuGet;
 using BlazorStudio.RazorLib.SolutionExplorer;
+using BlazorStudio.RazorLib.Terminal;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -152,7 +154,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var terminalPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
-            typeof(SolutionExplorerDisplay),
+            typeof(TerminalDisplay),
             typeof(IconFolder),
             "Terminal");
         
@@ -163,13 +165,17 @@ public partial class BlazorStudioInitializer : ComponentBase
         var nuGetPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
-            typeof(SolutionExplorerDisplay),
+            typeof(NuGetPackageManager),
             typeof(IconFolder),
             "NuGet");
         
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             bottomPanel.PanelRecordKey,
             nuGetPanelTab));
+        
+        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
+            bottomPanel.PanelRecordKey,
+            nuGetPanelTab.PanelTabKey));
         
         var unitTestsPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
