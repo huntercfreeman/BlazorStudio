@@ -6,6 +6,7 @@ using BlazorStudio.ClassLib.Store.PanelCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.RazorLib.FolderExplorer;
+using BlazorStudio.RazorLib.Notification;
 using BlazorStudio.RazorLib.NuGet;
 using BlazorStudio.RazorLib.SolutionExplorer;
 using BlazorStudio.RazorLib.Terminal;
@@ -116,7 +117,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var notificationsPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             rightPanel.ElementDimensions,
-            typeof(SolutionExplorerDisplay),
+            typeof(NotificationHistoryDisplay),
             typeof(IconFolder),
             "Notifications");
         
@@ -132,7 +133,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var gitPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
-            typeof(SolutionExplorerDisplay),
+            typeof(TerminalDisplay),
             typeof(IconFolder),
             "Git");
         
@@ -143,7 +144,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var buildPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
-            typeof(SolutionExplorerDisplay),
+            typeof(TerminalDisplay),
             typeof(IconFolder),
             "Build");
         
@@ -180,7 +181,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var unitTestsPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
-            typeof(SolutionExplorerDisplay),
+            typeof(TerminalDisplay),
             typeof(IconFolder),
             "Unit Tests");
         
@@ -191,7 +192,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         var problemsPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
-            typeof(SolutionExplorerDisplay),
+            typeof(TerminalDisplay),
             typeof(IconFolder),
             "Problems");
         
