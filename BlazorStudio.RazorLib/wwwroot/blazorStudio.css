@@ -312,8 +312,9 @@ button.bstudio_input-file-address-hierarchy-entry {
     display: flex;
 }
 
-.bstudio_panel_left .bstudio_panel-tabs .bstudio_panel-tab {
+.bstudio_panel-tab {
     padding: 1px;
+    font-size: 0.7em;
 }
 
 .bstudio_panel_left .bstudio_panel-tabs .bstudio_panel-tab span {
@@ -324,5 +325,17 @@ button.bstudio_input-file-address-hierarchy-entry {
     -ms-transform: rotate(180deg);
     -o-transform: rotate(180deg);
     transform: rotate(180deg);
-    font-size: 0.7em;
+}
+
+.bstudio_panel_right {
+    flex-direction: row-reverse;
+}
+
+.bstudio_panel_right .bstudio_panel-tabs .bstudio_panel-tab span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+.bstudio_panel_bottom {
+    flex-direction: column-reverse;
 }
