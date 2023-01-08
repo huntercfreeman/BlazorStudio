@@ -80,6 +80,10 @@ public partial class BlazorStudioInitializer : ComponentBase
             leftPanel.PanelRecordKey,
             solutionExplorerPanelTab));
         
+        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
+            leftPanel.PanelRecordKey,
+            solutionExplorerPanelTab.PanelTabKey));
+        
         var folderExplorerPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             leftPanel.ElementDimensions,
