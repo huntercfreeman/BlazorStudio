@@ -1,7 +1,9 @@
-﻿using BlazorStudio.ClassLib.Panel;
+﻿using BlazorALaCarte.Shared.Dimensions;
+using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -15,9 +17,24 @@ public partial class PanelDisplay : FluxorComponent
     [Parameter, EditorRequired]
     public PanelRecordKey PanelRecordKey { get; set; } = null!;
     [Parameter, EditorRequired]
+    public ElementDimensions AdjacentElementDimensions { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public DimensionAttributeKind DimensionAttributeKind { get; set; }
+    [Parameter, EditorRequired]
+    public Func<Task> ReRenderSelfAndAdjacentElementDimensionsFunc { get; set; } = null!;
+    [Parameter, EditorRequired]
     public string CssClassString { get; set; } = null!;
 
-    public string PanelPositionCssClass => GetPanelPositionCssClass();
+    public string DimensionAttributeModificationPurpose => $"take_size_of_adjacent_hidden_panel_{PanelRecordKey}";
+
+    private string PanelPositionCssClass => GetPanelPositionCssClass();    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            await PassAlongSizeIfHiddenAsync();
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
     private string GetPanelPositionCssClass()
     {
@@ -37,5 +54,70 @@ public partial class PanelDisplay : FluxorComponent
         }
 
         return $"bstudio_panel_{position}";
+    }
+    
+    private async Task PassAlongSizeIfHiddenAsync()
+    {
+        var panelsCollection = PanelsCollectionWrap.Value;
+
+        var panelRecord = panelsCollection.PanelRecordsList
+            .FirstOrDefault(x => x.PanelRecordKey == PanelRecordKey);
+
+        if (panelRecord is not null)
+        {
+            var activePanelTab = panelRecord.PanelTabs
+                .FirstOrDefault(x =>
+                    x.PanelTabKey == panelRecord.ActivePanelTabKey);
+            
+            var adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.DimensionAttributes
+                .First(x =>
+                    x.DimensionAttributeKind == DimensionAttributeKind);
+
+            var indexOfPreviousPassAlong = adjacentElementSizeDimensionAttribute.DimensionUnits.FindIndex(
+                x => x.Purpose == DimensionAttributeModificationPurpose);
+        
+            if (activePanelTab is null && 
+                indexOfPreviousPassAlong == -1)
+            {
+                var panelRecordSizeDimensionsAttribute =
+                    panelRecord.ElementDimensions.DimensionAttributes.First(x =>
+                        x.DimensionAttributeKind == DimensionAttributeKind);
+
+                var panelRecordPercentageSize = panelRecordSizeDimensionsAttribute.DimensionUnits
+                    .First(x => x.DimensionUnitKind == DimensionUnitKind.Percentage);
+                
+                adjacentElementSizeDimensionAttribute.DimensionUnits.Add(new DimensionUnit
+                {
+                    Value = panelRecordPercentageSize.Value,
+                    DimensionUnitKind = panelRecordPercentageSize.DimensionUnitKind,
+                    DimensionOperatorKind = DimensionOperatorKind.Add,
+                    Purpose = DimensionAttributeModificationPurpose
+                });
+
+                await ReRenderSelfAndAdjacentElementDimensionsFunc.Invoke();
+            }
+            else if (activePanelTab is not null && 
+                     indexOfPreviousPassAlong != -1)
+            {
+                adjacentElementSizeDimensionAttribute.DimensionUnits.RemoveAt(indexOfPreviousPassAlong);
+
+                await ReRenderSelfAndAdjacentElementDimensionsFunc.Invoke();
+            }
+        }
+    }
+    
+    private string GetElementDimensionsStyleString(
+        PanelRecord? panelRecord,
+        PanelTab? activePanelTab)
+    {
+        if (activePanelTab is null)
+        {
+            return "calc(" +
+                   "var(--bstudio_panel-tabs-font-size)" +
+                   " + var(--bstudio_panel-tabs-margin)" +
+                   " + var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
+        }
+        
+        return panelRecord?.ElementDimensions.StyleString ?? string.Empty;
     }
 }

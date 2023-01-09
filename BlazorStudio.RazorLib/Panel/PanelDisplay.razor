@@ -19,7 +19,7 @@
 }
 
 <div class="bstudio_panel @PanelPositionCssClass @CssClassString"
-     style="@(panelRecord?.ElementDimensions.StyleString ?? string.Empty)">
+     style="@GetElementDimensionsStyleString(panelRecord, activePanelTab)">
     
     <div class="bstudio_panel-tabs">
         @if (panelRecord is not null)

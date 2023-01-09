@@ -3,11 +3,15 @@
 @using BlazorALaCarte.Shared.Resize
 @using BlazorStudio.ClassLib.Panel
 @using BlazorStudio.RazorLib.Panel
+@using BlazorALaCarte.Shared.Dimensions
 
 <div class="bstudio_body"
      style="@BodyElementDimensions.StyleString">
     
-    <PanelDisplay PanelRecordKey="PanelFacts.LeftPanelRecordKey"/>
+    <PanelDisplay PanelRecordKey="PanelFacts.LeftPanelRecordKey"
+                  AdjacentElementDimensions="_editorElementDimensions"
+                  DimensionAttributeKind="DimensionAttributeKind.Width"
+                  ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderAsync"/>
 
     <ResizableColumn LeftElementDimensions="@PanelFacts.GetLeftPanelRecord(PanelsCollectionWrap.Value).ElementDimensions"
                      RightElementDimensions="_editorElementDimensions"
@@ -16,8 +20,11 @@
     <EditorDisplay EditorElementDimensions="_editorElementDimensions"/>
     
     <ResizableColumn LeftElementDimensions="_editorElementDimensions"
-                         RightElementDimensions="@PanelFacts.GetRightPanelRecord(PanelsCollectionWrap.Value).ElementDimensions"
-                         ReRenderFuncAsync="ReRenderAsync"/>
+                     RightElementDimensions="@PanelFacts.GetRightPanelRecord(PanelsCollectionWrap.Value).ElementDimensions"
+                     ReRenderFuncAsync="ReRenderAsync"/>
     
-    <PanelDisplay PanelRecordKey="PanelFacts.RightPanelRecordKey"/>
+    <PanelDisplay PanelRecordKey="PanelFacts.RightPanelRecordKey"
+                  AdjacentElementDimensions="_editorElementDimensions"
+                  DimensionAttributeKind="DimensionAttributeKind.Width"
+                  ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderAsync"/>
 </div>

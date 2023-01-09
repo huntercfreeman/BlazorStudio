@@ -2,6 +2,7 @@
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorTextEditor.RazorLib
 @using BlazorALaCarte.DialogNotification.Installation
+@using BlazorALaCarte.Shared.Dimensions
 @using BlazorALaCarte.Shared.Drag
 @using BlazorALaCarte.Shared.Resize
 @using BlazorStudio.ClassLib.Panel
@@ -26,6 +27,9 @@
                   ReRenderFuncAsync="ReRenderAsync"/>
 
     <PanelDisplay PanelRecordKey="PanelFacts.BottomPanelRecordKey"
-                  CssClassString="bstudio_footer"/>
+                  CssClassString="bstudio_footer"
+                  AdjacentElementDimensions="_bodyElementDimensions"
+                  DimensionAttributeKind="DimensionAttributeKind.Height"
+                  ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderAsync"/>
     
 </ContextBoundary>
