@@ -45,7 +45,7 @@ public partial record PanelsCollection(
         {
             new DimensionUnit
             {
-                Value = 30,
+                Value = 33.3333,
                 DimensionUnitKind = DimensionUnitKind.Percentage
             },
             new DimensionUnit
@@ -74,7 +74,7 @@ public partial record PanelsCollection(
         {
             new DimensionUnit
             {
-                Value = 70,
+                Value = 33.3333,
                 DimensionUnitKind = DimensionUnitKind.Percentage
             },
             new DimensionUnit
