@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewAbsoluteFilePathDisplay),
             typeof(NuGetPackageManager),
-            typeof(GitDisplay),
+            typeof(GitChangesDisplay),
             typeof(RemoveCSharpProjectFromSolutionDisplay),
             typeof(BooleanPromptOrCancelDisplay));
         

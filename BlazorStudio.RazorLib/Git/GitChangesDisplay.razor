@@ -12,7 +12,7 @@
     }
     
     <div class="bstudio_section-title">
-        Git
+        Git Changes
     </div>
 
     <div class="bstudio_section-body"
@@ -45,7 +45,8 @@
 
                     if (gitState.GitFolderAbsoluteFilePath is null)
                     {
-                        <button class="balc_button">
+                        <button class="balc_button"
+                                @onclick="GitInitOnClickAsync">
                             Git Init
                         </button>
                     }

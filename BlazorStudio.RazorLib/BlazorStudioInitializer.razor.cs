@@ -6,6 +6,7 @@ using BlazorStudio.ClassLib.Store.PanelCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.RazorLib.FolderExplorer;
+using BlazorStudio.RazorLib.Git;
 using BlazorStudio.RazorLib.Notification;
 using BlazorStudio.RazorLib.NuGet;
 using BlazorStudio.RazorLib.SolutionExplorer;
@@ -104,7 +105,7 @@ public partial class BlazorStudioInitializer : ComponentBase
             PanelTabKey.NewPanelTabKey(),
             leftPanel.ElementDimensions,
             new(),
-            typeof(FolderExplorerDisplay),
+            typeof(GitChangesDisplay),
             typeof(IconFolder),
             "Git Changes");
         
