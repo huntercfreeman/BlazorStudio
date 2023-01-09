@@ -23,7 +23,9 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public PanelRecord PanelRecord { get; set; } = null!;
 
-    private string IsActiveCssClassString => PanelRecord.ActivePanelTabKey == PanelTab.PanelTabKey
+    private bool IsActive => PanelRecord.ActivePanelTabKey == PanelTab.PanelTabKey;
+    
+    private string IsActiveCssClassString => IsActive
         ? "balc_active"
         : string.Empty;
 
@@ -50,9 +52,18 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
 
     private void DispatchSetActivePanelTabActionOnClick()
     {
-        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
-            PanelRecord.PanelRecordKey,
-            PanelTab.PanelTabKey));
+        if (IsActive)
+        {
+            Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
+                PanelRecord.PanelRecordKey,
+                PanelTabKey.Empty));
+        }
+        else
+        {
+            Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
+                PanelRecord.PanelRecordKey,
+                PanelTab.PanelTabKey));
+        }
     }
     
     private Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)

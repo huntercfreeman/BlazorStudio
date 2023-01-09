@@ -13,6 +13,8 @@ public partial class PanelDisplay : FluxorComponent
 {
     [Inject]
     private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public PanelRecordKey PanelRecordKey { get; set; } = null!;
@@ -119,5 +121,57 @@ public partial class PanelDisplay : FluxorComponent
         }
         
         return panelRecord?.ElementDimensions.StyleString ?? string.Empty;
+    }
+    
+    private Task TopDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
+    {
+        var panelsCollection = PanelsCollectionWrap.Value;
+
+        var panelRecord = panelsCollection.PanelRecordsList
+            .FirstOrDefault(x => x.PanelRecordKey == PanelRecordKey);
+        
+        if (panelRecord is null)
+            return Task.CompletedTask;
+        
+        var panelDragEventArgs = panelsCollection.PanelDragEventArgs;
+
+        if (panelDragEventArgs is not null)
+        {
+            Dispatcher.Dispatch(new PanelsCollection.DisposePanelTabAction(
+                panelDragEventArgs.Value.ParentPanelRecord.PanelRecordKey,
+                panelDragEventArgs.Value.TagDragTarget.PanelTabKey));
+            
+            Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+                panelRecord.PanelRecordKey,
+                panelDragEventArgs.Value.TagDragTarget));
+        }
+
+        return Task.CompletedTask;
+    }
+    
+    private Task BottomDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
+    {
+        var panelsCollection = PanelsCollectionWrap.Value;
+
+        var panelRecord = panelsCollection.PanelRecordsList
+            .FirstOrDefault(x => x.PanelRecordKey == PanelRecordKey);
+
+        if (panelRecord is null)
+            return Task.CompletedTask;
+        
+        var panelDragEventArgs = panelsCollection.PanelDragEventArgs;
+
+        if (panelDragEventArgs is not null)
+        {
+            Dispatcher.Dispatch(new PanelsCollection.DisposePanelTabAction(
+                panelDragEventArgs.Value.ParentPanelRecord.PanelRecordKey,
+                panelDragEventArgs.Value.TagDragTarget.PanelTabKey));
+            
+            Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+                panelRecord.PanelRecordKey,
+                panelDragEventArgs.Value.TagDragTarget));
+        }
+
+        return Task.CompletedTask;
     }
 }

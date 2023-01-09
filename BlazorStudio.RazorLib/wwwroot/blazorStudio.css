@@ -312,6 +312,10 @@ button.bstudio_input-file-address-hierarchy-entry {
     display: flex;
 }
 
+.bstudio_panel-tabs {
+    position: relative;
+}
+
 .bstudio_panel-tab {
     padding: 1px;
     font-size: var(--bstudio_panel-tabs-font-size);
