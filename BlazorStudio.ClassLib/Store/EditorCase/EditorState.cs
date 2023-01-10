@@ -69,21 +69,21 @@ public class EditorState
 
         var inputFileAbsoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
 
-        var textEditorBase = textEditorService
-            .GetTextEditorBaseOrDefaultByResourceUri(inputFileAbsoluteFilePathString);
+        var textEditorModel = textEditorService
+            .GetTextEditorModelOrDefaultByResourceUri(inputFileAbsoluteFilePathString);
 
-        var textEditorKey = textEditorBase?.Key ?? TextEditorKey.Empty;
+        var textEditorKey = textEditorModel?.ModelKey ?? TextEditorModelKey.Empty;
         
-        if (textEditorBase is null)
+        if (textEditorModel is null)
         {
-            textEditorKey = TextEditorKey.NewTextEditorKey();
+            textEditorKey = TextEditorModelKey.NewTextEditorKey();
 
             var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
             
             var content = await File
                 .ReadAllTextAsync(inputFileAbsoluteFilePathString);
 
-            textEditorBase = new TextEditorBase(
+            textEditorModel = new TextEditorModel(
                 inputFileAbsoluteFilePathString,
                 fileLastWriteTime,
                 absoluteFilePath.ExtensionNoPeriod,
@@ -94,17 +94,17 @@ public class EditorState
                 textEditorKey
             );
             
-            textEditorService.RegisterCustomTextEditor(textEditorBase);
+            textEditorService.RegisterCustomTextEditor(textEditorModel);
 
-            textEditorKey = textEditorBase.Key;
+            textEditorKey = textEditorModel.ModelKey;
             
-            await textEditorBase.ApplySyntaxHighlightingAsync();
+            await textEditorModel.ApplySyntaxHighlightingAsync();
         }
         else
         {
             var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
 
-            if (fileLastWriteTime > textEditorBase.ResourceLastWriteTime)
+            if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime)
             {
                 var notificationInformativeKey = NotificationKey.NewNotificationKey();
                 
@@ -135,11 +135,11 @@ public class EditorState
                                     var content = await File
                                         .ReadAllTextAsync(inputFileAbsoluteFilePathString);
                                 
-                                    textEditorService.ReloadTextEditorBase(
+                                    textEditorService.ReloadTextEditorModel(
                                         textEditorKey,
                                         content);
                                 
-                                    await textEditorBase.ApplySyntaxHighlightingAsync();
+                                    await textEditorModel.ApplySyntaxHighlightingAsync();
                                 });
                             })
                         },
@@ -162,7 +162,7 @@ public class EditorState
         }
 
         var viewModel = textEditorService
-            .GetViewModelsForTextEditorBase(textEditorBase.Key)
+            .GetViewModelsForModel(textEditorModel.ModelKey)
             .FirstOrDefault();
 
         var viewModelKey = viewModel?.TextEditorViewModelKey ?? TextEditorViewModelKey.Empty;
@@ -192,7 +192,7 @@ public class EditorState
             EditorTextEditorGroupKey,
             viewModelKey);
 
-        void HandleOnSaveRequested(TextEditorBase innerTextEditor)
+        void HandleOnSaveRequested(TextEditorModel innerTextEditor)
         {
             var innerContent = innerTextEditor.GetAllText();
                 
@@ -204,8 +204,8 @@ public class EditorState
                     var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
             
                     textEditorService.SetResourceData(
-                        textEditorBase.Key,
-                        textEditorBase.ResourceUri,
+                        textEditorModel.ModelKey,
+                        textEditorModel.ResourceUri,
                         fileLastWriteTime);
                 });
         
