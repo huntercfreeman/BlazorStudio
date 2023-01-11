@@ -31,11 +31,7 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
             _gitInitTerminalCommandKey,
             GitCliFacts.GIT_INIT_COMMAND,
             gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
-            CancellationToken.None,
-            async () =>
-            {
-                
-            });
+            CancellationToken.None, () => { return Task.CompletedTask; });
         
         var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];

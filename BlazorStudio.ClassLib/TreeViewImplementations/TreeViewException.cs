@@ -1,9 +1,10 @@
 ﻿using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.CommonComponents;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
-public class TreeViewException : TreeViewBase<Exception>
+public class TreeViewException : TreeViewWithType<Exception>
 {
     private readonly ICommonComponentRenderers _commonComponentRenderers;
 
@@ -56,7 +57,7 @@ public class TreeViewException : TreeViewBase<Exception>
         return Task.CompletedTask;
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeView> treeViews)
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> treeViews)
     {
         // This method is meant to do nothing in this case.
     }

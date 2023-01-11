@@ -2,7 +2,8 @@
 using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.TreeViewCase;
+using BlazorALaCarte.TreeView.Events;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
@@ -25,7 +26,7 @@ public partial class InputFileContent : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -49,7 +50,7 @@ public partial class InputFileContent : FluxorComponent
     protected override void OnInitialized()
     {
         if (!TreeViewService.TryGetTreeViewState(
-                InputFileContent.TreeViewInputFileContentStateKey, 
+                TreeViewInputFileContentStateKey, 
                 out var treeViewState))
         {
             var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(

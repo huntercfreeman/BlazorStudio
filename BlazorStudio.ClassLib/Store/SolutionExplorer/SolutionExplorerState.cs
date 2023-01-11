@@ -140,7 +140,7 @@ public record SolutionExplorerState(
                     Task.Run(() =>
                     {
                         dispatcher.Dispatch(
-                            new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+                            new RequestSetSolutionExplorerStateAction(
                                 afp));
                     });
                     

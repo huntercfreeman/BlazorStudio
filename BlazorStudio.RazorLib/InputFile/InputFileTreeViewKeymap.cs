@@ -2,7 +2,7 @@
 using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.Commands;
 using BlazorALaCarte.TreeView.Keymap;
-using BlazorALaCarte.TreeView.TreeViewCase;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -115,7 +115,7 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
         return true;
     }
     
-    private async Task SetInputFileContentTreeViewRoot(
+    private Task SetInputFileContentTreeViewRoot(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
@@ -123,9 +123,10 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
         var treeViewAbsoluteFilePath = activeNode as TreeViewAbsoluteFilePath;
 
         if (treeViewAbsoluteFilePath?.Item is null)
-            return;
+            return Task.CompletedTask;
         
         _setInputFileContentTreeViewRoot.Invoke(treeViewAbsoluteFilePath.Item);
+        return Task.CompletedTask;
     }
     
     private Task HandleBackButtonOnClick(

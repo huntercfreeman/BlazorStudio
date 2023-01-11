@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification.Dialog;
+using BlazorALaCarte.DialogNotification.Store.DialogCase;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
@@ -91,14 +92,14 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             _newDotNetSolutionTerminalCommandKey,
             interpolatedCommand,
             _parentDirectoryName,
-            _newDotNetSolutionCancellationTokenSource.Token,
-            async () =>
+            _newDotNetSolutionCancellationTokenSource.Token, () =>
             {
                 // ContinueWith -> Open the newly created solution
 
                 // Close Dialog
                 Dispatcher.Dispatch(
-                    new DialogsState.DisposeDialogRecordAction(DialogRecord.DialogKey));
+                    new DialogRecordsCollection.DisposeAction(
+                        DialogRecord.DialogKey));
                 
                 // Strip ending directory separator if exists
                 {
@@ -132,6 +133,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 Dispatcher.Dispatch(
                     new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
                         solutionAbsoluteFilePath));
+                return Task.CompletedTask;
             });
         
         var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[

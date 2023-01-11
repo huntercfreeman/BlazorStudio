@@ -19,7 +19,7 @@ public class PhotinoHttpHandler : DelegatingHandler
     //Otherwise, use DelegatingHandler.InnerHandler public property to set the next handler.
     public PhotinoHttpHandler(PhotinoBlazorApp app, HttpMessageHandler innerHandler)
     {
-        this._app = app;
+        _app = app;
 
         //the last (inner) handler in the pipeline should be a "real" handler.
         //To make a HTTP request, create a HttpClientHandler instance.

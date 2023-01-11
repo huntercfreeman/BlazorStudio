@@ -9,6 +9,6 @@ public record NugetPackageVersionRecord(
     string Version,
     long Downloads)
 {
-    [JsonPropertyName("@id")] 
-    public string AtId { get; init; }
+    [JsonPropertyName("@id")]
+    public string AtId { get; init; } = string.Empty;
 }

@@ -1,4 +1,5 @@
 ﻿using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -8,11 +9,11 @@ namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static async Task<List<TreeView>> LoadChildrenForCSharpProjectAsync(
+    public static Task<List<TreeViewNoType>> LoadChildrenForCSharpProjectAsync(
         TreeViewNamespacePath cSharpProjectTreeView)
     {
         if (cSharpProjectTreeView.Item is null)
-            return new();
+            return Task.FromResult<List<TreeViewNoType>>(new());
         
         var parentDirectoryOfCSharpProject = (IAbsoluteFilePath)
             cSharpProjectTreeView.Item.AbsoluteFilePath.Directories
@@ -90,7 +91,7 @@ public partial class TreeViewHelper
 
                 var namespaceString = cSharpProjectTreeView.Item.Namespace;
                 
-                return (TreeView)new TreeViewNamespacePath(
+                return (TreeViewNoType)new TreeViewNamespacePath(
                     new NamespacePath(
                         namespaceString,
                         absoluteFilePath),
@@ -104,9 +105,9 @@ public partial class TreeViewHelper
             });
         
         return 
-            foundUniqueDirectories
-            .Union(foundDefaultDirectories)
-            .Union(childFileTreeViewModels)
-            .ToList();
+            Task.FromResult(foundUniqueDirectories
+                .Union(foundDefaultDirectories)
+                .Union(childFileTreeViewModels)
+                .ToList());
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification.Notification;
+using BlazorALaCarte.DialogNotification.Store.NotificationCase;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
@@ -104,8 +105,7 @@ public partial class NugetPackageDisplay : FluxorComponent
             _addNugetPackageTerminalCommandKey,
             interpolatedCommand,
             parentDirectory.GetAbsoluteFilePathString(),
-            CancellationToken.None,
-            async () =>
+            CancellationToken.None, () =>
             {
                 var notificationInformative  = new NotificationRecord(
                     NotificationKey.NewNotificationKey(), 
@@ -121,8 +121,9 @@ public partial class NugetPackageDisplay : FluxorComponent
                     TimeSpan.FromSeconds(6));
         
                 Dispatcher.Dispatch(
-                    new NotificationsState.RegisterNotificationRecordAction(
+                    new NotificationRecordsCollection.RegisterAction(
                         notificationInformative));
+                return Task.CompletedTask;
             });
         
         var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[

@@ -24,7 +24,7 @@ public partial class PanelDisplay : FluxorComponent
     public DimensionAttributeKind DimensionAttributeKind { get; set; }
     [Parameter, EditorRequired]
     public Func<Task> ReRenderSelfAndAdjacentElementDimensionsFunc { get; set; } = null!;
-    [Parameter, EditorRequired]
+    [Parameter]
     public string CssClassString { get; set; } = null!;
 
     public string DimensionAttributeModificationPurpose => $"take_size_of_adjacent_hidden_panel_{PanelRecordKey}";

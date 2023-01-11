@@ -18,7 +18,7 @@ public partial record GitState(
 {
     public GitState() : this(
         default(IAbsoluteFilePath?),
-        default(GitState.TryFindGitFolderInDirectoryAction?))
+        default(TryFindGitFolderInDirectoryAction?))
     {
         
     }

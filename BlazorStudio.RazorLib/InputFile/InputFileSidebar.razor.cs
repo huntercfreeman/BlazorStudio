@@ -1,7 +1,8 @@
 ﻿using System.Collections.Immutable;
 using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.TreeViewCase;
+using BlazorALaCarte.TreeView.Events;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;

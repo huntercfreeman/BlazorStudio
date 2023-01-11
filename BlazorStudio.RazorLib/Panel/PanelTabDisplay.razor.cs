@@ -1,6 +1,7 @@
 ﻿using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Drag;
 using BlazorALaCarte.Shared.Resize;
+using BlazorALaCarte.Shared.Store.DragCase;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
 using Fluxor;
@@ -189,7 +190,7 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new PanelsCollection.SetPanelDragEventArgsAction(
             (PanelTab, PanelRecord)));
         
-        Dispatcher.Dispatch(new SetDragStateAction(true, null));
+        Dispatcher.Dispatch(new DragState.SetDragStateAction(true, null));
     }
     
     private async Task DragEventHandlerScrollAsync(

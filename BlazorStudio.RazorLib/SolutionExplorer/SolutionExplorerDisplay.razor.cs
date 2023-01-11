@@ -3,8 +3,11 @@ using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.Icons;
 using BlazorALaCarte.Shared.Menu;
+using BlazorALaCarte.Shared.Store.DropdownCase;
+using BlazorALaCarte.Shared.Store.IconCase;
 using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.TreeViewCase;
+using BlazorALaCarte.TreeView.Events;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileConstants;
@@ -46,7 +49,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     
     public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
@@ -132,7 +135,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         _mostRecentTreeViewContextMenuEvent = treeViewContextMenuEvent;
         
         Dispatcher.Dispatch(
-            new DropdownsState.AddActiveDropdownKeyAction(
+            new DropdownsState.AddActiveAction(
                 SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
         
         await InvokeAsync(StateHasChanged);

@@ -24,8 +24,9 @@ public record NugetPackageRecord(
     bool Verified,
     ImmutableArray<NugetPackageVersionRecord> Versions)
 {
-    [JsonPropertyName("@id")] 
-    public string AtId { get; init; }
-    // TODO: Pull this data from the JSON but it seems to not be VITAL at this moment.
+    [JsonPropertyName("@id")]
+    public string AtId { get; init; } = string.Empty;
+    
+    // TODO: Pull this property's data from the JSON but it seems to not be VITAL at this moment.
     // public ImmutableArray<string> PackageTypes { get; init; }
 }

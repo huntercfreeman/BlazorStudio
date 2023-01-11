@@ -1,8 +1,10 @@
 using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification;
 using BlazorALaCarte.DialogNotification.Dialog;
+using BlazorALaCarte.DialogNotification.Store.DialogCase;
 using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.Menu;
+using BlazorALaCarte.Shared.Store.DropdownCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
@@ -106,7 +108,9 @@ public partial class BlazorTextEditorHeader : ComponentBase
 
     private void AddActiveFileDropdown()
     {
-        Dispatcher.Dispatch(new DropdownsState.AddActiveDropdownKeyAction(_dropdownKeyFileDropdown));
+        Dispatcher.Dispatch(
+            new DropdownsState.AddActiveAction(
+                _dropdownKeyFileDropdown));
     }
     
     /// <summary>
@@ -130,7 +134,7 @@ public partial class BlazorTextEditorHeader : ComponentBase
         };
         
         Dispatcher.Dispatch(
-            new DialogsState.RegisterDialogRecordAction(
+            new DialogRecordsCollection.RegisterAction(
                 dialogRecord));
     }
 }

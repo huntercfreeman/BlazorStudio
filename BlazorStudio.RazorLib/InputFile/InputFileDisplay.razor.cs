@@ -1,7 +1,8 @@
 using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Resize;
 using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.TreeViewCase;
+using BlazorALaCarte.TreeView.Events;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -95,8 +96,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             InputFileStateWrap,
             Dispatcher,
             CommonComponentRenderers,
-            SetInputFileContentTreeViewRoot,
-            async () => SearchElementReference?.FocusAsync(),
+            SetInputFileContentTreeViewRoot, () => Task.FromResult(SearchElementReference?.FocusAsync()),
             () => _searchMatchTuples);
         
         InitializeElementDimensions();

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification.Notification;
+using BlazorALaCarte.DialogNotification.Store.NotificationCase;
 using BlazorALaCarte.Shared.Clipboard;
 using BlazorALaCarte.Shared.Menu;
 using BlazorStudio.ClassLib.Clipboard;
@@ -126,7 +127,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitAction),
                     new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
-                        (directoryName, exactMatchFileTemplate, relatedMatchFileTemplates) => 
+                        (directoryName, _, _) => 
                             PerformNewDirectoryAction(
                                 directoryName,
                                 parentDirectory,
@@ -185,7 +186,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitAction),
                     new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
-                        (nextName, exactMatchFileTemplate, relatedMatchFileTemplates) => 
+                        (nextName, _, _) => 
                             PerformRenameAction(
                                 sourceAbsoluteFilePath,
                                 nextName,
@@ -250,7 +251,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 },
                 {
                     nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
-                    new Action<IAbsoluteFilePath>(afp => 
+                    new Action<IAbsoluteFilePath>(_ => 
                         PerformRemoveCSharpProjectReferenceFromSolutionAction(
                             solutionNode, 
                             projectNode,
@@ -476,7 +477,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                         destinationFileName);
                                 }
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 successfullyPasted = false; 
                             }
@@ -548,13 +549,13 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         {
             if (sourceAbsoluteFilePath.IsDirectory)
             {
-                System.IO.Directory.Move(
+                Directory.Move(
                     sourceAbsoluteFilePathString, 
                     destinationAbsoluteFilePathString);    
             }
             else
             {
-                System.IO.File.Move(
+                File.Move(
                     sourceAbsoluteFilePathString, 
                     destinationAbsoluteFilePathString);
             }
@@ -575,7 +576,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 TimeSpan.FromSeconds(15));
         
             dispatcher.Dispatch(
-                new NotificationsState.RegisterNotificationRecordAction(
+                new NotificationRecordsCollection.RegisterAction(
                     notificationError));
             
             onAfterCompletion.Invoke();
@@ -614,13 +615,13 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     TerminalCommandKey.NewTerminalCommandKey(), 
                     removeCSharpProjectReferenceFromSolutionCommandString,
                     workingDirectory.GetAbsoluteFilePathString(),
-                    CancellationToken.None,
-                    async () =>
+                    CancellationToken.None, () =>
                     {
                         // Re-open the modified Solution
                         dispatcher.Dispatch(
                             new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
                                 solutionNode.Item.AbsoluteFilePath));
+                        return Task.CompletedTask;
                     });
         
                 await terminalSession
@@ -679,7 +680,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 TimeSpan.FromSeconds(7));
 
                             dispatcher.Dispatch(
-                                new NotificationsState.RegisterNotificationRecordAction(
+                                new NotificationRecordsCollection.RegisterAction(
                                     notificationInformative));
 
                             await onAfterCompletion.Invoke();

@@ -4,9 +4,14 @@ using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification;
 using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.DialogNotification.Notification;
+using BlazorALaCarte.DialogNotification.Store.DialogCase;
+using BlazorALaCarte.DialogNotification.Store.NotificationCase;
 using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
+using BlazorALaCarte.TreeView.Events;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
@@ -21,7 +26,6 @@ using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.DotNetSolutionForm;
 using Fluxor;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
@@ -39,7 +43,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
@@ -54,14 +58,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     /// The program is currently running using Photino locally on the user's computer
     /// therefore this static solution works without leaking any information.
     /// </summary>
-    public static TreeView? ParentOfCutFile;
+    public static TreeViewNoType? ParentOfCutFile;
     
     private MenuRecord GetMenuRecord(
         TreeViewContextMenuEvent treeViewContextMenuEvent)
     {
         var menuRecords = new List<MenuOptionRecord>();
         
-        var treeViewModel = treeViewContextMenuEvent.TreeView;
+        var treeViewModel = treeViewContextMenuEvent.TreeViewNoType;
         var parentTreeViewModel = treeViewModel.Parent;
 
         var parentTreeViewNamespacePath = parentTreeViewModel as TreeViewNamespacePath;
@@ -189,10 +193,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
-                Dispatcher,
-                async () =>
-                {
-                }),
+                Dispatcher, () => { return Task.CompletedTask; }),
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
@@ -205,8 +206,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
-                Dispatcher,
-                async () =>
+                Dispatcher, () =>
                 {
                     if (project is not null)
                     {
@@ -221,6 +221,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                             Dispatcher.Dispatch(requestSetSolutionExplorerStateAction);
                         }
                     }
+
+                    return Task.CompletedTask;
                 }),
         };
     }
@@ -312,7 +314,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         };
         
         Dispatcher.Dispatch(
-            new DialogsState.RegisterDialogRecordAction(
+            new DialogRecordsCollection.RegisterAction(
                 dialogRecord));
     }
     
@@ -405,7 +407,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     /// </summary>
     /// <param name="treeViewModel"></param>
     private async Task ReloadTreeViewModel(
-        TreeView? treeViewModel)
+        TreeViewNoType? treeViewModel)
     {
         if (treeViewModel is null)
             return;
@@ -436,7 +438,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             TimeSpan.FromSeconds(3));
 
         Dispatcher.Dispatch(
-            new NotificationsState.RegisterNotificationRecordAction(
+            new NotificationRecordsCollection.RegisterAction(
                 notificationInformative));
 
         return Task.CompletedTask;
@@ -462,7 +464,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             TimeSpan.FromSeconds(3));
         
         Dispatcher.Dispatch(
-            new NotificationsState.RegisterNotificationRecordAction(
+            new NotificationRecordsCollection.RegisterAction(
                 notificationInformative));
 
         return Task.CompletedTask;

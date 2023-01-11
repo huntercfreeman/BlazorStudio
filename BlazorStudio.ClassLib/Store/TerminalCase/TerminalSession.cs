@@ -37,7 +37,7 @@ public class TerminalSession
 
     public string? WorkingDirectoryAbsoluteFilePathString { get; private set; }
     
-    public TerminalCommand ActiveTerminalCommand { get; private set; }
+    public TerminalCommand? ActiveTerminalCommand { get; private set; }
     
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
     

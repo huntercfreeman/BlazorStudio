@@ -1,9 +1,11 @@
 ﻿using BlazorALaCarte.DialogNotification.Notification;
+using BlazorALaCarte.DialogNotification.Store.NotificationCase;
 using BlazorALaCarte.Shared.Keyboard;
 using BlazorALaCarte.Shared.Menu;
-using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorALaCarte.TreeView.Commands;
 using BlazorALaCarte.TreeView.Keymap;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
@@ -146,7 +148,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             TimeSpan.FromSeconds(3));
         
         _dispatcher.Dispatch(
-            new NotificationsState.RegisterNotificationRecordAction(
+            new NotificationRecordsCollection.RegisterAction(
                 notificationInformative));
 
         return Task.CompletedTask;
@@ -172,7 +174,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             TimeSpan.FromSeconds(3));
         
         _dispatcher.Dispatch(
-            new NotificationsState.RegisterNotificationRecordAction(
+            new NotificationRecordsCollection.RegisterAction(
                 notificationInformative));
 
         return Task.CompletedTask;
@@ -198,7 +200,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
         return Task.CompletedTask;
     }  
     
-    private async Task InvokePasteClipboard(ITreeViewCommandParameter treeViewCommandParameter)
+    private Task InvokePasteClipboard(ITreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
@@ -206,7 +208,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
             treeViewNamespacePath.Item is null)
         {
-            return;
+            return Task.CompletedTask;
         }
 
         MenuOptionRecord pasteMenuOptionRecord;
@@ -250,9 +252,10 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
         }
 
         pasteMenuOptionRecord.OnClick?.Invoke();
+        return Task.CompletedTask;
     }
     
-    private async Task InvokeCutFile(ITreeViewCommandParameter treeViewCommandParameter)
+    private Task InvokeCutFile(ITreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
@@ -260,7 +263,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
             treeViewNamespacePath.Item is null)
         {
-            return;
+            return Task.CompletedTask;
         }
 
         var parent = treeViewNamespacePath.Parent as TreeViewNamespacePath;
@@ -272,6 +275,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
                 parent));
 
         cutFileOptionRecord.OnClick?.Invoke();
+        return Task.CompletedTask;
     }
     
     private async Task InvokeOpenInEditor(ITreeViewCommandParameter treeViewCommandParameter)
@@ -293,7 +297,7 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
     }
     
     private async Task ReloadTreeViewModel(
-        TreeView? treeViewModel)
+        TreeViewNoType? treeViewModel)
     {
         if (treeViewModel is null)
             return;

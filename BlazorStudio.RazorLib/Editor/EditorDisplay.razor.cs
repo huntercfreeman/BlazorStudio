@@ -9,6 +9,7 @@ using BlazorTextEditor.RazorLib.Cursor;
 using BlazorTextEditor.RazorLib.HelperComponents;
 using BlazorTextEditor.RazorLib.Store.TextEditorCase;
 using BlazorTextEditor.RazorLib.TextEditor;
+using BlazorTextEditor.RazorLib.ViewModel;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -25,6 +26,4 @@ public partial class EditorDisplay : FluxorComponent
     
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
-    
-    private TextEditorViewModelDisplay? _textEditorViewModelDisplay;
 }
