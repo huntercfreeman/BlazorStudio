@@ -104,13 +104,8 @@ public partial class InputFileTopNavBar : FluxorComponent
     
     private void InputFileEditAddressOnFocusOutCallback(string address)
     {
-        if (address.EndsWith(Path.DirectorySeparatorChar) ||
-            address.EndsWith(Path.AltDirectorySeparatorChar))
-        {
-            address = address.Substring(
-                0,
-                address.Length - 1);
-        }
+        address = FilePathHelper.StripEndingDirectorySeparatorIfExists(
+            address);
 
         try
         {

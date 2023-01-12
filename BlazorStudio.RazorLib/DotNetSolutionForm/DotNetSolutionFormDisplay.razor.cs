@@ -100,19 +100,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 Dispatcher.Dispatch(
                     new DialogRecordsCollection.DisposeAction(
                         DialogRecord.DialogKey));
-                
-                // Strip ending directory separator if exists
-                {
-                    if (localParentDirectoryName.EndsWith(Path.DirectorySeparatorChar) ||
-                        localParentDirectoryName.EndsWith(Path.AltDirectorySeparatorChar))
-                    {
-                        localParentDirectoryName =
-                            localParentDirectoryName
-                                .Substring(
-                                    0, 
-                                    localParentDirectoryName.Length - 1);
-                    }
-                }
+
+                localParentDirectoryName = FilePathHelper.StripEndingDirectorySeparatorIfExists(
+                    localParentDirectoryName);
                 
                 var parentDirectoryAbsoluteFilePath = new AbsoluteFilePath(
                     localParentDirectoryName, 

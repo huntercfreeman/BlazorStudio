@@ -46,15 +46,8 @@ public class WorkspaceStateReducer
         
         var noTrailingSlashMsBuildPath = visualStudioInstance.MSBuildPath;
 
-        if (visualStudioInstance.MSBuildPath.EndsWith(Path.DirectorySeparatorChar) ||
-            visualStudioInstance.MSBuildPath.EndsWith(Path.AltDirectorySeparatorChar))
-        {
-            noTrailingSlashMsBuildPath =
-                noTrailingSlashMsBuildPath
-                    .Substring(
-                        0, 
-                        noTrailingSlashMsBuildPath.Length - 1);
-        }
+        noTrailingSlashMsBuildPath = FilePathHelper.StripEndingDirectorySeparatorIfExists(
+                noTrailingSlashMsBuildPath);
 
         var msBuildAbsoluteFilePath = new AbsoluteFilePath(
             noTrailingSlashMsBuildPath, 

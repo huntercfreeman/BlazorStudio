@@ -428,7 +428,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                         
                         if (Directory.Exists(clipboardPhrase.Value))
                         {
-                            clipboardPhrase.Value = RemoveEndingDirectorySeparator(
+                            clipboardPhrase.Value = FilePathHelper.StripEndingDirectorySeparatorIfExists(
                                 clipboardPhrase.Value);
                             
                             clipboardAbsoluteFilePath = new AbsoluteFilePath(
@@ -539,10 +539,10 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         var destinationAbsoluteFilePathString = parentOfSource.GetAbsoluteFilePathString() +
                                   nextName;
 
-        sourceAbsoluteFilePathString = RemoveEndingDirectorySeparator(
+        sourceAbsoluteFilePathString = FilePathHelper.StripEndingDirectorySeparatorIfExists(
             sourceAbsoluteFilePathString);
         
-        destinationAbsoluteFilePathString = RemoveEndingDirectorySeparator(
+        destinationAbsoluteFilePathString = FilePathHelper.StripEndingDirectorySeparatorIfExists(
             destinationAbsoluteFilePathString);
         
         try
@@ -713,19 +713,6 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             dispatcher.Dispatch(
                 requestInputFileStateFormAction);
         });
-    }
-
-    private string RemoveEndingDirectorySeparator(string value)
-    {
-        if (value.EndsWith(Path.DirectorySeparatorChar) ||
-            value.EndsWith(Path.AltDirectorySeparatorChar))
-        {
-            return value.Substring(
-                0, 
-                value.Length - 1);
-        }
-
-        return value;
     }
     
     /// <summary>

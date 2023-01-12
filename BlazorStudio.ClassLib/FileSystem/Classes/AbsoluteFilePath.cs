@@ -186,4 +186,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
     }
 
     public virtual AbsoluteFilePathKind AbsoluteFilePathKind { get; } = AbsoluteFilePathKind.Default;
+
+    public IAbsoluteFilePath? ParentDirectory => 
+        Directories.LastOrDefault() as IAbsoluteFilePath;
 }
