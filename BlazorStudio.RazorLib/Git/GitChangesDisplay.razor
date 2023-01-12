@@ -18,45 +18,35 @@
     <div class="bstudio_section-body"
          style="width: 100%;">
         
-        @if (gitState.GitFolderAbsoluteFilePath is not null)
-        {
-            <text>
-                @gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()
-            </text>
-        }
-        else
+        @if (gitState.GitFolderAbsoluteFilePath is null)
         {
             <div>
-                @if (gitState.GitFolderAbsoluteFilePath is null)
-                {
-                    <div>gitState.GitFolderAbsoluteFilePath is null</div>
-                }
-                else
-                {
-                    <div>@gitState.GitFolderAbsoluteFilePath</div>
-                }
+                <button class="balc_button"
+                        @onclick="GitInitOnClickAsync">
+                    Git Init
+                </button>
                 
                 @if (gitState.MostRecentTryFindGitFolderInDirectoryAction is not null)
                 {
                     <span>
-                        MostRecentTryFindGitFolderInDirectoryAction:&nbsp;
-                        @gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString()
+                        (Last attempt to find the .git folder was in the directory:
+                        
+                        <em class="balc_em">
+                            @gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString()
+                        </em>
+                        )
                     </span>
-
-                    if (gitState.GitFolderAbsoluteFilePath is null)
-                    {
-                        <button class="balc_button"
-                                @onclick="GitInitOnClickAsync">
-                            Git Init
-                        </button>
-                    }
                 }
-                else
-                {
-                    <div>
-                        gitState.MostRecentTryFindGitFolderInDirectoryAction is null
-                    </div>
-                }
+            </div>
+        }
+        else
+        {
+            <div>
+                .git folder located:
+                
+                <em class="balc_em">
+                    @gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()
+                </em>
             </div>
         }
     </div>

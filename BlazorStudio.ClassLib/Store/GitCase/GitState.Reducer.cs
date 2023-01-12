@@ -26,20 +26,20 @@ public partial record GitState
             if (!tryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.IsDirectory)
                 return previousGitState;
 
-            var parentDirectoryAbsoluteFilePathString = 
+            var directoryAbsoluteFilePathString = 
                 tryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath
                     .GetAbsoluteFilePathString();
             
-            var childDirectories = Directory.GetDirectories(
-                parentDirectoryAbsoluteFilePathString);
+            var childDirectoryAbsoluteFilePathStrings = Directory.GetDirectories(
+                directoryAbsoluteFilePathString);
 
-            var gitFolder = childDirectories.FirstOrDefault(
-                x => x == GitFacts.GIT_FOLDER_NAME);
+            var gitFolderAbsoluteFilePathString = childDirectoryAbsoluteFilePathStrings.FirstOrDefault(
+                x => x.EndsWith(GitFacts.GIT_FOLDER_NAME));
             
-            if (gitFolder is not null)
+            if (gitFolderAbsoluteFilePathString is not null)
             {
                 var gitFolderAbsoluteFilePath = new AbsoluteFilePath(
-                    parentDirectoryAbsoluteFilePathString + gitFolder,
+                    gitFolderAbsoluteFilePathString,
                     true);
                 
                 return previousGitState with

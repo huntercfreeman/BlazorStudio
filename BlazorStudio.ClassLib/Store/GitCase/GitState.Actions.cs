@@ -2,7 +2,7 @@
 
 namespace BlazorStudio.ClassLib.Store.GitCase;
 
-public partial  record GitState
+public partial record GitState
 {
     public record SetGitFolderAbsoluteFilePathAction(IAbsoluteFilePath? GitFolderAbsoluteFilePath);
     public record TryFindGitFolderInDirectoryAction(IAbsoluteFilePath DirectoryAbsoluteFilePath);
