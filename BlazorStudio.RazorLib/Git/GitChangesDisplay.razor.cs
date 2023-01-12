@@ -39,4 +39,24 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
         await generalTerminalSession
             .EnqueueCommandAsync(gitInitCommand);
     }
+
+    private async Task RefreshGitOnClickAsync()
+    {
+        var gitState = GitStateWrap.Value;
+        
+        if (gitState.MostRecentTryFindGitFolderInDirectoryAction is null)
+            return;
+        
+        var gitInitCommand = new TerminalCommand(
+            _gitInitTerminalCommandKey,
+            GitCliFacts.GIT_INIT_COMMAND,
+            gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
+            CancellationToken.None, () => { return Task.CompletedTask; });
+        
+        var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+        
+        await generalTerminalSession
+            .EnqueueCommandAsync(gitInitCommand);
+    }
 }

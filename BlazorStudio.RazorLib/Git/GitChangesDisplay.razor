@@ -13,6 +13,12 @@
     
     <div class="bstudio_section-title">
         Git Changes
+        
+        <button class="balc_button"
+                @onclick="RefreshGitOnClickAsync"
+                @onclick:stopPropagation="true">
+            <IconRefresh/>
+        </button>
     </div>
 
     <div class="bstudio_section-body"
