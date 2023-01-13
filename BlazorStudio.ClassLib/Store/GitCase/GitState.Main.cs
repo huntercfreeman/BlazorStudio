@@ -1,4 +1,6 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Git;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.GitCase;
@@ -14,11 +16,13 @@ namespace BlazorStudio.ClassLib.Store.GitCase;
 [FeatureState]
 public partial record GitState(
     IAbsoluteFilePath? GitFolderAbsoluteFilePath,
-    GitState.TryFindGitFolderInDirectoryAction? MostRecentTryFindGitFolderInDirectoryAction)
+    GitState.TryFindGitFolderInDirectoryAction? MostRecentTryFindGitFolderInDirectoryAction,
+    ImmutableList<GitFile> GitFilesList)
 {
     public GitState() : this(
         default(IAbsoluteFilePath?),
-        default(TryFindGitFolderInDirectoryAction?))
+        default(TryFindGitFolderInDirectoryAction?),
+        ImmutableList<GitFile>.Empty)
     {
         
     }

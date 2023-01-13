@@ -1,5 +1,6 @@
 ﻿@using BlazorStudio.ClassLib.Context
 @using Microsoft.AspNetCore.Components
+@using BlazorStudio.RazorLib.Git.InternalComponents
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -26,34 +27,48 @@
         
         @if (gitState.GitFolderAbsoluteFilePath is null)
         {
-            <div>
+            <div class="bstudio_git-changes-git-folder-not-found">
+                <div>
+                    
+                    <em class="balc_em">.git</em>
+
+                    folder was not found.
+                </div>
+                
+                @if (gitState.MostRecentTryFindGitFolderInDirectoryAction is not null)
+                {
+                    <div>
+                        Searched in folder:
+                    
+                        <div class="balc_indent-child-content">
+                            <em class="balc_em">
+                                @gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString()
+                            </em>
+                        </div>
+                    </div>
+                }
+
                 <button class="balc_button"
                         @onclick="GitInitOnClickAsync">
                     Git Init
                 </button>
-                
-                @if (gitState.MostRecentTryFindGitFolderInDirectoryAction is not null)
-                {
-                    <span>
-                        (Last attempt to find the .git folder was in the directory:
-                        
-                        <em class="balc_em">
-                            @gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString()
-                        </em>
-                        )
-                    </span>
-                }
             </div>
         }
         else
         {
             <div>
-                .git folder located:
-                
-                <em class="balc_em">
-                    @gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()
-                </em>
+                .git folder:
+                    
+                <div class="balc_indent-child-content">
+                    <em class="balc_em">
+                        @gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()
+                    </em>
+                </div>
             </div>
+            
+            <hr/>
+            
+            <GitStatusOutput/>
         }
     </div>
 </ContextBoundary>

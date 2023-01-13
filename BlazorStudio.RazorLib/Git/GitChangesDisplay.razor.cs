@@ -1,6 +1,8 @@
-﻿using System.Text;
+﻿using System.Collections.Immutable;
+using System.Text;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Git;
 using BlazorStudio.ClassLib.Store.GitCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -18,12 +20,6 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-
-    private readonly TerminalCommandKey _gitInitTerminalCommandKey = 
-        TerminalCommandKey.NewTerminalCommandKey();
-    
-    private readonly TerminalCommandKey _gitStatusTerminalCommandKey = 
-        TerminalCommandKey.NewTerminalCommandKey();
     
     private async Task GitInitOnClickAsync()
     {
@@ -33,7 +29,7 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
             return;
         
         var gitInitCommand = new TerminalCommand(
-            _gitInitTerminalCommandKey,
+            GitFacts.GitInitTerminalCommandKey,
             GitCliFacts.GIT_INIT_COMMAND,
             gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
             CancellationToken.None);
@@ -60,14 +56,14 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
             TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
         
         var gitStatusCommand = new TerminalCommand(
-            _gitStatusTerminalCommandKey,
+            GitFacts.GitStatusTerminalCommandKey,
             GitCliFacts.GIT_STATUS_COMMAND,
             gitState.GitFolderAbsoluteFilePath.ParentDirectory.GetAbsoluteFilePathString(),
             CancellationToken.None,
             async () =>
             {
                 var gitStatusOutput = generalTerminalSession.ReadStandardOut(
-                    _gitStatusTerminalCommandKey);
+                    GitFacts.GitStatusTerminalCommandKey);
 
                 if (gitStatusOutput is null)
                     return;
@@ -112,8 +108,30 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
                     }
 
                     var untrackedFilesText = untrackedFilesBuilder.ToString();
+                    
+                    var untrackedFilesRelativePaths = untrackedFilesText
+                        .Split('\t');
 
-                    var z = 2;
+                    if (untrackedFilesRelativePaths.First() == string.Empty)
+                    {
+                        untrackedFilesRelativePaths = untrackedFilesRelativePaths
+                            .Skip(1)
+                            .ToArray();
+                    }
+
+                    var untrackedFilesAbsolutePaths = untrackedFilesRelativePaths
+                        .Select(x => new AbsoluteFilePath(
+                            gitState.GitFolderAbsoluteFilePath.ParentDirectory.GetAbsoluteFilePathString() + x,
+                            x.EndsWith(Path.DirectorySeparatorChar) || x.EndsWith(Path.AltDirectorySeparatorChar)))
+                        .ToImmutableArray();
+
+                    var untrackedGitFiles = untrackedFilesAbsolutePaths
+                        .Select(x => new GitFile(x, GitDirtyReason.Untracked))
+                        .ToImmutableList();
+
+                    Dispatcher.Dispatch(
+                        new GitState.SetGitFilesListAction(
+                            untrackedGitFiles));
                 }
             });
         

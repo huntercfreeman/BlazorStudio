@@ -1,0 +1,17 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_git-changes-terminal-output">
+    @{
+        var gitState = GitStateWrap.Value;
+    }
+    
+    @if (gitState is not null)
+    {
+        foreach (var gitFile in gitState.GitFilesList)
+        {
+            <div>
+                @gitFile.AbsoluteFilePath.GetAbsoluteFilePathString()
+            </div>
+        }
+    }
+</div>

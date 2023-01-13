@@ -10,6 +10,9 @@ public class AbsoluteFilePath : IAbsoluteFilePath
 
     public AbsoluteFilePath(string absoluteFilePathString, bool isDirectory)
     {
+        absoluteFilePathString = FilePathHelper
+            .StripEndingDirectorySeparatorIfExists(absoluteFilePathString);
+        
         IsDirectory = isDirectory;
 
         // TODO: Go through and make sure any malformed absoluteFilePathStrings received get parsed in a well defined manner

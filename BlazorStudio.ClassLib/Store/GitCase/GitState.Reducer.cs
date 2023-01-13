@@ -56,6 +56,17 @@ public partial record GitState
                 MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
             };
         }
+        
+        [ReducerMethod]
+        public static GitState ReduceSetGitFilesListAction(
+            GitState previousGitState,
+            SetGitFilesListAction setGitFilesListAction)
+        {
+            return previousGitState with
+            {
+                GitFilesList = setGitFilesListAction.GitFilesList
+            };
+        }
     }
 }
 
