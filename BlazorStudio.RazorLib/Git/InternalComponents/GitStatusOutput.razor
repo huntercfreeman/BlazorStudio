@@ -9,9 +9,7 @@
     {
         foreach (var gitFile in gitState.GitFilesList)
         {
-            <div>
-                @gitFile.AbsoluteFilePath.GetAbsoluteFilePathString()
-            </div>
+            <GitFileDisplay GitFile="gitFile"/>
         }
     }
 </div>
