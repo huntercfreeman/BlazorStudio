@@ -1,5 +1,7 @@
-﻿using BlazorStudio.ClassLib.Git;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Git;
 using BlazorStudio.ClassLib.Store.GitCase;
+using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -9,37 +11,30 @@ public partial class GitFileDisplay : ComponentBase
 {
     [Inject]
     private IState<GitState> GitStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public GitFile GitFile { get; set; } = null!;
 
-    private string TryShortenGitFilePath()
+    private string TryShortenGitFilePath(
+        IAbsoluteFilePath absoluteFilePath,
+        IAbsoluteFilePath shortenByStartsWithAbsoluteFilePath)
     {
-        var gitState = GitStateWrap.Value;
-        var gitFile = GitFile;
-
-        if (gitState.GitFolderAbsoluteFilePath is null)
-        {
-            return gitFile.AbsoluteFilePath.ParentDirectory?
-                .GetAbsoluteFilePathString()
-                   ?? string.Empty;
-        }
-
-        var gitFolderParentAbsoluteFilePathString = gitState.GitFolderAbsoluteFilePath.ParentDirectory?
+        var shortenByStartsWithAbsoluteFilePathString = shortenByStartsWithAbsoluteFilePath.ParentDirectory?
             .GetAbsoluteFilePathString() ?? string.Empty;
 
-        var gitFileAbsoluteFilePathString = gitFile.AbsoluteFilePath
+        var absoluteFilePathString = absoluteFilePath
             .GetAbsoluteFilePathString();
         
-        if (gitFileAbsoluteFilePathString.StartsWith(gitFolderParentAbsoluteFilePathString))
+        if (absoluteFilePathString.StartsWith(shortenByStartsWithAbsoluteFilePathString))
         {
-            return new string (gitFileAbsoluteFilePathString
-                .Skip(gitFolderParentAbsoluteFilePathString.Length)
+            return new string (absoluteFilePathString
+                .Skip(shortenByStartsWithAbsoluteFilePathString.Length)
                 .ToArray());
         }
 
-        return gitFile.AbsoluteFilePath
-            .GetAbsoluteFilePathString();
+        return absoluteFilePathString;
     }
 }
 

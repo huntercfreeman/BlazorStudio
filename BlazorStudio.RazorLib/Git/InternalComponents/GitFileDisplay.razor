@@ -1,3 +1,41 @@
-﻿<div class="bstudio_git-file">
-    @TryShortenGitFilePath()
+﻿<div class="bstudio_git-file"
+     title="@GitFile.GitDirtyReason">
+    
+    @{
+        var gitState = GitStateWrap.Value;
+        var solutionExplorerState = SolutionExplorerStateWrap.Value;
+
+        string shortenedParentDirectoryFilePathString = GitFile.AbsoluteFilePath
+            .GetAbsoluteFilePathString();
+        
+        if (GitFile.AbsoluteFilePath.ParentDirectory is not null &&
+            gitState.GitFolderAbsoluteFilePath?.ParentDirectory is not null)
+        {
+            if (solutionExplorerState.SolutionAbsoluteFilePath is not null)
+            {
+                shortenedParentDirectoryFilePathString = TryShortenGitFilePath(
+                    GitFile.AbsoluteFilePath.ParentDirectory,
+                    solutionExplorerState.SolutionAbsoluteFilePath);
+            }
+            else
+            {
+                shortenedParentDirectoryFilePathString = TryShortenGitFilePath(
+                    GitFile.AbsoluteFilePath.ParentDirectory,
+                    gitState.GitFolderAbsoluteFilePath.ParentDirectory);
+            }
+        }
+    }
+    
+    <span>
+        @* TODO: Swap out <IconClippy/> for the correct icon based on file extension *@
+        <IconClippy/>
+    </span>
+    
+    <em class="balc_em">
+        @GitFile.AbsoluteFilePath.FilenameWithExtension
+    </em>
+    
+    <span>
+        @shortenedParentDirectoryFilePathString
+    </span>
 </div>

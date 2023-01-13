@@ -67,6 +67,20 @@ public partial record GitState
                 GitFilesList = setGitFilesListAction.GitFilesList
             };
         }
+        
+        [ReducerMethod]
+        public static GitState ReduceAddGitFilesAction(
+            GitState previousGitState,
+            AddGitFilesAction addGitFilesAction)
+        {
+            var nextGitFilesList = previousGitState.GitFilesList
+                .AddRange(addGitFilesAction.GitFilesList);
+            
+            return previousGitState with
+            {
+                GitFilesList = nextGitFilesList
+            };
+        }
     }
 }
 

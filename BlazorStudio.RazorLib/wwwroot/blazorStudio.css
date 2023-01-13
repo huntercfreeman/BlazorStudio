@@ -410,3 +410,7 @@ button.bstudio_input-file-address-hierarchy-entry {
     border-left: 2px solid var(--balc_primary-border-color);
     margin-bottom: 6px;
 }
+
+.bstudio_git-file {
+    white-space: nowrap;
+}

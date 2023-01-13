@@ -9,4 +9,5 @@ public partial record GitState
     public record SetGitFolderAbsoluteFilePathAction(IAbsoluteFilePath? GitFolderAbsoluteFilePath);
     public record TryFindGitFolderInDirectoryAction(IAbsoluteFilePath DirectoryAbsoluteFilePath);
     public record SetGitFilesListAction(ImmutableList<GitFile> GitFilesList);
+    public record AddGitFilesAction(ImmutableList<GitFile> GitFilesList);
 }
