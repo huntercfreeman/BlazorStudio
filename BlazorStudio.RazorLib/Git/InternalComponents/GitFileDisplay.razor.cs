@@ -25,17 +25,17 @@ public partial class GitFileDisplay : ComponentBase
                    ?? string.Empty;
         }
 
-        var gitFileParentAbsoluteFilePathString = gitFile.AbsoluteFilePath.ParentDirectory?
-            .GetAbsoluteFilePathString();  
-            
         var gitFolderParentAbsoluteFilePathString = gitState.GitFolderAbsoluteFilePath.ParentDirectory?
             .GetAbsoluteFilePathString() ?? string.Empty;
 
-        if (gitFileParentAbsoluteFilePathString == gitFolderParentAbsoluteFilePathString)
+        var gitFileAbsoluteFilePathString = gitFile.AbsoluteFilePath
+            .GetAbsoluteFilePathString();
+        
+        if (gitFileAbsoluteFilePathString.StartsWith(gitFolderParentAbsoluteFilePathString))
         {
-            return gitFile.AbsoluteFilePath
-                .GetAbsoluteFilePathString()
-                .Replace(gitFileParentAbsoluteFilePathString, string.Empty);
+            return new string (gitFileAbsoluteFilePathString
+                .Skip(gitFolderParentAbsoluteFilePathString.Length)
+                .ToArray());
         }
 
         return gitFile.AbsoluteFilePath
