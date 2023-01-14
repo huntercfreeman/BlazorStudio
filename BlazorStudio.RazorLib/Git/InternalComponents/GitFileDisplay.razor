@@ -1,4 +1,6 @@
-﻿<div class="bstudio_git-file"
+﻿@using BlazorStudio.RazorLib.File
+
+<div class="bstudio_git-file"
      title="@GitFile.GitDirtyReason">
     
     @{
@@ -26,10 +28,7 @@
         }
     }
     
-    <span>
-        @* TODO: Swap out <IconClippy/> for the correct icon based on file extension *@
-        <IconClippy/>
-    </span>
+    <FileIconDisplay AbsoluteFilePath="GitFile.AbsoluteFilePath"/>
     
     <em class="balc_em">
         @GitFile.AbsoluteFilePath.FilenameWithExtension
