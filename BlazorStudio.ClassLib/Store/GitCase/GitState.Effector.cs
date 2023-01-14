@@ -201,13 +201,21 @@ public partial record GitState
                     GitFacts.GitInitTerminalCommandKey,
                     GitCliFacts.GIT_INIT_COMMAND,
                     gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
-                    CancellationToken.None);
+                    CancellationToken.None,
+                    () =>
+                    {
+                        dispatcher.Dispatch(
+                            new GitState.RefreshGitAction(
+                                gitInitAction.CancellationToken));
+                        
+                        return Task.CompletedTask;
+                    });
         
                 var generalTerminalSession = _terminalSessionsStateWrap.Value.TerminalSessionMap[
                     TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
         
                 await generalTerminalSession
-                    .EnqueueCommandAsync(gitInitCommand); 
+                    .EnqueueCommandAsync(gitInitCommand);
             }
             finally
             {
@@ -283,6 +291,10 @@ public partial record GitState
                             GitFolderAbsoluteFilePath = gitFolderAbsoluteFilePath,
                             MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
                         }));
+                    
+                    dispatcher.Dispatch(
+                        new GitState.RefreshGitAction(
+                            tryFindGitFolderInDirectoryAction.CancellationToken));
                 }
                 else
                 {
