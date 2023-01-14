@@ -6,8 +6,12 @@ namespace BlazorStudio.ClassLib.Store.GitCase;
 
 public partial record GitState
 {
-    public record SetGitFolderAbsoluteFilePathAction(IAbsoluteFilePath? GitFolderAbsoluteFilePath);
-    public record TryFindGitFolderInDirectoryAction(IAbsoluteFilePath DirectoryAbsoluteFilePath);
-    public record SetGitFilesListAction(ImmutableList<GitFile> GitFilesList);
-    public record AddGitFilesAction(ImmutableList<GitFile> GitFilesList);
+    public record SetGitStateWithAction(Func<GitState, GitState> GitStateWithFunc);
+    
+    public record TryFindGitFolderInDirectoryAction(
+        IAbsoluteFilePath DirectoryAbsoluteFilePath,
+        CancellationToken CancellationToken);
+    
+    public record RefreshGitAction(CancellationToken CancellationToken);
+    public record GitInitAction(CancellationToken CancellationToken);
 }

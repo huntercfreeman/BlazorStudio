@@ -17,12 +17,14 @@ namespace BlazorStudio.ClassLib.Store.GitCase;
 public partial record GitState(
     IAbsoluteFilePath? GitFolderAbsoluteFilePath,
     GitState.TryFindGitFolderInDirectoryAction? MostRecentTryFindGitFolderInDirectoryAction,
-    ImmutableList<GitFile> GitFilesList)
+    ImmutableList<GitFile> GitFilesList,
+    ImmutableList<GitTask> ActiveGitTasks)
 {
     public GitState() : this(
         default(IAbsoluteFilePath?),
         default(TryFindGitFolderInDirectoryAction?),
-        ImmutableList<GitFile>.Empty)
+        ImmutableList<GitFile>.Empty,
+        ImmutableList<GitTask>.Empty)
     {
         
     }

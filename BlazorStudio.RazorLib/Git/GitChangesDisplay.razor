@@ -16,10 +16,19 @@
         Git Changes
         
         <button class="balc_button"
-                @onclick="RefreshGitOnClickAsync"
+                @onclick="RefreshGitOnClick"
                 @onclick:stopPropagation="true">
             <IconRefresh/>
         </button>
+        
+        @{ var mostRecentActiveGitTask = gitState.ActiveGitTasks.LastOrDefault(); }
+        
+        @if (mostRecentActiveGitTask is not null)
+        {
+            <span>
+                @mostRecentActiveGitTask.DisplayName
+            </span>
+        }
     </div>
 
     <div class="bstudio_section-body"
@@ -49,7 +58,7 @@
                 }
 
                 <button class="balc_button"
-                        @onclick="GitInitOnClickAsync">
+                        @onclick="GitInitOnClick">
                     Git Init
                 </button>
             </div>

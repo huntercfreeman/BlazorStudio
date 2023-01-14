@@ -123,7 +123,8 @@ public record SolutionExplorerState(
             {
                 dispatcher.Dispatch(
                     new GitState.TryFindGitFolderInDirectoryAction(
-                        parentDirectory));
+                        parentDirectory,
+                        CancellationToken.None));
             }
         }
     }
