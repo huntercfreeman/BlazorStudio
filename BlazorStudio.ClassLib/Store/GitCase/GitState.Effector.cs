@@ -50,24 +50,29 @@ public partial record GitState
                 refreshGitAction,
                 refreshGitAction.CancellationToken);
             
+            if (refreshGitAction.CancellationToken.IsCancellationRequested)
+                return;
+            
             try
             {
-                await _handleActionSemaphoreSlim.WaitAsync(
-                    refreshGitAction.CancellationToken);
+                await _handleActionSemaphoreSlim.WaitAsync();
                 
+                if (refreshGitAction.CancellationToken.IsCancellationRequested)
+                    return;
+
                 var gitState = _gitStateWrap.Value;
 
                 dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
                 {
                     var nextActiveGitTasks = withGitState.ActiveGitTasks.Add(
                         handleRefreshGitTask);
-                    
+
                     return withGitState with
                     {
                         ActiveGitTasks = nextActiveGitTasks,
                     };
                 }));
-                
+
                 // Do not combine this following Dispatch for GitFilesList replacement
                 // with the Dispatch for ActiveGitTasks replacement.
                 // It could cause confusion in the future when one gets removed
@@ -76,17 +81,17 @@ public partial record GitState
                 {
                     GitFilesList = ImmutableList<GitFile>.Empty
                 }));
-    
+
                 if (gitState.GitFolderAbsoluteFilePath is null ||
                     !Directory.Exists(gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()) ||
                     gitState.GitFolderAbsoluteFilePath.ParentDirectory is null)
                 {
                     return;
                 }
-            
+
                 var generalTerminalSession = _terminalSessionsStateWrap.Value.TerminalSessionMap[
                     TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-            
+
                 var gitStatusCommand = new TerminalCommand(
                     GitFacts.GitStatusTerminalCommandKey,
                     GitCliFacts.GIT_STATUS_COMMAND,
@@ -96,7 +101,7 @@ public partial record GitState
                     {
                         var gitStatusOutput = generalTerminalSession.ReadStandardOut(
                             GitFacts.GitStatusTerminalCommandKey);
-    
+
                         if (gitStatusOutput is null)
                             return;
 
@@ -114,10 +119,10 @@ public partial record GitState
                             null,
                             ChangesNotStagedOnAfterCompletedAction);
                     });
-            
+
                 await generalTerminalSession
                     .EnqueueCommandAsync(gitStatusCommand);
-                
+
                 void UntrackedFilesOnAfterCompletedAction(ImmutableList<GitFile> gitFiles)
                 {
                     dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
@@ -165,11 +170,16 @@ public partial record GitState
                 nameof(HandleRefreshGitAction),
                 gitInitAction,
                 gitInitAction.CancellationToken);
+
+            if (gitInitAction.CancellationToken.IsCancellationRequested)
+                return;
             
             try
             {
-                await _handleActionSemaphoreSlim.WaitAsync(
-                    gitInitAction.CancellationToken);
+                await _handleActionSemaphoreSlim.WaitAsync();
+                
+                if (gitInitAction.CancellationToken.IsCancellationRequested)
+                    return;
                 
                 dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
                 {
@@ -226,11 +236,16 @@ public partial record GitState
                 nameof(HandleRefreshGitAction),
                 tryFindGitFolderInDirectoryAction,
                 tryFindGitFolderInDirectoryAction.CancellationToken);
+
+            if (tryFindGitFolderInDirectoryAction.CancellationToken.IsCancellationRequested)
+                return;
             
             try
             {
-                await _handleActionSemaphoreSlim.WaitAsync(
-                    tryFindGitFolderInDirectoryAction.CancellationToken);
+                await _handleActionSemaphoreSlim.WaitAsync();
+                
+                if (tryFindGitFolderInDirectoryAction.CancellationToken.IsCancellationRequested)
+                    return;
                 
                 dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
                 {

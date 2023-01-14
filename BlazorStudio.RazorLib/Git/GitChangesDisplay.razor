@@ -16,6 +16,7 @@
         Git Changes
         
         <button class="balc_button"
+                style="display: inline-flex;"
                 @onclick="RefreshGitOnClick"
                 @onclick:stopPropagation="true">
             <IconRefresh/>
@@ -25,9 +26,16 @@
         
         @if (mostRecentActiveGitTask is not null)
         {
-            <span>
-                @mostRecentActiveGitTask.DisplayName
-            </span>
+            <div title="@mostRecentActiveGitTask.DisplayName"
+                 style="display: inline-flex;">
+                <IconLoading CssStyleString="display: inline;"/>
+                
+                <button class="balc_button"
+                        style="display: inline-flex;"
+                        @onclick="ResetGitActionCancellationTokenSource">
+                    <IconClose/>
+                </button>
+            </div>
         }
     </div>
 
