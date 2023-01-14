@@ -37,6 +37,18 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
     private CancellationTokenSource _gitActionCancellationTokenSource = new();
     private bool _disposedValue;
     
+    protected override void OnInitialized()
+    {
+        if (!TreeViewService.TryGetTreeViewState(
+                GitChangesTreeViewStateKey, 
+                out _))
+        {
+            SetGitChangesTreeViewRoot();
+        }
+        
+        base.OnInitialized();
+    }
+    
     private void GitInitOnClick()
     {
         Dispatcher.Dispatch(

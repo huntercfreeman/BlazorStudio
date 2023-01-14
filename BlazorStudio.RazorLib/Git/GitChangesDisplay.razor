@@ -1,6 +1,5 @@
 ﻿@using BlazorStudio.ClassLib.Context
 @using Microsoft.AspNetCore.Components
-@using BlazorStudio.RazorLib.Git.InternalComponents
 @using BlazorALaCarte.TreeView
 @using BlazorALaCarte.TreeView.Displays
 
@@ -75,7 +74,14 @@
         }
         else
         {
-            <div>
+            @* 
+                TODO: Make 3em into a CSS Variable and see change TreeViewStateDisplay.CssStyleString to use the CSS Variable that was made.
+                
+                - 3em is for the div above it showing the found .git folder
+                - 2rem is for the margin on the <hr/>
+                - 1px is for the height of the <hr/> 
+            *@
+            <div style="height: 3em;">
                 .git folder:
                     
                 <div class="balc_indent-child-content">
@@ -87,10 +93,15 @@
             
             <hr/>
             
+            @* 
+                TODO: Make TreeViewStateDisplay.CssStyleString use CSS Variables.
+                
+                - 3em is for the div above it showing the found .git folder
+                - 2rem is for the margin on the <hr/>
+                - 1px is for the height of the <hr/> 
+            *@
             <TreeViewStateDisplay TreeViewStateKey="GitChangesTreeViewStateKey"
-                                  CssStyleString="height: 100%;"/>
-            
-            <GitStatusOutput/>
+                                  CssStyleString="height: calc(100% - 3em - 2rem - 1px);"/>
         }
     </div>
 </ContextBoundary>
