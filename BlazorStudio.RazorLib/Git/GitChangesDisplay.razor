@@ -1,6 +1,8 @@
 ﻿@using BlazorStudio.ClassLib.Context
 @using Microsoft.AspNetCore.Components
 @using BlazorStudio.RazorLib.Git.InternalComponents
+@using BlazorALaCarte.TreeView
+@using BlazorALaCarte.TreeView.Displays
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -84,6 +86,9 @@
             </div>
             
             <hr/>
+            
+            <TreeViewStateDisplay TreeViewStateKey="GitChangesTreeViewStateKey"
+                                  CssStyleString="height: 100%;"/>
             
             <GitStatusOutput/>
         }

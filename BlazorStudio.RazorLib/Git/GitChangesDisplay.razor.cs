@@ -1,11 +1,17 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
+using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Git;
 using BlazorStudio.ClassLib.Store.GitCase;
+using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorStudio.ClassLib.TreeViewImplementations;
+using BlazorStudio.RazorLib.InputFile;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
@@ -20,7 +26,14 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-
+    [Inject]
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private ITreeViewService TreeViewService { get; set; } = null!;
+    
+    private static readonly TreeViewStateKey GitChangesTreeViewStateKey = 
+        TreeViewStateKey.NewTreeViewStateKey();
+    
     private CancellationTokenSource _gitActionCancellationTokenSource = new();
     private bool _disposedValue;
     
@@ -42,6 +55,49 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
     {
         _gitActionCancellationTokenSource.Cancel();
         _gitActionCancellationTokenSource = new();
+    }
+    
+    private void SetGitChangesTreeViewRoot()
+    {
+        var gitState = GitStateWrap.Value;
+
+        var treeViewNodes = gitState.GitFilesList
+            .Select(x => (TreeViewNoType)new TreeViewGitFile(
+                x,
+                CommonComponentRenderers,
+                false,
+                false))
+            .ToArray();
+        
+        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
+            treeViewNodes);
+
+        foreach (var child in adhocRootNode.Children)
+        {
+            child.IsExpandable = false;
+        }
+
+        var activeNode = adhocRootNode.Children.FirstOrDefault();
+        
+        if (!TreeViewService.TryGetTreeViewState(
+                GitChangesTreeViewStateKey, 
+                out var treeViewState))
+        {
+            TreeViewService.RegisterTreeViewState(new TreeViewState(
+                GitChangesTreeViewStateKey,
+                adhocRootNode,
+                activeNode));
+        }
+        else
+        {
+            TreeViewService.SetRoot(
+                GitChangesTreeViewStateKey,
+                adhocRootNode);
+            
+            TreeViewService.SetActiveNode(
+                GitChangesTreeViewStateKey,
+                activeNode);
+        }
     }
 
     protected override void Dispose(bool disposing)

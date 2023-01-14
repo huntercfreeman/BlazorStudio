@@ -1,29 +1,28 @@
 ﻿using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Git;
 using BlazorStudio.ClassLib.Store.GitCase;
-using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorStudio.RazorLib.InputFile;
 using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazorStudio.RazorLib.Git.InternalComponents;
+namespace BlazorStudio.RazorLib.TreeViewImplementations;
 
-public partial class GitFileDisplay : ComponentBase
+public partial class TreeViewGitFileDisplay 
+    : FluxorComponent, ITreeViewGitFileRendererType
 {
     [Inject]
     private IState<GitState> GitStateWrap { get; set; } = null!;
     [Inject]
     private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
+    
+    [CascadingParameter]
+    public TreeViewState TreeViewState { get; set; } = null!;
     
     [Parameter, EditorRequired]
-    public GitFile GitFile { get; set; } = null!;
+    public TreeViewGitFile TreeViewGitFile { get; set; } = null!;
 
     private string TryShortenGitFilePath(
         IAbsoluteFilePath absoluteFilePath,
@@ -45,4 +44,3 @@ public partial class GitFileDisplay : ComponentBase
         return absoluteFilePathString;
     }
 }
-

@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
             typeof(TreeViewNamespacePathDisplay),
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewAbsoluteFilePathDisplay),
+            typeof(TreeViewGitFileDisplay),
             typeof(NuGetPackageManager),
             typeof(GitChangesDisplay),
             typeof(RemoveCSharpProjectFromSolutionDisplay),
