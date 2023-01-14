@@ -25,9 +25,4 @@
         <ProjectReference Include="..\BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Git\InternalComponents\GitFileDisplay.razor" />
-      <_ContentIncludedByDefault Remove="Git\InternalComponents\GitStatusOutput.razor" />
-    </ItemGroup>
-
 </Project>
