@@ -418,8 +418,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey, 
             treeViewModel);
         
-        TreeViewService.MoveActiveSelectionUp(
-            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey);
+        TreeViewService.MoveUp(
+            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey,
+            false);
     }
     
     private Task NotifyCopyCompleted(NamespacePath namespacePath)

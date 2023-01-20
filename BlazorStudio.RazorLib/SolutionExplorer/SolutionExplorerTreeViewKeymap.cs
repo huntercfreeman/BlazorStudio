@@ -308,7 +308,8 @@ public class SolutionExplorerTreeViewKeymap : ITreeViewKeymap
             SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey, 
             treeViewModel);
         
-        _treeViewService.MoveActiveSelectionUp(
-            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey);
+        _treeViewService.MoveUp(
+            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey,
+            false);
     }
 }

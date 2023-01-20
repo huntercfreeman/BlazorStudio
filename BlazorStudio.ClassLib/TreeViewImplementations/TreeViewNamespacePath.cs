@@ -105,7 +105,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                     newChild.IsExpanded = oldChild.IsExpanded;
                     newChild.IsExpandable = oldChild.IsExpandable;
                     newChild.IsHidden = oldChild.IsHidden;
-                    newChild.Id = oldChild.Id;
+                    newChild.TreeViewNodeKey = oldChild.TreeViewNodeKey;
                     newChild.Children = oldChild.Children;
                 }
             }
