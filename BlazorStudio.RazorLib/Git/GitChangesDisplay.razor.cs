@@ -98,7 +98,8 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
             TreeViewService.RegisterTreeViewState(new TreeViewState(
                 GitChangesTreeViewStateKey,
                 adhocRootNode,
-                activeNode));
+                activeNode,
+                ImmutableList<TreeViewNoType>.Empty));
         }
         else
         {

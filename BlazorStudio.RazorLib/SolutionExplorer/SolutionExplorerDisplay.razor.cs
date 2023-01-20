@@ -6,6 +6,7 @@ using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.Shared.Store.DropdownCase;
 using BlazorALaCarte.Shared.Store.IconCase;
 using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorALaCarte.TreeView.Events;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
@@ -126,7 +127,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             TreeViewService.RegisterTreeViewState(new TreeViewState(
                 TreeViewSolutionExplorerStateKey,
                 solutionExplorerNode,
-                solutionExplorerNode));
+                solutionExplorerNode,
+                ImmutableList<TreeViewNoType>.Empty));
         }
     }
     

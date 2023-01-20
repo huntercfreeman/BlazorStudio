@@ -1,6 +1,8 @@
+using System.Collections.Immutable;
 using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Resize;
 using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorALaCarte.TreeView.Events;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
@@ -170,7 +172,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             TreeViewService.RegisterTreeViewState(new TreeViewState(
                 InputFileContent.TreeViewInputFileContentStateKey,
                 adhocRootNode,
-                activeNode));
+                activeNode,
+                ImmutableList<TreeViewNoType>.Empty));
         }
         else
         {
