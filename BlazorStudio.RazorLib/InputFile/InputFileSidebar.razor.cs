@@ -34,7 +34,7 @@ public partial class InputFileSidebar : FluxorComponent
     [CascadingParameter(Name = "SetInputFileContentTreeViewRoot")]
     public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
     [CascadingParameter]
-    public TreeViewMouseEventRegistrar TreeViewMouseEventRegistrar { get; set; } = null!;
+    public InputFileTreeViewMouseEventHandler InputFileTreeViewMouseEventHandler { get; set; } = null!;
     [CascadingParameter]
     public InputFileTreeViewKeymap InputFileTreeViewKeymap { get; set; } = null!;
     

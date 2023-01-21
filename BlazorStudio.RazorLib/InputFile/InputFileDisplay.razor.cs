@@ -68,7 +68,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private readonly ElementDimensions _contentElementDimensions = new();
     
     private IAbsoluteFilePath? _selectedAbsoluteFilePath;
-    private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
+    private InputFileTreeViewMouseEventHandler _inputFileTreeViewMouseEventHandler = null!;
     private InputFileTreeViewKeymap _inputFileTreeViewKeymap = null!;
     private InputFileTopNavBar? _inputFileTopNavBarComponent;
 
@@ -86,11 +86,10 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     
     protected override void OnInitialized()
     {
-        _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
-        {
-            OnClick = TreeViewOnClick,
-            OnDoubleClick = TreeViewOnDoubleClick
-        };
+        _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
+            TreeViewService,
+            Dispatcher,
+            SetInputFileContentTreeViewRoot);
 
         _inputFileTreeViewKeymap = new InputFileTreeViewKeymap(
             InputFileContent.TreeViewInputFileContentStateKey,
@@ -191,38 +190,5 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             CommonComponentRenderers);
         
         Dispatcher.Dispatch(setOpenedTreeViewModelAction);
-    }
-    
-    private Task TreeViewOnClick(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
-    {
-        if (treeViewMouseEventParameter.TargetNode 
-            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
-        {
-            return Task.CompletedTask;
-        }
-        
-        var setSelectedTreeViewModelAction = 
-            new InputFileState.SetSelectedTreeViewModelAction(
-                treeViewAbsoluteFilePath);
-        
-        Dispatcher.Dispatch(setSelectedTreeViewModelAction);
-        
-        return Task.CompletedTask;
-    }
-    
-    private Task TreeViewOnDoubleClick(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
-    {
-        if (treeViewMouseEventParameter.TargetNode 
-            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
-        {
-            return Task.CompletedTask;
-        }
-
-        if (treeViewAbsoluteFilePath.Item != null) 
-            SetInputFileContentTreeViewRoot(treeViewAbsoluteFilePath.Item);
-
-        return Task.CompletedTask;
     }
 }
