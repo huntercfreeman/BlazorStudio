@@ -196,7 +196,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private Task TreeViewOnClick(
         TreeViewMouseEventParameter treeViewMouseEventParameter)
     {
-        if (treeViewMouseEventParameter.MouseTargetedTreeView 
+        if (treeViewMouseEventParameter.TargetNode 
             is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
         {
             return Task.CompletedTask;
@@ -214,7 +214,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private Task TreeViewOnDoubleClick(
         TreeViewMouseEventParameter treeViewMouseEventParameter)
     {
-        if (treeViewMouseEventParameter.MouseTargetedTreeView 
+        if (treeViewMouseEventParameter.TargetNode 
             is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
         {
             return Task.CompletedTask;

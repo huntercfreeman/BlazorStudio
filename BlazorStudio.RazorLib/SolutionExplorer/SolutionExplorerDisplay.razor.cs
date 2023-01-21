@@ -146,7 +146,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private async Task TreeViewOnDoubleClick(
         TreeViewMouseEventParameter treeViewMouseEventParameter)
     {
-        if (treeViewMouseEventParameter.MouseTargetedTreeView 
+        if (treeViewMouseEventParameter.TargetNode 
             is not TreeViewNamespacePath treeViewNamespacePath)
         {
             return;

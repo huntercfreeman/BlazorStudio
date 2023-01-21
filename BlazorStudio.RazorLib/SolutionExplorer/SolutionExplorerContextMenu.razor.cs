@@ -6,6 +6,7 @@ using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.DialogNotification.Notification;
 using BlazorALaCarte.DialogNotification.Store.DialogCase;
 using BlazorALaCarte.DialogNotification.Store.NotificationCase;
+using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.TreeView;
@@ -477,10 +478,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             return "display: none;";
         
         var left = 
-            $"left: {treeViewContextMenuEvent.ContextMenuFixedPosition.LeftPositionInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture)}px;";
+            $"left: {treeViewContextMenuEvent.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
         
         var top = 
-            $"top: {treeViewContextMenuEvent.ContextMenuFixedPosition.TopPositionInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture)}px;";
+            $"top: {treeViewContextMenuEvent.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
         return $"{left} {top}";
     }
