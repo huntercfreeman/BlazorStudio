@@ -58,7 +58,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private string _filePath = string.Empty;
     private TreeViewContextMenuEvent? _mostRecentTreeViewContextMenuEvent;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
-    private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
+    private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
         IconStateWrap.Value.IconSizeInPixels *
@@ -74,17 +74,21 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             TreeViewService,
             TextEditorService);
         
-        _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
-        {
-            OnDoubleClick = TreeViewOnDoubleClick
-        };
+        _solutionExplorerTreeViewMouseEventHandler = 
+            new SolutionExplorerTreeViewMouseEventHandler(
+                Dispatcher,
+                TextEditorService,
+                CommonComponentRenderers,
+                TreeViewService);
         
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrapOnStateChanged;
     
         base.OnInitialized();
     }
 
-    private async void SolutionExplorerStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void SolutionExplorerStateWrapOnStateChanged(
+        object? sender,
+        EventArgs e)
     {
         if (SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath is null)
             return;
@@ -141,25 +145,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
         
         await InvokeAsync(StateHasChanged);
-    }
-
-    private async Task TreeViewOnDoubleClick(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
-    {
-        if (treeViewMouseEventParameter.TargetNode 
-            is not TreeViewNamespacePath treeViewNamespacePath)
-        {
-            return;
-        }
-
-        if (treeViewNamespacePath.Item is null)
-            return;
-
-        await EditorState.OpenInEditorAsync(
-            treeViewNamespacePath.Item.AbsoluteFilePath,
-            Dispatcher,
-            TextEditorService,
-            CommonComponentRenderers);
     }
     
     protected override void Dispose(bool disposing)
