@@ -1,5 +1,7 @@
-﻿using BlazorALaCarte.Shared.Clipboard;
+﻿using System.Collections.Immutable;
+using BlazorALaCarte.Shared.Clipboard;
 using BlazorALaCarte.Shared.Facts;
+using BlazorALaCarte.Shared.Theme;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -27,6 +29,8 @@ public static class ServiceCollectionExtensions
             {
                 configureTextEditorServiceOptions.InitializeFluxor = false;
                 configureTextEditorServiceOptions.ClipboardProviderFactory = clipboardProviderDefaultFactory;
+                configureTextEditorServiceOptions.InitialThemeRecords = BlazorStudioTextEditorColorThemeFacts.BlazorStudioTextEditorThemes;
+                configureTextEditorServiceOptions.InitialThemeKey = BlazorStudioTextEditorColorThemeFacts.LightTheme.ThemeKey;
             },
             themeOptions =>
             {
