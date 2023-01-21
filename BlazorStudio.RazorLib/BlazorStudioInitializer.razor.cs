@@ -28,8 +28,6 @@ public partial class BlazorStudioInitializer : ComponentBase
     
     protected override void OnInitialized()
     {
-        TextEditorService.SetTheme(ThemeFacts.VisualStudioDarkThemeClone);
-        
         foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
         {
             var terminalSession = new TerminalSession(
