@@ -7,6 +7,7 @@ using BlazorALaCarte.Shared.Store.DropdownCase;
 using BlazorALaCarte.Shared.Store.IconCase;
 using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.BaseTypes;
+using BlazorALaCarte.TreeView.Commands;
 using BlazorALaCarte.TreeView.Events;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
@@ -56,7 +57,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         TreeViewStateKey.NewTreeViewStateKey();
     
     private string _filePath = string.Empty;
-    private TreeViewContextMenuEvent? _mostRecentTreeViewContextMenuEvent;
+    private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
 
@@ -136,9 +137,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         }
     }
     
-    private async Task OnTreeViewContextMenuFunc(TreeViewContextMenuEvent treeViewContextMenuEvent)
+    private async Task OnTreeViewContextMenuFunc(ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _mostRecentTreeViewContextMenuEvent = treeViewContextMenuEvent;
+        _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
         
         Dispatcher.Dispatch(
             new DropdownsState.AddActiveAction(

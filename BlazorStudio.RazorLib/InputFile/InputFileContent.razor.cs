@@ -37,7 +37,7 @@ public partial class InputFileContent : FluxorComponent
     [CascadingParameter]
     public InputFileTreeViewMouseEventHandler InputFileTreeViewMouseEventHandler { get; set; } = null!;
     [CascadingParameter]
-    public InputFileTreeViewKeymap InputFileTreeViewKeymap { get; set; } = null!;
+    public InputFileTreeViewKeyboardEventHandler InputFileTreeViewKeyboardEventHandler { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;

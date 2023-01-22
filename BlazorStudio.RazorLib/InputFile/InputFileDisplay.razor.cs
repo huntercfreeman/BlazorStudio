@@ -3,7 +3,6 @@ using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Resize;
 using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.BaseTypes;
-using BlazorALaCarte.TreeView.Events;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -69,7 +68,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     
     private IAbsoluteFilePath? _selectedAbsoluteFilePath;
     private InputFileTreeViewMouseEventHandler _inputFileTreeViewMouseEventHandler = null!;
-    private InputFileTreeViewKeymap _inputFileTreeViewKeymap = null!;
+    private InputFileTreeViewKeyboardEventHandler _inputFileTreeViewKeyboardEventHandler = null!;
     private InputFileTopNavBar? _inputFileTopNavBarComponent;
 
     /// <summary>
@@ -91,7 +90,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             Dispatcher,
             SetInputFileContentTreeViewRoot);
 
-        _inputFileTreeViewKeymap = new InputFileTreeViewKeymap(
+        _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
             InputFileContent.TreeViewInputFileContentStateKey,
             TreeViewService,
             InputFileStateWrap,

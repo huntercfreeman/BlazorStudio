@@ -1,9 +1,8 @@
-﻿using BlazorALaCarte.TreeView.Events;
+﻿using BlazorALaCarte.TreeView.Commands;
+using BlazorALaCarte.TreeView.Events;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.EditorCase;
-using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
@@ -29,11 +28,11 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
     }
     
     public override async Task<bool> OnDoubleClickAsync(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
+        ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _ = base.OnDoubleClickAsync(treeViewMouseEventParameter);
+        _ = base.OnDoubleClickAsync(treeViewCommandParameter);
 
-        if (treeViewMouseEventParameter.TargetNode 
+        if (treeViewCommandParameter.TargetNode 
             is not TreeViewNamespacePath treeViewNamespacePath)
         {
             return false;

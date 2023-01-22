@@ -1,4 +1,5 @@
-﻿using BlazorALaCarte.TreeView.Events;
+﻿using BlazorALaCarte.TreeView.Commands;
+using BlazorALaCarte.TreeView.Events;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -23,11 +24,11 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
     }
 
     public override Task<bool> OnClickAsync(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
+        ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _ = base.OnClickAsync(treeViewMouseEventParameter);
+        _ = base.OnClickAsync(treeViewCommandParameter);
         
-        if (treeViewMouseEventParameter.TargetNode 
+        if (treeViewCommandParameter.TargetNode 
             is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
         {
             return Task.FromResult(false);
@@ -43,11 +44,11 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
     }
 
     public override Task<bool> OnDoubleClickAsync(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
+        ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _ = base.OnDoubleClickAsync(treeViewMouseEventParameter);
+        _ = base.OnDoubleClickAsync(treeViewCommandParameter);
 
-        if (treeViewMouseEventParameter.TargetNode 
+        if (treeViewCommandParameter.TargetNode 
             is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
         {
             return Task.FromResult(false);

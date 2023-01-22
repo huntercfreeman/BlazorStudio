@@ -1,5 +1,4 @@
-﻿using BlazorStudio.ClassLib.Git;
-using BlazorStudio.ClassLib.TreeViewImplementations;
+﻿using BlazorStudio.ClassLib.TreeViewImplementations;
 
 namespace BlazorStudio.ClassLib.CommonComponents;
 

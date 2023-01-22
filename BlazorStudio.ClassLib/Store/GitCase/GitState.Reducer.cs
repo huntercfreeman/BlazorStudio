@@ -1,6 +1,4 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.Git;
-using Fluxor;
+﻿using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.GitCase;
 

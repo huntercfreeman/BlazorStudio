@@ -38,7 +38,7 @@
                                 <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"
                                                       CssStyleString="height: 100%;"
                                                       OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                                      TreeViewKeymap="_solutionExplorerTreeViewKeymap"
+                                                      TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
                                                       TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler"/>
                             </CascadingValue>
                         </CascadingValue>
@@ -47,9 +47,9 @@
 
                     <DropdownDisplay DropdownKey="SolutionExplorerContextMenu.ContextMenuEventDropdownKey"
                                      DropdownPositionKind="DropdownPositionKind.Unset"
-                                     CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewContextMenuEvent)">
+                                     CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter)">
 
-                        <SolutionExplorerContextMenu TreeViewContextMenuEvent="_mostRecentTreeViewContextMenuEvent"/>
+                        <SolutionExplorerContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter"/>
                     </DropdownDisplay>
                 }
             }

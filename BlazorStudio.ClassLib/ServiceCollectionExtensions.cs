@@ -1,7 +1,5 @@
-﻿using System.Collections.Immutable;
-using BlazorALaCarte.Shared.Clipboard;
+﻿using BlazorALaCarte.Shared.Clipboard;
 using BlazorALaCarte.Shared.Facts;
-using BlazorALaCarte.Shared.Theme;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;

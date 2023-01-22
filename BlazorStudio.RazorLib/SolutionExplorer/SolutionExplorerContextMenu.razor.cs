@@ -11,6 +11,7 @@ using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.BaseTypes;
+using BlazorALaCarte.TreeView.Commands;
 using BlazorALaCarte.TreeView.Events;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommandLine;
@@ -51,7 +52,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
     
     [Parameter, EditorRequired]
-    public TreeViewContextMenuEvent TreeViewContextMenuEvent { get; set; } = null!;
+    public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
 
     public static readonly DropdownKey ContextMenuEventDropdownKey = DropdownKey.NewDropdownKey();
     
@@ -62,11 +63,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     public static TreeViewNoType? ParentOfCutFile;
     
     private MenuRecord GetMenuRecord(
-        TreeViewContextMenuEvent treeViewContextMenuEvent)
+        ITreeViewCommandParameter treeViewCommandParameter)
     {
+        if (treeViewCommandParameter.TargetNode is null)
+            return MenuRecord.Empty;
+        
         var menuRecords = new List<MenuOptionRecord>();
         
-        var treeViewModel = treeViewContextMenuEvent.TreeViewNoType;
+        var treeViewModel = treeViewCommandParameter.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
 
         var parentTreeViewNamespacePath = parentTreeViewModel as TreeViewNamespacePath;
@@ -74,13 +78,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         if (treeViewModel is not TreeViewNamespacePath treeViewNamespacePath ||
             treeViewNamespacePath.Item is null)
         {
-            return new MenuRecord(new []
-            {
-                new MenuOptionRecord(
-                    "No context menu options for this item.",
-                    MenuOptionKind.Other,
-                    () => { })
-            }.ToImmutableArray());
+            return MenuRecord.Empty;
         }
         
         if (treeViewNamespacePath.Item.AbsoluteFilePath.IsDirectory)
@@ -472,16 +470,16 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         return Task.CompletedTask;
     }
     
-    public static string GetContextMenuCssStyleString(TreeViewContextMenuEvent? treeViewContextMenuEvent)
+    public static string GetContextMenuCssStyleString(ITreeViewCommandParameter? treeViewCommandParameter)
     {
-        if (treeViewContextMenuEvent is null)
+        if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";
         
         var left = 
-            $"left: {treeViewContextMenuEvent.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
+            $"left: {treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
         
         var top = 
-            $"top: {treeViewContextMenuEvent.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
+            $"top: {treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
         return $"{left} {top}";
     }

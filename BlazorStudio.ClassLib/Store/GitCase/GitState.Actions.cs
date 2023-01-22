@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Git;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
 namespace BlazorStudio.ClassLib.Store.GitCase;
 
