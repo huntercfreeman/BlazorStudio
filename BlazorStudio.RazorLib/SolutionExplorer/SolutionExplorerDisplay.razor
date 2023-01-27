@@ -3,12 +3,13 @@
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorALaCarte.Shared.Dropdown
 @using BlazorALaCarte.TreeView
+@using BlazorALaCarte.TreeView.Displays
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
                  ClassCssString="bstudio_folder-explorer-display"
-                 StyleCssString="@($"height: 100% {SolutionExplorerElementDimensions.StyleString}")">
+                 StyleCssString="height: 100%">
     @{
         var solutionExplorerState = SolutionExplorerStateWrap.Value;
 
@@ -37,8 +38,8 @@
                                 <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"
                                                       CssStyleString="height: 100%;"
                                                       OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                                      TreeViewKeymap="_solutionExplorerTreeViewKeymap"
-                                                      TreeViewMouseEventRegistrar="_treeViewMouseEventRegistrar"/>
+                                                      TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
+                                                      TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler"/>
                             </CascadingValue>
                         </CascadingValue>
                     </CascadingValue>
@@ -46,9 +47,9 @@
 
                     <DropdownDisplay DropdownKey="SolutionExplorerContextMenu.ContextMenuEventDropdownKey"
                                      DropdownPositionKind="DropdownPositionKind.Unset"
-                                     CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewContextMenuEvent)">
+                                     CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter)">
 
-                        <SolutionExplorerContextMenu TreeViewContextMenuEvent="_mostRecentTreeViewContextMenuEvent"/>
+                        <SolutionExplorerContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter"/>
                     </DropdownDisplay>
                 }
             }

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Immutable;
 using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.TreeViewCase;
+using BlazorALaCarte.TreeView.BaseTypes;
+using BlazorALaCarte.TreeView.Events;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
@@ -32,9 +34,9 @@ public partial class InputFileSidebar : FluxorComponent
     [CascadingParameter(Name = "SetInputFileContentTreeViewRoot")]
     public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
     [CascadingParameter]
-    public TreeViewMouseEventRegistrar TreeViewMouseEventRegistrar { get; set; } = null!;
+    public InputFileTreeViewMouseEventHandler InputFileTreeViewMouseEventHandler { get; set; } = null!;
     [CascadingParameter]
-    public InputFileTreeViewKeymap InputFileTreeViewKeymap { get; set; } = null!;
+    public InputFileTreeViewKeyboardEventHandler InputFileTreeViewKeyboardEventHandler { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
@@ -76,7 +78,8 @@ public partial class InputFileSidebar : FluxorComponent
             TreeViewService.RegisterTreeViewState(new TreeViewState(
                 TreeViewInputFileSidebarStateKey,
                 adhocRootNode,
-                directoryHomeNode));
+                directoryHomeNode,
+                ImmutableList<TreeViewNoType>.Empty));
         }
         
         base.OnInitialized();

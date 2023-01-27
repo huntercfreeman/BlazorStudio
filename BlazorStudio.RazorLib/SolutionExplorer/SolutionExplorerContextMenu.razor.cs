@@ -4,9 +4,16 @@ using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification;
 using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.DialogNotification.Notification;
+using BlazorALaCarte.DialogNotification.Store.DialogCase;
+using BlazorALaCarte.DialogNotification.Store.NotificationCase;
+using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
+using BlazorALaCarte.TreeView.Commands;
+using BlazorALaCarte.TreeView.Events;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
@@ -21,7 +28,6 @@ using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.DotNetSolutionForm;
 using Fluxor;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
@@ -39,14 +45,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     
     [Parameter, EditorRequired]
-    public TreeViewContextMenuEvent TreeViewContextMenuEvent { get; set; } = null!;
+    public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
 
     public static readonly DropdownKey ContextMenuEventDropdownKey = DropdownKey.NewDropdownKey();
     
@@ -54,14 +60,17 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     /// The program is currently running using Photino locally on the user's computer
     /// therefore this static solution works without leaking any information.
     /// </summary>
-    public static TreeView? ParentOfCutFile;
+    public static TreeViewNoType? ParentOfCutFile;
     
     private MenuRecord GetMenuRecord(
-        TreeViewContextMenuEvent treeViewContextMenuEvent)
+        ITreeViewCommandParameter treeViewCommandParameter)
     {
+        if (treeViewCommandParameter.TargetNode is null)
+            return MenuRecord.Empty;
+        
         var menuRecords = new List<MenuOptionRecord>();
         
-        var treeViewModel = treeViewContextMenuEvent.TreeView;
+        var treeViewModel = treeViewCommandParameter.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
 
         var parentTreeViewNamespacePath = parentTreeViewModel as TreeViewNamespacePath;
@@ -69,13 +78,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         if (treeViewModel is not TreeViewNamespacePath treeViewNamespacePath ||
             treeViewNamespacePath.Item is null)
         {
-            return new MenuRecord(new []
-            {
-                new MenuOptionRecord(
-                    "No context menu options for this item.",
-                    MenuOptionKind.Other,
-                    () => { })
-            }.ToImmutableArray());
+            return MenuRecord.Empty;
         }
         
         if (treeViewNamespacePath.Item.AbsoluteFilePath.IsDirectory)
@@ -189,10 +192,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
-                Dispatcher,
-                async () =>
-                {
-                }),
+                Dispatcher, () => { return Task.CompletedTask; }),
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
@@ -205,8 +205,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
-                Dispatcher,
-                async () =>
+                Dispatcher, () =>
                 {
                     if (project is not null)
                     {
@@ -221,6 +220,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                             Dispatcher.Dispatch(requestSetSolutionExplorerStateAction);
                         }
                     }
+
+                    return Task.CompletedTask;
                 }),
         };
     }
@@ -312,7 +313,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         };
         
         Dispatcher.Dispatch(
-            new DialogsState.RegisterDialogRecordAction(
+            new DialogRecordsCollection.RegisterAction(
                 dialogRecord));
     }
     
@@ -405,7 +406,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     /// </summary>
     /// <param name="treeViewModel"></param>
     private async Task ReloadTreeViewModel(
-        TreeView? treeViewModel)
+        TreeViewNoType? treeViewModel)
     {
         if (treeViewModel is null)
             return;
@@ -416,8 +417,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey, 
             treeViewModel);
         
-        TreeViewService.MoveActiveSelectionUp(
-            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey);
+        TreeViewService.MoveUp(
+            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey,
+            false);
     }
     
     private Task NotifyCopyCompleted(NamespacePath namespacePath)
@@ -436,7 +438,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             TimeSpan.FromSeconds(3));
 
         Dispatcher.Dispatch(
-            new NotificationsState.RegisterNotificationRecordAction(
+            new NotificationRecordsCollection.RegisterAction(
                 notificationInformative));
 
         return Task.CompletedTask;
@@ -462,22 +464,22 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             TimeSpan.FromSeconds(3));
         
         Dispatcher.Dispatch(
-            new NotificationsState.RegisterNotificationRecordAction(
+            new NotificationRecordsCollection.RegisterAction(
                 notificationInformative));
 
         return Task.CompletedTask;
     }
     
-    public static string GetContextMenuCssStyleString(TreeViewContextMenuEvent? treeViewContextMenuEvent)
+    public static string GetContextMenuCssStyleString(ITreeViewCommandParameter? treeViewCommandParameter)
     {
-        if (treeViewContextMenuEvent is null)
+        if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";
         
         var left = 
-            $"left: {treeViewContextMenuEvent.ContextMenuFixedPosition.LeftPositionInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture)}px;";
+            $"left: {treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
         
         var top = 
-            $"top: {treeViewContextMenuEvent.ContextMenuFixedPosition.TopPositionInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture)}px;";
+            $"top: {treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
         return $"{left} {top}";
     }

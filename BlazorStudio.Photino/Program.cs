@@ -24,7 +24,7 @@ namespace BlazorStudio.Photino
             // customize window
             app.MainWindow
                 .SetIconFile("favicon.ico")
-                .SetTitle("Blazor Text Editor")
+                .SetTitle("BlazorStudio")
                 .SetDevToolsEnabled(true)
                 .SetContextMenuEnabled(true)
                 .SetUseOsDefaultSize(false)

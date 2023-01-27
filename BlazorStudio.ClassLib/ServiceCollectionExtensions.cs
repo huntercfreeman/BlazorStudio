@@ -20,13 +20,15 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddSingleton<ICommonComponentRenderers>(commonComponentRenderers)
-            .AddSingleton<BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory, BlazorStudio.ClassLib.Menu.CommonMenuOptionsFactory>()
+            .AddSingleton<Menu.ICommonMenuOptionsFactory, Menu.CommonMenuOptionsFactory>()
             .AddSingleton<IFileTemplateProvider, FileTemplateProvider>()
             .AddSingleton<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
             .AddBlazorTextEditor(configureTextEditorServiceOptions =>
             {
                 configureTextEditorServiceOptions.InitializeFluxor = false;
                 configureTextEditorServiceOptions.ClipboardProviderFactory = clipboardProviderDefaultFactory;
+                configureTextEditorServiceOptions.InitialThemeRecords = BlazorStudioTextEditorColorThemeFacts.BlazorStudioTextEditorThemes;
+                configureTextEditorServiceOptions.InitialThemeKey = BlazorStudioTextEditorColorThemeFacts.LightTheme.ThemeKey;
             },
             themeOptions =>
             {
@@ -39,7 +41,7 @@ public static class ServiceCollectionExtensions
                     typeof(BlazorALaCarte.DialogNotification.Installation.ServiceCollectionExtensions).Assembly, 
                     typeof(BlazorALaCarte.TreeView.Installation.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
-                    typeof(BlazorStudio.ClassLib.ServiceCollectionExtensions).Assembly))
+                    typeof(ServiceCollectionExtensions).Assembly))
             .AddScoped<IFileSystemProvider, LocalFileSystemProvider>();
     }
 }

@@ -1,4 +1,5 @@
 ﻿@using BlazorALaCarte.TreeView
+@using BlazorALaCarte.TreeView.Displays
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -8,7 +9,7 @@
     <CascadingValue Name="SearchQuery" Value="InputFileStateWrap.Value.SearchQuery">
         <TreeViewStateDisplay TreeViewStateKey="TreeViewInputFileContentStateKey"
                               CssStyleString="height: 100%;"
-                              TreeViewMouseEventRegistrar="TreeViewMouseEventRegistrar"
-                              TreeViewKeymap="InputFileTreeViewKeymap"/>
+                              TreeViewMouseEventHandler="InputFileTreeViewMouseEventHandler"
+                              TreeViewKeyboardEventHandler="InputFileTreeViewKeyboardEventHandler"/>
     </CascadingValue>
 </div>

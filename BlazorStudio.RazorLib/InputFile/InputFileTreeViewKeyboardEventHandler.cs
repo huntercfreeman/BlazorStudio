@@ -1,8 +1,8 @@
 ﻿using BlazorALaCarte.Shared.Keyboard;
 using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.Commands;
-using BlazorALaCarte.TreeView.Keymap;
-using BlazorALaCarte.TreeView.TreeViewCase;
+using BlazorALaCarte.TreeView.Events;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
-public class InputFileTreeViewKeymap : ITreeViewKeymap
+public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
     private readonly TreeViewStateKey _treeViewStateKey;
     private readonly ITreeViewService _treeViewService;
@@ -23,7 +23,7 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
     private readonly Func<Task> _focusSearchInputElementFunc;
     private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> _getSearchMatchTuplesFunc;
 
-    public InputFileTreeViewKeymap(TreeViewStateKey treeViewStateKey,
+    public InputFileTreeViewKeyboardEventHandler(TreeViewStateKey treeViewStateKey,
         ITreeViewService treeViewService,
         IState<InputFileState> inputFileStateWrap,
         IDispatcher dispatcher,
@@ -31,6 +31,7 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
         Action<IAbsoluteFilePath> setInputFileContentTreeViewRoot,
         Func<Task> focusSearchInputElementFunc,
         Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> getSearchMatchTuplesFunc)
+        : base(treeViewService)
     {
         _treeViewStateKey = treeViewStateKey;
         _treeViewService = treeViewService;
@@ -42,21 +43,23 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
         _getSearchMatchTuplesFunc = getSearchMatchTuplesFunc;
     }
     
-    public bool TryMapKey(
-        KeyboardEventArgs keyboardEventArgs, 
-        out TreeViewCommand? treeViewCommand)
+    public override async Task<bool> OnKeyDownAsync(
+        ITreeViewCommandParameter treeViewCommandParameter)
     {
-        switch (keyboardEventArgs.Code)
+        if (treeViewCommandParameter.KeyboardEventArgs is null)
+            return false;
+        
+        switch (treeViewCommandParameter.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                treeViewCommand = new TreeViewCommand(SetInputFileContentTreeViewRoot);
+                await SetInputFileContentTreeViewRootAsync(treeViewCommandParameter);
                 return true;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                treeViewCommand = new TreeViewCommand(SetSelectedTreeViewModel);
+                await SetSelectedTreeViewModelAsync(treeViewCommandParameter);
                 return true;
         }
 
-        switch (keyboardEventArgs.Key)
+        switch (treeViewCommandParameter.KeyboardEventArgs.Key)
         {
             // Tried to have { "Ctrl" + "f" } => MoveFocusToSearchBar
             // however, the webview was ending up taking over
@@ -66,7 +69,7 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
             // worms as JSInterop is needed, as well a custom Blazor event.
             case "/":
             case "?":
-                treeViewCommand = new TreeViewCommand(MoveFocusToSearchBar);
+                await MoveFocusToSearchBarAsync(treeViewCommandParameter);
                 return true;
             // TODO: Add move to next match and move to previous match
             //
@@ -78,44 +81,43 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
             //     return true;
         }
 
-        if (keyboardEventArgs.AltKey)
-            return AltModifiedKeymap(keyboardEventArgs, out treeViewCommand);
+        if (treeViewCommandParameter.KeyboardEventArgs.AltKey)
+        {
+            var wasMappedToAnAction = await AltModifiedKeymapAsync(treeViewCommandParameter);
+
+            if (wasMappedToAnAction)
+                return wasMappedToAnAction;
+        }
         
-        treeViewCommand = null;
         return false;
     }
     
-    private bool AltModifiedKeymap(
-        KeyboardEventArgs keyboardEventArgs,
-        out TreeViewCommand? treeViewCommand)
+    private async Task<bool> AltModifiedKeymapAsync(
+        ITreeViewCommandParameter treeViewCommandParameter)
     {
-        TreeViewCommand? command = null;
+        if (treeViewCommandParameter.KeyboardEventArgs is null)
+            return false;
         
-        switch (keyboardEventArgs.Key)
+        switch (treeViewCommandParameter.KeyboardEventArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-                command = new TreeViewCommand(HandleBackButtonOnClick);
+                await HandleBackButtonOnClickAsync(treeViewCommandParameter);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-                command = new TreeViewCommand(HandleUpwardButtonOnClick);
+                await HandleUpwardButtonOnClick(treeViewCommandParameter);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-                command = new TreeViewCommand(HandleForwardButtonOnClick);
+                await HandleForwardButtonOnClick(treeViewCommandParameter);
                 break;
             case "r":
-                command = new TreeViewCommand(HandleRefreshButtonOnClick);
+                await HandleRefreshButtonOnClick(treeViewCommandParameter);
                 break;
         }
 
-        treeViewCommand = command;
-        
-        if (treeViewCommand is null)
-            return false;
-        
-        return true;
+        return false;
     }
     
-    private async Task SetInputFileContentTreeViewRoot(
+    private Task SetInputFileContentTreeViewRootAsync(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
@@ -123,12 +125,13 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
         var treeViewAbsoluteFilePath = activeNode as TreeViewAbsoluteFilePath;
 
         if (treeViewAbsoluteFilePath?.Item is null)
-            return;
+            return Task.CompletedTask;
         
         _setInputFileContentTreeViewRoot.Invoke(treeViewAbsoluteFilePath.Item);
+        return Task.CompletedTask;
     }
     
-    private Task HandleBackButtonOnClick(
+    private Task HandleBackButtonOnClickAsync(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
@@ -184,7 +187,7 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
             _setInputFileContentTreeViewRoot.Invoke(openedTreeView.Item);
     }
     
-    private Task SetSelectedTreeViewModel(
+    private Task SetSelectedTreeViewModelAsync(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
@@ -203,7 +206,7 @@ public class InputFileTreeViewKeymap : ITreeViewKeymap
         return Task.CompletedTask;
     }
     
-    private async Task MoveFocusToSearchBar(
+    private async Task MoveFocusToSearchBarAsync(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         await _focusSearchInputElementFunc.Invoke();

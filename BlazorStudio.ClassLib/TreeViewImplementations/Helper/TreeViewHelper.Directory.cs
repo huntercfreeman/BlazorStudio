@@ -1,4 +1,5 @@
 ﻿using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Namespaces;
 
@@ -6,11 +7,11 @@ namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static async Task<List<TreeView>> LoadChildrenForDirectoryAsync(
+    public static Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewNamespacePath directoryTreeView)
     {
         if (directoryTreeView.Item is null)
-            return new();
+            return Task.FromResult<List<TreeViewNoType>>(new());
         
         var directoryAbsoluteFilePathString = directoryTreeView.Item.AbsoluteFilePath
             .GetAbsoluteFilePathString();
@@ -23,14 +24,14 @@ public partial class TreeViewHelper
                 var absoluteFilePath = new AbsoluteFilePath(x, true);
 
                 var namespaceString = directoryTreeView.Item.Namespace +
-                                      TreeViewHelper.NAMESPACE_DELIMITER +
+                                      NAMESPACE_DELIMITER +
                                       absoluteFilePath.FileNameNoExtension;
 
                 var namespacePath = new NamespacePath(
                     namespaceString,
                     absoluteFilePath);
 
-                return (TreeView)new TreeViewNamespacePath(
+                return (TreeViewNoType)new TreeViewNamespacePath(
                     namespacePath,
                     directoryTreeView.CommonComponentRenderers,
                     directoryTreeView.SolutionExplorerStateWrap,
@@ -54,7 +55,7 @@ public partial class TreeViewHelper
                     namespaceString,
                     absoluteFilePath);
 
-                return (TreeView)new TreeViewNamespacePath(
+                return (TreeViewNoType)new TreeViewNamespacePath(
                     namespacePath,
                     directoryTreeView.CommonComponentRenderers,
                     directoryTreeView.SolutionExplorerStateWrap,
@@ -65,7 +66,7 @@ public partial class TreeViewHelper
                 };
             }).ToList();
 
-        var copyOfChildrenToFindRelatedFiles = new List<TreeView>(childFileTreeViewModels);
+        var copyOfChildrenToFindRelatedFiles = new List<TreeViewNoType>(childFileTreeViewModels);
         
         foreach (var child in childFileTreeViewModels)
         {
@@ -77,16 +78,16 @@ public partial class TreeViewHelper
         // children take their respective 'code behinds'
         childFileTreeViewModels = copyOfChildrenToFindRelatedFiles;
 
-        return childDirectoryTreeViewModels
+        return Task.FromResult(childDirectoryTreeViewModels
             .Union(childFileTreeViewModels)
-            .ToList();
+            .ToList());
     }
     
-    public static async Task<List<TreeView>> LoadChildrenForDirectoryAsync(
+    public static Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewAbsoluteFilePath directoryTreeView)
     {
         if (directoryTreeView.Item is null)
-            return new();
+            return Task.FromResult<List<TreeViewNoType>>(new());
         
         var directoryAbsoluteFilePathString = directoryTreeView.Item
             .GetAbsoluteFilePathString();
@@ -98,7 +99,7 @@ public partial class TreeViewHelper
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, true);
 
-                return (TreeView)new TreeViewAbsoluteFilePath(
+                return (TreeViewNoType)new TreeViewAbsoluteFilePath(
                     absoluteFilePath,
                     directoryTreeView.CommonComponentRenderers,
                     true,
@@ -115,7 +116,7 @@ public partial class TreeViewHelper
             {
                 var absoluteFilePath = new AbsoluteFilePath(x, false);
 
-                return (TreeView)new TreeViewAbsoluteFilePath(
+                return (TreeViewNoType)new TreeViewAbsoluteFilePath(
                     absoluteFilePath,
                     directoryTreeView.CommonComponentRenderers,
                     false,
@@ -125,8 +126,8 @@ public partial class TreeViewHelper
                 };
             });
 
-        return childDirectoryTreeViewModels
+        return Task.FromResult(childDirectoryTreeViewModels
             .Union(childFileTreeViewModels)
-            .ToList();
+            .ToList());
     }
 }

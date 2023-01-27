@@ -1,7 +1,9 @@
+using System.Collections.Immutable;
 using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Resize;
 using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.TreeViewCase;
+using BlazorALaCarte.TreeView.BaseTypes;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -65,8 +67,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private readonly ElementDimensions _contentElementDimensions = new();
     
     private IAbsoluteFilePath? _selectedAbsoluteFilePath;
-    private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
-    private InputFileTreeViewKeymap _inputFileTreeViewKeymap = null!;
+    private InputFileTreeViewMouseEventHandler _inputFileTreeViewMouseEventHandler = null!;
+    private InputFileTreeViewKeyboardEventHandler _inputFileTreeViewKeyboardEventHandler = null!;
     private InputFileTopNavBar? _inputFileTopNavBarComponent;
 
     /// <summary>
@@ -83,20 +85,18 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     
     protected override void OnInitialized()
     {
-        _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
-        {
-            OnClick = TreeViewOnClick,
-            OnDoubleClick = TreeViewOnDoubleClick
-        };
+        _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
+            TreeViewService,
+            Dispatcher,
+            SetInputFileContentTreeViewRoot);
 
-        _inputFileTreeViewKeymap = new InputFileTreeViewKeymap(
+        _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
             InputFileContent.TreeViewInputFileContentStateKey,
             TreeViewService,
             InputFileStateWrap,
             Dispatcher,
             CommonComponentRenderers,
-            SetInputFileContentTreeViewRoot,
-            async () => SearchElementReference?.FocusAsync(),
+            SetInputFileContentTreeViewRoot, () => Task.FromResult(SearchElementReference?.FocusAsync()),
             () => _searchMatchTuples);
         
         InitializeElementDimensions();
@@ -170,7 +170,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             TreeViewService.RegisterTreeViewState(new TreeViewState(
                 InputFileContent.TreeViewInputFileContentStateKey,
                 adhocRootNode,
-                activeNode));
+                activeNode,
+                ImmutableList<TreeViewNoType>.Empty));
         }
         else
         {
@@ -188,38 +189,5 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             CommonComponentRenderers);
         
         Dispatcher.Dispatch(setOpenedTreeViewModelAction);
-    }
-    
-    private Task TreeViewOnClick(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
-    {
-        if (treeViewMouseEventParameter.MouseTargetedTreeView 
-            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
-        {
-            return Task.CompletedTask;
-        }
-        
-        var setSelectedTreeViewModelAction = 
-            new InputFileState.SetSelectedTreeViewModelAction(
-                treeViewAbsoluteFilePath);
-        
-        Dispatcher.Dispatch(setSelectedTreeViewModelAction);
-        
-        return Task.CompletedTask;
-    }
-    
-    private Task TreeViewOnDoubleClick(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
-    {
-        if (treeViewMouseEventParameter.MouseTargetedTreeView 
-            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
-        {
-            return Task.CompletedTask;
-        }
-
-        if (treeViewAbsoluteFilePath.Item != null) 
-            SetInputFileContentTreeViewRoot(treeViewAbsoluteFilePath.Item);
-
-        return Task.CompletedTask;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Namespaces;
 
@@ -6,13 +7,13 @@ namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static async Task<List<TreeView>> LoadChildrenForDotNetSolutionAsync(
+    public static Task<List<TreeViewNoType>> LoadChildrenForDotNetSolutionAsync(
         TreeViewNamespacePath dotNetSolutionTreeView)
     {
         var solutionExplorerState = dotNetSolutionTreeView.SolutionExplorerStateWrap.Value;
 
         if (solutionExplorerState.Solution is null)
-            return new();
+            return Task.FromResult<List<TreeViewNoType>>(new());
 
         var childProjects = solutionExplorerState.Solution.Projects
             .Select(x =>
@@ -25,7 +26,7 @@ public partial class TreeViewHelper
                     absoluteFilePath.FileNameNoExtension,
                     absoluteFilePath);
                 
-                return (TreeView)new TreeViewNamespacePath(
+                return (TreeViewNoType)new TreeViewNamespacePath(
                     namespacePath,
                     dotNetSolutionTreeView.CommonComponentRenderers,
                     dotNetSolutionTreeView.SolutionExplorerStateWrap,
@@ -38,6 +39,6 @@ public partial class TreeViewHelper
             .OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsoluteFilePath.FileNameNoExtension)
             .ToList();
 
-        return childProjects;
+        return Task.FromResult(childProjects);
     }
 }

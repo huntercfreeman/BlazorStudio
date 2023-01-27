@@ -1,4 +1,4 @@
-﻿using BlazorALaCarte.TreeView.TreeViewCase;
+﻿using BlazorALaCarte.TreeView;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using Microsoft.AspNetCore.Components;

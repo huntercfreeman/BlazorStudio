@@ -1,6 +1,6 @@
 using BlazorALaCarte.Shared.Facts;
-using BlazorALaCarte.Shared.Icons;
-using BlazorALaCarte.Shared.Store;
+using BlazorALaCarte.Shared.Store.IconCase;
+using BlazorALaCarte.Shared.Store.ThemeCase;
 using BlazorALaCarte.Shared.Theme;
 using BlazorStudio.ClassLib.Store.FontCase;
 using BlazorStudio.ClassLib.Store.LocalStorageCase;
@@ -26,11 +26,13 @@ public partial class SettingsDisplay : FluxorComponent
 
     private void DispatchSetThemeStateAction(ThemeRecord themeRecord)
     {
-        TextEditorService.SetTheme(themeRecord.ThemeColorKind == ThemeColorKind.Light
+        TextEditorService.GlobalOptionsSetTheme(themeRecord.ThemeColorKind == ThemeColorKind.Light
             ? ThemeFacts.VisualStudioLightThemeClone
             : ThemeFacts.VisualStudioDarkThemeClone);
 
-        Dispatcher.Dispatch(new ThemeState.SetActiveThemeRecordAction(themeRecord.ThemeKey));
+        Dispatcher.Dispatch(
+            new ThemeState.SetActiveAction(
+                themeRecord.ThemeKey));
     }
     
     private Task PersistSettingsLocallyOnClick()

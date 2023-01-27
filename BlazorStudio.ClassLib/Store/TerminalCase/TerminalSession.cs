@@ -37,7 +37,7 @@ public class TerminalSession
 
     public string? WorkingDirectoryAbsoluteFilePathString { get; private set; }
     
-    public TerminalCommand ActiveTerminalCommand { get; private set; }
+    public TerminalCommand? ActiveTerminalCommand { get; private set; }
     
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
     
@@ -195,8 +195,10 @@ public class TerminalSession
         {
             var terminalCommandKey = terminalCommand.TerminalCommandKey;
 
+            var text = $"{e.Data ?? string.Empty}\n";
+            
             _standardOutBuilderMap[terminalCommandKey]
-                .Append(e.Data ?? string.Empty);
+                .Append(text);
 
             DispatchNewStateKey();
         }

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification.Dialog;
-using BlazorALaCarte.TreeView;
+using BlazorALaCarte.DialogNotification.Store.DialogCase;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -144,7 +145,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 {
                     // Close Dialog
                     Dispatcher.Dispatch(
-                        new DialogsState.DisposeDialogRecordAction(DialogRecord.DialogKey));
+                        new DialogRecordsCollection.DisposeAction(
+                            DialogRecord.DialogKey));
 
                     // Add the C# project to the workspace
                     //

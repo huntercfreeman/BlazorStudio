@@ -20,9 +20,6 @@ public partial class FolderExplorerDisplay : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     
-    [Parameter, EditorRequired]
-    public ElementDimensions FolderExplorerElementDimensions { get; set; } = null!;
-
     private string _filePath = string.Empty;
 
     protected override void OnInitialized()

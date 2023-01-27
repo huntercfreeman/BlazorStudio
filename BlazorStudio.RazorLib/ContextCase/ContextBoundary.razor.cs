@@ -17,13 +17,13 @@ public partial class ContextBoundary : ComponentBase
     [Parameter, EditorRequired]
     public ContextRecord ContextRecord { get; set; } = null!;
     [Parameter, EditorRequired]
-    public string ClassCssString { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public string StyleCssString { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public int TabIndex { get; set; } = -1;
-    [Parameter, EditorRequired]
     public RenderFragment ChildContent { get; set; } = null!;
+    [Parameter]
+    public string ClassCssString { get; set; } = null!;
+    [Parameter]
+    public string StyleCssString { get; set; } = null!;
+    [Parameter]
+    public int TabIndex { get; set; } = -1;
     
     public void DispatchSetActiveContextStatesAction(List<ContextRecord> contextRecords)
     {

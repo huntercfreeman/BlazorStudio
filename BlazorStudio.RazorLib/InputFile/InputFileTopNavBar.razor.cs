@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification.Notification;
+using BlazorALaCarte.DialogNotification.Store.NotificationCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -103,13 +104,8 @@ public partial class InputFileTopNavBar : FluxorComponent
     
     private void InputFileEditAddressOnFocusOutCallback(string address)
     {
-        if (address.EndsWith(Path.DirectorySeparatorChar) ||
-            address.EndsWith(Path.AltDirectorySeparatorChar))
-        {
-            address = address.Substring(
-                0,
-                address.Length - 1);
-        }
+        address = FilePathHelper.StripEndingDirectorySeparatorIfExists(
+            address);
 
         try
         {
@@ -147,7 +143,7 @@ public partial class InputFileTopNavBar : FluxorComponent
                 TimeSpan.FromSeconds(12));
             
             Dispatcher.Dispatch(
-                new NotificationsState.RegisterNotificationRecordAction(
+                new NotificationRecordsCollection.RegisterAction(
                     errorNotification));
         }
     }

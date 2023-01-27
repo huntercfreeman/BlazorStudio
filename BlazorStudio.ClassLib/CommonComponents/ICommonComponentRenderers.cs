@@ -10,7 +10,9 @@ public interface ICommonComponentRenderers
     public Type TreeViewNamespacePathRendererType { get; }
     public Type TreeViewExceptionRendererType { get; }
     public Type TreeViewAbsoluteFilePathRendererType { get; }
+    public Type TreeViewGitChangesRendererType { get; }
     public Type NuGetPackageManagerRendererType { get; }
+    public Type GitDisplayRendererType { get; }
     public Type RemoveCSharpProjectFromSolutionRendererType { get; }
     public Type BooleanPromptOrCancelRendererType { get; }
 }

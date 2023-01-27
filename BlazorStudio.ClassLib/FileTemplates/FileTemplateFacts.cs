@@ -14,7 +14,7 @@ public static class FileTemplateFacts
         FileTemplateKind.CSharp,
         filename => filename
             .EndsWith('.' + ExtensionNoPeriodFacts.C_SHARP_CLASS),
-        filename => ImmutableArray<IFileTemplate>.Empty,
+        _ => ImmutableArray<IFileTemplate>.Empty,
         true,
         CSharpClassCreateFileFunc);
     
@@ -24,7 +24,7 @@ public static class FileTemplateFacts
         FileTemplateKind.Razor,
         filename => filename
             .EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP),
-        filename => new[] { RazorCodebehind }.ToImmutableArray(),
+        _ => new[] { RazorCodebehind }.ToImmutableArray(),
         true,
         RazorMarkupCreateFileFunc);
 
@@ -34,7 +34,7 @@ public static class FileTemplateFacts
         FileTemplateKind.Razor,
         filename => filename
             .EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND),
-        filename => ImmutableArray<IFileTemplate>.Empty,
+        _ => ImmutableArray<IFileTemplate>.Empty,
         true,
         RazorCodebehindCreateFileFunc);
     
@@ -119,7 +119,7 @@ public static class FileTemplateFacts
     private static FileTemplateResult RazorMarkupCreateFileFunc(
         FileTemplateParameter fileTemplateParameter)
     {
-        string GetContent(string fileNameNoExtension, string namespaceString)
+        string GetContent(string fileNameNoExtension)
         {
             var templateBuilder = new StringBuilder();
 
@@ -153,8 +153,7 @@ public static class FileTemplateFacts
             false);
 
         var templatedFileContent = GetContent(
-            emptyFileAbsoluteFilePath.FileNameNoExtension,
-            fileTemplateParameter.ParentDirectory.Namespace);
+            emptyFileAbsoluteFilePath.FileNameNoExtension);
         
         var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
                                                      .ParentDirectory.AbsoluteFilePath

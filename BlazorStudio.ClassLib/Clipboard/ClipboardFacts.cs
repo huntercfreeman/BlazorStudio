@@ -54,17 +54,17 @@ public static class ClipboardFacts
     {
         clipboardPhrase = null;
         
-        if (clipboardContents.StartsWith(ClipboardFacts.Tag))
+        if (clipboardContents.StartsWith(Tag))
         {
             // Skip Tag
             clipboardContents = clipboardContents
-                .Substring(ClipboardFacts.Tag.Length);
+                .Substring(Tag.Length);
             // Skip Delimiter following the Tag
             clipboardContents = clipboardContents
-                .Substring(ClipboardFacts.FieldDelimiter.Length);
+                .Substring(FieldDelimiter.Length);
 
             var nextDelimiter = clipboardContents.IndexOf(
-                ClipboardFacts.FieldDelimiter, 
+                FieldDelimiter, 
                 StringComparison.Ordinal);
             
             // Take Command
@@ -75,7 +75,7 @@ public static class ClipboardFacts
                 .Substring(nextDelimiter + 1);
             
             nextDelimiter = clipboardContents.IndexOf(
-                ClipboardFacts.FieldDelimiter, 
+                FieldDelimiter, 
                 StringComparison.Ordinal);
             
             // Take DataType
@@ -86,12 +86,10 @@ public static class ClipboardFacts
             var value = clipboardContents
                 .Substring(nextDelimiter + 1);
 
-            clipboardPhrase = new ClipboardPhrase
-            {
-                Command = command,
-                DataType = dataType,
-                Value = value
-            };
+            clipboardPhrase = new ClipboardPhrase(
+                command,
+                dataType,
+                value);
 
             return true;
         }

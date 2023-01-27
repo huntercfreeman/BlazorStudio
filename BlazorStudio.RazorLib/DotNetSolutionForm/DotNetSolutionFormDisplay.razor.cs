@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification.Dialog;
+using BlazorALaCarte.DialogNotification.Store.DialogCase;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
@@ -91,27 +92,17 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             _newDotNetSolutionTerminalCommandKey,
             interpolatedCommand,
             _parentDirectoryName,
-            _newDotNetSolutionCancellationTokenSource.Token,
-            async () =>
+            _newDotNetSolutionCancellationTokenSource.Token, () =>
             {
                 // ContinueWith -> Open the newly created solution
 
                 // Close Dialog
                 Dispatcher.Dispatch(
-                    new DialogsState.DisposeDialogRecordAction(DialogRecord.DialogKey));
-                
-                // Strip ending directory separator if exists
-                {
-                    if (localParentDirectoryName.EndsWith(Path.DirectorySeparatorChar) ||
-                        localParentDirectoryName.EndsWith(Path.AltDirectorySeparatorChar))
-                    {
-                        localParentDirectoryName =
-                            localParentDirectoryName
-                                .Substring(
-                                    0, 
-                                    localParentDirectoryName.Length - 1);
-                    }
-                }
+                    new DialogRecordsCollection.DisposeAction(
+                        DialogRecord.DialogKey));
+
+                localParentDirectoryName = FilePathHelper.StripEndingDirectorySeparatorIfExists(
+                    localParentDirectoryName);
                 
                 var parentDirectoryAbsoluteFilePath = new AbsoluteFilePath(
                     localParentDirectoryName, 
@@ -132,6 +123,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 Dispatcher.Dispatch(
                     new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
                         solutionAbsoluteFilePath));
+                return Task.CompletedTask;
             });
         
         var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[

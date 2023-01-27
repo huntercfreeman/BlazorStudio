@@ -3,8 +3,13 @@ using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.Icons;
 using BlazorALaCarte.Shared.Menu;
+using BlazorALaCarte.Shared.Store.DropdownCase;
+using BlazorALaCarte.Shared.Store.IconCase;
 using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.TreeViewCase;
+using BlazorALaCarte.TreeView.BaseTypes;
+using BlazorALaCarte.TreeView.Commands;
+using BlazorALaCarte.TreeView.Events;
+using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileConstants;
@@ -46,18 +51,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     
-    [Parameter, EditorRequired]
-    public ElementDimensions SolutionExplorerElementDimensions { get; set; } = null!;
-
     public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
     
     private string _filePath = string.Empty;
-    private TreeViewContextMenuEvent? _mostRecentTreeViewContextMenuEvent;
+    private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
-    private TreeViewMouseEventRegistrar _treeViewMouseEventRegistrar = null!;
+    private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
         IconStateWrap.Value.IconSizeInPixels *
@@ -73,17 +75,21 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             TreeViewService,
             TextEditorService);
         
-        _treeViewMouseEventRegistrar = new TreeViewMouseEventRegistrar
-        {
-            OnDoubleClick = TreeViewOnDoubleClick
-        };
+        _solutionExplorerTreeViewMouseEventHandler = 
+            new SolutionExplorerTreeViewMouseEventHandler(
+                Dispatcher,
+                TextEditorService,
+                CommonComponentRenderers,
+                TreeViewService);
         
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrapOnStateChanged;
     
         base.OnInitialized();
     }
 
-    private async void SolutionExplorerStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void SolutionExplorerStateWrapOnStateChanged(
+        object? sender,
+        EventArgs e)
     {
         if (SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath is null)
             return;
@@ -126,38 +132,20 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             TreeViewService.RegisterTreeViewState(new TreeViewState(
                 TreeViewSolutionExplorerStateKey,
                 solutionExplorerNode,
-                solutionExplorerNode));
+                solutionExplorerNode,
+                ImmutableList<TreeViewNoType>.Empty));
         }
     }
     
-    private async Task OnTreeViewContextMenuFunc(TreeViewContextMenuEvent treeViewContextMenuEvent)
+    private async Task OnTreeViewContextMenuFunc(ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _mostRecentTreeViewContextMenuEvent = treeViewContextMenuEvent;
+        _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
         
         Dispatcher.Dispatch(
-            new DropdownsState.AddActiveDropdownKeyAction(
+            new DropdownsState.AddActiveAction(
                 SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
         
         await InvokeAsync(StateHasChanged);
-    }
-
-    private async Task TreeViewOnDoubleClick(
-        TreeViewMouseEventParameter treeViewMouseEventParameter)
-    {
-        if (treeViewMouseEventParameter.MouseTargetedTreeView 
-            is not TreeViewNamespacePath treeViewNamespacePath)
-        {
-            return;
-        }
-
-        if (treeViewNamespacePath.Item is null)
-            return;
-
-        await EditorState.OpenInEditorAsync(
-            treeViewNamespacePath.Item.AbsoluteFilePath,
-            Dispatcher,
-            TextEditorService,
-            CommonComponentRenderers);
     }
     
     protected override void Dispose(bool disposing)

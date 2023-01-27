@@ -307,3 +307,104 @@ button.bstudio_input-file-address-hierarchy-entry {
 .bte_text-editor-input-cursor-size .bte_text-editor {
     min-height: initial;
 }
+
+.bstudio_panel {
+    display: flex;
+}
+
+.bstudio_panel-tabs {
+    position: relative;
+}
+
+.bstudio_panel-tab {
+    padding: 1px;
+    font-size: var(--bstudio_panel-tabs-font-size);
+    display: inline-flex !important;
+    border: none !important;
+    position: relative;
+}
+
+.bstudio_panel-tab-dropzone {
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    left: 0;
+    z-index: 100;
+}
+
+.bstudio_panel-tab-dropzone:hover {
+    background-color: orange;
+}
+
+.bstudio_panel-tab-dropzone-top {
+    top: 0;
+    background-color: aqua;
+}
+
+.bstudio_panel-tab-dropzone-bottom {
+    top: 50%;
+    background-color: mediumpurple;
+}
+
+.bstudio_panel-tab-drag-display {
+    position: fixed;
+    min-width: 10ch;
+    min-height: 2em;
+    background-color: var(--balc_tertiary-background-color);
+    color: var(--balc_tertiary-foreground-color);
+}
+
+.bstudio_panel_left .bstudio_panel-tabs .bstudio_panel-tab span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.bstudio_panel_right {
+    flex-direction: row-reverse;
+}
+
+.bstudio_panel_right .bstudio_panel-tabs .bstudio_panel-tab span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+.bstudio_panel_bottom {
+    flex-direction: column-reverse;
+}
+
+.bstudio_panel_left .bstudio_panel-tabs {
+    width: calc(var(--bstudio_panel-tabs-font-size) + var(--bstudio_panel-tabs-margin) + var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_left .bstudio_panel-body {
+    width: calc(100% - var(--bstudio_panel-tabs-font-size) - var(--bstudio_panel-tabs-margin) - var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_right .bstudio_panel-tabs {
+    width: calc(var(--bstudio_panel-tabs-font-size) + var(--bstudio_panel-tabs-margin) + var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_right .bstudio_panel-body {
+    width: calc(100% - var(--bstudio_panel-tabs-font-size) - var(--bstudio_panel-tabs-margin) - var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_bottom .bstudio_panel-tabs {
+    height: calc(var(--bstudio_panel-tabs-font-size) + var(--bstudio_panel-tabs-margin) + var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_bottom .bstudio_panel-body {
+    height: calc(100% - var(--bstudio_panel-tabs-font-size) - var(--bstudio_panel-tabs-margin) - var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+}
+
+.bstudio_panel_bottom .bstudio_panel-tab:not(:first-of-type) {
+    border-left: 2px solid var(--balc_primary-border-color) !important;
+}
+
+.bstudio_git-file {
+    white-space: nowrap;
+}

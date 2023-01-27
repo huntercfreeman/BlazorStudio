@@ -2,27 +2,34 @@
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorTextEditor.RazorLib
 @using BlazorALaCarte.DialogNotification.Installation
+@using BlazorALaCarte.Shared.Dimensions
 @using BlazorALaCarte.Shared.Drag
 @using BlazorALaCarte.Shared.Resize
+@using BlazorStudio.ClassLib.Panel
+@using BlazorStudio.RazorLib.Panel
 
 @inherits LayoutComponentBase
 
 <ContextBoundary ContextRecord="ContextFacts.GlobalContext"
                  ClassCssString="@($"bstudio_main-layout {UnselectableClassCss} {ThemeStateWrap.Value.ActiveThemeRecord.CssClassString}")"
-                 StyleCssString="@($"font-size: {FontStateWrap.Value.FontSizeInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture)}px;")">
+                 StyleCssString="@($"font-size: {FontStateWrap.Value.FontSizeInPixels.ToCssValue()}px;")">
 
-    <BlazorTextEditorRazorLibInitializer/>
+    <BlazorStudioInitializer/>
     <DialogInitializer/>
     <NotificationInitializer/>
-    <DragDisplay/>
 
     <BlazorTextEditorHeader/>
 
     <BlazorTextEditorBody BodyElementDimensions="_bodyElementDimensions"/>
 
     <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                  BottomElementDimensions="_footerElementDimensions"
+                  BottomElementDimensions="PanelFacts.GetBottomPanelRecord(PanelsCollectionWrap.Value).ElementDimensions"
                   ReRenderFuncAsync="ReRenderAsync"/>
 
-    <BlazorTextEditorFooter FooterElementDimensions="_footerElementDimensions"/>
+    <PanelDisplay PanelRecordKey="PanelFacts.BottomPanelRecordKey"
+                  CssClassString="bstudio_footer"
+                  AdjacentElementDimensions="_bodyElementDimensions"
+                  DimensionAttributeKind="DimensionAttributeKind.Height"
+                  ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderAsync"/>
+    
 </ContextBoundary>

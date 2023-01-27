@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification.Dialog;
+using BlazorALaCarte.DialogNotification.Store.DialogCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.TreeViewImplementations;
@@ -310,7 +311,7 @@ public record InputFileState(
             }; 
             
             dispatcher.Dispatch(
-                new DialogsState.RegisterDialogRecordAction(
+                new DialogRecordsCollection.RegisterAction(
                     inputFileDialog));
 
             return Task.CompletedTask;

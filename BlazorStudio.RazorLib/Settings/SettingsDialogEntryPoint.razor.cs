@@ -1,5 +1,6 @@
 using BlazorALaCarte.DialogNotification;
 using BlazorALaCarte.DialogNotification.Dialog;
+using BlazorALaCarte.DialogNotification.Store.DialogCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -21,6 +22,8 @@ public partial class SettingsDialogEntryPoint : ComponentBase
 
     public void DispatchRegisterDialogRecordAction()
     {
-        Dispatcher.Dispatch(new DialogsState.RegisterDialogRecordAction(_dialogRecord));
+        Dispatcher.Dispatch(
+            new DialogRecordsCollection.RegisterAction(
+                _dialogRecord));
     }
 }

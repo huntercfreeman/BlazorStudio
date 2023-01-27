@@ -1,14 +1,15 @@
 ﻿using System.Collections.Immutable;
 using BlazorALaCarte.DialogNotification.Notification;
+using BlazorALaCarte.DialogNotification.Store.NotificationCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.FileSystemCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorTextEditor.RazorLib;
-using BlazorTextEditor.RazorLib.Store.TextEditorCase.Group;
-using BlazorTextEditor.RazorLib.Store.TextEditorCase.ViewModels;
-using BlazorTextEditor.RazorLib.TextEditor;
+using BlazorTextEditor.RazorLib.Group;
+using BlazorTextEditor.RazorLib.Model;
+using BlazorTextEditor.RazorLib.ViewModel;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.EditorCase;
@@ -65,25 +66,25 @@ public class EditorState
             return;
         }
         
-        textEditorService.RegisterGroup(EditorTextEditorGroupKey);
+        textEditorService.GroupRegister(EditorTextEditorGroupKey);
 
         var inputFileAbsoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
 
-        var textEditorBase = textEditorService
-            .GetTextEditorBaseOrDefaultByResourceUri(inputFileAbsoluteFilePathString);
+        var textEditorModel = textEditorService
+            .ResourceUriGetModelOrDefault(inputFileAbsoluteFilePathString);
 
-        var textEditorKey = textEditorBase?.Key ?? TextEditorKey.Empty;
+        var textEditorKey = textEditorModel?.ModelKey ?? TextEditorModelKey.Empty;
         
-        if (textEditorBase is null)
+        if (textEditorModel is null)
         {
-            textEditorKey = TextEditorKey.NewTextEditorKey();
+            textEditorKey = TextEditorModelKey.NewTextEditorModelKey();
 
             var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
             
             var content = await File
                 .ReadAllTextAsync(inputFileAbsoluteFilePathString);
 
-            textEditorBase = new TextEditorBase(
+            textEditorModel = new TextEditorModel(
                 inputFileAbsoluteFilePathString,
                 fileLastWriteTime,
                 absoluteFilePath.ExtensionNoPeriod,
@@ -94,17 +95,17 @@ public class EditorState
                 textEditorKey
             );
             
-            textEditorService.RegisterCustomTextEditor(textEditorBase);
+            textEditorService.ModelRegisterCustomModel(textEditorModel);
 
-            textEditorKey = textEditorBase.Key;
+            textEditorKey = textEditorModel.ModelKey;
             
-            await textEditorBase.ApplySyntaxHighlightingAsync();
+            await textEditorModel.ApplySyntaxHighlightingAsync();
         }
         else
         {
             var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
 
-            if (fileLastWriteTime > textEditorBase.ResourceLastWriteTime)
+            if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime)
             {
                 var notificationInformativeKey = NotificationKey.NewNotificationKey();
                 
@@ -129,17 +130,17 @@ public class EditorState
                                 _ = Task.Run(async () =>
                                 {
                                     dispatcher.Dispatch(
-                                        new NotificationsState.DisposeNotificationRecordAction(
+                                        new NotificationRecordsCollection.DisposeAction(
                                             notificationInformativeKey));
                                     
                                     var content = await File
                                         .ReadAllTextAsync(inputFileAbsoluteFilePathString);
                                 
-                                    textEditorService.ReloadTextEditorBase(
+                                    textEditorService.ModelReload(
                                         textEditorKey,
                                         content);
                                 
-                                    await textEditorBase.ApplySyntaxHighlightingAsync();
+                                    await textEditorModel.ApplySyntaxHighlightingAsync();
                                 });
                             })
                         },
@@ -148,7 +149,7 @@ public class EditorState
                             new Action(() =>
                             {
                                 dispatcher.Dispatch(
-                                    new NotificationsState.DisposeNotificationRecordAction(
+                                    new NotificationRecordsCollection.DisposeAction(
                                         notificationInformativeKey));
                             })
                         },
@@ -156,26 +157,26 @@ public class EditorState
                     TimeSpan.FromSeconds(20));
         
                 dispatcher.Dispatch(
-                    new NotificationsState.RegisterNotificationRecordAction(
+                    new NotificationRecordsCollection.RegisterAction(
                         notificationInformative));
             }
         }
 
         var viewModel = textEditorService
-            .GetViewModelsForTextEditorBase(textEditorBase.Key)
+            .ModelGetViewModelsOrEmpty(textEditorModel.ModelKey)
             .FirstOrDefault();
 
-        var viewModelKey = viewModel?.TextEditorViewModelKey ?? TextEditorViewModelKey.Empty;
+        var viewModelKey = viewModel?.ViewModelKey ?? TextEditorViewModelKey.Empty;
 
         if (viewModel is null)
         {
             viewModelKey = TextEditorViewModelKey.NewTextEditorViewModelKey();
             
-            textEditorService.RegisterViewModel(
+            textEditorService.ViewModelRegister(
                 viewModelKey,
                 textEditorKey);
             
-            textEditorService.SetViewModelWith(
+            textEditorService.ViewModelWith(
                 viewModelKey,
                 textEditorViewModel => textEditorViewModel with
                 {
@@ -184,15 +185,15 @@ public class EditorState
                 });
         }
             
-        textEditorService.AddViewModelToGroup(
+        textEditorService.GroupAddViewModel(
             EditorTextEditorGroupKey,
             viewModelKey);
         
-        textEditorService.SetActiveViewModelOfGroup(
+        textEditorService.GroupSetActiveViewModel(
             EditorTextEditorGroupKey,
             viewModelKey);
 
-        void HandleOnSaveRequested(TextEditorBase innerTextEditor)
+        void HandleOnSaveRequested(TextEditorModel innerTextEditor)
         {
             var innerContent = innerTextEditor.GetAllText();
                 
@@ -203,9 +204,9 @@ public class EditorState
                 {
                     var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
             
-                    textEditorService.SetResourceData(
-                        textEditorBase.Key,
-                        textEditorBase.ResourceUri,
+                    textEditorService.ModelSetResourceData(
+                        textEditorModel.ModelKey,
+                        textEditorModel.ResourceUri,
                         fileLastWriteTime);
                 });
         

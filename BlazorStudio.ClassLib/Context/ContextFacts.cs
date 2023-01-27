@@ -49,6 +49,11 @@ public static class ContextFacts
         "NuGetPackageManager",
         "nu-get-package-manager");
     
+    public static readonly ContextRecord GitContext = new(
+        ContextKey.NewContextKey(),
+        "Git",
+        "git");
+    
     public static readonly ImmutableArray<ContextRecord> ContextRecords = new [] 
     {
         MainLayoutHeaderContext,
@@ -58,6 +63,7 @@ public static class ContextFacts
         EditorContext,
         TextEditorContext,
         TerminalContext,
-        NuGetPackageManagerContext
+        NuGetPackageManagerContext,
+        GitContext
     }.ToImmutableArray();
 }

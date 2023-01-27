@@ -17,14 +17,14 @@ public static class DotNetCliFacts
     
     public static string FormatStartProjectWithoutDebugging(string projectPath)
     {
-        projectPath = QuoteValue(projectPath);
+        projectPath = CommandLineHelper.QuoteValue(projectPath);
         
         return $"dotnet run --project {projectPath}";
     }
     
     public static string FormatDotnetNewSln(string solutionName)
     {
-        solutionName = QuoteValue(solutionName);
+        solutionName = CommandLineHelper.QuoteValue(solutionName);
         
         return $"{DotnetNewSlnCommand} -o {solutionName}";
     }
@@ -34,8 +34,8 @@ public static class DotNetCliFacts
         string cSharpProjectName, 
         string optionalParameters)
     {
-        projectTemplateName = QuoteValue(projectTemplateName);
-        cSharpProjectName = QuoteValue(cSharpProjectName);
+        projectTemplateName = CommandLineHelper.QuoteValue(projectTemplateName);
+        cSharpProjectName = CommandLineHelper.QuoteValue(cSharpProjectName);
         
         return $"dotnet new {projectTemplateName} -o {cSharpProjectName} {optionalParameters}";
     }
@@ -44,8 +44,8 @@ public static class DotNetCliFacts
         string solutionAbsoluteFilePathString, 
         string cSharpProjectPath)
     {
-        solutionAbsoluteFilePathString = QuoteValue(solutionAbsoluteFilePathString);
-        cSharpProjectPath = QuoteValue(cSharpProjectPath);
+        solutionAbsoluteFilePathString = CommandLineHelper.QuoteValue(solutionAbsoluteFilePathString);
+        cSharpProjectPath = CommandLineHelper.QuoteValue(cSharpProjectPath);
         
         return $"dotnet sln {solutionAbsoluteFilePathString} add {cSharpProjectPath}";
     }
@@ -54,8 +54,8 @@ public static class DotNetCliFacts
         string solutionAbsoluteFilePathString, 
         string cSharpProjectAbsoluteFilePathString)
     {
-        solutionAbsoluteFilePathString = QuoteValue(solutionAbsoluteFilePathString);
-        cSharpProjectAbsoluteFilePathString = QuoteValue(cSharpProjectAbsoluteFilePathString);
+        solutionAbsoluteFilePathString = CommandLineHelper.QuoteValue(solutionAbsoluteFilePathString);
+        cSharpProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(cSharpProjectAbsoluteFilePathString);
         
         return $"dotnet sln {solutionAbsoluteFilePathString} remove {cSharpProjectAbsoluteFilePathString}";
     }
@@ -65,9 +65,9 @@ public static class DotNetCliFacts
         string nugetPackageId,
         string nugetPackageVersion)
     {
-        cSharpProjectAbsoluteFilePathString = QuoteValue(cSharpProjectAbsoluteFilePathString);
-        nugetPackageId = QuoteValue(nugetPackageId);
-        nugetPackageVersion = QuoteValue(nugetPackageVersion);
+        cSharpProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(cSharpProjectAbsoluteFilePathString);
+        nugetPackageId = CommandLineHelper.QuoteValue(nugetPackageId);
+        nugetPackageVersion = CommandLineHelper.QuoteValue(nugetPackageVersion);
         
         return $"dotnet add {cSharpProjectAbsoluteFilePathString} package {nugetPackageId} --version {nugetPackageVersion}";
     }
@@ -76,14 +76,9 @@ public static class DotNetCliFacts
         string receivingProjectAbsoluteFilePathString, 
         string referencedProjectAbsoluteFilePathString)
     {
-        receivingProjectAbsoluteFilePathString = QuoteValue(receivingProjectAbsoluteFilePathString);
-        referencedProjectAbsoluteFilePathString = QuoteValue(referencedProjectAbsoluteFilePathString);
+        receivingProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(receivingProjectAbsoluteFilePathString);
+        referencedProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(referencedProjectAbsoluteFilePathString);
         
         return $"dotnet add {receivingProjectAbsoluteFilePathString} reference {referencedProjectAbsoluteFilePathString}";
-    }
-
-    private static string QuoteValue(string parameter)
-    {
-        return $"\"{parameter}\"";
     }
 }

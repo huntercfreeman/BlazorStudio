@@ -1,11 +1,12 @@
 ﻿using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
-public class TreeViewAbsoluteFilePath : TreeViewBase<IAbsoluteFilePath>
+public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
 {
     public TreeViewAbsoluteFilePath(
         IAbsoluteFilePath absoluteFilePath,
@@ -62,7 +63,7 @@ public class TreeViewAbsoluteFilePath : TreeViewBase<IAbsoluteFilePath>
 
         try
         {
-            var newChildren = new List<TreeView>();
+            var newChildren = new List<TreeViewNoType>();
             
             if (Item.IsDirectory)
             {
@@ -80,7 +81,7 @@ public class TreeViewAbsoluteFilePath : TreeViewBase<IAbsoluteFilePath>
                     newChild.IsExpanded = oldChild.IsExpanded;
                     newChild.IsExpandable = oldChild.IsExpandable;
                     newChild.IsHidden = oldChild.IsHidden;
-                    newChild.Id = oldChild.Id;
+                    newChild.TreeViewNodeKey = oldChild.TreeViewNodeKey;
                     newChild.Children = oldChild.Children;
                 }
             }
@@ -97,7 +98,7 @@ public class TreeViewAbsoluteFilePath : TreeViewBase<IAbsoluteFilePath>
         }
         catch (Exception exception)
         {
-            Children = new List<TreeView>
+            Children = new List<TreeViewNoType>
             {
                 new TreeViewException(
                     exception,
@@ -112,7 +113,7 @@ public class TreeViewAbsoluteFilePath : TreeViewBase<IAbsoluteFilePath>
         }
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeView> treeViews)
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> treeViews)
     {
         // This method is meant to do nothing in this case.
     }

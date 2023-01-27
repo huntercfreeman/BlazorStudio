@@ -1,4 +1,5 @@
 ﻿using BlazorALaCarte.TreeView;
+using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.Namespaces;
@@ -8,7 +9,7 @@ using Fluxor;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
-public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
+public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 {
     public TreeViewNamespacePath(
         NamespacePath namespacePath,
@@ -68,7 +69,7 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
 
         try
         {
-            var newChildren = new List<TreeView>();
+            var newChildren = new List<TreeViewNoType>();
             
             if (Item.AbsoluteFilePath.IsDirectory)
             {
@@ -104,7 +105,7 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
                     newChild.IsExpanded = oldChild.IsExpanded;
                     newChild.IsExpandable = oldChild.IsExpandable;
                     newChild.IsHidden = oldChild.IsHidden;
-                    newChild.Id = oldChild.Id;
+                    newChild.TreeViewNodeKey = oldChild.TreeViewNodeKey;
                     newChild.Children = oldChild.Children;
                 }
             }
@@ -121,7 +122,7 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
         }
         catch (Exception exception)
         {
-            Children = new List<TreeView>
+            Children = new List<TreeViewNoType>
             {
                 new TreeViewException(
                     exception,
@@ -136,7 +137,7 @@ public class TreeViewNamespacePath : TreeViewBase<NamespacePath>
         }
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeView> treeViews)
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> treeViews)
     {
         if (Item is null)
         {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using BlazorALaCarte.DialogNotification.Notification;
+using BlazorALaCarte.DialogNotification.Store.NotificationCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using Fluxor;
@@ -35,7 +36,7 @@ public class FileSystemState
         Action OnAfterSaveCompleted);
     
     [EffectMethod]
-    public async Task HandleSaveFileAction(
+    public Task HandleSaveFileAction(
         SaveFileAction saveFileAction,
         IDispatcher dispatcher)
     {
@@ -70,6 +71,7 @@ public class FileSystemState
                     
                     return (absoluteFilePathString, saveFileAction, dispatcher);
                 });
+        return Task.CompletedTask;
     }
 
     private async Task PerformWriteOperationAsync(
@@ -154,7 +156,7 @@ public class FileSystemState
             TimeSpan.FromSeconds(5));
         
         dispatcher.Dispatch(
-            new NotificationsState.RegisterNotificationRecordAction(
+            new NotificationRecordsCollection.RegisterAction(
                 notificationInformative));
         
         saveFileAction.OnAfterSaveCompleted?.Invoke();
