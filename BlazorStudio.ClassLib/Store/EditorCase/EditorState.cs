@@ -66,12 +66,12 @@ public class EditorState
             return;
         }
         
-        textEditorService.RegisterGroup(EditorTextEditorGroupKey);
+        textEditorService.GroupRegister(EditorTextEditorGroupKey);
 
         var inputFileAbsoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
 
         var textEditorModel = textEditorService
-            .GetTextEditorModelOrDefaultByResourceUri(inputFileAbsoluteFilePathString);
+            .ResourceUriGetModelOrDefault(inputFileAbsoluteFilePathString);
 
         var textEditorKey = textEditorModel?.ModelKey ?? TextEditorModelKey.Empty;
         
@@ -95,7 +95,7 @@ public class EditorState
                 textEditorKey
             );
             
-            textEditorService.RegisterCustomTextEditorModel(textEditorModel);
+            textEditorService.ModelRegisterCustomModel(textEditorModel);
 
             textEditorKey = textEditorModel.ModelKey;
             
@@ -136,7 +136,7 @@ public class EditorState
                                     var content = await File
                                         .ReadAllTextAsync(inputFileAbsoluteFilePathString);
                                 
-                                    textEditorService.ReloadTextEditorModel(
+                                    textEditorService.ModelReload(
                                         textEditorKey,
                                         content);
                                 
@@ -163,20 +163,20 @@ public class EditorState
         }
 
         var viewModel = textEditorService
-            .GetViewModelsForModel(textEditorModel.ModelKey)
+            .ModelGetViewModelsOrEmpty(textEditorModel.ModelKey)
             .FirstOrDefault();
 
-        var viewModelKey = viewModel?.TextEditorViewModelKey ?? TextEditorViewModelKey.Empty;
+        var viewModelKey = viewModel?.ViewModelKey ?? TextEditorViewModelKey.Empty;
 
         if (viewModel is null)
         {
             viewModelKey = TextEditorViewModelKey.NewTextEditorViewModelKey();
             
-            textEditorService.RegisterViewModel(
+            textEditorService.ViewModelRegister(
                 viewModelKey,
                 textEditorKey);
             
-            textEditorService.SetViewModelWith(
+            textEditorService.ViewModelWith(
                 viewModelKey,
                 textEditorViewModel => textEditorViewModel with
                 {
@@ -185,11 +185,11 @@ public class EditorState
                 });
         }
             
-        textEditorService.AddViewModelToGroup(
+        textEditorService.GroupAddViewModel(
             EditorTextEditorGroupKey,
             viewModelKey);
         
-        textEditorService.SetActiveViewModelOfGroup(
+        textEditorService.GroupSetActiveViewModel(
             EditorTextEditorGroupKey,
             viewModelKey);
 
@@ -204,7 +204,7 @@ public class EditorState
                 {
                     var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
             
-                    textEditorService.SetResourceData(
+                    textEditorService.ModelSetResourceData(
                         textEditorModel.ModelKey,
                         textEditorModel.ResourceUri,
                         fileLastWriteTime);

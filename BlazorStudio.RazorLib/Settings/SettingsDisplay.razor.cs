@@ -26,7 +26,7 @@ public partial class SettingsDisplay : FluxorComponent
 
     private void DispatchSetThemeStateAction(ThemeRecord themeRecord)
     {
-        TextEditorService.SetTheme(themeRecord.ThemeColorKind == ThemeColorKind.Light
+        TextEditorService.GlobalOptionsSetTheme(themeRecord.ThemeColorKind == ThemeColorKind.Light
             ? ThemeFacts.VisualStudioLightThemeClone
             : ThemeFacts.VisualStudioDarkThemeClone);
 
