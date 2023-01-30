@@ -11,7 +11,7 @@
 @inherits LayoutComponentBase
 
 <ContextBoundary ContextRecord="ContextFacts.GlobalContext"
-                 ClassCssString="@($"bstudio_main-layout {UnselectableClassCss} {ThemeStateWrap.Value.ActiveThemeRecord.CssClassString}")"
+                 ClassCssString="@($"bstudio_main-layout {UnselectableClassCss} {AppOptionsService.GlobalThemeCssClassString}")"
                  StyleCssString="@($"font-size: {FontStateWrap.Value.FontSizeInPixels.ToCssValue()}px;")">
 
     <BlazorStudioInitializer/>

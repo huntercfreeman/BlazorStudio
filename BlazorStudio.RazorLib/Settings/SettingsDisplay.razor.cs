@@ -1,4 +1,5 @@
 using BlazorALaCarte.Shared.Facts;
+using BlazorALaCarte.Shared.Options;
 using BlazorALaCarte.Shared.Store.IconCase;
 using BlazorALaCarte.Shared.Store.ThemeCase;
 using BlazorALaCarte.Shared.Theme;
@@ -14,7 +15,9 @@ namespace BlazorStudio.RazorLib.Settings;
 public partial class SettingsDisplay : FluxorComponent
 {
     [Inject]
-    private IState<ThemeState> ThemeStateWrap { get; set; } = null!;
+    private IState<ThemeRecordsCollection> ThemeRecordsCollectionWrap { get; set; } = null!;
+    [Inject]
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IState<FontState> FontStateWrap { get; set; } = null!;
     [Inject]
@@ -30,16 +33,14 @@ public partial class SettingsDisplay : FluxorComponent
             ? ThemeFacts.VisualStudioLightThemeClone
             : ThemeFacts.VisualStudioDarkThemeClone);
 
-        Dispatcher.Dispatch(
-            new ThemeState.SetActiveAction(
-                themeRecord.ThemeKey));
+        AppOptionsService.SetActiveThemeRecordKey(themeRecord.ThemeKey);
     }
     
     private Task PersistSettingsLocallyOnClick()
     {
         var fontSize = FontStateWrap.Value.FontSizeInPixels;
         var iconSize = IconStateWrap.Value.IconSizeInPixels;
-        var themeClassCssString = ThemeStateWrap.Value.ActiveThemeRecord.CssClassString;
+        var themeClassCssString = AppOptionsService.GlobalThemeCssClassString;
         
         Dispatcher.Dispatch(new LocalStorageEffects.LocalStorageSetItemAction(
             "bstudio_fontSize",

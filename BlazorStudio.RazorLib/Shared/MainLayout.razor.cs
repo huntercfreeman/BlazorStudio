@@ -4,6 +4,7 @@ using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Drag;
 using BlazorALaCarte.Shared.Facts;
 using BlazorALaCarte.Shared.Icons;
+using BlazorALaCarte.Shared.Options;
 using BlazorALaCarte.Shared.Resize;
 using BlazorALaCarte.Shared.Store;
 using BlazorALaCarte.Shared.Store.DragCase;
@@ -28,7 +29,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
     [Inject]
-    private IState<ThemeState> ThemeStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IState<FontState> FontStateWrap { get; set; } = null!;
     [Inject]
@@ -54,7 +55,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     protected override void OnInitialized()
     {
         DragStateWrap.StateChanged += DragStateWrapOnStateChanged;
-        ThemeStateWrap.StateChanged += ThemeStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateWrap.StateChanged += ApplicationOptionsStateWrapOnStateChanged;
         FontStateWrap.StateChanged += FontStateWrapOnStateChanged;
         
         var bodyHeight = _bodyElementDimensions.DimensionAttributes
@@ -131,7 +132,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private void ThemeStateWrapOnStateChanged(object? sender, EventArgs e)
+    private void ApplicationOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
     {
         InvokeAsync(StateHasChanged);
     }
@@ -158,7 +159,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     public void Dispose()
     {
         DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
-        ThemeStateWrap.StateChanged -= ThemeStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateWrap.StateChanged += ApplicationOptionsStateWrapOnStateChanged;
         FontStateWrap.StateChanged -= FontStateWrapOnStateChanged;
     }
 }

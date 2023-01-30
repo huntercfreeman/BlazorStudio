@@ -7,8 +7,6 @@ using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Cursor;
 using BlazorTextEditor.RazorLib.HelperComponents;
-using BlazorTextEditor.RazorLib.Store.TextEditorCase;
-using BlazorTextEditor.RazorLib.TextEditor;
 using BlazorTextEditor.RazorLib.ViewModel;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;

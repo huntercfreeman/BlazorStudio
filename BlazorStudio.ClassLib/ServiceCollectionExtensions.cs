@@ -37,7 +37,7 @@ public static class ServiceCollectionExtensions
             .AddFluxor(options => options
                 .ScanAssemblies(
                     typeof(ServiceCollectionExtensions).Assembly,
-                    typeof(BlazorALaCarte.Shared.Installation.ServiceCollectionExtensions).Assembly,
+                    typeof(BlazorALaCarte.Shared.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorALaCarte.DialogNotification.Installation.ServiceCollectionExtensions).Assembly, 
                     typeof(BlazorALaCarte.TreeView.Installation.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
