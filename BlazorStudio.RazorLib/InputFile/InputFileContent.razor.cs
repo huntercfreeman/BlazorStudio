@@ -1,28 +1,17 @@
-﻿using System.Collections.Immutable;
-using BlazorALaCarte.Shared.Dimensions;
-using BlazorALaCarte.Shared.Menu;
+﻿using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.Events;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Menu;
-using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.TreeViewImplementations;
 using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
-public partial class InputFileContent : FluxorComponent
+public partial class InputFileContent : ComponentBase
 {
-    [Inject]
-    private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -38,6 +27,8 @@ public partial class InputFileContent : FluxorComponent
     public InputFileTreeViewMouseEventHandler InputFileTreeViewMouseEventHandler { get; set; } = null!;
     [CascadingParameter]
     public InputFileTreeViewKeyboardEventHandler InputFileTreeViewKeyboardEventHandler { get; set; } = null!;
+    [CascadingParameter]
+    public InputFileState InputFileState { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
@@ -51,12 +42,12 @@ public partial class InputFileContent : FluxorComponent
     {
         if (!TreeViewService.TryGetTreeViewState(
                 TreeViewInputFileContentStateKey, 
-                out var treeViewState))
+                out _))
         {
             var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 true);
-
+    
             SetInputFileContentTreeViewRoot.Invoke(directoryHomeAbsoluteFilePath);
         }
         

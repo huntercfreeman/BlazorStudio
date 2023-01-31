@@ -14,10 +14,8 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
-public partial class InputFileBottomControls : FluxorComponent
+public partial class InputFileBottomControls : ComponentBase
 {
-    [Inject]
-    private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -25,6 +23,8 @@ public partial class InputFileBottomControls : FluxorComponent
     
     [CascadingParameter]
     public DialogRecord? DialogRecord { get; set; }
+    [CascadingParameter]
+    public InputFileState InputFileState { get; set; } = null!;
 
     private ElementReference? _searchElementReference;
     private string _searchQuery = string.Empty;
@@ -57,11 +57,9 @@ public partial class InputFileBottomControls : FluxorComponent
     
     private void SelectInputFilePatternOnChange(ChangeEventArgs changeEventArgs)
     {
-        var inputFileState = InputFileStateWrap.Value;
-        
         var patternName = (string)(changeEventArgs.Value ?? string.Empty);
 
-        var pattern = inputFileState.InputFilePatterns
+        var pattern = InputFileState.InputFilePatterns
             .FirstOrDefault(x => x.PatternName == patternName);
 
         if (pattern is not null)
@@ -84,10 +82,8 @@ public partial class InputFileBottomControls : FluxorComponent
     
     private async Task FireOnAfterSubmit()
     {
-        var inputFileState = InputFileStateWrap.Value;
-
-        var valid = await inputFileState.SelectionIsValidFunc.Invoke(
-            inputFileState.SelectedTreeViewModel?.Item);
+        var valid = await InputFileState.SelectionIsValidFunc.Invoke(
+            InputFileState.SelectedTreeViewModel?.Item);
         
         if (valid)
         {
@@ -98,17 +94,15 @@ public partial class InputFileBottomControls : FluxorComponent
                         DialogRecord.DialogKey));
             }
             
-            await InputFileStateWrap.Value.OnAfterSubmitFunc
-                .Invoke(inputFileState.SelectedTreeViewModel?.Item);
+            await InputFileState.OnAfterSubmitFunc
+                .Invoke(InputFileState.SelectedTreeViewModel?.Item);
         }
     }
     
     private bool OnAfterSubmitIsDisabled()
     {
-        var inputFileState = InputFileStateWrap.Value;
-
-        return !inputFileState.SelectionIsValidFunc.Invoke(
-                inputFileState.SelectedTreeViewModel?.Item)
+        return !InputFileState.SelectionIsValidFunc.Invoke(
+                InputFileState.SelectedTreeViewModel?.Item)
             .Result;
     }
     

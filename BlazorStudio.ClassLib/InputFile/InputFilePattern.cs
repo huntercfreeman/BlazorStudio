@@ -1,6 +1,6 @@
 ﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
-namespace BlazorStudio.ClassLib.Store.InputFileCase;
+namespace BlazorStudio.ClassLib.InputFile;
 
 public class InputFilePattern
 {

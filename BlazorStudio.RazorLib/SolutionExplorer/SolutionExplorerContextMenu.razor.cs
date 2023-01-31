@@ -18,6 +18,7 @@ using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.InputFile;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
@@ -192,7 +193,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
-                Dispatcher, () => { return Task.CompletedTask; }),
+                Dispatcher, () => Task.CompletedTask),
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,

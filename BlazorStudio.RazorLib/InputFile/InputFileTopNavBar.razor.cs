@@ -14,10 +14,8 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
-public partial class InputFileTopNavBar : FluxorComponent
+public partial class InputFileTopNavBar : ComponentBase
 {
-    [Inject]
-    private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -25,6 +23,8 @@ public partial class InputFileTopNavBar : FluxorComponent
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRoot")]
     public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
+    [CascadingParameter]
+    public InputFileState InputFileState { get; set; } = null!;
     
     public ElementReference? SearchElementReference { get; private set; }
     private string _searchQuery = string.Empty;
@@ -39,31 +39,18 @@ public partial class InputFileTopNavBar : FluxorComponent
                     value));
     }
 
-    protected override void OnInitialized()
-    {
-        InputFileStateWrap.StateChanged += InputFileStateWrapOnStateChanged;
-        
-        base.OnInitialized();
-    }
-
-    private void InputFileStateWrapOnStateChanged(object? sender, EventArgs e)
-    {
-        _searchQuery = InputFileStateWrap.Value.SearchQuery;
-        InvokeAsync(StateHasChanged);
-    }
-
     private void HandleBackButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
 
-        ChangeContentRootToOpenedTreeView(InputFileStateWrap.Value);
+        ChangeContentRootToOpenedTreeView(InputFileState);
     }
     
     private void HandleForwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
         
-        ChangeContentRootToOpenedTreeView(InputFileStateWrap.Value);
+        ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
     private void HandleUpwardButtonOnClick()
@@ -71,14 +58,14 @@ public partial class InputFileTopNavBar : FluxorComponent
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             CommonComponentRenderers));
         
-        ChangeContentRootToOpenedTreeView(InputFileStateWrap.Value);
+        ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
     private void HandleRefreshButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction());
         
-        ChangeContentRootToOpenedTreeView(InputFileStateWrap.Value);
+        ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
     private void FocusSearchElementReferenceOnClick()
@@ -86,18 +73,12 @@ public partial class InputFileTopNavBar : FluxorComponent
         SearchElementReference?.FocusAsync();
     }
 
-    private TreeViewAbsoluteFilePath GetOpenedTreeView(InputFileState inputFileState)
-    {
-        return inputFileState.OpenedTreeViewModelHistory[
-            inputFileState.IndexInHistory];
-    }
-    
     private void ChangeContentRootToOpenedTreeView(
         InputFileState inputFileState)
     {
-        var openedTreeView = GetOpenedTreeView(InputFileStateWrap.Value);
+        var openedTreeView = InputFileState.GetOpenedTreeView();
         
-        if (openedTreeView.Item is not null)
+        if (openedTreeView?.Item is not null)
             SetInputFileContentTreeViewRoot.Invoke(openedTreeView.Item);
     }
     
@@ -151,12 +132,5 @@ public partial class InputFileTopNavBar : FluxorComponent
     {
         _showInputTextEditForAddress = false;
         InvokeAsync(StateHasChanged);
-    }
-    
-    protected override void Dispose(bool disposing)
-    {
-        InputFileStateWrap.StateChanged -= InputFileStateWrapOnStateChanged;
-        
-        base.Dispose(disposing);
     }
 }

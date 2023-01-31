@@ -63,7 +63,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Parameter]
     public string BodyStyleCssString { get; set; } = null!;
     
-    private readonly ElementDimensions _navMenuElementDimensions = new();
+    private readonly ElementDimensions _sidebarElementDimensions = new();
     private readonly ElementDimensions _contentElementDimensions = new();
     
     private IAbsoluteFilePath? _selectedAbsoluteFilePath;
@@ -106,7 +106,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
     private void InitializeElementDimensions()
     {
-        var navMenuWidth = _navMenuElementDimensions.DimensionAttributes
+        var navMenuWidth = _sidebarElementDimensions.DimensionAttributes
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
         
         navMenuWidth.DimensionUnits.AddRange(new []

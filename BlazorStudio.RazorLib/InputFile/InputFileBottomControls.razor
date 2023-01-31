@@ -1,26 +1,22 @@
 ﻿@using BlazorStudio.ClassLib.Store.InputFileCase
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_input-file-display-bottom-controls">
-    @{
-        var inputFileState = InputFileStateWrap.Value;
-    }
     <div class="bstudio_input-file-display-bottom-controls-text-input">
         <div>
-            @GetSelectedTreeViewModelAbsoluteFilePathString(inputFileState)    
+            @GetSelectedTreeViewModelAbsoluteFilePathString(InputFileState)    
         </div>
         <div>
-            (@inputFileState.Message)    
+            (@InputFileState.Message)    
         </div>
     </div>
     <div class="bstudio_input-file-display-bottom-controls-non-text">
         <div>
             <select @onchange="SelectInputFilePatternOnChange">
-                @foreach (var inputFilePattern in inputFileState.InputFilePatterns)
+                @foreach (var inputFilePattern in InputFileState.InputFilePatterns)
                 {
                     <option value="@inputFilePattern.PatternName"
                             selected="@(
-                                (inputFileState.SelectedInputFilePattern?.PatternName ?? string.Empty)
+                                (InputFileState.SelectedInputFilePattern?.PatternName ?? string.Empty)
                                 == inputFilePattern.PatternName)">
                         @inputFilePattern.PatternName
                     </option>

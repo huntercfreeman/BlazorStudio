@@ -1,12 +1,9 @@
-﻿@using BlazorALaCarte.TreeView
-@using BlazorALaCarte.TreeView.Displays
-
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+﻿@using BlazorALaCarte.TreeView.Displays
 
 <div class="bstudio_input-file-display-side-bar"
      style="@ElementDimensions.StyleString">
 
-    <CascadingValue Name="SearchQuery" Value="InputFileStateWrap.Value.SearchQuery">
+    <CascadingValue Name="SearchQuery" Value="InputFileState.SearchQuery">
             <TreeViewStateDisplay TreeViewStateKey="TreeViewInputFileSidebarStateKey"
                                   CssStyleString="height: 100%;"
                                   TreeViewMouseEventHandler="InputFileTreeViewMouseEventHandler"

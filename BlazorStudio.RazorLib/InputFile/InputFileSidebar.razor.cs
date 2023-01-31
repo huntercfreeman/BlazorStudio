@@ -19,10 +19,8 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.InputFile;
 
-public partial class InputFileSidebar : FluxorComponent
+public partial class InputFileSidebar : ComponentBase
 {
-    [Inject]
-    private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -36,6 +34,8 @@ public partial class InputFileSidebar : FluxorComponent
     public InputFileTreeViewMouseEventHandler InputFileTreeViewMouseEventHandler { get; set; } = null!;
     [CascadingParameter]
     public InputFileTreeViewKeyboardEventHandler InputFileTreeViewKeyboardEventHandler { get; set; } = null!;
+    [CascadingParameter]
+    public InputFileState InputFileState { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
@@ -45,42 +45,42 @@ public partial class InputFileSidebar : FluxorComponent
     private static readonly TreeViewStateKey TreeViewInputFileSidebarStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
 
-    protected override void OnInitialized()
-    {
-        var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-            true);
-        
-        var directoryHomeNode = new TreeViewAbsoluteFilePath(
-            directoryHomeAbsoluteFilePath,
-            CommonComponentRenderers,
-            true,
-            false);
-        
-        var directoryRootAbsoluteFilePath = new AbsoluteFilePath(
-            "/",
-            true);
-
-        var directoryRootNode = new TreeViewAbsoluteFilePath(
-            directoryRootAbsoluteFilePath,
-            CommonComponentRenderers,
-            true,
-            false);
-        
-        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-            directoryHomeNode,
-            directoryRootNode);
-        
-        if (!TreeViewService.TryGetTreeViewState(
-                TreeViewInputFileSidebarStateKey, out var treeViewState))
-        {
-            TreeViewService.RegisterTreeViewState(new TreeViewState(
-                TreeViewInputFileSidebarStateKey,
-                adhocRootNode,
-                directoryHomeNode,
-                ImmutableList<TreeViewNoType>.Empty));
-        }
-        
-        base.OnInitialized();
-    }
+    // protected override void OnInitialized()
+    // {
+    //     var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
+    //         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+    //         true);
+    //     
+    //     var directoryHomeNode = new TreeViewAbsoluteFilePath(
+    //         directoryHomeAbsoluteFilePath,
+    //         CommonComponentRenderers,
+    //         true,
+    //         false);
+    //     
+    //     var directoryRootAbsoluteFilePath = new AbsoluteFilePath(
+    //         "/",
+    //         true);
+    //
+    //     var directoryRootNode = new TreeViewAbsoluteFilePath(
+    //         directoryRootAbsoluteFilePath,
+    //         CommonComponentRenderers,
+    //         true,
+    //         false);
+    //     
+    //     var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
+    //         directoryHomeNode,
+    //         directoryRootNode);
+    //     
+    //     if (!TreeViewService.TryGetTreeViewState(
+    //             TreeViewInputFileSidebarStateKey, out var treeViewState))
+    //     {
+    //         TreeViewService.RegisterTreeViewState(new TreeViewState(
+    //             TreeViewInputFileSidebarStateKey,
+    //             adhocRootNode,
+    //             directoryHomeNode,
+    //             ImmutableList<TreeViewNoType>.Empty));
+    //     }
+    //     
+    //     base.OnInitialized();
+    // }
 }

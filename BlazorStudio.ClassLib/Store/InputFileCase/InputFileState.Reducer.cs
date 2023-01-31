@@ -1,75 +1,17 @@
-﻿using System.Collections.Immutable;
-using BlazorALaCarte.DialogNotification.Dialog;
-using BlazorALaCarte.DialogNotification.Store.DialogCase;
-using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.InputFileCase;
 
-[FeatureState]
-public record InputFileState(
-    int IndexInHistory,
-    ImmutableList<TreeViewAbsoluteFilePath> OpenedTreeViewModelHistory,
-    TreeViewAbsoluteFilePath? SelectedTreeViewModel,
-    Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc,
-    Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc,
-    ImmutableArray<InputFilePattern> InputFilePatterns,
-    InputFilePattern? SelectedInputFilePattern,
-    string SearchQuery,
-    string Message)
+public partial record InputFileState
 {
-    private InputFileState() : this(
-        -1,
-        ImmutableList<TreeViewAbsoluteFilePath>.Empty,
-        null,
-        _ => Task.CompletedTask,
-        _ => Task.FromResult(false),
-        ImmutableArray<InputFilePattern>.Empty,
-        null,
-        string.Empty,
-        string.Empty) 
-    {
-    }
-
-    public record RequestInputFileStateFormAction(
-        string Message,
-        Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc,
-        Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc,
-        ImmutableArray<InputFilePattern> InputFilePatterns);
-    
-    public record SetSelectedTreeViewModelAction(
-        TreeViewAbsoluteFilePath? SelectedTreeViewModel);
-    
-    public record SetOpenedTreeViewModelAction(
-        TreeViewAbsoluteFilePath TreeViewModel,
-        ICommonComponentRenderers CommonComponentRenderers);
-    
-    public record SetSelectedInputFilePatternAction(
-        InputFilePattern InputFilePattern);
-    
-    public record SetSearchQueryAction(
-        string SearchQuery);
-
-    public record MoveBackwardsInHistoryAction;
-    public record MoveForwardsInHistoryAction;
-    public record OpenParentDirectoryAction(ICommonComponentRenderers CommonComponentRenderers);
-    public record RefreshCurrentSelectionAction;
-
-    public static bool CanMoveBackwardsInHistory(InputFileState inputFileState) => 
-        inputFileState.IndexInHistory > 0;
-    
-    public static bool CanMoveForwardsInHistory(InputFileState inputFileState) => 
-        inputFileState.IndexInHistory < 
-        inputFileState.OpenedTreeViewModelHistory.Count - 1;
-    
-    private class InputFileStateReducer
+    private static class Reducer
     {
         [ReducerMethod]
         public static InputFileState ReduceStartInputFileStateFormAction(
             InputFileState inInputFileState,
-            InputFileStateEffects.StartInputFileStateFormAction startInputFileStateFormAction)
+            StartInputFileStateFormAction startInputFileStateFormAction)
         {
             return inInputFileState with
             {
@@ -132,7 +74,7 @@ public record InputFileState(
             InputFileState inInputFileState,
             MoveBackwardsInHistoryAction moveBackwardsInHistoryAction)
         {
-            if (CanMoveBackwardsInHistory(inInputFileState))
+            if (inInputFileState.CanMoveBackwardsInHistory)
             {
                 return inInputFileState with
                 {
@@ -149,7 +91,7 @@ public record InputFileState(
             InputFileState inInputFileState,
             MoveForwardsInHistoryAction moveForwardsInHistoryAction)
         {
-            if (CanMoveForwardsInHistory(inInputFileState))
+            if (inInputFileState.CanMoveForwardsInHistory)
             {
                 return inInputFileState with
                 {
@@ -235,86 +177,6 @@ public record InputFileState(
             {
                 SearchQuery = setSearchQueryAction.SearchQuery
             };
-        }
-        
-        private static InputFileState NewOpenedTreeViewModelHistory(
-            InputFileState inInputFileState,
-            TreeViewAbsoluteFilePath selectedTreeViewModel,
-            ICommonComponentRenderers commonComponentRenderers)
-        {
-            var selectionClone = new TreeViewAbsoluteFilePath(
-                selectedTreeViewModel.Item,
-                commonComponentRenderers,
-                false,
-                true);
-
-            selectionClone.LoadChildrenAsync().Wait();
-
-            selectionClone.IsExpanded = true;
-
-            var nextHistory = 
-                inInputFileState.OpenedTreeViewModelHistory;
-             
-            // If not at end of history the more recent history is
-            // replaced by the to be selected TreeViewModel
-            if (inInputFileState.IndexInHistory != 
-                inInputFileState.OpenedTreeViewModelHistory.Count - 1)
-            {
-                var historyCount = inInputFileState.OpenedTreeViewModelHistory.Count;
-                var startingIndexToRemove = inInputFileState.IndexInHistory + 1;
-                var countToRemove = historyCount - startingIndexToRemove;
-
-                nextHistory = inInputFileState.OpenedTreeViewModelHistory
-                    .RemoveRange(startingIndexToRemove, countToRemove);
-            }
-            
-            nextHistory = nextHistory
-                .Add(selectionClone);
-            
-            return inInputFileState with
-            {
-                IndexInHistory = inInputFileState.IndexInHistory + 1,
-                OpenedTreeViewModelHistory = nextHistory,
-            };
-        }
-    }
-    
-    private class InputFileStateEffects
-    {
-        private readonly ICommonComponentRenderers _commonComponentRenderers;
-
-        public InputFileStateEffects(
-            ICommonComponentRenderers commonComponentRenderers)
-        {
-            _commonComponentRenderers = commonComponentRenderers;
-        }
-        
-        public record StartInputFileStateFormAction(
-            RequestInputFileStateFormAction RequestInputFileStateFormAction);
-        
-        [EffectMethod]
-        public Task HandleRequestInputFileStateFormAction(
-            RequestInputFileStateFormAction requestInputFileStateFormAction,
-            IDispatcher dispatcher)
-        {
-            dispatcher.Dispatch(
-                new StartInputFileStateFormAction(
-                    requestInputFileStateFormAction));
-
-            var inputFileDialog = new DialogRecord(
-                DialogFacts.InputFileDialogKey,
-                "Input File",
-                _commonComponentRenderers.InputFileRendererType,
-                null)
-            {
-                IsResizable = true
-            }; 
-            
-            dispatcher.Dispatch(
-                new DialogRecordsCollection.RegisterAction(
-                    inputFileDialog));
-
-            return Task.CompletedTask;
         }
     }
 }
