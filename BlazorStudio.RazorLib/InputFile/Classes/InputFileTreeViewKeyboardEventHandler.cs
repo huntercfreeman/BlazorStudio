@@ -9,7 +9,7 @@ using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using Fluxor;
 
-namespace BlazorStudio.RazorLib.InputFile;
+namespace BlazorStudio.RazorLib.InputFile.Classes;
 
 public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
@@ -88,7 +88,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
                 return wasMappedToAnAction;
         }
         
-        return false;
+        return await base.OnKeyDownAsync(treeViewCommandParameter);
     }
     
     private async Task<bool> AltModifiedKeymapAsync(
@@ -171,16 +171,10 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         return Task.CompletedTask;
     }
     
-    private TreeViewAbsoluteFilePath GetOpenedTreeView(InputFileState inputFileState)
-    {
-        return inputFileState.OpenedTreeViewModelHistory[
-            inputFileState.IndexInHistory];
-    }
-    
     private void ChangeContentRootToOpenedTreeView(
         InputFileState inputFileState)
     {
-        var openedTreeView = GetOpenedTreeView(_inputFileStateWrap.Value);
+        var openedTreeView = inputFileState.GetOpenedTreeView();
         
         if (openedTreeView.Item is not null)
             _setInputFileContentTreeViewRoot.Invoke(openedTreeView.Item);

@@ -5,10 +5,11 @@ using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
+using BlazorStudio.RazorLib.InputFile.Classes;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazorStudio.RazorLib.InputFile;
+namespace BlazorStudio.RazorLib.InputFile.InternalComponents;
 
 public partial class InputFileContent : ComponentBase
 {

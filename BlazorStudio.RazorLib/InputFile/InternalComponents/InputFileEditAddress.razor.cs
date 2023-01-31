@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace BlazorStudio.RazorLib.InputFile;
+namespace BlazorStudio.RazorLib.InputFile.InternalComponents;
 
 public partial class InputFileEditAddress : ComponentBase
 {

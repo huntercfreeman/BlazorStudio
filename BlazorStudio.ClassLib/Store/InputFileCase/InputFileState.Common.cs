@@ -12,13 +12,11 @@ public partial record InputFileState
 
     public TreeViewAbsoluteFilePath? GetOpenedTreeView()
     {
-        if (IndexInHistory == -1)
+        if (IndexInHistory == -1 ||
+            IndexInHistory < OpenedTreeViewModelHistory.Count)
             return null;
         
-        if (IndexInHistory < OpenedTreeViewModelHistory.Count)
-            return null;
-        
-        return null;
+        return OpenedTreeViewModelHistory[IndexInHistory];
     }
     
     private static InputFileState NewOpenedTreeViewModelHistory(

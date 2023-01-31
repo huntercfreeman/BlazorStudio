@@ -6,7 +6,7 @@ using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using Fluxor;
 
-namespace BlazorStudio.RazorLib.InputFile;
+namespace BlazorStudio.RazorLib.InputFile.Classes;
 
 public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {

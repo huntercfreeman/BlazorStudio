@@ -1,18 +1,13 @@
-﻿using System.Collections.Immutable;
-using BlazorALaCarte.DialogNotification.Notification;
+﻿using BlazorALaCarte.DialogNotification.Notification;
 using BlazorALaCarte.DialogNotification.Store.NotificationCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorTextEditor.RazorLib;
 using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
-namespace BlazorStudio.RazorLib.InputFile;
+namespace BlazorStudio.RazorLib.InputFile.InternalComponents;
 
 public partial class InputFileTopNavBar : ComponentBase
 {
@@ -27,12 +22,11 @@ public partial class InputFileTopNavBar : ComponentBase
     public InputFileState InputFileState { get; set; } = null!;
     
     public ElementReference? SearchElementReference { get; private set; }
-    private string _searchQuery = string.Empty;
     private bool _showInputTextEditForAddress;
 
     public string SearchQuery
     {
-        get => _searchQuery;
+        get => InputFileState.SearchQuery;
         set => Dispatcher
             .Dispatch(
                 new InputFileState.SetSearchQueryAction(

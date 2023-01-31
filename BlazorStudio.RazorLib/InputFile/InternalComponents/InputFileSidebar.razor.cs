@@ -2,22 +2,17 @@
 using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.BaseTypes;
-using BlazorALaCarte.TreeView.Events;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorTextEditor.RazorLib;
+using BlazorStudio.RazorLib.InputFile.Classes;
 using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
-namespace BlazorStudio.RazorLib.InputFile;
+namespace BlazorStudio.RazorLib.InputFile.InternalComponents;
 
 public partial class InputFileSidebar : ComponentBase
 {
@@ -45,42 +40,42 @@ public partial class InputFileSidebar : ComponentBase
     private static readonly TreeViewStateKey TreeViewInputFileSidebarStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
 
-    // protected override void OnInitialized()
-    // {
-    //     var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
-    //         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-    //         true);
-    //     
-    //     var directoryHomeNode = new TreeViewAbsoluteFilePath(
-    //         directoryHomeAbsoluteFilePath,
-    //         CommonComponentRenderers,
-    //         true,
-    //         false);
-    //     
-    //     var directoryRootAbsoluteFilePath = new AbsoluteFilePath(
-    //         "/",
-    //         true);
-    //
-    //     var directoryRootNode = new TreeViewAbsoluteFilePath(
-    //         directoryRootAbsoluteFilePath,
-    //         CommonComponentRenderers,
-    //         true,
-    //         false);
-    //     
-    //     var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-    //         directoryHomeNode,
-    //         directoryRootNode);
-    //     
-    //     if (!TreeViewService.TryGetTreeViewState(
-    //             TreeViewInputFileSidebarStateKey, out var treeViewState))
-    //     {
-    //         TreeViewService.RegisterTreeViewState(new TreeViewState(
-    //             TreeViewInputFileSidebarStateKey,
-    //             adhocRootNode,
-    //             directoryHomeNode,
-    //             ImmutableList<TreeViewNoType>.Empty));
-    //     }
-    //     
-    //     base.OnInitialized();
-    // }
+    protected override void OnInitialized()
+    {
+        var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            true);
+        
+        var directoryHomeNode = new TreeViewAbsoluteFilePath(
+            directoryHomeAbsoluteFilePath,
+            CommonComponentRenderers,
+            true,
+            false);
+        
+        var directoryRootAbsoluteFilePath = new AbsoluteFilePath(
+            "/",
+            true);
+    
+        var directoryRootNode = new TreeViewAbsoluteFilePath(
+            directoryRootAbsoluteFilePath,
+            CommonComponentRenderers,
+            true,
+            false);
+        
+        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
+            directoryHomeNode,
+            directoryRootNode);
+        
+        if (!TreeViewService.TryGetTreeViewState(
+                TreeViewInputFileSidebarStateKey, out var treeViewState))
+        {
+            TreeViewService.RegisterTreeViewState(new TreeViewState(
+                TreeViewInputFileSidebarStateKey,
+                adhocRootNode,
+                directoryHomeNode,
+                ImmutableList<TreeViewNoType>.Empty));
+        }
+        
+        base.OnInitialized();
+    }
 }

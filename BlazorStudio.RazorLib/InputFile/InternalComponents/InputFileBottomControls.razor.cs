@@ -1,18 +1,11 @@
-﻿using System.Collections.Immutable;
-using BlazorALaCarte.DialogNotification;
-using BlazorALaCarte.DialogNotification.Dialog;
+﻿using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.DialogNotification.Store.DialogCase;
 using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorTextEditor.RazorLib;
 using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
-namespace BlazorStudio.RazorLib.InputFile;
+namespace BlazorStudio.RazorLib.InputFile.InternalComponents;
 
 public partial class InputFileBottomControls : ComponentBase
 {
