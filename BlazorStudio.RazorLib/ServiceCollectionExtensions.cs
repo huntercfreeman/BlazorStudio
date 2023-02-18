@@ -15,7 +15,7 @@ namespace BlazorStudio.RazorLib;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddBlazorTextEditorRazorLibServices(this IServiceCollection services)
+    public static IServiceCollection AddBlazorStudioRazorLibServices(this IServiceCollection services)
     {
         var commonRendererTypes = new CommonComponentRenderers(
             typeof(InputFileDisplay),

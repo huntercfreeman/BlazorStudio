@@ -19,10 +19,10 @@ public static class ServiceCollectionExtensions
         ICommonComponentRenderers commonComponentRenderers)
     {
         return services
-            .AddSingleton<ICommonComponentRenderers>(commonComponentRenderers)
-            .AddSingleton<Menu.ICommonMenuOptionsFactory, Menu.CommonMenuOptionsFactory>()
-            .AddSingleton<IFileTemplateProvider, FileTemplateProvider>()
-            .AddSingleton<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
+            .AddScoped<ICommonComponentRenderers>(_ => commonComponentRenderers)
+            .AddScoped<Menu.ICommonMenuOptionsFactory, Menu.CommonMenuOptionsFactory>()
+            .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
+            .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
             .AddBlazorTextEditor(configureTextEditorServiceOptions =>
             {
                 configureTextEditorServiceOptions.InitializeFluxor = false;
