@@ -3,8 +3,8 @@ using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.Icons;
 using BlazorALaCarte.Shared.Menu;
+using BlazorALaCarte.Shared.Store.ApplicationOptions;
 using BlazorALaCarte.Shared.Store.DropdownCase;
-using BlazorALaCarte.Shared.Store.IconCase;
 using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorALaCarte.TreeView.Commands;
@@ -41,7 +41,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
-    private IState<IconState> IconStateWrap { get; set; } = null!;
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -62,7 +62,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        IconStateWrap.Value.IconSizeInPixels *
+        AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
         (2.0/3.0));
 
     protected override void OnInitialized()

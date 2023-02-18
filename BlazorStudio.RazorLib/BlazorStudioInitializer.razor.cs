@@ -1,5 +1,4 @@
-﻿using BlazorALaCarte.Shared.Facts;
-using BlazorALaCarte.Shared.Icons.Codicon;
+﻿using BlazorALaCarte.Shared.Icons.Codicon;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;

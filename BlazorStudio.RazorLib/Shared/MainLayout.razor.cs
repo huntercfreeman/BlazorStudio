@@ -2,13 +2,11 @@ using BlazorALaCarte.DialogNotification;
 using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Drag;
-using BlazorALaCarte.Shared.Facts;
 using BlazorALaCarte.Shared.Icons;
 using BlazorALaCarte.Shared.Options;
 using BlazorALaCarte.Shared.Resize;
 using BlazorALaCarte.Shared.Store;
 using BlazorALaCarte.Shared.Store.DragCase;
-using BlazorALaCarte.Shared.Store.IconCase;
 using BlazorALaCarte.Shared.Store.ThemeCase;
 using BlazorALaCarte.Shared.Theme;
 using BlazorStudio.ClassLib.Dimensions;
@@ -120,7 +118,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
                 Dispatcher.Dispatch(new SetFontSizeInPixelsAction(fontSize));
             
             if (int.TryParse(iconSizeString, out var iconSize))
-                Dispatcher.Dispatch(new IconState.SetIconSizeInPixelsAction(iconSize));
+                AppOptionsService.SetIconSize(iconSize);
 
             if (System.IO.File.Exists("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
             {

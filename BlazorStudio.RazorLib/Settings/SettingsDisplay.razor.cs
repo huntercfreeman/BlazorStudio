@@ -1,6 +1,4 @@
-using BlazorALaCarte.Shared.Facts;
 using BlazorALaCarte.Shared.Options;
-using BlazorALaCarte.Shared.Store.IconCase;
 using BlazorALaCarte.Shared.Store.ThemeCase;
 using BlazorALaCarte.Shared.Theme;
 using BlazorStudio.ClassLib.Store.FontCase;
@@ -21,8 +19,6 @@ public partial class SettingsDisplay : FluxorComponent
     [Inject]
     private IState<FontState> FontStateWrap { get; set; } = null!;
     [Inject]
-    private IState<IconState> IconStateWrap { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
@@ -39,7 +35,7 @@ public partial class SettingsDisplay : FluxorComponent
     private Task PersistSettingsLocallyOnClick()
     {
         var fontSize = FontStateWrap.Value.FontSizeInPixels;
-        var iconSize = IconStateWrap.Value.IconSizeInPixels;
+        var iconSize = AppOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels;
         var themeClassCssString = AppOptionsService.GlobalThemeCssClassString;
         
         Dispatcher.Dispatch(new LocalStorageEffects.LocalStorageSetItemAction(
