@@ -1,6 +1,7 @@
 using BlazorALaCarte.DialogNotification.Notification;
 using BlazorStudio.ClassLib;
 using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.RazorLib.Clipboard;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.File;
@@ -35,6 +36,8 @@ public static class ServiceCollectionExtensions
         return services
             .AddBlazorStudioClassLibServices(
                 _ => new TemporaryInMemoryClipboardProvider(),
-                commonRendererTypes);
+                commonRendererTypes,
+                new LocalFileSystemProvider(),
+                new LocalEnvironmentProvider());
     }
 }

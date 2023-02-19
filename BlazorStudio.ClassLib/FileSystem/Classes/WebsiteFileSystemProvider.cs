@@ -1,9 +1,16 @@
+using Azure.Storage.Blobs;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
 namespace BlazorStudio.ClassLib.FileSystem.Classes;
 
 public class WebsiteFileSystemProvider : IFileSystemProvider
 {
+    private const string AZURE_STORAGE_CONNECTION_STRING_ENVIRONMENT_VARIABLE_NAME = "AZURE_STORAGE_CONNECTION_STRING";
+    
+    private readonly BlobServiceClient _blobServiceClient = new(
+        Environment.GetEnvironmentVariable(
+            AZURE_STORAGE_CONNECTION_STRING_ENVIRONMENT_VARIABLE_NAME));
+    
     public Task WriteFileAsync(
         IAbsoluteFilePath absoluteFilePath, 
         string content,

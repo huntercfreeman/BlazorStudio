@@ -21,4 +21,10 @@
       <ProjectReference Include="..\..\Blazor.Text.Editor\BlazorTextEditor.RazorLib\BlazorTextEditor.RazorLib.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="Azure.Storage.Blobs">
+        <HintPath>..\..\..\.nuget\packages\azure.storage.blobs\12.14.1\lib\netstandard2.1\Azure.Storage.Blobs.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>
