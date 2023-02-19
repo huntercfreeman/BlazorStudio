@@ -1,7 +1,10 @@
 ﻿using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.Shared.Dimensions;
+using BlazorALaCarte.Shared.Store.DropdownCase;
 using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.BaseTypes;
+using BlazorALaCarte.TreeView.Commands;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
@@ -35,6 +38,8 @@ public partial class InputFileSidebar : ComponentBase
     public InputFileTreeViewKeyboardEventHandler InputFileTreeViewKeyboardEventHandler { get; set; } = null!;
     [CascadingParameter]
     public InputFileState InputFileState { get; set; } = null!;
+    [CascadingParameter]
+    public DialogRecord DialogRecord { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
@@ -43,6 +48,8 @@ public partial class InputFileSidebar : ComponentBase
     
     private static readonly TreeViewStateKey TreeViewInputFileSidebarStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
+    
+    private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 
     protected override void OnInitialized()
     {
@@ -77,5 +84,16 @@ public partial class InputFileSidebar : ComponentBase
         }
         
         base.OnInitialized();
+    }
+    
+    private async Task OnTreeViewContextMenuFunc(ITreeViewCommandParameter treeViewCommandParameter)
+    {
+        _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
+        
+        Dispatcher.Dispatch(
+            new DropdownsState.AddActiveAction(
+                InputFileContextMenu.ContextMenuEventDropdownKey));
+        
+        await InvokeAsync(StateHasChanged);
     }
 }

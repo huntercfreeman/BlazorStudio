@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Resize;
 using BlazorALaCarte.TreeView;
@@ -33,7 +34,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-
+    
     /// <summary>
     /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
     /// a parameter to the <see cref="RenderFragment"/>
