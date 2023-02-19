@@ -128,9 +128,9 @@ public class FileSystemState
         string notificationInformativeMessage;
         
         if (absoluteFilePathString is not null &&
-            File.Exists(absoluteFilePathString))
+            _fileSystemProvider.FileExists(absoluteFilePathString))
         {
-            await File.WriteAllTextAsync(
+            await _fileSystemProvider.WriteAllTextAsync(
                 absoluteFilePathString,
                 saveFileAction.Content);
         

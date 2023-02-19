@@ -51,7 +51,8 @@ public partial record InputFileState
                 return NewOpenedTreeViewModelHistory(
                     inInputFileState,
                     setOpenedTreeViewModelAction.TreeViewModel,
-                    setOpenedTreeViewModelAction.CommonComponentRenderers);
+                    setOpenedTreeViewModelAction.CommonComponentRenderers,
+                    setOpenedTreeViewModelAction.FileSystemProvider);
             }
                 
             return inInputFileState;
@@ -122,6 +123,7 @@ public partial record InputFileState
                 parentDirectoryTreeViewModel = new TreeViewAbsoluteFilePath(
                     (IAbsoluteFilePath)parentDirectoryAbsoluteFilePath, 
                     openParentDirectoryAction.CommonComponentRenderers,
+                    openParentDirectoryAction.FileSystemProvider,
                     false,
                     true);
 
@@ -133,7 +135,8 @@ public partial record InputFileState
                 return NewOpenedTreeViewModelHistory(
                     inInputFileState,
                     parentDirectoryTreeViewModel,
-                    openParentDirectoryAction.CommonComponentRenderers);
+                    openParentDirectoryAction.CommonComponentRenderers,
+                    openParentDirectoryAction.FileSystemProvider);
             }
 
             return inInputFileState;

@@ -19,6 +19,8 @@ public partial class FolderExplorerDisplay : FluxorComponent
     private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     
     private string _filePath = string.Empty;
 
@@ -37,7 +39,7 @@ public partial class FolderExplorerDisplay : FluxorComponent
     
     private void DispatchSetFolderExplorerStateOnClick()
     {
-        if (!Directory.Exists(_filePath))
+        if (!FileSystemProvider.DirectoryExists(_filePath))
             throw new DirectoryNotFoundException();
         
         Dispatcher.Dispatch(

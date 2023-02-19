@@ -6,6 +6,7 @@ using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.Shared.Store.DropdownCase;
 using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.AccountCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
@@ -32,6 +33,8 @@ public partial class BlazorTextEditorHeader : FluxorComponent
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     
     private DropdownKey _dropdownKeyFile = DropdownKey.NewDropdownKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -83,7 +86,8 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                     await EditorState.ShowInputFileAsync(
                         Dispatcher, 
                         TextEditorService,
-                        CommonComponentRenderers));
+                        CommonComponentRenderers,
+                        FileSystemProvider));
         
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
@@ -98,7 +102,8 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                     await EditorState.ShowInputFileAsync(
                         Dispatcher, 
                         TextEditorService,
-                        CommonComponentRenderers));
+                        CommonComponentRenderers,
+                        FileSystemProvider));
         
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",

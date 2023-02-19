@@ -21,7 +21,9 @@ public partial class InputFileContent : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    
     [CascadingParameter(Name = "SetInputFileContentTreeViewRoot")]
     public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
     [CascadingParameter]
@@ -45,11 +47,8 @@ public partial class InputFileContent : ComponentBase
                 TreeViewInputFileContentStateKey, 
                 out _))
         {
-            var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
-                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                true);
-    
-            SetInputFileContentTreeViewRoot.Invoke(directoryHomeAbsoluteFilePath);
+            SetInputFileContentTreeViewRoot.Invoke(
+                EnvironmentProvider.HomeDirectoryAbsoluteFilePath);
         }
         
         base.OnInitialized();

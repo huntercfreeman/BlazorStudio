@@ -22,6 +22,10 @@ public partial class InputFileSidebar : ComponentBase
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
     [CascadingParameter(Name = "SetInputFileContentTreeViewRoot")]
     public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
@@ -42,23 +46,17 @@ public partial class InputFileSidebar : ComponentBase
 
     protected override void OnInitialized()
     {
-        var directoryHomeAbsoluteFilePath = new AbsoluteFilePath(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-            true);
-        
         var directoryHomeNode = new TreeViewAbsoluteFilePath(
-            directoryHomeAbsoluteFilePath,
+            EnvironmentProvider.HomeDirectoryAbsoluteFilePath,
             CommonComponentRenderers,
+            FileSystemProvider,
             true,
             false);
-        
-        var directoryRootAbsoluteFilePath = new AbsoluteFilePath(
-            "/",
-            true);
     
         var directoryRootNode = new TreeViewAbsoluteFilePath(
-            directoryRootAbsoluteFilePath,
+            EnvironmentProvider.RootDirectoryAbsoluteFilePath,
             CommonComponentRenderers,
+            FileSystemProvider,
             true,
             false);
         

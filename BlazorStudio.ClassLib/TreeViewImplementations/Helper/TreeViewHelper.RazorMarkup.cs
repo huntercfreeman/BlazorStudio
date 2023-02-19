@@ -22,26 +22,29 @@ public partial class TreeViewHelper
         var parentAbsoluteFilePathString = parentDirectoryOfRazorMarkup
             .GetAbsoluteFilePathString();
 
-        var childFileTreeViewModels = Directory
-            .GetFiles(parentAbsoluteFilePathString)
-            .Select(x =>
-            {
-                var absoluteFilePath = new AbsoluteFilePath(x, false);
-
-                var namespaceString = razorMarkupTreeView.Item.Namespace;
-                
-                return (TreeViewNoType)new TreeViewNamespacePath(
-                    new NamespacePath(
-                        namespaceString,
-                        absoluteFilePath),
-                    razorMarkupTreeView.CommonComponentRenderers,
-                    razorMarkupTreeView.SolutionExplorerStateWrap,
-                    false,
-                    false)
+        var childFileTreeViewModels = 
+            
+            razorMarkupTreeView.FileSystemProvider
+                .DirectoryGetFiles(parentAbsoluteFilePathString)
+                .Select(x =>
                 {
-                    TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
-                };
-            }).ToList();
+                    var absoluteFilePath = new AbsoluteFilePath(x, false);
+
+                    var namespaceString = razorMarkupTreeView.Item.Namespace;
+                    
+                    return (TreeViewNoType)new TreeViewNamespacePath(
+                        new NamespacePath(
+                            namespaceString,
+                            absoluteFilePath),
+                        razorMarkupTreeView.CommonComponentRenderers,
+                        razorMarkupTreeView.SolutionExplorerStateWrap,
+                        razorMarkupTreeView.FileSystemProvider,
+                        false,
+                        false)
+                    {
+                        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                    };
+                }).ToList();
 
         RazorMarkupFindRelatedFiles(
             razorMarkupTreeView,

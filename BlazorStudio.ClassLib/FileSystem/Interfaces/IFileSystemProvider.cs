@@ -13,4 +13,15 @@ public interface IFileSystemProvider
     public Task CreateDirectoryAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default);
     public Task DeleteFileAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default);
     public Task DeleteDirectoryAsync(IAbsoluteFilePath absoluteFilePath, bool recursive, CancellationToken cancellationToken = default);
+    public bool FileExists(string absoluteFilePathString);
+    public void FileCopy(string sourceAbsoluteFilePathString, string destinationAbsoluteFilePathString);
+    public void FileMove(string sourceAbsoluteFilePathString, string destinationAbsoluteFilePathString);
+    public DateTime FileGetLastWriteTime(string absoluteFilePathString);
+    public Task<string> FileReadAllTextAsync(string absoluteFilePathString);
+    public Task WriteAllTextAsync(string absoluteFilePathString, string? contents, CancellationToken cancellationToken = default(CancellationToken));
+    public bool DirectoryExists(string absoluteFilePathString);
+    public void DirectoryMove(string sourceAbsoluteFilePathString, string destinationAbsoluteFilePathString);
+    public string[] DirectoryGetDirectories(string absoluteFilePathString);
+    public string[] DirectoryGetFiles(string absoluteFilePathString);
+    public IEnumerable<string> DirectoryEnumerateFileSystemEntries(string absoluteFilePathString);
 }

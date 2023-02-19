@@ -30,6 +30,7 @@ public partial class TreeViewHelper
                     namespacePath,
                     dotNetSolutionTreeView.CommonComponentRenderers,
                     dotNetSolutionTreeView.SolutionExplorerStateWrap,
+                    dotNetSolutionTreeView.FileSystemProvider,
                     true,
                     false)
                 {

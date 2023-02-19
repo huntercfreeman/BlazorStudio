@@ -15,6 +15,8 @@ public partial class InputFileTopNavBar : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRoot")]
     public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
@@ -50,7 +52,8 @@ public partial class InputFileTopNavBar : ComponentBase
     private void HandleUpwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
-            CommonComponentRenderers));
+            CommonComponentRenderers,
+            FileSystemProvider));
         
         ChangeContentRootToOpenedTreeView(InputFileState);
     }
@@ -83,9 +86,9 @@ public partial class InputFileTopNavBar : ComponentBase
 
         try
         {
-            if (!Directory.Exists(address))
+            if (!FileSystemProvider.DirectoryExists(address))
             {
-                if (System.IO.File.Exists(address))
+                if (FileSystemProvider.FileExists(address))
                 {
                     throw new ApplicationException(
                         $"Address provided was a file. Provide a directory instead. {address}");

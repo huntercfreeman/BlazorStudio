@@ -2,6 +2,7 @@
 using System.Text;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Git;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
@@ -14,7 +15,8 @@ public partial record GitState
     {
         private readonly IState<TerminalSessionsState> _terminalSessionsStateWrap;
         private readonly IState<GitState> _gitStateWrap;
-        
+        private readonly IFileSystemProvider _fileSystemProvider;
+
         // Usage:
         /*
            try
@@ -33,10 +35,12 @@ public partial record GitState
 
         public Effector(
             IState<TerminalSessionsState> terminalSessionsStateWrap,
-            IState<GitState> gitStateWrap)
+            IState<GitState> gitStateWrap,
+            IFileSystemProvider fileSystemProvider)
         {
             _terminalSessionsStateWrap = terminalSessionsStateWrap;
             _gitStateWrap = gitStateWrap;
+            _fileSystemProvider = fileSystemProvider;
         }
 
         [EffectMethod]
@@ -83,7 +87,7 @@ public partial record GitState
                 }));
 
                 if (gitState.GitFolderAbsoluteFilePath is null ||
-                    !Directory.Exists(gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()) ||
+                    !_fileSystemProvider.DirectoryExists(gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()) ||
                     gitState.GitFolderAbsoluteFilePath.ParentDirectory is null)
                 {
                     return;
@@ -273,7 +277,7 @@ public partial record GitState
                     tryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath
                         .GetAbsoluteFilePathString();
             
-                var childDirectoryAbsoluteFilePathStrings = Directory.GetDirectories(
+                var childDirectoryAbsoluteFilePathStrings = _fileSystemProvider.DirectoryGetDirectories(
                     directoryAbsoluteFilePathString);
 
                 var gitFolderAbsoluteFilePathString = childDirectoryAbsoluteFilePathStrings.FirstOrDefault(

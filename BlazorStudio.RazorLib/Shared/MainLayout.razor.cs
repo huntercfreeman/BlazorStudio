@@ -11,6 +11,7 @@ using BlazorALaCarte.Shared.Store.ThemeCase;
 using BlazorALaCarte.Shared.Theme;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.FontCase;
 using BlazorStudio.ClassLib.Store.PanelCase;
@@ -38,6 +39,8 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 
     private string _message = string.Empty;
     
@@ -120,7 +123,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             if (int.TryParse(iconSizeString, out var iconSize))
                 AppOptionsService.SetIconSize(iconSize);
 
-            if (System.IO.File.Exists("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
+            if (FileSystemProvider.FileExists("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
             {
                 Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
                     new AbsoluteFilePath("/home/hunter/Repos/Demos/TestApp/TestApp.sln", false)));

@@ -1,5 +1,6 @@
 ﻿using BlazorALaCarte.Shared.Icons.Codicon;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
@@ -24,6 +25,8 @@ public partial class BlazorStudioInitializer : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     
     protected override void OnInitialized()
     {
@@ -31,7 +34,8 @@ public partial class BlazorStudioInitializer : ComponentBase
         {
             var terminalSession = new TerminalSession(
                 null, 
-                Dispatcher)
+                Dispatcher,
+                FileSystemProvider)
             {
                 TerminalSessionKey = terminalSessionKey
             };
@@ -47,7 +51,7 @@ public partial class BlazorStudioInitializer : ComponentBase
                 @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp.sln",
                 false);
 
-            if (System.IO.File.Exists(testSolutionExplorer.GetAbsoluteFilePathString()))
+            if (FileSystemProvider.FileExists(testSolutionExplorer.GetAbsoluteFilePathString()))
             {
                 Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
                     testSolutionExplorer));

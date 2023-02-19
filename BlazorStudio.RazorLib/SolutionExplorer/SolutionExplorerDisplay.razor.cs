@@ -52,6 +52,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     
     public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
@@ -71,6 +73,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             TerminalSessionsStateWrap,
             CommonMenuOptionsFactory,
             CommonComponentRenderers,
+            FileSystemProvider,
             Dispatcher,
             TreeViewService,
             TextEditorService);
@@ -80,6 +83,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 Dispatcher,
                 TextEditorService,
                 CommonComponentRenderers,
+                FileSystemProvider,
                 TreeViewService);
         
         SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrapOnStateChanged;
@@ -102,6 +106,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             solutionNamespacePath,
             CommonComponentRenderers,
             SolutionExplorerStateWrap,
+            FileSystemProvider,
             true,
             true)
         {

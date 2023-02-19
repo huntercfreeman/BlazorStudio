@@ -1,6 +1,7 @@
 ﻿using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.DialogNotification.Store.DialogCase;
 using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -13,6 +14,8 @@ public partial class InputFileBottomControls : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     
     [CascadingParameter]
     public DialogRecord? DialogRecord { get; set; }
@@ -35,7 +38,8 @@ public partial class InputFileBottomControls : ComponentBase
     private void HandleUpwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
-            CommonComponentRenderers));
+            CommonComponentRenderers,
+            FileSystemProvider));
     }
 
     private void HandleRefreshButtonOnClick()

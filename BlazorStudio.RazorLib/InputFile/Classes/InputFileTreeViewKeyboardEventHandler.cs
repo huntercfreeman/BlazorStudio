@@ -18,6 +18,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly IState<InputFileState> _inputFileStateWrap;
     private readonly IDispatcher _dispatcher;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
+    private readonly IFileSystemProvider _fileSystemProvider;
     private readonly Action<IAbsoluteFilePath> _setInputFileContentTreeViewRoot;
     private readonly Func<Task> _focusSearchInputElementFunc;
     private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> _getSearchMatchTuplesFunc;
@@ -27,6 +28,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         IState<InputFileState> inputFileStateWrap,
         IDispatcher dispatcher,
         ICommonComponentRenderers commonComponentRenderers,
+        IFileSystemProvider fileSystemProvider,
         Action<IAbsoluteFilePath> setInputFileContentTreeViewRoot,
         Func<Task> focusSearchInputElementFunc,
         Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> getSearchMatchTuplesFunc)
@@ -37,6 +39,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _inputFileStateWrap = inputFileStateWrap;
         _dispatcher = dispatcher;
         _commonComponentRenderers = commonComponentRenderers;
+        _fileSystemProvider = fileSystemProvider;
         _setInputFileContentTreeViewRoot = setInputFileContentTreeViewRoot;
         _focusSearchInputElementFunc = focusSearchInputElementFunc;
         _getSearchMatchTuplesFunc = getSearchMatchTuplesFunc;
@@ -154,7 +157,8 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
-            _commonComponentRenderers));
+            _commonComponentRenderers,
+            _fileSystemProvider));
         
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
 

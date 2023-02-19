@@ -22,7 +22,8 @@ public class EditorState
     public static Task ShowInputFileAsync(
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
-        ICommonComponentRenderers commonComponentRenderers)
+        ICommonComponentRenderers commonComponentRenderers,
+        IFileSystemProvider fileSystemProvider)
     {
         dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
@@ -33,7 +34,8 @@ public class EditorState
                         afp, 
                         dispatcher, 
                         textEditorService,
-                        commonComponentRenderers);
+                        commonComponentRenderers,
+                        fileSystemProvider);
                 },
                 afp =>
                 {
@@ -59,7 +61,8 @@ public class EditorState
         IAbsoluteFilePath? absoluteFilePath,
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
-        ICommonComponentRenderers commonComponentRenderers)
+        ICommonComponentRenderers commonComponentRenderers,
+        IFileSystemProvider fileSystemProvider)
     {
         if (absoluteFilePath is null ||
             absoluteFilePath.IsDirectory)
@@ -80,10 +83,11 @@ public class EditorState
         {
             textEditorKey = TextEditorModelKey.NewTextEditorModelKey();
 
-            var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
+            var fileLastWriteTime = fileSystemProvider.FileGetLastWriteTime(
+                inputFileAbsoluteFilePathString);
             
-            var content = await File
-                .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+            var content = await fileSystemProvider.FileReadAllTextAsync(
+                inputFileAbsoluteFilePathString);
 
             textEditorModel = new TextEditorModel(
                 inputFileAbsoluteFilePathString,
@@ -104,7 +108,8 @@ public class EditorState
         }
         else
         {
-            var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
+            var fileLastWriteTime = fileSystemProvider.FileGetLastWriteTime(
+                inputFileAbsoluteFilePathString);
 
             if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime)
             {
@@ -134,8 +139,8 @@ public class EditorState
                                         new NotificationRecordsCollection.DisposeAction(
                                             notificationInformativeKey));
                                     
-                                    var content = await File
-                                        .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+                                    var content = await fileSystemProvider
+                                        .FileReadAllTextAsync(inputFileAbsoluteFilePathString);
                                 
                                     textEditorService.ModelReload(
                                         textEditorKey,
@@ -203,7 +208,8 @@ public class EditorState
                 innerContent,
                 () =>
                 {
-                    var fileLastWriteTime = File.GetLastWriteTime(inputFileAbsoluteFilePathString);
+                    var fileLastWriteTime = fileSystemProvider
+                        .FileGetLastWriteTime(inputFileAbsoluteFilePathString);
             
                     textEditorService.ModelSetResourceData(
                         textEditorModel.ModelKey,

@@ -11,6 +11,9 @@ namespace BlazorStudio.RazorLib.File;
 public partial class DeleteFileFormDisplay 
     : ComponentBase, IDeleteFileFormRendererType
 {
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    
     [CascadingParameter]
     public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
     
@@ -38,8 +41,7 @@ public partial class DeleteFileFormDisplay
 
             if (AbsoluteFilePath.IsDirectory)
             {
-                _countOfImmediateChildren = Directory
-                    .EnumerateFileSystemEntries(
+                _countOfImmediateChildren = FileSystemProvider.DirectoryEnumerateFileSystemEntries(
                         AbsoluteFilePath.GetAbsoluteFilePathString())
                     .Count();
             }

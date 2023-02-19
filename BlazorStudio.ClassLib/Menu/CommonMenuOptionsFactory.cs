@@ -427,7 +427,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
                         IAbsoluteFilePath? clipboardAbsoluteFilePath = null;
                         
-                        if (Directory.Exists(clipboardPhrase.Value))
+                        if (_fileSystemProvider.DirectoryExists(clipboardPhrase.Value))
                         {
                             clipboardPhrase.Value = FilePathHelper.StripEndingDirectorySeparatorIfExists(
                                 clipboardPhrase.Value);
@@ -436,7 +436,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 clipboardPhrase.Value,
                                 true);
                         }
-                        else if (File.Exists(clipboardPhrase.Value))
+                        else if (_fileSystemProvider.FileExists(clipboardPhrase.Value))
                         {
                             clipboardAbsoluteFilePath = new AbsoluteFilePath(
                                 clipboardPhrase.Value,
@@ -467,15 +467,15 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 }
                                 else
                                 {
-                                    var destinationFileName = receivingDirectory.GetAbsoluteFilePathString() +
+                                    var destinationAbsoluteFilePathString = receivingDirectory.GetAbsoluteFilePathString() +
                                                               clipboardAbsoluteFilePath.FilenameWithExtension;
                                 
                                     var sourceAbsoluteFilePathString = clipboardAbsoluteFilePath
                                         .GetAbsoluteFilePathString();
-                                
-                                    File.Copy(
+
+                                    _fileSystemProvider.FileCopy(
                                         sourceAbsoluteFilePathString,
-                                        destinationFileName);
+                                        destinationAbsoluteFilePathString);
                                 }
                             }
                             catch (Exception)
@@ -550,13 +550,13 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         {
             if (sourceAbsoluteFilePath.IsDirectory)
             {
-                Directory.Move(
+                _fileSystemProvider.DirectoryMove(
                     sourceAbsoluteFilePathString, 
                     destinationAbsoluteFilePathString);    
             }
             else
             {
-                File.Move(
+                _fileSystemProvider.FileMove(
                     sourceAbsoluteFilePathString, 
                     destinationAbsoluteFilePathString);
             }
