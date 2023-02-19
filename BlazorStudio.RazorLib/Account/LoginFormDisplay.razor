@@ -1,0 +1,79 @@
+<div class="bstudio_file-form-display"
+     @onkeydown="HandleOnKeyDown">
+
+    <div style="margin-bottom: 10px;">
+
+        <div>
+            <label for="bstudio_container-key-input">
+                Container Key:
+            </label>
+
+            <input id="bstudio_container-key-input"
+                   class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   type="text"
+                   placeholder="Container Key"
+                   autocapitalize="none"
+                   autocorrect="off"
+                   autocomplete="off"
+                   spellcheck="false"
+                   @bind="ContainerKey"
+                   @bind:event="oninput"
+                   @ref="_containerInputElementReference"/>
+        </div>
+
+        <div class="bstudio_login-form-hint">
+            ^ provides micro filtering
+        </div>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+
+        <div>
+            <label for="bstudio_alias-key-input">
+                Group Key:
+            </label>
+
+            <input id="bstudio_alias-key-input"
+                   class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   type="text"
+                   placeholder="Group Key"
+                   autocapitalize="none"
+                   autocorrect="off"
+                   autocomplete="off"
+                   spellcheck="false"
+                   @bind="GroupKey"
+                   @bind:event="oninput"/>
+        </div>
+        
+        <div class="bstudio_login-form-hint">
+            ^ provides macro filtering
+        </div>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+
+        <div>
+            <label for="bstudio_alias-input">
+                Alias:
+            </label>
+
+            <input id="bstudio_alias-input"
+                   class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   type="text"
+                   placeholder="Alias"
+                   autocapitalize="none"
+                   autocorrect="off"
+                   autocomplete="off"
+                   spellcheck="false"
+                   @bind="Alias"
+                   @bind:event="oninput"/>
+        </div>
+
+        <div class="bstudio_login-form-hint">
+            ^ displayed to other users
+        </div>
+    </div>
+</div>

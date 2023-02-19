@@ -1,3 +1,4 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 @using BlazorStudio.ClassLib.Context
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorStudio.RazorLib.Settings
@@ -36,11 +37,13 @@
         
         <ButtonDisplay @ref="_buttonDisplayComponentAccount"
                        OnClickFunc="() => { AddActiveDropdownKey(_dropdownKeyAccount); return Task.CompletedTask; }"
-                       CssStyleString="position: relative; min-width: 10ch;">
-            Account
+                       CssStyleString="position: relative;">
+            
+            @AccountStateWrap.Value.Alias
             
             <DropdownDisplay DropdownKey="_dropdownKeyAccount"
-                             DropdownPositionKind="DropdownPositionKind.Vertical">
+                             DropdownPositionKind="DropdownPositionKind.Vertical"
+                             CssStyleString="left: unset; right: var(--balc_menu-option-display-focus-outline-size);">
     
                 <CascadingValue Value="RestoreFocusToButtonDisplayComponentAccount" Name="ReturnFocusToParentAction">
                     <MenuDisplay MenuRecord="_menuAccount"/>

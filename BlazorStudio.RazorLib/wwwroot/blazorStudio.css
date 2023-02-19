@@ -407,3 +407,9 @@ button.bstudio_input-file-address-hierarchy-entry {
 .bstudio_git-file {
     white-space: nowrap;
 }
+
+.bstudio_login-form-hint {
+    background-color: var(--bte_newline-background-color);
+    color: var(--bte_newline-foreground-color);
+    margin-top: calc(3px + var(--bstudio_input-focus-outline-size));
+}

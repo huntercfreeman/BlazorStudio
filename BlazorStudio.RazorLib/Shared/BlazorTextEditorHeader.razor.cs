@@ -6,21 +6,26 @@ using BlazorALaCarte.Shared.Dropdown;
 using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.Shared.Store.DropdownCase;
 using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.Store.AccountCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
+using BlazorStudio.RazorLib.Account;
 using BlazorStudio.RazorLib.Button;
 using BlazorStudio.RazorLib.DotNetSolutionForm;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Shared;
 
-public partial class BlazorTextEditorHeader : ComponentBase
+public partial class BlazorTextEditorHeader : FluxorComponent
 {
+    [Inject]
+    private IState<AccountState> AccountStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -127,7 +132,8 @@ public partial class BlazorTextEditorHeader : ComponentBase
         {
             var menuOptionLogin = new MenuOptionRecord(
                 "Login",
-                MenuOptionKind.Other);
+                MenuOptionKind.Other,
+                WidgetRendererType: typeof(LoginFormDisplay));
             
             menuOptions.Add(menuOptionLogin);
         }
