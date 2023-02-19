@@ -28,97 +28,135 @@ public partial class BlazorTextEditorHeader : ComponentBase
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     
-    private DropdownKey _dropdownKeyFileDropdown = DropdownKey.NewDropdownKey();
-    private MenuRecord _fileMenu = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private ButtonDisplay? _fileButtonDisplay;
+    private DropdownKey _dropdownKeyFile = DropdownKey.NewDropdownKey();
+    private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private ButtonDisplay? _buttonDisplayComponentFile;
+    
+    private DropdownKey _dropdownKeyAccount = DropdownKey.NewDropdownKey();
+    private MenuRecord _menuAccount = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private ButtonDisplay? _buttonDisplayComponentAccount;
 
     protected override Task OnInitializedAsync()
     {
-        _fileMenu = new MenuRecord(
-            new []
-            {
-                GetMenuOptionNew(),
-                GetMenuOptionOpen()
-            }.ToImmutableArray());
+        InitializeMenuFile();
+        InitializeMenuAccount();
         
         return base.OnInitializedAsync();
     }
 
-    private MenuOptionRecord GetMenuOptionNew()
+    private void InitializeMenuFile()
     {
-        var newDotNetSolution = new MenuOptionRecord(
-            ".NET Solution",
-            MenuOptionKind.Other,
-            OpenNewDotNetSolutionDialog);
+        var menuOptions = new List<MenuOptionRecord>();
+
+        // Menu Option New
+        {
+            var menuOptionNewDotNetSolution = new MenuOptionRecord(
+                ".NET Solution",
+                MenuOptionKind.Other,
+                OpenNewDotNetSolutionDialog);
+
+            var menuOptionNew = new MenuOptionRecord(
+                "New",
+                MenuOptionKind.Other,
+                SubMenu: new MenuRecord(
+                    new[]
+                    {
+                        menuOptionNewDotNetSolution
+                    }.ToImmutableArray()));
+            
+            menuOptions.Add(menuOptionNew);
+        }
         
-        return new MenuOptionRecord(
-            "New",
-            MenuOptionKind.Other,
-            SubMenu: new MenuRecord(
-                new []
-                {
-                    newDotNetSolution
-                }.ToImmutableArray()));
+        // Menu Option Open
+        {
+            // TODO: Why do all the OnClicks have an async void lambda? Not quite sure what I was doing when I originally wrote this and should revisit this.
+            
+            var menuOptionOpenFile = new MenuOptionRecord(
+                "File",
+                MenuOptionKind.Other,
+                async () => 
+                    await EditorState.ShowInputFileAsync(
+                        Dispatcher, 
+                        TextEditorService,
+                        CommonComponentRenderers));
+        
+            var menuOptionOpenDirectory = new MenuOptionRecord(
+                "Directory",
+                MenuOptionKind.Other,
+                async () => 
+                    await FolderExplorerState.ShowInputFileAsync(Dispatcher));
+        
+            var menuOptionOpenCSharpProject = new MenuOptionRecord(
+                "C# Project - TODO: Adhoc Sln",
+                MenuOptionKind.Other,
+                async () => 
+                    await EditorState.ShowInputFileAsync(
+                        Dispatcher, 
+                        TextEditorService,
+                        CommonComponentRenderers));
+        
+            var menuOptionOpenDotNetSolution = new MenuOptionRecord(
+                ".NET Solution",
+                MenuOptionKind.Other,
+                async () => 
+                    await SolutionExplorerState.ShowInputFileAsync(Dispatcher));
+
+            var menuOptionOpen = new MenuOptionRecord(
+                "Open",
+                MenuOptionKind.Other,
+                SubMenu: new MenuRecord(
+                    new []
+                    {
+                        menuOptionOpenFile,
+                        menuOptionOpenDirectory,
+                        menuOptionOpenCSharpProject,
+                        menuOptionOpenDotNetSolution
+                    }.ToImmutableArray()));
+        
+            menuOptions.Add(menuOptionOpen);
+        }
+        
+        _menuFile = new MenuRecord(menuOptions.ToImmutableArray());
+    }
+    
+    private void InitializeMenuAccount()
+    {
+        var menuOptions = new List<MenuOptionRecord>();
+
+        // Menu Option Login
+        {
+            var menuOptionLogin = new MenuOptionRecord(
+                "Login",
+                MenuOptionKind.Other);
+            
+            menuOptions.Add(menuOptionLogin);
+        }
+        
+        _menuAccount = new MenuRecord(menuOptions.ToImmutableArray());
     }
 
-    private MenuOptionRecord GetMenuOptionOpen()
-    {
-        var openFile = new MenuOptionRecord(
-            "File",
-            MenuOptionKind.Other,
-            async () => 
-                await EditorState.ShowInputFileAsync(
-                    Dispatcher, 
-                    TextEditorService,
-                    CommonComponentRenderers));
-        
-        var openDirectory = new MenuOptionRecord(
-            "Directory",
-            MenuOptionKind.Other,
-            async () => 
-                await FolderExplorerState.ShowInputFileAsync(Dispatcher));
-        
-        var openCSharpProject = new MenuOptionRecord(
-            "C# Project - TODO: Adhoc Sln",
-            MenuOptionKind.Other,
-            async () => 
-                await EditorState.ShowInputFileAsync(
-                    Dispatcher, 
-                    TextEditorService,
-                    CommonComponentRenderers));
-        
-        var openDotNetSolution = new MenuOptionRecord(
-            ".NET Solution",
-            MenuOptionKind.Other,
-            async () => 
-                await SolutionExplorerState.ShowInputFileAsync(Dispatcher));
-
-        return new MenuOptionRecord(
-            "Open",
-            MenuOptionKind.Other,
-            SubMenu: new MenuRecord(
-                new []
-                {
-                    openFile,
-                    openDirectory,
-                    openCSharpProject,
-                    openDotNetSolution
-                }.ToImmutableArray()));
-    }
-
-    private void AddActiveFileDropdown()
+    private void AddActiveDropdownKey(DropdownKey dropdownKey)
     {
         Dispatcher.Dispatch(
             new DropdownsState.AddActiveAction(
-                _dropdownKeyFileDropdown));
+                dropdownKey));
     }
     
     /// <summary>
     /// TODO: Make this method abstracted into a component that takes care of the UI to show the dropdown and to restore focus when menu closed
     /// </summary>
-    private void RestoreFocusToFileButton()
+    private void RestoreFocusToButtonDisplayComponentFile()
     {
-        _fileButtonDisplay?.ButtonElementReference?
+        _buttonDisplayComponentFile?.ButtonElementReference?
+            .FocusAsync();
+    }
+    
+    /// <summary>
+    /// TODO: Make this method abstracted into a component that takes care of the UI to show the dropdown and to restore focus when menu closed
+    /// </summary>
+    private void RestoreFocusToButtonDisplayComponentAccount()
+    {
+        _buttonDisplayComponentAccount?.ButtonElementReference?
             .FocusAsync();
     }
 
