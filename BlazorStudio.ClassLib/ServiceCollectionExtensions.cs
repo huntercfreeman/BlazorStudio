@@ -25,7 +25,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
             .AddBlazorTextEditor(configureTextEditorServiceOptions =>
             {
-                configureTextEditorServiceOptions.InitializeFluxor = false;
                 configureTextEditorServiceOptions.ClipboardProviderFactory = clipboardProviderDefaultFactory;
                 configureTextEditorServiceOptions.InitialThemeRecords = BlazorStudioTextEditorColorThemeFacts.BlazorStudioTextEditorThemes;
                 configureTextEditorServiceOptions.InitialThemeKey = BlazorStudioTextEditorColorThemeFacts.LightTheme.ThemeKey;

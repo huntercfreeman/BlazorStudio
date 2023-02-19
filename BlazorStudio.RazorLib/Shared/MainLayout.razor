@@ -1,6 +1,5 @@
 @using BlazorStudio.ClassLib.Context
 @using BlazorStudio.RazorLib.ContextCase
-@using BlazorTextEditor.RazorLib
 @using BlazorALaCarte.DialogNotification.Installation
 @using BlazorALaCarte.Shared.Dimensions
 @using BlazorALaCarte.Shared.Drag
@@ -13,10 +12,6 @@
 <ContextBoundary ContextRecord="ContextFacts.GlobalContext"
                  ClassCssString="@($"bstudio_main-layout {UnselectableClassCss} {AppOptionsService.GlobalThemeCssClassString}")"
                  StyleCssString="@($"font-size: {FontStateWrap.Value.FontSizeInPixels.ToCssValue()}px;")">
-
-    <BlazorStudioInitializer/>
-    <DialogInitializer/>
-    <NotificationInitializer/>
 
     <BlazorTextEditorHeader/>
 
