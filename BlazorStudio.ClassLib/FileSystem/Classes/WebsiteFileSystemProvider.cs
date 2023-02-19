@@ -34,8 +34,19 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(WriteFileAsync));
+
+        var accountState = _accountStateWrap.Value;
         
-        throw new NotImplementedException();
+        var containerClient = _blobServiceClient.GetBlobContainerClient(
+            accountState.ContainerName);
+
+        GetBlobClient(
+            containerClient,
+            absoluteFilePath.GetAbsoluteFilePathString(),
+            true,
+            content);
+
+        return Task.CompletedTask;
     }
 
     public Task<string> ReadFileAsync(
@@ -170,7 +181,8 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         var directoryBlobClient = GetBlobClient(
             containerClient,
             absoluteFilePathString + DIRECTORY_FILE_NAME,
-            true);
+            true,
+            string.Empty);
         
         var blobItemPages = containerClient
             .GetBlobs(prefix: absoluteFilePathString);
@@ -200,7 +212,15 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         var directoryBlobClient = GetBlobClient(
             containerClient,
             absoluteFilePathString + DIRECTORY_FILE_NAME,
-            true);
+            true,
+            string.Empty);
+
+        if (absoluteFilePathString.StartsWith(_environmentProvider.DirectorySeparatorChar))
+        {
+            absoluteFilePathString = new string(absoluteFilePathString
+                .Skip(1)
+                .ToArray());
+        }
         
         var blobItemPages = containerClient
             .GetBlobs(prefix: absoluteFilePathString);
@@ -208,12 +228,13 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         var blobItems = blobItemPages
             .AsPages()
             .SelectMany(x => x.Values)
-            .Where(blobItem => !blobItem.Name
-                .Replace(absoluteFilePathString, string.Empty)
-                .Contains(_environmentProvider.DirectorySeparatorChar))
             .ToList();
 
         return blobItems
+            .Where(blobItem => !blobItem.Name
+                .Replace(absoluteFilePathString, string.Empty)
+                .Contains(_environmentProvider.DirectorySeparatorChar) &&
+                               !blobItem.Name.EndsWith(DIRECTORY_FILE_NAME))
             .Select(x => x.Name)
             .ToArray();
     }
@@ -240,14 +261,15 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
     private BlobClient GetBlobClient(
         BlobContainerClient blobContainerClient,
         string absoluteFilePathString,
-        bool createIfDoesNotExist)
+        bool createIfDoesNotExist,
+        string createIfDoesNotExistInitialText)
     {
         var blobClient = blobContainerClient.GetBlobClient(absoluteFilePathString);
 
         if (!blobClient.Exists() &&
             createIfDoesNotExist)
         {
-            var stream = GenerateStreamFromString(string.Empty);
+            var stream = GenerateStreamFromString(createIfDoesNotExistInitialText);
 
             blobClient
                 .UploadAsync(stream, true)
