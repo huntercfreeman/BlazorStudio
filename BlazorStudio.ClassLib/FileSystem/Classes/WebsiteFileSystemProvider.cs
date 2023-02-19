@@ -47,28 +47,36 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         throw new NotImplementedException();
     }
 
-    public Task CreateDirectoryAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default)
+    public Task CreateDirectoryAsync(
+        IAbsoluteFilePath absoluteFilePath,
+        CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(CreateDirectoryAsync));
         
         throw new NotImplementedException();
     }
 
-    public Task DeleteFileAsync(IAbsoluteFilePath absoluteFilePath, CancellationToken cancellationToken = default)
+    public Task DeleteFileAsync(
+        IAbsoluteFilePath absoluteFilePath,
+        CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(DeleteFileAsync));
         
         throw new NotImplementedException();
     }
     
-    public Task DeleteDirectoryAsync(IAbsoluteFilePath absoluteFilePath, bool recursive, CancellationToken cancellationToken = default)
+    public Task DeleteDirectoryAsync(
+        IAbsoluteFilePath absoluteFilePath,
+        bool recursive,
+        CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(DeleteDirectoryAsync));
         
         throw new NotImplementedException();
     }
     
-    public bool FileExists(string absoluteFilePathString)
+    public bool FileExists(
+        string absoluteFilePathString)
     {
         var accountState = _accountStateWrap.Value;
         
@@ -83,56 +91,75 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         return blobClient.Exists();
     }
 
-    public void FileCopy(string sourceAbsoluteFilePathString, string destinationAbsoluteFilePathString)
+    public void FileCopy(
+        string sourceAbsoluteFilePathString,
+        string destinationAbsoluteFilePathString)
     {
         Console.WriteLine(nameof(FileCopy));
         
         throw new NotImplementedException();
     }
 
-    public void FileMove(string sourceAbsoluteFilePathString, string destinationAbsoluteFilePathString)
+    public void FileMove(
+        string sourceAbsoluteFilePathString,
+        string destinationAbsoluteFilePathString)
     {
         Console.WriteLine(nameof(FileMove));
         
         throw new NotImplementedException();
     }
 
-    public DateTime FileGetLastWriteTime(string absoluteFilePathString)
+    public DateTime FileGetLastWriteTime(
+        string absoluteFilePathString)
     {
         Console.WriteLine(nameof(FileGetLastWriteTime));
         
         throw new NotImplementedException();
     }
 
-    public Task<string> FileReadAllTextAsync(string absoluteFilePathString)
+    public Task<string> FileReadAllTextAsync(
+        string absoluteFilePathString)
     {
         Console.WriteLine(nameof(FileReadAllTextAsync));
         
         throw new NotImplementedException();
     }
 
-    public Task WriteAllTextAsync(string absoluteFilePathString, string? contents, CancellationToken cancellationToken = default(CancellationToken))
+    public Task WriteAllTextAsync(
+        string absoluteFilePathString,
+        string? contents,
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         Console.WriteLine(nameof(WriteAllTextAsync));
         
         throw new NotImplementedException();
     }
 
-    public bool DirectoryExists(string absoluteFilePathString)
+    public bool DirectoryExists(
+        string absoluteFilePathString)
     {
         Console.WriteLine(nameof(DirectoryExists));
         
-        throw new NotImplementedException();
+        var accountState = _accountStateWrap.Value;
+        
+        var containerClient = GetBlobContainerClient(accountState);
+        
+        var blobClient = containerClient.GetBlobClient(absoluteFilePathString);
+
+        return blobClient.Exists();
     }
 
-    public void DirectoryMove(string sourceAbsoluteFilePathString, string destinationAbsoluteFilePathString)
+    public void DirectoryMove(
+        string sourceAbsoluteFilePathString,
+        string destinationAbsoluteFilePathString)
     {
         Console.WriteLine(nameof(DirectoryMove));
         
         throw new NotImplementedException();
     }
 
-    public string[] DirectoryGetDirectories(string absoluteFilePathString)
+    public string[] DirectoryGetDirectories(
+        string absoluteFilePathString)
     {
         Console.WriteLine(nameof(DirectoryGetDirectories));
         
@@ -161,7 +188,8 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
             .ToArray();
     }
 
-    public string[] DirectoryGetFiles(string absoluteFilePathString)
+    public string[] DirectoryGetFiles(
+        string absoluteFilePathString)
     {
         Console.WriteLine(nameof(DirectoryGetFiles));
         
@@ -190,7 +218,8 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
             .ToArray();
     }
 
-    public IEnumerable<string> DirectoryEnumerateFileSystemEntries(string absoluteFilePathString)
+    public IEnumerable<string> DirectoryEnumerateFileSystemEntries(
+        string absoluteFilePathString)
     {
         Console.WriteLine(nameof(DirectoryEnumerateFileSystemEntries));
         
@@ -228,7 +257,8 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         return blobClient;
     }
     
-    public Stream GenerateStreamFromString(string s)
+    public Stream GenerateStreamFromString(
+        string s)
     {
         return new MemoryStream(Encoding.UTF8.GetBytes(s));
     }
