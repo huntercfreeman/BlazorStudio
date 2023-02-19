@@ -4,11 +4,15 @@ namespace BlazorStudio.ClassLib.FileSystem.Classes;
 
 public class FileSystemDrive : IFileSystemDrive
 {
-    public FileSystemDrive(string driveNameAsIdentifier)
+    public FileSystemDrive(
+        string driveNameAsIdentifier,
+        IEnvironmentProvider environmentProvider)
     {
         DriveNameAsIdentifier = driveNameAsIdentifier;
+        EnvironmentProvider = environmentProvider;
     }
 
     public string DriveNameAsIdentifier { get; }
-    public string DriveNameAsPath => $"{DriveNameAsIdentifier}:{Path.DirectorySeparatorChar}";
+    public IEnvironmentProvider EnvironmentProvider { get; }
+    public string DriveNameAsPath => $"{DriveNameAsIdentifier}:{EnvironmentProvider.DirectorySeparatorChar}";
 }

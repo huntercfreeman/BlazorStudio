@@ -24,12 +24,14 @@ public partial record InputFileState
         InputFileState inInputFileState,
         TreeViewAbsoluteFilePath selectedTreeViewModel,
         ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider)
+        IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider)
     {
         var selectionClone = new TreeViewAbsoluteFilePath(
             selectedTreeViewModel.Item,
             commonComponentRenderers,
             fileSystemProvider,
+            environmentProvider,
             false,
             true);
 

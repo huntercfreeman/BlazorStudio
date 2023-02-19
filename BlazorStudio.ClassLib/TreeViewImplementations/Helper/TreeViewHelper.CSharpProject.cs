@@ -32,7 +32,10 @@ public partial class TreeViewHelper
                 .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(x, true);
+                    var absoluteFilePath = new AbsoluteFilePath(
+                        x,
+                        true,
+                        cSharpProjectTreeView.EnvironmentProvider);
 
                     var namespaceString = cSharpProjectTreeView.Item.Namespace +
                                           NAMESPACE_DELIMITER +
@@ -45,6 +48,7 @@ public partial class TreeViewHelper
                         cSharpProjectTreeView.CommonComponentRenderers,
                         cSharpProjectTreeView.SolutionExplorerStateWrap,
                         cSharpProjectTreeView.FileSystemProvider,
+                        cSharpProjectTreeView.EnvironmentProvider,
                         true,
                         false)
                     {
@@ -90,7 +94,10 @@ public partial class TreeViewHelper
                 .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(x, false);
+                    var absoluteFilePath = new AbsoluteFilePath(
+                        x,
+                        false,
+                        cSharpProjectTreeView.EnvironmentProvider);
 
                     var namespaceString = cSharpProjectTreeView.Item.Namespace;
                     
@@ -101,6 +108,7 @@ public partial class TreeViewHelper
                         cSharpProjectTreeView.CommonComponentRenderers,
                         cSharpProjectTreeView.SolutionExplorerStateWrap,
                         cSharpProjectTreeView.FileSystemProvider,
+                        cSharpProjectTreeView.EnvironmentProvider,
                         false,
                         false)
                     {

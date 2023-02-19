@@ -12,6 +12,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
         IAbsoluteFilePath absoluteFilePath,
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider,
         bool isExpandable,
         bool isExpanded)
             : base(
@@ -21,10 +22,12 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
     {
         CommonComponentRenderers = commonComponentRenderers;
         FileSystemProvider = fileSystemProvider;
+        EnvironmentProvider = environmentProvider;
     }
  
     public ICommonComponentRenderers CommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
+    public IEnvironmentProvider EnvironmentProvider { get; }
 
     public override bool Equals(object? obj)
     {

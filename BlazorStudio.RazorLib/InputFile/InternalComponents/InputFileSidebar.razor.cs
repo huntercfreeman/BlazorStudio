@@ -50,6 +50,7 @@ public partial class InputFileSidebar : ComponentBase
             EnvironmentProvider.HomeDirectoryAbsoluteFilePath,
             CommonComponentRenderers,
             FileSystemProvider,
+            EnvironmentProvider,
             true,
             false);
     
@@ -57,6 +58,7 @@ public partial class InputFileSidebar : ComponentBase
             EnvironmentProvider.RootDirectoryAbsoluteFilePath,
             CommonComponentRenderers,
             FileSystemProvider,
+            EnvironmentProvider,
             true,
             false);
         

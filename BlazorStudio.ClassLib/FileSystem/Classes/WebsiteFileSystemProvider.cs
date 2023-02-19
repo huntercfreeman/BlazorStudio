@@ -8,15 +8,19 @@ namespace BlazorStudio.ClassLib.FileSystem.Classes;
 public class WebsiteFileSystemProvider : IFileSystemProvider
 {
     private const string AZURE_STORAGE_CONNECTION_STRING_ENVIRONMENT_VARIABLE_NAME = "AZURE_STORAGE_CONNECTION_STRING";
-    
+
+    private readonly IEnvironmentProvider _environmentProvider;
     private readonly IState<AccountState> _accountStateWrap;
     
     private readonly BlobServiceClient _blobServiceClient = new(
         Environment.GetEnvironmentVariable(
             AZURE_STORAGE_CONNECTION_STRING_ENVIRONMENT_VARIABLE_NAME));
 
-    public WebsiteFileSystemProvider(IState<AccountState> accountStateWrap)
+    public WebsiteFileSystemProvider(
+        IEnvironmentProvider environmentProvider,
+        IState<AccountState> accountStateWrap)
     {
+        _environmentProvider = environmentProvider;
         _accountStateWrap = accountStateWrap;
     }
 
@@ -55,7 +59,16 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
     public bool FileExists(string absoluteFilePathString)
     {
         var accountState = _accountStateWrap.Value;
-        throw new NotImplementedException();
+        
+        var containerClient = _blobServiceClient.GetBlobContainerClient(
+            accountState.ContainerName);
+
+        var blobName = _environmentProvider.RootDirectoryAbsoluteFilePath + 
+                       absoluteFilePathString;
+        
+        var blobClient = containerClient.GetBlobClient(blobName);
+
+        return blobClient.Exists();
     }
 
     public void FileCopy(string sourceAbsoluteFilePathString, string destinationAbsoluteFilePathString)

@@ -21,6 +21,8 @@ public partial class FolderExplorerDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
     private string _filePath = string.Empty;
 
@@ -44,7 +46,10 @@ public partial class FolderExplorerDisplay : FluxorComponent
         
         Dispatcher.Dispatch(
             new SetFolderExplorerStateAction(
-                new AbsoluteFilePath(_filePath, true)));
+                new AbsoluteFilePath(
+                    _filePath,
+                    true,
+                    EnvironmentProvider)));
     }
     
     protected override void Dispose(bool disposing)

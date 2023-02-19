@@ -20,7 +20,8 @@ public partial class TreeViewHelper
             {
                 var absoluteFilePath = new AbsoluteFilePath(
                     x.FilePath, 
-                    false);
+                    false,
+                    dotNetSolutionTreeView.EnvironmentProvider);
 
                 var namespacePath = new NamespacePath(
                     absoluteFilePath.FileNameNoExtension,
@@ -31,6 +32,7 @@ public partial class TreeViewHelper
                     dotNetSolutionTreeView.CommonComponentRenderers,
                     dotNetSolutionTreeView.SolutionExplorerStateWrap,
                     dotNetSolutionTreeView.FileSystemProvider,
+                    dotNetSolutionTreeView.EnvironmentProvider,
                     true,
                     false)
                 {

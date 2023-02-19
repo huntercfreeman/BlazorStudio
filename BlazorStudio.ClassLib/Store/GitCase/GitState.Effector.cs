@@ -16,6 +16,7 @@ public partial record GitState
         private readonly IState<TerminalSessionsState> _terminalSessionsStateWrap;
         private readonly IState<GitState> _gitStateWrap;
         private readonly IFileSystemProvider _fileSystemProvider;
+        private readonly IEnvironmentProvider _environmentProvider;
 
         // Usage:
         /*
@@ -36,11 +37,13 @@ public partial record GitState
         public Effector(
             IState<TerminalSessionsState> terminalSessionsStateWrap,
             IState<GitState> gitStateWrap,
-            IFileSystemProvider fileSystemProvider)
+            IFileSystemProvider fileSystemProvider,
+            IEnvironmentProvider environmentProvider)
         {
             _terminalSessionsStateWrap = terminalSessionsStateWrap;
             _gitStateWrap = gitStateWrap;
             _fileSystemProvider = fileSystemProvider;
+            _environmentProvider = environmentProvider;
         }
 
         [EffectMethod]
@@ -287,7 +290,8 @@ public partial record GitState
                 {
                     var gitFolderAbsoluteFilePath = new AbsoluteFilePath(
                         gitFolderAbsoluteFilePathString,
-                        true);
+                        true,
+                        _environmentProvider);
                 
                     dispatcher.Dispatch(
                         new SetGitStateWithAction(withGitState => withGitState with
@@ -437,12 +441,13 @@ public partial record GitState
                             gitState.GitFolderAbsoluteFilePath.ParentDirectory.GetAbsoluteFilePathString() +
                             x.relativePath;
                         
-                        var isDirectory = x.relativePath.EndsWith(Path.DirectorySeparatorChar) ||
-                                          x.relativePath.EndsWith(Path.AltDirectorySeparatorChar);
+                        var isDirectory = x.relativePath.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
+                                          x.relativePath.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
                         
                         var absoluteFilePath = new AbsoluteFilePath(
                             absoluteFilePathString,
-                            isDirectory);
+                            isDirectory,
+                            _environmentProvider);
 
                         return new GitFile(absoluteFilePath, x.gitDirtyReason);
                     })

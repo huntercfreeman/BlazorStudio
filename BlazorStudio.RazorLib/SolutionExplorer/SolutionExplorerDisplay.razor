@@ -26,7 +26,7 @@
             @{
                 if (solutionExplorerState.SolutionAbsoluteFilePath is null)
                 {
-                    <ButtonDisplay OnClickFunc="async () => await SolutionExplorerState.ShowInputFileAsync(Dispatcher)">
+                    <ButtonDisplay OnClickFunc="async () => await SolutionExplorerState.ShowInputFileAsync(Dispatcher, EnvironmentProvider)">
                         Open Solution
                     </ButtonDisplay>
                 }

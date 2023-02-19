@@ -8,18 +8,24 @@ public class RelativeFilePath : IRelativeFilePath
     private int _position;
     private readonly StringBuilder _tokenBuilder = new();
 
-    public RelativeFilePath(List<IFilePath> directories,
+    public RelativeFilePath(
+        List<IFilePath> directories,
         string fileNameNoExtension, 
         string extensionNoPeriod,
-        bool isDirectory)
+        bool isDirectory,
+        IEnvironmentProvider environmentProvider)
     {
         Directories = directories;
         FileNameNoExtension = fileNameNoExtension;
         ExtensionNoPeriod = extensionNoPeriod;
         IsDirectory = isDirectory;
+        EnvironmentProvider = environmentProvider;
     }
 
-    public RelativeFilePath(string relativeFilePathString, bool isDirectory)
+    public RelativeFilePath(
+        string relativeFilePathString,
+        bool isDirectory,
+        IEnvironmentProvider environmentProvider)
     {
         // TODO: Handle ../../myFile.c
 
@@ -33,8 +39,8 @@ public class RelativeFilePath : IRelativeFilePath
                  * System.IO.Path.DirectorySeparatorChar is not a constant character
                  * As a result this is an if statement instead of a switch statement
                  */
-                if (currentCharacter == Path.DirectorySeparatorChar ||
-                    currentCharacter == Path.AltDirectorySeparatorChar)
+                if (currentCharacter ==  environmentProvider.DirectorySeparatorChar ||
+                    currentCharacter == environmentProvider.AltDirectorySeparatorChar)
                 {
                     break;
                 }
@@ -42,7 +48,8 @@ public class RelativeFilePath : IRelativeFilePath
         }
         
         IsDirectory = isDirectory;
-        
+        EnvironmentProvider = environmentProvider;
+
         while (_position < relativeFilePathString.Length)
         {
             char currentCharacter = relativeFilePathString[_position++];
@@ -51,8 +58,8 @@ public class RelativeFilePath : IRelativeFilePath
              * System.IO.Path.DirectorySeparatorChar is not a constant character
              * As a result this is an if statement instead of a switch statement
              */
-            if (currentCharacter == Path.DirectorySeparatorChar ||
-                currentCharacter == Path.AltDirectorySeparatorChar)
+            if (currentCharacter == environmentProvider.DirectorySeparatorChar ||
+                currentCharacter == environmentProvider.AltDirectorySeparatorChar)
             {
                 ConsumeTokenAsDirectory();
             }
@@ -96,8 +103,9 @@ public class RelativeFilePath : IRelativeFilePath
     {
         IFilePath directoryFilePath = (IFilePath)new RelativeFilePath(new List<IFilePath>(Directories),
             _tokenBuilder.ToString(),
-            Path.DirectorySeparatorChar.ToString(),
-            true);
+            EnvironmentProvider.DirectorySeparatorChar.ToString(),
+            true,
+            EnvironmentProvider);
 
         Directories.Add(directoryFilePath);
 
@@ -120,8 +128,12 @@ public class RelativeFilePath : IRelativeFilePath
 
     public FilePathType FilePathType { get; } = FilePathType.RelativeFilePath;
     public bool IsDirectory { get; protected set; }
+    public IEnvironmentProvider EnvironmentProvider { get; }
     public List<IFilePath> Directories { get; } = new();
     public string FileNameNoExtension { get; protected set; }
     public string ExtensionNoPeriod { get; protected set; }
-    public string FilenameWithExtension => FileNameNoExtension + (IsDirectory ? Path.DirectorySeparatorChar.ToString() : $".{ExtensionNoPeriod}");
+    public string FilenameWithExtension => FileNameNoExtension + 
+                                           (IsDirectory 
+                                               ? EnvironmentProvider.DirectorySeparatorChar.ToString()
+                                               : $".{ExtensionNoPeriod}");
 }

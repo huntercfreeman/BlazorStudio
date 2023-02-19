@@ -26,7 +26,8 @@ public record SolutionExplorerState(
     }
     
     public record RequestSetSolutionExplorerStateAction(
-        IAbsoluteFilePath? SolutionAbsoluteFilePath);
+        IAbsoluteFilePath? SolutionAbsoluteFilePath,
+        IEnvironmentProvider EnvironmentProvider);
     
     public record RequestSetSolutionAction(
         Solution? Solution);
@@ -101,7 +102,9 @@ public record SolutionExplorerState(
             
             if (_workspaceStateWrap.Value.Workspace is null)
             {
-                dispatcher.Dispatch(new SetWorkspaceStateAction());
+                dispatcher.Dispatch(
+                    new SetWorkspaceStateAction(
+                        requestSetSolutionExplorerStateAction.EnvironmentProvider));
             }
 
             var mSBuildWorkspace = ((MSBuildWorkspace)_workspaceStateWrap.Value.Workspace);
@@ -131,7 +134,8 @@ public record SolutionExplorerState(
     }
     
     public static Task ShowInputFileAsync(
-        IDispatcher dispatcher)
+        IDispatcher dispatcher,
+        IEnvironmentProvider environmentProvider)
     {
         dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
@@ -143,7 +147,8 @@ public record SolutionExplorerState(
                     {
                         dispatcher.Dispatch(
                             new RequestSetSolutionExplorerStateAction(
-                                afp));
+                                afp,
+                                environmentProvider));
                     });
                     
                     return Task.CompletedTask;

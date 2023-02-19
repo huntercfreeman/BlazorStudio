@@ -8,17 +8,23 @@ public class AbsoluteFilePath : IAbsoluteFilePath
     private int _position;
     private readonly StringBuilder _tokenBuilder = new();
 
-    public AbsoluteFilePath(string absoluteFilePathString, bool isDirectory)
+    public AbsoluteFilePath(
+        string absoluteFilePathString,
+        bool isDirectory,
+        IEnvironmentProvider environmentProvider)
     {
-        absoluteFilePathString = FilePathHelper
-            .StripEndingDirectorySeparatorIfExists(absoluteFilePathString);
-        
         IsDirectory = isDirectory;
-
+        EnvironmentProvider = environmentProvider;
+        
+        absoluteFilePathString = FilePathHelper
+            .StripEndingDirectorySeparatorIfExists(
+                absoluteFilePathString,
+                environmentProvider);
+        
         // TODO: Go through and make sure any malformed absoluteFilePathStrings received get parsed in a well defined manner
         
-        if (absoluteFilePathString.StartsWith(Path.DirectorySeparatorChar) 
-            || absoluteFilePathString.StartsWith(Path.AltDirectorySeparatorChar))
+        if (absoluteFilePathString.StartsWith(EnvironmentProvider.DirectorySeparatorChar) 
+            || absoluteFilePathString.StartsWith(EnvironmentProvider.AltDirectorySeparatorChar))
         {
             _position++;
         }
@@ -31,8 +37,8 @@ public class AbsoluteFilePath : IAbsoluteFilePath
              * System.IO.Path.DirectorySeparatorChar is not a constant character
              * As a result this is an if statement instead of a switch statement
              */
-            if (currentCharacter == Path.DirectorySeparatorChar ||
-                currentCharacter == Path.AltDirectorySeparatorChar)
+            if (currentCharacter == EnvironmentProvider.DirectorySeparatorChar ||
+                currentCharacter == EnvironmentProvider.AltDirectorySeparatorChar)
             {
                 ConsumeTokenAsDirectory();
             }
@@ -87,10 +93,12 @@ public class AbsoluteFilePath : IAbsoluteFilePath
     /// <summary>
     /// Given an absoluteFilePath and a relative path from that absolute path construct a joined absolute path
     /// </summary>
-    /// <param name="absoluteFilePath"></param>
-    /// <param name="relativeFilePath"></param>
-    public AbsoluteFilePath(IAbsoluteFilePath absoluteFilePath, IRelativeFilePath relativeFilePath)
+    public AbsoluteFilePath(
+        IAbsoluteFilePath absoluteFilePath,
+        IRelativeFilePath relativeFilePath,
+        IEnvironmentProvider environmentProvider)
     {
+        EnvironmentProvider = environmentProvider;
         Directories.AddRange(absoluteFilePath.Directories);
 
         absoluteFilePath = (IAbsoluteFilePath) absoluteFilePath.Directories
@@ -102,7 +110,8 @@ public class AbsoluteFilePath : IAbsoluteFilePath
                 new List<IFilePath>(Directories),
                 relativeFilePathDirectory.FileNameNoExtension,
                 relativeFilePathDirectory.ExtensionNoPeriod,
-                relativeFilePathDirectory.IsDirectory));
+                relativeFilePathDirectory.IsDirectory,
+                environmentProvider));
         }
 
         RootDrive = absoluteFilePath.RootDrive;
@@ -115,18 +124,22 @@ public class AbsoluteFilePath : IAbsoluteFilePath
         List<IFilePath> directories,
         string fileNameNoExtension, 
         string extensionNoPeriod, 
-        bool isDirectory)
+        bool isDirectory,
+        IEnvironmentProvider environmentProvider)
     {
         RootDrive = rootDrive;
         Directories = directories;
         FileNameNoExtension = fileNameNoExtension;
         ExtensionNoPeriod = extensionNoPeriod;
         IsDirectory = isDirectory;
+        EnvironmentProvider = environmentProvider;
     }
 
     public void ConsumeTokenAsRootDrive()
     {
-        RootDrive = new FileSystemDrive(_tokenBuilder.ToString());
+        RootDrive = new FileSystemDrive(
+            _tokenBuilder.ToString(),
+            EnvironmentProvider);
         _tokenBuilder.Clear();
 
         // skip the next file delimiter
@@ -138,8 +151,9 @@ public class AbsoluteFilePath : IAbsoluteFilePath
         IFilePath directoryFilePath = (IFilePath)new AbsoluteFilePath(RootDrive,
             new List<IFilePath>(Directories),
             _tokenBuilder.ToString(),
-            Path.DirectorySeparatorChar.ToString(),
-            true);
+            EnvironmentProvider.DirectorySeparatorChar.ToString(),
+            true,
+            EnvironmentProvider);
 
         Directories.Add(directoryFilePath);
 
@@ -148,12 +162,13 @@ public class AbsoluteFilePath : IAbsoluteFilePath
 
     public FilePathType FilePathType { get; } = FilePathType.AbsoluteFilePath;
     public bool IsDirectory { get; protected set; }
+    public IEnvironmentProvider EnvironmentProvider { get; }
     public List<IFilePath> Directories { get; } = new();
     public string FileNameNoExtension { get; protected set; }
     public string ExtensionNoPeriod { get; protected set; }
     public string FilenameWithExtension => FileNameNoExtension + 
                                            (IsDirectory 
-                                               ? Path.DirectorySeparatorChar.ToString() 
+                                               ? EnvironmentProvider.DirectorySeparatorChar.ToString() 
                                                : ExtensionNoPeriod == string.Empty
                                                    ? string.Empty
                                                    : $".{ExtensionNoPeriod}");
@@ -161,7 +176,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
     public IFileSystemDrive? RootDrive { get; private set; }
 
     public string GetRootDirectory => RootDrive is null
-        ? Path.DirectorySeparatorChar.ToString()
+        ? EnvironmentProvider.DirectorySeparatorChar.ToString()
         : RootDrive.DriveNameAsPath;
 
     public string GetAbsoluteFilePathString()
@@ -179,10 +194,10 @@ public class AbsoluteFilePath : IAbsoluteFilePath
 
         var absoluteFilePathString = absoluteFilePathStringBuilder.ToString();
 
-        if (absoluteFilePathString == new string(Path.DirectorySeparatorChar, 2) ||
-            absoluteFilePathString == new string(Path.AltDirectorySeparatorChar, 2))
+        if (absoluteFilePathString == new string(EnvironmentProvider.DirectorySeparatorChar, 2) ||
+            absoluteFilePathString == new string(EnvironmentProvider.AltDirectorySeparatorChar, 2))
         {
-            return Path.DirectorySeparatorChar.ToString();
+            return EnvironmentProvider.DirectorySeparatorChar.ToString();
         }
 
         return absoluteFilePathString;

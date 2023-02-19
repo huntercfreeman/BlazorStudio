@@ -17,6 +17,8 @@ public partial class InputFileTopNavBar : ComponentBase
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRoot")]
     public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
@@ -53,7 +55,8 @@ public partial class InputFileTopNavBar : ComponentBase
     {
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             CommonComponentRenderers,
-            FileSystemProvider));
+            FileSystemProvider,
+            EnvironmentProvider));
         
         ChangeContentRootToOpenedTreeView(InputFileState);
     }
@@ -82,7 +85,8 @@ public partial class InputFileTopNavBar : ComponentBase
     private void InputFileEditAddressOnFocusOutCallback(string address)
     {
         address = FilePathHelper.StripEndingDirectorySeparatorIfExists(
-            address);
+            address,
+            EnvironmentProvider);
 
         try
         {
@@ -98,7 +102,10 @@ public partial class InputFileTopNavBar : ComponentBase
                     $"Address provided does not exist. {address}");
             }
             
-            var absoluteFilePath = new AbsoluteFilePath(address, true);
+            var absoluteFilePath = new AbsoluteFilePath(
+                address,
+                true,
+                EnvironmentProvider);
             
             _showInputTextEditForAddress = false;
             

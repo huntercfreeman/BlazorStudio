@@ -21,26 +21,26 @@ public partial class LoginFormDisplay : ComponentBase
 
     private string GroupKey
     {
-        get => AccountStateWrap.Value.GroupKey;
+        get => AccountStateWrap.Value.GroupName;
         set
         {
             Dispatcher.Dispatch(new AccountState.AccountStateWithAction(
                 inAccountState => inAccountState with
                 {
-                    GroupKey = value
+                    GroupName = value
                 }));
         }
     }
 
     private string ContainerKey
     {
-        get => AccountStateWrap.Value.ContainerKey;
+        get => AccountStateWrap.Value.ContainerName;
         set
         {
             Dispatcher.Dispatch(new AccountState.AccountStateWithAction(
                 inAccountState => inAccountState with
                 {
-                    ContainerKey = value
+                    ContainerName = value
                 }));
         }
     }

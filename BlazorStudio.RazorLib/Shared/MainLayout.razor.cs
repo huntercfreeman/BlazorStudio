@@ -41,6 +41,8 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     private string _message = string.Empty;
     
@@ -126,7 +128,11 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             if (FileSystemProvider.FileExists("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
             {
                 Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                    new AbsoluteFilePath("/home/hunter/Repos/Demos/TestApp/TestApp.sln", false)));
+                    new AbsoluteFilePath(
+                        "/home/hunter/Repos/Demos/TestApp/TestApp.sln",
+                        false,
+                        EnvironmentProvider),
+                    EnvironmentProvider));
             }
         }
         

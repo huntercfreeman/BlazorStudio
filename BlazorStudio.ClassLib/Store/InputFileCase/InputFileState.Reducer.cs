@@ -52,7 +52,8 @@ public partial record InputFileState
                     inInputFileState,
                     setOpenedTreeViewModelAction.TreeViewModel,
                     setOpenedTreeViewModelAction.CommonComponentRenderers,
-                    setOpenedTreeViewModelAction.FileSystemProvider);
+                    setOpenedTreeViewModelAction.FileSystemProvider,
+                    setOpenedTreeViewModelAction.EnvironmentProvider);
             }
                 
             return inInputFileState;
@@ -124,6 +125,7 @@ public partial record InputFileState
                     (IAbsoluteFilePath)parentDirectoryAbsoluteFilePath, 
                     openParentDirectoryAction.CommonComponentRenderers,
                     openParentDirectoryAction.FileSystemProvider,
+                    openParentDirectoryAction.EnvironmentProvider,
                     false,
                     true);
 
@@ -136,7 +138,8 @@ public partial record InputFileState
                     inInputFileState,
                     parentDirectoryTreeViewModel,
                     openParentDirectoryAction.CommonComponentRenderers,
-                    openParentDirectoryAction.FileSystemProvider);
+                    openParentDirectoryAction.FileSystemProvider,
+                    openParentDirectoryAction.EnvironmentProvider);
             }
 
             return inInputFileState;

@@ -28,7 +28,10 @@ public partial class TreeViewHelper
                 .DirectoryGetFiles(parentAbsoluteFilePathString)
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(x, false);
+                    var absoluteFilePath = new AbsoluteFilePath(
+                        x,
+                        false,
+                        razorMarkupTreeView.EnvironmentProvider);
 
                     var namespaceString = razorMarkupTreeView.Item.Namespace;
                     
@@ -39,6 +42,7 @@ public partial class TreeViewHelper
                         razorMarkupTreeView.CommonComponentRenderers,
                         razorMarkupTreeView.SolutionExplorerStateWrap,
                         razorMarkupTreeView.FileSystemProvider,
+                        razorMarkupTreeView.EnvironmentProvider,
                         false,
                         false)
                     {

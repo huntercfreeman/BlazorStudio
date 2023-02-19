@@ -17,6 +17,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         ICommonComponentRenderers commonComponentRenderers,
         IState<SolutionExplorerState> solutionExplorerStateWrap,
         IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider,
         bool isExpandable,
         bool isExpanded)
             : base(
@@ -27,11 +28,13 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         CommonComponentRenderers = commonComponentRenderers;
         SolutionExplorerStateWrap = solutionExplorerStateWrap;
         FileSystemProvider = fileSystemProvider;
+        EnvironmentProvider = environmentProvider;
     }
  
     public ICommonComponentRenderers CommonComponentRenderers { get; }
     public IState<SolutionExplorerState> SolutionExplorerStateWrap { get; }
     public IFileSystemProvider FileSystemProvider { get; }
+    public IEnvironmentProvider EnvironmentProvider { get; }
 
     public override bool Equals(object? obj)
     {

@@ -54,6 +54,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
     public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
@@ -107,6 +109,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             CommonComponentRenderers,
             SolutionExplorerStateWrap,
             FileSystemProvider,
+            EnvironmentProvider,
             true,
             true)
         {

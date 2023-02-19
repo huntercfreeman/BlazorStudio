@@ -84,7 +84,8 @@ public static class FileTemplateFacts
         // knowing the file extension and other details
         var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
             emptyFileAbsoluteFilePathString, 
-            false);
+            false,
+            fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileContent = GetContent(
             emptyFileAbsoluteFilePath.FileNameNoExtension,
@@ -99,7 +100,8 @@ public static class FileTemplateFacts
         
         var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
             templatedFileFileAbsoluteFilePathString, 
-            false);
+            false,
+            fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileNamespacePath = new NamespacePath(
             fileTemplateParameter.ParentDirectory.Namespace,
@@ -150,7 +152,8 @@ public static class FileTemplateFacts
         // knowing the file extension and other details
         var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
             emptyFileAbsoluteFilePathString, 
-            false);
+            false,
+            fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileContent = GetContent(
             emptyFileAbsoluteFilePath.FileNameNoExtension);
@@ -164,7 +167,8 @@ public static class FileTemplateFacts
         
         var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
             templatedFileFileAbsoluteFilePathString, 
-            false);
+            false,
+            fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileNamespacePath = new NamespacePath(
             fileTemplateParameter.ParentDirectory.Namespace,
@@ -228,7 +232,8 @@ public static class FileTemplateFacts
         // knowing the file extension and other details
         var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
             emptyFileAbsoluteFilePathString, 
-            false);
+            false,
+            fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileContent = GetContent(
             emptyFileAbsoluteFilePath.FileNameNoExtension,
@@ -253,7 +258,8 @@ public static class FileTemplateFacts
         
         var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
             templatedFileFileAbsoluteFilePathString, 
-            false);
+            false,
+            fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileNamespacePath = new NamespacePath(
             fileTemplateParameter.ParentDirectory.Namespace,

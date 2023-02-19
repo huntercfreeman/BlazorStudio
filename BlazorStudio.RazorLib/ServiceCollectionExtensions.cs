@@ -2,6 +2,7 @@ using BlazorALaCarte.DialogNotification.Notification;
 using BlazorStudio.ClassLib;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.AccountCase;
 using BlazorStudio.RazorLib.Clipboard;
 using BlazorStudio.RazorLib.CSharpProjectForm;
@@ -39,10 +40,11 @@ public static class ServiceCollectionExtensions
             .AddBlazorStudioClassLibServices(
                 _ => new TemporaryInMemoryClipboardProvider(),
                 commonRendererTypes,
+                serviceProvider => new WebsiteEnvironmentProvider(
+                    serviceProvider.GetRequiredService<IState<AccountState>>()),
                 serviceProvider => 
                     new WebsiteFileSystemProvider(
-                        serviceProvider.GetRequiredService<IState<AccountState>>()),
-                serviceProvider => new WebsiteEnvironmentProvider(
-                    serviceProvider.GetRequiredService<IState<AccountState>>()));
+                        serviceProvider.GetRequiredService<IEnvironmentProvider>(),
+                        serviceProvider.GetRequiredService<IState<AccountState>>()));
     }
 }

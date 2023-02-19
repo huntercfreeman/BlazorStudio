@@ -35,6 +35,8 @@ public partial class BlazorTextEditorHeader : FluxorComponent
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
     private DropdownKey _dropdownKeyFile = DropdownKey.NewDropdownKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -109,7 +111,9 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                 ".NET Solution",
                 MenuOptionKind.Other,
                 async () => 
-                    await SolutionExplorerState.ShowInputFileAsync(Dispatcher));
+                    await SolutionExplorerState.ShowInputFileAsync(
+                        Dispatcher,
+                        EnvironmentProvider));
 
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",

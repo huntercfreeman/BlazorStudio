@@ -16,8 +16,8 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         Func<IServiceProvider, IClipboardProvider> clipboardProviderDefaultFactory,
         ICommonComponentRenderers commonComponentRenderers,
-        Func<IServiceProvider, IFileSystemProvider> fileSystemProviderFactory,
-        Func<IServiceProvider, IEnvironmentProvider> environmentProviderFactory)
+        Func<IServiceProvider, IEnvironmentProvider> environmentProviderFactory,
+        Func<IServiceProvider, IFileSystemProvider> fileSystemProviderFactory)
     {
         return services
             .AddScoped<ICommonComponentRenderers>(_ => commonComponentRenderers)
@@ -42,7 +42,7 @@ public static class ServiceCollectionExtensions
                     typeof(BlazorALaCarte.TreeView.Installation.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
                     typeof(ServiceCollectionExtensions).Assembly))
-            .AddScoped<IFileSystemProvider>(fileSystemProviderFactory.Invoke)
-            .AddScoped<IEnvironmentProvider>(environmentProviderFactory.Invoke);
+            .AddScoped<IEnvironmentProvider>(environmentProviderFactory.Invoke)
+            .AddScoped<IFileSystemProvider>(fileSystemProviderFactory.Invoke);
     }
 }

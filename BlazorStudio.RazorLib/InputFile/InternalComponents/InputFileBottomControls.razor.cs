@@ -16,6 +16,8 @@ public partial class InputFileBottomControls : ComponentBase
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
     [CascadingParameter]
     public DialogRecord? DialogRecord { get; set; }
@@ -39,7 +41,8 @@ public partial class InputFileBottomControls : ComponentBase
     {
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             CommonComponentRenderers,
-            FileSystemProvider));
+            FileSystemProvider,
+            EnvironmentProvider));
     }
 
     private void HandleRefreshButtonOnClick()

@@ -31,6 +31,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
@@ -101,6 +103,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             Dispatcher,
             CommonComponentRenderers,
             FileSystemProvider,
+            EnvironmentProvider,
             SetInputFileContentTreeViewRoot, () => Task.FromResult(SearchElementReference?.FocusAsync()),
             () => _searchMatchTuples);
         
@@ -154,6 +157,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             absoluteFilePath,
             CommonComponentRenderers,
             FileSystemProvider,
+            EnvironmentProvider,
             true,
             false);
 
@@ -193,7 +197,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,
             CommonComponentRenderers,
-            FileSystemProvider);
+            FileSystemProvider,
+            EnvironmentProvider);
         
         Dispatcher.Dispatch(setOpenedTreeViewModelAction);
     }

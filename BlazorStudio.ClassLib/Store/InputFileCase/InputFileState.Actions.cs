@@ -10,12 +10,12 @@ public partial record InputFileState
 {
     public record RequestInputFileStateFormAction(string Message, Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc, Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc, ImmutableArray<InputFilePattern> InputFilePatterns);
     public record SetSelectedTreeViewModelAction(TreeViewAbsoluteFilePath? SelectedTreeViewModel);
-    public record SetOpenedTreeViewModelAction(TreeViewAbsoluteFilePath TreeViewModel, ICommonComponentRenderers CommonComponentRenderers, IFileSystemProvider FileSystemProvider);
+    public record SetOpenedTreeViewModelAction(TreeViewAbsoluteFilePath TreeViewModel, ICommonComponentRenderers CommonComponentRenderers, IFileSystemProvider FileSystemProvider, IEnvironmentProvider EnvironmentProvider);
     public record SetSelectedInputFilePatternAction(InputFilePattern InputFilePattern);
     public record SetSearchQueryAction(string SearchQuery);
     public record MoveBackwardsInHistoryAction;
     public record MoveForwardsInHistoryAction;
-    public record OpenParentDirectoryAction(ICommonComponentRenderers CommonComponentRenderers, IFileSystemProvider FileSystemProvider);
+    public record OpenParentDirectoryAction(ICommonComponentRenderers CommonComponentRenderers, IFileSystemProvider FileSystemProvider, IEnvironmentProvider EnvironmentProvider);
     public record RefreshCurrentSelectionAction;
     public record StartInputFileStateFormAction(RequestInputFileStateFormAction RequestInputFileStateFormAction);
 }

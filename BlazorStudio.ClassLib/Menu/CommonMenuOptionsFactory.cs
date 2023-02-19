@@ -24,6 +24,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 {
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
+    private readonly IEnvironmentProvider _environmentProvider;
     private readonly IClipboardProvider _clipboardProvider;
 
     /// <summary>
@@ -34,10 +35,12 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     public CommonMenuOptionsFactory(
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider,
         IClipboardProvider clipboardProvider)
     {
         _commonComponentRenderers = commonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
+        _environmentProvider = environmentProvider;
         _clipboardProvider = clipboardProvider;
     }
     
@@ -296,7 +299,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
                 var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
                     emptyFileAbsoluteFilePathString, 
-                    false);
+                    false,
+                    _environmentProvider);
                 
                 await _fileSystemProvider.WriteFileAsync(
                     emptyFileAbsoluteFilePath,
@@ -315,7 +319,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     var templateResult = fileTemplate.ConstructFileContents.Invoke(
                         new FileTemplateParameter(
                             fileName,
-                            namespacePath));
+                            namespacePath,
+                            _environmentProvider));
                     
                     await _fileSystemProvider.WriteFileAsync(
                         templateResult.FileNamespacePath.AbsoluteFilePath,
@@ -339,7 +344,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
         var directoryAbsoluteFilePath = new AbsoluteFilePath(
             directoryAbsoluteFilePathString, 
-            false);
+            false,
+            _environmentProvider);
 
         _ = Task.Run(async () =>
         {
@@ -430,17 +436,20 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                         if (_fileSystemProvider.DirectoryExists(clipboardPhrase.Value))
                         {
                             clipboardPhrase.Value = FilePathHelper.StripEndingDirectorySeparatorIfExists(
-                                clipboardPhrase.Value);
+                                clipboardPhrase.Value,
+                                _environmentProvider);
                             
                             clipboardAbsoluteFilePath = new AbsoluteFilePath(
                                 clipboardPhrase.Value,
-                                true);
+                                true,
+                                _environmentProvider);
                         }
                         else if (_fileSystemProvider.FileExists(clipboardPhrase.Value))
                         {
                             clipboardAbsoluteFilePath = new AbsoluteFilePath(
                                 clipboardPhrase.Value,
-                                false);
+                                false,
+                                _environmentProvider);
                         }
 
                         if (clipboardAbsoluteFilePath is not null)
@@ -516,7 +525,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 StringComparison.OrdinalIgnoreCase)
                     == 0)
         {
-            var temporaryNextName = Path.GetRandomFileName();
+            var temporaryNextName = _environmentProvider.GetRandomFileName();
             
             var temporaryRenameResult = PerformRenameAction(
                 sourceAbsoluteFilePath, 
@@ -541,10 +550,12 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                   nextName;
 
         sourceAbsoluteFilePathString = FilePathHelper.StripEndingDirectorySeparatorIfExists(
-            sourceAbsoluteFilePathString);
+            sourceAbsoluteFilePathString,
+            _environmentProvider);
         
         destinationAbsoluteFilePathString = FilePathHelper.StripEndingDirectorySeparatorIfExists(
-            destinationAbsoluteFilePathString);
+            destinationAbsoluteFilePathString,
+            _environmentProvider);
         
         try
         {
@@ -588,7 +599,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         
         return new AbsoluteFilePath(
             destinationAbsoluteFilePathString,
-            sourceAbsoluteFilePath.IsDirectory);
+            sourceAbsoluteFilePath.IsDirectory,
+            _environmentProvider);
     }
     
     private void PerformRemoveCSharpProjectReferenceFromSolutionAction(TreeViewNamespacePath? solutionNode,
@@ -621,7 +633,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                         // Re-open the modified Solution
                         dispatcher.Dispatch(
                             new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                                solutionNode.Item.AbsoluteFilePath));
+                                solutionNode.Item.AbsoluteFilePath,
+                                _environmentProvider));
                         return Task.CompletedTask;
                     });
         

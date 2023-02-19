@@ -27,6 +27,8 @@ public partial class BlazorStudioInitializer : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
     protected override void OnInitialized()
     {
@@ -49,12 +51,14 @@ public partial class BlazorStudioInitializer : ComponentBase
         {
             var testSolutionExplorer = new AbsoluteFilePath(
                 @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp.sln",
-                false);
+                false,
+                EnvironmentProvider);
 
             if (FileSystemProvider.FileExists(testSolutionExplorer.GetAbsoluteFilePathString()))
             {
                 Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                    testSolutionExplorer));
+                    testSolutionExplorer,
+                    EnvironmentProvider));
             }
         }
 

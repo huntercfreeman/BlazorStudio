@@ -28,6 +28,8 @@ public partial class NugetPackageDisplay : FluxorComponent
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public NugetPackageRecord NugetPackageRecord { get; set; } = null!;
@@ -91,7 +93,10 @@ public partial class NugetPackageDisplay : FluxorComponent
             return;
         }
 
-        var projectAbsoluteFilePath = new AbsoluteFilePath(targetProject.FilePath, false);
+        var projectAbsoluteFilePath = new AbsoluteFilePath(
+            targetProject.FilePath,
+            false,
+            EnvironmentProvider);
         
         var parentDirectory = (IAbsoluteFilePath) projectAbsoluteFilePath.Directories
             .Last();
