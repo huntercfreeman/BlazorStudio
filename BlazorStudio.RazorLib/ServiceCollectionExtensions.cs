@@ -2,6 +2,7 @@ using BlazorALaCarte.DialogNotification.Notification;
 using BlazorStudio.ClassLib;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.Store.AccountCase;
 using BlazorStudio.RazorLib.Clipboard;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.File;
@@ -10,6 +11,7 @@ using BlazorStudio.RazorLib.Git;
 using BlazorStudio.RazorLib.InputFile;
 using BlazorStudio.RazorLib.NuGet;
 using BlazorStudio.RazorLib.TreeViewImplementations;
+using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BlazorStudio.RazorLib;
@@ -37,7 +39,10 @@ public static class ServiceCollectionExtensions
             .AddBlazorStudioClassLibServices(
                 _ => new TemporaryInMemoryClipboardProvider(),
                 commonRendererTypes,
-                new LocalFileSystemProvider(),
-                new LocalEnvironmentProvider());
+                serviceProvider => 
+                    new WebsiteFileSystemProvider(
+                        serviceProvider.GetRequiredService<IState<AccountState>>()),
+                serviceProvider => new WebsiteEnvironmentProvider(
+                    serviceProvider.GetRequiredService<IState<AccountState>>()));
     }
 }

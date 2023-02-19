@@ -16,13 +16,11 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         Func<IServiceProvider, IClipboardProvider> clipboardProviderDefaultFactory,
         ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider)
+        Func<IServiceProvider, IFileSystemProvider> fileSystemProviderFactory,
+        Func<IServiceProvider, IEnvironmentProvider> environmentProviderFactory)
     {
         return services
             .AddScoped<ICommonComponentRenderers>(_ => commonComponentRenderers)
-            .AddScoped<IFileSystemProvider>(_ => fileSystemProvider)
-            .AddScoped<IEnvironmentProvider>(_ => environmentProvider)
             .AddScoped<Menu.ICommonMenuOptionsFactory, Menu.CommonMenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
@@ -43,6 +41,8 @@ public static class ServiceCollectionExtensions
                     typeof(BlazorALaCarte.DialogNotification.Installation.ServiceCollectionExtensions).Assembly, 
                     typeof(BlazorALaCarte.TreeView.Installation.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
-                    typeof(ServiceCollectionExtensions).Assembly));
+                    typeof(ServiceCollectionExtensions).Assembly))
+            .AddScoped<IFileSystemProvider>(fileSystemProviderFactory.Invoke)
+            .AddScoped<IEnvironmentProvider>(environmentProviderFactory.Invoke);
     }
 }

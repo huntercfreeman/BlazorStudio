@@ -1,5 +1,7 @@
 using Azure.Storage.Blobs;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.AccountCase;
+using Fluxor;
 
 namespace BlazorStudio.ClassLib.FileSystem.Classes;
 
@@ -7,10 +9,17 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
 {
     private const string AZURE_STORAGE_CONNECTION_STRING_ENVIRONMENT_VARIABLE_NAME = "AZURE_STORAGE_CONNECTION_STRING";
     
+    private readonly IState<AccountState> _accountStateWrap;
+    
     private readonly BlobServiceClient _blobServiceClient = new(
         Environment.GetEnvironmentVariable(
             AZURE_STORAGE_CONNECTION_STRING_ENVIRONMENT_VARIABLE_NAME));
-    
+
+    public WebsiteFileSystemProvider(IState<AccountState> accountStateWrap)
+    {
+        _accountStateWrap = accountStateWrap;
+    }
+
     public Task WriteFileAsync(
         IAbsoluteFilePath absoluteFilePath, 
         string content,
@@ -45,6 +54,7 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
     
     public bool FileExists(string absoluteFilePathString)
     {
+        var accountState = _accountStateWrap.Value;
         throw new NotImplementedException();
     }
 
