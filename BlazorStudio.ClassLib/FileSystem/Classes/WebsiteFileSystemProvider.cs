@@ -33,6 +33,10 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         bool create,
         CancellationToken cancellationToken = default)
     {
+        var absoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
+        
+        absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
+        
         Console.WriteLine(nameof(WriteFileAsync));
 
         var accountState = _accountStateWrap.Value;
@@ -42,7 +46,7 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
 
         GetBlobClient(
             containerClient,
-            absoluteFilePath.GetAbsoluteFilePathString(),
+            absoluteFilePathString,
             true,
             content);
 
@@ -89,15 +93,14 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
     public bool FileExists(
         string absoluteFilePathString)
     {
+        absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
+        
         var accountState = _accountStateWrap.Value;
         
         var containerClient = _blobServiceClient.GetBlobContainerClient(
             accountState.ContainerName);
-
-        var blobName = _environmentProvider.RootDirectoryAbsoluteFilePath + 
-                       absoluteFilePathString;
         
-        var blobClient = containerClient.GetBlobClient(blobName);
+        var blobClient = containerClient.GetBlobClient(absoluteFilePathString);
 
         return blobClient.Exists();
     }
@@ -123,32 +126,71 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
     public DateTime FileGetLastWriteTime(
         string absoluteFilePathString)
     {
+        absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
+        
         Console.WriteLine(nameof(FileGetLastWriteTime));
         
-        throw new NotImplementedException();
+        var accountState = _accountStateWrap.Value;
+        
+        var containerClient = _blobServiceClient.GetBlobContainerClient(
+            accountState.ContainerName);
+
+        var blobClient = containerClient.GetBlobClient(absoluteFilePathString);
+        
+        return blobClient
+            .GetPropertiesAsync()
+            .Result.Value.LastModified.UtcDateTime;
     }
 
-    public Task<string> FileReadAllTextAsync(
+    public async Task<string> FileReadAllTextAsync(
         string absoluteFilePathString)
     {
+        absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
+        
         Console.WriteLine(nameof(FileReadAllTextAsync));
         
-        throw new NotImplementedException();
+        var accountState = _accountStateWrap.Value;
+        
+        var containerClient = _blobServiceClient.GetBlobContainerClient(
+            accountState.ContainerName);
+
+        var blobClient = containerClient.GetBlobClient(absoluteFilePathString);
+        
+        var contentResponse = await blobClient.DownloadContentAsync();
+
+        return System.Text.Encoding.UTF8.GetString(
+            contentResponse.Value.Content);
     }
 
-    public Task WriteAllTextAsync(
+    public async Task WriteAllTextAsync(
         string absoluteFilePathString,
         string? contents,
         CancellationToken cancellationToken = default(CancellationToken))
     {
+        absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
+        
         Console.WriteLine(nameof(WriteAllTextAsync));
         
-        throw new NotImplementedException();
+        var accountState = _accountStateWrap.Value;
+        
+        var containerClient = _blobServiceClient.GetBlobContainerClient(
+            accountState.ContainerName);
+
+        var blobClient = containerClient.GetBlobClient(absoluteFilePathString);
+        
+        var stream = GenerateStreamFromString(contents ?? string.Empty);
+            
+        await blobClient.UploadAsync(
+            stream, 
+            true,
+            cancellationToken);
     }
 
     public bool DirectoryExists(
         string absoluteFilePathString)
     {
+        absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
+        
         Console.WriteLine(nameof(DirectoryExists));
         
         var accountState = _accountStateWrap.Value;
@@ -172,6 +214,8 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
     public string[] DirectoryGetDirectories(
         string absoluteFilePathString)
     {
+        absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
+        
         Console.WriteLine(nameof(DirectoryGetDirectories));
         
         var accountState = _accountStateWrap.Value;
@@ -203,6 +247,8 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
     public string[] DirectoryGetFiles(
         string absoluteFilePathString)
     {
+        absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
+        
         Console.WriteLine(nameof(DirectoryGetFiles));
         
         var accountState = _accountStateWrap.Value;
@@ -214,13 +260,6 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
             absoluteFilePathString + DIRECTORY_FILE_NAME,
             true,
             string.Empty);
-
-        if (absoluteFilePathString.StartsWith(_environmentProvider.DirectorySeparatorChar))
-        {
-            absoluteFilePathString = new string(absoluteFilePathString
-                .Skip(1)
-                .ToArray());
-        }
         
         var blobItemPages = containerClient
             .GetBlobs(prefix: absoluteFilePathString);
@@ -237,6 +276,18 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
                                !blobItem.Name.EndsWith(DIRECTORY_FILE_NAME))
             .Select(x => x.Name)
             .ToArray();
+    }
+
+    private string FormatAbsoluteFilePathString(string absoluteFilePathString)
+    {
+        if (absoluteFilePathString.StartsWith(_environmentProvider.DirectorySeparatorChar))
+        {
+            return new string(absoluteFilePathString
+                .Skip(1)
+                .ToArray());
+        }
+
+        return absoluteFilePathString;
     }
 
     public IEnumerable<string> DirectoryEnumerateFileSystemEntries(
