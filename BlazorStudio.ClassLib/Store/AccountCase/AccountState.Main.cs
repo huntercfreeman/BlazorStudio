@@ -8,14 +8,14 @@ namespace BlazorStudio.ClassLib.Store.AccountCase;
 [FeatureState]
 public partial record AccountState(string ContainerName, string GroupName, string Alias)
 {
+    public const string DEFAULT_CONTAINER_NAME = "default-container-name";
+    public const string DEFAULT_GROUP_NAME = "default-group-name";
     public const string DEFAULT_ALIAS = "Anonymous";
-    public const string EMPTY_CONTAINER_NAME = "00000000-0000-0000-0000-000000000000";
-    public const string EMPTY_GROUP_NAME = "00000000-0000-0000-0000-000000000000";
     
     private AccountState() 
         : this(
-            EMPTY_CONTAINER_NAME,
-            EMPTY_GROUP_NAME,
+            DEFAULT_CONTAINER_NAME,
+            DEFAULT_GROUP_NAME,
             DEFAULT_ALIAS)
     {
     }

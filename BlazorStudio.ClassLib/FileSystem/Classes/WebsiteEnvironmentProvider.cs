@@ -21,16 +21,24 @@ public class WebsiteEnvironmentProvider : IEnvironmentProvider
             var accountState = _accountStateWrap.Value;
             
             return new AbsoluteFilePath(
-                accountState.GroupName + '/',
+                string.Empty,
                 true,
                 this);
         }
     }
 
-    public IAbsoluteFilePath HomeDirectoryAbsoluteFilePath => new AbsoluteFilePath(
-        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-        true,
-        this);
+    public IAbsoluteFilePath HomeDirectoryAbsoluteFilePath
+    {
+        get
+        {
+            var accountState = _accountStateWrap.Value;
+            
+            return new AbsoluteFilePath(
+                accountState.GroupName + '/',
+                true,
+                this);
+        }
+    }
     
     public char DirectorySeparatorChar => '/';
     public char AltDirectorySeparatorChar => '/';
