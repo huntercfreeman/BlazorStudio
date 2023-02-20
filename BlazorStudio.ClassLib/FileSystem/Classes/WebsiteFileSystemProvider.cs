@@ -33,12 +33,12 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         bool create,
         CancellationToken cancellationToken = default)
     {
+        Console.WriteLine(nameof(WriteFileAsync));
+        
         var absoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
         
         absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
         
-        Console.WriteLine(nameof(WriteFileAsync));
-
         var accountState = _accountStateWrap.Value;
         
         var containerClient = _blobServiceClient.GetBlobContainerClient(
@@ -68,7 +68,22 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
     {
         Console.WriteLine(nameof(CreateDirectoryAsync));
         
-        throw new NotImplementedException();
+        var absoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
+        
+        absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
+        
+        var accountState = _accountStateWrap.Value;
+        
+        var containerClient = _blobServiceClient.GetBlobContainerClient(
+            accountState.ContainerName);
+
+        _ = GetBlobClient(
+            containerClient,
+            absoluteFilePathString + DIRECTORY_FILE_NAME,
+            true,
+            string.Empty);
+
+        return Task.CompletedTask;
     }
 
     public Task DeleteFileAsync(
@@ -224,7 +239,7 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
 
         var directoryBlobClient = GetBlobClient(
             containerClient,
-            absoluteFilePathString + DIRECTORY_FILE_NAME,
+            absoluteFilePathString,
             true,
             string.Empty);
         
@@ -257,7 +272,7 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
 
         var directoryBlobClient = GetBlobClient(
             containerClient,
-            absoluteFilePathString + DIRECTORY_FILE_NAME,
+            absoluteFilePathString,
             true,
             string.Empty);
         

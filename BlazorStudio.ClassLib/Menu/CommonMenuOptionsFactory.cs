@@ -344,7 +344,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
         var directoryAbsoluteFilePath = new AbsoluteFilePath(
             directoryAbsoluteFilePathString, 
-            false,
+            true,
             _environmentProvider);
 
         _ = Task.Run(async () =>
