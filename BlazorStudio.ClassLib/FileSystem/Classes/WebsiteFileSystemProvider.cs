@@ -106,14 +106,46 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         await blobClient.DeleteAsync(cancellationToken: cancellationToken);
     }
     
-    public Task DeleteDirectoryAsync(
+    public async Task DeleteDirectoryAsync(
         IAbsoluteFilePath absoluteFilePath,
         bool recursive,
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(DeleteDirectoryAsync));
+
+        var absoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
         
-        throw new NotImplementedException();
+        absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
+
+        if (AccountState.DEFAULT_GROUP_NAME  + _environmentProvider.DirectorySeparatorChar == absoluteFilePathString)
+            return;
+        
+        Console.WriteLine(nameof(DirectoryGetDirectories));
+        
+        var accountState = _accountStateWrap.Value;
+        
+        var containerClient = GetBlobContainerClient(accountState);
+
+        var blobItemPages = containerClient
+            .GetBlobs(prefix: absoluteFilePathString);
+
+        var blobItems = blobItemPages
+            .AsPages()
+            .SelectMany(x => x.Values)
+            .ToList();
+
+        var blobItemsSortedByDepth = blobItems
+            .OrderByDescending(blobItem => blobItem.Name
+                .Split(_environmentProvider.DirectorySeparatorChar)
+                .Length)
+            .ToArray();
+
+        foreach (var blobItem in blobItemsSortedByDepth)
+        {
+            await DeleteFileAsync(
+                new AbsoluteFilePath(blobItem.Name, false, _environmentProvider),
+                cancellationToken);
+        }
     }
     
     public bool FileExists(
