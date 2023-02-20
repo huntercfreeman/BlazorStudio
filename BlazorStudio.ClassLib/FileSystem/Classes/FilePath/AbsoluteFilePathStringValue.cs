@@ -1,6 +1,6 @@
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
-namespace BlazorStudio.ClassLib.FileSystem.Classes;
+namespace BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 
 public record AbsoluteFilePathStringValue(string AbsoluteFilePathString)
 {

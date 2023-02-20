@@ -176,7 +176,7 @@ public class TerminalSession
 
         var bash = "/bin/bash";
 
-        if (_fileSystemProvider.FileExists(bash))
+        if (await _fileSystemProvider.File.ExistsAsync(bash))
         {
             _process.StartInfo.FileName = bash;
             _process.StartInfo.Arguments = $"-c \"{terminalCommand.Command}\"";

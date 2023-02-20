@@ -1,6 +1,7 @@
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
-namespace BlazorStudio.ClassLib.FileSystem.Classes;
+namespace BlazorStudio.ClassLib.FileSystem.Classes.Local;
 
 public class LocalEnvironmentProvider : IEnvironmentProvider
 {

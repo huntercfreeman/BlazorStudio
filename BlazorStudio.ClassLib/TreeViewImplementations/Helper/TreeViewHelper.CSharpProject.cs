@@ -2,6 +2,7 @@
 using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
 
@@ -9,11 +10,11 @@ namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static Task<List<TreeViewNoType>> LoadChildrenForCSharpProjectAsync(
+    public static async Task<List<TreeViewNoType>> LoadChildrenForCSharpProjectAsync(
         TreeViewNamespacePath cSharpProjectTreeView)
     {
         if (cSharpProjectTreeView.Item is null)
-            return Task.FromResult<List<TreeViewNoType>>(new());
+            return new();
         
         var parentDirectoryOfCSharpProject = (IAbsoluteFilePath)
             cSharpProjectTreeView.Item.AbsoluteFilePath.Directories
@@ -26,8 +27,8 @@ public partial class TreeViewHelper
             .GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
         
         var childDirectoryTreeViewModels = 
-            cSharpProjectTreeView.FileSystemProvider
-                .DirectoryGetDirectories(parentAbsoluteFilePathString)
+            (await cSharpProjectTreeView.FileSystemProvider
+                .Directory.GetDirectoriesAsync(parentAbsoluteFilePathString))
                 .OrderBy(filePathString => filePathString)
                 .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
                 .Select(x =>
@@ -88,8 +89,8 @@ public partial class TreeViewHelper
             .ToList();
         
         var childFileTreeViewModels = 
-            cSharpProjectTreeView.FileSystemProvider
-                .DirectoryGetFiles(parentAbsoluteFilePathString)
+            (await cSharpProjectTreeView.FileSystemProvider
+                .Directory.GetFilesAsync(parentAbsoluteFilePathString))
                 .OrderBy(filePathString => filePathString)
                 .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                 .Select(x =>
@@ -116,10 +117,9 @@ public partial class TreeViewHelper
                     };
                 });
         
-        return 
-            Task.FromResult(foundUniqueDirectories
-                .Union(foundDefaultDirectories)
-                .Union(childFileTreeViewModels)
-                .ToList());
+        return foundUniqueDirectories
+            .Union(foundDefaultDirectories)
+            .Union(childFileTreeViewModels)
+            .ToList();
     }
 }

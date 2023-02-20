@@ -2,6 +2,7 @@
 using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
 
@@ -9,11 +10,11 @@ namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static Task<List<TreeViewNoType>> LoadChildrenForRazorMarkupAsync(
+    public static async Task<List<TreeViewNoType>> LoadChildrenForRazorMarkupAsync(
         TreeViewNamespacePath razorMarkupTreeView)
     {
         if (razorMarkupTreeView.Item is null)
-            return Task.FromResult<List<TreeViewNoType>>(new());
+            return new();
         
         var parentDirectoryOfRazorMarkup = (IAbsoluteFilePath)
             razorMarkupTreeView.Item.AbsoluteFilePath.Directories
@@ -23,9 +24,8 @@ public partial class TreeViewHelper
             .GetAbsoluteFilePathString();
 
         var childFileTreeViewModels = 
-            
-            razorMarkupTreeView.FileSystemProvider
-                .DirectoryGetFiles(parentAbsoluteFilePathString)
+            (await razorMarkupTreeView.FileSystemProvider
+                .Directory.GetFilesAsync(parentAbsoluteFilePathString))
                 .Select(x =>
                 {
                     var absoluteFilePath = new AbsoluteFilePath(
@@ -54,7 +54,7 @@ public partial class TreeViewHelper
             razorMarkupTreeView,
             childFileTreeViewModels);
 
-        return Task.FromResult(razorMarkupTreeView.Children);
+        return razorMarkupTreeView.Children;
     }
     
     public static void RazorMarkupFindRelatedFiles(

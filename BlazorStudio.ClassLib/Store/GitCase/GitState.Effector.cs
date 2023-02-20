@@ -2,6 +2,7 @@
 using System.Text;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Git;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -90,7 +91,7 @@ public partial record GitState
                 }));
 
                 if (gitState.GitFolderAbsoluteFilePath is null ||
-                    !_fileSystemProvider.DirectoryExists(gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()) ||
+                    !await _fileSystemProvider.Directory.ExistsAsync(gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()) ||
                     gitState.GitFolderAbsoluteFilePath.ParentDirectory is null)
                 {
                     return;
@@ -280,8 +281,9 @@ public partial record GitState
                     tryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath
                         .GetAbsoluteFilePathString();
             
-                var childDirectoryAbsoluteFilePathStrings = _fileSystemProvider.DirectoryGetDirectories(
-                    directoryAbsoluteFilePathString);
+                var childDirectoryAbsoluteFilePathStrings = await _fileSystemProvider.Directory
+                    .GetDirectoriesAsync(
+                        directoryAbsoluteFilePathString);
 
                 var gitFolderAbsoluteFilePathString = childDirectoryAbsoluteFilePathStrings.FirstOrDefault(
                     x => x.EndsWith(GitFacts.GIT_FOLDER_NAME));

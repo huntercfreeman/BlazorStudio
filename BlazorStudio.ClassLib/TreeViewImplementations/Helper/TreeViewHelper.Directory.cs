@@ -1,24 +1,25 @@
 ﻿using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.Namespaces;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
+    public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewNamespacePath directoryTreeView)
     {
         if (directoryTreeView.Item is null)
-            return Task.FromResult<List<TreeViewNoType>>(new());
+            return new();
         
         var directoryAbsoluteFilePathString = directoryTreeView.Item.AbsoluteFilePath
             .GetAbsoluteFilePathString();
         
         var childDirectoryTreeViewModels = 
-            directoryTreeView.FileSystemProvider
-                .DirectoryGetDirectories(directoryAbsoluteFilePathString)
+            (await directoryTreeView.FileSystemProvider
+                .Directory.GetDirectoriesAsync(directoryAbsoluteFilePathString))
                 .OrderBy(filePathString => filePathString)
                 .Select(x =>
                 {
@@ -48,10 +49,9 @@ public partial class TreeViewHelper
                     };
                 });
         
-        var childFileTreeViewModels = 
-            
-            directoryTreeView.FileSystemProvider
-                .DirectoryGetFiles(directoryAbsoluteFilePathString)
+        var childFileTreeViewModels =
+            (await directoryTreeView.FileSystemProvider
+                .Directory.GetFilesAsync(directoryAbsoluteFilePathString))
                 .OrderBy(filePathString => filePathString)
                 .Select(x =>
                 {
@@ -91,24 +91,23 @@ public partial class TreeViewHelper
         // children take their respective 'code behinds'
         childFileTreeViewModels = copyOfChildrenToFindRelatedFiles;
 
-        return Task.FromResult(childDirectoryTreeViewModels
+        return childDirectoryTreeViewModels
             .Union(childFileTreeViewModels)
-            .ToList());
+            .ToList();
     }
     
-    public static Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
+    public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewAbsoluteFilePath directoryTreeView)
     {
         if (directoryTreeView.Item is null)
-            return Task.FromResult<List<TreeViewNoType>>(new());
+            return new();
         
         var directoryAbsoluteFilePathString = directoryTreeView.Item
             .GetAbsoluteFilePathString();
         
         var childDirectoryTreeViewModels = 
-            
-            directoryTreeView.FileSystemProvider
-                .DirectoryGetDirectories(directoryAbsoluteFilePathString)
+            (await directoryTreeView.FileSystemProvider
+                .Directory.GetDirectoriesAsync(directoryAbsoluteFilePathString))
                 .OrderBy(filePathString => filePathString)
                 .Select(x =>
                 {
@@ -130,9 +129,8 @@ public partial class TreeViewHelper
                 });
         
         var childFileTreeViewModels = 
-            
-            directoryTreeView.FileSystemProvider
-                .DirectoryGetFiles(directoryAbsoluteFilePathString)
+            (await directoryTreeView.FileSystemProvider
+                .Directory.GetFilesAsync(directoryAbsoluteFilePathString))
                 .OrderBy(filePathString => filePathString)
                 .Select(x =>
                 {
@@ -153,8 +151,8 @@ public partial class TreeViewHelper
                     };
                 });
 
-        return Task.FromResult(childDirectoryTreeViewModels
+        return childDirectoryTreeViewModels
             .Union(childFileTreeViewModels)
-            .ToList());
+            .ToList();
     }
 }

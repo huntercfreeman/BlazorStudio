@@ -1,4 +1,4 @@
-﻿namespace BlazorStudio.ClassLib.FileSystem.Classes;
+﻿namespace BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 
 public enum FilePathType
 {

@@ -29,7 +29,7 @@ public partial class DeleteFileFormDisplay
     private int? _countOfImmediateChildren;
     private ButtonDisplay? _cancelButtonDisplay;
 
-    protected override Task OnParametersSetAsync()
+    protected override async Task OnParametersSetAsync()
     {
         if (_previousAbsoluteFilePath is null ||
             _previousAbsoluteFilePath.GetAbsoluteFilePathString() != 
@@ -41,13 +41,14 @@ public partial class DeleteFileFormDisplay
 
             if (AbsoluteFilePath.IsDirectory)
             {
-                _countOfImmediateChildren = FileSystemProvider.DirectoryEnumerateFileSystemEntries(
-                        AbsoluteFilePath.GetAbsoluteFilePathString())
+                _countOfImmediateChildren = (await FileSystemProvider.Directory
+                    .EnumerateFileSystemEntriesAsync(
+                        AbsoluteFilePath.GetAbsoluteFilePathString()))
                     .Count();
             }
         }
         
-        return base.OnParametersSetAsync();
+        await base.OnParametersSetAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

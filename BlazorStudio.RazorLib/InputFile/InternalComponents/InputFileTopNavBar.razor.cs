@@ -2,6 +2,7 @@
 using BlazorALaCarte.DialogNotification.Store.NotificationCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using Fluxor;
@@ -82,7 +83,7 @@ public partial class InputFileTopNavBar : ComponentBase
             SetInputFileContentTreeViewRoot.Invoke(openedTreeView.Item);
     }
     
-    private void InputFileEditAddressOnFocusOutCallback(string address)
+    private async Task InputFileEditAddressOnFocusOutCallbackAsync(string address)
     {
         address = FilePathHelper.StripEndingDirectorySeparatorIfExists(
             address,
@@ -90,9 +91,9 @@ public partial class InputFileTopNavBar : ComponentBase
 
         try
         {
-            if (!FileSystemProvider.DirectoryExists(address))
+            if (!await FileSystemProvider.Directory.ExistsAsync(address))
             {
-                if (FileSystemProvider.FileExists(address))
+                if (await FileSystemProvider.File.ExistsAsync(address))
                 {
                     throw new ApplicationException(
                         $"Address provided was a file. Provide a directory instead. {address}");

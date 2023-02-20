@@ -9,7 +9,7 @@ public partial class InputFileEditAddress : ComponentBase
     [Parameter, EditorRequired]
     public string InitialInputValue { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action<string> OnFocusOutCallback { get; set; } = null!;
+    public Func<string, Task> OnFocusOutCallbackAsync { get; set; } = null!;
     [Parameter, EditorRequired]
     public Action OnEscapeKeyDownCallback { get; set; } = null!;
 
@@ -34,13 +34,13 @@ public partial class InputFileEditAddress : ComponentBase
         base.OnAfterRender(firstRender);
     }
 
-    private void InputTextEditForAddressOnFocusOut()
+    private async Task InputTextEditForAddressOnFocusOutAsync()
     {
         if (!_isCancelled)
-            OnFocusOutCallback.Invoke(_editForAddressValue);
+            await OnFocusOutCallbackAsync.Invoke(_editForAddressValue);
     }
 
-    private void InputTextEditForAddressOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private async Task InputTextEditForAddressOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
@@ -50,7 +50,7 @@ public partial class InputFileEditAddress : ComponentBase
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
-            InputTextEditForAddressOnFocusOut();
+            await InputTextEditForAddressOnFocusOutAsync();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BlazorALaCarte.Shared.Icons.Codicon;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
@@ -46,6 +47,13 @@ public partial class BlazorStudioInitializer : ComponentBase
                 terminalSession));
         }
 
+        InitializePanelTabs();
+        
+        base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
         // This block is so I can work on the Solution Explorer UI
         // without clicking through the app to open a solution
         {
@@ -54,17 +62,15 @@ public partial class BlazorStudioInitializer : ComponentBase
                 false,
                 EnvironmentProvider);
 
-            if (FileSystemProvider.FileExists(testSolutionExplorer.GetAbsoluteFilePathString()))
+            if (await FileSystemProvider.File.ExistsAsync(testSolutionExplorer.GetAbsoluteFilePathString()))
             {
                 Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
                     testSolutionExplorer,
                     EnvironmentProvider));
             }
         }
-
-        InitializePanelTabs();
         
-        base.OnInitialized();
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private void InitializePanelTabs()

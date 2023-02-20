@@ -1,8 +1,9 @@
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.AccountCase;
 using Fluxor;
 
-namespace BlazorStudio.ClassLib.FileSystem.Classes;
+namespace BlazorStudio.ClassLib.FileSystem.Classes.Website;
 
 public class WebsiteEnvironmentProvider : IEnvironmentProvider
 {

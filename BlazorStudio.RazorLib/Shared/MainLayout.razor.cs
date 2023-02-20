@@ -11,6 +11,7 @@ using BlazorALaCarte.Shared.Store.ThemeCase;
 using BlazorALaCarte.Shared.Theme;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.FontCase;
@@ -125,7 +126,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             if (int.TryParse(iconSizeString, out var iconSize))
                 AppOptionsService.SetIconSize(iconSize);
 
-            if (FileSystemProvider.FileExists("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
+            if (await FileSystemProvider.File.ExistsAsync("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
             {
                 Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
                     new AbsoluteFilePath(
