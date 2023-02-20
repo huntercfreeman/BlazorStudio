@@ -16,6 +16,7 @@ using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.FolderExplorer.Classes;
+using BlazorStudio.RazorLib.FolderExplorer.InternalComponents;
 using BlazorStudio.RazorLib.InputFile.InternalComponents;
 using BlazorStudio.RazorLib.SolutionExplorer;
 using BlazorTextEditor.RazorLib;
@@ -139,7 +140,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         
         Dispatcher.Dispatch(
             new DropdownsState.AddActiveAction(
-                SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
+                FolderExplorerContextMenu.ContextMenuEventDropdownKey));
         
         await InvokeAsync(StateHasChanged);
     }
