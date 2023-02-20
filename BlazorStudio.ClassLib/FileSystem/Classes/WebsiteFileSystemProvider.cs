@@ -334,8 +334,11 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         string absoluteFilePathString)
     {
         Console.WriteLine(nameof(DirectoryEnumerateFileSystemEntries));
-        
-        throw new NotImplementedException();
+
+        var childDirectories = DirectoryGetDirectories(absoluteFilePathString);
+        var childFiles = DirectoryGetFiles(absoluteFilePathString);
+
+        return childDirectories.Union(childFiles);
     }
     
     private BlobContainerClient GetBlobContainerClient(
