@@ -49,18 +49,43 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
-    
-    public static readonly TreeViewStateKey TreeViewFolderExplorerContentStateKey = 
+
+    public static readonly TreeViewStateKey TreeViewFolderExplorerContentStateKey =
         TreeViewStateKey.NewTreeViewStateKey();
-    
+
     private FolderExplorerTreeViewMouseEventHandler _folderExplorerTreeViewMouseEventHandler = null!;
     private FolderExplorerTreeViewKeyboardEventHandler _folderExplorerTreeViewKeyboardEventHandler = null!;
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
-    
+
+    private TreeViewNodeKey _previousRootTreeViewNodeKey = TreeViewNodeKey.Empty;
+
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
         AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
-        (2.0/3.0));
-    
+        (2.0 / 3.0));
+
+    protected override void OnParametersSet()
+    {
+        var folderExplorerState = FolderExplorerStateWrap.Value;
+        
+        var treeViewStateFound = TreeViewService.TryGetTreeViewState(
+            TreeViewFolderExplorerContentStateKey,
+            out var treeViewState);
+
+        if (treeViewStateFound &&
+            treeViewState is not null &&
+            _previousRootTreeViewNodeKey != treeViewState.RootNode.TreeViewNodeKey)
+        {
+            FolderExplorerStateWrapOnStateChanged(null, EventArgs.Empty);
+        }
+        else
+        {
+            if (folderExplorerState.AbsoluteFilePath is not null)
+                SetFolderExplorerTreeViewRoot(folderExplorerState.AbsoluteFilePath);
+        }
+
+        base.OnParametersSet();
+    }
+
     protected override void OnInitialized()
     {
         FolderExplorerStateWrap.StateChanged += FolderExplorerStateWrapOnStateChanged;
@@ -81,7 +106,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             Dispatcher,
             TreeViewService,
             TextEditorService);
-        
+
         base.OnInitialized();
     }
 
@@ -94,12 +119,12 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
         await InvokeAsync(StateHasChanged);
     }
-    
+
     private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
     {
         await InvokeAsync(StateHasChanged);
     }
-    
+
     private void SetFolderExplorerTreeViewRoot(IAbsoluteFilePath absoluteFilePath)
     {
         var rootNode = new TreeViewAbsoluteFilePath(
@@ -110,10 +135,12 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             true,
             true);
 
+        _previousRootTreeViewNodeKey = rootNode.TreeViewNodeKey;
+
         rootNode.LoadChildrenAsync().Wait();
-        
+
         if (!TreeViewService.TryGetTreeViewState(
-                TreeViewFolderExplorerContentStateKey, 
+                TreeViewFolderExplorerContentStateKey,
                 out var treeViewState))
         {
             TreeViewService.RegisterTreeViewState(new TreeViewState(
@@ -127,21 +154,21 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             TreeViewService.SetRoot(
                 TreeViewFolderExplorerContentStateKey,
                 rootNode);
-            
+
             TreeViewService.SetActiveNode(
                 TreeViewFolderExplorerContentStateKey,
                 rootNode);
         }
     }
-    
+
     private async Task OnTreeViewContextMenuFunc(ITreeViewCommandParameter treeViewCommandParameter)
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
-        
+
         Dispatcher.Dispatch(
             new DropdownsState.AddActiveAction(
                 FolderExplorerContextMenu.ContextMenuEventDropdownKey));
-        
+
         await InvokeAsync(StateHasChanged);
     }
 
