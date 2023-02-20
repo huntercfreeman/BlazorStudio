@@ -1,8 +1,11 @@
 @using BlazorStudio.ClassLib.Context
 @using BlazorStudio.ClassLib.Store.FolderExplorerCase
 @using BlazorStudio.RazorLib.ContextCase
-
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@using BlazorStudio.ClassLib.Store.SolutionExplorer
+@using BlazorALaCarte.Shared.Dropdown
+@using BlazorALaCarte.TreeView
+@using BlazorALaCarte.TreeView.Displays
+@using BlazorStudio.RazorLib.FolderExplorer.InternalComponents
 
 <ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
                  ClassCssString="bstudio_folder-explorer-display"
@@ -24,8 +27,26 @@
             }
             else
             {
-                
-            }
+                    <CascadingValue Name="BlazorTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                        <CascadingValue Name="BlazorTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                                <TreeViewStateDisplay TreeViewStateKey="TreeViewFolderExplorerContentStateKey"
+                                                      CssStyleString="height: 100%;"
+                                                      OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                      TreeViewKeyboardEventHandler="_folderExplorerTreeViewKeyboardEventHandler"
+                                                      TreeViewMouseEventHandler="_folderExplorerTreeViewMouseEventHandler"/>
+                            </CascadingValue>
+                        </CascadingValue>
+                    </CascadingValue>
+
+
+                    <DropdownDisplay DropdownKey="FolderExplorerContextMenu.ContextMenuEventDropdownKey"
+                                     DropdownPositionKind="DropdownPositionKind.Unset"
+                                     CssStyleString="@FolderExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter)">
+
+                        <FolderExplorerContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter"/>
+                    </DropdownDisplay>
+                }
         }
     </div>
 </ContextBoundary>

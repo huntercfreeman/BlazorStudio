@@ -1,4 +1,7 @@
-﻿using System.Collections.Immutable;
+﻿using BlazorStudio.ClassLib.Menu;
+using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification;
 using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.DialogNotification.Notification;
 using BlazorALaCarte.DialogNotification.Store.DialogCase;
@@ -9,6 +12,7 @@ using BlazorALaCarte.Shared.Menu;
 using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorALaCarte.TreeView.Commands;
+using BlazorALaCarte.TreeView.Events;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
@@ -23,14 +27,15 @@ using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.CSharpProjectForm;
-using BlazorStudio.RazorLib.SolutionExplorer;
+using BlazorStudio.RazorLib.DotNetSolutionForm;
 using Fluxor;
-using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 
-namespace BlazorStudio.RazorLib.InputFile.InternalComponents;
+namespace BlazorStudio.RazorLib.FolderExplorer.InternalComponents;
 
-public partial class InputFileContextMenu : ComponentBase
+public partial class FolderExplorerContextMenu : ComponentBase
 {
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
@@ -280,11 +285,11 @@ public partial class InputFileContextMenu : ComponentBase
         await treeViewModel.LoadChildrenAsync();
         
         TreeViewService.ReRenderNode(
-            InputFileSidebar.TreeViewInputFileSidebarStateKey, 
+            FolderExplorerDisplay.TreeViewFolderExplorerContentStateKey, 
             treeViewModel);
         
         TreeViewService.MoveUp(
-            InputFileSidebar.TreeViewInputFileSidebarStateKey,
+            FolderExplorerDisplay.TreeViewFolderExplorerContentStateKey,
             false);
     }
     
@@ -336,67 +341,17 @@ public partial class InputFileContextMenu : ComponentBase
         return Task.CompletedTask;
     }
     
-    public static string GetContextMenuCssStyleString(
-        ITreeViewCommandParameter? treeViewCommandParameter,
-        DialogRecord dialogRecord)
+    public static string GetContextMenuCssStyleString(ITreeViewCommandParameter? treeViewCommandParameter)
     {
         if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";
-
-        var dialogLeftDimensionAttribute = dialogRecord
-            .ElementDimensions
-            .DimensionAttributes
-            .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
-
-        var contextMenuLeftDimensionAttribute = new DimensionAttribute
-        {
-            DimensionAttributeKind = DimensionAttributeKind.Left
-        };
-
-        contextMenuLeftDimensionAttribute.DimensionUnits.Add(new DimensionUnit
-        {
-            DimensionUnitKind = DimensionUnitKind.Pixels,
-            Value = treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels
-        });
         
-        foreach (var dimensionUnit in dialogLeftDimensionAttribute.DimensionUnits)
-        {
-            contextMenuLeftDimensionAttribute.DimensionUnits.Add(new DimensionUnit
-            {
-                Purpose = dimensionUnit.Purpose,
-                Value = dimensionUnit.Value,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-                DimensionUnitKind = dimensionUnit.DimensionUnitKind
-            });
-        }
+        var left = 
+            $"left: {treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
         
-        var dialogTopDimensionAttribute = dialogRecord
-            .ElementDimensions
-            .DimensionAttributes
-            .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-        
-        var contextMenuTopDimensionAttribute = new DimensionAttribute
-        {
-            DimensionAttributeKind = DimensionAttributeKind.Top
-        };
+        var top = 
+            $"top: {treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
-        contextMenuTopDimensionAttribute.DimensionUnits.Add(new DimensionUnit
-        {
-            DimensionUnitKind = DimensionUnitKind.Pixels,
-            Value = treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels
-        });
-        
-        foreach (var dimensionUnit in dialogTopDimensionAttribute.DimensionUnits)
-        {
-            contextMenuTopDimensionAttribute.DimensionUnits.Add(new DimensionUnit
-            {
-                Purpose = dimensionUnit.Purpose,
-                Value = dimensionUnit.Value,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-                DimensionUnitKind = dimensionUnit.DimensionUnitKind
-            });
-        }
-
-        return $"{contextMenuLeftDimensionAttribute.StyleString} {contextMenuTopDimensionAttribute.StyleString}";
+        return $"{left} {top}";
     }
 }

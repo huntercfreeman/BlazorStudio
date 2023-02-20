@@ -46,7 +46,7 @@ public partial class InputFileSidebar : ComponentBase
     [Parameter, EditorRequired]
     public Action<IAbsoluteFilePath?> SetSelectedAbsoluteFilePath { get; set; } = null!;
     
-    private static readonly TreeViewStateKey TreeViewInputFileSidebarStateKey = 
+    public static readonly TreeViewStateKey TreeViewInputFileSidebarStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
     
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
