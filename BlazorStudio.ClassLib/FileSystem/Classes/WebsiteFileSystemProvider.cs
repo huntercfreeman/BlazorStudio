@@ -86,13 +86,24 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         return Task.CompletedTask;
     }
 
-    public Task DeleteFileAsync(
+    public async Task DeleteFileAsync(
         IAbsoluteFilePath absoluteFilePath,
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(DeleteFileAsync));
+
+        var absoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
         
-        throw new NotImplementedException();
+        absoluteFilePathString = FormatAbsoluteFilePathString(absoluteFilePathString);
+        
+        var accountState = _accountStateWrap.Value;
+        
+        var containerClient = _blobServiceClient.GetBlobContainerClient(
+            accountState.ContainerName);
+        
+        var blobClient = containerClient.GetBlobClient(absoluteFilePathString);
+
+        await blobClient.DeleteAsync(cancellationToken: cancellationToken);
     }
     
     public Task DeleteDirectoryAsync(
@@ -237,26 +248,46 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         
         var containerClient = GetBlobContainerClient(accountState);
 
-        var directoryBlobClient = GetBlobClient(
-            containerClient,
-            absoluteFilePathString,
-            true,
-            string.Empty);
-        
         var blobItemPages = containerClient
             .GetBlobs(prefix: absoluteFilePathString);
 
         var blobItems = blobItemPages
             .AsPages()
             .SelectMany(x => x.Values)
-            .Where(blobItem => blobItem.Name
-                .Replace(absoluteFilePathString, string.Empty)
-                .Contains(_environmentProvider.DirectorySeparatorChar))
             .ToList();
 
-        return blobItems
-            .Select(x => x.Name)
+        var directoryBlobs = blobItems
+            .Where(blobItem => blobItem.Name
+                .Replace(absoluteFilePathString, string.Empty)
+                .Contains(_environmentProvider.DirectorySeparatorChar));
+
+        var childBlobs = directoryBlobs
+            .Where(blobItem =>
+            {
+                var splitName = blobItem.Name
+                    .Split(_environmentProvider.DirectorySeparatorChar);
+
+                var inputSplitLength = absoluteFilePathString
+                    .Split(_environmentProvider.DirectorySeparatorChar)
+                    .Length;
+
+                if (splitName.Length > inputSplitLength + 1)
+                    return false;
+
+                if (blobItem.Name.EndsWith(DIRECTORY_FILE_NAME))
+                    return true;
+
+                return false;
+            });
+
+        var result = childBlobs
+            .Select(x => x.Name
+                .Replace(
+                    _environmentProvider.DirectorySeparatorChar + DIRECTORY_FILE_NAME,
+                    string.Empty))
             .ToArray();
+        
+        return result;
     }
 
     public string[] DirectoryGetFiles(
@@ -270,12 +301,6 @@ public class WebsiteFileSystemProvider : IFileSystemProvider
         
         var containerClient = GetBlobContainerClient(accountState);
 
-        var directoryBlobClient = GetBlobClient(
-            containerClient,
-            absoluteFilePathString,
-            true,
-            string.Empty);
-        
         var blobItemPages = containerClient
             .GetBlobs(prefix: absoluteFilePathString);
 
