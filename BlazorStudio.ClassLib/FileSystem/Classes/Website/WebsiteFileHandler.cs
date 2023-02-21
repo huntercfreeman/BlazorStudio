@@ -148,6 +148,8 @@ public class WebsiteFileHandler : IFileHandler
         {
             contents = "Sample Text";
         }
+
+        contents = Uri.EscapeDataString(contents);
         
         await _httpClient.PostAsync(
             "https://hunter-freeman-dev-api.azurewebsites.net/" +
