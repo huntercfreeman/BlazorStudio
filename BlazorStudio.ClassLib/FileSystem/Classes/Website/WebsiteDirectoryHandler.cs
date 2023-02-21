@@ -21,19 +21,24 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
         _httpClient = httpClient;
     }
 
-    public Task CreateDirectoryAsync(
+    public async Task CreateDirectoryAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(nameof(CreateDirectoryAsync));
+        
+        await _httpClient.GetAsync(
+            "https://hunter-freeman-dev-api.azurewebsites.net/FileSystem/DirectoryCreateDirectory?groupName=default-group-name&absoluteFilePathString=Lmao");
     }
 
-    public Task DeleteAsync(
+    public async Task DeleteAsync(
         string absoluteFilePathString,
         bool recursive,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(nameof(DeleteAsync));
+        
+        await _httpClient.GetAsync("directoryExists");
     }
 
     public Task<bool> ExistsAsync(
@@ -52,10 +57,6 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
         string destinationAbsoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
-        Console.WriteLine(nameof(MoveAsync));
-        
-        _httpClient.GetAsync("directoryMove");
-        
         throw new NotImplementedException();
     }
 

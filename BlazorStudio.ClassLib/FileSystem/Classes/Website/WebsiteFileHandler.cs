@@ -28,7 +28,7 @@ public class WebsiteFileHandler : IFileHandler
         Console.WriteLine(nameof(ExistsAsync));
         
         await _httpClient.GetAsync(
-            "fileExists",
+            "https://hunter-freeman-dev-api.azurewebsites.net/FileSystem/DirectoryExists?groupName=default-group-name&absoluteFilePathString=Hunter%2FFreeman",
             cancellationToken);
 
         return true;
