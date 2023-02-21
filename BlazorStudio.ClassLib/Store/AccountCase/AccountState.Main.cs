@@ -11,6 +11,7 @@ public partial record AccountState(string ContainerName, string GroupName, strin
     public const string DEFAULT_CONTAINER_NAME = "default-container-name";
     public const string DEFAULT_GROUP_NAME = "default-group-name";
     public const string DEFAULT_ALIAS = "Anonymous";
+    public const char DIRECTORY_SEPARATOR_CHAR = '/';
     
     private AccountState() 
         : this(
