@@ -13,6 +13,9 @@
                  ClassCssString="@($"bstudio_main-layout {UnselectableClassCss} {AppOptionsService.GlobalThemeCssClassString}")"
                  StyleCssString="@($"font-size: {FontStateWrap.Value.FontSizeInPixels.ToCssValue()}px;")">
 
+    <DialogInitializer/>
+    <NotificationInitializer/>
+
     <BlazorTextEditorHeader/>
 
     <BlazorTextEditorBody BodyElementDimensions="_bodyElementDimensions"/>

@@ -56,19 +56,19 @@ public partial class BlazorStudioInitializer : ComponentBase
     {
         // This block is so I can work on the Solution Explorer UI
         // without clicking through the app to open a solution
-        {
-            var testSolutionExplorer = new AbsoluteFilePath(
-                @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp.sln",
-                false,
-                EnvironmentProvider);
-
-            if (await FileSystemProvider.File.ExistsAsync(testSolutionExplorer.GetAbsoluteFilePathString()))
-            {
-                Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                    testSolutionExplorer,
-                    EnvironmentProvider));
-            }
-        }
+        // {
+        //     var testSolutionExplorer = new AbsoluteFilePath(
+        //         @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp.sln",
+        //         false,
+        //         EnvironmentProvider);
+        //
+        //     if (await FileSystemProvider.File.ExistsAsync(testSolutionExplorer.GetAbsoluteFilePathString()))
+        //     {
+        //         Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+        //             testSolutionExplorer,
+        //             EnvironmentProvider));
+        //     }
+        // }
         
         await base.OnAfterRenderAsync(firstRender);
     }

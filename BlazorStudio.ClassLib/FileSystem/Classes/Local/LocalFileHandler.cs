@@ -66,7 +66,7 @@ public class LocalFileHandler : IFileHandler
 
     public async Task WriteAllTextAsync(
         string absoluteFilePathString,
-        string? contents,
+        string contents,
         CancellationToken cancellationToken = default)
     {
         await File.WriteAllTextAsync(

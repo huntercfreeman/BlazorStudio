@@ -1,6 +1,7 @@
 using BlazorStudio.ClassLib.Dto;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.AccountCase;
+using BlazorStudio.ClassLib.Store.FileSystemCase;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.FileSystem.Classes.Website;
@@ -28,15 +29,27 @@ public class WebsiteFileHandler : IFileHandler
         Console.WriteLine(nameof(ExistsAsync));
         
         await _httpClient.GetAsync(
-            "https://hunter-freeman-dev-api.azurewebsites.net/FileSystem/DirectoryExists?groupName=default-group-name&absoluteFilePathString=Hunter%2FFreeman",
+            "https://hunter-freeman-dev-api.azurewebsites.net/" +
+            "FileSystem/" +
+            "FileExists?" +
+            $"groupName={string.Empty}&" +
+            $"absoluteFilePathString={absoluteFilePathString}",
             cancellationToken);
 
         return true;
     }
 
-    public Task DeleteAsync(string absoluteFilePathString, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(string absoluteFilePathString, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(nameof(DeleteAsync));
+        
+        await _httpClient.GetAsync(
+            "https://hunter-freeman-dev-api.azurewebsites.net/" +
+            "FileSystem/" +
+            "FileDelete?" +
+            $"groupName={string.Empty}&" +
+            $"absoluteFilePathString={absoluteFilePathString}",
+            cancellationToken);
     }
 
     public async Task CopyAsync(
@@ -45,10 +58,8 @@ public class WebsiteFileHandler : IFileHandler
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(CopyAsync));
-        
-        await _httpClient.GetAsync(
-            "fileCopy",
-            cancellationToken);
+
+        throw new NotImplementedException();
     }
 
     public async Task MoveAsync(
@@ -57,11 +68,7 @@ public class WebsiteFileHandler : IFileHandler
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(MoveAsync));
-        
-        await _httpClient.GetAsync(
-            "fileMove",
-            cancellationToken);
-        
+
         throw new NotImplementedException();
     }
 
@@ -72,10 +79,14 @@ public class WebsiteFileHandler : IFileHandler
         Console.WriteLine(nameof(GetLastWriteTimeAsync));
         
         await _httpClient.GetAsync(
-            "fileGetLastWriteTime",
+            "https://hunter-freeman-dev-api.azurewebsites.net/" +
+            "FileSystem/" +
+            "FileGetLastWriteTime?" +
+            $"groupName={string.Empty}&" +
+            $"absoluteFilePathString={absoluteFilePathString}",
             cancellationToken);
-        
-        throw new NotImplementedException();
+
+        return DateTime.UtcNow;
     }
 
     public async Task<string> ReadAllTextAsync(
@@ -85,23 +96,37 @@ public class WebsiteFileHandler : IFileHandler
         Console.WriteLine(nameof(ReadAllTextAsync));
         
         await _httpClient.GetAsync(
-            "fileReadAllTextAsync",
+            "https://hunter-freeman-dev-api.azurewebsites.net/" +
+            "FileSystem/" +
+            "FileReadAllText?" +
+            $"groupName={string.Empty}&" +
+            $"absoluteFilePathString={absoluteFilePathString}",
             cancellationToken);
-        
-        throw new NotImplementedException();
+
+        return string.Empty;
     }
 
     public async Task WriteAllTextAsync(
         string absoluteFilePathString,
-        string? contents,
+        string contents,
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(WriteAllTextAsync));
+
+        if (contents.Length > FileSystemState.MAXIMUM_CHARACTER_COUNT_OF_CONTENT)
+        {
+            contents = new string(contents
+                .Take(FileSystemState.MAXIMUM_CHARACTER_COUNT_OF_CONTENT)
+                .ToArray());
+        }
         
         await _httpClient.GetAsync(
-            "writeAllTextAsync",
+            "https://hunter-freeman-dev-api.azurewebsites.net/" +
+            "FileSystem/" +
+            "FileWriteAllText?" +
+            $"groupName={string.Empty}&" +
+            $"absoluteFilePathString={absoluteFilePathString}&" +
+            $"contents={contents}",
             cancellationToken);
-        
-        throw new NotImplementedException();
     }
 }

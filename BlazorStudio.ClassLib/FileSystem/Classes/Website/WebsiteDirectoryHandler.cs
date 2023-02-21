@@ -28,7 +28,12 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
         Console.WriteLine(nameof(CreateDirectoryAsync));
         
         await _httpClient.GetAsync(
-            "https://hunter-freeman-dev-api.azurewebsites.net/FileSystem/DirectoryCreateDirectory?groupName=default-group-name&absoluteFilePathString=Lmao");
+            "https://hunter-freeman-dev-api.azurewebsites.net/" +
+            "FileSystem/" +
+            "DirectoryCreateDirectory?" +
+            $"groupName={string.Empty}&" +
+            $"absoluteFilePathString={absoluteFilePathString}",
+            cancellationToken);
     }
 
     public async Task DeleteAsync(
@@ -38,18 +43,31 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
     {
         Console.WriteLine(nameof(DeleteAsync));
         
-        await _httpClient.GetAsync("directoryExists");
+        await _httpClient.GetAsync(
+            "https://hunter-freeman-dev-api.azurewebsites.net/" +
+            "FileSystem/" +
+            "DirectoryDelete?" +
+            $"groupName={string.Empty}&" +
+            $"absoluteFilePathString={absoluteFilePathString}&" +
+            $"recursive={recursive}",
+            cancellationToken);
     }
 
-    public Task<bool> ExistsAsync(
+    public async Task<bool> ExistsAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(ExistsAsync));
         
-        _httpClient.GetAsync("directoryExists");
-        
-        throw new NotImplementedException();
+        await _httpClient.GetAsync(
+            "https://hunter-freeman-dev-api.azurewebsites.net/" +
+            "FileSystem/" +
+            "DirectoryExists?" +
+            $"groupName={string.Empty}&" +
+            $"absoluteFilePathString={absoluteFilePathString}",
+            cancellationToken);
+
+        return true;
     }
 
     public Task MoveAsync(
@@ -57,39 +75,59 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
         string destinationAbsoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
+        Console.WriteLine(nameof(MoveAsync));
+        
         throw new NotImplementedException();
     }
 
-    public Task<string[]> GetDirectoriesAsync(
+    public async Task<string[]> GetDirectoriesAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(GetDirectoriesAsync));
         
-        _httpClient.GetAsync("directoryGetDirectories");
-        
-        throw new NotImplementedException();
+        await _httpClient.GetAsync(
+            "https://hunter-freeman-dev-api.azurewebsites.net/" +
+            "FileSystem/" +
+            "DirectoryGetDirectories?" +
+            $"groupName={string.Empty}&" +
+            $"absoluteFilePathString={absoluteFilePathString}",
+            cancellationToken);
+
+        return new[] { string.Empty };
     }
 
-    public Task<string[]> GetFilesAsync(
+    public async Task<string[]> GetFilesAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(GetFilesAsync));
         
-        _httpClient.GetAsync("directoryGetFiles");
+        await _httpClient.GetAsync(
+            "https://hunter-freeman-dev-api.azurewebsites.net/" +
+            "FileSystem/" +
+            "DirectoryGetFiles?" +
+            $"groupName={string.Empty}&" +
+            $"absoluteFilePathString={absoluteFilePathString}",
+            cancellationToken);
         
-        throw new NotImplementedException();
+        return new[] { string.Empty };
     }
 
-    public Task<IEnumerable<string>> EnumerateFileSystemEntriesAsync(
+    public async Task<IEnumerable<string>> EnumerateFileSystemEntriesAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(EnumerateFileSystemEntriesAsync));
 
-        _httpClient.GetAsync("directoryEnumerateFileSystemEntries");
+        await _httpClient.GetAsync(
+            "https://hunter-freeman-dev-api.azurewebsites.net/" +
+            "FileSystem/" +
+            "DirectoryEnumerateFileSystemEntries?" +
+            $"groupName={string.Empty}&" +
+            $"absoluteFilePathString={absoluteFilePathString}",
+            cancellationToken);
 
-        throw new NotImplementedException();
+        return new[] { string.Empty };
     }
 }

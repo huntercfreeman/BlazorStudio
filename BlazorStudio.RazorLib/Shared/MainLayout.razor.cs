@@ -126,15 +126,15 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             if (int.TryParse(iconSizeString, out var iconSize))
                 AppOptionsService.SetIconSize(iconSize);
 
-            if (await FileSystemProvider.File.ExistsAsync("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
-            {
-                Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                    new AbsoluteFilePath(
-                        "/home/hunter/Repos/Demos/TestApp/TestApp.sln",
-                        false,
-                        EnvironmentProvider),
-                    EnvironmentProvider));
-            }
+            // if (await FileSystemProvider.File.ExistsAsync("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
+            // {
+            //     Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+            //         new AbsoluteFilePath(
+            //             "/home/hunter/Repos/Demos/TestApp/TestApp.sln",
+            //             false,
+            //             EnvironmentProvider),
+            //         EnvironmentProvider));
+            // }
         }
         
         await base.OnAfterRenderAsync(firstRender);
