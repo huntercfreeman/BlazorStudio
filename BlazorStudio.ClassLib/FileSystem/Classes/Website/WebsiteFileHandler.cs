@@ -25,7 +25,7 @@ public class WebsiteFileHandler : IFileHandler
         _httpClient = httpClient;
     }
 
-    public Task<bool> ExistsAsync(
+    public async Task<bool> ExistsAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
@@ -36,19 +36,17 @@ public class WebsiteFileHandler : IFileHandler
             AccountState.DIRECTORY_SEPARATOR_CHAR,
             false);
         
-        var response = _httpClient.GetFromJsonAsync<bool>(
+        var response = await _httpClient.GetFromJsonAsync<bool>(
             "https://hunter-freeman-dev-api.azurewebsites.net/" +
             "FileSystem/" +
             "FileExists?" +
             $"absoluteFilePathString={Uri.EscapeDataString(absoluteFilePathString)}",
-            cancellationToken)
-            .Result;
+            cancellationToken);
 
-        return Task.FromResult(
-            response);
+        return response;
     }
 
-    public Task DeleteAsync(string absoluteFilePathString, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(string absoluteFilePathString, CancellationToken cancellationToken = default)
     {
         Console.WriteLine(nameof(DeleteAsync));
         
@@ -57,18 +55,15 @@ public class WebsiteFileHandler : IFileHandler
             AccountState.DIRECTORY_SEPARATOR_CHAR,
             false);
         
-        _httpClient.GetAsync(
+        await _httpClient.GetAsync(
             "https://hunter-freeman-dev-api.azurewebsites.net/" +
             "FileSystem/" +
             "FileDelete?" +
             $"absoluteFilePathString={Uri.EscapeDataString(absoluteFilePathString)}",
-            cancellationToken)
-            .Wait(cancellationToken);
-
-        return Task.CompletedTask;
+            cancellationToken);
     }
 
-    public Task CopyAsync(
+    public async Task CopyAsync(
         string sourceAbsoluteFilePathString,
         string destinationAbsoluteFilePathString,
         CancellationToken cancellationToken = default)
@@ -78,7 +73,7 @@ public class WebsiteFileHandler : IFileHandler
         throw new NotImplementedException();
     }
 
-    public Task MoveAsync(
+    public async Task MoveAsync(
         string sourceAbsoluteFilePathString,
         string destinationAbsoluteFilePathString,
         CancellationToken cancellationToken = default)
@@ -88,7 +83,7 @@ public class WebsiteFileHandler : IFileHandler
         throw new NotImplementedException();
     }
 
-    public Task<DateTime> GetLastWriteTimeAsync(
+    public async Task<DateTime> GetLastWriteTimeAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
@@ -99,19 +94,17 @@ public class WebsiteFileHandler : IFileHandler
             AccountState.DIRECTORY_SEPARATOR_CHAR,
             false);
         
-        var response = _httpClient.GetFromJsonAsync<DateTime>(
+        var response = await _httpClient.GetFromJsonAsync<DateTime>(
             "https://hunter-freeman-dev-api.azurewebsites.net/" +
             "FileSystem/" +
             "FileGetLastWriteTime?" +
             $"absoluteFilePathString={Uri.EscapeDataString(absoluteFilePathString)}",
-            cancellationToken)
-            .Result;
+            cancellationToken);
 
-        return Task.FromResult(
-            response);
+        return response;
     }
 
-    public Task<string> ReadAllTextAsync(
+    public async Task<string> ReadAllTextAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
@@ -122,21 +115,18 @@ public class WebsiteFileHandler : IFileHandler
             AccountState.DIRECTORY_SEPARATOR_CHAR,
             false);
         
-        var response = _httpClient.GetAsync(
+        var response = await _httpClient.GetAsync(
             "https://hunter-freeman-dev-api.azurewebsites.net/" +
             "FileSystem/" +
             "FileReadAllText?" +
             $"absoluteFilePathString={Uri.EscapeDataString(absoluteFilePathString)}",
-            cancellationToken)
-            .Result;
+            cancellationToken);
 
-        return Task.FromResult(
-            response?.Content
-                .ReadAsStringAsync(cancellationToken).Result ??
-            string.Empty);
+        return await response.Content
+            .ReadAsStringAsync(cancellationToken);
     }
 
-    public Task WriteAllTextAsync(
+    public async Task WriteAllTextAsync(
         string absoluteFilePathString,
         string contents,
         CancellationToken cancellationToken = default)
@@ -159,16 +149,13 @@ public class WebsiteFileHandler : IFileHandler
             contents = "Sample Text";
         }
         
-        _httpClient.PostAsync(
+        await _httpClient.PostAsync(
             "https://hunter-freeman-dev-api.azurewebsites.net/" +
             "FileSystem/" +
             "FileWriteAllText?" +
             $"absoluteFilePathString={Uri.EscapeDataString(absoluteFilePathString)}&" +
             $"contents={contents}",
             null,
-            cancellationToken)
-            .Wait(cancellationToken);
-
-        return Task.CompletedTask;
+            cancellationToken);
     }
 }

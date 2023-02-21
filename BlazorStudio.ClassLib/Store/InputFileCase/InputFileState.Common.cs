@@ -35,10 +35,10 @@ public partial record InputFileState
             false,
             true);
 
-        selectionClone.LoadChildrenAsync().Wait();
-
         selectionClone.IsExpanded = true;
 
+        selectionClone.Children = selectedTreeViewModel.Children;
+        
         var nextHistory = 
             inInputFileState.OpenedTreeViewModelHistory;
              

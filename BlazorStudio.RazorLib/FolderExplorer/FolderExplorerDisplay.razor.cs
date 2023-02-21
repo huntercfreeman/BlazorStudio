@@ -80,7 +80,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         else
         {
             if (folderExplorerState.AbsoluteFilePath is not null)
-                SetFolderExplorerTreeViewRoot(folderExplorerState.AbsoluteFilePath);
+                SetFolderExplorerTreeViewRootAsync(folderExplorerState.AbsoluteFilePath);
         }
 
         base.OnParametersSet();
@@ -115,7 +115,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         var folderExplorerState = FolderExplorerStateWrap.Value;
 
         if (folderExplorerState.AbsoluteFilePath is not null)
-            SetFolderExplorerTreeViewRoot(folderExplorerState.AbsoluteFilePath);
+            await SetFolderExplorerTreeViewRootAsync(folderExplorerState.AbsoluteFilePath);
 
         await InvokeAsync(StateHasChanged);
     }
@@ -125,7 +125,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    private void SetFolderExplorerTreeViewRoot(IAbsoluteFilePath absoluteFilePath)
+    private async Task SetFolderExplorerTreeViewRootAsync(IAbsoluteFilePath absoluteFilePath)
     {
         var rootNode = new TreeViewAbsoluteFilePath(
             absoluteFilePath,
@@ -137,7 +137,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
         _previousRootTreeViewNodeKey = rootNode.TreeViewNodeKey;
 
-        rootNode.LoadChildrenAsync().Wait();
+        await rootNode.LoadChildrenAsync();
 
         if (!TreeViewService.TryGetTreeViewState(
                 TreeViewFolderExplorerContentStateKey,

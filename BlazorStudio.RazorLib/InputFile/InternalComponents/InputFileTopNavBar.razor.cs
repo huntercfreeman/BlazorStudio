@@ -21,8 +21,8 @@ public partial class InputFileTopNavBar : ComponentBase
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
-    [CascadingParameter(Name="SetInputFileContentTreeViewRoot")]
-    public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
+    [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
+    public Func<IAbsoluteFilePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
     [CascadingParameter]
     public InputFileState InputFileState { get; set; } = null!;
     
@@ -38,35 +38,35 @@ public partial class InputFileTopNavBar : ComponentBase
                     value));
     }
 
-    private void HandleBackButtonOnClick()
+    private async Task HandleBackButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
 
-        ChangeContentRootToOpenedTreeView(InputFileState);
+        await ChangeContentRootToOpenedTreeView(InputFileState);
     }
     
-    private void HandleForwardButtonOnClick()
+    private async Task HandleForwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
         
-        ChangeContentRootToOpenedTreeView(InputFileState);
+        await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
-    private void HandleUpwardButtonOnClick()
+    private async Task HandleUpwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             CommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider));
         
-        ChangeContentRootToOpenedTreeView(InputFileState);
+        await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
-    private void HandleRefreshButtonOnClick()
+    private async Task HandleRefreshButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction());
         
-        ChangeContentRootToOpenedTreeView(InputFileState);
+        await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
     private void FocusSearchElementReferenceOnClick()
@@ -74,13 +74,13 @@ public partial class InputFileTopNavBar : ComponentBase
         SearchElementReference?.FocusAsync();
     }
 
-    private void ChangeContentRootToOpenedTreeView(
+    private async Task ChangeContentRootToOpenedTreeView(
         InputFileState inputFileState)
     {
         var openedTreeView = InputFileState.GetOpenedTreeView();
         
         if (openedTreeView?.Item is not null)
-            SetInputFileContentTreeViewRoot.Invoke(openedTreeView.Item);
+            await SetInputFileContentTreeViewRootFunc.Invoke(openedTreeView.Item);
     }
     
     private async Task InputFileEditAddressOnFocusOutCallbackAsync(string address)
@@ -110,7 +110,7 @@ public partial class InputFileTopNavBar : ComponentBase
             
             _showInputTextEditForAddress = false;
             
-            SetInputFileContentTreeViewRoot.Invoke(absoluteFilePath);
+            await SetInputFileContentTreeViewRootFunc.Invoke(absoluteFilePath);
         }
         catch (Exception exception)
         {

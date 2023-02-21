@@ -20,7 +20,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly Action<IAbsoluteFilePath> _setInputFileContentTreeViewRoot;
+    private readonly Func<IAbsoluteFilePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
     private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> _getSearchMatchTuplesFunc;
 
@@ -31,7 +31,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        Action<IAbsoluteFilePath> setInputFileContentTreeViewRoot,
+        Func<IAbsoluteFilePath, Task> setInputFileContentTreeViewRootFunc,
         Func<Task> focusSearchInputElementFunc,
         Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> getSearchMatchTuplesFunc)
         : base(treeViewService)
@@ -43,7 +43,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _commonComponentRenderers = commonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
-        _setInputFileContentTreeViewRoot = setInputFileContentTreeViewRoot;
+        _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
         _focusSearchInputElementFunc = focusSearchInputElementFunc;
         _getSearchMatchTuplesFunc = getSearchMatchTuplesFunc;
     }
@@ -122,7 +122,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         return false;
     }
     
-    private Task SetInputFileContentTreeViewRootAsync(
+    private async Task SetInputFileContentTreeViewRootAsync(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
@@ -130,33 +130,29 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         var treeViewAbsoluteFilePath = activeNode as TreeViewAbsoluteFilePath;
 
         if (treeViewAbsoluteFilePath?.Item is null)
-            return Task.CompletedTask;
+            return;
         
-        _setInputFileContentTreeViewRoot.Invoke(treeViewAbsoluteFilePath.Item);
-        return Task.CompletedTask;
+        await _setInputFileContentTreeViewRootFunc.Invoke(
+            treeViewAbsoluteFilePath.Item);
     }
     
-    private Task HandleBackButtonOnClickAsync(
+    private async Task HandleBackButtonOnClickAsync(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
 
-        ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
-        
-        return Task.CompletedTask;
+        await ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
     
-    private Task HandleForwardButtonOnClick(
+    private async Task HandleForwardButtonOnClick(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
         
-        ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
-        
-        return Task.CompletedTask;
+        await ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
 
-    private Task HandleUpwardButtonOnClick(
+    private async Task HandleUpwardButtonOnClick(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
@@ -164,28 +160,24 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
             _fileSystemProvider,
             _environmentProvider));
         
-        ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
-
-        return Task.CompletedTask;
+        await ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
 
-    private Task HandleRefreshButtonOnClick(
+    private async Task HandleRefreshButtonOnClick(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction());
         
-        ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
-        
-        return Task.CompletedTask;
+        await ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
     
-    private void ChangeContentRootToOpenedTreeView(
+    private async Task ChangeContentRootToOpenedTreeView(
         InputFileState inputFileState)
     {
         var openedTreeView = inputFileState.GetOpenedTreeView();
         
         if (openedTreeView.Item is not null)
-            _setInputFileContentTreeViewRoot.Invoke(openedTreeView.Item);
+            await _setInputFileContentTreeViewRootFunc.Invoke(openedTreeView.Item);
     }
     
     private Task SetSelectedTreeViewModelAsync(

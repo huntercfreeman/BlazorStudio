@@ -95,7 +95,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
             TreeViewService,
             Dispatcher,
-            SetInputFileContentTreeViewRoot);
+            SetInputFileContentTreeViewRootFunc);
 
         _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
             InputFileContent.TreeViewInputFileContentStateKey,
@@ -105,7 +105,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             CommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
-            SetInputFileContentTreeViewRoot, () => Task.FromResult(SearchElementReference?.FocusAsync()),
+            SetInputFileContentTreeViewRootFunc, 
+            () => Task.FromResult(SearchElementReference?.FocusAsync()),
             () => _searchMatchTuples);
         
         InitializeElementDimensions();
@@ -152,7 +153,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         });
     }
     
-    private void SetInputFileContentTreeViewRoot(IAbsoluteFilePath absoluteFilePath)
+    private async Task SetInputFileContentTreeViewRootFunc(IAbsoluteFilePath absoluteFilePath)
     {
         var pseudoRootNode = new TreeViewAbsoluteFilePath(
             absoluteFilePath,
@@ -162,7 +163,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             true,
             false);
 
-        pseudoRootNode.LoadChildrenAsync().Wait();
+        await pseudoRootNode.LoadChildrenAsync();
         
         var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
             pseudoRootNode.Children.ToArray());
@@ -194,6 +195,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                 InputFileContent.TreeViewInputFileContentStateKey,
                 activeNode);
         }
+        
+        await pseudoRootNode.LoadChildrenAsync();
 
         var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,

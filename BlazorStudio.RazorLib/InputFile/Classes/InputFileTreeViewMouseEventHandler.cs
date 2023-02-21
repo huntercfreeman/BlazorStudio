@@ -11,16 +11,16 @@ namespace BlazorStudio.RazorLib.InputFile.Classes;
 public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly IDispatcher _dispatcher;
-    private readonly Action<IAbsoluteFilePath> _setInputFileContentTreeViewRoot;
+    private readonly Func<IAbsoluteFilePath, Task> _setInputFileContentTreeViewRootFunc;
 
     public InputFileTreeViewMouseEventHandler(
         ITreeViewService treeViewService,
         IDispatcher dispatcher,
-        Action<IAbsoluteFilePath> setInputFileContentTreeViewRoot) 
+        Func<IAbsoluteFilePath, Task> setInputFileContentTreeViewRootFunc) 
         : base(treeViewService)
     {
         _dispatcher = dispatcher;
-        _setInputFileContentTreeViewRoot = setInputFileContentTreeViewRoot;
+        _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
     }
 
     public override Task<bool> OnClickAsync(
@@ -43,7 +43,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         return Task.FromResult(true);
     }
 
-    public override Task<bool> OnDoubleClickAsync(
+    public override async Task<bool> OnDoubleClickAsync(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         _ = base.OnDoubleClickAsync(treeViewCommandParameter);
@@ -51,12 +51,12 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (treeViewCommandParameter.TargetNode 
             is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         if (treeViewAbsoluteFilePath.Item != null) 
-            _setInputFileContentTreeViewRoot.Invoke(treeViewAbsoluteFilePath.Item);
+            await _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsoluteFilePath.Item);
 
-        return Task.FromResult(true);
+        return true;
     }
 }

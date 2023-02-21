@@ -84,22 +84,6 @@ public partial class BlazorStudioInitializer : ComponentBase
     {
         var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsCollectionWrap.Value);
 
-        var solutionExplorerPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
-            leftPanel.ElementDimensions,
-            new(),
-            typeof(SolutionExplorerDisplay),
-            typeof(IconFolder),
-            "Solution Explorer");
-        
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
-            leftPanel.PanelRecordKey,
-            solutionExplorerPanelTab));
-        
-        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
-            leftPanel.PanelRecordKey,
-            solutionExplorerPanelTab.PanelTabKey));
-        
         var folderExplorerPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             leftPanel.ElementDimensions,
@@ -111,6 +95,22 @@ public partial class BlazorStudioInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             leftPanel.PanelRecordKey,
             folderExplorerPanelTab));
+        
+        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
+            leftPanel.PanelRecordKey,
+            folderExplorerPanelTab.PanelTabKey));
+        
+        var solutionExplorerPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            leftPanel.ElementDimensions,
+            new(),
+            typeof(SolutionExplorerDisplay),
+            typeof(IconFolder),
+            "Solution Explorer");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            leftPanel.PanelRecordKey,
+            solutionExplorerPanelTab));
         
         var gitChangesPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),

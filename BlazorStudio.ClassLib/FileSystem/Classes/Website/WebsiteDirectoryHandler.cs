@@ -24,7 +24,7 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
         _httpClient = httpClient;
     }
 
-    public Task CreateDirectoryAsync(
+    public async Task CreateDirectoryAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
@@ -35,18 +35,15 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
             AccountState.DIRECTORY_SEPARATOR_CHAR,
             true);
         
-        _httpClient.GetAsync(
+        await _httpClient.GetAsync(
             "https://hunter-freeman-dev-api.azurewebsites.net/" +
             "FileSystem/" +
             "DirectoryCreateDirectory?" +
             $"absoluteFilePathString={Uri.EscapeDataString(absoluteFilePathString)}",
-            cancellationToken)
-            .Wait(cancellationToken);
-
-        return Task.CompletedTask;
+            cancellationToken);
     }
 
-    public Task DeleteAsync(
+    public async Task DeleteAsync(
         string absoluteFilePathString,
         bool recursive,
         CancellationToken cancellationToken = default)
@@ -58,19 +55,16 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
             AccountState.DIRECTORY_SEPARATOR_CHAR,
             true);
         
-        _httpClient.GetAsync(
+        await _httpClient.GetAsync(
             "https://hunter-freeman-dev-api.azurewebsites.net/" +
             "FileSystem/" +
             "DirectoryDelete?" +
             $"absoluteFilePathString={Uri.EscapeDataString(absoluteFilePathString)}&" +
             $"recursive={recursive}",
-            cancellationToken)
-            .Wait(cancellationToken);
-        
-        return Task.CompletedTask;
+            cancellationToken);
     }
 
-    public Task<bool> ExistsAsync(
+    public async Task<bool> ExistsAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
@@ -81,19 +75,17 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
             AccountState.DIRECTORY_SEPARATOR_CHAR,
             true);
         
-        var response = _httpClient.GetFromJsonAsync<bool>(
+        var response = await _httpClient.GetFromJsonAsync<bool>(
             "https://hunter-freeman-dev-api.azurewebsites.net/" +
             "FileSystem/" +
             "DirectoryExists?" +
             $"absoluteFilePathString={Uri.EscapeDataString(absoluteFilePathString)}",
-            cancellationToken)
-            .Result;
+            cancellationToken);
 
-        return Task.FromResult(
-            response);
+        return response;
     }
 
-    public Task MoveAsync(
+    public async Task MoveAsync(
         string sourceAbsoluteFilePathString,
         string destinationAbsoluteFilePathString,
         CancellationToken cancellationToken = default)
@@ -103,7 +95,7 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
         throw new NotImplementedException();
     }
 
-    public Task<string[]> GetDirectoriesAsync(
+    public async Task<string[]> GetDirectoriesAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
@@ -119,16 +111,14 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
                          "DirectoryGetDirectories?" +
                          $"absoluteFilePathString={Uri.EscapeDataString(absoluteFilePathString)}";
 
-        var response = _httpClient.GetFromJsonAsync<string[]>(
+        var response = await _httpClient.GetFromJsonAsync<string[]>(
                 requestUri,
-                cancellationToken)
-            .Result;
+                cancellationToken);
 
-        return Task.FromResult(
-            response ?? new[] { string.Empty });
+        return response ?? new[] { string.Empty };
     }
 
-    public Task<string[]> GetFilesAsync(
+    public async Task<string[]> GetFilesAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
@@ -139,19 +129,17 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
             AccountState.DIRECTORY_SEPARATOR_CHAR,
             true);
         
-        var response = _httpClient.GetFromJsonAsync<string[]>(
+        var response = await _httpClient.GetFromJsonAsync<string[]>(
             "https://hunter-freeman-dev-api.azurewebsites.net/" +
             "FileSystem/" +
             "DirectoryGetFiles?" +
             $"absoluteFilePathString={Uri.EscapeDataString(absoluteFilePathString)}",
-            cancellationToken)
-            .Result;
+            cancellationToken);
         
-        return Task.FromResult(
-            response ?? new[] { string.Empty });
+        return response ?? new[] { string.Empty };
     }
 
-    public Task<IEnumerable<string>> EnumerateFileSystemEntriesAsync(
+    public async Task<IEnumerable<string>> EnumerateFileSystemEntriesAsync(
         string absoluteFilePathString,
         CancellationToken cancellationToken = default)
     {
@@ -162,15 +150,13 @@ public class WebsiteDirectoryHandler : IDirectoryHandler
             AccountState.DIRECTORY_SEPARATOR_CHAR,
             true);
 
-        var response = _httpClient.GetFromJsonAsync<string[]>(
+        var response = await _httpClient.GetFromJsonAsync<string[]>(
             "https://hunter-freeman-dev-api.azurewebsites.net/" +
             "FileSystem/" +
             "DirectoryEnumerateFileSystemEntries?" +
             $"absoluteFilePathString={Uri.EscapeDataString(absoluteFilePathString)}",
-            cancellationToken)
-            .Result;
+            cancellationToken);
 
-        return Task.FromResult<IEnumerable<string>>(
-            response ?? new[] { string.Empty });
+        return response ?? new[] { string.Empty };
     }
 }

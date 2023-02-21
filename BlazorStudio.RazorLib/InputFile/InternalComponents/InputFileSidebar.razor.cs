@@ -30,8 +30,8 @@ public partial class InputFileSidebar : ComponentBase
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
-    [CascadingParameter(Name = "SetInputFileContentTreeViewRoot")]
-    public Action<IAbsoluteFilePath> SetInputFileContentTreeViewRoot { get; set; } = null!;
+    [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
+    public Func<IAbsoluteFilePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
     [CascadingParameter]
     public InputFileTreeViewMouseEventHandler InputFileTreeViewMouseEventHandler { get; set; } = null!;
     [CascadingParameter]

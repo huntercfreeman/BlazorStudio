@@ -129,7 +129,10 @@ public partial record InputFileState
                     false,
                     true);
 
-                parentDirectoryTreeViewModel.LoadChildrenAsync().Wait();  
+                _ = Task.Run(async () =>
+                {
+                    await parentDirectoryTreeViewModel.LoadChildrenAsync();  
+                });
             }
 
             if (parentDirectoryTreeViewModel is not null)
@@ -155,7 +158,10 @@ public partial record InputFileState
 
             currentSelection.Children.Clear();
 
-            currentSelection.LoadChildrenAsync().Wait();
+            _ = Task.Run(async () =>
+            {
+                await currentSelection.LoadChildrenAsync();  
+            });
 
             return inInputFileState;
         }
