@@ -37,6 +37,9 @@ public partial class BlazorTextEditorHeader : FluxorComponent
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public Type LoginDisplayComponentType { get; set; } = null!;
     
     private DropdownKey _dropdownKeyFile = DropdownKey.NewDropdownKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);

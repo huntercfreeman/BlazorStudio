@@ -7,7 +7,8 @@ input[type="checkbox"]{
     width: 100vw;
     height: 100vh;
     overflow: auto;
-    color: var(--balc_primary-font-color);
+    color: var(--balc_primary-foreground-color);
+    background-color: var(--balc_primary-background-color);
 }
 
 .bstudio_header {
