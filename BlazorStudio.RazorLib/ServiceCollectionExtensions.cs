@@ -5,6 +5,8 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Classes.Website;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.AccountCase;
+using BlazorStudio.RazorLib.BalcTreeView.TreeViewImplementations;
+using BlazorStudio.RazorLib.BalcTreeView.WatchWindowExample;
 using BlazorStudio.RazorLib.Clipboard;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.File;
@@ -15,6 +17,7 @@ using BlazorStudio.RazorLib.NuGet;
 using BlazorStudio.RazorLib.TreeViewImplementations;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
+using TreeViewExceptionDisplay = BlazorStudio.RazorLib.TreeViewImplementations.TreeViewExceptionDisplay;
 
 namespace BlazorStudio.RazorLib;
 
@@ -36,6 +39,16 @@ public static class ServiceCollectionExtensions
             typeof(GitChangesDisplay),
             typeof(RemoveCSharpProjectFromSolutionDisplay),
             typeof(BooleanPromptOrCancelDisplay));
+        
+        services
+            .AddSingleton<ITreeViewRenderers>(new TreeViewRenderers(
+                typeof(TreeViewTextDisplay),
+                typeof(TreeViewReflectionDisplay),
+                typeof(TreeViewPropertiesDisplay),
+                typeof(TreeViewInterfaceImplementationDisplay),
+                typeof(TreeViewFieldsDisplay),
+                typeof(TreeViewExceptionDisplay),
+                typeof(TreeViewEnumerableDisplay)));
         
         return services
             .AddBlazorStudioClassLibServices(

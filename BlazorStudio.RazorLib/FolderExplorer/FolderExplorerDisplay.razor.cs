@@ -11,6 +11,7 @@ using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
+using BlazorStudio.ClassLib.Store.AccountCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -23,6 +24,7 @@ using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.FolderExplorer;
@@ -35,6 +37,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AccountState> AccountStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -50,6 +54,9 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
     public static readonly TreeViewStateKey TreeViewFolderExplorerContentStateKey =
         TreeViewStateKey.NewTreeViewStateKey();
 
@@ -63,27 +70,44 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
         (2.0 / 3.0));
 
-    protected override void OnParametersSet()
+    protected override async Task OnInitializedAsync()
     {
-        var folderExplorerState = FolderExplorerStateWrap.Value;
-        
-        var treeViewStateFound = TreeViewService.TryGetTreeViewState(
-            TreeViewFolderExplorerContentStateKey,
-            out var treeViewState);
-
-        if (treeViewStateFound &&
-            treeViewState is not null &&
-            _previousRootTreeViewNodeKey != treeViewState.RootNode.TreeViewNodeKey)
+        if (AuthenticationStateTask is not null)
         {
-            FolderExplorerStateWrapOnStateChanged(null, EventArgs.Empty);
-        }
-        else
-        {
-            if (folderExplorerState.AbsoluteFilePath is not null)
-                SetFolderExplorerTreeViewRootAsync(folderExplorerState.AbsoluteFilePath);
+            var authenticationState = await AuthenticationStateTask;
+
+            var subClaim = authenticationState.User.FindFirst(
+                AccountState.SUB_CLAIM_NAME);
+
+            if (subClaim is null)
+                return;
+            
+            Dispatcher.Dispatch(new AccountState.AccountStateWithAction(
+                inAccountState => inAccountState with
+                {
+                    GroupName = subClaim.Value
+                })); 
+
+            var folderExplorerState = FolderExplorerStateWrap.Value;
+
+            var treeViewStateFound = TreeViewService.TryGetTreeViewState(
+                TreeViewFolderExplorerContentStateKey,
+                out var treeViewState);
+
+            if (treeViewStateFound &&
+                treeViewState is not null &&
+                _previousRootTreeViewNodeKey != treeViewState.RootNode.TreeViewNodeKey)
+            {
+                FolderExplorerStateWrapOnStateChanged(null, EventArgs.Empty);
+            }
+            else
+            {
+                if (folderExplorerState.AbsoluteFilePath is not null)
+                    await SetFolderExplorerTreeViewRootAsync(folderExplorerState.AbsoluteFilePath);
+            }
         }
 
-        base.OnParametersSet();
+        await base.OnInitializedAsync();
     }
 
     protected override void OnInitialized()
