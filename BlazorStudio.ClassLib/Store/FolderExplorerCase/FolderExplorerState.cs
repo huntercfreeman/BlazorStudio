@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.InputFile;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using Fluxor;
 

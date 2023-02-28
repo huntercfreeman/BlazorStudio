@@ -4,6 +4,9 @@ using BlazorALaCarte.DialogNotification.Store.DialogCase;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.InputFile;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -19,6 +22,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -102,27 +107,31 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         DialogRecord.DialogKey));
 
                 localParentDirectoryName = FilePathHelper.StripEndingDirectorySeparatorIfExists(
-                    localParentDirectoryName);
+                    localParentDirectoryName,
+                    EnvironmentProvider);
                 
                 var parentDirectoryAbsoluteFilePath = new AbsoluteFilePath(
                     localParentDirectoryName, 
-                    true);
+                    true,
+                    EnvironmentProvider);
 
                 var solutionAbsoluteFilePathString =
                     parentDirectoryAbsoluteFilePath.GetAbsoluteFilePathString() +
                     localSolutionName +
-                    Path.DirectorySeparatorChar +
+                    EnvironmentProvider.DirectorySeparatorChar +
                     localSolutionName +
                     '.' +
                     ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
                 var solutionAbsoluteFilePath = new AbsoluteFilePath(
                     solutionAbsoluteFilePathString, 
-                    false);
+                    false,
+                    EnvironmentProvider);
 
                 Dispatcher.Dispatch(
                     new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                        solutionAbsoluteFilePath));
+                        solutionAbsoluteFilePath,
+                        EnvironmentProvider));
                 return Task.CompletedTask;
             });
         

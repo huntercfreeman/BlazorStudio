@@ -1,70 +1,83 @@
 ﻿using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.Namespaces;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
+    public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewNamespacePath directoryTreeView)
     {
         if (directoryTreeView.Item is null)
-            return Task.FromResult<List<TreeViewNoType>>(new());
+            return new();
         
         var directoryAbsoluteFilePathString = directoryTreeView.Item.AbsoluteFilePath
             .GetAbsoluteFilePathString();
         
-        var childDirectoryTreeViewModels = Directory
-            .GetDirectories(directoryAbsoluteFilePathString)
-            .OrderBy(filePathString => filePathString)
-            .Select(x =>
-            {
-                var absoluteFilePath = new AbsoluteFilePath(x, true);
-
-                var namespaceString = directoryTreeView.Item.Namespace +
-                                      NAMESPACE_DELIMITER +
-                                      absoluteFilePath.FileNameNoExtension;
-
-                var namespacePath = new NamespacePath(
-                    namespaceString,
-                    absoluteFilePath);
-
-                return (TreeViewNoType)new TreeViewNamespacePath(
-                    namespacePath,
-                    directoryTreeView.CommonComponentRenderers,
-                    directoryTreeView.SolutionExplorerStateWrap,
-                    true,
-                    false)
+        var childDirectoryTreeViewModels = 
+            (await directoryTreeView.FileSystemProvider
+                .Directory.GetDirectoriesAsync(directoryAbsoluteFilePathString))
+                .OrderBy(filePathString => filePathString)
+                .Select(x =>
                 {
-                    TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
-                };
-            });
+                    var absoluteFilePath = new AbsoluteFilePath(
+                        x,
+                        true,
+                        directoryTreeView.EnvironmentProvider);
+
+                    var namespaceString = directoryTreeView.Item.Namespace +
+                                          NAMESPACE_DELIMITER +
+                                          absoluteFilePath.FileNameNoExtension;
+
+                    var namespacePath = new NamespacePath(
+                        namespaceString,
+                        absoluteFilePath);
+
+                    return (TreeViewNoType)new TreeViewNamespacePath(
+                        namespacePath,
+                        directoryTreeView.CommonComponentRenderers,
+                        directoryTreeView.SolutionExplorerStateWrap,
+                        directoryTreeView.FileSystemProvider,
+                        directoryTreeView.EnvironmentProvider,
+                        true,
+                        false)
+                    {
+                        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                    };
+                });
         
-        var childFileTreeViewModels = Directory
-            .GetFiles(directoryAbsoluteFilePathString)
-            .OrderBy(filePathString => filePathString)
-            .Select(x =>
-            {
-                var absoluteFilePath = new AbsoluteFilePath(x, false);
-
-                var namespaceString = directoryTreeView.Item.Namespace;
-                
-                var namespacePath = new NamespacePath(
-                    namespaceString,
-                    absoluteFilePath);
-
-                return (TreeViewNoType)new TreeViewNamespacePath(
-                    namespacePath,
-                    directoryTreeView.CommonComponentRenderers,
-                    directoryTreeView.SolutionExplorerStateWrap,
-                    false,
-                    false)
+        var childFileTreeViewModels =
+            (await directoryTreeView.FileSystemProvider
+                .Directory.GetFilesAsync(directoryAbsoluteFilePathString))
+                .OrderBy(filePathString => filePathString)
+                .Select(x =>
                 {
-                    TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
-                };
-            }).ToList();
+                    var absoluteFilePath = new AbsoluteFilePath(
+                        x,
+                        false,
+                        directoryTreeView.EnvironmentProvider);
+
+                    var namespaceString = directoryTreeView.Item.Namespace;
+                    
+                    var namespacePath = new NamespacePath(
+                        namespaceString,
+                        absoluteFilePath);
+
+                    return (TreeViewNoType)new TreeViewNamespacePath(
+                        namespacePath,
+                        directoryTreeView.CommonComponentRenderers,
+                        directoryTreeView.SolutionExplorerStateWrap,
+                        directoryTreeView.FileSystemProvider,
+                        directoryTreeView.EnvironmentProvider,
+                        false,
+                        false)
+                    {
+                        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                    };
+                }).ToList();
 
         var copyOfChildrenToFindRelatedFiles = new List<TreeViewNoType>(childFileTreeViewModels);
         
@@ -78,56 +91,68 @@ public partial class TreeViewHelper
         // children take their respective 'code behinds'
         childFileTreeViewModels = copyOfChildrenToFindRelatedFiles;
 
-        return Task.FromResult(childDirectoryTreeViewModels
+        return childDirectoryTreeViewModels
             .Union(childFileTreeViewModels)
-            .ToList());
+            .ToList();
     }
     
-    public static Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
+    public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewAbsoluteFilePath directoryTreeView)
     {
         if (directoryTreeView.Item is null)
-            return Task.FromResult<List<TreeViewNoType>>(new());
+            return new();
         
         var directoryAbsoluteFilePathString = directoryTreeView.Item
             .GetAbsoluteFilePathString();
         
-        var childDirectoryTreeViewModels = Directory
-            .GetDirectories(directoryAbsoluteFilePathString)
-            .OrderBy(filePathString => filePathString)
-            .Select(x =>
-            {
-                var absoluteFilePath = new AbsoluteFilePath(x, true);
-
-                return (TreeViewNoType)new TreeViewAbsoluteFilePath(
-                    absoluteFilePath,
-                    directoryTreeView.CommonComponentRenderers,
-                    true,
-                    false)
+        var childDirectoryTreeViewModels = 
+            (await directoryTreeView.FileSystemProvider
+                .Directory.GetDirectoriesAsync(directoryAbsoluteFilePathString))
+                .OrderBy(filePathString => filePathString)
+                .Select(x =>
                 {
-                    TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
-                };
-            });
+                    var absoluteFilePath = new AbsoluteFilePath(
+                        x,
+                        true,
+                        directoryTreeView.EnvironmentProvider);
+
+                    return (TreeViewNoType)new TreeViewAbsoluteFilePath(
+                        absoluteFilePath,
+                        directoryTreeView.CommonComponentRenderers,
+                        directoryTreeView.FileSystemProvider,
+                        directoryTreeView.EnvironmentProvider,
+                        true,
+                        false)
+                    {
+                        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                    };
+                });
         
-        var childFileTreeViewModels = Directory
-            .GetFiles(directoryAbsoluteFilePathString)
-            .OrderBy(filePathString => filePathString)
-            .Select(x =>
-            {
-                var absoluteFilePath = new AbsoluteFilePath(x, false);
-
-                return (TreeViewNoType)new TreeViewAbsoluteFilePath(
-                    absoluteFilePath,
-                    directoryTreeView.CommonComponentRenderers,
-                    false,
-                    false)
+        var childFileTreeViewModels = 
+            (await directoryTreeView.FileSystemProvider
+                .Directory.GetFilesAsync(directoryAbsoluteFilePathString))
+                .OrderBy(filePathString => filePathString)
+                .Select(x =>
                 {
-                    TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
-                };
-            });
+                    var absoluteFilePath = new AbsoluteFilePath(
+                        x,
+                        false,
+                        directoryTreeView.EnvironmentProvider);
 
-        return Task.FromResult(childDirectoryTreeViewModels
+                    return (TreeViewNoType)new TreeViewAbsoluteFilePath(
+                        absoluteFilePath,
+                        directoryTreeView.CommonComponentRenderers,
+                        directoryTreeView.FileSystemProvider,
+                        directoryTreeView.EnvironmentProvider,
+                        false,
+                        false)
+                    {
+                        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                    };
+                });
+
+        return childDirectoryTreeViewModels
             .Union(childFileTreeViewModels)
-            .ToList());
+            .ToList();
     }
 }

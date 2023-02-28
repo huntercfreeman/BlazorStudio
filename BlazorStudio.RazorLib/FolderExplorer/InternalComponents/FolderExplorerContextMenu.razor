@@ -1,0 +1,5 @@
+﻿@using BlazorALaCarte.Shared.Menu
+
+<CascadingValue Name="ReturnFocusToParentAction" Value="@(new Action(() => TreeViewCommandParameter.RestoreFocusToTreeView.Invoke()))">
+    <MenuDisplay MenuRecord="GetMenuRecord(TreeViewCommandParameter)"/>
+</CascadingValue>

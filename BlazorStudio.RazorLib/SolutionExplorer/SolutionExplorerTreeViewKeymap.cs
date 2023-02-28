@@ -22,6 +22,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
     private readonly IState<TerminalSessionsState> _terminalSessionsStateWrap;
     private readonly BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory _commonMenuOptionsFactory;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
+    private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
     private readonly ITextEditorService _textEditorService;
@@ -30,6 +31,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         IState<TerminalSessionsState> terminalSessionsStateWrap,
         BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory commonMenuOptionsFactory,
         ICommonComponentRenderers commonComponentRenderers,
+        IFileSystemProvider fileSystemProvider,
         IDispatcher dispatcher,
         ITreeViewService treeViewService,
         ITextEditorService textEditorService)
@@ -38,6 +40,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _commonMenuOptionsFactory = commonMenuOptionsFactory;
         _commonComponentRenderers = commonComponentRenderers;
+        _fileSystemProvider = fileSystemProvider;
         _dispatcher = dispatcher;
         _treeViewService = treeViewService;
         _textEditorService = textEditorService;
@@ -291,7 +294,8 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
             treeViewNamespacePath.Item.AbsoluteFilePath,
             _dispatcher,
             _textEditorService,
-            _commonComponentRenderers);
+            _commonComponentRenderers,
+            _fileSystemProvider);
     }
 
     private async Task ReloadTreeViewModel(

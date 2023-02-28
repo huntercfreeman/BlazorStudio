@@ -2,6 +2,7 @@
 using BlazorALaCarte.TreeView.Events;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
@@ -14,17 +15,20 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
     private readonly IDispatcher _dispatcher;
     private readonly ITextEditorService _textEditorService;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
+    private readonly IFileSystemProvider _fileSystemProvider;
 
     public SolutionExplorerTreeViewMouseEventHandler(
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
         ICommonComponentRenderers commonComponentRenderers,
+        IFileSystemProvider fileSystemProvider,
         ITreeViewService treeViewService) 
         : base(treeViewService)
     {
         _dispatcher = dispatcher;
         _textEditorService = textEditorService;
         _commonComponentRenderers = commonComponentRenderers;
+        _fileSystemProvider = fileSystemProvider;
     }
     
     public override async Task<bool> OnDoubleClickAsync(
@@ -45,7 +49,8 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
             treeViewNamespacePath.Item.AbsoluteFilePath,
             _dispatcher,
             _textEditorService,
-            _commonComponentRenderers);
+            _commonComponentRenderers,
+            _fileSystemProvider);
         
         return true;
     }

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.Shared.Dimensions;
 using BlazorALaCarte.Shared.Resize;
 using BlazorALaCarte.TreeView;
@@ -8,6 +9,8 @@ using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
+using BlazorStudio.RazorLib.InputFile.Classes;
+using BlazorStudio.RazorLib.InputFile.InternalComponents;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -27,7 +30,11 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
-
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    
     /// <summary>
     /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
     /// a parameter to the <see cref="RenderFragment"/>
@@ -63,7 +70,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Parameter]
     public string BodyStyleCssString { get; set; } = null!;
     
-    private readonly ElementDimensions _navMenuElementDimensions = new();
+    private readonly ElementDimensions _sidebarElementDimensions = new();
     private readonly ElementDimensions _contentElementDimensions = new();
     
     private IAbsoluteFilePath? _selectedAbsoluteFilePath;
@@ -88,7 +95,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
             TreeViewService,
             Dispatcher,
-            SetInputFileContentTreeViewRoot);
+            SetInputFileContentTreeViewRootFunc);
 
         _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
             InputFileContent.TreeViewInputFileContentStateKey,
@@ -96,7 +103,10 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             InputFileStateWrap,
             Dispatcher,
             CommonComponentRenderers,
-            SetInputFileContentTreeViewRoot, () => Task.FromResult(SearchElementReference?.FocusAsync()),
+            FileSystemProvider,
+            EnvironmentProvider,
+            SetInputFileContentTreeViewRootFunc, 
+            () => Task.FromResult(SearchElementReference?.FocusAsync()),
             () => _searchMatchTuples);
         
         InitializeElementDimensions();
@@ -106,7 +116,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
     private void InitializeElementDimensions()
     {
-        var navMenuWidth = _navMenuElementDimensions.DimensionAttributes
+        var navMenuWidth = _sidebarElementDimensions.DimensionAttributes
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
         
         navMenuWidth.DimensionUnits.AddRange(new []
@@ -143,15 +153,17 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         });
     }
     
-    private void SetInputFileContentTreeViewRoot(IAbsoluteFilePath absoluteFilePath)
+    private async Task SetInputFileContentTreeViewRootFunc(IAbsoluteFilePath absoluteFilePath)
     {
         var pseudoRootNode = new TreeViewAbsoluteFilePath(
             absoluteFilePath,
             CommonComponentRenderers,
+            FileSystemProvider,
+            EnvironmentProvider,
             true,
             false);
 
-        pseudoRootNode.LoadChildrenAsync().Wait();
+        await pseudoRootNode.LoadChildrenAsync();
         
         var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
             pseudoRootNode.Children.ToArray());
@@ -183,10 +195,14 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                 InputFileContent.TreeViewInputFileContentStateKey,
                 activeNode);
         }
+        
+        await pseudoRootNode.LoadChildrenAsync();
 
         var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,
-            CommonComponentRenderers);
+            CommonComponentRenderers,
+            FileSystemProvider,
+            EnvironmentProvider);
         
         Dispatcher.Dispatch(setOpenedTreeViewModelAction);
     }

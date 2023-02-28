@@ -3,6 +3,7 @@ using BlazorALaCarte.DialogNotification.Dialog;
 using BlazorALaCarte.DialogNotification.Store.DialogCase;
 using BlazorALaCarte.TreeView.Services;
 using BlazorStudio.ClassLib.CommandLine;
+using BlazorStudio.ClassLib.InputFile;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;

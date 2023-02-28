@@ -32,9 +32,6 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
     {
         var query = nugetPackageManagerQuery.Query;
         
-        var response = await _httpClient
-            .PostAsync(query, null, cancellationToken);
-
         var nugetPackages = await _httpClient
             .GetFromJsonAsync<NugetResponse>(
                 query, 

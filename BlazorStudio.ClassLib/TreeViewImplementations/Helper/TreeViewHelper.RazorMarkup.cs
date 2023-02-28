@@ -2,6 +2,7 @@
 using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
 
@@ -9,11 +10,11 @@ namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static Task<List<TreeViewNoType>> LoadChildrenForRazorMarkupAsync(
+    public static async Task<List<TreeViewNoType>> LoadChildrenForRazorMarkupAsync(
         TreeViewNamespacePath razorMarkupTreeView)
     {
         if (razorMarkupTreeView.Item is null)
-            return Task.FromResult<List<TreeViewNoType>>(new());
+            return new();
         
         var parentDirectoryOfRazorMarkup = (IAbsoluteFilePath)
             razorMarkupTreeView.Item.AbsoluteFilePath.Directories
@@ -22,32 +23,38 @@ public partial class TreeViewHelper
         var parentAbsoluteFilePathString = parentDirectoryOfRazorMarkup
             .GetAbsoluteFilePathString();
 
-        var childFileTreeViewModels = Directory
-            .GetFiles(parentAbsoluteFilePathString)
-            .Select(x =>
-            {
-                var absoluteFilePath = new AbsoluteFilePath(x, false);
-
-                var namespaceString = razorMarkupTreeView.Item.Namespace;
-                
-                return (TreeViewNoType)new TreeViewNamespacePath(
-                    new NamespacePath(
-                        namespaceString,
-                        absoluteFilePath),
-                    razorMarkupTreeView.CommonComponentRenderers,
-                    razorMarkupTreeView.SolutionExplorerStateWrap,
-                    false,
-                    false)
+        var childFileTreeViewModels = 
+            (await razorMarkupTreeView.FileSystemProvider
+                .Directory.GetFilesAsync(parentAbsoluteFilePathString))
+                .Select(x =>
                 {
-                    TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
-                };
-            }).ToList();
+                    var absoluteFilePath = new AbsoluteFilePath(
+                        x,
+                        false,
+                        razorMarkupTreeView.EnvironmentProvider);
+
+                    var namespaceString = razorMarkupTreeView.Item.Namespace;
+                    
+                    return (TreeViewNoType)new TreeViewNamespacePath(
+                        new NamespacePath(
+                            namespaceString,
+                            absoluteFilePath),
+                        razorMarkupTreeView.CommonComponentRenderers,
+                        razorMarkupTreeView.SolutionExplorerStateWrap,
+                        razorMarkupTreeView.FileSystemProvider,
+                        razorMarkupTreeView.EnvironmentProvider,
+                        false,
+                        false)
+                    {
+                        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                    };
+                }).ToList();
 
         RazorMarkupFindRelatedFiles(
             razorMarkupTreeView,
             childFileTreeViewModels);
 
-        return Task.FromResult(razorMarkupTreeView.Children);
+        return razorMarkupTreeView.Children;
     }
     
     public static void RazorMarkupFindRelatedFiles(

@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.State;
 using Fluxor;
 
@@ -10,6 +11,7 @@ namespace BlazorStudio.ClassLib.Store.TerminalCase;
 public class TerminalSession
 {
     private readonly IDispatcher _dispatcher;
+    private readonly IFileSystemProvider _fileSystemProvider;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
 
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
@@ -23,9 +25,11 @@ public class TerminalSession
     
     public TerminalSession(
         string? workingDirectoryAbsoluteFilePathString, 
-        IDispatcher dispatcher)
+        IDispatcher dispatcher,
+        IFileSystemProvider fileSystemProvider)
     {
         _dispatcher = dispatcher;
+        _fileSystemProvider = fileSystemProvider;
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
     }
 
@@ -172,7 +176,7 @@ public class TerminalSession
 
         var bash = "/bin/bash";
 
-        if (File.Exists(bash))
+        if (await _fileSystemProvider.File.ExistsAsync(bash))
         {
             _process.StartInfo.FileName = bash;
             _process.StartInfo.Arguments = $"-c \"{terminalCommand.Command}\"";

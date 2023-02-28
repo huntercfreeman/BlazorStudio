@@ -2,6 +2,7 @@
 using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
@@ -15,6 +16,8 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         NamespacePath namespacePath,
         ICommonComponentRenderers commonComponentRenderers,
         IState<SolutionExplorerState> solutionExplorerStateWrap,
+        IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider,
         bool isExpandable,
         bool isExpanded)
             : base(
@@ -24,10 +27,14 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     {
         CommonComponentRenderers = commonComponentRenderers;
         SolutionExplorerStateWrap = solutionExplorerStateWrap;
+        FileSystemProvider = fileSystemProvider;
+        EnvironmentProvider = environmentProvider;
     }
  
     public ICommonComponentRenderers CommonComponentRenderers { get; }
     public IState<SolutionExplorerState> SolutionExplorerStateWrap { get; }
+    public IFileSystemProvider FileSystemProvider { get; }
+    public IEnvironmentProvider EnvironmentProvider { get; }
 
     public override bool Equals(object? obj)
     {

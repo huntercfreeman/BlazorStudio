@@ -14,7 +14,7 @@ namespace BlazorStudio.Photino
             appBuilder.Services
                 .AddLogging();
 
-            appBuilder.Services.AddBlazorTextEditorRazorLibServices();
+            appBuilder.Services.AddBlazorStudioRazorLibServices();
             
             // register root component
             appBuilder.RootComponents.Add<App>("app");

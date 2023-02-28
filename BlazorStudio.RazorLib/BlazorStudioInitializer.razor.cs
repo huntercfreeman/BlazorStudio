@@ -1,6 +1,7 @@
-﻿using BlazorALaCarte.Shared.Facts;
-using BlazorALaCarte.Shared.Icons.Codicon;
+﻿using BlazorALaCarte.Shared.Icons.Codicon;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
 using BlazorStudio.ClassLib.Store.SolutionExplorer;
@@ -25,6 +26,10 @@ public partial class BlazorStudioInitializer : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
     protected override void OnInitialized()
     {
@@ -32,7 +37,8 @@ public partial class BlazorStudioInitializer : ComponentBase
         {
             var terminalSession = new TerminalSession(
                 null, 
-                Dispatcher)
+                Dispatcher,
+                FileSystemProvider)
             {
                 TerminalSessionKey = terminalSessionKey
             };
@@ -41,23 +47,30 @@ public partial class BlazorStudioInitializer : ComponentBase
                 terminalSession));
         }
 
-        // This block is so I can work on the Solution Explorer UI
-        // without clicking through the app to open a solution
-        {
-            var testSolutionExplorer = new AbsoluteFilePath(
-                @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp.sln",
-                false);
-
-            if (System.IO.File.Exists(testSolutionExplorer.GetAbsoluteFilePathString()))
-            {
-                Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                    testSolutionExplorer));
-            }
-        }
-
         InitializePanelTabs();
         
         base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // This block is so I can work on the Solution Explorer UI
+        // without clicking through the app to open a solution
+        // {
+        //     var testSolutionExplorer = new AbsoluteFilePath(
+        //         @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp.sln",
+        //         false,
+        //         EnvironmentProvider);
+        //
+        //     if (await FileSystemProvider.File.ExistsAsync(testSolutionExplorer.GetAbsoluteFilePathString()))
+        //     {
+        //         Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
+        //             testSolutionExplorer,
+        //             EnvironmentProvider));
+        //     }
+        // }
+        
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private void InitializePanelTabs()
@@ -71,22 +84,6 @@ public partial class BlazorStudioInitializer : ComponentBase
     {
         var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsCollectionWrap.Value);
 
-        var solutionExplorerPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
-            leftPanel.ElementDimensions,
-            new(),
-            typeof(SolutionExplorerDisplay),
-            typeof(IconFolder),
-            "Solution Explorer");
-        
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
-            leftPanel.PanelRecordKey,
-            solutionExplorerPanelTab));
-        
-        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
-            leftPanel.PanelRecordKey,
-            solutionExplorerPanelTab.PanelTabKey));
-        
         var folderExplorerPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             leftPanel.ElementDimensions,
@@ -98,6 +95,22 @@ public partial class BlazorStudioInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             leftPanel.PanelRecordKey,
             folderExplorerPanelTab));
+        
+        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
+            leftPanel.PanelRecordKey,
+            folderExplorerPanelTab.PanelTabKey));
+        
+        var solutionExplorerPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            leftPanel.ElementDimensions,
+            new(),
+            typeof(SolutionExplorerDisplay),
+            typeof(IconFolder),
+            "Solution Explorer");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            leftPanel.PanelRecordKey,
+            solutionExplorerPanelTab));
         
         var gitChangesPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),

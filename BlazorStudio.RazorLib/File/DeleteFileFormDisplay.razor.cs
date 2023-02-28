@@ -11,6 +11,9 @@ namespace BlazorStudio.RazorLib.File;
 public partial class DeleteFileFormDisplay 
     : ComponentBase, IDeleteFileFormRendererType
 {
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    
     [CascadingParameter]
     public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
     
@@ -26,7 +29,7 @@ public partial class DeleteFileFormDisplay
     private int? _countOfImmediateChildren;
     private ButtonDisplay? _cancelButtonDisplay;
 
-    protected override Task OnParametersSetAsync()
+    protected override async Task OnParametersSetAsync()
     {
         if (_previousAbsoluteFilePath is null ||
             _previousAbsoluteFilePath.GetAbsoluteFilePathString() != 
@@ -38,14 +41,14 @@ public partial class DeleteFileFormDisplay
 
             if (AbsoluteFilePath.IsDirectory)
             {
-                _countOfImmediateChildren = Directory
-                    .EnumerateFileSystemEntries(
-                        AbsoluteFilePath.GetAbsoluteFilePathString())
+                _countOfImmediateChildren = (await FileSystemProvider.Directory
+                    .EnumerateFileSystemEntriesAsync(
+                        AbsoluteFilePath.GetAbsoluteFilePathString()))
                     .Count();
             }
         }
         
-        return base.OnParametersSetAsync();
+        await base.OnParametersSetAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

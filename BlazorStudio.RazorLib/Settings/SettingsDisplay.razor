@@ -1,39 +1,25 @@
 @using BlazorStudio.RazorLib.FontSettings
 @using BlazorTextEditor.RazorLib.HelperComponents
-@using BlazorALaCarte.Shared.Theme
+@using BlazorALaCarte.Shared.Options
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="bstudio_settings-display">
     
     <div class="bstudio_settings-group">
-        <h3>
-            Appearance
-            
-            <ButtonDisplay OnClickFunc="PersistSettingsLocallyOnClick"
-                           CssStyleString="display: inline; font-size: 1rem;">
-                Save Appearance Settings
-            </ButtonDisplay>
-        </h3>
-        
-        @* The "bstudio_input" css class when used on a <select> HTML element does not render correctly on Ubuntu so do not include it here*@
-        <div style="margin-top: 7px;"></div>
-        <ThemeSelectTheme InputElementCssClass=""/>
-    
-        <div style="margin-top: 7px;"></div>
-        <FontSettingsDisplay/>
-    
-        <div style="margin-top: 7px;"></div>
-        <IconSettingsDisplay InputElementCssClass="bstudio_input"/>
+
+        <InputAppFontSize/>
+        <InputAppIconSize/>
+        <InputAppTheme/>
     </div>
 
     <div class="bstudio_settings-group">
         <h3>
             Editor
-            
+
             <span style="font-size: 1rem;">(these settings auto-save on change)</span>
         </h3>
-        
+
         <TextEditorSettings InputElementCssClass="bstudio_input"/>
     </div>
 

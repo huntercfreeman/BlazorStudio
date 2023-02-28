@@ -13,6 +13,12 @@ public class TerminalSessionsReducer
         TerminalSessionsState inTerminalSessionsState,
         RegisterTerminalSessionAction registerTerminalSessionAction)
     {
+        if (inTerminalSessionsState.TerminalSessionMap.ContainsKey(
+                registerTerminalSessionAction.TerminalSession.TerminalSessionKey))
+        {
+            return inTerminalSessionsState;
+        }
+        
         var nextMap = inTerminalSessionsState.TerminalSessionMap
             .Add(
                 registerTerminalSessionAction.TerminalSession.TerminalSessionKey, 

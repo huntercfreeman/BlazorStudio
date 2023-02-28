@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using Fluxor;
 using Microsoft.Build.Locator;
@@ -22,7 +23,7 @@ public record WorkspaceState(
     }
 }
 
-public record SetWorkspaceStateAction;
+public record SetWorkspaceStateAction(IEnvironmentProvider EnvironmentProvider);
 
 public class WorkspaceStateReducer
 {
@@ -47,11 +48,13 @@ public class WorkspaceStateReducer
         var noTrailingSlashMsBuildPath = visualStudioInstance.MSBuildPath;
 
         noTrailingSlashMsBuildPath = FilePathHelper.StripEndingDirectorySeparatorIfExists(
-                noTrailingSlashMsBuildPath);
+                noTrailingSlashMsBuildPath,
+                setWorkspaceStateAction.EnvironmentProvider);
 
         var msBuildAbsoluteFilePath = new AbsoluteFilePath(
             noTrailingSlashMsBuildPath, 
-            true);
+            true,
+            setWorkspaceStateAction.EnvironmentProvider);
 
         return inWorkspaceState with
         {

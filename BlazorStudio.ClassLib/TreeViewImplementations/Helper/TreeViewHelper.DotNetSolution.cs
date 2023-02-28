@@ -1,6 +1,7 @@
 ﻿using BlazorALaCarte.TreeView;
 using BlazorALaCarte.TreeView.BaseTypes;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.Namespaces;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
@@ -20,7 +21,8 @@ public partial class TreeViewHelper
             {
                 var absoluteFilePath = new AbsoluteFilePath(
                     x.FilePath, 
-                    false);
+                    false,
+                    dotNetSolutionTreeView.EnvironmentProvider);
 
                 var namespacePath = new NamespacePath(
                     absoluteFilePath.FileNameNoExtension,
@@ -30,6 +32,8 @@ public partial class TreeViewHelper
                     namespacePath,
                     dotNetSolutionTreeView.CommonComponentRenderers,
                     dotNetSolutionTreeView.SolutionExplorerStateWrap,
+                    dotNetSolutionTreeView.FileSystemProvider,
+                    dotNetSolutionTreeView.EnvironmentProvider,
                     true,
                     false)
                 {

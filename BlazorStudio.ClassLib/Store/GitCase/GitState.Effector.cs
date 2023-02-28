@@ -2,6 +2,8 @@
 using System.Text;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Git;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
@@ -14,7 +16,9 @@ public partial record GitState
     {
         private readonly IState<TerminalSessionsState> _terminalSessionsStateWrap;
         private readonly IState<GitState> _gitStateWrap;
-        
+        private readonly IFileSystemProvider _fileSystemProvider;
+        private readonly IEnvironmentProvider _environmentProvider;
+
         // Usage:
         /*
            try
@@ -33,10 +37,14 @@ public partial record GitState
 
         public Effector(
             IState<TerminalSessionsState> terminalSessionsStateWrap,
-            IState<GitState> gitStateWrap)
+            IState<GitState> gitStateWrap,
+            IFileSystemProvider fileSystemProvider,
+            IEnvironmentProvider environmentProvider)
         {
             _terminalSessionsStateWrap = terminalSessionsStateWrap;
             _gitStateWrap = gitStateWrap;
+            _fileSystemProvider = fileSystemProvider;
+            _environmentProvider = environmentProvider;
         }
 
         [EffectMethod]
@@ -83,7 +91,7 @@ public partial record GitState
                 }));
 
                 if (gitState.GitFolderAbsoluteFilePath is null ||
-                    !Directory.Exists(gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()) ||
+                    !await _fileSystemProvider.Directory.ExistsAsync(gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()) ||
                     gitState.GitFolderAbsoluteFilePath.ParentDirectory is null)
                 {
                     return;
@@ -273,8 +281,9 @@ public partial record GitState
                     tryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath
                         .GetAbsoluteFilePathString();
             
-                var childDirectoryAbsoluteFilePathStrings = Directory.GetDirectories(
-                    directoryAbsoluteFilePathString);
+                var childDirectoryAbsoluteFilePathStrings = await _fileSystemProvider.Directory
+                    .GetDirectoriesAsync(
+                        directoryAbsoluteFilePathString);
 
                 var gitFolderAbsoluteFilePathString = childDirectoryAbsoluteFilePathStrings.FirstOrDefault(
                     x => x.EndsWith(GitFacts.GIT_FOLDER_NAME));
@@ -283,7 +292,8 @@ public partial record GitState
                 {
                     var gitFolderAbsoluteFilePath = new AbsoluteFilePath(
                         gitFolderAbsoluteFilePathString,
-                        true);
+                        true,
+                        _environmentProvider);
                 
                     dispatcher.Dispatch(
                         new SetGitStateWithAction(withGitState => withGitState with
@@ -433,12 +443,13 @@ public partial record GitState
                             gitState.GitFolderAbsoluteFilePath.ParentDirectory.GetAbsoluteFilePathString() +
                             x.relativePath;
                         
-                        var isDirectory = x.relativePath.EndsWith(Path.DirectorySeparatorChar) ||
-                                          x.relativePath.EndsWith(Path.AltDirectorySeparatorChar);
+                        var isDirectory = x.relativePath.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
+                                          x.relativePath.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
                         
                         var absoluteFilePath = new AbsoluteFilePath(
                             absoluteFilePathString,
-                            isDirectory);
+                            isDirectory,
+                            _environmentProvider);
 
                         return new GitFile(absoluteFilePath, x.gitDirtyReason);
                     })

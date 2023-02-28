@@ -1,7 +1,6 @@
 ﻿using BlazorALaCarte.Shared.Clipboard;
-using BlazorALaCarte.Shared.Facts;
+using BlazorALaCarte.Shared.Theme;
 using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.Nuget;
@@ -16,16 +15,17 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddBlazorStudioClassLibServices(
         this IServiceCollection services,
         Func<IServiceProvider, IClipboardProvider> clipboardProviderDefaultFactory,
-        ICommonComponentRenderers commonComponentRenderers)
+        ICommonComponentRenderers commonComponentRenderers,
+        Func<IServiceProvider, IEnvironmentProvider> environmentProviderFactory,
+        Func<IServiceProvider, IFileSystemProvider> fileSystemProviderFactory)
     {
         return services
-            .AddSingleton<ICommonComponentRenderers>(commonComponentRenderers)
-            .AddSingleton<Menu.ICommonMenuOptionsFactory, Menu.CommonMenuOptionsFactory>()
-            .AddSingleton<IFileTemplateProvider, FileTemplateProvider>()
-            .AddSingleton<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
+            .AddScoped<ICommonComponentRenderers>(_ => commonComponentRenderers)
+            .AddScoped<Menu.ICommonMenuOptionsFactory, Menu.CommonMenuOptionsFactory>()
+            .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
+            .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
             .AddBlazorTextEditor(configureTextEditorServiceOptions =>
             {
-                configureTextEditorServiceOptions.InitializeFluxor = false;
                 configureTextEditorServiceOptions.ClipboardProviderFactory = clipboardProviderDefaultFactory;
                 configureTextEditorServiceOptions.InitialThemeRecords = BlazorStudioTextEditorColorThemeFacts.BlazorStudioTextEditorThemes;
                 configureTextEditorServiceOptions.InitialThemeKey = BlazorStudioTextEditorColorThemeFacts.LightTheme.ThemeKey;
@@ -37,11 +37,12 @@ public static class ServiceCollectionExtensions
             .AddFluxor(options => options
                 .ScanAssemblies(
                     typeof(ServiceCollectionExtensions).Assembly,
-                    typeof(BlazorALaCarte.Shared.Installation.ServiceCollectionExtensions).Assembly,
+                    typeof(BlazorALaCarte.Shared.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorALaCarte.DialogNotification.Installation.ServiceCollectionExtensions).Assembly, 
                     typeof(BlazorALaCarte.TreeView.Installation.ServiceCollectionExtensions).Assembly,
                     typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
                     typeof(ServiceCollectionExtensions).Assembly))
-            .AddScoped<IFileSystemProvider, LocalFileSystemProvider>();
+            .AddScoped<IEnvironmentProvider>(environmentProviderFactory.Invoke)
+            .AddScoped<IFileSystemProvider>(fileSystemProviderFactory.Invoke);
     }
 }

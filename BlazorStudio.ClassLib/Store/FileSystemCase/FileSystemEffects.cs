@@ -9,9 +9,11 @@ namespace BlazorStudio.ClassLib.Store.FileSystemCase;
 
 public class FileSystemState
 {
+    public const int MAXIMUM_CHARACTER_COUNT_OF_CONTENT = 250;
+    
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
-
+    
     /// <summary>
     /// "string: absoluteFilePath"
     /// <br/>
@@ -125,21 +127,28 @@ public class FileSystemState
 
         isFirstLoop = false;
         
-        string notificationInformativeMessage;
+        string notificationMessage;
         
         if (absoluteFilePathString is not null &&
-            File.Exists(absoluteFilePathString))
+            await _fileSystemProvider.File.ExistsAsync(absoluteFilePathString))
         {
-            await File.WriteAllTextAsync(
+            await _fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePathString,
                 saveFileAction.Content);
         
-            notificationInformativeMessage = $"successfully saved: {absoluteFilePathString}";
+            if (saveFileAction.Content.Length > MAXIMUM_CHARACTER_COUNT_OF_CONTENT)
+            {
+                notificationMessage = $"{MAXIMUM_CHARACTER_COUNT_OF_CONTENT} character limit was reached. Partially saved: {absoluteFilePathString}";
+            }
+            else
+            {
+                notificationMessage = $"successfully saved: {absoluteFilePathString}";
+            }
         }
         else
         {
             // TODO: Save As to make new file
-            notificationInformativeMessage = "File not found. TODO: Save As";
+            notificationMessage = "File not found. TODO: Save As";
         }
         
         var notificationInformative  = new NotificationRecord(
@@ -150,7 +159,7 @@ public class FileSystemState
             {
                 {
                     nameof(IInformativeNotificationRendererType.Message), 
-                    notificationInformativeMessage
+                    notificationMessage
                 },
             },
             TimeSpan.FromSeconds(5));
