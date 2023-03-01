@@ -26,4 +26,20 @@
         <ProjectReference Include="..\BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="BalcTreeView\NavLinks\BalcTreeViewNavLinks.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\LabeledCounter.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\TextEditorDebugContextMenuDisplay.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\TextEditorDebugDisplay.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\TreeViewEnumerableDisplay.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\TreeViewExceptionDisplay.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\TreeViewFieldsDisplay.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\TreeViewInterfaceImplementationDisplay.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\TreeViewPropertiesDisplay.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\TreeViewReflectionDisplay.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\TreeViewTextDisplay.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\_Imports.razor" />
+      <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowPage.razor" />
+    </ItemGroup>
+
 </Project>

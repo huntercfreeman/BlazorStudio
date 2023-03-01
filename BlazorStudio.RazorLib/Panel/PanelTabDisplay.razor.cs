@@ -1,8 +1,5 @@
-﻿using BlazorALaCarte.Shared.Dimensions;
-using BlazorALaCarte.Shared.Drag;
-using BlazorALaCarte.Shared.Resize;
-using BlazorALaCarte.Shared.Store.DragCase;
-using BlazorCommon.RazorLib.Dimensions;
+﻿using BlazorCommon.RazorLib.Dimensions;
+using BlazorCommon.RazorLib.Resize;
 using BlazorCommon.RazorLib.Store.DragCase;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
@@ -29,7 +26,7 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
     private bool IsActive => PanelRecord.ActivePanelTabKey == PanelTab.PanelTabKey;
     
     private string IsActiveCssClassString => IsActive
-        ? "balc_active"
+        ? "bcrl_active"
         : string.Empty;
 
     private readonly SemaphoreSlim _onMouseMoveSemaphoreSlim = new(1, 1);
@@ -211,7 +208,7 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
             if (_thinksLeftMouseButtonIsDown &&
                 (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
             {
-                ResizeService.Move(
+                ResizeHelper.Move(
                     PanelTab.BeingDraggedDimensions,
                     mouseEventArgsTuple.firstMouseEventArgs,
                     mouseEventArgsTuple.secondMouseEventArgs);

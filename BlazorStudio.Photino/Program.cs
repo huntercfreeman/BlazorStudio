@@ -1,4 +1,7 @@
 ﻿using System;
+using BlazorStudio.RazorLib;
+using Microsoft.Extensions.DependencyInjection;
+using Photino.Blazor;
 
 namespace BlazorStudio.Photino
 {
@@ -11,7 +14,7 @@ namespace BlazorStudio.Photino
             appBuilder.Services
                 .AddLogging();
 
-            appBuilder.Services.AddBlazorStudioRazorLibServices();
+            appBuilder.Services.AddBlazorStudioRazorLibServices(true);
             
             // register root component
             appBuilder.RootComponents.Add<App>("app");

@@ -1,7 +1,4 @@
-﻿using BlazorALaCarte.Shared.Dimensions;
-using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.Services;
-using BlazorCommon.RazorLib.Dimensions;
+﻿using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.CommonComponents;

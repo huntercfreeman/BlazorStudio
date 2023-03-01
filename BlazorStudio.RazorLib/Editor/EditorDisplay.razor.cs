@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using BlazorALaCarte.Shared.Dimensions;
 using BlazorCommon.RazorLib.Dimensions;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FileSystemCase;
