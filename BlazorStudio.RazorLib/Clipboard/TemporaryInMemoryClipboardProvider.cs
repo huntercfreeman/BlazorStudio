@@ -1,6 +1,4 @@
-﻿using BlazorALaCarte.Shared.Clipboard;
-
-namespace BlazorStudio.RazorLib.Clipboard;
+﻿namespace BlazorStudio.RazorLib.Clipboard;
 
 public class TemporaryInMemoryClipboardProvider : IClipboardProvider
 {

@@ -1,4 +1,5 @@
 ﻿using BlazorALaCarte.Shared.Dimensions;
+using BlazorCommon.RazorLib.Dimensions;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
 using Fluxor;

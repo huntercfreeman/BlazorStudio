@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
-using BlazorALaCarte.Shared.Keyboard;
-using BlazorALaCarte.Shared.Menu;
+using BlazorCommon.RazorLib.Keyboard;
+using BlazorCommon.RazorLib.Menu;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileTemplates;
 using Microsoft.AspNetCore.Components;

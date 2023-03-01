@@ -1,5 +1,5 @@
-using BlazorALaCarte.Shared.Keyboard;
-using BlazorALaCarte.Shared.Menu;
+using BlazorCommon.RazorLib.Keyboard;
+using BlazorCommon.RazorLib.Menu;
 using BlazorStudio.ClassLib.Store.AccountCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;

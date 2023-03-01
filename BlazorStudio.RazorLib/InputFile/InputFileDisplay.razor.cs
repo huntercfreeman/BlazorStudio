@@ -1,10 +1,8 @@
 using System.Collections.Immutable;
-using BlazorALaCarte.DialogNotification.Dialog;
-using BlazorALaCarte.Shared.Dimensions;
-using BlazorALaCarte.Shared.Resize;
-using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.BaseTypes;
-using BlazorALaCarte.TreeView.Services;
+using BlazorCommon.RazorLib.Dimensions;
+using BlazorCommon.RazorLib.Resize;
+using BlazorCommon.RazorLib.TreeView;
+using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;

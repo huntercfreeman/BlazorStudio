@@ -1,10 +1,9 @@
-﻿using BlazorALaCarte.TreeView.Commands;
-using BlazorALaCarte.TreeView.Events;
-using BlazorALaCarte.TreeView.Services;
+﻿using BlazorCommon.RazorLib.TreeView;
+using BlazorCommon.RazorLib.TreeView.Commands;
+using BlazorCommon.RazorLib.TreeView.Events;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.EditorCase;
-using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
 using Fluxor;

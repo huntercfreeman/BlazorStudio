@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using BlazorALaCarte.Shared.Dimensions;
+using BlazorCommon.RazorLib.Dimensions;
 
 namespace BlazorStudio.ClassLib.Panel;
 

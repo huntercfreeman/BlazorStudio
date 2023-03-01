@@ -2,6 +2,8 @@
 using BlazorALaCarte.Shared.Drag;
 using BlazorALaCarte.Shared.Resize;
 using BlazorALaCarte.Shared.Store.DragCase;
+using BlazorCommon.RazorLib.Dimensions;
+using BlazorCommon.RazorLib.Store.DragCase;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
 using Fluxor;

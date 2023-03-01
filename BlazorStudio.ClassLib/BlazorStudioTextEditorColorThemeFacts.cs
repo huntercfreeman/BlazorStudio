@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using BlazorALaCarte.Shared.Theme;
+using BlazorCommon.RazorLib.Theme;
 
 namespace BlazorStudio.ClassLib;
 

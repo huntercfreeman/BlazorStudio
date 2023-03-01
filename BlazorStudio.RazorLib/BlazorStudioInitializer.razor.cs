@@ -1,10 +1,7 @@
-﻿using BlazorALaCarte.Shared.Icons.Codicon;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
+﻿using BlazorCommon.RazorLib.Icons.Codicon;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.RazorLib.FolderExplorer;
 using BlazorStudio.RazorLib.Git;

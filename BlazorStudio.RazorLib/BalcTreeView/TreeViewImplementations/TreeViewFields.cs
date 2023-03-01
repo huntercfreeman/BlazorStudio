@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
-using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.BaseTypes;
+using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 
 namespace BlazorStudio.RazorLib.BalcTreeView.TreeViewImplementations;
 

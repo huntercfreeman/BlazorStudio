@@ -1,13 +1,12 @@
 ﻿using System.Collections.Immutable;
-using BlazorALaCarte.DialogNotification.Notification;
-using BlazorALaCarte.DialogNotification.Store.NotificationCase;
-using BlazorALaCarte.Shared.Clipboard;
-using BlazorALaCarte.Shared.Menu;
+using BlazorCommon.RazorLib.Clipboard;
+using BlazorCommon.RazorLib.Menu;
+using BlazorCommon.RazorLib.Notification;
+using BlazorCommon.RazorLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Clipboard;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
-using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.FileTemplates;
@@ -26,7 +25,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly IClipboardProvider _clipboardProvider;
+    private readonly IClipboardService _clipboardService;
 
     /// <summary>
     /// I could not get a dependency injected <see cref="IDispatcher"/>
@@ -37,12 +36,12 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        IClipboardProvider clipboardProvider)
+        IClipboardService clipboardService)
     {
         _commonComponentRenderers = commonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
-        _clipboardProvider = clipboardProvider;
+        _clipboardService = clipboardService;
     }
     
     public MenuOptionRecord NewEmptyFile(
@@ -386,7 +385,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     {
         _ = Task.Run(async () =>
         { 
-            await _clipboardProvider
+            await _clipboardService
                 .SetClipboard(
                     ClipboardFacts.FormatPhrase(
                         ClipboardFacts.CopyCommand,
@@ -403,7 +402,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     {
         _ = Task.Run(async () =>
         { 
-            await _clipboardProvider
+            await _clipboardService
                 .SetClipboard(
                     ClipboardFacts.FormatPhrase(
                         ClipboardFacts.CutCommand,
@@ -420,7 +419,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     {
         _ = Task.Run(async () =>
         {
-            var clipboardContents = await _clipboardProvider
+            var clipboardContents = await _clipboardService
                 .ReadClipboard();
 
             if (ClipboardFacts.TryParseString(
