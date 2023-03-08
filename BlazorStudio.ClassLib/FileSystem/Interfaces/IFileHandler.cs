@@ -1,5 +1,3 @@
-using BlazorStudio.ClassLib.Dto;
-
 namespace BlazorStudio.ClassLib.FileSystem.Interfaces;
 
 public interface IFileHandler

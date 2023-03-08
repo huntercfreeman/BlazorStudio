@@ -1,4 +1,4 @@
-﻿using BlazorALaCarte.Shared.Menu;
+﻿using BlazorCommon.RazorLib.Menu;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.TerminalCase;

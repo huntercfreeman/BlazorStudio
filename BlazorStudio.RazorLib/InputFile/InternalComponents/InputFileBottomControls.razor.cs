@@ -1,5 +1,5 @@
-﻿using BlazorALaCarte.DialogNotification.Dialog;
-using BlazorALaCarte.DialogNotification.Store.DialogCase;
+﻿using BlazorCommon.RazorLib.Dialog;
+using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;

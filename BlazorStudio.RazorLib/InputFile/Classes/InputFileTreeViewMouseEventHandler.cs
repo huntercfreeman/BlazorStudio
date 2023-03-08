@@ -1,6 +1,6 @@
-﻿using BlazorALaCarte.TreeView.Commands;
-using BlazorALaCarte.TreeView.Events;
-using BlazorALaCarte.TreeView.Services;
+﻿using BlazorCommon.RazorLib.TreeView;
+using BlazorCommon.RazorLib.TreeView.Commands;
+using BlazorCommon.RazorLib.TreeView.Events;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;

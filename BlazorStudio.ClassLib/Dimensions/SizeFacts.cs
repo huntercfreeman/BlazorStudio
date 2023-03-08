@@ -1,4 +1,4 @@
-﻿using BlazorALaCarte.Shared.Dimensions;
+﻿using BlazorCommon.RazorLib.Dimensions;
 
 namespace BlazorStudio.ClassLib.Dimensions;
 

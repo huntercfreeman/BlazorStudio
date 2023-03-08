@@ -1,11 +1,10 @@
 ﻿using System.Collections.Immutable;
-using BlazorALaCarte.DialogNotification.Dialog;
-using BlazorALaCarte.Shared.Dimensions;
-using BlazorALaCarte.Shared.Store.DropdownCase;
-using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.BaseTypes;
-using BlazorALaCarte.TreeView.Commands;
-using BlazorALaCarte.TreeView.Services;
+using BlazorCommon.RazorLib.Dialog;
+using BlazorCommon.RazorLib.Dimensions;
+using BlazorCommon.RazorLib.Store.DropdownCase;
+using BlazorCommon.RazorLib.TreeView;
+using BlazorCommon.RazorLib.TreeView.Commands;
+using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;

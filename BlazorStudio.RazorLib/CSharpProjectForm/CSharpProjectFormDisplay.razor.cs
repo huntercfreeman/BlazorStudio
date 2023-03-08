@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using BlazorALaCarte.DialogNotification.Dialog;
-using BlazorALaCarte.DialogNotification.Store.DialogCase;
-using BlazorALaCarte.TreeView.Services;
+using BlazorCommon.RazorLib.Dialog;
+using BlazorCommon.RazorLib.Store.DialogCase;
+using BlazorCommon.RazorLib.TreeView;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.InputFile;
 using BlazorStudio.ClassLib.Namespaces;

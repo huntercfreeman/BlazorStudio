@@ -1,5 +1,4 @@
-﻿using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.BaseTypes;
+﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Git;
 

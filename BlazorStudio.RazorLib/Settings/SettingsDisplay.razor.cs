@@ -1,6 +1,6 @@
-using BlazorALaCarte.Shared.Options;
-using BlazorALaCarte.Shared.Store.ThemeCase;
-using BlazorALaCarte.Shared.Theme;
+using BlazorCommon.RazorLib.Options;
+using BlazorCommon.RazorLib.Store.ThemeCase;
+using BlazorCommon.RazorLib.Theme;
 using BlazorStudio.ClassLib.Store.FontCase;
 using BlazorStudio.ClassLib.Store.LocalStorageCase;
 using BlazorTextEditor.RazorLib;

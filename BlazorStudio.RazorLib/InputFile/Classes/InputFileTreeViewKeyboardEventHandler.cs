@@ -1,8 +1,8 @@
-﻿using BlazorALaCarte.Shared.Keyboard;
-using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.Commands;
-using BlazorALaCarte.TreeView.Events;
-using BlazorALaCarte.TreeView.Services;
+﻿using BlazorCommon.RazorLib.Keyboard;
+using BlazorCommon.RazorLib.TreeView;
+using BlazorCommon.RazorLib.TreeView.Commands;
+using BlazorCommon.RazorLib.TreeView.Events;
+using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;

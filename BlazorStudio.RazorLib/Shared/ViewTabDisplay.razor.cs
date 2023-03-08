@@ -20,7 +20,7 @@ public partial class ViewTabDisplay : FluxorComponent
                              View.ViewKey;
     
     private string IsActiveCssClass => IsActive
-        ? "balc_active"
+        ? "bcrl_active"
         : string.Empty;
 
     private void DispatchSetActiveViewAction()

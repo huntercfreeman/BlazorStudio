@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
-using BlazorALaCarte.DialogNotification.Notification;
-using BlazorALaCarte.DialogNotification.Store.NotificationCase;
+using BlazorCommon.RazorLib.Notification;
+using BlazorCommon.RazorLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using Fluxor;

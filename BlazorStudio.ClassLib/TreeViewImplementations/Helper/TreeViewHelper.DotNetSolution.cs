@@ -1,6 +1,4 @@
-﻿using BlazorALaCarte.TreeView;
-using BlazorALaCarte.TreeView.BaseTypes;
-using BlazorStudio.ClassLib.FileSystem.Classes;
+﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.Namespaces;
 
