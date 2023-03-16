@@ -334,11 +334,7 @@ public partial class InputFileContextMenu : ComponentBase
 
         return Task.CompletedTask;
     }
-    
-    /// <summary>
-    /// TODO: Should this logic just use position: fixed; instead of the default "position: absolute;"
-    /// TODO: Fix bug for maximized dialog right click causes context menu not correct position.
-    /// </summary>
+
     public static string GetContextMenuCssStyleString(
         ITreeViewCommandParameter? treeViewCommandParameter,
         DialogRecord dialogRecord)
@@ -346,6 +342,11 @@ public partial class InputFileContextMenu : ComponentBase
         if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";
 
+        if (dialogRecord.IsMaximized)
+            return
+                $"left: {treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;" +
+                " " +
+                $"top: {treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
         var dialogLeftDimensionAttribute = dialogRecord
             .ElementDimensions
             .DimensionAttributes
@@ -361,7 +362,7 @@ public partial class InputFileContextMenu : ComponentBase
             DimensionUnitKind = DimensionUnitKind.Pixels,
             Value = treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels
         });
-        
+
         foreach (var dimensionUnit in dialogLeftDimensionAttribute.DimensionUnits)
         {
             contextMenuLeftDimensionAttribute.DimensionUnits.Add(new DimensionUnit
@@ -372,12 +373,12 @@ public partial class InputFileContextMenu : ComponentBase
                 DimensionUnitKind = dimensionUnit.DimensionUnitKind
             });
         }
-        
+
         var dialogTopDimensionAttribute = dialogRecord
             .ElementDimensions
             .DimensionAttributes
             .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-        
+
         var contextMenuTopDimensionAttribute = new DimensionAttribute
         {
             DimensionAttributeKind = DimensionAttributeKind.Top
@@ -388,7 +389,7 @@ public partial class InputFileContextMenu : ComponentBase
             DimensionUnitKind = DimensionUnitKind.Pixels,
             Value = treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels
         });
-        
+
         foreach (var dimensionUnit in dialogTopDimensionAttribute.DimensionUnits)
         {
             contextMenuTopDimensionAttribute.DimensionUnits.Add(new DimensionUnit
