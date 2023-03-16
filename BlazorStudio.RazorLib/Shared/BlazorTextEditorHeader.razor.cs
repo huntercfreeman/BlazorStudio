@@ -36,7 +36,7 @@ public partial class BlazorTextEditorHeader : FluxorComponent
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public Type LoginDisplayComponentType { get; set; } = null!;
+    public Type LoginDisplayComponentType { get; set; } = typeof(LoginFormDisplay);
     
     private DropdownKey _dropdownKeyFile = DropdownKey.NewDropdownKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);

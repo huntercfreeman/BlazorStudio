@@ -1,24 +1,39 @@
-@using BlazorTextEditor.RazorLib.HelperComponents
+﻿@using BlazorCommon.RazorLib.Options
+@using BlazorTextEditor.RazorLib.Options
 
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
-<div class="bstudio_settings-display">
+<div class="bstudio_settings">
     
-    <div class="bstudio_settings-group">
-
-        <InputAppFontSize/>
-        <InputAppIconSize/>
-        <InputAppTheme/>
+    <div class="bstudio_settings-scope">
+        <div class="bstudio_settings-scope-title bstudio_larger-font-size">
+            Application Settings
+        </div>
+        
+        <div class="bstudio_settings-scope-body bcrl_indent-child-content">
+            
+            <div class="bstudio_settings-scope-border"></div>
+            
+            <InputAppFontSize/>
+            <InputAppIconSize/>
+            <InputAppTheme/>
+        </div>
     </div>
-
-    <div class="bstudio_settings-group">
-        <h3>
-            Editor
-
-            <span style="font-size: 1rem;">(these settings auto-save on change)</span>
-        </h3>
-
-        <TextEditorSettings InputElementCssClass="bstudio_input"/>
+    
+    <div class="bstudio_settings-scope">
+        <div class="bstudio_settings-scope-title bstudio_larger-font-size">
+            Text Editor Settings
+        </div>
+        
+        <div class="bstudio_settings-scope-body bcrl_indent-child-content">
+            
+            <div class="bstudio_settings-scope-border"></div>
+            
+            <TextEditorSettingsPreview/>
+            <InputTextEditorFontSize/>
+            <InputTextEditorCursorWidth/>
+            <InputTextEditorShowNewLines/>
+            <InputTextEditorShowWhitespace/>
+            <InputTextEditorTheme/>
+            <InputTextEditorKeymap/>
+        </div>
     </div>
-
 </div>

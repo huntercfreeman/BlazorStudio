@@ -17,10 +17,10 @@ public static class ServiceCollectionExtensions
             .AddScoped<Menu.ICommonMenuOptionsFactory, Menu.CommonMenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
-            .AddFluxor(options => options
-                .ScanAssemblies(
-                    typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
+            .AddFluxor(options =>
+                options.ScanAssemblies(
                     typeof(BlazorCommon.RazorLib.ServiceCollectionExtensions).Assembly,
+                    typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
                     typeof(ServiceCollectionExtensions).Assembly));
     }
 }

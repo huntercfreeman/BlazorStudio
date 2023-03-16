@@ -54,39 +54,36 @@ public static class ServiceCollectionExtensions
                 typeof(TreeViewExceptionDisplay),
                 typeof(TreeViewEnumerableDisplay)));
         
-        services.AddBlazorCommonServices(options =>
+        var shouldInitializeFluxor = false;
+        
+        services.AddBlazorTextEditor(inTextEditorOptions =>
         {
-            options = options with
+            var blazorCommonOptions = 
+                (inTextEditorOptions.BlazorCommonOptions ?? new()) with
             {
-                InitializeFluxor = false
+                InitializeFluxor = shouldInitializeFluxor
             };
-            
-            var inBlazorCommonFactories = options.BlazorCommonFactories;
 
             if (isNativeApplication)
             {
-                options = options with
+                var blazorCommonFactories = blazorCommonOptions.BlazorCommonFactories with
                 {
-                    BlazorCommonFactories = inBlazorCommonFactories with
-                    {
-                        ClipboardServiceFactory = _ => new InMemoryClipboardService(true),
-                    }
+                    ClipboardServiceFactory = _ => new InMemoryClipboardService(true),
+                };
+
+                blazorCommonOptions = blazorCommonOptions with
+                {
+                    BlazorCommonFactories = blazorCommonFactories
                 };
             }
-
-            return options;
-        });
-        
-        services.AddBlazorTextEditor(configureTextEditorServiceOptions =>
-        {
-            configureTextEditorServiceOptions.InitializeFluxor = 
-                false;
             
-            configureTextEditorServiceOptions.InitialThemeRecords =
-                BlazorStudioTextEditorColorThemeFacts.BlazorStudioTextEditorThemes;
-            
-            configureTextEditorServiceOptions.InitialThemeKey =
-                BlazorStudioTextEditorColorThemeFacts.DarkTheme.ThemeKey;
+            return inTextEditorOptions with
+            {
+                InitializeFluxor = shouldInitializeFluxor,
+                CustomThemeRecords = BlazorTextEditorCustomThemeFacts.AllCustomThemes,
+                InitialThemeKey = BlazorTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
+                BlazorCommonOptions = blazorCommonOptions 
+            };
         });
 
         Func<IServiceProvider, IEnvironmentProvider> environmentProviderFactory;
@@ -115,6 +112,12 @@ public static class ServiceCollectionExtensions
             .AddScoped<IEnvironmentProvider>(environmentProviderFactory.Invoke)
             .AddScoped<IFileSystemProvider>(fileSystemProviderFactory.Invoke);
 
+        if (isNativeApplication)
+            services.AddAuthorizationCore(); 
+        
+        services.AddSingleton<BlazorStudioOptions>(_ => 
+            new BlazorStudioOptions(isNativeApplication));
+        
         return services.AddBlazorStudioClassLibServices(
             commonRendererTypes);
     }
