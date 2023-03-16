@@ -335,6 +335,10 @@ public partial class InputFileContextMenu : ComponentBase
         return Task.CompletedTask;
     }
     
+    /// <summary>
+    /// TODO: Should this logic just use position: fixed; instead of the default "position: absolute;"
+    /// TODO: Fix bug for maximized dialog right click causes context menu not correct position.
+    /// </summary>
     public static string GetContextMenuCssStyleString(
         ITreeViewCommandParameter? treeViewCommandParameter,
         DialogRecord dialogRecord)

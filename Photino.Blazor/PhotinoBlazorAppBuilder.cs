@@ -65,7 +65,7 @@ public class RootComponentList : IEnumerable<(Type, string)>
         return _components.GetEnumerator();
     }
 
-    public void Add<TComponent>(string selector) where TComponent : IComponent
+    public void Add<TComponent>(string selector) where TComponent : Microsoft.AspNetCore.Components.IComponent
     {
         _components.Add((typeof(TComponent), selector));
     }
