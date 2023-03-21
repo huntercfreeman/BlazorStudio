@@ -91,6 +91,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
         if (firstRender)
         {
             await TextEditorService.OptionsSetFromLocalStorageAsync();
+            await AppOptionsService.SetFromLocalStorageAsync();
             
             if (System.IO.File.Exists("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
             {

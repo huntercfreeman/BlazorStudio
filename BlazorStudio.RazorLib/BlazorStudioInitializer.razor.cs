@@ -80,22 +80,6 @@ public partial class BlazorStudioInitializer : ComponentBase
     private void InitializeLeftPanelTabs()
     {
         var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsCollectionWrap.Value);
-
-        var folderExplorerPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
-            leftPanel.ElementDimensions,
-            new(),
-            typeof(FolderExplorerDisplay),
-            typeof(IconFolder),
-            "Folder Explorer");
-        
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
-            leftPanel.PanelRecordKey,
-            folderExplorerPanelTab));
-        
-        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
-            leftPanel.PanelRecordKey,
-            folderExplorerPanelTab.PanelTabKey));
         
         var solutionExplorerPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
@@ -109,6 +93,10 @@ public partial class BlazorStudioInitializer : ComponentBase
             leftPanel.PanelRecordKey,
             solutionExplorerPanelTab));
         
+        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
+            leftPanel.PanelRecordKey,
+            solutionExplorerPanelTab.PanelTabKey));
+        
         var gitChangesPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             leftPanel.ElementDimensions,
@@ -120,6 +108,18 @@ public partial class BlazorStudioInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             leftPanel.PanelRecordKey,
             gitChangesPanelTab));
+        
+        var folderExplorerPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            leftPanel.ElementDimensions,
+            new(),
+            typeof(FolderExplorerDisplay),
+            typeof(IconFolder),
+            "Folder Explorer");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            leftPanel.PanelRecordKey,
+            folderExplorerPanelTab));
     }
     
     private void InitializeRightPanelTabs()

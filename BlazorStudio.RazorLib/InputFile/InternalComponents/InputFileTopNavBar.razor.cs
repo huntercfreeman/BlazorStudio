@@ -69,9 +69,12 @@ public partial class InputFileTopNavBar : ComponentBase
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
-    private void FocusSearchElementReferenceOnClick()
+    private async Task FocusSearchElementReferenceOnClickAsync()
     {
-        SearchElementReference?.FocusAsync();
+        var localSearchElementReference = SearchElementReference;
+
+        if (localSearchElementReference is not null)
+            await localSearchElementReference.Value.FocusAsync();
     }
 
     private async Task ChangeContentRootToOpenedTreeView(
