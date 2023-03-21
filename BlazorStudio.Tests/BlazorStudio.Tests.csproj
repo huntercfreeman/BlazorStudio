@@ -26,4 +26,9 @@
         <ProjectReference Include="..\BlazorStudio.ClassLib\BlazorStudio.ClassLib.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Basics" />
+      <Folder Include="UserStories" />
+    </ItemGroup>
+
 </Project>
