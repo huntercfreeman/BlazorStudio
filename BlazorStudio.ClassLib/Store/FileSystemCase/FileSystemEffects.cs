@@ -9,8 +9,6 @@ namespace BlazorStudio.ClassLib.Store.FileSystemCase;
 
 public class FileSystemState
 {
-    public const int MAXIMUM_CHARACTER_COUNT_OF_CONTENT = 250;
-    
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     
@@ -135,15 +133,8 @@ public class FileSystemState
             await _fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePathString,
                 saveFileAction.Content);
-        
-            if (saveFileAction.Content.Length > MAXIMUM_CHARACTER_COUNT_OF_CONTENT)
-            {
-                notificationMessage = $"{MAXIMUM_CHARACTER_COUNT_OF_CONTENT} character limit was reached. Partially saved: {absoluteFilePathString}";
-            }
-            else
-            {
-                notificationMessage = $"successfully saved: {absoluteFilePathString}";
-            }
+         
+           notificationMessage = $"successfully saved: {absoluteFilePathString}";
         }
         else
         {

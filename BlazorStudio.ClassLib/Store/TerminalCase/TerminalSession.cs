@@ -184,7 +184,7 @@ public class TerminalSession
         else
         {
             _process.StartInfo.FileName = "cmd.exe";
-            _process.StartInfo.Arguments = $"/c {terminalCommand.Command} 2>&1";
+            _process.StartInfo.Arguments = $"/c \"{terminalCommand.Command}\" 2>&1";
         }
 
         // Start the child process.
@@ -193,6 +193,7 @@ public class TerminalSession
         // Redirect the output stream of the child process.
         _process.StartInfo.UseShellExecute = false;
         _process.StartInfo.RedirectStandardOutput = true;
+        _process.StartInfo.RedirectStandardError = true;
         _process.StartInfo.CreateNoWindow = true;
         
         void OutputDataReceived(object sender, DataReceivedEventArgs e)

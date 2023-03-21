@@ -14,7 +14,7 @@ public partial record InputFileState
     public TreeViewAbsoluteFilePath? GetOpenedTreeView()
     {
         if (IndexInHistory == -1 ||
-            IndexInHistory < OpenedTreeViewModelHistory.Count)
+            IndexInHistory >= OpenedTreeViewModelHistory.Count)
             return null;
         
         return OpenedTreeViewModelHistory[IndexInHistory];
