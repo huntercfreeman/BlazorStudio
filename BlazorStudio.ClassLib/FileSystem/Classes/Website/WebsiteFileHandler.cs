@@ -136,16 +136,16 @@ public class WebsiteFileHandler : IFileHandler
             AccountState.DIRECTORY_SEPARATOR_CHAR,
             false);
 
-        if (contents.Length > FileSystemState.MAXIMUM_CHARACTER_COUNT_OF_CONTENT)
-        {
-            contents = new string(contents
-                .Take(FileSystemState.MAXIMUM_CHARACTER_COUNT_OF_CONTENT)
-                .ToArray());
-        }
-        else if (string.IsNullOrWhiteSpace(contents))
-        {
-            contents = "Sample Text";
-        }
+        // if (contents.Length > FileSystemState.MAXIMUM_CHARACTER_COUNT_OF_CONTENT)
+        // {
+        //     contents = new string(contents
+        //         .Take(FileSystemState.MAXIMUM_CHARACTER_COUNT_OF_CONTENT)
+        //         .ToArray());
+        // }
+        // else if (string.IsNullOrWhiteSpace(contents))
+        // {
+        //     contents = "Sample Text";
+        // }
 
         contents = Uri.EscapeDataString(contents);
         
