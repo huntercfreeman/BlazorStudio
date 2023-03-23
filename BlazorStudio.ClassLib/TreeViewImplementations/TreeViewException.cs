@@ -41,7 +41,7 @@ public class TreeViewException : TreeViewWithType<Exception>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            _commonComponentRenderers.TreeViewExceptionRendererType,
+            _commonComponentRenderers.TreeViewExceptionRendererType!,
             new Dictionary<string, object?>
             {
                 {

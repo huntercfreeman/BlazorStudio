@@ -35,6 +35,7 @@ public static class ServiceCollectionExtensions
             typeof(CommonErrorNotificationDisplay),
             typeof(FileFormDisplay),
             typeof(DeleteFileFormDisplay),
+            typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewNamespacePathDisplay),
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewAbsoluteFilePathDisplay),

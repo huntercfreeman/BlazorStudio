@@ -117,22 +117,25 @@ public partial class InputFileTopNavBar : ComponentBase
         }
         catch (Exception exception)
         {
-            var errorNotification = new NotificationRecord(
-                NotificationKey.NewNotificationKey(),
-                $"ERROR: {nameof(InputFileTopNavBar)}",
-                CommonComponentRenderers.ErrorNotificationRendererType,
-                new Dictionary<string, object?>
-                {
+            if (CommonComponentRenderers.ErrorNotificationRendererType != null)
+            {
+                var errorNotification = new NotificationRecord(
+                    NotificationKey.NewNotificationKey(),
+                    $"ERROR: {nameof(InputFileTopNavBar)}",
+                    CommonComponentRenderers.ErrorNotificationRendererType,
+                    new Dictionary<string, object?>
                     {
-                        nameof(IErrorNotificationRendererType.Message),
-                        exception.ToString()
-                    }
-                },
-                TimeSpan.FromSeconds(12));
+                        {
+                            nameof(IErrorNotificationRendererType.Message),
+                            exception.ToString()
+                        }
+                    },
+                    TimeSpan.FromSeconds(12));
             
-            Dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    errorNotification));
+                Dispatcher.Dispatch(
+                    new NotificationRecordsCollection.RegisterAction(
+                        errorNotification));
+            }
         }
     }
     

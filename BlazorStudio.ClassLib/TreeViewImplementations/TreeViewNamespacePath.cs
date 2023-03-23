@@ -58,7 +58,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            CommonComponentRenderers.TreeViewNamespacePathRendererType,
+            CommonComponentRenderers.TreeViewNamespacePathRendererType!,
             new Dictionary<string, object?>
             {
                 {

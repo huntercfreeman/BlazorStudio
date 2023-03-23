@@ -51,7 +51,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            CommonComponentRenderers.TreeViewAbsoluteFilePathRendererType,
+            CommonComponentRenderers.TreeViewAbsoluteFilePathRendererType!,
             new Dictionary<string, object?>
             {
                 {

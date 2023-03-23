@@ -22,22 +22,25 @@ public partial record InputFileState
             RequestInputFileStateFormAction requestInputFileStateFormAction,
             IDispatcher dispatcher)
         {
-            dispatcher.Dispatch(
-                new StartInputFileStateFormAction(
-                    requestInputFileStateFormAction));
-
-            var inputFileDialog = new DialogRecord(
-                DialogFacts.InputFileDialogKey,
-                "Input File",
-                _commonComponentRenderers.InputFileRendererType,
-                null)
+            if (_commonComponentRenderers.InputFileRendererType is not null)
             {
-                IsResizable = true
-            }; 
+                dispatcher.Dispatch(
+                    new StartInputFileStateFormAction(
+                        requestInputFileStateFormAction));
+
+                var inputFileDialog = new DialogRecord(
+                    DialogFacts.InputFileDialogKey,
+                    "Input File",
+                    _commonComponentRenderers.InputFileRendererType,
+                    null)
+                {
+                    IsResizable = true
+                }; 
             
-            dispatcher.Dispatch(
-                new DialogRecordsCollection.RegisterAction(
-                    inputFileDialog));
+                dispatcher.Dispatch(
+                    new DialogRecordsCollection.RegisterAction(
+                        inputFileDialog));
+            }
 
             return Task.CompletedTask;
         }

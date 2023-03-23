@@ -44,7 +44,7 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            CommonComponentRenderers.TreeViewGitChangesRendererType,
+            CommonComponentRenderers.TreeViewGitFileRendererType!,
             new Dictionary<string, object?>
             {
                 {

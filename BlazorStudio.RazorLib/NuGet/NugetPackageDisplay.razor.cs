@@ -113,22 +113,26 @@ public partial class NugetPackageDisplay : FluxorComponent
             parentDirectory.GetAbsoluteFilePathString(),
             CancellationToken.None, () =>
             {
-                var notificationInformative  = new NotificationRecord(
-                    NotificationKey.NewNotificationKey(), 
-                    "Add Nuget Package Reference",
-                    CommonComponentRenderers.InformativeNotificationRendererType,
-                    new Dictionary<string, object?>
-                    {
+                if (CommonComponentRenderers.InformativeNotificationRendererType != null)
+                {
+                    var notificationInformative  = new NotificationRecord(
+                        NotificationKey.NewNotificationKey(), 
+                        "Add Nuget Package Reference",
+                        CommonComponentRenderers.InformativeNotificationRendererType,
+                        new Dictionary<string, object?>
                         {
-                            nameof(IInformativeNotificationRendererType.Message), 
-                            $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject}"
+                            {
+                                nameof(IInformativeNotificationRendererType.Message), 
+                                $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject}"
+                            },
                         },
-                    },
-                    TimeSpan.FromSeconds(6));
+                        TimeSpan.FromSeconds(6));
         
-                Dispatcher.Dispatch(
-                    new NotificationRecordsCollection.RegisterAction(
-                        notificationInformative));
+                    Dispatcher.Dispatch(
+                        new NotificationRecordsCollection.RegisterAction(
+                            notificationInformative));
+                }
+
                 return Task.CompletedTask;
             });
         

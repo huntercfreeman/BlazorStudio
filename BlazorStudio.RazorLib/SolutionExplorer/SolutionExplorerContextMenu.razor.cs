@@ -422,22 +422,25 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     
     private Task NotifyCopyCompleted(NamespacePath namespacePath)
     {
-        var notificationInformative  = new NotificationRecord(
-            NotificationKey.NewNotificationKey(), 
-            "Copy Action",
-            CommonComponentRenderers.InformativeNotificationRendererType,
-            new Dictionary<string, object?>
-            {
+        if (CommonComponentRenderers.InformativeNotificationRendererType != null)
+        {
+            var notificationInformative  = new NotificationRecord(
+                NotificationKey.NewNotificationKey(), 
+                "Copy Action",
+                CommonComponentRenderers.InformativeNotificationRendererType,
+                new Dictionary<string, object?>
                 {
-                    nameof(IInformativeNotificationRendererType.Message), 
-                    $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                    {
+                        nameof(IInformativeNotificationRendererType.Message), 
+                        $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                    },
                 },
-            },
-            TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3));
 
-        Dispatcher.Dispatch(
-            new NotificationRecordsCollection.RegisterAction(
-                notificationInformative));
+            Dispatcher.Dispatch(
+                new NotificationRecordsCollection.RegisterAction(
+                    notificationInformative));
+        }
 
         return Task.CompletedTask;
     }
@@ -447,23 +450,26 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         TreeViewNamespacePath? parentTreeViewModel)
     {
         ParentOfCutFile = parentTreeViewModel;
-        
-        var notificationInformative  = new NotificationRecord(
-            NotificationKey.NewNotificationKey(), 
-            "Cut Action",
-            CommonComponentRenderers.InformativeNotificationRendererType,
-            new Dictionary<string, object?>
-            {
+
+        if (CommonComponentRenderers.InformativeNotificationRendererType != null)
+        {
+            var notificationInformative  = new NotificationRecord(
+                NotificationKey.NewNotificationKey(), 
+                "Cut Action",
+                CommonComponentRenderers.InformativeNotificationRendererType,
+                new Dictionary<string, object?>
                 {
-                    nameof(IInformativeNotificationRendererType.Message), 
-                    $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                    {
+                        nameof(IInformativeNotificationRendererType.Message), 
+                        $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                    },
                 },
-            },
-            TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3));
         
-        Dispatcher.Dispatch(
-            new NotificationRecordsCollection.RegisterAction(
-                notificationInformative));
+            Dispatcher.Dispatch(
+                new NotificationRecordsCollection.RegisterAction(
+                    notificationInformative));
+        }
 
         return Task.CompletedTask;
     }
