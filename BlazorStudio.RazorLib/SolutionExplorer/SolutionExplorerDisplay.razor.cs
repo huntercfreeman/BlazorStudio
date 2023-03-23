@@ -14,7 +14,6 @@ using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
@@ -24,14 +23,11 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 
 public partial class SolutionExplorerDisplay : FluxorComponent
 {
-    [Inject]
-    private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
@@ -81,8 +77,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 CommonComponentRenderers,
                 FileSystemProvider,
                 TreeViewService);
-        
-        SolutionExplorerStateWrap.StateChanged += SolutionExplorerStateWrapOnStateChanged;
     
         base.OnInitialized();
     }
@@ -91,52 +85,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         object? sender,
         EventArgs e)
     {
-        if (SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath is null)
-            return;
-
-        var solutionNamespacePath = new NamespacePath(
-            string.Empty,
-            SolutionExplorerStateWrap.Value.SolutionAbsoluteFilePath);
-
-        var solutionExplorerNode = new TreeViewNamespacePath(
-            solutionNamespacePath,
-            CommonComponentRenderers,
-            SolutionExplorerStateWrap,
-            FileSystemProvider,
-            EnvironmentProvider,
-            true,
-            true)
-        {
-            TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
-        };
-    
-        await solutionExplorerNode.LoadChildrenAsync();
-
-        if (TreeViewService.TryGetTreeViewState(
-                TreeViewSolutionExplorerStateKey, 
-                out var treeViewState) &&
-            treeViewState is not null)
-        {
-            await treeViewState.RootNode.LoadChildrenAsync();
-            
-            TreeViewService.ReRenderNode(
-                TreeViewSolutionExplorerStateKey,
-                treeViewState.RootNode);
-            
-            TreeViewService.SetRoot(
-                TreeViewSolutionExplorerStateKey,
-                solutionExplorerNode);
-            
-            await InvokeAsync(StateHasChanged);
-        }
-        else
-        {
-            TreeViewService.RegisterTreeViewState(new TreeViewState(
-                TreeViewSolutionExplorerStateKey,
-                solutionExplorerNode,
-                solutionExplorerNode,
-                ImmutableList<TreeViewNoType>.Empty));
-        }
     }
     
     private async Task OnTreeViewContextMenuFunc(ITreeViewCommandParameter treeViewCommandParameter)
@@ -148,12 +96,5 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
         
         await InvokeAsync(StateHasChanged);
-    }
-    
-    protected override void Dispose(bool disposing)
-    {
-        SolutionExplorerStateWrap.StateChanged -= SolutionExplorerStateWrapOnStateChanged;
-        
-        base.Dispose(disposing);
     }
 }

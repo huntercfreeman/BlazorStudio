@@ -38,7 +38,6 @@ public partial class TreeViewHelper
                             namespaceString,
                             absoluteFilePath),
                         razorMarkupTreeView.CommonComponentRenderers,
-                        razorMarkupTreeView.SolutionExplorerStateWrap,
                         razorMarkupTreeView.FileSystemProvider,
                         razorMarkupTreeView.EnvironmentProvider,
                         false,

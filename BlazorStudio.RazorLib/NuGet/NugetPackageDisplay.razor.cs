@@ -8,8 +8,6 @@ using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Nuget;
-using BlazorStudio.ClassLib.Store.NuGetPackageManagerCase;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -19,10 +17,6 @@ namespace BlazorStudio.RazorLib.NuGet;
 
 public partial class NugetPackageDisplay : FluxorComponent
 {
-    [Inject]
-    private IState<NuGetPackageManagerState> NuGetPackageManagerStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
@@ -70,72 +64,11 @@ public partial class NugetPackageDisplay : FluxorComponent
     
     private bool ValidateSolutionContainsSelectedProject()
     {
-        var solutionExplorerState = SolutionExplorerStateWrap.Value;
-        var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
-        
-        if (solutionExplorerState.Solution is null ||
-            nuGetPackageManagerState.SelectedProjectToModify is null)
-            return false;
-        
-        return solutionExplorerState.Solution.ContainsProject(
-            nuGetPackageManagerState.SelectedProjectToModify.Id);
+        return false;
     }
     
     private async Task AddNugetPackageReferenceOnClick()
     {
-        var targetProject = NuGetPackageManagerStateWrap.Value.SelectedProjectToModify;
-        var targetNugetPackage = NugetPackageRecord;
-        var targetNugetVersion = _nugetPackageVersionString;
-
-        if (!ValidateSolutionContainsSelectedProject() ||
-            targetProject is null ||
-            targetProject.FilePath is null)
-        {
-            return;
-        }
-
-        var projectAbsoluteFilePath = new AbsoluteFilePath(
-            targetProject.FilePath,
-            false,
-            EnvironmentProvider);
-        
-        var parentDirectory = (IAbsoluteFilePath) projectAbsoluteFilePath.Directories
-            .Last();
-
-        var interpolatedCommand = DotNetCliFacts.FormatAddNugetPackageReferenceToProject(
-            targetProject.FilePath,
-            targetNugetPackage.Id,
-            targetNugetVersion);
-        
-        var addNugetPackageReferenceCommand = new TerminalCommand(
-            _addNugetPackageTerminalCommandKey,
-            interpolatedCommand,
-            parentDirectory.GetAbsoluteFilePathString(),
-            CancellationToken.None, () =>
-            {
-                var notificationInformative  = new NotificationRecord(
-                    NotificationKey.NewNotificationKey(), 
-                    "Add Nuget Package Reference",
-                    CommonComponentRenderers.InformativeNotificationRendererType,
-                    new Dictionary<string, object?>
-                    {
-                        {
-                            nameof(IInformativeNotificationRendererType.Message), 
-                            $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject}"
-                        },
-                    },
-                    TimeSpan.FromSeconds(6));
-        
-                Dispatcher.Dispatch(
-                    new NotificationRecordsCollection.RegisterAction(
-                        notificationInformative));
-                return Task.CompletedTask;
-            });
-        
-        var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-        
-        await generalTerminalSession
-            .EnqueueCommandAsync(addNugetPackageReferenceCommand);
+        return;
     }
 }

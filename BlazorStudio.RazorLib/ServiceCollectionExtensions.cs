@@ -1,4 +1,3 @@
-using BlazorCommon.RazorLib;
 using BlazorCommon.RazorLib.Clipboard;
 using BlazorCommon.RazorLib.Notification;
 using BlazorCommon.RazorLib.WatchWindow.TreeViewImplementations;
@@ -35,6 +34,7 @@ public static class ServiceCollectionExtensions
             typeof(CommonErrorNotificationDisplay),
             typeof(FileFormDisplay),
             typeof(DeleteFileFormDisplay),
+            typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewNamespacePathDisplay),
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewAbsoluteFilePathDisplay),

@@ -16,7 +16,6 @@ using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -95,12 +94,6 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             
             if (System.IO.File.Exists("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
             {
-                Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                    new AbsoluteFilePath(
-                        "/home/hunter/Repos/Demos/TestApp/TestApp.sln",
-                        false,
-                        EnvironmentProvider),
-                    EnvironmentProvider));
             }
         }
 

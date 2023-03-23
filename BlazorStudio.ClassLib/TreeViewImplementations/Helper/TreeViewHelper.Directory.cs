@@ -37,7 +37,6 @@ public partial class TreeViewHelper
                     return (TreeViewNoType)new TreeViewNamespacePath(
                         namespacePath,
                         directoryTreeView.CommonComponentRenderers,
-                        directoryTreeView.SolutionExplorerStateWrap,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         true,
@@ -67,7 +66,6 @@ public partial class TreeViewHelper
                     return (TreeViewNoType)new TreeViewNamespacePath(
                         namespacePath,
                         directoryTreeView.CommonComponentRenderers,
-                        directoryTreeView.SolutionExplorerStateWrap,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         false,

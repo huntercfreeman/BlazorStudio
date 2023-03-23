@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Basics" />
+      <Folder Include="Basics\Terminal" />
       <Folder Include="UserStories" />
     </ItemGroup>
 

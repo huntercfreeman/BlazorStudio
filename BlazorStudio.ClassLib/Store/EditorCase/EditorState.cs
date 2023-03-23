@@ -111,7 +111,8 @@ public class EditorState
             var fileLastWriteTime = await fileSystemProvider.File.GetLastWriteTimeAsync(
                 inputFileAbsoluteFilePathString);
 
-            if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime)
+            if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
+                commonComponentRenderers.BooleanPromptOrCancelRendererType is not null)
             {
                 var notificationInformativeKey = NotificationKey.NewNotificationKey();
                 
