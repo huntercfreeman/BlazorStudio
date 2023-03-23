@@ -3,7 +3,6 @@ using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 using Fluxor;
 
@@ -14,7 +13,6 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     public TreeViewNamespacePath(
         NamespacePath namespacePath,
         ICommonComponentRenderers commonComponentRenderers,
-        IState<SolutionExplorerState> solutionExplorerStateWrap,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
@@ -25,13 +23,11 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                 isExpanded)
     {
         CommonComponentRenderers = commonComponentRenderers;
-        SolutionExplorerStateWrap = solutionExplorerStateWrap;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
  
     public ICommonComponentRenderers CommonComponentRenderers { get; }
-    public IState<SolutionExplorerState> SolutionExplorerStateWrap { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 

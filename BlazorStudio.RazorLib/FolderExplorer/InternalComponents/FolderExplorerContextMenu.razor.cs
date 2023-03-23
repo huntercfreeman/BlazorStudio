@@ -19,16 +19,12 @@ using BlazorStudio.ClassLib.InputFile;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
-using BlazorStudio.ClassLib.Store.WorkspaceCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.DotNetSolutionForm;
 using Fluxor;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.MSBuild;
 
 namespace BlazorStudio.RazorLib.FolderExplorer.InternalComponents;
 
@@ -36,10 +32,6 @@ public partial class FolderExplorerContextMenu : ComponentBase
 {
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<WorkspaceState> WorkspaceStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -200,46 +192,8 @@ public partial class FolderExplorerContextMenu : ComponentBase
                             solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
                             afp.GetAbsoluteFilePathString());
                     
-                    var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
-                        TerminalCommandKey.NewTerminalCommandKey(), 
-                        localInterpolatedAddExistingProjectToSolutionCommand,
-                        null,
-                        CancellationToken.None,
-                        async () =>
-                        {
-                            // Add the C# project to the workspace
-                            //
-                            // Cannot find another way as of 2022-11-09
-                            // to add the C# project to the workspace
-                            // other than reloading the solution.
-                            {
-                                var mSBuildWorkspace = ((MSBuildWorkspace)WorkspaceStateWrap.Value.Workspace);
-
-                                var solution = SolutionExplorerStateWrap.Value.Solution;
-
-                                if (mSBuildWorkspace is not null &&
-                                    solution is not null &&
-                                    solution.FilePath is not null)
-                                {
-                                    mSBuildWorkspace.CloseSolution();
-                            
-                                    solution = await mSBuildWorkspace
-                                        .OpenSolutionAsync(solution.FilePath);
-                            
-                                    var requestSetSolutionExplorerStateAction = 
-                                        new SolutionExplorerState.RequestSetSolutionAction(
-                                            solution);
-                            
-                                    Dispatcher.Dispatch(requestSetSolutionExplorerStateAction);
-                                }
-                            }
-                        });
-                    
                     var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-
-                    await generalTerminalSession
-                        .EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand);
                 },
                 afp =>
                 {

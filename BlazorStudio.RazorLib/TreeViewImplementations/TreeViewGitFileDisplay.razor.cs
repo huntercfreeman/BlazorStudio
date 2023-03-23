@@ -2,7 +2,6 @@
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.GitCase;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -15,8 +14,6 @@ public partial class TreeViewGitFileDisplay
 {
     [Inject]
     private IState<GitState> GitStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<SolutionExplorerState> SolutionExplorerStateWrap { get; set; } = null!;
     
     [CascadingParameter]
     public TreeViewState TreeViewState { get; set; } = null!;

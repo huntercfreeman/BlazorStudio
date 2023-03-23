@@ -22,7 +22,6 @@ else
     
         @{
             var gitState = GitStateWrap.Value;
-            var solutionExplorerState = SolutionExplorerStateWrap.Value;
 
             string shortenedParentDirectoryFilePathString = gitFile.AbsoluteFilePath
                 .GetAbsoluteFilePathString();
@@ -30,18 +29,6 @@ else
             if (gitFile.AbsoluteFilePath.ParentDirectory is not null &&
                 gitState.GitFolderAbsoluteFilePath?.ParentDirectory is not null)
             {
-                if (solutionExplorerState.SolutionAbsoluteFilePath is not null)
-                {
-                    shortenedParentDirectoryFilePathString = TryShortenGitFilePath(
-                        gitFile.AbsoluteFilePath.ParentDirectory,
-                        solutionExplorerState.SolutionAbsoluteFilePath);
-                }
-                else
-                {
-                    shortenedParentDirectoryFilePathString = TryShortenGitFilePath(
-                        gitFile.AbsoluteFilePath.ParentDirectory,
-                        gitState.GitFolderAbsoluteFilePath.ParentDirectory);
-                }
             }
         }
     

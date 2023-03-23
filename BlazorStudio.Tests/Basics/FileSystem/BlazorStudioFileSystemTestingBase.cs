@@ -4,8 +4,6 @@ using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes.Local;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorTextEditor.RazorLib;
-using BlazorTextEditor.RazorLib.Model;
-using BlazorTextEditor.RazorLib.ViewModel;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;

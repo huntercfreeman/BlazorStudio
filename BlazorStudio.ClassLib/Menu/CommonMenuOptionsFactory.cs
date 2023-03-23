@@ -13,7 +13,6 @@ using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.InputFile;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using Fluxor;
@@ -629,15 +628,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     TerminalCommandKey.NewTerminalCommandKey(), 
                     removeCSharpProjectReferenceFromSolutionCommandString,
                     workingDirectory.GetAbsoluteFilePathString(),
-                    CancellationToken.None, () =>
-                    {
-                        // Re-open the modified Solution
-                        dispatcher.Dispatch(
-                            new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                                solutionNode.Item.AbsoluteFilePath,
-                                _environmentProvider));
-                        return Task.CompletedTask;
-                    });
+                    CancellationToken.None,
+                    () => Task.CompletedTask);
         
                 await terminalSession
                     .EnqueueCommandAsync(

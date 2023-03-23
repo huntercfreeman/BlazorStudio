@@ -1,5 +1,4 @@
 @using BlazorStudio.ClassLib.Context
-@using BlazorStudio.ClassLib.Store.SolutionExplorer
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorCommon.RazorLib.Dropdown
 @using BlazorCommon.RazorLib.TreeView
@@ -11,48 +10,6 @@
                  ClassCssString="bstudio_folder-explorer-display"
                  StyleCssString="height: 100%">
     @{
-        var solutionExplorerState = SolutionExplorerStateWrap.Value;
-
-        <div class="bstudio_section-title">
-            Solution Explorer
-            @if (solutionExplorerState.PerformingAsynchronousOperation)
-            {
-                <text>&nbsp;</text>
-                <IconLoading/>
-            }
-        </div>
-
-        <div class="bstudio_section-body">
-            @{
-                if (solutionExplorerState.SolutionAbsoluteFilePath is null)
-                {
-                    <ButtonDisplay OnClickFunc="async () => await SolutionExplorerState.ShowInputFileAsync(Dispatcher, EnvironmentProvider)">
-                        Open Solution
-                    </ButtonDisplay>
-                }
-                else
-                {
-                    <CascadingValue Name="BlazorTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                        <CascadingValue Name="BlazorTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                                <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"
-                                                      CssStyleString="height: 100%;"
-                                                      OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                                      TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
-                                                      TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler"/>
-                            </CascadingValue>
-                        </CascadingValue>
-                    </CascadingValue>
-
-
-                    <DropdownDisplay DropdownKey="SolutionExplorerContextMenu.ContextMenuEventDropdownKey"
-                                     DropdownPositionKind="DropdownPositionKind.Unset"
-                                     CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter)">
-
-                        <SolutionExplorerContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter"/>
-                    </DropdownDisplay>
-                }
-            }
-        </div>
+        <div>TODO: Solution Explorer</div>
     }
 </ContextBoundary>

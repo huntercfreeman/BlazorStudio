@@ -7,7 +7,6 @@ using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.InputFile;
 using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -127,10 +126,6 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                     false,
                     EnvironmentProvider);
 
-                Dispatcher.Dispatch(
-                    new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                        solutionAbsoluteFilePath,
-                        EnvironmentProvider));
                 return Task.CompletedTask;
             });
         

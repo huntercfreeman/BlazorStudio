@@ -4,7 +4,6 @@ using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
-using BlazorStudio.ClassLib.Store.SolutionExplorer;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.RazorLib.FolderExplorer;
 using BlazorStudio.RazorLib.Git;
@@ -76,9 +75,6 @@ public partial class BlazorStudioInitializer : ComponentBase
         
             if (await FileSystemProvider.File.ExistsAsync(testSolutionExplorer.GetAbsoluteFilePathString()))
             {
-                Dispatcher.Dispatch(new SolutionExplorerState.RequestSetSolutionExplorerStateAction(
-                    testSolutionExplorer,
-                    EnvironmentProvider));
             }
         }
         

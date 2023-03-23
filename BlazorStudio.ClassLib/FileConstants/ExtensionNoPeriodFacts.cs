@@ -1,15 +1,14 @@
-﻿using BlazorTextEditor.RazorLib.Analysis.CSharp.Decoration;
-using BlazorTextEditor.RazorLib.Analysis.CSharp.SyntaxActors;
+﻿using BlazorTextEditor.RazorLib.Analysis.CSharp.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.Css.Decoration;
 using BlazorTextEditor.RazorLib.Analysis.Css.SyntaxActors;
+using BlazorTextEditor.RazorLib.Analysis.FSharp.SyntaxActors;
+using BlazorTextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using BlazorTextEditor.RazorLib.Analysis.Html.Decoration;
 using BlazorTextEditor.RazorLib.Analysis.Html.SyntaxActors;
-using BlazorTextEditor.RazorLib.Analysis.JavaScript.Decoration;
 using BlazorTextEditor.RazorLib.Analysis.JavaScript.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.Json.Decoration;
 using BlazorTextEditor.RazorLib.Analysis.Json.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.Razor.SyntaxActors;
-using BlazorTextEditor.RazorLib.Analysis.TypeScript.Decoration;
 using BlazorTextEditor.RazorLib.Analysis.TypeScript.SyntaxActors;
 using BlazorTextEditor.RazorLib.Decoration;
 using BlazorTextEditor.RazorLib.Lexing;
@@ -34,6 +33,7 @@ public static class ExtensionNoPeriodFacts
     public const string JAVA_SCRIPT = "js";
     public const string TYPE_SCRIPT = "ts";
     public const string MARK_DOWN = "md";
+    public const string F_SHARP = "fs";
 
     public static ILexer GetLexer(string extensionNoPeriod) => extensionNoPeriod switch
     {
@@ -48,6 +48,7 @@ public static class ExtensionNoPeriodFacts
         JAVA_SCRIPT => new TextEditorJavaScriptLexer(),
         JSON => new TextEditorJsonLexer(),
         TYPE_SCRIPT => new TextEditorTypeScriptLexer(),
+        F_SHARP => new TextEditorFSharpLexer(),
         _ => new TextEditorLexerDefault(),
     };
 
@@ -56,14 +57,15 @@ public static class ExtensionNoPeriodFacts
         HTML => new TextEditorHtmlDecorationMapper(),
         XML => new TextEditorHtmlDecorationMapper(),
         C_SHARP_PROJECT => new TextEditorHtmlDecorationMapper(),
-        C_SHARP_CLASS => new TextEditorCSharpDecorationMapper(),
-        RAZOR_CODEBEHIND => new TextEditorCSharpDecorationMapper(),
+        C_SHARP_CLASS => new GenericDecorationMapper(),
+        RAZOR_CODEBEHIND => new GenericDecorationMapper(),
         RAZOR_MARKUP => new TextEditorHtmlDecorationMapper(),
         CSHTML_CLASS => new TextEditorHtmlDecorationMapper(),
         CSS => new TextEditorCssDecorationMapper(),
-        JAVA_SCRIPT => new TextEditorJavaScriptDecorationMapper(),
+        JAVA_SCRIPT => new GenericDecorationMapper(),
         JSON => new TextEditorJsonDecorationMapper(),
-        TYPE_SCRIPT => new TextEditorTypeScriptDecorationMapper(),
+        TYPE_SCRIPT => new GenericDecorationMapper(),
+        F_SHARP => new GenericDecorationMapper(),
         _ => new TextEditorDecorationMapperDefault(),
     };
 }
