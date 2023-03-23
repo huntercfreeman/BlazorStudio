@@ -32,11 +32,23 @@ public class DotNetSolutionParser
     {
         var projectBuilder = new StringBuilder();
         
+        Guid? projectTypeGuid = null;
+        Guid? projectIdGuid = null;
+
         while (!stringWalker.IsEof)
         {
             if (WhitespaceFacts.LINE_ENDING_CHARACTERS.Contains(stringWalker.CurrentCharacter))
             {
                 break;
+            }
+            else if (stringWalker.CheckForSubstring(DotNetSolutionFacts.START_OF_GUID))
+            {
+                var guid = ParseGuid(stringWalker);
+
+                if (projectTypeGuid is null)
+                    projectTypeGuid = guid;
+                else
+                    projectIdGuid = guid;
             }
             else
             {
@@ -47,5 +59,32 @@ public class DotNetSolutionParser
         }
 
         return new CSharpProject(projectBuilder.ToString(), Guid.Empty,  Guid.Empty);
+    }
+    
+    private static Guid ParseGuid(StringWalker stringWalker)
+    {
+        _ = stringWalker.ReadCharacter();
+        
+        var guidBuilder = new StringBuilder();
+        
+        while (!stringWalker.IsEof)
+        {
+            if (WhitespaceFacts.LINE_ENDING_CHARACTERS.Contains(stringWalker.CurrentCharacter))
+            {
+                break;
+            }
+            else if (stringWalker.CheckForSubstring(DotNetSolutionFacts.END_OF_GUID))
+            {
+                break;
+            }
+            else
+            {
+                guidBuilder.Append(stringWalker.CurrentCharacter);
+            }
+            
+            _ = stringWalker.ReadCharacter();
+        }
+
+        return Guid.Parse(guidBuilder.ToString());
     }
 }
