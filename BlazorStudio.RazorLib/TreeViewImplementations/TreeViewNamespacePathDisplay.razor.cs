@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using Microsoft.AspNetCore.Components;
 
@@ -8,5 +9,5 @@ public partial class TreeViewNamespacePathDisplay
     : ComponentBase, ITreeViewNamespacePathRendererType
 {
     [Parameter, EditorRequired]
-    public TreeViewNamespacePath TreeViewNamespacePath { get; set; } = null!;
+    public NamespacePath NamespacePath { get; set; } = null!;
 }
