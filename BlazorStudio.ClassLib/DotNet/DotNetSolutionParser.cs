@@ -1,13 +1,15 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
 using BlazorStudio.ClassLib.DotNet.CSharp;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Namespaces;
 using BlazorTextEditor.RazorLib.Analysis;
 
 namespace BlazorStudio.ClassLib.DotNet;
 
 public class DotNetSolutionParser
 {
-    public static DotNetSolution Parse(string content, string fileName)
+    public static DotNetSolution Parse(string content, NamespacePath namespacePath)
     {
         var projects = new List<IDotNetProject>();
         
@@ -25,7 +27,7 @@ public class DotNetSolutionParser
             _ = stringWalker.ReadCharacter();
         }
 
-        return new DotNetSolution(fileName, projects.ToImmutableList());
+        return new DotNetSolution(namespacePath, projects.ToImmutableList());
     }
     
     /*

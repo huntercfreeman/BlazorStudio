@@ -1,4 +1,5 @@
 @using BlazorStudio.ClassLib.Context
+@using BlazorStudio.ClassLib.Store.DotNetSolutionCase
 @using BlazorStudio.RazorLib.ContextCase
 @using BlazorCommon.RazorLib.Dropdown
 @using BlazorCommon.RazorLib.TreeView
@@ -11,34 +12,42 @@
                  StyleCssString="height: 100%">
     @{
         var dotNetSolutionState = DotNetSolutionStateWrap.Value;
-    }
-    
-    @if (dotNetSolutionState.DotNetSolution is null)
-    {
-        <div>dotNetSolutionState.DotNetSolution is null</div>
-        
-        <input @bind="_solutionExplorerAbsolutePathString"
-               @bind:event="oninput"/>
-        
-        <button class="bcrl_button"
-                @onclick="async () => await SetSolutionExplorerOnClick(_solutionExplorerAbsolutePathString)">
-            Set solution explorer
-        </button>
-    }
-    else
-    {
-        <div>
-            @dotNetSolutionState.DotNetSolution.DisplayName
+
+        <div class="bstudio_section-title">
+            Solution Explorer
         </div>
-        
-        <hr/>
-        
-        <div>
-            @foreach (var project in dotNetSolutionState.DotNetSolution.DotNetProjects)
+
+        <div class="bstudio_section-body">
+            @if (dotNetSolutionState.DotNetSolution is null)
             {
-                <div>
-                    @project.DisplayName
-                </div>
+                <div>Dot Net Solution is null</div>
+                
+                <button class="bcrl_button"
+                        @onclick="async () => await SetSolutionExplorerOnClick(_solutionExplorerAbsolutePathString)">
+                    Set solution explorer
+                </button>
+            }
+            else
+            {
+                <CascadingValue Name="BlazorTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                    <CascadingValue Name="BlazorTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                        <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                            <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"
+                                                  CssStyleString="height: 100%;"
+                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                  TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
+                                                  TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler"/>
+                        </CascadingValue>
+                    </CascadingValue>
+                </CascadingValue>
+
+
+                <DropdownDisplay DropdownKey="SolutionExplorerContextMenu.ContextMenuEventDropdownKey"
+                                 DropdownPositionKind="DropdownPositionKind.Unset"
+                                 CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter)">
+
+                    <SolutionExplorerContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter"/>
+                </DropdownDisplay>
             }
         </div>
     }
