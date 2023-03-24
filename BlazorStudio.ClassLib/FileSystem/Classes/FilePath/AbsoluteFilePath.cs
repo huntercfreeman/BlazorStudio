@@ -119,7 +119,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
         ExtensionNoPeriod = relativeFilePath.ExtensionNoPeriod;
         IsDirectory = relativeFilePath.IsDirectory;
     }
-
+    
     public AbsoluteFilePath(IFileSystemDrive rootDrive, 
         List<IFilePath> directories,
         string fileNameNoExtension, 
@@ -133,6 +133,53 @@ public class AbsoluteFilePath : IAbsoluteFilePath
         ExtensionNoPeriod = extensionNoPeriod;
         IsDirectory = isDirectory;
         EnvironmentProvider = environmentProvider;
+    }
+    
+    /// <summary>
+    /// Given an absoluteFilePath and a relative path from that absolute path construct a joined absolute path
+    /// </summary>
+    public static string JoinAnAbsoluteFilePathAndRelativeFilePath(
+        IAbsoluteFilePath absoluteFilePath,
+        string relativeFilePathString,
+        IEnvironmentProvider environmentProvider)
+    {
+        /*
+         * if ".." exists then SkipLast(countOf"..")
+         *
+         * if "." exists then Take all directories
+         *
+         * if neither exists then Take all directories
+         */
+
+        var upperDirectoryString = relativeFilePathString;
+        var indexOfUpperDirectory = -1;
+        
+        var upperDirectoryCount = 0;
+
+        while ((indexOfUpperDirectory = upperDirectoryString
+                   .IndexOf("..", StringComparison.InvariantCulture)) != -1)
+        {
+            upperDirectoryCount++;
+            
+            upperDirectoryString = upperDirectoryString
+                .Remove(indexOfUpperDirectory, 2);
+        }
+        
+        var sharedAncestorDirectories = absoluteFilePath.Directories
+            .SkipLast(upperDirectoryCount)
+            .ToArray();
+
+        if (sharedAncestorDirectories.Length > 0)
+        {
+            var nearestSharedAncestor = (IAbsoluteFilePath)sharedAncestorDirectories.Last();
+
+            var nearestSharedAncestorAbsoluteFilePathString = nearestSharedAncestor
+                .GetAbsoluteFilePathString();
+
+            return nearestSharedAncestorAbsoluteFilePathString + relativeFilePathString;
+        }
+
+        return relativeFilePathString;
     }
 
     public void ConsumeTokenAsRootDrive()

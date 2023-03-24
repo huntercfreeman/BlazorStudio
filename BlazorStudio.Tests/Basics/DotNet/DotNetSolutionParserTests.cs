@@ -1,4 +1,7 @@
 ﻿using BlazorStudio.ClassLib.DotNet;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
+using BlazorStudio.ClassLib.FileSystem.Classes.Local;
+using BlazorStudio.ClassLib.Namespaces;
 
 namespace BlazorStudio.Tests.Basics.DotNet;
 
@@ -7,7 +10,19 @@ public class DotNetSolutionParserTests
     [Fact]
     public void AdhocTest()
     {
-	    var solution = DotNetSolutionParser.Parse(SolutionTestData);
+	    var localEnvironmentProvider = new LocalEnvironmentProvider();
+	    
+	    var solutionAbsoluteFilePathString = @"C:\Users\hunte\Repos\BlazorApp1\BlazorApp1.sln";
+
+	    var solutionAbsoluteFilePath = new AbsoluteFilePath(
+		    solutionAbsoluteFilePathString,
+		    false,
+		    localEnvironmentProvider);
+	    
+	    var solution = DotNetSolutionParser.Parse(
+		    SolutionTestData,
+		    new NamespacePath("", solutionAbsoluteFilePath),
+		    localEnvironmentProvider);
     }
 
     private const string SolutionTestData = @"

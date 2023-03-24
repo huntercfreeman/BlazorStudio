@@ -1,5 +1,6 @@
 ﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.DotNet;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
@@ -8,17 +9,17 @@ using Fluxor;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
-public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
+public class TreeViewSolution : TreeViewWithType<DotNetSolution>
 {
-    public TreeViewNamespacePath(
-        NamespacePath namespacePath,
+    public TreeViewSolution(
+        DotNetSolution dotNetSolution,
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
         bool isExpanded)
             : base(
-                namespacePath,
+                dotNetSolution,
                 isExpandable,
                 isExpanded)
     {
@@ -34,21 +35,23 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewNamespacePath treeViewSolutionExplorer ||
-            treeViewSolutionExplorer.Item is null ||
+            obj is not TreeViewSolution treeViewSolution ||
+            treeViewSolution.Item is null ||
             Item is null)
         {
             return false;
         }
 
-        return treeViewSolutionExplorer.Item.AbsoluteFilePath
-                   .GetAbsoluteFilePathString() ==
-               Item.AbsoluteFilePath.GetAbsoluteFilePathString();
+        return treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString() ==
+               Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString();
     }
 
     public override int GetHashCode()
     {
-        return Item?.AbsoluteFilePath.GetAbsoluteFilePathString().GetHashCode() ?? default;
+        return Item?.NamespacePath.AbsoluteFilePath
+            .GetAbsoluteFilePathString()
+            .GetHashCode()
+               ?? default;
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -59,7 +62,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
             {
                 {
                     nameof(ITreeViewNamespacePathRendererType.NamespacePath),
-                    Item
+                    Item?.NamespacePath
                 },
             });
     }
@@ -71,30 +74,9 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
         try
         {
-            var newChildren = new List<TreeViewNoType>();
+            var newChildren = await TreeViewHelper
+                .LoadChildrenForDotNetSolutionAsync(this);
             
-            if (Item.AbsoluteFilePath.IsDirectory)
-            {
-                newChildren = await TreeViewHelper
-                    .LoadChildrenForDirectoryAsync(this);
-            }
-            else
-            {
-                switch (Item.AbsoluteFilePath.ExtensionNoPeriod)
-                {
-                    case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
-                        return;
-                    case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        newChildren = await TreeViewHelper
-                            .LoadChildrenForCSharpProjectAsync(this);
-                        break;
-                    case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                        newChildren = await TreeViewHelper
-                            .LoadChildrenForRazorMarkupAsync(this);
-                        break;
-                }
-            }
-        
             var oldChildrenMap = Children
                 .ToDictionary(child => child);
         
@@ -139,17 +121,6 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> treeViews)
     {
-        if (Item is null)
-        {
-            return;
-        }
-        
-        if (Item.AbsoluteFilePath.ExtensionNoPeriod
-            .EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
-        {
-            TreeViewHelper.RazorMarkupFindRelatedFiles(
-                this, 
-                treeViews);
-        }
+        return;
     }
 }

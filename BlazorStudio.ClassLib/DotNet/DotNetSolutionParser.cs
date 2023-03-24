@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
 using BlazorStudio.ClassLib.DotNet.CSharp;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorTextEditor.RazorLib.Analysis;
@@ -9,7 +10,10 @@ namespace BlazorStudio.ClassLib.DotNet;
 
 public class DotNetSolutionParser
 {
-    public static DotNetSolution Parse(string content, NamespacePath namespacePath)
+    public static DotNetSolution Parse(
+        string content,
+        NamespacePath namespacePath,
+        IEnvironmentProvider environmentProvider)
     {
         var projects = new List<IDotNetProject>();
         
@@ -20,6 +24,19 @@ public class DotNetSolutionParser
             if (stringWalker.CheckForSubstring(DotNetSolutionFacts.START_OF_PROJECT_DEFINITION))
             {
                 var dotNetProjectSyntax = ParseDotNetProject(stringWalker);
+
+                var projectAbsoluteFilePathString = AbsoluteFilePath
+                    .JoinAnAbsoluteFilePathAndRelativeFilePath(
+                        namespacePath.AbsoluteFilePath,
+                        dotNetProjectSyntax.RelativePathFromSolutionFileString,
+                        environmentProvider);
+
+                var projectAbsoluteFilePath = new AbsoluteFilePath(
+                    projectAbsoluteFilePathString,
+                    false,
+                    environmentProvider);
+                
+                dotNetProjectSyntax.SetAbsoluteFilePath(projectAbsoluteFilePath);
                 
                 projects.Add(dotNetProjectSyntax);
             }

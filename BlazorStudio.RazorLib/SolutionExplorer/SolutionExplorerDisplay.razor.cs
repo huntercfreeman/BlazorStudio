@@ -165,7 +165,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
         var dotNetSolution = DotNetSolutionParser.Parse(
             content,
-            solutionNamespacePath);
+            solutionNamespacePath,
+            EnvironmentProvider);
         
         Dispatcher.Dispatch(
             new DotNetSolutionState.WithAction(

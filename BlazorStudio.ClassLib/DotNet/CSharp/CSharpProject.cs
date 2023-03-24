@@ -1,4 +1,6 @@
-﻿namespace BlazorStudio.ClassLib.DotNet.CSharp;
+﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+
+namespace BlazorStudio.ClassLib.DotNet.CSharp;
 
 public class CSharpProject : IDotNetProject
 {
@@ -18,4 +20,10 @@ public class CSharpProject : IDotNetProject
     public Guid ProjectTypeGuid { get; }
     public string RelativePathFromSolutionFileString { get; }
     public Guid ProjectIdGuid { get; }
+    public IAbsoluteFilePath AbsoluteFilePath { get; private set; }
+
+    public void SetAbsoluteFilePath(IAbsoluteFilePath absoluteFilePath)
+    {
+        AbsoluteFilePath = absoluteFilePath;
+    }
 }
