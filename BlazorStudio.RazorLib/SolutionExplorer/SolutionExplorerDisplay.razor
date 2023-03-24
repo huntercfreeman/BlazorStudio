@@ -10,6 +10,36 @@
                  ClassCssString="bstudio_folder-explorer-display"
                  StyleCssString="height: 100%">
     @{
-        <div>TODO: Solution Explorer</div>
+        var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+    }
+    
+    @if (dotNetSolutionState.DotNetSolution is null)
+    {
+        <div>dotNetSolutionState.DotNetSolution is null</div>
+        
+        <input @bind="_solutionExplorerAbsolutePathString"
+               @bind:event="oninput"/>
+        
+        <button class="bcrl_button"
+                @onclick="async () => await SetSolutionExplorerOnClick(_solutionExplorerAbsolutePathString)">
+            Set solution explorer
+        </button>
+    }
+    else
+    {
+        <div>
+            @dotNetSolutionState.DotNetSolution.DisplayName
+        </div>
+        
+        <hr/>
+        
+        <div>
+            @foreach (var project in dotNetSolutionState.DotNetSolution.DotNetProjects)
+            {
+                <div>
+                    @project.DisplayName
+                </div>
+            }
+        </div>
     }
 </ContextBoundary>

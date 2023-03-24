@@ -7,7 +7,7 @@ namespace BlazorStudio.ClassLib.DotNet;
 
 public class DotNetSolutionParser
 {
-    public static DotNetSolution Parse(string content)
+    public static DotNetSolution Parse(string content, string fileName)
     {
         var projects = new List<IDotNetProject>();
         
@@ -25,7 +25,7 @@ public class DotNetSolutionParser
             _ = stringWalker.ReadCharacter();
         }
 
-        return new DotNetSolution("TODO: DisplayName", projects.ToImmutableList());
+        return new DotNetSolution(fileName, projects.ToImmutableList());
     }
     
     /*

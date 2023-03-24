@@ -6,11 +6,14 @@ using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.Dimensions;
+using BlazorStudio.ClassLib.DotNet;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Namespaces;
+using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -33,6 +36,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
+    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
@@ -54,6 +59,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
+    private string _solutionExplorerAbsolutePathString = @"C:\Users\hunte\Repos\BlazorApp1\BlazorApp1.sln";
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
         AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
@@ -96,5 +102,28 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
         
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task SetSolutionExplorerOnClick(string localSolutionExplorerAbsolutePathString)
+    {
+        var content = await FileSystemProvider.File.ReadAllTextAsync(
+            localSolutionExplorerAbsolutePathString,
+            CancellationToken.None);
+
+        var solutionAbsoluteFilePath = new AbsoluteFilePath(
+            localSolutionExplorerAbsolutePathString,
+            false,
+            EnvironmentProvider);
+
+        var dotNetSolution = DotNetSolutionParser.Parse(
+            content,
+            solutionAbsoluteFilePath.FilenameWithExtension);
+        
+        Dispatcher.Dispatch(
+            new DotNetSolutionState.WithAction(
+                inDotNetSolutionState => inDotNetSolutionState with
+                {
+                    DotNetSolution = dotNetSolution
+                }));
     }
 }
