@@ -97,7 +97,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         if (dotNetSolutionState.DotNetSolution is not null)
         {
             await SetSolutionExplorerTreeViewRootAsync(
-                dotNetSolutionState.DotNetSolution.NamespacePath);
+                dotNetSolutionState.DotNetSolution);
         }
 
         await InvokeAsync(StateHasChanged);
@@ -114,10 +114,10 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         await InvokeAsync(StateHasChanged);
     }
     
-    private async Task SetSolutionExplorerTreeViewRootAsync(NamespacePath namespacePath)
+    private async Task SetSolutionExplorerTreeViewRootAsync(DotNetSolution dotNetSolution)
     {
-        var rootNode = new TreeViewNamespacePath(
-            namespacePath,
+        var rootNode = new TreeViewSolution(
+            dotNetSolution,
             CommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
