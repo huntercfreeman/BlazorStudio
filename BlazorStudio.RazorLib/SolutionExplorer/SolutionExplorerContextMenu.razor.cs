@@ -153,7 +153,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 parentDirectory,
                 async () => await ReloadTreeViewModel(treeViewModel)),
             CommonMenuOptionsFactory.NewTemplatedFile(
-                treeViewModel.Item,
+                new NamespacePath(treeViewModel.Item.Namespace, parentDirectory),
                 async () => await ReloadTreeViewModel(treeViewModel)),
             CommonMenuOptionsFactory.NewDirectory(
                 parentDirectory,
