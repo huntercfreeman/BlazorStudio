@@ -97,6 +97,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
                 
                 newChild.IndexAmongSiblings = i;
                 newChild.Parent = this;
+                newChild.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
             }
             
             Children = newChildren;
@@ -116,9 +117,11 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
                 }
             };
         }
+        
+        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> treeViews)
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
         // This method is meant to do nothing in this case.
     }

@@ -116,6 +116,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                 
                 newChild.IndexAmongSiblings = i;
                 newChild.Parent = this;
+                newChild.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
             }
             
             Children = newChildren;
@@ -135,21 +136,25 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                 }
             };
         }
+        
+        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> treeViews)
+    /// <summary>
+    /// This method is called on each child when loading children for a parent node.
+    /// This method allows for code-behinds
+    /// </summary>
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
         if (Item is null)
-        {
             return;
-        }
         
         if (Item.AbsoluteFilePath.ExtensionNoPeriod
             .EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
         {
             TreeViewHelper.RazorMarkupFindRelatedFiles(
                 this, 
-                treeViews);
+                siblingsAndSelfTreeViews);
         }
     }
 }

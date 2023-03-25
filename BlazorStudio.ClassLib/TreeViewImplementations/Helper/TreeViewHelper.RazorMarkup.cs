@@ -56,7 +56,7 @@ public partial class TreeViewHelper
     
     public static void RazorMarkupFindRelatedFiles(
         TreeViewNamespacePath razorMarkupTreeView,
-        List<TreeViewNoType> treeViews)
+        List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
         if (razorMarkupTreeView.Item is null)
             return;
@@ -75,19 +75,22 @@ public partial class TreeViewHelper
                 ExtensionNoPeriodFacts.CSS
         };
         
-        var relatedFile = treeViews.FirstOrDefault(x =>
-            x.UntypedItem is NamespacePath namespacePath &&
-            matches.Contains(namespacePath.AbsoluteFilePath.FilenameWithExtension));
+        var relatedFiles = siblingsAndSelfTreeViews.Where(x =>
+                x.UntypedItem is NamespacePath namespacePath &&
+                matches.Contains(namespacePath.AbsoluteFilePath.FilenameWithExtension))
+            .ToArray();
 
-        if (relatedFile is null)
-        {
+        if (!relatedFiles.Any())
             return;
+
+        foreach (var relatedFile in relatedFiles)
+        {
+            razorMarkupTreeView.Children.Add(relatedFile);
+            siblingsAndSelfTreeViews.Remove(relatedFile);
         }
 
-        treeViews.Remove(relatedFile);
-
         razorMarkupTreeView.IsExpandable = true;
-
-        razorMarkupTreeView.Children.Add(relatedFile);
+        
+        razorMarkupTreeView.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
     }
 }
