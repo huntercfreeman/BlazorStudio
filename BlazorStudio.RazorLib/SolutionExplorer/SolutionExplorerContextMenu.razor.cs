@@ -68,10 +68,27 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         if (treeViewModel is not TreeViewNamespacePath treeViewNamespacePath ||
             treeViewNamespacePath.Item is null)
         {
-            return MenuRecord.Empty;
+            if (treeViewModel is TreeViewSolution treeViewSolution &&
+                treeViewSolution.Item is not null)
+            {
+                if (treeViewSolution.Item.NamespacePath.AbsoluteFilePath.ExtensionNoPeriod ==
+                    ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+                {
+                    if (treeViewSolution.Parent is null ||
+                        treeViewSolution.Parent is TreeViewAdhoc)
+                    {
+                        menuRecords.AddRange(
+                            GetDotNetSolutionMenuOptions(treeViewSolution));
+                    }
+                }
+            }
+            else
+            {
+                return MenuRecord.Empty;
+            }
+            
         }
-        
-        if (treeViewNamespacePath.Item.AbsoluteFilePath.IsDirectory)
+        else if (treeViewNamespacePath.Item.AbsoluteFilePath.IsDirectory)
         {
             menuRecords.AddRange(
                 GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
@@ -82,19 +99,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             switch (treeViewNamespacePath.Item.AbsoluteFilePath.ExtensionNoPeriod)
             {
-                case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
-                    if (treeViewNamespacePath.Parent is null ||
-                        treeViewNamespacePath.Parent is TreeViewAdhoc)
-                    {
-                        menuRecords.AddRange(
-                            GetDotNetSolutionMenuOptions(treeViewNamespacePath)
-                                .Union(GetDebugMenuOptions(treeViewNamespacePath)));
-                    }
-                    else
-                    {
-                        goto default;
-                    }
-                    break;
                 case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
                     menuRecords.AddRange(
                         GetCSharpProjectMenuOptions(treeViewNamespacePath)
@@ -112,19 +116,22 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             menuRecords.ToImmutableArray());
     }
 
-    private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewNamespacePath treeViewModel)
+    private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewSolution treeViewSolution)
     {
+        if (treeViewSolution.Item is null)
+            return Array.Empty<MenuOptionRecord>();
+        
         // TODO: Add menu options for non C# projects perhaps a more generic option is good
 
         var addNewCSharpProject = new MenuOptionRecord(
             "New C# Project",
             MenuOptionKind.Other,
-            () => OpenNewCSharpProjectDialog(treeViewModel.Item));
+            () => OpenNewCSharpProjectDialog(treeViewSolution.Item.NamespacePath));
         
         var addExistingCSharpProject = new MenuOptionRecord(
             "Existing C# Project",
             MenuOptionKind.Other,
-            () => AddExistingProjectToSolution(treeViewModel.Item));
+            () => AddExistingProjectToSolution(treeViewSolution.Item.NamespacePath));
         
         return new[]
         {

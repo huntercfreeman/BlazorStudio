@@ -59,7 +59,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
-    private string _solutionExplorerAbsolutePathString = @"C:\Users\hunte\Repos\BlazorApp1\BlazorApp1.sln";
+    private string _solutionExplorerAbsolutePathString = @"C:\Users\hunte\Repos\Demos\Blarg\Blarg.sln";
     private bool _disposed;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
