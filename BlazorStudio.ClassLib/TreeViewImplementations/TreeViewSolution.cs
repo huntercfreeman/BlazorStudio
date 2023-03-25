@@ -98,6 +98,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
                 
                 newChild.IndexAmongSiblings = i;
                 newChild.Parent = this;
+                newChild.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
             }
             
             Children = newChildren;
@@ -117,9 +118,11 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
                 }
             };
         }
+        
+        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> treeViews)
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
         return;
     }

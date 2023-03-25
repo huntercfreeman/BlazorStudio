@@ -143,26 +143,20 @@ public class AbsoluteFilePath : IAbsoluteFilePath
         string relativeFilePathString,
         IEnvironmentProvider environmentProvider)
     {
-        /*
-         * if ".." exists then SkipLast(countOf"..")
-         *
-         * if "." exists then Take all directories
-         *
-         * if neither exists then Take all directories
-         */
-
-        var upperDirectoryString = relativeFilePathString;
+        var upperDirectoryString = relativeFilePathString.Replace("\\", "/");
         var indexOfUpperDirectory = -1;
         
         var upperDirectoryCount = 0;
 
+        var moveUpDirectoryToken = "../";
+        
         while ((indexOfUpperDirectory = upperDirectoryString
-                   .IndexOf("..", StringComparison.InvariantCulture)) != -1)
+                   .IndexOf(moveUpDirectoryToken, StringComparison.InvariantCulture)) != -1)
         {
             upperDirectoryCount++;
             
             upperDirectoryString = upperDirectoryString
-                .Remove(indexOfUpperDirectory, 2);
+                .Remove(indexOfUpperDirectory, moveUpDirectoryToken.Length);
         }
         
         var sharedAncestorDirectories = absoluteFilePath.Directories
@@ -176,7 +170,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
             var nearestSharedAncestorAbsoluteFilePathString = nearestSharedAncestor
                 .GetAbsoluteFilePathString();
 
-            return nearestSharedAncestorAbsoluteFilePathString + relativeFilePathString;
+            return nearestSharedAncestorAbsoluteFilePathString + upperDirectoryString;
         }
 
         return relativeFilePathString;

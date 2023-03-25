@@ -56,7 +56,7 @@ public class TreeViewException : TreeViewWithType<Exception>
         return Task.CompletedTask;
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> treeViews)
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
         // This method is meant to do nothing in this case.
     }
