@@ -18,7 +18,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<Menu.ICommonMenuOptionsFactory, Menu.CommonMenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
-            .AddHostedService<QueuedHostedService>()
             .AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>()
             .AddSingleton<IBackgroundTaskMonitor, BackgroundTaskMonitor>()
             .AddFluxor(options =>

@@ -23,6 +23,16 @@ public partial class AdhocDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
     
+    private void EnqueueTaskOnClick()
+    {
+        BackgroundTaskQueue.QueueBackgroundWorkItem(
+            BackgroundTaskKey.NewBackgroundTaskKey(),
+            "Aaa",
+            "Bbb",
+            async cancellationToken => await Task.Delay(1_500, cancellationToken),
+            cancellationToken => Task.CompletedTask);
+    }
+    
     public void Dispose()
     {
         BackgroundTaskMonitor.ExecutingBackgroundTaskChanged -= BackgroundTaskMonitorOnExecutingBackgroundTaskChanged;

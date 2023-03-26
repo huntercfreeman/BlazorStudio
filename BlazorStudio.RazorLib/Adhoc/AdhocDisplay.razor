@@ -8,6 +8,15 @@
      <div class="bstudio_section-body"
           style="width: 100%;">
          
+         <div>
+             <button class="bcrl_button"
+                     @onclick="EnqueueTaskOnClick">
+                 Enqueue Task
+             </button>
+         </div>
+         
+         <hr/>
+         
          @@BackgroundTaskMonitor.ExecutingBackgroundTask:
          
          &nbsp;
