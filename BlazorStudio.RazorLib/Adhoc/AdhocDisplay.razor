@@ -1,0 +1,27 @@
+﻿<div class="bstudio_terminal-display"
+     style="height: 100%; width: 100%;">
+
+     <div class="bstudio_section-title">
+         Adhoc Display
+     </div>
+ 
+     <div class="bstudio_section-body"
+          style="width: 100%;">
+         
+         @@BackgroundTaskMonitor.ExecutingBackgroundTask:
+         
+         &nbsp;
+         
+         @if (BackgroundTaskMonitor.ExecutingBackgroundTask is null)
+         {
+             @: null
+         }
+         else
+         {
+             @BackgroundTaskMonitor.ExecutingBackgroundTask.Name
+         }
+     </div>
+</div>
+
+
+

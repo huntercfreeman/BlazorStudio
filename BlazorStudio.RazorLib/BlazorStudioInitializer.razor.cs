@@ -5,6 +5,7 @@ using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorStudio.RazorLib.Adhoc;
 using BlazorStudio.RazorLib.FolderExplorer;
 using BlazorStudio.RazorLib.Git;
 using BlazorStudio.RazorLib.Notification;
@@ -148,6 +149,18 @@ public partial class BlazorStudioInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             rightPanel.PanelRecordKey,
             notificationsPanelTab));
+        
+        var adhocPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            rightPanel.ElementDimensions,
+            new(),
+            typeof(AdhocDisplay),
+            typeof(IconFolder),
+            "Adhoc");
+        
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            rightPanel.PanelRecordKey,
+            adhocPanelTab));
     }
     
     private void InitializeBottomPanelTabs()
