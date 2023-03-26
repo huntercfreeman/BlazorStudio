@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.CommonComponents;
+﻿using BlazorStudio.ClassLib.BackgroundTaskCase;
+using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.Nuget;
 using Fluxor;
@@ -17,6 +18,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<Menu.ICommonMenuOptionsFactory, Menu.CommonMenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
+            .AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>()
+            .AddSingleton<IBackgroundTaskMonitor, BackgroundTaskMonitor>()
             .AddFluxor(options =>
                 options.ScanAssemblies(
                     typeof(BlazorCommon.RazorLib.ServiceCollectionExtensions).Assembly,
