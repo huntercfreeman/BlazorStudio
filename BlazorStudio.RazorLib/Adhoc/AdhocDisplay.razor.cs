@@ -14,6 +14,8 @@ public partial class AdhocDisplay : ComponentBase, IDisposable
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
+    private CancellationTokenSource _cancellationTokenSource = new();
+
     protected override void OnInitialized()
     {
         BackgroundTaskMonitor.ExecutingBackgroundTaskChanged += BackgroundTaskMonitorOnExecutingBackgroundTaskChanged;
@@ -28,20 +30,38 @@ public partial class AdhocDisplay : ComponentBase, IDisposable
     
     private void EnqueueTaskOnClick()
     {
+        _cancellationTokenSource.Cancel();
+        var token = _cancellationTokenSource.Token;
+        _cancellationTokenSource = new();
+        
         var backgroundTask = new BackgroundTask(
-            async cancellationToken => await Task.Delay(1_500, cancellationToken),
-            "Aaa",
-            "Bbb",
+            async cancellationToken => await WorkItem(cancellationToken),
+            "Execute App",
+            "Executes dotnet run",
             cancellationToken => Task.CompletedTask,
             Dispatcher,
-            BackgroundTaskKey.NewBackgroundTaskKey());
+            BackgroundTaskKey.NewBackgroundTaskKey(),
+            token);
         
         BackgroundTaskQueue.QueueBackgroundWorkItem(
             backgroundTask);
+    }
+
+    private async Task WorkItem(
+        CancellationToken cancellationToken)
+    {
+        throw new ApplicationException("yayaya");
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        await Task.Delay(1_500, cancellationToken);
+        
+        cancellationToken.ThrowIfCancellationRequested();
     }
     
     public void Dispose()
     {
         BackgroundTaskMonitor.ExecutingBackgroundTaskChanged -= BackgroundTaskMonitorOnExecutingBackgroundTaskChanged;
+
+        _cancellationTokenSource.Cancel();
     }
 }

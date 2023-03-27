@@ -259,7 +259,8 @@ public partial class FolderExplorerContextMenu : ComponentBase
                         $"Copied: {absoluteFilePath.FilenameWithExtension}"
                     },
                 },
-                TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3),
+                null);
 
             Dispatcher.Dispatch(
                 new NotificationRecordsCollection.RegisterAction(
@@ -288,7 +289,8 @@ public partial class FolderExplorerContextMenu : ComponentBase
                         $"Cut: {absoluteFilePath.FilenameWithExtension}"
                     },
                 },
-                TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3),
+                null);
         
             Dispatcher.Dispatch(
                 new NotificationRecordsCollection.RegisterAction(

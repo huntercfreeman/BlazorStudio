@@ -7,14 +7,11 @@ namespace BlazorStudio.ClassLib.BackgroundTaskCase;
 
 public class BackgroundTaskMonitor : IBackgroundTaskMonitor
 {
-    private readonly INotificationService _notificationService;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
 
     public BackgroundTaskMonitor(
-        INotificationService notificationService,
         ICommonComponentRenderers commonComponentRenderers)
     {
-        _notificationService = notificationService;
         _commonComponentRenderers = commonComponentRenderers;
     }
     
@@ -27,7 +24,8 @@ public class BackgroundTaskMonitor : IBackgroundTaskMonitor
         ExecutingBackgroundTask = backgroundTask;
         ExecutingBackgroundTaskChanged?.Invoke();
 
-        if (backgroundTask is not null)
+        if (backgroundTask?.Dispatcher is not null &&
+            _commonComponentRenderers.BackgroundTaskDisplayRendererType is not null)
         {
             var notificationRecord = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
@@ -40,6 +38,7 @@ public class BackgroundTaskMonitor : IBackgroundTaskMonitor
                         backgroundTask
                     }
                 },
+                null,
                 null);
         
             backgroundTask.Dispatcher.Dispatch(

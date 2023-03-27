@@ -130,7 +130,8 @@ public partial class InputFileTopNavBar : ComponentBase
                             exception.ToString()
                         }
                     },
-                    TimeSpan.FromSeconds(12));
+                    TimeSpan.FromSeconds(12),
+                    IErrorNotificationRendererType.CSS_CLASS_STRING);
             
                 Dispatcher.Dispatch(
                     new NotificationRecordsCollection.RegisterAction(

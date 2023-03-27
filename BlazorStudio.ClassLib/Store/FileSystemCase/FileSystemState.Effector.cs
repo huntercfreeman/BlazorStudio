@@ -152,7 +152,8 @@ public partial class FileSystemState
                             notificationMessage
                         },
                     },
-                    TimeSpan.FromSeconds(5));
+                    TimeSpan.FromSeconds(5),
+                    null);
                 
                 dispatcher.Dispatch(
                     new NotificationRecordsCollection.RegisterAction(

@@ -148,7 +148,8 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                         $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                     },
                 },
-                TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3),
+                null);
 
             _dispatcher.Dispatch(
                 new NotificationRecordsCollection.RegisterAction(
@@ -177,7 +178,8 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                         $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                     },
                 },
-                TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3),
+                null);
 
             _dispatcher.Dispatch(
                 new NotificationRecordsCollection.RegisterAction(

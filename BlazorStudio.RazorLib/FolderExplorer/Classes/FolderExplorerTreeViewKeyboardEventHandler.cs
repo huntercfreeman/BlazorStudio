@@ -148,7 +148,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                         $"Copied: {absoluteFilePath.FilenameWithExtension}"
                     },
                 },
-                TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3),
+                null);
 
             _dispatcher.Dispatch(
                 new NotificationRecordsCollection.RegisterAction(
@@ -177,7 +178,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                         $"Cut: {absoluteFilePath.FilenameWithExtension}"
                     },
                 },
-                TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3),
+                null);
 
             _dispatcher.Dispatch(
                 new NotificationRecordsCollection.RegisterAction(
