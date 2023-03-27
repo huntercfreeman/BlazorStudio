@@ -1,10 +1,15 @@
+using Fluxor;
+
 namespace BlazorStudio.ClassLib.BackgroundTaskCase;
 
 public interface IBackgroundTask
 {
-    public BackgroundTaskKey BackgroundTaskKey { get; init; }
-    public string Name { get; init; }
-    public string Description { get; init; }
-    public Func<CancellationToken, Task> WorkItem { get; init; }
-    public Func<CancellationToken, Task> CancelFunc { get; init; }
+    public BackgroundTaskKey BackgroundTaskKey { get; }
+    public string Name { get; }
+    public string Description { get; }
+    public Task? WorkProgress { get; }
+    public Func<CancellationToken, Task> CancelFunc { get; }
+    public IDispatcher Dispatcher { get; }
+    
+    public Task InvokeWorkItem(CancellationToken cancellationToken);
 }

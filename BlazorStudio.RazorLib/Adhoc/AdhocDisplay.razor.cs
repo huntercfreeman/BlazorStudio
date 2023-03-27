@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.BackgroundTaskCase;
+using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
@@ -10,6 +11,8 @@ public partial class AdhocDisplay : ComponentBase, IDisposable
     private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
     [Inject]
     private IBackgroundTaskMonitor BackgroundTaskMonitor { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -25,12 +28,16 @@ public partial class AdhocDisplay : ComponentBase, IDisposable
     
     private void EnqueueTaskOnClick()
     {
-        BackgroundTaskQueue.QueueBackgroundWorkItem(
-            BackgroundTaskKey.NewBackgroundTaskKey(),
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken => await Task.Delay(1_500, cancellationToken),
             "Aaa",
             "Bbb",
-            async cancellationToken => await Task.Delay(1_500, cancellationToken),
-            cancellationToken => Task.CompletedTask);
+            cancellationToken => Task.CompletedTask,
+            Dispatcher,
+            BackgroundTaskKey.NewBackgroundTaskKey());
+        
+        BackgroundTaskQueue.QueueBackgroundWorkItem(
+            backgroundTask);
     }
     
     public void Dispose()

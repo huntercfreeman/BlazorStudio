@@ -16,4 +16,5 @@ public interface ICommonComponentRenderers
     public Type? GitDisplayRendererType { get; }
     public Type? RemoveCSharpProjectFromSolutionRendererType { get; }
     public Type? BooleanPromptOrCancelRendererType { get; }
+    public Type? BackgroundTaskDisplayRendererType { get; }
 }
