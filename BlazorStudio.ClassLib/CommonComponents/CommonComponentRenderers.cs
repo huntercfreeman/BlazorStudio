@@ -16,7 +16,8 @@ public class CommonComponentRenderers : ICommonComponentRenderers
         Type? nuGetPackageManagerRendererType,
         Type? gitDisplayRendererType,
         Type? removeCSharpProjectFromSolutionRendererType,
-        Type? booleanPromptOrCancelRendererType)
+        Type? booleanPromptOrCancelRendererType,
+        Type? backgroundTaskDisplayRendererType)
     {
         InputFileRendererType = inputFileRenderer;
         InformativeNotificationRendererType = informativeNotificationRenderer;
@@ -32,6 +33,7 @@ public class CommonComponentRenderers : ICommonComponentRenderers
         GitDisplayRendererType = gitDisplayRendererType;
         RemoveCSharpProjectFromSolutionRendererType = removeCSharpProjectFromSolutionRendererType;
         BooleanPromptOrCancelRendererType = booleanPromptOrCancelRendererType;
+        BackgroundTaskDisplayRendererType = backgroundTaskDisplayRendererType;
     }
 
     public Type? InputFileRendererType { get; private set; }
@@ -48,4 +50,5 @@ public class CommonComponentRenderers : ICommonComponentRenderers
     public Type? GitDisplayRendererType { get; private set; }
     public Type? RemoveCSharpProjectFromSolutionRendererType { get; private set; }
     public Type? BooleanPromptOrCancelRendererType { get; private set; }
+    public Type? BackgroundTaskDisplayRendererType { get; private set; }
 }

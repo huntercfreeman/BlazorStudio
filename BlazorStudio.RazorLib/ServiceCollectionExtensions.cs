@@ -8,6 +8,7 @@ using BlazorStudio.ClassLib.FileSystem.Classes.Local;
 using BlazorStudio.ClassLib.FileSystem.Classes.Website;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.AccountCase;
+using BlazorStudio.RazorLib.BackgroundTaskCase;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.File;
 using BlazorStudio.RazorLib.FormsGeneric;
@@ -42,7 +43,8 @@ public static class ServiceCollectionExtensions
             typeof(NuGetPackageManager),
             typeof(GitChangesDisplay),
             typeof(RemoveCSharpProjectFromSolutionDisplay),
-            typeof(BooleanPromptOrCancelDisplay));
+            typeof(BooleanPromptOrCancelDisplay),
+            typeof(BackgroundTaskDisplay));
         
         services
             .AddSingleton<ITreeViewRenderers>(new TreeViewRenderers(
