@@ -14,6 +14,7 @@ public partial class SettingsDialogEntryPoint : ComponentBase
         DialogKey.NewDialogKey(), 
         "Settings",
         typeof(SettingsDisplay),
+        null,
         null)
     {
         IsResizable = true

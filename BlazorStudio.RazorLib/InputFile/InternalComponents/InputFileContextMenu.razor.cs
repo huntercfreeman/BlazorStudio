@@ -165,7 +165,8 @@ public partial class InputFileContextMenu : ComponentBase
                     nameof(CSharpProjectFormDisplay.SolutionNamespacePath),
                     solutionNamespacePath
                 }
-            })
+            },
+            null)
         {
             IsResizable = true
         };
