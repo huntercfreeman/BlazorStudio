@@ -171,6 +171,7 @@ public partial class BlazorTextEditorHeader : FluxorComponent
             DialogKey.NewDialogKey(), 
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
+            null,
             null)
         {
             IsResizable = true

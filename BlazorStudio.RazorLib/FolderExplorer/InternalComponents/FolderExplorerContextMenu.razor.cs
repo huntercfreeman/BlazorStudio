@@ -167,7 +167,8 @@ public partial class FolderExplorerContextMenu : ComponentBase
                     nameof(CSharpProjectFormDisplay.SolutionNamespacePath),
                     solutionNamespacePath
                 }
-            })
+            },
+            null)
         {
             IsResizable = true
         };

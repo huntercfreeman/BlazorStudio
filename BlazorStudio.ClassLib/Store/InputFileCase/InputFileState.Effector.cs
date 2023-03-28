@@ -32,6 +32,7 @@ public partial record InputFileState
                     DialogFacts.InputFileDialogKey,
                     "Input File",
                     _commonComponentRenderers.InputFileRendererType,
+                    null,
                     null)
                 {
                     IsResizable = true

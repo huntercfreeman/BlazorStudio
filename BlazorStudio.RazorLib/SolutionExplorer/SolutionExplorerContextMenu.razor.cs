@@ -283,7 +283,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     nameof(CSharpProjectFormDisplay.SolutionNamespacePath),
                     solutionNamespacePath
                 }
-            })
+            },
+            null)
         {
             IsResizable = true
         };
