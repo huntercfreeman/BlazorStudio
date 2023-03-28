@@ -9,7 +9,7 @@ public interface IBackgroundTask
     public string Description { get; }
     public Task? WorkProgress { get; }
     public Func<CancellationToken, Task> CancelFunc { get; }
-    public IDispatcher Dispatcher { get; }
+    public IDispatcher? Dispatcher { get; }
     
     public Task InvokeWorkItem(CancellationToken cancellationToken);
 }

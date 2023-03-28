@@ -15,7 +15,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
         _workItemsQueueSemaphoreSlim.Release();
     }
   
-    public async Task<IBackgroundTask>? DequeueAsync(  
+    public async Task<IBackgroundTask?> DequeueAsync(  
         CancellationToken cancellationToken)
     {
         IBackgroundTask? backgroundTask;

@@ -385,7 +385,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                     },
                 },
-                TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3),
+                null);
 
             Dispatcher.Dispatch(
                 new NotificationRecordsCollection.RegisterAction(
@@ -414,7 +415,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
                     },
                 },
-                TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3),
+                null);
         
             Dispatcher.Dispatch(
                 new NotificationRecordsCollection.RegisterAction(

@@ -257,7 +257,8 @@ public partial class InputFileContextMenu : ComponentBase
                         $"Copied: {absoluteFilePath.FilenameWithExtension}"
                     },
                 },
-                TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3),
+                null);
 
             Dispatcher.Dispatch(
                 new NotificationRecordsCollection.RegisterAction(
@@ -286,7 +287,8 @@ public partial class InputFileContextMenu : ComponentBase
                         $"Cut: {absoluteFilePath.FilenameWithExtension}"
                     },
                 },
-                TimeSpan.FromSeconds(3));
+                TimeSpan.FromSeconds(3),
+                null);
         
             Dispatcher.Dispatch(
                 new NotificationRecordsCollection.RegisterAction(

@@ -574,22 +574,26 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         }
         catch (Exception e)
         {
-            var notificationError  = new NotificationRecord(
-                NotificationKey.NewNotificationKey(), 
-                "Rename Action",
-                _commonComponentRenderers.ErrorNotificationRendererType,
-                new Dictionary<string, object?>
-                {
+            if (_commonComponentRenderers.ErrorNotificationRendererType is not null)
+            {
+                var notificationError  = new NotificationRecord(
+                    NotificationKey.NewNotificationKey(), 
+                    "Rename Action",
+                    _commonComponentRenderers.ErrorNotificationRendererType,
+                    new Dictionary<string, object?>
                     {
-                        nameof(IErrorNotificationRendererType.Message), 
-                        $"ERROR: {e.Message}"
+                        {
+                            nameof(IErrorNotificationRendererType.Message), 
+                            $"ERROR: {e.Message}"
+                        },
                     },
-                },
-                TimeSpan.FromSeconds(15));
+                    TimeSpan.FromSeconds(15),
+                    IErrorNotificationRendererType.CSS_CLASS_STRING);
         
-            dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationError));
+                dispatcher.Dispatch(
+                    new NotificationRecordsCollection.RegisterAction(
+                        notificationError));
+            }
             
             onAfterCompletion.Invoke();
             return null;
@@ -684,7 +688,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                         $" to have a reference to {referencedProject.FilenameWithExtension}"
                                     },
                                 },
-                                TimeSpan.FromSeconds(7));
+                                TimeSpan.FromSeconds(7),
+                                null);
 
                             dispatcher.Dispatch(
                                 new NotificationRecordsCollection.RegisterAction(

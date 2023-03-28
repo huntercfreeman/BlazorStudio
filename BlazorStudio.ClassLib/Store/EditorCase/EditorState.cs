@@ -161,7 +161,8 @@ public class EditorState
                             })
                         },
                     },
-                    TimeSpan.FromSeconds(20));
+                    TimeSpan.FromSeconds(20),
+                    null);
         
                 dispatcher.Dispatch(
                     new NotificationRecordsCollection.RegisterAction(
