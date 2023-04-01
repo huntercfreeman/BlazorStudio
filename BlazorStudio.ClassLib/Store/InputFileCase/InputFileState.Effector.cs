@@ -1,6 +1,7 @@
 ﻿using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.Html;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.InputFileCase;
@@ -33,7 +34,7 @@ public partial record InputFileState
                     "Input File",
                     _commonComponentRenderers.InputFileRendererType,
                     null,
-                    null)
+                    HtmlFacts.Classes.DIALOG_PADDING_0)
                 {
                     IsResizable = true
                 }; 
