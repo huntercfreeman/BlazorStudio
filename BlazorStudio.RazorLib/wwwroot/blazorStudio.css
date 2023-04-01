@@ -59,6 +59,7 @@ input[type="checkbox"]{
 
 .bstudio_input-file-display {
     height: 100%;
+    overflow: hidden;
 }
 
 .bstudio_input-file-display-top-nav-bar {
@@ -211,10 +212,9 @@ input[type="checkbox"]{
 }
 
 .bstudio_form {
-    overflow: auto;
     width: 100%;
     height: 100%;
-    padding: 5px;
+    padding: 5px 0;
 }
 
 .bstudio_form-group {
@@ -413,4 +413,8 @@ button.bstudio_input-file-address-hierarchy-entry {
     background-color: var(--bte_newline-background-color);
     color: var(--bte_newline-foreground-color);
     margin-top: calc(3px + var(--bstudio_input-focus-outline-size));
+}
+
+.bstudio_dialog-padding-0 .bcrl_dialog-display-body {
+    padding: 0 !important;
 }
