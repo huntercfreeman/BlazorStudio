@@ -635,14 +635,20 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     removeCSharpProjectReferenceFromSolutionCommandString,
                     workingDirectory.GetAbsoluteFilePathString(),
                     CancellationToken.None,
-                    () => Task.CompletedTask);
+                    async () => await onAfterCompletion.Invoke());
         
                 await terminalSession
                     .EnqueueCommandAsync(
                         removeCSharpProjectReferenceFromSolutionCommand);
             }
-
-            await onAfterCompletion.Invoke();
+            else
+            {
+                // Do not combine this "onAfterCompletion.Invoke" with the if statement's.
+                // One awaits a terminal command.
+                // The other does not.
+                // They cannot combine. 
+                await onAfterCompletion.Invoke();
+            }
         });
     }
     

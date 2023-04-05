@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BlazorCommon.RazorLib.Dialog;
+using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -142,6 +143,10 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 _newCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
+                    Dispatcher.Dispatch(
+                        new DialogRecordsCollection.DisposeAction(
+                            DialogRecord.DialogKey));
+                    
                     await DotNetSolutionState.SetActiveSolutionAsync(
                         solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
                         FileSystemProvider,

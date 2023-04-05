@@ -5,4 +5,7 @@ namespace BlazorStudio.ClassLib.DotNet;
 
 public record DotNetSolution(
     NamespacePath NamespacePath,
-    ImmutableList<IDotNetProject> DotNetProjects);
+    ImmutableList<IDotNetProject> DotNetProjects)
+{
+    public Guid Id { get; init; } = Guid.NewGuid();
+}

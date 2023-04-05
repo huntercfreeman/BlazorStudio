@@ -329,7 +329,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         localInterpolatedAddExistingProjectToSolutionCommand,
                         null,
                         CancellationToken.None,
-                        () => Task.CompletedTask);
+                        async () =>
+                        {
+                            await DotNetSolutionState.SetActiveSolutionAsync(
+                                solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                                FileSystemProvider,
+                                EnvironmentProvider,
+                                Dispatcher);
+                        });
                     
                     var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
