@@ -1,4 +1,5 @@
-﻿using BlazorCommon.RazorLib.Keyboard;
+﻿using BlazorCommon.RazorLib.ComponentRenderers.Types;
+using BlazorCommon.RazorLib.Keyboard;
 using BlazorCommon.RazorLib.Menu;
 using BlazorCommon.RazorLib.Notification;
 using BlazorCommon.RazorLib.Store.NotificationCase;
@@ -6,7 +7,7 @@ using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.Events;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.EditorCase;
@@ -21,7 +22,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 {
     private readonly IState<TerminalSessionsState> _terminalSessionsStateWrap;
     private readonly BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory _commonMenuOptionsFactory;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
+    private readonly IBlazorStudioComponentRenderers _blazorStudioComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
@@ -30,7 +31,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
     public SolutionExplorerTreeViewKeymap(
         IState<TerminalSessionsState> terminalSessionsStateWrap,
         BlazorStudio.ClassLib.Menu.ICommonMenuOptionsFactory commonMenuOptionsFactory,
-        ICommonComponentRenderers commonComponentRenderers,
+        IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IDispatcher dispatcher,
         ITreeViewService treeViewService,
@@ -39,7 +40,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
     {
         _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _commonMenuOptionsFactory = commonMenuOptionsFactory;
-        _commonComponentRenderers = commonComponentRenderers;
+        _blazorStudioComponentRenderers = blazorStudioComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _dispatcher = dispatcher;
         _treeViewService = treeViewService;
@@ -135,12 +136,12 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 
     private Task NotifyCopyCompleted(NamespacePath namespacePath)
     {
-        if (_commonComponentRenderers.InformativeNotificationRendererType != null)
+        if (_blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
                 "Copy Action",
-                _commonComponentRenderers.InformativeNotificationRendererType,
+                _blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                     {
@@ -165,12 +166,12 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
     {
         SolutionExplorerContextMenu.ParentOfCutFile = parentTreeViewModel;
 
-        if (_commonComponentRenderers.InformativeNotificationRendererType != null)
+        if (_blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
                 "Cut Action",
-                _commonComponentRenderers.InformativeNotificationRendererType,
+                _blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                     {
@@ -302,7 +303,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
             treeViewNamespacePath.Item.AbsoluteFilePath,
             _dispatcher,
             _textEditorService,
-            _commonComponentRenderers,
+            _blazorStudioComponentRenderers,
             _fileSystemProvider);
     }
 

@@ -1,7 +1,8 @@
 ﻿using System.Collections.Immutable;
+using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Notification;
 using BlazorCommon.RazorLib.Store.NotificationCase;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.InputFile;
@@ -22,7 +23,7 @@ public class EditorState
     public static Task ShowInputFileAsync(
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
-        ICommonComponentRenderers commonComponentRenderers,
+        IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider)
     {
         dispatcher.Dispatch(
@@ -34,7 +35,7 @@ public class EditorState
                         afp, 
                         dispatcher, 
                         textEditorService,
-                        commonComponentRenderers,
+                        blazorStudioComponentRenderers,
                         fileSystemProvider);
                 },
                 afp =>
@@ -61,7 +62,7 @@ public class EditorState
         IAbsoluteFilePath? absoluteFilePath,
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
-        ICommonComponentRenderers commonComponentRenderers,
+        IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider)
     {
         if (absoluteFilePath is null ||
@@ -112,14 +113,14 @@ public class EditorState
                 inputFileAbsoluteFilePathString);
 
             if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
-                commonComponentRenderers.BooleanPromptOrCancelRendererType is not null)
+                blazorStudioComponentRenderers.BlazorCommonComponentRenderers.BooleanPromptOrCancelRendererType is not null)
             {
                 var notificationInformativeKey = NotificationKey.NewNotificationKey();
                 
                 var notificationInformative  = new NotificationRecord(
                     notificationInformativeKey, 
                     "File contents were modified on disk",
-                    commonComponentRenderers.BooleanPromptOrCancelRendererType,
+                    blazorStudioComponentRenderers.BlazorCommonComponentRenderers.BooleanPromptOrCancelRendererType,
                     new Dictionary<string, object?>
                     {
                         {

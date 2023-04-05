@@ -1,6 +1,5 @@
-﻿using BlazorStudio.ClassLib.BackgroundTaskCase;
+﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
 using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.Adhoc;

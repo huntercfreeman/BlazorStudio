@@ -3,7 +3,7 @@ using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.Resize;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
@@ -21,7 +21,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -100,7 +100,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             TreeViewService,
             InputFileStateWrap,
             Dispatcher,
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             SetInputFileContentTreeViewRootFunc, 
@@ -155,7 +155,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     {
         var pseudoRootNode = new TreeViewAbsoluteFilePath(
             absoluteFilePath,
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
@@ -198,7 +198,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider);
         

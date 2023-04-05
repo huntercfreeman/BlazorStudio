@@ -1,5 +1,5 @@
 ﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.Git;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
@@ -8,7 +8,7 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
 {
     public TreeViewGitFile(
         GitFile gitFile,
-        ICommonComponentRenderers commonComponentRenderers,
+        IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         bool isExpandable,
         bool isExpanded)
             : base(
@@ -16,10 +16,10 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
                 isExpandable,
                 isExpanded)
     {
-        CommonComponentRenderers = commonComponentRenderers;
+        BlazorStudioComponentRenderers = blazorStudioComponentRenderers;
     }
  
-    public ICommonComponentRenderers CommonComponentRenderers { get; }
+    public IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {
@@ -44,7 +44,7 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            CommonComponentRenderers.TreeViewGitFileRendererType!,
+            BlazorStudioComponentRenderers.TreeViewGitFileRendererType!,
             new Dictionary<string, object?>
             {
                 {

@@ -44,7 +44,7 @@ public partial class TreeViewHelper
                         new NamespacePath(
                             namespaceString,
                             absoluteFilePath),
-                        cSharpProjectTreeView.CommonComponentRenderers,
+                        cSharpProjectTreeView.BlazorStudioComponentRenderers,
                         cSharpProjectTreeView.FileSystemProvider,
                         cSharpProjectTreeView.EnvironmentProvider,
                         true,
@@ -103,7 +103,7 @@ public partial class TreeViewHelper
                         new NamespacePath(
                             namespaceString,
                             absoluteFilePath),
-                        cSharpProjectTreeView.CommonComponentRenderers,
+                        cSharpProjectTreeView.BlazorStudioComponentRenderers,
                         cSharpProjectTreeView.FileSystemProvider,
                         cSharpProjectTreeView.EnvironmentProvider,
                         false,

@@ -1,15 +1,16 @@
 using System.Collections.Immutable;
+using BlazorCommon.RazorLib.ComponentRenderers;
+using BlazorCommon.RazorLib.Store.AccountCase;
 using BlazorCommon.RazorLib.Store.ApplicationOptions;
 using BlazorCommon.RazorLib.Store.DropdownCase;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
-using BlazorStudio.ClassLib.Store.AccountCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -48,7 +49,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
     [Inject]
     private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
 
@@ -116,14 +117,14 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         _folderExplorerTreeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             Dispatcher,
             TextEditorService,
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             TreeViewService);
 
         _folderExplorerTreeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
             TerminalSessionsStateWrap,
             CommonMenuOptionsFactory,
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             Dispatcher,
             TreeViewService,
@@ -151,7 +152,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     {
         var rootNode = new TreeViewAbsoluteFilePath(
             absoluteFilePath,
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,

@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using BlazorCommon.RazorLib.Dialog;
-using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.InputFile;

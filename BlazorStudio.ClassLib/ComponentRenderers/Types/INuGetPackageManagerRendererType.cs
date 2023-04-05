@@ -1,4 +1,4 @@
-﻿namespace BlazorStudio.ClassLib.CommonComponents;
+﻿namespace BlazorStudio.ClassLib.ComponentRenderers;
 
 public interface INuGetPackageManagerRendererType
 {

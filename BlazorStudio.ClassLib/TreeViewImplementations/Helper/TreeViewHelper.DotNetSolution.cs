@@ -1,7 +1,4 @@
-﻿using BlazorCommon.RazorLib.TreeView;
-using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
+﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.Namespaces;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations.Helper;
@@ -23,7 +20,7 @@ public partial class TreeViewHelper
                 
                 return (TreeViewNoType)new TreeViewNamespacePath(
                     namespacePath,
-                    treeViewSolution.CommonComponentRenderers,
+                    treeViewSolution.BlazorStudioComponentRenderers,
                     treeViewSolution.FileSystemProvider,
                     treeViewSolution.EnvironmentProvider,
                     true,

@@ -1,11 +1,12 @@
 ﻿using System.Collections.Immutable;
+using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.Store.DropdownCase;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
@@ -21,7 +22,7 @@ public partial class InputFileSidebar : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -54,7 +55,7 @@ public partial class InputFileSidebar : ComponentBase
     {
         var directoryHomeNode = new TreeViewAbsoluteFilePath(
             EnvironmentProvider.HomeDirectoryAbsoluteFilePath,
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
@@ -62,7 +63,7 @@ public partial class InputFileSidebar : ComponentBase
     
         var directoryRootNode = new TreeViewAbsoluteFilePath(
             EnvironmentProvider.RootDirectoryAbsoluteFilePath,
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,

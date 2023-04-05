@@ -3,7 +3,7 @@ using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.Events;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
@@ -17,7 +17,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly ITreeViewService _treeViewService;
     private readonly IState<InputFileState> _inputFileStateWrap;
     private readonly IDispatcher _dispatcher;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
+    private readonly IBlazorStudioComponentRenderers _blazorStudioComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly Func<IAbsoluteFilePath, Task> _setInputFileContentTreeViewRootFunc;
@@ -28,7 +28,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         ITreeViewService treeViewService,
         IState<InputFileState> inputFileStateWrap,
         IDispatcher dispatcher,
-        ICommonComponentRenderers commonComponentRenderers,
+        IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         Func<IAbsoluteFilePath, Task> setInputFileContentTreeViewRootFunc,
@@ -40,7 +40,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _treeViewService = treeViewService;
         _inputFileStateWrap = inputFileStateWrap;
         _dispatcher = dispatcher;
-        _commonComponentRenderers = commonComponentRenderers;
+        _blazorStudioComponentRenderers = blazorStudioComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
@@ -156,7 +156,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
-            _commonComponentRenderers,
+            _blazorStudioComponentRenderers,
             _fileSystemProvider,
             _environmentProvider));
         

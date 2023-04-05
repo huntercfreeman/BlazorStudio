@@ -1,6 +1,6 @@
 ﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
 
-namespace BlazorStudio.ClassLib.CommonComponents;
+namespace BlazorStudio.ClassLib.ComponentRenderers;
 
 public interface IRemoveCSharpProjectFromSolutionRendererType
 {

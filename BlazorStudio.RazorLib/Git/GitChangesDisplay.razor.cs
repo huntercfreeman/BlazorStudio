@@ -1,11 +1,11 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
+using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.CommandLine;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.Git;
 using BlazorStudio.ClassLib.Store.GitCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -26,7 +26,7 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     
@@ -75,7 +75,7 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
         var treeViewNodes = gitState.GitFilesList
             .Select(x => (TreeViewNoType)new TreeViewGitFile(
                 x,
-                CommonComponentRenderers,
+                BlazorStudioComponentRenderers,
                 false,
                 false))
             .ToArray();

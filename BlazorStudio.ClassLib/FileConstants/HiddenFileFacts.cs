@@ -4,8 +4,8 @@ namespace BlazorStudio.ClassLib.FileConstants;
 
 public static class HiddenFileFacts
 {
-    public const string Bin = "bin";
-    public const string Obj = "obj";
+    public const string BIN = "bin";
+    public const string OBJ = "obj";
 
     /// <summary>
     /// If rendering a .csproj file pass in <see cref="ExtensionNoPeriodFacts.C_SHARP_PROJECT"/>
@@ -18,7 +18,7 @@ public static class HiddenFileFacts
     {
         return extensionNoPeriod switch
         {
-            ExtensionNoPeriodFacts.C_SHARP_PROJECT => new[] { Bin, Obj }.ToImmutableArray(),
+            ExtensionNoPeriodFacts.C_SHARP_PROJECT => new[] { BIN, OBJ }.ToImmutableArray(),
             _ => ImmutableArray<string>.Empty 
         };
     }

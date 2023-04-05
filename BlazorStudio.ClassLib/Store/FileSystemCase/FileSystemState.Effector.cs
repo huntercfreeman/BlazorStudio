@@ -1,7 +1,8 @@
 ﻿using System.Collections.Concurrent;
+using BlazorCommon.RazorLib.ComponentRenderers;
+using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Notification;
 using BlazorCommon.RazorLib.Store.NotificationCase;
-using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using Fluxor;
 
@@ -12,7 +13,7 @@ public partial class FileSystemState
     private class Effector
     {
         private readonly IFileSystemProvider _fileSystemProvider;
-        private readonly ICommonComponentRenderers _commonComponentRenderers;
+        private readonly IBlazorCommonComponentRenderers _blazorCommonComponentRenderers;
         
         /// <summary>
         /// "string: absoluteFilePath"
@@ -26,10 +27,10 @@ public partial class FileSystemState
         
         public Effector(
             IFileSystemProvider fileSystemProvider,
-            ICommonComponentRenderers commonComponentRenderers)
+            IBlazorCommonComponentRenderers blazorCommonComponentRenderers)
         {
             _fileSystemProvider = fileSystemProvider;
-            _commonComponentRenderers = commonComponentRenderers;
+            _blazorCommonComponentRenderers = blazorCommonComponentRenderers;
         }
         
         [EffectMethod]
@@ -139,12 +140,12 @@ public partial class FileSystemState
                 notificationMessage = "File not found. TODO: Save As";
             }
 
-            if (_commonComponentRenderers.InformativeNotificationRendererType is not null)
+            if (_blazorCommonComponentRenderers.InformativeNotificationRendererType is not null)
             {
                 var notificationInformative  = new NotificationRecord(
                     NotificationKey.NewNotificationKey(), 
                     "Save Action",
-                    _commonComponentRenderers.InformativeNotificationRendererType,
+                    _blazorCommonComponentRenderers.InformativeNotificationRendererType,
                     new Dictionary<string, object?>
                     {
                         {

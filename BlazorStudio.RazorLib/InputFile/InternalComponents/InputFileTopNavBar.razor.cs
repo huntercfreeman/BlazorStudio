@@ -1,6 +1,8 @@
-﻿using BlazorCommon.RazorLib.Notification;
+﻿using BlazorCommon.RazorLib.ComponentRenderers;
+using BlazorCommon.RazorLib.ComponentRenderers.Types;
+using BlazorCommon.RazorLib.Notification;
 using BlazorCommon.RazorLib.Store.NotificationCase;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -15,7 +17,7 @@ public partial class InputFileTopNavBar : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -55,7 +57,7 @@ public partial class InputFileTopNavBar : ComponentBase
     private async Task HandleUpwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider));
         
@@ -117,12 +119,12 @@ public partial class InputFileTopNavBar : ComponentBase
         }
         catch (Exception exception)
         {
-            if (CommonComponentRenderers.ErrorNotificationRendererType != null)
+            if (BlazorStudioComponentRenderers.BlazorCommonComponentRenderers.ErrorNotificationRendererType != null)
             {
                 var errorNotification = new NotificationRecord(
                     NotificationKey.NewNotificationKey(),
                     $"ERROR: {nameof(InputFileTopNavBar)}",
-                    CommonComponentRenderers.ErrorNotificationRendererType,
+                    BlazorStudioComponentRenderers.BlazorCommonComponentRenderers.ErrorNotificationRendererType,
                     new Dictionary<string, object?>
                     {
                         {

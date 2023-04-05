@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.Nuget;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;

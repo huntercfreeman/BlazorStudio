@@ -1,6 +1,6 @@
 ﻿using BlazorCommon.RazorLib.Clipboard;
+using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Storage;
-using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileSystem.Classes.Local;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorTextEditor.RazorLib;
@@ -32,15 +32,7 @@ public class BlazorStudioFileSystemTestingBase
         
         services.AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime());
 
-        services.AddScoped<ICommonComponentRenderers>(_ => new CommonComponentRenderers(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
+        services.AddScoped<IBlazorCommonComponentRenderers>(_ => new BlazorCommonComponentRenderers(
             null,
             null,
             null,
