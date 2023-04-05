@@ -8,6 +8,7 @@ using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorCommon.RazorLib.Store.DropdownCase;
 using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.RazorLib.Account;
@@ -106,6 +107,16 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                         TextEditorService,
                         BlazorStudioComponentRenderers,
                         FileSystemProvider));
+            
+            var menuOptionOpenDotNetSolution = new MenuOptionRecord(
+                ".NET Solution",
+                MenuOptionKind.Other,
+                async () => 
+                    await DotNetSolutionState.ShowInputFileAsync(
+                        Dispatcher,
+                        BlazorStudioComponentRenderers,
+                        FileSystemProvider,
+                        EnvironmentProvider));
         
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
@@ -116,6 +127,7 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                         menuOptionOpenFile,
                         menuOptionOpenDirectory,
                         menuOptionOpenCSharpProject,
+                        menuOptionOpenDotNetSolution
                     }.ToImmutableArray()));
         
             menuOptions.Add(menuOptionOpen);

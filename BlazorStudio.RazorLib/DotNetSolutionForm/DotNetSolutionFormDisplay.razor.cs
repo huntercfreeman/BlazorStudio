@@ -6,6 +6,7 @@ using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.InputFile;
+using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
@@ -22,6 +23,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -95,15 +98,15 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             _newDotNetSolutionTerminalCommandKey,
             interpolatedCommand,
             _parentDirectoryName,
-            _newDotNetSolutionCancellationTokenSource.Token, () =>
+            _newDotNetSolutionCancellationTokenSource.Token,
+            async () =>
             {
-                // ContinueWith -> Open the newly created solution
-
                 // Close Dialog
                 Dispatcher.Dispatch(
                     new DialogRecordsCollection.DisposeAction(
                         DialogRecord.DialogKey));
 
+                // Open the created .NET Solution
                 localParentDirectoryName = FilePathHelper.StripEndingDirectorySeparatorIfExists(
                     localParentDirectoryName,
                     EnvironmentProvider);
@@ -120,13 +123,12 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                     localSolutionName +
                     '.' +
                     ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
-
-                var solutionAbsoluteFilePath = new AbsoluteFilePath(
-                    solutionAbsoluteFilePathString, 
-                    false,
-                    EnvironmentProvider);
-
-                return Task.CompletedTask;
+                
+                await DotNetSolutionState.SetActiveSolutionAsync(
+                    solutionAbsoluteFilePathString,
+                    FileSystemProvider,
+                    EnvironmentProvider,
+                    Dispatcher);
             });
         
         var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[

@@ -37,6 +37,7 @@ public partial class AdhocDisplay : ComponentBase, IDisposable
             async cancellationToken => await WorkItem(cancellationToken),
             "Execute App",
             "Executes dotnet run",
+            true,
             cancellationToken => Task.CompletedTask,
             Dispatcher,
             BackgroundTaskKey.NewBackgroundTaskKey(),

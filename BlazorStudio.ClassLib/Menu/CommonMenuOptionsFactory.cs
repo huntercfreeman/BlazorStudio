@@ -237,7 +237,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     }
 
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
-        TreeViewNamespacePath? solutionNode,
+        TreeViewSolution? treeViewSolution,
         TreeViewNamespacePath projectNode,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
@@ -257,7 +257,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
                     new Action<IAbsoluteFilePath>(_ => 
                         PerformRemoveCSharpProjectReferenceFromSolutionAction(
-                            solutionNode, 
+                            treeViewSolution, 
                             projectNode,
                             terminalSession,
                             dispatcher,
@@ -608,7 +608,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             _environmentProvider);
     }
     
-    private void PerformRemoveCSharpProjectReferenceFromSolutionAction(TreeViewNamespacePath? solutionNode,
+    private void PerformRemoveCSharpProjectReferenceFromSolutionAction(
+        TreeViewSolution? treeViewSolution,
         TreeViewNamespacePath? projectNode,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
@@ -616,15 +617,15 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     {
         _ = Task.Run(async () =>
         { 
-            if (solutionNode?.Item is not null &&
+            if (treeViewSolution?.Item is not null &&
                 projectNode?.Item is not null)
             {
-                var workingDirectory = (IAbsoluteFilePath)solutionNode
-                    .Item.AbsoluteFilePath.Directories.Last();
+                var workingDirectory = (IAbsoluteFilePath)treeViewSolution
+                    .Item.NamespacePath.AbsoluteFilePath.Directories.Last();
 
                 var removeCSharpProjectReferenceFromSolutionCommandString = 
                     DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(
-                        solutionNode.Item.AbsoluteFilePath
+                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath
                             .GetAbsoluteFilePathString(),
                         projectNode.Item.AbsoluteFilePath
                             .GetAbsoluteFilePathString());
@@ -634,18 +635,25 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     removeCSharpProjectReferenceFromSolutionCommandString,
                     workingDirectory.GetAbsoluteFilePathString(),
                     CancellationToken.None,
-                    () => Task.CompletedTask);
+                    async () => await onAfterCompletion.Invoke());
         
                 await terminalSession
                     .EnqueueCommandAsync(
                         removeCSharpProjectReferenceFromSolutionCommand);
             }
-
-            await onAfterCompletion.Invoke();
+            else
+            {
+                // Do not combine this "onAfterCompletion.Invoke" with the if statement's.
+                // One awaits a terminal command.
+                // The other does not.
+                // They cannot combine. 
+                await onAfterCompletion.Invoke();
+            }
         });
     }
     
-    public void PerformProjectToProjectReferenceAction(TreeViewNamespacePath projectReceivingReference,
+    public void PerformProjectToProjectReferenceAction(
+        TreeViewNamespacePath projectReceivingReference,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
