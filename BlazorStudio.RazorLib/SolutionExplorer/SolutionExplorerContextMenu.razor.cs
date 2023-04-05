@@ -18,6 +18,7 @@ using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.InputFile;
 using BlazorStudio.ClassLib.Namespaces;
+using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -41,6 +42,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
@@ -152,8 +157,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         var parentDirectory = (IAbsoluteFilePath)treeViewModel.Item.AbsoluteFilePath.Directories.Last();
 
-        // likely a .NET Solution
-        var treeViewParent = treeViewModel.Parent as TreeViewNamespacePath;
+        var treeViewSolution = treeViewModel.Parent as TreeViewSolution;
 
         return new[]
         {
@@ -193,13 +197,23 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
                         treeViewModel.Item.AbsoluteFilePath))),
             CommonMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
-                treeViewParent,
+                treeViewSolution,
                 treeViewModel,
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher,
-                () => Task.CompletedTask),
+                async () =>
+                {
+                    if (treeViewSolution?.Item is not null)
+                    {
+                        await DotNetSolutionState.SetActiveSolutionAsync(
+                            treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                            FileSystemProvider,
+                            EnvironmentProvider,
+                            Dispatcher);
+                    }
+                }),
         };
     }
     

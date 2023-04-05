@@ -2,8 +2,10 @@ using System.Collections.Immutable;
 using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorStudio.ClassLib.CommandLine;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.InputFile;
 using BlazorStudio.ClassLib.Namespaces;
+using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
@@ -20,6 +22,10 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -106,7 +112,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         var localCSharpProjectName = _cSharpProjectName;
         var localOptionalParameters = _optionalParameters;
         var localParentDirectoryName = _parentDirectoryName;
-        var localSolutionAbsoluteFilePath = SolutionNamespacePath;
+        var solutionNamespacePath = SolutionNamespacePath;
 
         if (string.IsNullOrWhiteSpace(localProjectTemplateName) ||
             string.IsNullOrWhiteSpace(localCSharpProjectName) ||
@@ -127,14 +133,21 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         await generalTerminalSession
             .EnqueueCommandAsync(newDotNetSolutionCommand);
 
-        if (localSolutionAbsoluteFilePath is not null)
+        if (solutionNamespacePath is not null)
         {
             var addExistingProjectToSolutionCommand = new TerminalCommand(
                 _newCSharpProjectTerminalCommandKey,
                 localInterpolatedAddExistingProjectToSolutionCommand,
                 localParentDirectoryName,
                 _newCSharpProjectCancellationTokenSource.Token,
-                () => Task.CompletedTask);
+                async () =>
+                {
+                    await DotNetSolutionState.SetActiveSolutionAsync(
+                        solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                        FileSystemProvider,
+                        EnvironmentProvider,
+                        Dispatcher);
+                });
             
             await generalTerminalSession
                 .EnqueueCommandAsync(addExistingProjectToSolutionCommand);

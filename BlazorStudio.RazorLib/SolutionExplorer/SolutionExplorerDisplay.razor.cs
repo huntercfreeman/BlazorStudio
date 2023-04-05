@@ -146,8 +146,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         }
     }
 
-    private async Task SetSolutionExplorerOnClick(string localSolutionExplorerAbsolutePathString)
+    private async Task SetSolutionExplorerOnClick(
+        string localSolutionExplorerAbsolutePathString)
     {
+        await DotNetSolutionState.SetActiveSolutionAsync(
+            localSolutionExplorerAbsolutePathString,
+            FileSystemProvider,
+            EnvironmentProvider,
+            Dispatcher);
+        
         var content = await FileSystemProvider.File.ReadAllTextAsync(
             localSolutionExplorerAbsolutePathString,
             CancellationToken.None);
