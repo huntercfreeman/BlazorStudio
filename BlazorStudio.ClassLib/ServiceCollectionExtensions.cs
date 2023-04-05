@@ -1,5 +1,4 @@
-﻿using BlazorStudio.ClassLib.BackgroundTaskCase;
-using BlazorStudio.ClassLib.CommonComponents;
+﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorStudio.ClassLib.FileTemplates;
 using BlazorStudio.ClassLib.Nuget;
 using Fluxor;
@@ -10,11 +9,9 @@ namespace BlazorStudio.ClassLib;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddBlazorStudioClassLibServices(
-        this IServiceCollection services,
-        ICommonComponentRenderers commonComponentRenderers)
+        this IServiceCollection services)
     {
         return services
-            .AddScoped<ICommonComponentRenderers>(_ => commonComponentRenderers)
             .AddScoped<Menu.ICommonMenuOptionsFactory, Menu.CommonMenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()

@@ -1,11 +1,12 @@
 ﻿using System.Collections.Immutable;
 using BlazorCommon.RazorLib.Clipboard;
+using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Menu;
 using BlazorCommon.RazorLib.Notification;
 using BlazorCommon.RazorLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Clipboard;
 using BlazorStudio.ClassLib.CommandLine;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -21,7 +22,7 @@ namespace BlazorStudio.ClassLib.Menu;
 
 public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 {
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
+    private readonly IBlazorStudioComponentRenderers _blazorStudioComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IClipboardService _clipboardService;
@@ -32,12 +33,12 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     /// to methods in this file that need an <see cref="IDispatcher"/>
     /// </summary>
     public CommonMenuOptionsFactory(
-        ICommonComponentRenderers commonComponentRenderers,
+        IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         IClipboardService clipboardService)
     {
-        _commonComponentRenderers = commonComponentRenderers;
+        _blazorStudioComponentRenderers = blazorStudioComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
         _clipboardService = clipboardService;
@@ -50,7 +51,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         return new MenuOptionRecord(
             "New Empty File",
             MenuOptionKind.Create,
-            WidgetRendererType: _commonComponentRenderers.FileFormRendererType,
+            WidgetRendererType: _blazorStudioComponentRenderers.FileFormRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
                 {
@@ -84,7 +85,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         return new MenuOptionRecord(
             "New Templated File",
             MenuOptionKind.Create,
-            WidgetRendererType: _commonComponentRenderers.FileFormRendererType,
+            WidgetRendererType: _blazorStudioComponentRenderers.FileFormRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
                 {
@@ -116,7 +117,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         return new MenuOptionRecord(
             "New Directory",
             MenuOptionKind.Create,
-            WidgetRendererType: _commonComponentRenderers.FileFormRendererType,
+            WidgetRendererType: _blazorStudioComponentRenderers.FileFormRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
                 {
@@ -146,7 +147,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         return new MenuOptionRecord(
             "Delete",
             MenuOptionKind.Delete,
-            WidgetRendererType: _commonComponentRenderers.DeleteFileFormRendererType,
+            WidgetRendererType: _blazorStudioComponentRenderers.DeleteFileFormRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
                 {
@@ -173,7 +174,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         return new MenuOptionRecord(
             "Rename",
             MenuOptionKind.Update,
-            WidgetRendererType: _commonComponentRenderers.FileFormRendererType,
+            WidgetRendererType: _blazorStudioComponentRenderers.FileFormRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
                 {
@@ -245,7 +246,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         return new MenuOptionRecord(
             "Remove (no files are deleted)",
             MenuOptionKind.Delete,
-            WidgetRendererType: _commonComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
+            WidgetRendererType: _blazorStudioComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
                 {
@@ -574,12 +575,12 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         }
         catch (Exception e)
         {
-            if (_commonComponentRenderers.ErrorNotificationRendererType is not null)
+            if (_blazorStudioComponentRenderers.BlazorCommonComponentRenderers.ErrorNotificationRendererType is not null)
             {
                 var notificationError  = new NotificationRecord(
                     NotificationKey.NewNotificationKey(), 
                     "Rename Action",
-                    _commonComponentRenderers.ErrorNotificationRendererType,
+                    _blazorStudioComponentRenderers.BlazorCommonComponentRenderers.ErrorNotificationRendererType,
                     new Dictionary<string, object?>
                     {
                         {
@@ -679,7 +680,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                             var notificationInformative = new NotificationRecord(
                                 NotificationKey.NewNotificationKey(),
                                 "Add Project Reference",
-                                _commonComponentRenderers.InformativeNotificationRendererType,
+                                _blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType,
                                 new Dictionary<string, object?>
                                 {
                                     {

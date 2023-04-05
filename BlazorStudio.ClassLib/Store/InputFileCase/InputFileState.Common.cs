@@ -1,4 +1,4 @@
-﻿using BlazorStudio.ClassLib.CommonComponents;
+﻿using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 
@@ -23,13 +23,13 @@ public partial record InputFileState
     private static InputFileState NewOpenedTreeViewModelHistory(
         InputFileState inInputFileState,
         TreeViewAbsoluteFilePath selectedTreeViewModel,
-        ICommonComponentRenderers commonComponentRenderers,
+        IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
         var selectionClone = new TreeViewAbsoluteFilePath(
             selectedTreeViewModel.Item,
-            commonComponentRenderers,
+            blazorStudioComponentRenderers,
             fileSystemProvider,
             environmentProvider,
             false,

@@ -37,7 +37,7 @@ public partial class TreeViewHelper
                         new NamespacePath(
                             namespaceString,
                             absoluteFilePath),
-                        razorMarkupTreeView.CommonComponentRenderers,
+                        razorMarkupTreeView.BlazorStudioComponentRenderers,
                         razorMarkupTreeView.FileSystemProvider,
                         razorMarkupTreeView.EnvironmentProvider,
                         false,

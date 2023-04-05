@@ -1,11 +1,9 @@
 ﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorCommon.RazorLib.WatchWindow.TreeViewImplementations;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.DotNet;
-using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
-using Fluxor;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
@@ -13,7 +11,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
 {
     public TreeViewSolution(
         DotNetSolution dotNetSolution,
-        ICommonComponentRenderers commonComponentRenderers,
+        IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
@@ -23,12 +21,12 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
                 isExpandable,
                 isExpanded)
     {
-        CommonComponentRenderers = commonComponentRenderers;
+        BlazorStudioComponentRenderers = blazorStudioComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
  
-    public ICommonComponentRenderers CommonComponentRenderers { get; }
+    public IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -57,7 +55,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            CommonComponentRenderers.TreeViewNamespacePathRendererType!,
+            BlazorStudioComponentRenderers.TreeViewNamespacePathRendererType!,
             new Dictionary<string, object?>
             {
                 {
@@ -109,9 +107,9 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
             {
                 new TreeViewException(
                     exception,
-                    CommonComponentRenderers,
                     false,
-                    false)
+                    false,
+                    BlazorStudioComponentRenderers.BlazorCommonComponentRenderers.WatchWindowTreeViewRenderers)
                 {
                     Parent = this,
                     IndexAmongSiblings = 0,

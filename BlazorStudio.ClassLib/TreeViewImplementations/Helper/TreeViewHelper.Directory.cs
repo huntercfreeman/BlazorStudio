@@ -36,7 +36,7 @@ public partial class TreeViewHelper
 
                     return (TreeViewNoType)new TreeViewNamespacePath(
                         namespacePath,
-                        directoryTreeView.CommonComponentRenderers,
+                        directoryTreeView.BlazorStudioComponentRenderers,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         true,
@@ -65,7 +65,7 @@ public partial class TreeViewHelper
 
                     return (TreeViewNoType)new TreeViewNamespacePath(
                         namespacePath,
-                        directoryTreeView.CommonComponentRenderers,
+                        directoryTreeView.BlazorStudioComponentRenderers,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         false,
@@ -114,7 +114,7 @@ public partial class TreeViewHelper
 
                     return (TreeViewNoType)new TreeViewAbsoluteFilePath(
                         absoluteFilePath,
-                        directoryTreeView.CommonComponentRenderers,
+                        directoryTreeView.BlazorStudioComponentRenderers,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         true,
@@ -137,7 +137,7 @@ public partial class TreeViewHelper
 
                     return (TreeViewNoType)new TreeViewAbsoluteFilePath(
                         absoluteFilePath,
-                        directoryTreeView.CommonComponentRenderers,
+                        directoryTreeView.BlazorStudioComponentRenderers,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         false,

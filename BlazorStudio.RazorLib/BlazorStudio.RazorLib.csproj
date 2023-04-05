@@ -42,6 +42,7 @@
       <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowExample\_Imports.razor" />
       <_ContentIncludedByDefault Remove="BalcTreeView\WatchWindowPage.razor" />
       <_ContentIncludedByDefault Remove="FontSettings\FontSettingsDisplay.razor" />
+      <_ContentIncludedByDefault Remove="BackgroundTaskCase\BackgroundTaskDisplay.razor" />
     </ItemGroup>
 
 </Project>

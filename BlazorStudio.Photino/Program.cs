@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using BlazorStudio.ClassLib.BackgroundTaskCase;
+using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorStudio.RazorLib;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
@@ -19,7 +19,7 @@ namespace BlazorStudio.Photino
             appBuilder.Services.AddBlazorStudioRazorLibServices(true);
 
             // The code:
-            //     builder.Services.AddHostedService<WindowsBackgroundService>();
+            //     builder.Services.AddHostedService<QueuedHostedService>();
             //
             // is not working for the Photino Blazor app.
             // So manual starting of the service is done.

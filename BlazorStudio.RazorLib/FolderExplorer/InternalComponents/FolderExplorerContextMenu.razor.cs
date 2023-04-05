@@ -1,6 +1,8 @@
 ﻿using BlazorStudio.ClassLib.Menu;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using BlazorCommon.RazorLib.ComponentRenderers;
+using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.Dropdown;
@@ -12,7 +14,6 @@ using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.CommandLine;
-using BlazorStudio.ClassLib.CommonComponents;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.InputFile;
@@ -37,7 +38,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
     [Inject]
     private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     
@@ -247,12 +248,12 @@ public partial class FolderExplorerContextMenu : ComponentBase
     
     private Task NotifyCopyCompleted(IAbsoluteFilePath absoluteFilePath)
     {
-        if (CommonComponentRenderers.InformativeNotificationRendererType != null)
+        if (BlazorCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative  = new NotificationRecord(
                 NotificationKey.NewNotificationKey(), 
                 "Copy Action",
-                CommonComponentRenderers.InformativeNotificationRendererType,
+                BlazorCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                     {
@@ -277,12 +278,12 @@ public partial class FolderExplorerContextMenu : ComponentBase
     {
         ParentOfCutFile = parentTreeViewModel;
 
-        if (CommonComponentRenderers.InformativeNotificationRendererType != null)
+        if (BlazorCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative  = new NotificationRecord(
                 NotificationKey.NewNotificationKey(), 
                 "Cut Action",
-                CommonComponentRenderers.InformativeNotificationRendererType,
+                BlazorCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                     {

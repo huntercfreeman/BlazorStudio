@@ -1,6 +1,6 @@
 ﻿using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Store.DialogCase;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.Html;
 using Fluxor;
 
@@ -10,12 +10,12 @@ public partial record InputFileState
 {
     private class Effector
     {
-        private readonly ICommonComponentRenderers _commonComponentRenderers;
+        private readonly IBlazorStudioComponentRenderers _blazorStudioComponentRenderers;
 
         public Effector(
-            ICommonComponentRenderers commonComponentRenderers)
+            IBlazorStudioComponentRenderers blazorStudioComponentRenderers)
         {
-            _commonComponentRenderers = commonComponentRenderers;
+            _blazorStudioComponentRenderers = blazorStudioComponentRenderers;
         }
         
         [EffectMethod]
@@ -23,7 +23,7 @@ public partial record InputFileState
             RequestInputFileStateFormAction requestInputFileStateFormAction,
             IDispatcher dispatcher)
         {
-            if (_commonComponentRenderers.InputFileRendererType is not null)
+            if (_blazorStudioComponentRenderers.InputFileRendererType is not null)
             {
                 dispatcher.Dispatch(
                     new StartInputFileStateFormAction(
@@ -32,7 +32,7 @@ public partial record InputFileState
                 var inputFileDialog = new DialogRecord(
                     DialogFacts.InputFileDialogKey,
                     "Input File",
-                    _commonComponentRenderers.InputFileRendererType,
+                    _blazorStudioComponentRenderers.InputFileRendererType,
                     null,
                     HtmlFacts.Classes.DIALOG_PADDING_0)
                 {

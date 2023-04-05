@@ -1,5 +1,6 @@
 ﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorCommon.RazorLib.WatchWindow.TreeViewImplementations;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
@@ -9,7 +10,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
 {
     public TreeViewAbsoluteFilePath(
         IAbsoluteFilePath absoluteFilePath,
-        ICommonComponentRenderers commonComponentRenderers,
+        IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
@@ -19,12 +20,12 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
                 isExpandable,
                 isExpanded)
     {
-        CommonComponentRenderers = commonComponentRenderers;
+        BlazorStudioComponentRenderers = blazorStudioComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
  
-    public ICommonComponentRenderers CommonComponentRenderers { get; }
+    public IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -51,7 +52,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            CommonComponentRenderers.TreeViewAbsoluteFilePathRendererType!,
+            BlazorStudioComponentRenderers.TreeViewAbsoluteFilePathRendererType!,
             new Dictionary<string, object?>
             {
                 {
@@ -108,9 +109,9 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
             {
                 new TreeViewException(
                     exception,
-                    CommonComponentRenderers,
                     false,
-                    false)
+                    false,
+                    BlazorStudioComponentRenderers.BlazorCommonComponentRenderers.WatchWindowTreeViewRenderers)
                 {
                     Parent = this,
                     IndexAmongSiblings = 0,

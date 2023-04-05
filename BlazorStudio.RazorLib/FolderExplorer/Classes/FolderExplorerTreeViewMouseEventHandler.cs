@@ -1,7 +1,7 @@
 ﻿using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.Events;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
@@ -14,20 +14,20 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly IDispatcher _dispatcher;
     private readonly ITextEditorService _textEditorService;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
+    private readonly IBlazorStudioComponentRenderers _blazorStudioComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
 
     public FolderExplorerTreeViewMouseEventHandler(
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
-        ICommonComponentRenderers commonComponentRenderers,
+        IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         ITreeViewService treeViewService) 
         : base(treeViewService)
     {
         _dispatcher = dispatcher;
         _textEditorService = textEditorService;
-        _commonComponentRenderers = commonComponentRenderers;
+        _blazorStudioComponentRenderers = blazorStudioComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
     }
     
@@ -49,7 +49,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
             treeViewAbsoluteFilePath.Item,
             _dispatcher,
             _textEditorService,
-            _commonComponentRenderers,
+            _blazorStudioComponentRenderers,
             _fileSystemProvider);
         
         return true;

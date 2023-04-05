@@ -1,12 +1,13 @@
 using System.Collections.Immutable;
+using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Dropdown;
 using BlazorCommon.RazorLib.Menu;
+using BlazorCommon.RazorLib.Store.AccountCase;
 using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorCommon.RazorLib.Store.DropdownCase;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Store.AccountCase;
 using BlazorStudio.ClassLib.Store.EditorCase;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.RazorLib.Account;
@@ -28,7 +29,7 @@ public partial class BlazorTextEditorHeader : FluxorComponent
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -87,7 +88,7 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                     await EditorState.ShowInputFileAsync(
                         Dispatcher, 
                         TextEditorService,
-                        CommonComponentRenderers,
+                        BlazorStudioComponentRenderers,
                         FileSystemProvider));
         
             var menuOptionOpenDirectory = new MenuOptionRecord(
@@ -103,7 +104,7 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                     await EditorState.ShowInputFileAsync(
                         Dispatcher, 
                         TextEditorService,
-                        CommonComponentRenderers,
+                        BlazorStudioComponentRenderers,
                         FileSystemProvider));
         
             var menuOptionOpen = new MenuOptionRecord(

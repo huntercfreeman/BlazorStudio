@@ -1,14 +1,13 @@
 using System.Collections.Immutable;
+using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Store.ApplicationOptions;
 using BlazorCommon.RazorLib.Store.DropdownCase;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.DotNet;
-using BlazorStudio.ClassLib.FileConstants;
-using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
@@ -19,7 +18,6 @@ using BlazorStudio.ClassLib.Store.FolderExplorerCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 using BlazorStudio.RazorLib.TreeViewImplementations;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
@@ -44,7 +42,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
     [Inject]
     private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
@@ -73,7 +71,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
             TerminalSessionsStateWrap,
             CommonMenuOptionsFactory,
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             Dispatcher,
             TreeViewService,
@@ -83,7 +81,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             new SolutionExplorerTreeViewMouseEventHandler(
                 Dispatcher,
                 TextEditorService,
-                CommonComponentRenderers,
+                BlazorStudioComponentRenderers,
                 FileSystemProvider,
                 TreeViewService);
     
@@ -118,7 +116,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     {
         var rootNode = new TreeViewSolution(
             dotNetSolution,
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,

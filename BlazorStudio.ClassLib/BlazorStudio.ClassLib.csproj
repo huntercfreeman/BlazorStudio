@@ -33,4 +33,8 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="BackgroundTaskCase" />
+    </ItemGroup>
+
 </Project>

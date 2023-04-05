@@ -1,11 +1,5 @@
 using System.Collections.Immutable;
-using BlazorCommon.RazorLib.Notification;
-using BlazorCommon.RazorLib.Store.NotificationCase;
-using BlazorStudio.ClassLib.CommandLine;
-using BlazorStudio.ClassLib.CommonComponents;
-using BlazorStudio.ClassLib.FileConstants;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
+using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Nuget;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -20,7 +14,7 @@ public partial class NugetPackageDisplay : FluxorComponent
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]

@@ -1,6 +1,5 @@
-﻿using BlazorStudio.ClassLib.CommonComponents;
+﻿using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.Namespaces;
-using BlazorStudio.ClassLib.TreeViewImplementations;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.TreeViewImplementations;

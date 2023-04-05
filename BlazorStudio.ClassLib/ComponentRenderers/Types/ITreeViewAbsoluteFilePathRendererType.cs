@@ -1,6 +1,6 @@
 ﻿using BlazorStudio.ClassLib.TreeViewImplementations;
 
-namespace BlazorStudio.ClassLib.CommonComponents;
+namespace BlazorStudio.ClassLib.ComponentRenderers;
 
 public interface ITreeViewAbsoluteFilePathRendererType
 {

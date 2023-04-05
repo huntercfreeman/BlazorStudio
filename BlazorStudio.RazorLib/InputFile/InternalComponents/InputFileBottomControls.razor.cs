@@ -1,6 +1,7 @@
-﻿using BlazorCommon.RazorLib.Dialog;
+﻿using BlazorCommon.RazorLib.ComponentRenderers;
+using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Store.DialogCase;
-using BlazorStudio.ClassLib.CommonComponents;
+using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using Fluxor;
@@ -13,7 +14,7 @@ public partial class InputFileBottomControls : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -40,7 +41,7 @@ public partial class InputFileBottomControls : ComponentBase
     private void HandleUpwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
-            CommonComponentRenderers,
+            BlazorStudioComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider));
     }
