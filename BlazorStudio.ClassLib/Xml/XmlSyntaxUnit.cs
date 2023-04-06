@@ -6,31 +6,31 @@ public class XmlSyntaxUnit
 {
     public XmlSyntaxUnit(
         TagSyntax rootTagSyntax,
-        TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
+        XmlDiagnosticBag xmlDiagnosticBag)
     {
-        TextEditorHtmlDiagnosticBag = textEditorHtmlDiagnosticBag;
+        XmlDiagnosticBag = xmlDiagnosticBag;
         RootTagSyntax = rootTagSyntax;
     }
 
     public TagSyntax RootTagSyntax { get; }
-    public TextEditorHtmlDiagnosticBag TextEditorHtmlDiagnosticBag { get; }
+    public XmlDiagnosticBag XmlDiagnosticBag { get; }
 
-    public class HtmlSyntaxUnitBuilder
+    public class XmlSyntaxUnitBuilder
     {
-        public HtmlSyntaxUnitBuilder(TagSyntax rootTagSyntax, TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag)
+        public XmlSyntaxUnitBuilder(TagSyntax rootTagSyntax, XmlDiagnosticBag textEditorHtmlDiagnosticBag)
         {
             RootTagSyntax = rootTagSyntax;
-            TextEditorHtmlDiagnosticBag = textEditorHtmlDiagnosticBag;
+            XmlDiagnosticBag = textEditorHtmlDiagnosticBag;
         }
 
         public TagSyntax RootTagSyntax { get; }
-        public TextEditorHtmlDiagnosticBag TextEditorHtmlDiagnosticBag { get; }
+        public XmlDiagnosticBag XmlDiagnosticBag { get; }
 
         public XmlSyntaxUnit Build()
         {
             return new XmlSyntaxUnit(
                 RootTagSyntax,
-                TextEditorHtmlDiagnosticBag);
+                XmlDiagnosticBag);
         }
     }
 }

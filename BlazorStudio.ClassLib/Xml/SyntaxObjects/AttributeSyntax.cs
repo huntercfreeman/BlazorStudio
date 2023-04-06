@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using BlazorTextEditor.RazorLib.Analysis.Html.SyntaxEnums;
+using BlazorStudio.ClassLib.Xml.SyntaxEnums;
 
 namespace BlazorStudio.ClassLib.Xml.SyntaxObjects;
 
@@ -16,6 +16,6 @@ public class AttributeSyntax : IXmlSyntax
     public AttributeNameSyntax AttributeNameSyntax { get; }
     public AttributeValueSyntax AttributeValueSyntax { get; }
     
-    public HtmlSyntaxKind HtmlSyntaxKind => HtmlSyntaxKind.Attribute;
-    public ImmutableArray<IXmlSyntax> ChildHtmlSyntaxes { get; } = ImmutableArray<IXmlSyntax>.Empty;
+    public XmlSyntaxKind XmlSyntaxKind => XmlSyntaxKind.Attribute;
+    public ImmutableArray<IXmlSyntax> ChildXmlSyntaxes { get; } = ImmutableArray<IXmlSyntax>.Empty;
 }

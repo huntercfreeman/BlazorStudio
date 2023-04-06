@@ -1,10 +1,11 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Xml.SyntaxEnums;
 using BlazorTextEditor.RazorLib.Analysis.Html.SyntaxEnums;
 
 namespace BlazorStudio.ClassLib.Xml;
 
 public interface IXmlSyntax
 {
-    public HtmlSyntaxKind HtmlSyntaxKind { get; }
-    public ImmutableArray<IXmlSyntax> ChildHtmlSyntaxes { get; }
+    public XmlSyntaxKind XmlSyntaxKind { get; }
+    public ImmutableArray<IXmlSyntax> ChildXmlSyntaxes { get; }
 }

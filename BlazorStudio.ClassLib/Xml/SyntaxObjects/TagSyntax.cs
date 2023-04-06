@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
-using BlazorTextEditor.RazorLib.Analysis.Html.SyntaxEnums;
-using TagKind = BlazorStudio.ClassLib.Xml.SyntaxEnums.TagKind;
+using BlazorStudio.ClassLib.Xml.SyntaxEnums;
 
 namespace BlazorStudio.ClassLib.Xml.SyntaxObjects;
 
@@ -10,12 +9,12 @@ public class TagSyntax : IXmlSyntax
         TagNameSyntax? openTagNameSyntax,
         TagNameSyntax? closeTagNameSyntax,
         ImmutableArray<AttributeSyntax> attributeSyntaxes,
-        ImmutableArray<IXmlSyntax> childHtmlSyntaxes,
+        ImmutableArray<IXmlSyntax> childXmlSyntaxes,
         TagKind tagKind,
-        bool hasSpecialHtmlCharacter = false)
+        bool hasSpecialXmlCharacter = false)
     {
-        ChildHtmlSyntaxes = childHtmlSyntaxes;
-        HasSpecialHtmlCharacter = hasSpecialHtmlCharacter;
+        ChildXmlSyntaxes = childXmlSyntaxes;
+        HasSpecialXmlCharacter = hasSpecialXmlCharacter;
         AttributeSyntaxes = attributeSyntaxes;
         OpenTagNameSyntax = openTagNameSyntax;
         CloseTagNameSyntax = closeTagNameSyntax;
@@ -26,19 +25,19 @@ public class TagSyntax : IXmlSyntax
     public TagNameSyntax? CloseTagNameSyntax { get; }
     public ImmutableArray<AttributeSyntax> AttributeSyntaxes { get; }
     public TagKind TagKind { get; }
-    public bool HasSpecialHtmlCharacter { get; }
+    public bool HasSpecialXmlCharacter { get; }
     
-    public virtual ImmutableArray<IXmlSyntax> ChildHtmlSyntaxes { get; }
-    public virtual HtmlSyntaxKind HtmlSyntaxKind => HtmlSyntaxKind.Tag;
+    public virtual ImmutableArray<IXmlSyntax> ChildXmlSyntaxes { get; }
+    public virtual XmlSyntaxKind XmlSyntaxKind => XmlSyntaxKind.Tag;
 
     public class TagSyntaxBuilder
     {
         public TagNameSyntax? OpenTagNameSyntax { get; set; }
         public TagNameSyntax? CloseTagNameSyntax { get; set; }
         public List<AttributeSyntax> AttributeSyntaxes { get; set; } = new();
-        public List<IXmlSyntax> ChildHtmlSyntaxes { get; set; } = new();
+        public List<IXmlSyntax> ChildXmlSyntaxes { get; set; } = new();
         public TagKind TagKind { get; set; }
-        public bool HasSpecialHtmlCharacter { get; set; }
+        public bool HasSpecialXmlCharacter { get; set; }
 
         public TagSyntax Build()
         {
@@ -46,9 +45,9 @@ public class TagSyntax : IXmlSyntax
                 OpenTagNameSyntax,
                 CloseTagNameSyntax,
                 AttributeSyntaxes.ToImmutableArray(),
-                ChildHtmlSyntaxes.ToImmutableArray(),
+                ChildXmlSyntaxes.ToImmutableArray(),
                 TagKind,
-                HasSpecialHtmlCharacter);
+                HasSpecialXmlCharacter);
         }
     }
 }

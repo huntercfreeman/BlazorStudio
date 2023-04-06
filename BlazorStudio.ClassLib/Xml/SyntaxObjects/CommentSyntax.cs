@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
-using BlazorTextEditor.RazorLib.Analysis.Html.SyntaxEnums;
+using BlazorStudio.ClassLib.Xml.SyntaxEnums;
 using BlazorTextEditor.RazorLib.Lexing;
-using TagKind = BlazorStudio.ClassLib.Xml.SyntaxEnums.TagKind;
 
 namespace BlazorStudio.ClassLib.Xml.SyntaxObjects;
 
@@ -21,6 +20,6 @@ public class CommentSyntax : TagSyntax
 
     public TextEditorTextSpan TextEditorTextSpan { get; }
     
-    public override HtmlSyntaxKind HtmlSyntaxKind => HtmlSyntaxKind.Comment;
-    public override ImmutableArray<IXmlSyntax> ChildHtmlSyntaxes => ImmutableArray<IXmlSyntax>.Empty;
+    public override XmlSyntaxKind XmlSyntaxKind => XmlSyntaxKind.Comment;
+    public override ImmutableArray<IXmlSyntax> ChildXmlSyntaxes => ImmutableArray<IXmlSyntax>.Empty;
 }

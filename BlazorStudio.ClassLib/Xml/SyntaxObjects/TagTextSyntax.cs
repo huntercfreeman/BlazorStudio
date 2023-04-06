@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
-using BlazorTextEditor.RazorLib.Analysis.Html.SyntaxEnums;
-using TagKind = BlazorStudio.ClassLib.Xml.SyntaxEnums.TagKind;
+using BlazorStudio.ClassLib.Xml.SyntaxEnums;
 
 namespace BlazorStudio.ClassLib.Xml.SyntaxObjects;
 
@@ -8,21 +7,21 @@ public class TagTextSyntax : TagSyntax, IXmlSyntax
 {
     public TagTextSyntax(
         ImmutableArray<AttributeSyntax> attributeSyntaxes,
-        ImmutableArray<IXmlSyntax> childHtmlSyntaxes,
+        ImmutableArray<IXmlSyntax> childXmlSyntaxes,
         string value,
-        bool hasSpecialHtmlCharacter = false)
+        bool hasSpecialXmlCharacter = false)
         : base(
             null,
             null,
             attributeSyntaxes,
-            childHtmlSyntaxes,
+            childXmlSyntaxes,
             TagKind.Text,
-            hasSpecialHtmlCharacter)
+            hasSpecialXmlCharacter)
     {
         Value = value;
     }
 
     public string Value { get; }
 
-    public override HtmlSyntaxKind HtmlSyntaxKind => HtmlSyntaxKind.TagText;
+    public override XmlSyntaxKind XmlSyntaxKind => XmlSyntaxKind.TagText;
 }
