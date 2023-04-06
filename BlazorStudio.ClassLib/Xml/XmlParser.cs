@@ -200,16 +200,30 @@ public class XmlParser
             {
                 if (attributeNameEndingPositionIndexExclusive is null)
                     attributeNameEndingPositionIndexExclusive = stringWalker.PositionIndex;
-                else
+                else if (attributeValueEndingPositionIndexExclusive is null)
                 {
                     attributeValueEndingPositionIndexExclusive = stringWalker.PositionIndex;
+                    break;
                 }
             }
 
+            if (stringWalker.CurrentCharacter == XmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE)
+            {
+                if (attributeNameEndingPositionIndexExclusive is null)
+                    attributeNameEndingPositionIndexExclusive = stringWalker.PositionIndex;
+                else
+                    break;
+            }
+
             if (attributeNameStartingPositionIndexInclusive is null)
+            {
                 attributeNameStartingPositionIndexInclusive = stringWalker.PositionIndex;
-            else
+            }
+            else if (attributeValueStartingPositionIndexInclusive is null &&
+                     attributeNameEndingPositionIndexExclusive is not null)
+            {
                 attributeValueStartingPositionIndexInclusive = stringWalker.PositionIndex;
+            }
             
             _ = stringWalker.ReadCharacter();
         }

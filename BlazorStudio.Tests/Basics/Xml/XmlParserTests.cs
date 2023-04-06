@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Classes.Local;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Xml;
+using BlazorTextEditor.RazorLib.Analysis.Html.SyntaxActors;
 
 namespace BlazorStudio.Tests.Basics.Xml;
 
@@ -19,11 +20,18 @@ public class XmlParserTests
 		    projectAbsoluteFilePathString,
 		    false,
 		    localEnvironmentProvider);
+
+	    var htmlLexer = new TextEditorHtmlLexer();
+
+	    var textSpans = htmlLexer.Lex(ProjectTestData);
 	    
-	    var project = XmlParser.Parse(
-		    ProjectTestData,
-		    new NamespacePath("", projectAbsoluteFilePath),
-		    localEnvironmentProvider);
+	    var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(ProjectTestData);
+
+	    var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+
+	    var htmlSyntaxWalker = new HtmlSyntaxWalker();
+
+	    htmlSyntaxWalker.Visit(syntaxNodeRoot);
     }
 
     private const string ProjectTestData = @"<Project Sdk=""Microsoft.NET.Sdk.Web"">
