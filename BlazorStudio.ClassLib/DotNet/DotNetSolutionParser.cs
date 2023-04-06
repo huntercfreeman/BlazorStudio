@@ -47,26 +47,6 @@ public class DotNetSolutionParser
         return new DotNetSolution(namespacePath, projects.ToImmutableList());
     }
     
-    /*
-     * Microsoft Visual Studio Solution File, Format Version 12.00
-Project(""{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"") = ""BlazorApp1"", ""BlazorApp1\BlazorApp1.csproj"", ""{510BA6A0-B1B5-4D57-AB74-EA7ED2127ED4}""
-EndProject
-Project(""{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"") = ""BlazorCommon.RazorLib"", ""..\BlazorCommon\BlazorCommon.RazorLib\BlazorCommon.RazorLib.csproj"", ""{2F763B00-22EC-4566-B27A-C3D6367AC8F0}""
-EndProject
-Global
-
-    -------------------
-    
-    Every value for a Project definition within a .sln is wrapped in quotes.
-    
-    First algorithm
-        -Assume the order is always the same
-            -ProjectTypeGuid // Find '"' -> '{'
-            -DisplayName // Find '"' -> ~'{'
-            -RelativePathFromSolutionFile // Find '"' -> ~'{'
-            -ProjectIdGuid // Find '"' -> '{'
-     */
-    
     private static IDotNetProject ParseDotNetProject(StringWalker stringWalker)
     {
         var projectBuilder = new StringBuilder();

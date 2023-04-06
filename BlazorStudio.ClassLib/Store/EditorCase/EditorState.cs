@@ -32,7 +32,8 @@ public class EditorState
                 async afp =>
                 {
                     await OpenInEditorAsync(
-                        afp, 
+                        afp,
+                        true,
                         dispatcher, 
                         textEditorService,
                         blazorStudioComponentRenderers,
@@ -60,6 +61,7 @@ public class EditorState
     
     public static async Task OpenInEditorAsync(
         IAbsoluteFilePath? absoluteFilePath,
+        bool shouldSetFocusToEditor,
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
         IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
@@ -190,8 +192,13 @@ public class EditorState
                 textEditorViewModel => textEditorViewModel with
                 {
                     OnSaveRequested = HandleOnSaveRequested,
-                    GetTabDisplayNameFunc = _ => absoluteFilePath.FilenameWithExtension
+                    GetTabDisplayNameFunc = _ => absoluteFilePath.FilenameWithExtension,
+                    ShouldSetFocusAfterNextRender = shouldSetFocusToEditor
                 });
+        }
+        else
+        {
+            viewModel.ShouldSetFocusAfterNextRender = shouldSetFocusToEditor;
         }
             
         textEditorService.GroupAddViewModel(

@@ -58,7 +58,14 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         switch (treeViewCommandParameter.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                await InvokeOpenInEditorAsync(treeViewCommandParameter);
+                await InvokeOpenInEditorAsync(
+                    treeViewCommandParameter,
+                    true);
+                return true;
+            case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
+                await InvokeOpenInEditorAsync(
+                    treeViewCommandParameter,
+                    false);
                 return true;
         }
 
@@ -288,7 +295,9 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         return Task.CompletedTask;
     }
 
-    private async Task InvokeOpenInEditorAsync(ITreeViewCommandParameter treeViewCommandParameter)
+    private async Task InvokeOpenInEditorAsync(
+        ITreeViewCommandParameter treeViewCommandParameter,
+        bool shouldSetFocusToEditor)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
@@ -301,6 +310,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 
         await EditorState.OpenInEditorAsync(
             treeViewNamespacePath.Item.AbsoluteFilePath,
+            shouldSetFocusToEditor,
             _dispatcher,
             _textEditorService,
             _blazorStudioComponentRenderers,

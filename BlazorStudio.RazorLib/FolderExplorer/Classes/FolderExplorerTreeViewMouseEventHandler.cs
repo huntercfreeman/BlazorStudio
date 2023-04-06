@@ -47,6 +47,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
         await EditorState.OpenInEditorAsync(
             treeViewAbsoluteFilePath.Item,
+            true,
             _dispatcher,
             _textEditorService,
             _blazorStudioComponentRenderers,
