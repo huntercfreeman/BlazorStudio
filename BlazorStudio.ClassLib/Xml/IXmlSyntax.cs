@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Xml.SyntaxEnums;
-using BlazorTextEditor.RazorLib.Analysis.Html.SyntaxEnums;
 
 namespace BlazorStudio.ClassLib.Xml;
 

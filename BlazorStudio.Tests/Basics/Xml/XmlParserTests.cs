@@ -2,6 +2,7 @@
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Classes.Local;
 using BlazorStudio.ClassLib.Namespaces;
+using BlazorStudio.ClassLib.Xml;
 
 namespace BlazorStudio.Tests.Basics.Xml;
 
@@ -19,7 +20,7 @@ public class XmlParserTests
 		    false,
 		    localEnvironmentProvider);
 	    
-	    var project = DotNetSolutionParser.Parse(
+	    var project = XmlParser.Parse(
 		    ProjectTestData,
 		    new NamespacePath("", projectAbsoluteFilePath),
 		    localEnvironmentProvider);
