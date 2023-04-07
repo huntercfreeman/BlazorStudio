@@ -1,21 +1,22 @@
 ﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.ComponentRenderers;
-using BlazorStudio.ClassLib.DotNet.CSharp;
+using BlazorStudio.ClassLib.ComponentRenderers.Types;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Nuget;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
-public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpProjectToProjectReferences>
+public class TreeViewLightWeightNugetPackageRecord : TreeViewWithType<LightWeightNugetPackageRecord>
 {
-    public TreeViewCSharpProjectToProjectReferences(
-        CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
+    public TreeViewLightWeightNugetPackageRecord(
+        LightWeightNugetPackageRecord lightWeightNugetPackageRecord,
         IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
         bool isExpanded)
             : base(
-                cSharpProjectToProjectReferences,
+                lightWeightNugetPackageRecord,
                 isExpandable,
                 isExpanded)
     {
@@ -31,7 +32,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewCSharpProjectToProjectReferences treeViewCSharpProjectToProjectReferences ||
+            obj is not TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord ||
             Item is null)
         {
             return false;
@@ -50,8 +51,14 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            BlazorStudioComponentRenderers.TreeViewCSharpProjectToProjectReferencesRendererType!,
-            null);
+            BlazorStudioComponentRenderers.TreeViewLightWeightNugetPackageRecordRendererType!,
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(ITreeViewLightWeightNugetPackageRecordRendererType.LightWeightNugetPackageRecord),
+                    Item
+                },
+            });
     }
     
     public override async Task LoadChildrenAsync()

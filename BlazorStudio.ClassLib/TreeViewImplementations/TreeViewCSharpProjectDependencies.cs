@@ -1,10 +1,7 @@
 ﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorCommon.RazorLib.WatchWindow.TreeViewImplementations;
 using BlazorStudio.ClassLib.ComponentRenderers;
-using BlazorStudio.ClassLib.DotNet;
 using BlazorStudio.ClassLib.DotNet.CSharp;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
@@ -63,7 +60,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             return;
         
         var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
-            new CSharpProjectNugetPackageReferences(),
+            new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
             BlazorStudioComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,

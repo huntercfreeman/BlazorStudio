@@ -115,7 +115,7 @@ public partial class TreeViewHelper
                 });
 
         var cSharpProjectDependenciesTreeViewNode = new TreeViewCSharpProjectDependencies(
-            new CSharpProjectDependencies(),
+            new CSharpProjectDependencies(cSharpProjectTreeView.Item),
             cSharpProjectTreeView.BlazorStudioComponentRenderers,
             cSharpProjectTreeView.FileSystemProvider,
             cSharpProjectTreeView.EnvironmentProvider,

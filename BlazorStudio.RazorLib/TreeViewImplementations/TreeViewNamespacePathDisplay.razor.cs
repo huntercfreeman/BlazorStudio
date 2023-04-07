@@ -1,4 +1,4 @@
-﻿using BlazorStudio.ClassLib.ComponentRenderers;
+﻿using BlazorStudio.ClassLib.ComponentRenderers.Types;
 using BlazorStudio.ClassLib.Namespaces;
 using Microsoft.AspNetCore.Components;
 

@@ -17,7 +17,8 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
         Type? inputFileRendererType,
         Type? treeViewCSharpProjectDependenciesRendererType,
         Type? treeViewCSharpProjectNugetPackageReferencesRendererType,
-        Type? treeViewCSharpProjectToProjectReferencesRendererType)
+        Type? treeViewCSharpProjectToProjectReferencesRendererType,
+        Type? treeViewLightWeightNugetPackageRecordRendererType)
     {
         BlazorCommonComponentRenderers = blazorCommonComponentRenderers;
         FileFormRendererType = fileFormRendererType;
@@ -32,6 +33,7 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
         TreeViewCSharpProjectDependenciesRendererType = treeViewCSharpProjectDependenciesRendererType;
         TreeViewCSharpProjectNugetPackageReferencesRendererType = treeViewCSharpProjectNugetPackageReferencesRendererType;
         TreeViewCSharpProjectToProjectReferencesRendererType = treeViewCSharpProjectToProjectReferencesRendererType;
+        TreeViewLightWeightNugetPackageRecordRendererType = treeViewLightWeightNugetPackageRecordRendererType;
     }
 
     public IBlazorCommonComponentRenderers? BlazorCommonComponentRenderers { get; }
@@ -41,6 +43,7 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
     public Type? TreeViewCSharpProjectDependenciesRendererType { get; }
     public Type? TreeViewCSharpProjectNugetPackageReferencesRendererType { get; }
     public Type? TreeViewCSharpProjectToProjectReferencesRendererType { get; }
+    public Type? TreeViewLightWeightNugetPackageRecordRendererType { get; }
     public Type? TreeViewAbsoluteFilePathRendererType { get; }
     public Type? TreeViewGitFileRendererType { get; }
     public Type? NuGetPackageManagerRendererType { get; }

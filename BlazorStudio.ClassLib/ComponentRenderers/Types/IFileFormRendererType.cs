@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.FileTemplates;
 
-namespace BlazorStudio.ClassLib.ComponentRenderers;
+namespace BlazorStudio.ClassLib.ComponentRenderers.Types;
 
 public interface IFileFormRendererType
 {

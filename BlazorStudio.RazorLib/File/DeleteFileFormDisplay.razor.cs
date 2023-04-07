@@ -1,6 +1,6 @@
 ﻿using BlazorCommon.RazorLib.Keyboard;
 using BlazorCommon.RazorLib.Menu;
-using BlazorStudio.ClassLib.ComponentRenderers;
+using BlazorStudio.ClassLib.ComponentRenderers.Types;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.RazorLib.Button;
 using Microsoft.AspNetCore.Components;

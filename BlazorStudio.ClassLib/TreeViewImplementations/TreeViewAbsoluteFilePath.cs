@@ -1,6 +1,7 @@
 ﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorCommon.RazorLib.WatchWindow.TreeViewImplementations;
 using BlazorStudio.ClassLib.ComponentRenderers;
+using BlazorStudio.ClassLib.ComponentRenderers.Types;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
