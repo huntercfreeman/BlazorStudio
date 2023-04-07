@@ -7,6 +7,7 @@ using BlazorCommon.RazorLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.Clipboard;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.ComponentRenderers;
+using BlazorStudio.ClassLib.ComponentRenderers.Types;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;

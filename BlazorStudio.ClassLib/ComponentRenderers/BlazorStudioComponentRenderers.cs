@@ -13,7 +13,13 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
         Type? treeViewGitFileRendererType,
         Type? nuGetPackageManagerRendererType,
         Type? gitDisplayRendererType,
-        Type? removeCSharpProjectFromSolutionRendererType, Type? inputFileRendererType)
+        Type? removeCSharpProjectFromSolutionRendererType,
+        Type? inputFileRendererType,
+        Type? treeViewCSharpProjectDependenciesRendererType,
+        Type? treeViewCSharpProjectNugetPackageReferencesRendererType,
+        Type? treeViewCSharpProjectToProjectReferencesRendererType,
+        Type? treeViewLightWeightNugetPackageRecordRendererType,
+        Type? treeViewCSharpProjectToProjectReferenceRendererType)
     {
         BlazorCommonComponentRenderers = blazorCommonComponentRenderers;
         FileFormRendererType = fileFormRendererType;
@@ -25,12 +31,22 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
         GitDisplayRendererType = gitDisplayRendererType;
         RemoveCSharpProjectFromSolutionRendererType = removeCSharpProjectFromSolutionRendererType;
         InputFileRendererType = inputFileRendererType;
+        TreeViewCSharpProjectDependenciesRendererType = treeViewCSharpProjectDependenciesRendererType;
+        TreeViewCSharpProjectNugetPackageReferencesRendererType = treeViewCSharpProjectNugetPackageReferencesRendererType;
+        TreeViewCSharpProjectToProjectReferencesRendererType = treeViewCSharpProjectToProjectReferencesRendererType;
+        TreeViewLightWeightNugetPackageRecordRendererType = treeViewLightWeightNugetPackageRecordRendererType;
+        TreeViewCSharpProjectToProjectReferenceRendererType = treeViewCSharpProjectToProjectReferenceRendererType;
     }
 
     public IBlazorCommonComponentRenderers? BlazorCommonComponentRenderers { get; }
     public Type? FileFormRendererType { get; }
     public Type? DeleteFileFormRendererType { get; }
     public Type? TreeViewNamespacePathRendererType { get; }
+    public Type? TreeViewCSharpProjectDependenciesRendererType { get; }
+    public Type? TreeViewCSharpProjectNugetPackageReferencesRendererType { get; }
+    public Type? TreeViewCSharpProjectToProjectReferencesRendererType { get; }
+    public Type? TreeViewLightWeightNugetPackageRecordRendererType { get; }
+    public Type? TreeViewCSharpProjectToProjectReferenceRendererType { get; }
     public Type? TreeViewAbsoluteFilePathRendererType { get; }
     public Type? TreeViewGitFileRendererType { get; }
     public Type? NuGetPackageManagerRendererType { get; }

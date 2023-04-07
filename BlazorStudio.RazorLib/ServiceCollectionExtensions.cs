@@ -10,6 +10,7 @@ using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Classes.Local;
 using BlazorStudio.ClassLib.FileSystem.Classes.Website;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.CSharpProjectForm;
 using BlazorStudio.RazorLib.File;
 using BlazorStudio.RazorLib.FormsGeneric;
@@ -130,7 +131,12 @@ public static class ServiceCollectionExtensions
                 typeof(NuGetPackageManager),
                 typeof(GitChangesDisplay),
                 typeof(RemoveCSharpProjectFromSolutionDisplay),
-                typeof(InputFileDisplay));
+                typeof(InputFileDisplay),
+                typeof(TreeViewCSharpProjectDependenciesDisplay),
+                typeof(TreeViewCSharpProjectNugetPackageReferencesDisplay),
+                typeof(TreeViewCSharpProjectToProjectReferencesDisplay),
+                typeof(TreeViewLightWeightNugetPackageRecordDisplay),
+                typeof(TreeViewCSharpProjectToProjectReferenceDisplay));
         });
         
         return services.AddBlazorStudioClassLibServices();

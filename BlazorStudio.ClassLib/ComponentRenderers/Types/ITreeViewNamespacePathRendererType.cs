@@ -1,6 +1,6 @@
 ﻿using BlazorStudio.ClassLib.Namespaces;
 
-namespace BlazorStudio.ClassLib.ComponentRenderers;
+namespace BlazorStudio.ClassLib.ComponentRenderers.Types;
 
 public interface ITreeViewNamespacePathRendererType
 {

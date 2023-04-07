@@ -20,12 +20,12 @@ public class DotNetSolutionParserTests
 		    localEnvironmentProvider);
 	    
 	    var solution = DotNetSolutionParser.Parse(
-		    SolutionTestData,
+		    SOLUTION_TEST_DATA,
 		    new NamespacePath("", solutionAbsoluteFilePath),
 		    localEnvironmentProvider);
     }
 
-    private const string SolutionTestData = @"
+    private const string SOLUTION_TEST_DATA = @"
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project(""{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"") = ""BlazorApp1"", ""BlazorApp1\BlazorApp1.csproj"", ""{510BA6A0-B1B5-4D57-AB74-EA7ED2127ED4}""
 EndProject

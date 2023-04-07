@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
-using System.Xml;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Xml.Facts;

@@ -5,6 +5,7 @@ using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.ComponentRenderers;
+using BlazorStudio.ClassLib.ComponentRenderers.Types;
 using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.Store.GitCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;

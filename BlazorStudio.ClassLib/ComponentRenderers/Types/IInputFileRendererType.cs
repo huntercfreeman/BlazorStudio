@@ -1,4 +1,4 @@
-﻿namespace BlazorStudio.ClassLib.ComponentRenderers;
+﻿namespace BlazorStudio.ClassLib.ComponentRenderers.Types;
 
 public interface IInputFileRendererType
 {

@@ -1,5 +1,6 @@
 ﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.ComponentRenderers;
+using BlazorStudio.ClassLib.ComponentRenderers.Types;
 using BlazorStudio.ClassLib.Git;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
