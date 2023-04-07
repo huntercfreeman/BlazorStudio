@@ -71,7 +71,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
         };
         
         var treeViewCSharpProjectToProjectReferences = new TreeViewCSharpProjectToProjectReferences(
-            new CSharpProjectToProjectReferences(),
+            new CSharpProjectToProjectReferences(Item.CSharpProjectNamespacePath),
             BlazorStudioComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,

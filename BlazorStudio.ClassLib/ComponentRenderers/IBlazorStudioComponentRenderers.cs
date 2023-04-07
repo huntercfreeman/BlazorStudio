@@ -12,6 +12,7 @@ public interface IBlazorStudioComponentRenderers
     public Type? TreeViewCSharpProjectNugetPackageReferencesRendererType { get; }
     public Type? TreeViewCSharpProjectToProjectReferencesRendererType { get; }
     public Type? TreeViewLightWeightNugetPackageRecordRendererType { get; }
+    public Type? TreeViewCSharpProjectToProjectReferenceRendererType { get; }
     public Type? TreeViewAbsoluteFilePathRendererType { get; }
     public Type? TreeViewGitFileRendererType { get; }
     public Type? NuGetPackageManagerRendererType { get; }
