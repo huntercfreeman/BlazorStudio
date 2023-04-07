@@ -130,7 +130,8 @@ public static class ServiceCollectionExtensions
                 typeof(NuGetPackageManager),
                 typeof(GitChangesDisplay),
                 typeof(RemoveCSharpProjectFromSolutionDisplay),
-                typeof(InputFileDisplay));
+                typeof(InputFileDisplay),
+                typeof(TreeViewCSharpProjectDependenciesDisplay));
         });
         
         return services.AddBlazorStudioClassLibServices();

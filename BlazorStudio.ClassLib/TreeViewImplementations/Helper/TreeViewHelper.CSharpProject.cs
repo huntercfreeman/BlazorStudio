@@ -1,4 +1,5 @@
 ﻿using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
+using BlazorStudio.ClassLib.DotNet.CSharp;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -112,8 +113,21 @@ public partial class TreeViewHelper
                         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                     };
                 });
+
+        var cSharpProjectDependenciesTreeViewNode = new TreeViewCSharpProjectDependencies(
+            new CSharpProjectDependencies(),
+            cSharpProjectTreeView.BlazorStudioComponentRenderers,
+            cSharpProjectTreeView.FileSystemProvider,
+            cSharpProjectTreeView.EnvironmentProvider,
+            true,
+            false)
+        {
+            TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+        };
         
-        return foundUniqueDirectories
+        return 
+            new TreeViewNoType[] { cSharpProjectDependenciesTreeViewNode }
+            .Union(foundUniqueDirectories)
             .Union(foundDefaultDirectories)
             .Union(childFileTreeViewModels)
             .ToList();
