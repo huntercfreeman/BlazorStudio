@@ -15,7 +15,9 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
         Type? gitDisplayRendererType,
         Type? removeCSharpProjectFromSolutionRendererType,
         Type? inputFileRendererType,
-        Type? treeViewCSharpProjectDependenciesRendererType)
+        Type? treeViewCSharpProjectDependenciesRendererType,
+        Type? treeViewCSharpProjectNugetPackageReferencesRendererType,
+        Type? treeViewCSharpProjectToProjectReferencesRendererType)
     {
         BlazorCommonComponentRenderers = blazorCommonComponentRenderers;
         FileFormRendererType = fileFormRendererType;
@@ -28,6 +30,8 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
         RemoveCSharpProjectFromSolutionRendererType = removeCSharpProjectFromSolutionRendererType;
         InputFileRendererType = inputFileRendererType;
         TreeViewCSharpProjectDependenciesRendererType = treeViewCSharpProjectDependenciesRendererType;
+        TreeViewCSharpProjectNugetPackageReferencesRendererType = treeViewCSharpProjectNugetPackageReferencesRendererType;
+        TreeViewCSharpProjectToProjectReferencesRendererType = treeViewCSharpProjectToProjectReferencesRendererType;
     }
 
     public IBlazorCommonComponentRenderers? BlazorCommonComponentRenderers { get; }
@@ -35,6 +39,8 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
     public Type? DeleteFileFormRendererType { get; }
     public Type? TreeViewNamespacePathRendererType { get; }
     public Type? TreeViewCSharpProjectDependenciesRendererType { get; }
+    public Type? TreeViewCSharpProjectNugetPackageReferencesRendererType { get; }
+    public Type? TreeViewCSharpProjectToProjectReferencesRendererType { get; }
     public Type? TreeViewAbsoluteFilePathRendererType { get; }
     public Type? TreeViewGitFileRendererType { get; }
     public Type? NuGetPackageManagerRendererType { get; }

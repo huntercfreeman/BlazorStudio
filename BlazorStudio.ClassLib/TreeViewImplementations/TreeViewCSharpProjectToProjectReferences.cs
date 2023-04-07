@@ -8,17 +8,17 @@ using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 
-public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectDependencies>
+public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpProjectToProjectReferences>
 {
-    public TreeViewCSharpProjectDependencies(
-        CSharpProjectDependencies cSharpProjectDependencies,
+    public TreeViewCSharpProjectToProjectReferences(
+        CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
         IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
         bool isExpanded)
             : base(
-                cSharpProjectDependencies,
+                cSharpProjectToProjectReferences,
                 isExpandable,
                 isExpanded)
     {
@@ -34,7 +34,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewCSharpProjectDependencies treeViewCSharpProjectDependencies ||
+            obj is not TreeViewCSharpProjectToProjectReferences treeViewCSharpProjectToProjectReferences ||
             Item is null)
         {
             return false;
@@ -53,7 +53,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            BlazorStudioComponentRenderers.TreeViewCSharpProjectDependenciesRendererType!,
+            BlazorStudioComponentRenderers.TreeViewCSharpProjectToProjectReferencesRendererType!,
             null);
     }
     
@@ -62,44 +62,6 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
         if (Item is null)
             return;
         
-        var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
-            new CSharpProjectNugetPackageReferences(),
-            BlazorStudioComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
-            true,
-            false)
-        {
-            TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
-        };
-        
-        var treeViewCSharpProjectToProjectReferences = new TreeViewCSharpProjectToProjectReferences(
-            new CSharpProjectToProjectReferences(),
-            BlazorStudioComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
-            true,
-            false)
-        {
-            TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
-        };
-
-        var newChildren = new List<TreeViewNoType>
-        {
-            treeViewCSharpProjectNugetPackageReferences,
-            treeViewCSharpProjectToProjectReferences
-        };
-        
-        for (int i = 0; i < newChildren.Count; i++)
-        {
-            var newChild = newChildren[i];
-                
-            newChild.IndexAmongSiblings = i;
-            newChild.Parent = this;
-            newChild.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
-        }
-
-        Children = newChildren;
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
     }
 
