@@ -276,8 +276,42 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         return new MenuOptionRecord(
             "Add Project Reference",
             MenuOptionKind.Other,
-            OnClick: () => PerformProjectToProjectReferenceAction(
+            OnClick: () => PerformAddProjectToProjectReferenceAction(
                 projectReceivingReference,
+                terminalSession,
+                dispatcher,
+                onAfterCompletion));
+    }
+    
+    public MenuOptionRecord RemoveProjectToProjectReference(
+        TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
+        TerminalSession terminalSession,
+        IDispatcher dispatcher,
+        Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "Remove Project Reference",
+            MenuOptionKind.Other,
+            OnClick: () => PerformRemoveProjectToProjectReferenceAction(
+                treeViewCSharpProjectToProjectReference,
+                terminalSession,
+                dispatcher,
+                onAfterCompletion));
+    }
+    
+    public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
+        NamespacePath modifyProjectNamespacePath,
+        TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord,
+        TerminalSession terminalSession,
+        IDispatcher dispatcher,
+        Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "Remove NuGet Package Reference",
+            MenuOptionKind.Other,
+            OnClick: () => PerformRemoveNuGetPackageReferenceFromProjectAction(
+                modifyProjectNamespacePath,
+                treeViewLightWeightNugetPackageRecord,
                 terminalSession,
                 dispatcher,
                 onAfterCompletion));
@@ -653,7 +687,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         });
     }
     
-    public void PerformProjectToProjectReferenceAction(
+    public void PerformAddProjectToProjectReferenceAction(
         TreeViewNamespacePath projectReceivingReference,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
@@ -679,7 +713,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                             projectReceivingReference.Item.AbsoluteFilePath.GetAbsoluteFilePathString(),
                             referencedProject.GetAbsoluteFilePathString());
 
-                    var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
+                    var addProjectToProjectReferenceTerminalCommand = new TerminalCommand(
                         TerminalCommandKey.NewTerminalCommandKey(),
                         interpolatedCommand,
                         null,
@@ -709,7 +743,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                         });
 
                     await terminalSession
-                        .EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand);
+                        .EnqueueCommandAsync(addProjectToProjectReferenceTerminalCommand);
                 },
                 afp =>
                 {
@@ -734,6 +768,116 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         
             dispatcher.Dispatch(
                 requestInputFileStateFormAction);
+        });
+    }
+    
+    public void PerformRemoveProjectToProjectReferenceAction(
+        TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
+        TerminalSession terminalSession,
+        IDispatcher dispatcher,
+        Func<Task> onAfterCompletion)
+    {
+        _ = Task.Run(async () =>
+        {
+            if (treeViewCSharpProjectToProjectReference.Item is null)
+            {
+                await onAfterCompletion.Invoke();
+                return;
+            }
+
+            var interpolatedCommand = DotNetCliFacts
+                .FormatRemoveProjectToProjectReference(
+                    treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath
+                        .GetAbsoluteFilePathString(),
+                    treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath
+                        .GetAbsoluteFilePathString());
+
+            var removeProjectToProjectReferenceTerminalCommand = new TerminalCommand(
+                TerminalCommandKey.NewTerminalCommandKey(),
+                interpolatedCommand,
+                null,
+                CancellationToken.None,
+                async () =>
+                {
+                    var notificationInformative = new NotificationRecord(
+                        NotificationKey.NewNotificationKey(),
+                        "Remove Project Reference",
+                        _blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType,
+                        new Dictionary<string, object?>
+                        {
+                            {
+                                nameof(IInformativeNotificationRendererType.Message),
+                                $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
+                                $" to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.FilenameWithExtension}"
+                            },
+                        },
+                        TimeSpan.FromSeconds(7),
+                        null);
+
+                    dispatcher.Dispatch(
+                        new NotificationRecordsCollection.RegisterAction(
+                            notificationInformative));
+
+                    await onAfterCompletion.Invoke();
+                });
+
+            await terminalSession
+                .EnqueueCommandAsync(removeProjectToProjectReferenceTerminalCommand);
+        });
+    }
+    
+    public void PerformRemoveNuGetPackageReferenceFromProjectAction(
+        NamespacePath modifyProjectNamespacePath,
+        TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord,
+        TerminalSession terminalSession,
+        IDispatcher dispatcher,
+        Func<Task> onAfterCompletion)
+    {
+        _ = Task.Run(async () =>
+        {
+            if (treeViewLightWeightNugetPackageRecord.Item is null)
+            {
+                await onAfterCompletion.Invoke();
+                return;
+            }
+
+            var interpolatedCommand = DotNetCliFacts
+                .FormatRemoveNugetPackageReferenceFromProject(
+                    modifyProjectNamespacePath.AbsoluteFilePath
+                        .GetAbsoluteFilePathString(),
+                    treeViewLightWeightNugetPackageRecord.Item.Id);
+
+            var removeNugetPackageReferenceFromProjectTerminalCommand = new TerminalCommand(
+                TerminalCommandKey.NewTerminalCommandKey(),
+                interpolatedCommand,
+                null,
+                CancellationToken.None,
+                async () =>
+                {
+                    var notificationInformative = new NotificationRecord(
+                        NotificationKey.NewNotificationKey(),
+                        "Remove Project Reference",
+                        _blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType,
+                        new Dictionary<string, object?>
+                        {
+                            {
+                                nameof(IInformativeNotificationRendererType.Message),
+                                $"Modified {modifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
+                                $" to NOT have a reference to {treeViewLightWeightNugetPackageRecord.Item.Id}"
+                            },
+                        },
+                        TimeSpan.FromSeconds(7),
+                        null);
+
+                    dispatcher.Dispatch(
+                        new NotificationRecordsCollection.RegisterAction(
+                            notificationInformative));
+
+                    await onAfterCompletion.Invoke();
+                });
+
+            await terminalSession
+                .EnqueueCommandAsync(removeNugetPackageReferenceFromProjectTerminalCommand);
         });
     }
     

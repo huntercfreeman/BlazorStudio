@@ -101,6 +101,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
             var lightWeightNugetPackageRecord = new LightWeightNugetPackageRecord(
                 includeAttribute.Item2,
+                includeAttribute.Item2,
                 versionAttribute.Item2);
 
             lightWeightNugetPackageRecords.Add(lightWeightNugetPackageRecord);

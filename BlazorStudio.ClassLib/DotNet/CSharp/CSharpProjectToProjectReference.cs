@@ -1,13 +1,19 @@
 ﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Namespaces;
 
 namespace BlazorStudio.ClassLib.DotNet.CSharp;
 
 public class CSharpProjectToProjectReference
 {
-    public CSharpProjectToProjectReference(IAbsoluteFilePath absoluteFilePath)
+    public CSharpProjectToProjectReference(
+        NamespacePath modifyProjectNamespacePath,
+        IAbsoluteFilePath referenceProjectAbsoluteFilePath)
     {
-        AbsoluteFilePath = absoluteFilePath;
+        ModifyProjectNamespacePath = modifyProjectNamespacePath;
+        ReferenceProjectAbsoluteFilePath = referenceProjectAbsoluteFilePath;
     }
     
-    public IAbsoluteFilePath AbsoluteFilePath { get; }
+    /// <summary>The <see cref="ModifyProjectNamespacePath"/> is the <see cref="NamespacePath"/> of the Project which will have its XML data modified.</summary>
+    public NamespacePath ModifyProjectNamespacePath { get; }
+    public IAbsoluteFilePath ReferenceProjectAbsoluteFilePath { get; }
 }
