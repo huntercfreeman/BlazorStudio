@@ -54,4 +54,10 @@ public interface ICommonMenuOptionsFactory
         TerminalSession terminalSession,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
+    
+    public MenuOptionRecord RemoveProjectToProjectReference(
+        TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
+        TerminalSession terminalSession,
+        IDispatcher dispatcher,
+        Func<Task> onAfterCompletion);
 }

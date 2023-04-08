@@ -81,4 +81,14 @@ public static class DotNetCliFacts
         
         return $"dotnet add {receivingProjectAbsoluteFilePathString} reference {referencedProjectAbsoluteFilePathString}";
     }
+    
+    public static string FormatRemoveProjectToProjectReference(
+        string modifyProjectAbsoluteFilePathString, 
+        string referenceProjectAbsoluteFilePathString)
+    {
+        modifyProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(modifyProjectAbsoluteFilePathString);
+        referenceProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(referenceProjectAbsoluteFilePathString);
+        
+        return $"dotnet remove {modifyProjectAbsoluteFilePathString} reference {referenceProjectAbsoluteFilePathString}";
+    }
 }
