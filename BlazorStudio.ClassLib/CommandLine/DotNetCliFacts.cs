@@ -72,6 +72,16 @@ public static class DotNetCliFacts
         return $"dotnet add {cSharpProjectAbsoluteFilePathString} package {nugetPackageId} --version {nugetPackageVersion}";
     }
     
+    public static string FormatRemoveNugetPackageReferenceFromProject(
+        string cSharpProjectAbsoluteFilePathString, 
+        string nugetPackageId)
+    {
+        cSharpProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(cSharpProjectAbsoluteFilePathString);
+        nugetPackageId = CommandLineHelper.QuoteValue(nugetPackageId);
+        
+        return $"dotnet remove {cSharpProjectAbsoluteFilePathString} package {nugetPackageId}";
+    }
+    
     public static string FormatAddProjectToProjectReference(
         string receivingProjectAbsoluteFilePathString, 
         string referencedProjectAbsoluteFilePathString)

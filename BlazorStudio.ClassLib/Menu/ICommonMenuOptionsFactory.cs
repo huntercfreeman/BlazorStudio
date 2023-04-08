@@ -60,4 +60,11 @@ public interface ICommonMenuOptionsFactory
         TerminalSession terminalSession,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
+    
+    public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
+        NamespacePath modifyProjectNamespacePath,
+        TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord,
+        TerminalSession terminalSession,
+        IDispatcher dispatcher,
+        Func<Task> onAfterCompletion);
 }

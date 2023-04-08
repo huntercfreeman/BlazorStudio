@@ -116,6 +116,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 GetCSharpProjectToProjectReferenceMenuOptions(
                     treeViewCSharpProjectToProjectReference));
         }
+        else if (treeViewModel is TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord)
+        {
+            menuRecords.AddRange(
+                GetTreeViewLightWeightNugetPackageRecordMenuOptions(
+                    treeViewLightWeightNugetPackageRecord));
+        }
         
         if (!menuRecords.Any())
             return MenuRecord.Empty;
@@ -228,6 +234,24 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             CommonMenuOptionsFactory.RemoveProjectToProjectReference(
                 treeViewCSharpProjectToProjectReference,
+                TerminalSessionsStateWrap.Value
+                    .TerminalSessionMap[
+                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
+                Dispatcher, () => Task.CompletedTask),
+        };
+    }
+    
+    private MenuOptionRecord[] GetTreeViewLightWeightNugetPackageRecordMenuOptions(
+        TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord)
+    {
+        var treeViewCSharpProjectNugetPackageReferences = 
+            treeViewLightWeightNugetPackageRecord.Parent as TreeViewCSharpProjectNugetPackageReferences;
+        
+        return new[]
+        {
+            CommonMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
+                treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
+                treeViewLightWeightNugetPackageRecord,
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
