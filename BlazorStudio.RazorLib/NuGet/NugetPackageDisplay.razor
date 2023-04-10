@@ -19,10 +19,26 @@
                 }
             </select>
             
+            @{
+                var buttonIsDisabled = !ValidateSolutionContainsSelectedProject();
+            }
+            
             <ButtonDisplay OnClickFunc="AddNugetPackageReferenceOnClick"
                            CssStyleString="display: inline-flex; margin-left: 5px;"
-                           IsDisabled="!ValidateSolutionContainsSelectedProject()">
-                TODO: Add to ...
+                           IsDisabled="buttonIsDisabled">
+                
+                @if (buttonIsDisabled)
+                {
+                    <text>
+                        Must select a Project to Modify
+                    </text>
+                }
+                else
+                {
+                    <text>
+                        Add to @NuGetPackageManagerStateWrap.Value.SelectedProjectToModify.DisplayName
+                    </text>
+                }
             </ButtonDisplay>
         </div>
     </div>
