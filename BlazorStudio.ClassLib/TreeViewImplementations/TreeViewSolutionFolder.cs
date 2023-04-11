@@ -126,21 +126,25 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
                         return ConstructTreeViewCSharpProject((CSharpProject)x);
                     }
                 }).ToList();
-
-            Children = childTreeViews;
-
-            for (int i = siblingsAndSelfTreeViews.Count - 1; i >= 0; i--)
+            
+            for (int siblingsIndex = siblingsAndSelfTreeViews.Count - 1; siblingsIndex >= 0; siblingsIndex--)
             {
-                var siblingOrSelf = siblingsAndSelfTreeViews[i];
+                var siblingOrSelf = siblingsAndSelfTreeViews[siblingsIndex];
 
-                foreach (var childTreeView in childTreeViews)
+                for (var childrensIndex = 0; childrensIndex < childTreeViews.Count; childrensIndex++)
                 {
+                    var childTreeView = childTreeViews[childrensIndex];
+                    
                     if (siblingOrSelf.Equals(childTreeView))
-                    {
-                        siblingsAndSelfTreeViews.RemoveAt(i);
-                    }
+                        siblingsAndSelfTreeViews.RemoveAt(siblingsIndex);
+                    
+                    childTreeView.Parent = this;
+                    childTreeView.IndexAmongSiblings = childrensIndex;
+                    childTreeView.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
                 }
             }
+
+            Children = childTreeViews;
         }
         
         return;

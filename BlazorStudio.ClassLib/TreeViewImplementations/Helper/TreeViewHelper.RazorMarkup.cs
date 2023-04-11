@@ -83,10 +83,17 @@ public partial class TreeViewHelper
         if (!relatedFiles.Any())
             return;
 
-        foreach (var relatedFile in relatedFiles)
+        for (var index = 0; index < relatedFiles.Length; index++)
         {
-            razorMarkupTreeView.Children.Add(relatedFile);
+            var relatedFile = relatedFiles[index];
+            
             siblingsAndSelfTreeViews.Remove(relatedFile);
+
+            relatedFile.Parent = razorMarkupTreeView;
+            relatedFile.IndexAmongSiblings = index;
+            relatedFile.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+
+            razorMarkupTreeView.Children.Add(relatedFile);
         }
 
         razorMarkupTreeView.IsExpandable = true;
