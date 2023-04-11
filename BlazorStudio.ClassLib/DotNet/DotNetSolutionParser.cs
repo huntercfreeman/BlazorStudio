@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
 using BlazorStudio.ClassLib.DotNet.CSharp;
+using BlazorStudio.ClassLib.DotNet.DotNetSolutionGlobalSectionTypes;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
@@ -17,6 +18,7 @@ public class DotNetSolutionParser
     {
         var projects = new List<IDotNetProject>();
         var dotNetSolutionFolders = new List<DotNetSolutionFolder>();
+        var globalSection = new DotNetSolutionGlobalSection(null);
         
         var stringWalker = new StringWalker(content);
         
@@ -46,6 +48,20 @@ public class DotNetSolutionParser
                     dotNetSolutionFolders.Add((DotNetSolutionFolder)dotNetProjectSyntax);
                 }
             }
+            else if (stringWalker.CheckForSubstring(DotNetSolutionFacts.START_OF_GLOBAL_SECTION))
+            {
+                _ = stringWalker.ReadRange(DotNetSolutionFacts.START_OF_GLOBAL_SECTION.Length);
+                
+                if (stringWalker.CheckForSubstring(DotNetSolutionFacts.START_OF_GLOBAL_SECTION_NESTED_PROJECTS))
+                {
+                    var globalSectionNestedProjects = ParseGlobalSectionNestedProjects(stringWalker);
+
+                    globalSection = globalSection with
+                    {
+                        GlobalSectionNestedProjects = globalSectionNestedProjects 
+                    };
+                }
+            }
             
             _ = stringWalker.ReadCharacter();
         }
@@ -53,10 +69,12 @@ public class DotNetSolutionParser
         return new DotNetSolution(
             namespacePath,
             projects.ToImmutableList(),
-            dotNetSolutionFolders.ToImmutableList());
+            dotNetSolutionFolders.ToImmutableList(),
+            globalSection);
     }
     
-    private static IDotNetProject ParseDotNetProject(StringWalker stringWalker)
+    private static IDotNetProject ParseDotNetProject(
+        StringWalker stringWalker)
     {
         var projectBuilder = new StringBuilder();
         
@@ -149,7 +167,8 @@ public class DotNetSolutionParser
             projectIdGuid.Value);
     }
     
-    private static Guid ParseGuid(StringWalker stringWalker)
+    private static Guid ParseGuid(
+        StringWalker stringWalker)
     {
         var guidBuilder = new StringBuilder();
         
@@ -174,7 +193,9 @@ public class DotNetSolutionParser
         return Guid.Parse(guidBuilder.ToString());
     }
     
-    private static string ParseStringValue(StringWalker stringWalker, int doubleQuoteCounter)
+    private static string ParseStringValue(
+        StringWalker stringWalker,
+        int doubleQuoteCounter)
     {
         var stringValueBuilder = new StringBuilder();
         
@@ -200,5 +221,48 @@ public class DotNetSolutionParser
         }
 
         return stringValueBuilder.ToString();
+    }
+    
+    private static GlobalSectionNestedProjects ParseGlobalSectionNestedProjects(
+        StringWalker stringWalker)
+    {
+        var nestedProjectEntries = new List<NestedProjectEntry>();
+        
+        // As of 2023-04-10 the childGuid appears first, then the solutionFolderGuid
+        Guid? childGuid = null;
+        
+        while (!stringWalker.IsEof)
+        {
+            if (stringWalker.CheckForSubstring(DotNetSolutionFacts.END_OF_GLOBAL_SECTION))
+            {
+                break;
+            }
+            else if (stringWalker.CheckForSubstring(DotNetSolutionFacts.START_OF_GUID))
+            {
+                _ = stringWalker.ReadRange(DotNetSolutionFacts.START_OF_GUID.Length);
+                
+                var guid = ParseGuid(stringWalker);
+
+                if (childGuid is null)
+                {
+                    childGuid = guid;
+                }
+                else
+                {
+                    var nestedProjectEntry = new NestedProjectEntry(
+                        childGuid.Value,
+                        guid);
+                    
+                    nestedProjectEntries.Add(nestedProjectEntry);
+
+                    childGuid = null;
+                }
+            }
+            
+            _ = stringWalker.ReadCharacter();
+        }
+
+        return new GlobalSectionNestedProjects(
+            nestedProjectEntries.ToImmutableArray());
     }
 }

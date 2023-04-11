@@ -48,9 +48,23 @@ public partial class TreeViewHelper
             .OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsoluteFilePath.FileNameNoExtension)
             .ToList();
 
+        var children = childSolutionFolders
+            .Union(childProjects)
+            .ToList();
+        
+        var copyOfChildrenToFindRelatedFiles = new List<TreeViewNoType>(children);
+        
+        foreach (var child in children)
+        {
+            child.Parent = treeViewSolution; 
+            
+            child.RemoveRelatedFilesFromParent(
+                copyOfChildrenToFindRelatedFiles);
+        }
+
+        // The parent directory gets what is left over after the
+        // children take their respective 'code behinds'
         return Task.FromResult(
-            childSolutionFolders
-                .Union(childProjects)
-                .ToList());
+            copyOfChildrenToFindRelatedFiles);
     }
 }

@@ -3,7 +3,9 @@ using BlazorCommon.RazorLib.WatchWindow.TreeViewImplementations;
 using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.ComponentRenderers.Types;
 using BlazorStudio.ClassLib.DotNet;
+using BlazorStudio.ClassLib.DotNet.CSharp;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
+using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
@@ -93,8 +95,88 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
     }
 
-    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    public override void RemoveRelatedFilesFromParent(
+        List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
+        if (Parent is TreeViewSolution treeViewSolution)
+        {
+            var nestedProjectEntries = treeViewSolution
+                .Item.DotNetSolutionGlobalSection.GlobalSectionNestedProjects.NestedProjectEntries
+                .Where(x => x.SolutionFolderIdGuid == Item.ProjectIdGuid)
+                .ToArray();
+
+            var childProjectIds = nestedProjectEntries
+                .Select(x => x.ChildProjectIdGuid)
+                .ToArray();
+
+            var childProjects =
+                treeViewSolution.Item.DotNetProjects
+                    .Where(x => childProjectIds.Contains(x.ProjectIdGuid))
+                    .ToArray();
+
+            var childTreeViews = childProjects
+                .Select(x =>
+                {
+                    if (x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
+                    {
+                        return ConstructTreeViewSolutionFolder((DotNetSolutionFolder)x);
+                    }
+                    else
+                    {
+                        return ConstructTreeViewCSharpProject((CSharpProject)x);
+                    }
+                }).ToList();
+
+            Children = childTreeViews;
+
+            for (int i = siblingsAndSelfTreeViews.Count - 1; i >= 0; i--)
+            {
+                var siblingOrSelf = siblingsAndSelfTreeViews[i];
+
+                foreach (var childTreeView in childTreeViews)
+                {
+                    if (siblingOrSelf.Equals(childTreeView))
+                    {
+                        siblingsAndSelfTreeViews.RemoveAt(i);
+                    }
+                }
+            }
+        }
+        
         return;
+    }
+
+    private TreeViewNoType ConstructTreeViewSolutionFolder(
+        DotNetSolutionFolder dotNetSolutionFolder)
+    {
+        return (TreeViewNoType)new TreeViewSolutionFolder(
+            dotNetSolutionFolder,
+            BlazorStudioComponentRenderers,
+            FileSystemProvider,
+            EnvironmentProvider,
+            true,
+            false)
+        {
+            TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+        };
+    }
+    
+    private TreeViewNoType ConstructTreeViewCSharpProject(
+        CSharpProject cSharpProject)
+    {
+        var namespacePath = new NamespacePath(
+            cSharpProject.AbsoluteFilePath.FileNameNoExtension,
+            cSharpProject.AbsoluteFilePath);
+        
+        return (TreeViewNoType)new TreeViewNamespacePath(
+            namespacePath,
+            BlazorStudioComponentRenderers,
+            FileSystemProvider,
+            EnvironmentProvider,
+            true,
+            false)
+        {
+            TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+        };
     }
 }
