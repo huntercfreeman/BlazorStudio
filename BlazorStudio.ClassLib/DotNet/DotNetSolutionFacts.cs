@@ -16,4 +16,9 @@ public class DotNetSolutionFacts
     public const string START_OF_GUID = "{";
     // Example text: Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}")
     public const string END_OF_GUID = "}";
+    
+    public const string START_OF_GLOBAL_SECTION = "GlobalSection(";
+    public const string END_OF_GLOBAL_SECTION = "EndGlobalSection";
+    
+    public const string START_OF_GLOBAL_SECTION_NESTED_PROJECTS = "NestedProjects)";
 }

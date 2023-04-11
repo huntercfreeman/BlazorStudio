@@ -8,6 +8,7 @@ public interface IBlazorStudioComponentRenderers
     public Type? FileFormRendererType { get; }
     public Type? DeleteFileFormRendererType { get; }
     public Type? TreeViewNamespacePathRendererType { get; }
+    public Type? TreeViewSolutionFolderRendererType { get; }
     public Type? TreeViewCSharpProjectDependenciesRendererType { get; }
     public Type? TreeViewCSharpProjectNugetPackageReferencesRendererType { get; }
     public Type? TreeViewCSharpProjectToProjectReferencesRendererType { get; }

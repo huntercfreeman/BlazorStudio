@@ -136,7 +136,8 @@ public static class ServiceCollectionExtensions
                 typeof(TreeViewCSharpProjectNugetPackageReferencesDisplay),
                 typeof(TreeViewCSharpProjectToProjectReferencesDisplay),
                 typeof(TreeViewLightWeightNugetPackageRecordDisplay),
-                typeof(TreeViewCSharpProjectToProjectReferenceDisplay));
+                typeof(TreeViewCSharpProjectToProjectReferenceDisplay),
+                typeof(TreeViewSolutionFolderDisplay));
         });
         
         return services.AddBlazorStudioClassLibServices();
