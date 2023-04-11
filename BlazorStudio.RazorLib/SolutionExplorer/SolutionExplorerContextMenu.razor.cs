@@ -169,6 +169,23 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
         var treeViewSolution = treeViewModel.Parent as TreeViewSolution;
 
+        if (treeViewSolution is null)
+        {
+            var ancestorTreeView = treeViewModel.Parent;
+            
+            if (ancestorTreeView.Parent is null)
+                return Array.Empty<MenuOptionRecord>();
+            
+            // Parent could be a could be one or many levels of solution folders
+            while (ancestorTreeView.Parent is not null)
+                ancestorTreeView = ancestorTreeView.Parent;
+
+            treeViewSolution = ancestorTreeView as TreeViewSolution;
+            
+            if (treeViewSolution is null)
+                return Array.Empty<MenuOptionRecord>();
+        }
+
         return new[]
         {
             CommonMenuOptionsFactory.NewEmptyFile(
@@ -199,7 +216,23 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
-                Dispatcher, () => Task.CompletedTask),
+                Dispatcher, 
+                () => Task.CompletedTask),
+            CommonMenuOptionsFactory.MoveProjectToSolutionFolder(
+                treeViewSolution,
+                treeViewModel,
+                TerminalSessionsStateWrap.Value
+                    .TerminalSessionMap[
+                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
+                Dispatcher, 
+                async () =>
+                {
+                    await DotNetSolutionState.SetActiveSolutionAsync(
+                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                        FileSystemProvider,
+                        EnvironmentProvider,
+                        Dispatcher);
+                }),
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,

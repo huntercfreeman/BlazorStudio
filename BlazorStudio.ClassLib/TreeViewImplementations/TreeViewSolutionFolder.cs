@@ -98,7 +98,24 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
     public override void RemoveRelatedFilesFromParent(
         List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        if (Parent is TreeViewSolution treeViewSolution)
+        var ancestorNode = Parent;
+
+        if (ancestorNode is not TreeViewSolution)
+        {
+            if (ancestorNode.Parent is null)
+                return;
+            
+            while (ancestorNode is not TreeViewSolution &&
+                   ancestorNode.Parent is not null)
+            {
+                ancestorNode = ancestorNode.Parent;
+            }
+
+            if (ancestorNode is not TreeViewSolution)
+                return;
+        }
+        
+        if (ancestorNode is TreeViewSolution treeViewSolution)
         {
             var nestedProjectEntries = treeViewSolution
                 .Item.DotNetSolutionGlobalSection.GlobalSectionNestedProjects.NestedProjectEntries
@@ -126,21 +143,50 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
                         return ConstructTreeViewCSharpProject((CSharpProject)x);
                     }
                 }).ToList();
-
-            Children = childTreeViews;
-
-            for (int i = siblingsAndSelfTreeViews.Count - 1; i >= 0; i--)
+            
+            for (int siblingsIndex = siblingsAndSelfTreeViews.Count - 1; siblingsIndex >= 0; siblingsIndex--)
             {
-                var siblingOrSelf = siblingsAndSelfTreeViews[i];
+                var siblingOrSelf = siblingsAndSelfTreeViews[siblingsIndex];
 
-                foreach (var childTreeView in childTreeViews)
+                for (var childrensIndex = 0; childrensIndex < childTreeViews.Count; childrensIndex++)
                 {
+                    var childTreeView = childTreeViews[childrensIndex];
+                    
                     if (siblingOrSelf.Equals(childTreeView))
                     {
-                        siblingsAndSelfTreeViews.RemoveAt(i);
+                        // What i'm doing here is super confusing and needs changed.
+                        // In lines above I re-created a TreeView node for a second time.
+                        //
+                        // Now I have to figure out where that re-created TreeView node
+                        // existed originally because it will have its
+                        // "RemoveRelatedFilesFromParent" invoked.
+                        //
+                        // Without this logic a:
+                        //     solution folder -> solution folder -> project
+                        //
+                        // Will not render the project.
+                        //
+                        // TODO: Revisit this logic.
+                        var originalTreeView = siblingsAndSelfTreeViews[siblingsIndex];
+                        
+                        originalTreeView.Parent = this;
+                        originalTreeView.IndexAmongSiblings = childrensIndex;
+                        originalTreeView.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+                        
+                        siblingsAndSelfTreeViews.RemoveAt(siblingsIndex);
+
+                        childTreeViews[childrensIndex] = originalTreeView;
+                    }
+                    else
+                    {
+                        childTreeView.Parent = this;
+                        childTreeView.IndexAmongSiblings = childrensIndex;
+                        childTreeView.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
                     }
                 }
             }
+
+            Children = childTreeViews;
         }
         
         return;

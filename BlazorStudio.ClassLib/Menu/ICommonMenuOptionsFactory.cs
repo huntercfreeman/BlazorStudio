@@ -1,4 +1,5 @@
 ﻿using BlazorCommon.RazorLib.Menu;
+using BlazorStudio.ClassLib.DotNet;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
 using BlazorStudio.ClassLib.Store.TerminalCase;
@@ -57,6 +58,13 @@ public interface ICommonMenuOptionsFactory
     
     public MenuOptionRecord RemoveProjectToProjectReference(
         TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
+        TerminalSession terminalSession,
+        IDispatcher dispatcher,
+        Func<Task> onAfterCompletion);
+    
+    public MenuOptionRecord MoveProjectToSolutionFolder(
+        TreeViewSolution treeViewSolution,
+        TreeViewNamespacePath treeViewProjectToMove,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);

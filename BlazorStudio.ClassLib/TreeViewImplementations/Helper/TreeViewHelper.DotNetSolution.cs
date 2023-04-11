@@ -53,11 +53,15 @@ public partial class TreeViewHelper
             .ToList();
         
         var copyOfChildrenToFindRelatedFiles = new List<TreeViewNoType>(children);
+
+        // The foreach for child.Parent and the
+        // foreach for child.RemoveRelatedFilesFromParent(...)
+        // cannot be combined.
+        foreach (var child in children)
+            child.Parent = treeViewSolution;
         
         foreach (var child in children)
         {
-            child.Parent = treeViewSolution; 
-            
             child.RemoveRelatedFilesFromParent(
                 copyOfChildrenToFindRelatedFiles);
         }

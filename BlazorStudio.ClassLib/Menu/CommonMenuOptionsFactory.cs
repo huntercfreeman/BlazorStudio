@@ -8,6 +8,7 @@ using BlazorStudio.ClassLib.Clipboard;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.ComponentRenderers.Types;
+using BlazorStudio.ClassLib.DotNet;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -297,6 +298,42 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                 terminalSession,
                 dispatcher,
                 onAfterCompletion));
+    }
+    
+    public MenuOptionRecord MoveProjectToSolutionFolder(
+        TreeViewSolution treeViewSolution,
+        TreeViewNamespacePath treeViewProjectToMove,
+        TerminalSession terminalSession,
+        IDispatcher dispatcher,
+        Func<Task> onAfterCompletion)
+    {
+        return new MenuOptionRecord(
+            "Move to Solution Folder",
+            MenuOptionKind.Other,
+            WidgetRendererType: _blazorStudioComponentRenderers.FileFormRendererType,
+            WidgetParameters: new Dictionary<string, object?>
+            {
+                {
+                    nameof(IFileFormRendererType.FileName),
+                    string.Empty
+                },
+                {
+                    nameof(IFileFormRendererType.IsDirectory),
+                    false
+                },
+                {
+                    nameof(IFileFormRendererType.OnAfterSubmitAction),
+                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
+                        (nextName, _, _) => 
+                            PerformMoveProjectToSolutionFolderAction(
+                                treeViewSolution,
+                                treeViewProjectToMove,
+                                nextName,
+                                terminalSession,
+                                dispatcher,
+                                onAfterCompletion))
+                },
+            });
     }
     
     public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
@@ -823,6 +860,70 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
             await terminalSession
                 .EnqueueCommandAsync(removeProjectToProjectReferenceTerminalCommand);
+        });
+    }
+    
+    public void PerformMoveProjectToSolutionFolderAction(
+        TreeViewSolution treeViewSolution,
+        TreeViewNamespacePath treeViewProjectToMove,
+        string solutionFolderPath,
+        TerminalSession terminalSession,
+        IDispatcher dispatcher,
+        Func<Task> onAfterCompletion)
+    {
+        _ = Task.Run(async () =>
+        {
+            if (treeViewProjectToMove.Item is null)
+            {
+                await onAfterCompletion.Invoke();
+                return;
+            }
+            
+            var moveProjectToSolutionFolderCommand = DotNetCliFacts
+                .FormatMoveProjectToSolutionFolder(
+                    treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                    treeViewProjectToMove.Item.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                    solutionFolderPath);
+            
+            var moveProjectToSolutionFolderTerminalCommand = new TerminalCommand(
+                TerminalCommandKey.NewTerminalCommandKey(),
+                moveProjectToSolutionFolderCommand,
+                null,
+                CancellationToken.None,
+                async () =>
+                {
+                    var notificationInformative = new NotificationRecord(
+                        NotificationKey.NewNotificationKey(),
+                        "Move Project To Solution Folder",
+                        _blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType,
+                        new Dictionary<string, object?>
+                        {
+                            {
+                                nameof(IInformativeNotificationRendererType.Message),
+                                $"Moved {treeViewProjectToMove.Item.AbsoluteFilePath.FilenameWithExtension}" +
+                                $" to the Solution Folder path: {solutionFolderPath}"
+                            },
+                        },
+                        TimeSpan.FromSeconds(7),
+                        null);
+
+                    dispatcher.Dispatch(
+                        new NotificationRecordsCollection.RegisterAction(
+                            notificationInformative));
+
+                    await onAfterCompletion.Invoke();
+                });
+
+            PerformRemoveCSharpProjectReferenceFromSolutionAction(
+                treeViewSolution,
+                treeViewProjectToMove,
+                terminalSession,
+                dispatcher,
+                async () =>
+                {
+                    await terminalSession
+                        .EnqueueCommandAsync(moveProjectToSolutionFolderTerminalCommand);                    
+                });
         });
     }
     
