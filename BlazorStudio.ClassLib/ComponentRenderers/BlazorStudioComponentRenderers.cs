@@ -19,7 +19,8 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
         Type? treeViewCSharpProjectNugetPackageReferencesRendererType,
         Type? treeViewCSharpProjectToProjectReferencesRendererType,
         Type? treeViewLightWeightNugetPackageRecordRendererType,
-        Type? treeViewCSharpProjectToProjectReferenceRendererType)
+        Type? treeViewCSharpProjectToProjectReferenceRendererType,
+        Type? treeViewSolutionFolderRendererType)
     {
         BlazorCommonComponentRenderers = blazorCommonComponentRenderers;
         FileFormRendererType = fileFormRendererType;
@@ -36,12 +37,14 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
         TreeViewCSharpProjectToProjectReferencesRendererType = treeViewCSharpProjectToProjectReferencesRendererType;
         TreeViewLightWeightNugetPackageRecordRendererType = treeViewLightWeightNugetPackageRecordRendererType;
         TreeViewCSharpProjectToProjectReferenceRendererType = treeViewCSharpProjectToProjectReferenceRendererType;
+        TreeViewSolutionFolderRendererType = treeViewSolutionFolderRendererType;
     }
 
     public IBlazorCommonComponentRenderers? BlazorCommonComponentRenderers { get; }
     public Type? FileFormRendererType { get; }
     public Type? DeleteFileFormRendererType { get; }
     public Type? TreeViewNamespacePathRendererType { get; }
+    public Type? TreeViewSolutionFolderRendererType { get; }
     public Type? TreeViewCSharpProjectDependenciesRendererType { get; }
     public Type? TreeViewCSharpProjectNugetPackageReferencesRendererType { get; }
     public Type? TreeViewCSharpProjectToProjectReferencesRendererType { get; }
