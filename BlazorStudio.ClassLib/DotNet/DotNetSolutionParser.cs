@@ -16,6 +16,7 @@ public class DotNetSolutionParser
         IEnvironmentProvider environmentProvider)
     {
         var projects = new List<IDotNetProject>();
+        var dotNetSolutionFolders = new List<DotNetSolutionFolder>();
         
         var stringWalker = new StringWalker(content);
         
@@ -39,12 +40,20 @@ public class DotNetSolutionParser
                 dotNetProjectSyntax.SetAbsoluteFilePath(projectAbsoluteFilePath);
                 
                 projects.Add(dotNetProjectSyntax);
+
+                if (dotNetProjectSyntax.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
+                {
+                    dotNetSolutionFolders.Add((DotNetSolutionFolder)dotNetProjectSyntax);
+                }
             }
             
             _ = stringWalker.ReadCharacter();
         }
 
-        return new DotNetSolution(namespacePath, projects.ToImmutableList());
+        return new DotNetSolution(
+            namespacePath,
+            projects.ToImmutableList(),
+            dotNetSolutionFolders.ToImmutableList());
     }
     
     private static IDotNetProject ParseDotNetProject(StringWalker stringWalker)
@@ -122,6 +131,15 @@ public class DotNetSolutionParser
             }
             
             _ = stringWalker.ReadCharacter();
+        }
+
+        if (projectTypeGuid.Value == DotNetSolutionFolder.SolutionFolderProjectTypeGuid)
+        {
+            return new DotNetSolutionFolder(
+                displayName,
+                projectTypeGuid.Value, 
+                relativePathFromSolutionFileString,
+                projectIdGuid.Value);
         }
 
         return new CSharpProject(

@@ -9,6 +9,7 @@ public interface IDotNetProject
     public string RelativePathFromSolutionFileString { get; }
     public Guid ProjectIdGuid { get; }
     public IAbsoluteFilePath AbsoluteFilePath { get; }
+    public DotNetProjectKind DotNetProjectKind { get; }
 
     public void SetAbsoluteFilePath(IAbsoluteFilePath absoluteFilePath);
 }
