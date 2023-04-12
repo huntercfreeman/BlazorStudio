@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Notification;
 using BlazorCommon.RazorLib.Store.NotificationCase;
@@ -24,7 +25,8 @@ public class EditorState
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
         IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
-        IFileSystemProvider fileSystemProvider)
+        IFileSystemProvider fileSystemProvider,
+        IBackgroundTaskQueue backgroundTaskQueue)
     {
         dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
@@ -37,7 +39,8 @@ public class EditorState
                         dispatcher, 
                         textEditorService,
                         blazorStudioComponentRenderers,
-                        fileSystemProvider);
+                        fileSystemProvider,
+                        backgroundTaskQueue);
                 },
                 afp =>
                 {
@@ -65,7 +68,8 @@ public class EditorState
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
         IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
-        IFileSystemProvider fileSystemProvider)
+        IFileSystemProvider fileSystemProvider,
+        IBackgroundTaskQueue backgroundTaskQueue)
     {
         if (absoluteFilePath is null ||
             absoluteFilePath.IsDirectory)
@@ -137,21 +141,30 @@ public class EditorState
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction), 
                             new Action(() =>
                             {
-                                _ = Task.Run(async () =>
-                                {
-                                    dispatcher.Dispatch(
-                                        new NotificationRecordsCollection.DisposeAction(
-                                            notificationInformativeKey));
+                                var backgroundTask = new BackgroundTask(
+                                    async cancellationToken =>
+                                    {
+                                        dispatcher.Dispatch(
+                                            new NotificationRecordsCollection.DisposeAction(
+                                                notificationInformativeKey));
                                     
-                                    var content = await fileSystemProvider.File
-                                        .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+                                        var content = await fileSystemProvider.File
+                                            .ReadAllTextAsync(inputFileAbsoluteFilePathString);
                                 
-                                    textEditorService.ModelReload(
-                                        textEditorKey,
-                                        content);
+                                        textEditorService.ModelReload(
+                                            textEditorKey,
+                                            content);
                                 
-                                    await textEditorModel.ApplySyntaxHighlightingAsync();
-                                });
+                                        await textEditorModel.ApplySyntaxHighlightingAsync();
+                                    },
+                                    "FileContentsWereModifiedOnDiskTask",
+                                    "TODO: Describe this task",
+                                    false,
+                                    _ =>  Task.CompletedTask,
+                                    dispatcher,
+                                    CancellationToken.None);
+
+                                backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
                             })
                         },
                         {
@@ -218,16 +231,27 @@ public class EditorState
                 innerContent,
                 () =>
                 {
-                    Task.Run(async () =>
-                    {
-                        var fileLastWriteTime = await fileSystemProvider.File
-                            .GetLastWriteTimeAsync(inputFileAbsoluteFilePathString);
+                    var backgroundTask = new BackgroundTask(
+                        async cancellationToken =>
+                        {
+                            var fileLastWriteTime = await fileSystemProvider.File
+                                .GetLastWriteTimeAsync(
+                                    inputFileAbsoluteFilePathString,
+                                    cancellationToken);
             
-                        textEditorService.ModelSetResourceData(
-                            textEditorModel.ModelKey,
-                            textEditorModel.ResourceUri,
-                            fileLastWriteTime);
-                    });
+                            textEditorService.ModelSetResourceData(
+                                textEditorModel.ModelKey,
+                                textEditorModel.ResourceUri,
+                                fileLastWriteTime);
+                        },
+                        "HandleOnSaveRequestedTask",
+                        "TODO: Describe this task",
+                        false,
+                        _ =>  Task.CompletedTask,
+                        dispatcher,
+                        CancellationToken.None);
+
+                    backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
                 });
         
             dispatcher.Dispatch(saveFileAction);

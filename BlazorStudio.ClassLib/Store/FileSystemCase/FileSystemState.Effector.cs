@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Notification;
@@ -14,7 +15,8 @@ public partial class FileSystemState
     {
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IBlazorCommonComponentRenderers _blazorCommonComponentRenderers;
-        
+        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+
         /// <summary>
         /// "string: absoluteFilePath"
         /// <br/>
@@ -27,10 +29,12 @@ public partial class FileSystemState
         
         public Effector(
             IFileSystemProvider fileSystemProvider,
-            IBlazorCommonComponentRenderers blazorCommonComponentRenderers)
+            IBlazorCommonComponentRenderers blazorCommonComponentRenderers,
+            IBackgroundTaskQueue backgroundTaskQueue)
         {
             _fileSystemProvider = fileSystemProvider;
             _blazorCommonComponentRenderers = blazorCommonComponentRenderers;
+            _backgroundTaskQueue = backgroundTaskQueue;
         }
         
         [EffectMethod]
@@ -44,11 +48,22 @@ public partial class FileSystemState
             void FireAndForgetConsumerFirstLoop()
             {
                 // The first loop relies on the downstream code 'bool isFirstLoop = true;'
-                Task.Run(async () =>
-                    await PerformWriteOperationAsync(
-                        absoluteFilePathString, 
-                        saveFileAction, 
-                        dispatcher));
+                var backgroundTask = new BackgroundTask(
+                    async cancellationToken =>
+                    {
+                        await PerformWriteOperationAsync(
+                            absoluteFilePathString,
+                            saveFileAction,
+                            dispatcher);
+                    },
+                    "FireAndForgetConsumerFirstLoopTask",
+                    "TODO: Describe this task",
+                    false,
+                    _ =>  Task.CompletedTask,
+                    dispatcher,
+                    CancellationToken.None);
+
+                _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
             }
 
             // Produce write task and construct consumer if necessary

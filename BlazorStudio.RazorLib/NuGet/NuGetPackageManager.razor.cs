@@ -6,6 +6,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorStudio.ClassLib.DotNet;
 using BlazorStudio.ClassLib.Nuget;
 using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
@@ -27,6 +28,8 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
     
     private bool _performingNugetQuery;
     private Exception? _exceptionFromNugetQuery;
@@ -107,19 +110,28 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
 
             _performingNugetQuery = true;
             await InvokeAsync(StateHasChanged);
+            
+            var backgroundTask = new BackgroundTask(
+                async cancellationToken =>
+                {
+                    var localNugetResult =
+                        await NugetPackageManagerProvider
+                            .QueryForNugetPackagesAsync(query);
 
-            await Task.Run(async () =>
-            {
-                var localNugetResult =
-                    await NugetPackageManagerProvider
-                        .QueryForNugetPackagesAsync(query);
+                    var setMostRecentQueryResultAction = 
+                        new NuGetPackageManagerState.SetMostRecentQueryResultAction(
+                            localNugetResult);
 
-                var setMostRecentQueryResultAction = 
-                    new NuGetPackageManagerState.SetMostRecentQueryResultAction(
-                        localNugetResult);
+                    Dispatcher.Dispatch(setMostRecentQueryResultAction);
+                },
+                "SubmitNugetQueryOnClickTask",
+                "TODO: Describe this task",
+                false,
+                _ =>  Task.CompletedTask,
+                Dispatcher,
+                CancellationToken.None);
 
-                Dispatcher.Dispatch(setMostRecentQueryResultAction);
-            });
+            BackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
         }
         catch (Exception e)
         {

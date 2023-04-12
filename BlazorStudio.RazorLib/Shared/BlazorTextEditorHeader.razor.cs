@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Dropdown;
@@ -35,6 +36,8 @@ public partial class BlazorTextEditorHeader : FluxorComponent
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Type LoginDisplayComponentType { get; set; } = typeof(LoginFormDisplay);
@@ -90,7 +93,8 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                         Dispatcher, 
                         TextEditorService,
                         BlazorStudioComponentRenderers,
-                        FileSystemProvider));
+                        FileSystemProvider,
+                        BackgroundTaskQueue));
         
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
@@ -106,7 +110,8 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                         Dispatcher, 
                         TextEditorService,
                         BlazorStudioComponentRenderers,
-                        FileSystemProvider));
+                        FileSystemProvider,
+                        BackgroundTaskQueue));
             
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorCommon.RazorLib.Clipboard;
 using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Menu;
@@ -28,6 +29,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IClipboardService _clipboardService;
+    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     /// <summary>
     /// I could not get a dependency injected <see cref="IDispatcher"/>
@@ -38,12 +40,14 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        IClipboardService clipboardService)
+        IClipboardService clipboardService,
+        IBackgroundTaskQueue backgroundTaskQueue)
     {
         _blazorStudioComponentRenderers = blazorStudioComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
         _clipboardService = clipboardService;
+        _backgroundTaskQueue = backgroundTaskQueue;
     }
     
     public MenuOptionRecord NewEmptyFile(
@@ -361,48 +365,57 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         NamespacePath namespacePath, 
         Func<Task> onAfterCompletion)
     {
-        _ = Task.Run(async () =>
-        {
-            if (exactMatchFileTemplate is null)
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
             {
-                var emptyFileAbsoluteFilePathString = namespacePath.AbsoluteFilePath
-                                                          .GetAbsoluteFilePathString() +
-                                                      fileName;
-
-                var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
-                    emptyFileAbsoluteFilePathString, 
-                    false,
-                    _environmentProvider);
-                
-                await _fileSystemProvider.File.WriteAllTextAsync(
-                    emptyFileAbsoluteFilePath.GetAbsoluteFilePathString(),
-                    string.Empty,
-                    CancellationToken.None); 
-            }
-            else
-            {
-                var allTemplates = new[] { exactMatchFileTemplate }
-                    .Union(relatedMatchFileTemplates)
-                    .ToArray();
-                
-                foreach (var fileTemplate in allTemplates)
+                if (exactMatchFileTemplate is null)
                 {
-                    var templateResult = fileTemplate.ConstructFileContents.Invoke(
-                        new FileTemplateParameter(
-                            fileName,
-                            namespacePath,
-                            _environmentProvider));
-                    
+                    var emptyFileAbsoluteFilePathString = namespacePath.AbsoluteFilePath
+                                                              .GetAbsoluteFilePathString() +
+                                                          fileName;
+
+                    var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
+                        emptyFileAbsoluteFilePathString, 
+                        false,
+                        _environmentProvider);
+                
                     await _fileSystemProvider.File.WriteAllTextAsync(
-                        templateResult.FileNamespacePath.AbsoluteFilePath
-                            .GetAbsoluteFilePathString(),
-                        templateResult.Contents,
+                        emptyFileAbsoluteFilePath.GetAbsoluteFilePathString(),
+                        string.Empty,
                         CancellationToken.None); 
                 }
-            }
+                else
+                {
+                    var allTemplates = new[] { exactMatchFileTemplate }
+                        .Union(relatedMatchFileTemplates)
+                        .ToArray();
+                
+                    foreach (var fileTemplate in allTemplates)
+                    {
+                        var templateResult = fileTemplate.ConstructFileContents.Invoke(
+                            new FileTemplateParameter(
+                                fileName,
+                                namespacePath,
+                                _environmentProvider));
+                    
+                        await _fileSystemProvider.File.WriteAllTextAsync(
+                            templateResult.FileNamespacePath.AbsoluteFilePath
+                                .GetAbsoluteFilePathString(),
+                            templateResult.Contents,
+                            CancellationToken.None); 
+                    }
+                }
 
-            await onAfterCompletion.Invoke();
-        });
+                await onAfterCompletion.Invoke();
+            },
+            "PerformNewFileActionTask",
+            "TODO: Describe this task",
+            false,
+            _ =>  Task.CompletedTask,
+            null,
+            CancellationToken.None);
+
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
     
     private void PerformNewDirectoryAction(
@@ -417,171 +430,216 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             directoryAbsoluteFilePathString, 
             true,
             _environmentProvider);
+        
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
+            {
+                await _fileSystemProvider.Directory.CreateDirectoryAsync(
+                    directoryAbsoluteFilePath.GetAbsoluteFilePathString(),
+                    CancellationToken.None);
 
-        _ = Task.Run(async () =>
-        {
-            await _fileSystemProvider.Directory.CreateDirectoryAsync(
-                directoryAbsoluteFilePath.GetAbsoluteFilePathString(),
-                CancellationToken.None);
+                await onAfterCompletion.Invoke();
+            },
+            "PerformNewDirectoryActionTask",
+            "TODO: Describe this task",
+            false,
+            _ =>  Task.CompletedTask,
+            null,
+            CancellationToken.None);
 
-            await onAfterCompletion.Invoke();
-        });
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
     
     private void PerformDeleteFileAction(
         IAbsoluteFilePath absoluteFilePath, 
         Func<Task> onAfterCompletion)
     {
-        _ = Task.Run(async () =>
-        {
-            if (absoluteFilePath.IsDirectory)
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
             {
-                await _fileSystemProvider.Directory.DeleteAsync(
-                    absoluteFilePath.GetAbsoluteFilePathString(),
-                    true,
-                    CancellationToken.None);    
-            }
-            else
-            {
-                await _fileSystemProvider.File.DeleteAsync(
-                    absoluteFilePath.GetAbsoluteFilePathString());
-            }
+                if (absoluteFilePath.IsDirectory)
+                {
+                    await _fileSystemProvider.Directory.DeleteAsync(
+                        absoluteFilePath.GetAbsoluteFilePathString(),
+                        true,
+                        CancellationToken.None);    
+                }
+                else
+                {
+                    await _fileSystemProvider.File.DeleteAsync(
+                        absoluteFilePath.GetAbsoluteFilePathString());
+                }
 
-            await onAfterCompletion.Invoke();
-        });
+                await onAfterCompletion.Invoke();
+            },
+            "PerformDeleteFileActionTask",
+            "TODO: Describe this task",
+            false,
+            _ =>  Task.CompletedTask,
+            null,
+            CancellationToken.None);
+
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
     
     private void PerformCopyFileAction(
         IAbsoluteFilePath absoluteFilePath, 
         Func<Task> onAfterCompletion)
     {
-        _ = Task.Run(async () =>
-        { 
-            await _clipboardService
-                .SetClipboard(
-                    ClipboardFacts.FormatPhrase(
-                        ClipboardFacts.CopyCommand,
-                        ClipboardFacts.AbsoluteFilePathDataType,
-                        absoluteFilePath.GetAbsoluteFilePathString()));
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
+            {
+                await _clipboardService
+                    .SetClipboard(
+                        ClipboardFacts.FormatPhrase(
+                            ClipboardFacts.CopyCommand,
+                            ClipboardFacts.AbsoluteFilePathDataType,
+                            absoluteFilePath.GetAbsoluteFilePathString()));
 
-            await onAfterCompletion.Invoke();
-        });
+                await onAfterCompletion.Invoke();
+            },
+            "PerformCopyFileActionTask",
+            "TODO: Describe this task",
+            false,
+            _ =>  Task.CompletedTask,
+            null,
+            CancellationToken.None);
+
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
     
     private void PerformCutFileAction(
         IAbsoluteFilePath absoluteFilePath, 
         Func<Task> onAfterCompletion)
     {
-        _ = Task.Run(async () =>
-        { 
-            await _clipboardService
-                .SetClipboard(
-                    ClipboardFacts.FormatPhrase(
-                        ClipboardFacts.CutCommand,
-                        ClipboardFacts.AbsoluteFilePathDataType,
-                        absoluteFilePath.GetAbsoluteFilePathString()));
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
+            {
+                await _clipboardService
+                    .SetClipboard(
+                        ClipboardFacts.FormatPhrase(
+                            ClipboardFacts.CutCommand,
+                            ClipboardFacts.AbsoluteFilePathDataType,
+                            absoluteFilePath.GetAbsoluteFilePathString()));
 
-            await onAfterCompletion.Invoke();
-        });
+                await onAfterCompletion.Invoke();
+            },
+            "PerformCutFileActionTask",
+            "TODO: Describe this task",
+            false,
+            _ =>  Task.CompletedTask,
+            null,
+            CancellationToken.None);
+
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
-    
+
     private void PerformPasteFileAction(
-        IAbsoluteFilePath receivingDirectory, 
+        IAbsoluteFilePath receivingDirectory,
         Func<Task> onAfterCompletion)
     {
-        _ = Task.Run(async () =>
-        {
-            var clipboardContents = await _clipboardService
-                .ReadClipboard();
-
-            if (ClipboardFacts.TryParseString(
-                    clipboardContents, out var clipboardPhrase))
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
             {
-                if (clipboardPhrase is not null &&
-                    clipboardPhrase.DataType == ClipboardFacts.AbsoluteFilePathDataType)
+                var clipboardContents = await _clipboardService
+                    .ReadClipboard();
+
+                if (ClipboardFacts.TryParseString(
+                        clipboardContents, out var clipboardPhrase))
                 {
-                    if (clipboardPhrase.Command == ClipboardFacts.CopyCommand ||
-                        clipboardPhrase.Command == ClipboardFacts.CutCommand)
+                    if (clipboardPhrase is not null &&
+                        clipboardPhrase.DataType == ClipboardFacts.AbsoluteFilePathDataType)
                     {
-
-                        IAbsoluteFilePath? clipboardAbsoluteFilePath = null;
-
-                        if (await _fileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value))
+                        if (clipboardPhrase.Command == ClipboardFacts.CopyCommand ||
+                            clipboardPhrase.Command == ClipboardFacts.CutCommand)
                         {
-                            clipboardPhrase.Value = FilePathHelper.StripEndingDirectorySeparatorIfExists(
-                                clipboardPhrase.Value,
-                                _environmentProvider);
-                            
-                            clipboardAbsoluteFilePath = new AbsoluteFilePath(
-                                clipboardPhrase.Value,
-                                true,
-                                _environmentProvider);
-                        }
-                        else if (await _fileSystemProvider.File.ExistsAsync(clipboardPhrase.Value))
-                        {
-                            clipboardAbsoluteFilePath = new AbsoluteFilePath(
-                                clipboardPhrase.Value,
-                                false,
-                                _environmentProvider);
-                        }
+                            IAbsoluteFilePath? clipboardAbsoluteFilePath = null;
 
-                        if (clipboardAbsoluteFilePath is not null)
-                        {
-                            var successfullyPasted = true;
-                            
-                            try
+                            if (await _fileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value))
                             {
-                                if (clipboardAbsoluteFilePath.IsDirectory)
+                                clipboardPhrase.Value = FilePathHelper.StripEndingDirectorySeparatorIfExists(
+                                    clipboardPhrase.Value,
+                                    _environmentProvider);
+
+                                clipboardAbsoluteFilePath = new AbsoluteFilePath(
+                                    clipboardPhrase.Value,
+                                    true,
+                                    _environmentProvider);
+                            }
+                            else if (await _fileSystemProvider.File.ExistsAsync(clipboardPhrase.Value))
+                            {
+                                clipboardAbsoluteFilePath = new AbsoluteFilePath(
+                                    clipboardPhrase.Value,
+                                    false,
+                                    _environmentProvider);
+                            }
+
+                            if (clipboardAbsoluteFilePath is not null)
+                            {
+                                var successfullyPasted = true;
+
+                                try
                                 {
-                                    var clipboardDirectoryInfo =
-                                        new DirectoryInfo(
-                                            clipboardAbsoluteFilePath
-                                                .GetAbsoluteFilePathString());
-                                    
-                                    var receivingDirectoryInfo =
-                                        new DirectoryInfo(
-                                            receivingDirectory
-                                                .GetAbsoluteFilePathString());
-                                    
-                                    CopyFilesRecursively(
-                                        clipboardDirectoryInfo,
-                                        receivingDirectoryInfo);
+                                    if (clipboardAbsoluteFilePath.IsDirectory)
+                                    {
+                                        var clipboardDirectoryInfo =
+                                            new DirectoryInfo(
+                                                clipboardAbsoluteFilePath
+                                                    .GetAbsoluteFilePathString());
+
+                                        var receivingDirectoryInfo =
+                                            new DirectoryInfo(
+                                                receivingDirectory
+                                                    .GetAbsoluteFilePathString());
+
+                                        CopyFilesRecursively(
+                                            clipboardDirectoryInfo,
+                                            receivingDirectoryInfo);
+                                    }
+                                    else
+                                    {
+                                        var destinationAbsoluteFilePathString =
+                                            receivingDirectory.GetAbsoluteFilePathString() +
+                                            clipboardAbsoluteFilePath.FilenameWithExtension;
+
+                                        var sourceAbsoluteFilePathString = clipboardAbsoluteFilePath
+                                            .GetAbsoluteFilePathString();
+
+                                        await _fileSystemProvider.File.CopyAsync(
+                                            sourceAbsoluteFilePathString,
+                                            destinationAbsoluteFilePathString);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    successfullyPasted = false;
+                                }
+
+                                if (successfullyPasted &&
+                                    clipboardPhrase.Command == ClipboardFacts.CutCommand)
+                                {
+                                    // TODO: Rerender the parent of the deleted due to cut file
+                                    PerformDeleteFileAction(
+                                        clipboardAbsoluteFilePath,
+                                        onAfterCompletion);
                                 }
                                 else
                                 {
-                                    var destinationAbsoluteFilePathString = receivingDirectory.GetAbsoluteFilePathString() +
-                                                              clipboardAbsoluteFilePath.FilenameWithExtension;
-                                
-                                    var sourceAbsoluteFilePathString = clipboardAbsoluteFilePath
-                                        .GetAbsoluteFilePathString();
-
-                                    await _fileSystemProvider.File.CopyAsync(
-                                        sourceAbsoluteFilePathString,
-                                        destinationAbsoluteFilePathString);
+                                    await onAfterCompletion.Invoke();
                                 }
-                            }
-                            catch (Exception)
-                            {
-                                successfullyPasted = false; 
-                            }
-
-                            if (successfullyPasted &&
-                                clipboardPhrase.Command == ClipboardFacts.CutCommand)
-                            {
-                                // TODO: Rerender the parent of the deleted due to cut file
-                                PerformDeleteFileAction(
-                                    clipboardAbsoluteFilePath,
-                                    onAfterCompletion);    
-                            }
-                            else
-                            {
-                                await onAfterCompletion.Invoke();
                             }
                         }
                     }
                 }
-            }
-        });
+            },
+            "PerformPasteFileActionTask",
+            "TODO: Describe this task",
+            false,
+            _ => Task.CompletedTask,
+            null,
+            CancellationToken.None);
+
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
     
     private IAbsoluteFilePath? PerformRenameAction(
@@ -687,182 +745,211 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _ = Task.Run(async () =>
-        { 
-            if (treeViewSolution?.Item is not null &&
-                projectNode?.Item is not null)
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
             {
-                var workingDirectory = (IAbsoluteFilePath)treeViewSolution
-                    .Item.NamespacePath.AbsoluteFilePath.Directories.Last();
+                if (treeViewSolution?.Item is not null &&
+                    projectNode?.Item is not null)
+                {
+                    var workingDirectory = (IAbsoluteFilePath)treeViewSolution
+                        .Item.NamespacePath.AbsoluteFilePath.Directories.Last();
 
-                var removeCSharpProjectReferenceFromSolutionCommandString = 
-                    DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(
-                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath
-                            .GetAbsoluteFilePathString(),
-                        projectNode.Item.AbsoluteFilePath
-                            .GetAbsoluteFilePathString());
+                    var removeCSharpProjectReferenceFromSolutionCommandString = 
+                        DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(
+                            treeViewSolution.Item.NamespacePath.AbsoluteFilePath
+                                .GetAbsoluteFilePathString(),
+                            projectNode.Item.AbsoluteFilePath
+                                .GetAbsoluteFilePathString());
             
-                var removeCSharpProjectReferenceFromSolutionCommand = new TerminalCommand(
-                    TerminalCommandKey.NewTerminalCommandKey(), 
-                    removeCSharpProjectReferenceFromSolutionCommandString,
-                    workingDirectory.GetAbsoluteFilePathString(),
-                    CancellationToken.None,
-                    async () => await onAfterCompletion.Invoke());
+                    var removeCSharpProjectReferenceFromSolutionCommand = new TerminalCommand(
+                        TerminalCommandKey.NewTerminalCommandKey(), 
+                        removeCSharpProjectReferenceFromSolutionCommandString,
+                        workingDirectory.GetAbsoluteFilePathString(),
+                        CancellationToken.None,
+                        async () => await onAfterCompletion.Invoke());
         
-                await terminalSession
-                    .EnqueueCommandAsync(
-                        removeCSharpProjectReferenceFromSolutionCommand);
-            }
-            else
-            {
-                // Do not combine this "onAfterCompletion.Invoke" with the if statement's.
-                // One awaits a terminal command.
-                // The other does not.
-                // They cannot combine. 
-                await onAfterCompletion.Invoke();
-            }
-        });
+                    await terminalSession
+                        .EnqueueCommandAsync(
+                            removeCSharpProjectReferenceFromSolutionCommand);
+                }
+                else
+                {
+                    // Do not combine this "onAfterCompletion.Invoke" with the if statement's.
+                    // One awaits a terminal command.
+                    // The other does not.
+                    // They cannot combine. 
+                    await onAfterCompletion.Invoke();
+                }
+            },
+            "PerformRemoveCSharpProjectReferenceFromSolutionActionTask",
+            "TODO: Describe this task",
+            false,
+            _ =>  Task.CompletedTask,
+            dispatcher,
+            CancellationToken.None);
+
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
-    
+
     public void PerformAddProjectToProjectReferenceAction(
         TreeViewNamespacePath projectReceivingReference,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _ = Task.Run(async () =>
-        {
-            if (projectReceivingReference.Item is null)
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
             {
-                await onAfterCompletion.Invoke();
-                return;
-            }
-
-            var requestInputFileStateFormAction = new InputFileState.RequestInputFileStateFormAction(
-                $"Add Project reference to {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}",
-                async referencedProject =>
+                if (projectReceivingReference.Item is null)
                 {
-                    if (referencedProject is null)
-                        return;
+                    await onAfterCompletion.Invoke();
+                    return;
+                }
 
-                    var interpolatedCommand = DotNetCliFacts
-                        .FormatAddProjectToProjectReference(
-                            projectReceivingReference.Item.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                            referencedProject.GetAbsoluteFilePathString());
-
-                    var addProjectToProjectReferenceTerminalCommand = new TerminalCommand(
-                        TerminalCommandKey.NewTerminalCommandKey(),
-                        interpolatedCommand,
-                        null,
-                        CancellationToken.None,
-                        async () =>
-                        {
-                            var notificationInformative = new NotificationRecord(
-                                NotificationKey.NewNotificationKey(),
-                                "Add Project Reference",
-                                _blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType,
-                                new Dictionary<string, object?>
-                                {
-                                    {
-                                        nameof(IInformativeNotificationRendererType.Message),
-                                        $"Modified {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}" +
-                                        $" to have a reference to {referencedProject.FilenameWithExtension}"
-                                    },
-                                },
-                                TimeSpan.FromSeconds(7),
-                                null);
-
-                            dispatcher.Dispatch(
-                                new NotificationRecordsCollection.RegisterAction(
-                                    notificationInformative));
-
-                            await onAfterCompletion.Invoke();
-                        });
-
-                    await terminalSession
-                        .EnqueueCommandAsync(addProjectToProjectReferenceTerminalCommand);
-                },
-                afp =>
-                {
-                    if (afp is null ||
-                        afp.IsDirectory)
+                var requestInputFileStateFormAction = new InputFileState.RequestInputFileStateFormAction(
+                    $"Add Project reference to {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}",
+                    async referencedProject =>
                     {
-                        return Task.FromResult(false);
-                    }
+                        if (referencedProject is null)
+                            return;
 
-                    return Task.FromResult(
-                        afp.ExtensionNoPeriod
-                            .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
-                },
-                new[]
-                {
-                    new InputFilePattern(
-                        "C# Project",
-                        afp =>
+                        var interpolatedCommand = DotNetCliFacts
+                            .FormatAddProjectToProjectReference(
+                                projectReceivingReference.Item.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                                referencedProject.GetAbsoluteFilePathString());
+
+                        var addProjectToProjectReferenceTerminalCommand = new TerminalCommand(
+                            TerminalCommandKey.NewTerminalCommandKey(),
+                            interpolatedCommand,
+                            null,
+                            CancellationToken.None,
+                            async () =>
+                            {
+                                var notificationInformative = new NotificationRecord(
+                                    NotificationKey.NewNotificationKey(),
+                                    "Add Project Reference",
+                                    _blazorStudioComponentRenderers.BlazorCommonComponentRenderers
+                                        .InformativeNotificationRendererType,
+                                    new Dictionary<string, object?>
+                                    {
+                                        {
+                                            nameof(IInformativeNotificationRendererType.Message),
+                                            $"Modified {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}" +
+                                            $" to have a reference to {referencedProject.FilenameWithExtension}"
+                                        },
+                                    },
+                                    TimeSpan.FromSeconds(7),
+                                    null);
+
+                                dispatcher.Dispatch(
+                                    new NotificationRecordsCollection.RegisterAction(
+                                        notificationInformative));
+
+                                await onAfterCompletion.Invoke();
+                            });
+
+                        await terminalSession
+                            .EnqueueCommandAsync(addProjectToProjectReferenceTerminalCommand);
+                    },
+                    afp =>
+                    {
+                        if (afp is null ||
+                            afp.IsDirectory)
+                        {
+                            return Task.FromResult(false);
+                        }
+
+                        return Task.FromResult(
                             afp.ExtensionNoPeriod
-                                .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-                }.ToImmutableArray());
-        
-            dispatcher.Dispatch(
-                requestInputFileStateFormAction);
-        });
+                                .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+                    },
+                    new[]
+                    {
+                        new InputFilePattern(
+                            "C# Project",
+                            afp =>
+                                afp.ExtensionNoPeriod
+                                    .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                    }.ToImmutableArray());
+
+                dispatcher.Dispatch(
+                    requestInputFileStateFormAction);
+            },
+            "PerformAddProjectToProjectReferenceActionTask",
+            "TODO: Describe this task",
+            false,
+            _ => Task.CompletedTask,
+            dispatcher,
+            CancellationToken.None);
+
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
-    
+
     public void PerformRemoveProjectToProjectReferenceAction(
         TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _ = Task.Run(async () =>
-        {
-            if (treeViewCSharpProjectToProjectReference.Item is null)
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
             {
-                await onAfterCompletion.Invoke();
-                return;
-            }
-
-            var interpolatedCommand = DotNetCliFacts
-                .FormatRemoveProjectToProjectReference(
-                    treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath
-                        .GetAbsoluteFilePathString(),
-                    treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath
-                        .GetAbsoluteFilePathString());
-
-            var removeProjectToProjectReferenceTerminalCommand = new TerminalCommand(
-                TerminalCommandKey.NewTerminalCommandKey(),
-                interpolatedCommand,
-                null,
-                CancellationToken.None,
-                async () =>
+                if (treeViewCSharpProjectToProjectReference.Item is null)
                 {
-                    var notificationInformative = new NotificationRecord(
-                        NotificationKey.NewNotificationKey(),
-                        "Remove Project Reference",
-                        _blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType,
-                        new Dictionary<string, object?>
-                        {
-                            {
-                                nameof(IInformativeNotificationRendererType.Message),
-                                $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
-                                $" to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.FilenameWithExtension}"
-                            },
-                        },
-                        TimeSpan.FromSeconds(7),
-                        null);
-
-                    dispatcher.Dispatch(
-                        new NotificationRecordsCollection.RegisterAction(
-                            notificationInformative));
-
                     await onAfterCompletion.Invoke();
-                });
+                    return;
+                }
 
-            await terminalSession
-                .EnqueueCommandAsync(removeProjectToProjectReferenceTerminalCommand);
-        });
+                var interpolatedCommand = DotNetCliFacts
+                    .FormatRemoveProjectToProjectReference(
+                        treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath
+                            .GetAbsoluteFilePathString(),
+                        treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath
+                            .GetAbsoluteFilePathString());
+
+                var removeProjectToProjectReferenceTerminalCommand = new TerminalCommand(
+                    TerminalCommandKey.NewTerminalCommandKey(),
+                    interpolatedCommand,
+                    null,
+                    CancellationToken.None,
+                    async () =>
+                    {
+                        var notificationInformative = new NotificationRecord(
+                            NotificationKey.NewNotificationKey(),
+                            "Remove Project Reference",
+                            _blazorStudioComponentRenderers.BlazorCommonComponentRenderers
+                                .InformativeNotificationRendererType,
+                            new Dictionary<string, object?>
+                            {
+                                {
+                                    nameof(IInformativeNotificationRendererType.Message),
+                                    $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
+                                    $" to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.FilenameWithExtension}"
+                                },
+                            },
+                            TimeSpan.FromSeconds(7),
+                            null);
+
+                        dispatcher.Dispatch(
+                            new NotificationRecordsCollection.RegisterAction(
+                                notificationInformative));
+
+                        await onAfterCompletion.Invoke();
+                    });
+
+                await terminalSession
+                    .EnqueueCommandAsync(removeProjectToProjectReferenceTerminalCommand);
+            },
+            "PerformRemoveProjectToProjectReferenceActionTask",
+            "TODO: Describe this task",
+            false,
+            _ => Task.CompletedTask,
+            dispatcher,
+            CancellationToken.None);
+
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
-    
+
     public void PerformMoveProjectToSolutionFolderAction(
         TreeViewSolution treeViewSolution,
         TreeViewNamespacePath treeViewProjectToMove,
@@ -871,62 +958,72 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _ = Task.Run(async () =>
-        {
-            if (treeViewProjectToMove.Item is null)
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
             {
-                await onAfterCompletion.Invoke();
-                return;
-            }
-            
-            var moveProjectToSolutionFolderCommand = DotNetCliFacts
-                .FormatMoveProjectToSolutionFolder(
-                    treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                    treeViewProjectToMove.Item.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                    solutionFolderPath);
-            
-            var moveProjectToSolutionFolderTerminalCommand = new TerminalCommand(
-                TerminalCommandKey.NewTerminalCommandKey(),
-                moveProjectToSolutionFolderCommand,
-                null,
-                CancellationToken.None,
-                async () =>
+                if (treeViewProjectToMove.Item is null)
                 {
-                    var notificationInformative = new NotificationRecord(
-                        NotificationKey.NewNotificationKey(),
-                        "Move Project To Solution Folder",
-                        _blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType,
-                        new Dictionary<string, object?>
-                        {
-                            {
-                                nameof(IInformativeNotificationRendererType.Message),
-                                $"Moved {treeViewProjectToMove.Item.AbsoluteFilePath.FilenameWithExtension}" +
-                                $" to the Solution Folder path: {solutionFolderPath}"
-                            },
-                        },
-                        TimeSpan.FromSeconds(7),
-                        null);
-
-                    dispatcher.Dispatch(
-                        new NotificationRecordsCollection.RegisterAction(
-                            notificationInformative));
-
                     await onAfterCompletion.Invoke();
-                });
+                    return;
+                }
 
-            PerformRemoveCSharpProjectReferenceFromSolutionAction(
-                treeViewSolution,
-                treeViewProjectToMove,
-                terminalSession,
-                dispatcher,
-                async () =>
-                {
-                    await terminalSession
-                        .EnqueueCommandAsync(moveProjectToSolutionFolderTerminalCommand);                    
-                });
-        });
+                var moveProjectToSolutionFolderCommand = DotNetCliFacts
+                    .FormatMoveProjectToSolutionFolder(
+                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                        treeViewProjectToMove.Item.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                        solutionFolderPath);
+
+                var moveProjectToSolutionFolderTerminalCommand = new TerminalCommand(
+                    TerminalCommandKey.NewTerminalCommandKey(),
+                    moveProjectToSolutionFolderCommand,
+                    null,
+                    CancellationToken.None,
+                    async () =>
+                    {
+                        var notificationInformative = new NotificationRecord(
+                            NotificationKey.NewNotificationKey(),
+                            "Move Project To Solution Folder",
+                            _blazorStudioComponentRenderers.BlazorCommonComponentRenderers
+                                .InformativeNotificationRendererType,
+                            new Dictionary<string, object?>
+                            {
+                                {
+                                    nameof(IInformativeNotificationRendererType.Message),
+                                    $"Moved {treeViewProjectToMove.Item.AbsoluteFilePath.FilenameWithExtension}" +
+                                    $" to the Solution Folder path: {solutionFolderPath}"
+                                },
+                            },
+                            TimeSpan.FromSeconds(7),
+                            null);
+
+                        dispatcher.Dispatch(
+                            new NotificationRecordsCollection.RegisterAction(
+                                notificationInformative));
+
+                        await onAfterCompletion.Invoke();
+                    });
+
+                PerformRemoveCSharpProjectReferenceFromSolutionAction(
+                    treeViewSolution,
+                    treeViewProjectToMove,
+                    terminalSession,
+                    dispatcher,
+                    async () =>
+                    {
+                        await terminalSession
+                            .EnqueueCommandAsync(moveProjectToSolutionFolderTerminalCommand);
+                    });
+            },
+            "PerformMoveProjectToSolutionFolderActionTask",
+            "TODO: Describe this task",
+            false,
+            _ => Task.CompletedTask,
+            dispatcher,
+            CancellationToken.None);
+
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
-    
+
     public void PerformRemoveNuGetPackageReferenceFromProjectAction(
         NamespacePath modifyProjectNamespacePath,
         TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord,
@@ -934,52 +1031,62 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _ = Task.Run(async () =>
-        {
-            if (treeViewLightWeightNugetPackageRecord.Item is null)
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
             {
-                await onAfterCompletion.Invoke();
-                return;
-            }
-
-            var interpolatedCommand = DotNetCliFacts
-                .FormatRemoveNugetPackageReferenceFromProject(
-                    modifyProjectNamespacePath.AbsoluteFilePath
-                        .GetAbsoluteFilePathString(),
-                    treeViewLightWeightNugetPackageRecord.Item.Id);
-
-            var removeNugetPackageReferenceFromProjectTerminalCommand = new TerminalCommand(
-                TerminalCommandKey.NewTerminalCommandKey(),
-                interpolatedCommand,
-                null,
-                CancellationToken.None,
-                async () =>
+                if (treeViewLightWeightNugetPackageRecord.Item is null)
                 {
-                    var notificationInformative = new NotificationRecord(
-                        NotificationKey.NewNotificationKey(),
-                        "Remove Project Reference",
-                        _blazorStudioComponentRenderers.BlazorCommonComponentRenderers.InformativeNotificationRendererType,
-                        new Dictionary<string, object?>
-                        {
-                            {
-                                nameof(IInformativeNotificationRendererType.Message),
-                                $"Modified {modifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
-                                $" to NOT have a reference to {treeViewLightWeightNugetPackageRecord.Item.Id}"
-                            },
-                        },
-                        TimeSpan.FromSeconds(7),
-                        null);
-
-                    dispatcher.Dispatch(
-                        new NotificationRecordsCollection.RegisterAction(
-                            notificationInformative));
-
                     await onAfterCompletion.Invoke();
-                });
+                    return;
+                }
 
-            await terminalSession
-                .EnqueueCommandAsync(removeNugetPackageReferenceFromProjectTerminalCommand);
-        });
+                var interpolatedCommand = DotNetCliFacts
+                    .FormatRemoveNugetPackageReferenceFromProject(
+                        modifyProjectNamespacePath.AbsoluteFilePath
+                            .GetAbsoluteFilePathString(),
+                        treeViewLightWeightNugetPackageRecord.Item.Id);
+
+                var removeNugetPackageReferenceFromProjectTerminalCommand = new TerminalCommand(
+                    TerminalCommandKey.NewTerminalCommandKey(),
+                    interpolatedCommand,
+                    null,
+                    CancellationToken.None,
+                    async () =>
+                    {
+                        var notificationInformative = new NotificationRecord(
+                            NotificationKey.NewNotificationKey(),
+                            "Remove Project Reference",
+                            _blazorStudioComponentRenderers.BlazorCommonComponentRenderers
+                                .InformativeNotificationRendererType,
+                            new Dictionary<string, object?>
+                            {
+                                {
+                                    nameof(IInformativeNotificationRendererType.Message),
+                                    $"Modified {modifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
+                                    $" to NOT have a reference to {treeViewLightWeightNugetPackageRecord.Item.Id}"
+                                },
+                            },
+                            TimeSpan.FromSeconds(7),
+                            null);
+
+                        dispatcher.Dispatch(
+                            new NotificationRecordsCollection.RegisterAction(
+                                notificationInformative));
+
+                        await onAfterCompletion.Invoke();
+                    });
+
+                await terminalSession
+                    .EnqueueCommandAsync(removeNugetPackageReferenceFromProjectTerminalCommand);
+            },
+            "PerformRemoveNuGetPackageReferenceFromProjectActionTask",
+            "TODO: Describe this task",
+            false,
+            _ => Task.CompletedTask,
+            dispatcher,
+            CancellationToken.None);
+
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
     
     /// <summary>

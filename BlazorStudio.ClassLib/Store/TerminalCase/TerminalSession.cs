@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
+using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.State;
 using Fluxor;
@@ -12,6 +13,7 @@ public class TerminalSession
 {
     private readonly IDispatcher _dispatcher;
     private readonly IFileSystemProvider _fileSystemProvider;
+    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
 
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
@@ -26,10 +28,12 @@ public class TerminalSession
     public TerminalSession(
         string? workingDirectoryAbsoluteFilePathString, 
         IDispatcher dispatcher,
-        IFileSystemProvider fileSystemProvider)
+        IFileSystemProvider fileSystemProvider,
+        IBackgroundTaskQueue backgroundTaskQueue)
     {
         _dispatcher = dispatcher;
         _fileSystemProvider = fileSystemProvider;
+        _backgroundTaskQueue = backgroundTaskQueue;
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
     }
 
@@ -100,11 +104,20 @@ public class TerminalSession
         // thereby a consumer will need to be
         // made if there isn't one
         //
-        // Task.Run as to not have a chance of blocking the UI thread?
-        _ = Task.Run(async () =>
-        {
-            await ConsumeTerminalCommandsAsync();
-        });
+        // BackgroundTask as to not have a chance of blocking the UI thread?
+        var backgroundTask = new BackgroundTask(
+            async cancellationToken =>
+            {
+                await ConsumeTerminalCommandsAsync();
+            },
+            "EnqueueCommandAsyncTask",
+            "TODO: Describe this task",
+            false,
+            _ =>  Task.CompletedTask,
+            _dispatcher,
+            CancellationToken.None);
+
+        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
     
     public void ClearStandardOut()
@@ -244,10 +257,19 @@ public class TerminalSession
         {
             var continueWith = terminalCommand.ContinueWith;
             
-            _ = Task.Run(async () =>
-            {
-                await continueWith.Invoke();
-            });
+            var backgroundTask = new BackgroundTask(
+                async cancellationToken =>
+                {
+                    await continueWith.Invoke();
+                },
+                "TerminalCommand.ContinueWithTask",
+                "TODO: Describe this task",
+                false,
+                _ =>  Task.CompletedTask,
+                _dispatcher,
+                CancellationToken.None);
+
+            _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
         }
 
         goto doConsumeLabel;

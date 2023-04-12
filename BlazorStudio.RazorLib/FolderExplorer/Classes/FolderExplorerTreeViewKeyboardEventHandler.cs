@@ -1,4 +1,5 @@
-﻿using BlazorCommon.RazorLib.ComponentRenderers.Types;
+﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
+using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Keyboard;
 using BlazorCommon.RazorLib.Menu;
 using BlazorCommon.RazorLib.Notification;
@@ -27,6 +28,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
     private readonly ITextEditorService _textEditorService;
+    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public FolderExplorerTreeViewKeyboardEventHandler(
         IState<TerminalSessionsState> terminalSessionsStateWrap,
@@ -35,7 +37,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         IFileSystemProvider fileSystemProvider,
         IDispatcher dispatcher,
         ITreeViewService treeViewService,
-        ITextEditorService textEditorService)
+        ITextEditorService textEditorService,
+        IBackgroundTaskQueue backgroundTaskQueue)
         : base(treeViewService)
     {
         _terminalSessionsStateWrap = terminalSessionsStateWrap;
@@ -45,6 +48,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         _dispatcher = dispatcher;
         _treeViewService = treeViewService;
         _textEditorService = textEditorService;
+        _backgroundTaskQueue = backgroundTaskQueue;
     }
 
     public override async Task<bool> OnKeyDownAsync(
@@ -314,7 +318,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             _dispatcher,
             _textEditorService,
             _blazorStudioComponentRenderers,
-            _fileSystemProvider);
+            _fileSystemProvider,
+            _backgroundTaskQueue);
     }
 
     private async Task ReloadTreeViewModel(

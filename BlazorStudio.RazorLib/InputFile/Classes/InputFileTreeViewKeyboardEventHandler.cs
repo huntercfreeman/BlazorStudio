@@ -1,4 +1,5 @@
-﻿using BlazorCommon.RazorLib.Keyboard;
+﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
+using BlazorCommon.RazorLib.Keyboard;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.Events;
@@ -23,6 +24,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly Func<IAbsoluteFilePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
     private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> _getSearchMatchTuplesFunc;
+    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public InputFileTreeViewKeyboardEventHandler(TreeViewStateKey treeViewStateKey,
         ITreeViewService treeViewService,
@@ -33,7 +35,8 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         IEnvironmentProvider environmentProvider,
         Func<IAbsoluteFilePath, Task> setInputFileContentTreeViewRootFunc,
         Func<Task> focusSearchInputElementFunc,
-        Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> getSearchMatchTuplesFunc)
+        Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> getSearchMatchTuplesFunc,
+        IBackgroundTaskQueue backgroundTaskQueue)
         : base(treeViewService)
     {
         _treeViewStateKey = treeViewStateKey;
@@ -46,6 +49,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
         _focusSearchInputElementFunc = focusSearchInputElementFunc;
         _getSearchMatchTuplesFunc = getSearchMatchTuplesFunc;
+        _backgroundTaskQueue = backgroundTaskQueue;
     }
     
     public override async Task<bool> OnKeyDownAsync(
@@ -158,7 +162,8 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             _blazorStudioComponentRenderers,
             _fileSystemProvider,
-            _environmentProvider));
+            _environmentProvider,
+            _backgroundTaskQueue));
         
         await ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
@@ -166,7 +171,8 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private async Task HandleRefreshButtonOnClick(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction());
+        _dispatcher.Dispatch(
+            new InputFileState.RefreshCurrentSelectionAction(_backgroundTaskQueue));
         
         await ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }

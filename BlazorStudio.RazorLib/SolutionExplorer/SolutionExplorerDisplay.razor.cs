@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Store.ApplicationOptions;
 using BlazorCommon.RazorLib.Store.DropdownCase;
@@ -49,6 +50,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
     
     public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
@@ -75,7 +78,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             FileSystemProvider,
             Dispatcher,
             TreeViewService,
-            TextEditorService);
+            TextEditorService,
+            BackgroundTaskQueue);
         
         _solutionExplorerTreeViewMouseEventHandler = 
             new SolutionExplorerTreeViewMouseEventHandler(
@@ -83,7 +87,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 TextEditorService,
                 BlazorStudioComponentRenderers,
                 FileSystemProvider,
-                TreeViewService);
+                TreeViewService,
+                BackgroundTaskQueue);
     
         base.OnInitialized();
     }

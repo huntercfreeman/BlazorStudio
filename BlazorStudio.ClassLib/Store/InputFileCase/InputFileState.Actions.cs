@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.InputFile;
@@ -15,7 +16,7 @@ public partial record InputFileState
     public record SetSearchQueryAction(string SearchQuery);
     public record MoveBackwardsInHistoryAction;
     public record MoveForwardsInHistoryAction;
-    public record OpenParentDirectoryAction(IBlazorStudioComponentRenderers BlazorStudioComponentRenderers, IFileSystemProvider FileSystemProvider, IEnvironmentProvider EnvironmentProvider);
-    public record RefreshCurrentSelectionAction;
+    public record OpenParentDirectoryAction(IBlazorStudioComponentRenderers BlazorStudioComponentRenderers, IFileSystemProvider FileSystemProvider, IEnvironmentProvider EnvironmentProvider, IBackgroundTaskQueue BackgroundTaskQueue);
+    public record RefreshCurrentSelectionAction(IBackgroundTaskQueue BackgroundTaskQueue);
     public record StartInputFileStateFormAction(RequestInputFileStateFormAction RequestInputFileStateFormAction);
 }

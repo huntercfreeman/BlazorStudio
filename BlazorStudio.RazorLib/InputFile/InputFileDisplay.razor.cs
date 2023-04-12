@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.Resize;
 using BlazorCommon.RazorLib.TreeView;
@@ -33,6 +34,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
     
     /// <summary>
     /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
@@ -106,7 +109,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             EnvironmentProvider,
             SetInputFileContentTreeViewRootFunc, 
             () => Task.FromResult(SearchElementReference?.FocusAsync()),
-            () => _searchMatchTuples);
+            () => _searchMatchTuples,
+            BackgroundTaskQueue);
         
         InitializeElementDimensions();
         

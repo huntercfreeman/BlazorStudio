@@ -1,4 +1,5 @@
-﻿using BlazorCommon.RazorLib.ComponentRenderers;
+﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
+using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Notification;
 using BlazorCommon.RazorLib.Store.NotificationCase;
@@ -22,6 +23,8 @@ public partial class InputFileTopNavBar : ComponentBase
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
 
     [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
     public Func<IAbsoluteFilePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -59,14 +62,16 @@ public partial class InputFileTopNavBar : ComponentBase
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             BlazorStudioComponentRenderers,
             FileSystemProvider,
-            EnvironmentProvider));
+            EnvironmentProvider,
+            BackgroundTaskQueue));
         
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
     private async Task HandleRefreshButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction());
+        Dispatcher.Dispatch(
+            new InputFileState.RefreshCurrentSelectionAction(BackgroundTaskQueue));
         
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
