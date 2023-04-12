@@ -1,10 +1,14 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Reactive.Linq;
 using System.Text;
 using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.State;
+using CliWrap;
+using CliWrap.Buffered;
+using CliWrap.EventStream;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
@@ -15,6 +19,9 @@ public class TerminalSession
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IBackgroundTaskQueue _backgroundTaskQueue;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
+    private readonly SemaphoreSlim _lifeOfTerminalCommandConsumerSemaphoreSlim = new(1, 1);
+    private bool _hasTerminalCommandConsumer;
+    private CancellationTokenSource _commandCancellationTokenSource = new();
 
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
 
@@ -23,8 +30,6 @@ public class TerminalSession
     /// </summary>
     private readonly Dictionary<TerminalCommandKey, StringBuilder> _standardOutBuilderMap = new();
 
-    private Process? _process;
-    
     public TerminalSession(
         string? workingDirectoryAbsoluteFilePathString, 
         IDispatcher dispatcher,
@@ -37,9 +42,6 @@ public class TerminalSession
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
     }
 
-    private readonly SemaphoreSlim _lifeOfTerminalCommandConsumerSemaphoreSlim = new(1, 1);
-    private bool _hasTerminalCommandConsumer;
-    
     public TerminalSessionKey TerminalSessionKey { get; init; } = 
         TerminalSessionKey.NewTerminalSessionKey();
 
@@ -141,7 +143,8 @@ public class TerminalSession
     
     public void KillProcess()
     {
-        _process?.Kill(true);
+        _commandCancellationTokenSource.Cancel();
+        _commandCancellationTokenSource = new();
     }
     
     private async Task ConsumeTerminalCommandsAsync()
@@ -178,100 +181,155 @@ public class TerminalSession
 
         _terminalCommandsHistory.Add(terminalCommand);
         ActiveTerminalCommand = terminalCommand;
-        
-        _process = new Process();
 
-        if (WorkingDirectoryAbsoluteFilePathString is not null)
+        var command = Cli.Wrap(terminalCommand.TargetFilePath);
+
+        if (terminalCommand.Arguments.Any())
+            command = command.WithArguments(terminalCommand.Arguments);
+
+        if (terminalCommand.ChangeWorkingDirectoryTo is not null)
         {
-            _process.StartInfo.WorkingDirectory = 
-                WorkingDirectoryAbsoluteFilePathString;   
+            command = command
+                .WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
+        }
+        else if (WorkingDirectoryAbsoluteFilePathString is not null)
+        {
+            command = command
+                .WithWorkingDirectory(WorkingDirectoryAbsoluteFilePathString);
         }
 
-        var bash = "/bin/bash";
-
-        if (await _fileSystemProvider.File.ExistsAsync(bash))
-        {
-            _process.StartInfo.FileName = bash;
-            _process.StartInfo.Arguments = $"-c \"{terminalCommand.Command}\"";
-        }
-        else
-        {
-            _process.StartInfo.FileName = "cmd.exe";
-            _process.StartInfo.Arguments = $"/c \"{terminalCommand.Command}\" 2>&1";
-        }
-
-        // Start the child process.
-        // 2>&1 combines stdout and stderr
-        //process.StartInfo.Arguments = $"";
-        // Redirect the output stream of the child process.
-        _process.StartInfo.UseShellExecute = false;
-        _process.StartInfo.RedirectStandardOutput = true;
-        _process.StartInfo.RedirectStandardError = true;
-        _process.StartInfo.CreateNoWindow = true;
-        
-        void OutputDataReceived(object sender, DataReceivedEventArgs e)
+        // Push-based event stream
         {
             var terminalCommandKey = terminalCommand.TerminalCommandKey;
-
-            var text = $"{e.Data ?? string.Empty}\n";
             
-            _standardOutBuilderMap[terminalCommandKey]
-                .Append(text);
-
-            DispatchNewStateKey();
-        }
-
-        _process.OutputDataReceived += OutputDataReceived;
-        
-        try
-        {
             _standardOutBuilderMap.TryAdd(
                 terminalCommand.TerminalCommandKey,
                 new StringBuilder());
-
-            // Process Start
+            
+            HasExecutingProcess = true;
+            DispatchNewStateKey();
+            
+            try
             {
-                HasExecutingProcess = true;
-                DispatchNewStateKey();
-                
-                _process.Start();
+                await command.Observe(_commandCancellationTokenSource.Token).ForEachAsync(cmdEvent =>
+                {
+                    switch (cmdEvent)
+                    {
+                        case StartedCommandEvent started:
+                            _standardOutBuilderMap[terminalCommandKey]
+                                .AppendLine($"Process started; ID: {started.ProcessId}");
+                        
+                            DispatchNewStateKey();
+                            break;
+                        case StandardOutputCommandEvent stdOut:
+                            _standardOutBuilderMap[terminalCommandKey]
+                                .AppendLine($"Out> {stdOut.Text}");
+                        
+                            DispatchNewStateKey();
+                            break;
+                        case StandardErrorCommandEvent stdErr:
+                            _standardOutBuilderMap[terminalCommandKey]
+                                .AppendLine($"Err> {stdErr.Text}");
+                        
+                            DispatchNewStateKey();
+                            break;
+                        case ExitedCommandEvent exited:
+                            _standardOutBuilderMap[terminalCommandKey]
+                                .AppendLine($"Process exited; Code: {exited.ExitCode}");
+
+                            DispatchNewStateKey();
+                            break;
+                    }
+                });
             }
-
-            _process.BeginOutputReadLine();
-
-            // Await Process End
+            finally
             {
-                await _process.WaitForExitAsync();
-                
                 HasExecutingProcess = false;
                 DispatchNewStateKey();
+            
+                if (terminalCommand.ContinueWith is not null)
+                {
+                    var continueWith = terminalCommand.ContinueWith;
+            
+                    var backgroundTask = new BackgroundTask(
+                        async cancellationToken =>
+                        {
+                            await continueWith.Invoke();
+                        },
+                        "TerminalCommand.ContinueWithTask",
+                        "TODO: Describe this task",
+                        false,
+                        _ =>  Task.CompletedTask,
+                        _dispatcher,
+                        CancellationToken.None);
+            
+                    _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                }
             }
         }
-        finally
-        {
-            _process.CancelOutputRead();
-            _process.OutputDataReceived -= OutputDataReceived;
-        }
-
-        if (terminalCommand.ContinueWith is not null)
-        {
-            var continueWith = terminalCommand.ContinueWith;
-            
-            var backgroundTask = new BackgroundTask(
-                async cancellationToken =>
-                {
-                    await continueWith.Invoke();
-                },
-                "TerminalCommand.ContinueWithTask",
-                "TODO: Describe this task",
-                false,
-                _ =>  Task.CompletedTask,
-                _dispatcher,
-                CancellationToken.None);
-
-            _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
-        }
-
+        
+        // Pipe.ToDelegate
+        //
+        // {
+        //     {
+        //         
+        //     
+        //         command
+        //             .WithStandardErrorPipe(
+        //                 PipeTarget.ToDelegate(text =>
+        //                 {
+        //                     _standardOutBuilderMap[terminalCommandKey]
+        //                         .Append(text);
+        //
+        //                     DispatchNewStateKey();
+        //                 }))
+        //             .WithStandardOutputPipe(PipeTarget.ToDelegate(text =>
+        //             {
+        //                 _standardOutBuilderMap[terminalCommandKey]
+        //                     .Append(text);
+        //
+        //                 DispatchNewStateKey();
+        //             }));
+        //     }
+        //
+        //     _standardOutBuilderMap.TryAdd(
+        //         terminalCommand.TerminalCommandKey,
+        //         new StringBuilder());
+        //
+        //     HasExecutingProcess = true;
+        //     DispatchNewStateKey();
+        //
+        //     try
+        //     {
+        //         var result = await command.ExecuteAsync(
+        //             _commandCancellationTokenSource.Token);
+        //     }
+        //     finally
+        //     {
+        //         HasExecutingProcess = false;
+        //         DispatchNewStateKey();
+        //
+        //         if (terminalCommand.ContinueWith is not null)
+        //         {
+        //             var continueWith = terminalCommand.ContinueWith;
+        //     
+        //             var backgroundTask = new BackgroundTask(
+        //                 async cancellationToken =>
+        //                 {
+        //                     await continueWith.Invoke();
+        //                 },
+        //                 "TerminalCommand.ContinueWithTask",
+        //                 "TODO: Describe this task",
+        //                 false,
+        //                 _ =>  Task.CompletedTask,
+        //                 _dispatcher,
+        //                 CancellationToken.None);
+        //
+        //             _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        //         }
+        //     }
+        // }
+        
         goto doConsumeLabel;
     }
 

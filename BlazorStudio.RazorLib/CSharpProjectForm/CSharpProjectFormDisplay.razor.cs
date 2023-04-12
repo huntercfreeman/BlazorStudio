@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Text;
 using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorCommon.RazorLib.TreeView;
@@ -58,18 +59,38 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         ? "{enter parent directory name}"
         : _parentDirectoryName;
 
-    private string InterpolatedNewCSharpProjectCommand =>
+    private (string targetFileName, IEnumerable<string> arguments) FormattedNewCSharpProjectCommand =>
         DotNetCliFacts.FormatDotnetNewCSharpProject(
             _projectTemplateName,
             _cSharpProjectName,
             _optionalParameters);
     
-    private string InterpolatedAddExistingProjectToSolutionCommand =>
+    private string InterpolatedNewCSharpProjectCommand => FormattedCommandToStringHelper(
+        FormattedNewCSharpProjectCommand);
+
+    private (string targetFileName, IEnumerable<string> arguments) FormattedAddExistingProjectToSolutionCommand =>
         DotNetCliFacts.FormatAddExistingProjectToSolution(
             SolutionNamespacePath?.AbsoluteFilePath.GetAbsoluteFilePathString() 
-                ?? string.Empty,
+            ?? string.Empty,
             $"{_cSharpProjectName}/{_cSharpProjectName}.csproj");
+    
+    private string InterpolatedAddExistingProjectToSolutionCommand => FormattedCommandToStringHelper(
+        FormattedAddExistingProjectToSolutionCommand);
 
+    private string FormattedCommandToStringHelper(
+        (string targetFileName, IEnumerable<string> arguments) formattedCommand)
+    {
+        var interpolatedCommandBuilder = new StringBuilder(
+            formattedCommand.targetFileName);
+
+        foreach (var argument in formattedCommand.arguments)
+        {
+            interpolatedCommandBuilder.Append($" {argument}");
+        }
+
+        return interpolatedCommandBuilder.ToString();
+    }
+    
     private void RequestInputFileForParentDirectory(string message)
     {
         Dispatcher.Dispatch(
@@ -106,8 +127,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task StartNewCSharpProjectCommandOnClick()
     {
-        var localInterpolatedNewCSharpProjectCommand = InterpolatedNewCSharpProjectCommand;
-        var localInterpolatedAddExistingProjectToSolutionCommand = InterpolatedAddExistingProjectToSolutionCommand;
+        var localFormattedNewCSharpProjectCommand = FormattedNewCSharpProjectCommand;
+        var localFormattedAddExistingProjectToSolutionCommand = FormattedAddExistingProjectToSolutionCommand;
 
         var localProjectTemplateName = _projectTemplateName;
         var localCSharpProjectName = _cSharpProjectName;
@@ -124,7 +145,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         var newDotNetSolutionCommand = new TerminalCommand(
             _newCSharpProjectTerminalCommandKey,
-            localInterpolatedNewCSharpProjectCommand,
+            localFormattedNewCSharpProjectCommand.targetFileName,
+            localFormattedNewCSharpProjectCommand.arguments,
             localParentDirectoryName,
             _newCSharpProjectCancellationTokenSource.Token);
 
@@ -138,7 +160,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         {
             var addExistingProjectToSolutionCommand = new TerminalCommand(
                 _newCSharpProjectTerminalCommandKey,
-                localInterpolatedAddExistingProjectToSolutionCommand,
+                localFormattedAddExistingProjectToSolutionCommand.targetFileName,
+                localFormattedAddExistingProjectToSolutionCommand.arguments,
                 localParentDirectoryName,
                 _newCSharpProjectCancellationTokenSource.Token,
                 async () =>

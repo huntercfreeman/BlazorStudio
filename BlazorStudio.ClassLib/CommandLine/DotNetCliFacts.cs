@@ -3,121 +3,155 @@
 namespace BlazorStudio.ClassLib.CommandLine;
 
 /// <summary>
-/// Any values given will be wrapped in quotes internally
+/// Any values given will NOT be wrapped in quotes internally
 /// </summary>
 public static class DotNetCliFacts
 {
-    public const string DotnetNewSlnCommand = "dotnet new sln";
+    public const string DOT_NET_CLI_TARGET_FILE_NAME = "dotnet";
     
-    public static string FormatStartProjectWithoutDebugging(IAbsoluteFilePath projectAbsoluteFilePath)
+    public static (string targetFileName, IEnumerable<string> arguments) FormatStartProjectWithoutDebugging(
+        IAbsoluteFilePath projectAbsoluteFilePath)
     {
         return FormatStartProjectWithoutDebugging(
             projectAbsoluteFilePath.GetAbsoluteFilePathString());
     }
     
-    public static string FormatStartProjectWithoutDebugging(string projectPath)
+    public static (string targetFileName, IEnumerable<string> arguments) FormatStartProjectWithoutDebugging(
+        string projectPath)
     {
-        projectPath = CommandLineHelper.QuoteValue(projectPath);
-        
-        return $"dotnet run --project {projectPath}";
+        return (DOT_NET_CLI_TARGET_FILE_NAME, new []
+        {
+            "run",
+            "--project",
+            projectPath
+        });
     }
     
-    public static string FormatDotnetNewSln(string solutionName)
+    public static (string targetFileName, IEnumerable<string> arguments) FormatDotnetNewSln(
+        string solutionName)
     {
-        solutionName = CommandLineHelper.QuoteValue(solutionName);
-        
-        return $"{DotnetNewSlnCommand} -o {solutionName}";
+        return (DOT_NET_CLI_TARGET_FILE_NAME, new []
+        {
+            "new",
+            "sln",
+            "-o",
+            solutionName
+        });
     }
     
-    public static string FormatDotnetNewCSharpProject(
+    public static (string targetFileName, IEnumerable<string> arguments) FormatDotnetNewCSharpProject(
         string projectTemplateName, 
         string cSharpProjectName, 
         string optionalParameters)
     {
-        projectTemplateName = CommandLineHelper.QuoteValue(projectTemplateName);
-        cSharpProjectName = CommandLineHelper.QuoteValue(cSharpProjectName);
+        var arguments = new List<string>
+        {
+            "new",
+            projectTemplateName,
+            "-o",
+            cSharpProjectName
+        };
+
+        if (!string.IsNullOrWhiteSpace(optionalParameters))
+            arguments.Add(optionalParameters);
         
-        return $"dotnet new {projectTemplateName} -o {cSharpProjectName} {optionalParameters}";
+        return (DOT_NET_CLI_TARGET_FILE_NAME, arguments);
     }
     
-    public static string FormatAddExistingProjectToSolution(
+    public static (string targetFileName, IEnumerable<string> arguments) FormatAddExistingProjectToSolution(
         string solutionAbsoluteFilePathString, 
         string cSharpProjectPath)
     {
-        solutionAbsoluteFilePathString = CommandLineHelper.QuoteValue(solutionAbsoluteFilePathString);
-        cSharpProjectPath = CommandLineHelper.QuoteValue(cSharpProjectPath);
-        
-        return $"dotnet sln {solutionAbsoluteFilePathString} add {cSharpProjectPath}";
+        return (DOT_NET_CLI_TARGET_FILE_NAME, new []
+        {
+            "sln",
+            solutionAbsoluteFilePathString,
+            "add",
+            cSharpProjectPath
+        });
     }
     
-    public static string FormatRemoveCSharpProjectReferenceFromSolutionAction(
+    public static (string targetFileName, IEnumerable<string> arguments) FormatRemoveCSharpProjectReferenceFromSolutionAction(
         string solutionAbsoluteFilePathString, 
         string cSharpProjectAbsoluteFilePathString)
     {
-        solutionAbsoluteFilePathString = CommandLineHelper.QuoteValue(solutionAbsoluteFilePathString);
-        cSharpProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(cSharpProjectAbsoluteFilePathString);
-        
-        return $"dotnet sln {solutionAbsoluteFilePathString}" +
-               $" remove {cSharpProjectAbsoluteFilePathString}";
+        return (DOT_NET_CLI_TARGET_FILE_NAME, new []
+        {
+            "sln",
+            solutionAbsoluteFilePathString,
+            "remove",
+            cSharpProjectAbsoluteFilePathString
+        });
     }
     
-    public static string FormatAddNugetPackageReferenceToProject(
+    public static (string targetFileName, IEnumerable<string> arguments) FormatAddNugetPackageReferenceToProject(
         string cSharpProjectAbsoluteFilePathString, 
         string nugetPackageId,
         string nugetPackageVersion)
     {
-        cSharpProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(cSharpProjectAbsoluteFilePathString);
-        nugetPackageId = CommandLineHelper.QuoteValue(nugetPackageId);
-        nugetPackageVersion = CommandLineHelper.QuoteValue(nugetPackageVersion);
-        
-        return $"dotnet add {cSharpProjectAbsoluteFilePathString}" +
-               $" package {nugetPackageId}" +
-               $" --version {nugetPackageVersion}";
+        return (DOT_NET_CLI_TARGET_FILE_NAME, new []
+        {
+            "add",
+            cSharpProjectAbsoluteFilePathString,
+            "package",
+            nugetPackageId,
+            "--version",
+            nugetPackageVersion
+        });
     }
     
-    public static string FormatRemoveNugetPackageReferenceFromProject(
+    public static (string targetFileName, IEnumerable<string> arguments) FormatRemoveNugetPackageReferenceFromProject(
         string cSharpProjectAbsoluteFilePathString, 
         string nugetPackageId)
     {
-        cSharpProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(cSharpProjectAbsoluteFilePathString);
-        nugetPackageId = CommandLineHelper.QuoteValue(nugetPackageId);
-        
-        return $"dotnet remove {cSharpProjectAbsoluteFilePathString}" +
-               $" package {nugetPackageId}";
+        return (DOT_NET_CLI_TARGET_FILE_NAME, new []
+        {
+            "remove",
+            cSharpProjectAbsoluteFilePathString,
+            "package",
+            nugetPackageId
+        });
     }
     
-    public static string FormatAddProjectToProjectReference(
+    public static (string targetFileName, IEnumerable<string> arguments) FormatAddProjectToProjectReference(
         string receivingProjectAbsoluteFilePathString, 
-        string referencedProjectAbsoluteFilePathString)
+        string referenceProjectAbsoluteFilePathString)
     {
-        receivingProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(receivingProjectAbsoluteFilePathString);
-        referencedProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(referencedProjectAbsoluteFilePathString);
-        
-        return $"dotnet add {receivingProjectAbsoluteFilePathString}" +
-               $" reference {referencedProjectAbsoluteFilePathString}";
+        return (DOT_NET_CLI_TARGET_FILE_NAME, new []
+        {
+            "add",
+            receivingProjectAbsoluteFilePathString,
+            "reference",
+            referenceProjectAbsoluteFilePathString
+        });
     }
     
-    public static string FormatRemoveProjectToProjectReference(
+    public static (string targetFileName, IEnumerable<string> arguments) FormatRemoveProjectToProjectReference(
         string modifyProjectAbsoluteFilePathString, 
         string referenceProjectAbsoluteFilePathString)
     {
-        modifyProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(modifyProjectAbsoluteFilePathString);
-        referenceProjectAbsoluteFilePathString = CommandLineHelper.QuoteValue(referenceProjectAbsoluteFilePathString);
-        
-        return $"dotnet remove {modifyProjectAbsoluteFilePathString}" +
-               $" reference {referenceProjectAbsoluteFilePathString}";
+        return (DOT_NET_CLI_TARGET_FILE_NAME, new []
+        {
+            "remove",
+            modifyProjectAbsoluteFilePathString,
+            "reference",
+            referenceProjectAbsoluteFilePathString
+        });
     }
     
-    public static string FormatMoveProjectToSolutionFolder(
+    public static (string targetFileName, IEnumerable<string> arguments) FormatMoveProjectToSolutionFolder(
         string solutionAbsoluteFilePathString,
         string projectToMoveAbsoluteFilePathString,
         string solutionFolderPath)
     {
-        projectToMoveAbsoluteFilePathString = CommandLineHelper.QuoteValue(projectToMoveAbsoluteFilePathString);
-        solutionFolderPath = CommandLineHelper.QuoteValue(solutionFolderPath);
-        
-        return $"dotnet sln {solutionAbsoluteFilePathString}" +
-               $" add {projectToMoveAbsoluteFilePathString}" +
-               $" --solution-folder {solutionFolderPath}";
+        return (DOT_NET_CLI_TARGET_FILE_NAME, new []
+        {
+            "sln",
+            solutionAbsoluteFilePathString,
+            "add",
+            projectToMoveAbsoluteFilePathString,
+            "--solution-folder",
+            "solutionFolderPath",
+        });
     }
 }

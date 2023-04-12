@@ -33,12 +33,15 @@ public partial class StartupControlsDisplay : FluxorComponent
 
         if (parentDirectoryAbsoluteFilePathString is null)
             return;
+
+        var formattedCommand = DotNetCliFacts
+            .FormatStartProjectWithoutDebugging(
+                programExecutionState.StartupProjectAbsoluteFilePath);
         
         var startProgramWithoutDebuggingCommand = new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,
-            DotNetCliFacts
-                .FormatStartProjectWithoutDebugging(
-                    programExecutionState.StartupProjectAbsoluteFilePath),
+            formattedCommand.targetFileName,
+            formattedCommand.arguments,
             parentDirectoryAbsoluteFilePathString,
             _newDotNetSolutionCancellationTokenSource.Token);
         

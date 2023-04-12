@@ -7,6 +7,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using System.Text;
 using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Notification;
 using BlazorCommon.RazorLib.Store.NotificationCase;
@@ -106,14 +107,15 @@ public partial class NugetPackageDisplay : FluxorComponent
         if (parentDirectory is null)
             return;
 
-        var interpolatedCommand = DotNetCliFacts.FormatAddNugetPackageReferenceToProject(
+        var formattedCommand = DotNetCliFacts.FormatAddNugetPackageReferenceToProject(
             targetProject.AbsoluteFilePath.GetAbsoluteFilePathString(),
             targetNugetPackage.Id,
             targetNugetVersion);
         
         var addNugetPackageReferenceCommand = new TerminalCommand(
             AddNugetPackageTerminalCommandKey,
-            interpolatedCommand,
+            formattedCommand.targetFileName,
+            formattedCommand.arguments,
             parentDirectory.GetAbsoluteFilePathString(),
             CancellationToken.None, () =>
             {

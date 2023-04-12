@@ -2,7 +2,8 @@
 
 public record TerminalCommand(
     TerminalCommandKey TerminalCommandKey,
-    string Command,
+    string TargetFilePath,
+    IEnumerable<string> Arguments,
     string? ChangeWorkingDirectoryTo = null,
     CancellationToken CancellationToken = default,
     Func<Task>? ContinueWith = null);
