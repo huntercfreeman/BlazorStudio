@@ -1,11 +1,14 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Reactive.Linq;
 using System.Text;
 using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.State;
 using CliWrap;
+using CliWrap.Buffered;
+using CliWrap.EventStream;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
@@ -195,60 +198,138 @@ public class TerminalSession
                 .WithWorkingDirectory(WorkingDirectoryAbsoluteFilePathString);
         }
 
+        // Push-based event stream
         {
             var terminalCommandKey = terminalCommand.TerminalCommandKey;
             
-            command
-                .WithStandardErrorPipe(
-                    PipeTarget.ToDelegate(text =>
-                    {
-                        _standardOutBuilderMap[terminalCommandKey]
-                            .Append(text);
-
-                        DispatchNewStateKey();
-                    }))
-                .WithStandardOutputPipe(PipeTarget.ToDelegate(text =>
+            _standardOutBuilderMap.TryAdd(
+                terminalCommand.TerminalCommandKey,
+                new StringBuilder());
+            
+            HasExecutingProcess = true;
+            DispatchNewStateKey();
+            
+            try
+            {
+                await command.Observe(_commandCancellationTokenSource.Token).ForEachAsync(cmdEvent =>
                 {
-                    _standardOutBuilderMap[terminalCommandKey]
-                        .Append(text);
+                    switch (cmdEvent)
+                    {
+                        case StartedCommandEvent started:
+                            _standardOutBuilderMap[terminalCommandKey]
+                                .AppendLine($"Process started; ID: {started.ProcessId}");
+                        
+                            DispatchNewStateKey();
+                            break;
+                        case StandardOutputCommandEvent stdOut:
+                            _standardOutBuilderMap[terminalCommandKey]
+                                .AppendLine($"Out> {stdOut.Text}");
+                        
+                            DispatchNewStateKey();
+                            break;
+                        case StandardErrorCommandEvent stdErr:
+                            _standardOutBuilderMap[terminalCommandKey]
+                                .AppendLine($"Err> {stdErr.Text}");
+                        
+                            DispatchNewStateKey();
+                            break;
+                        case ExitedCommandEvent exited:
+                            _standardOutBuilderMap[terminalCommandKey]
+                                .AppendLine($"Process exited; Code: {exited.ExitCode}");
 
-                    DispatchNewStateKey();
-                }));
+                            DispatchNewStateKey();
+                            break;
+                    }
+                });
+            }
+            finally
+            {
+                HasExecutingProcess = false;
+                DispatchNewStateKey();
+            
+                if (terminalCommand.ContinueWith is not null)
+                {
+                    var continueWith = terminalCommand.ContinueWith;
+            
+                    var backgroundTask = new BackgroundTask(
+                        async cancellationToken =>
+                        {
+                            await continueWith.Invoke();
+                        },
+                        "TerminalCommand.ContinueWithTask",
+                        "TODO: Describe this task",
+                        false,
+                        _ =>  Task.CompletedTask,
+                        _dispatcher,
+                        CancellationToken.None);
+            
+                    _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                }
+            }
         }
         
-        // TODO: There was a try wrapping this command.ExecuteAsync() logic. I removed it on 2023-04-12 because it seemingly is no longer needed. It only had a finally to dispose of resources.
-        _standardOutBuilderMap.TryAdd(
-            terminalCommand.TerminalCommandKey,
-            new StringBuilder());
-
-        HasExecutingProcess = true;
-        DispatchNewStateKey();
-                
-        await command.ExecuteAsync(
-            _commandCancellationTokenSource.Token);
-            
-        HasExecutingProcess = false;
-        DispatchNewStateKey();
-
-        if (terminalCommand.ContinueWith is not null)
-        {
-            var continueWith = terminalCommand.ContinueWith;
-            
-            var backgroundTask = new BackgroundTask(
-                async cancellationToken =>
-                {
-                    await continueWith.Invoke();
-                },
-                "TerminalCommand.ContinueWithTask",
-                "TODO: Describe this task",
-                false,
-                _ =>  Task.CompletedTask,
-                _dispatcher,
-                CancellationToken.None);
-
-            _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
-        }
-
+        // Pipe.ToDelegate
+        //
+        // {
+        //     {
+        //         
+        //     
+        //         command
+        //             .WithStandardErrorPipe(
+        //                 PipeTarget.ToDelegate(text =>
+        //                 {
+        //                     _standardOutBuilderMap[terminalCommandKey]
+        //                         .Append(text);
+        //
+        //                     DispatchNewStateKey();
+        //                 }))
+        //             .WithStandardOutputPipe(PipeTarget.ToDelegate(text =>
+        //             {
+        //                 _standardOutBuilderMap[terminalCommandKey]
+        //                     .Append(text);
+        //
+        //                 DispatchNewStateKey();
+        //             }));
+        //     }
+        //
+        //     _standardOutBuilderMap.TryAdd(
+        //         terminalCommand.TerminalCommandKey,
+        //         new StringBuilder());
+        //
+        //     HasExecutingProcess = true;
+        //     DispatchNewStateKey();
+        //
+        //     try
+        //     {
+        //         var result = await command.ExecuteAsync(
+        //             _commandCancellationTokenSource.Token);
+        //     }
+        //     finally
+        //     {
+        //         HasExecutingProcess = false;
+        //         DispatchNewStateKey();
+        //
+        //         if (terminalCommand.ContinueWith is not null)
+        //         {
+        //             var continueWith = terminalCommand.ContinueWith;
+        //     
+        //             var backgroundTask = new BackgroundTask(
+        //                 async cancellationToken =>
+        //                 {
+        //                     await continueWith.Invoke();
+        //                 },
+        //                 "TerminalCommand.ContinueWithTask",
+        //                 "TODO: Describe this task",
+        //                 false,
+        //                 _ =>  Task.CompletedTask,
+        //                 _dispatcher,
+        //                 CancellationToken.None);
+        //
+        //             _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        //         }
+        //     }
+        // }
+        
         goto doConsumeLabel;
     }
 
