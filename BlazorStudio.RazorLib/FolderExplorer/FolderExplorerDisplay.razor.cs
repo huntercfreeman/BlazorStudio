@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Store.AccountCase;
 using BlazorCommon.RazorLib.Store.ApplicationOptions;
@@ -52,6 +53,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
     [Inject]
     private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
 
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
@@ -119,7 +122,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             TextEditorService,
             BlazorStudioComponentRenderers,
             FileSystemProvider,
-            TreeViewService);
+            TreeViewService,
+            BackgroundTaskQueue);
 
         _folderExplorerTreeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
             TerminalSessionsStateWrap,
@@ -128,7 +132,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             FileSystemProvider,
             Dispatcher,
             TreeViewService,
-            TextEditorService);
+            TextEditorService,
+            BackgroundTaskQueue);
 
         base.OnInitialized();
     }

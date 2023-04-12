@@ -1,4 +1,5 @@
-﻿using BlazorCommon.RazorLib.ComponentRenderers;
+﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
+using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorStudio.ClassLib.ComponentRenderers;
@@ -19,6 +20,8 @@ public partial class InputFileBottomControls : ComponentBase
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
     
     [CascadingParameter]
     public DialogRecord? DialogRecord { get; set; }
@@ -43,12 +46,14 @@ public partial class InputFileBottomControls : ComponentBase
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             BlazorStudioComponentRenderers,
             FileSystemProvider,
-            EnvironmentProvider));
+            EnvironmentProvider,
+            BackgroundTaskQueue));
     }
 
     private void HandleRefreshButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction());
+        Dispatcher.Dispatch(
+            new InputFileState.RefreshCurrentSelectionAction(BackgroundTaskQueue));
     }
 
     private void FocusSearchElementReferenceOnClick()

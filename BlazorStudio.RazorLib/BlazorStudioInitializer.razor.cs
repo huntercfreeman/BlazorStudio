@@ -1,4 +1,5 @@
-﻿using BlazorCommon.RazorLib.Icons.Codicon;
+﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
+using BlazorCommon.RazorLib.Icons.Codicon;
 using BlazorCommon.RazorLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
@@ -32,6 +33,8 @@ public partial class BlazorStudioInitializer : ComponentBase
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private BlazorTextEditorOptions BlazorTextEditorOptions { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
     
     protected override void OnInitialized()
     {
@@ -50,7 +53,8 @@ public partial class BlazorStudioInitializer : ComponentBase
             var terminalSession = new TerminalSession(
                 null, 
                 Dispatcher,
-                FileSystemProvider)
+                FileSystemProvider,
+                BackgroundTaskQueue)
             {
                 TerminalSessionKey = terminalSessionKey
             };

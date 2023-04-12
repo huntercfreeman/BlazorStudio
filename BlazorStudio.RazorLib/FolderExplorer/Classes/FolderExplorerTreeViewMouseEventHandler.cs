@@ -1,4 +1,5 @@
-﻿using BlazorCommon.RazorLib.TreeView;
+﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
+using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.Events;
 using BlazorStudio.ClassLib.ComponentRenderers;
@@ -16,19 +17,22 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
     private readonly ITextEditorService _textEditorService;
     private readonly IBlazorStudioComponentRenderers _blazorStudioComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
+    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public FolderExplorerTreeViewMouseEventHandler(
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
         IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
         IFileSystemProvider fileSystemProvider,
-        ITreeViewService treeViewService) 
+        ITreeViewService treeViewService,
+        IBackgroundTaskQueue backgroundTaskQueue) 
         : base(treeViewService)
     {
         _dispatcher = dispatcher;
         _textEditorService = textEditorService;
         _blazorStudioComponentRenderers = blazorStudioComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
+        _backgroundTaskQueue = backgroundTaskQueue;
     }
     
     public override async Task<bool> OnDoubleClickAsync(
@@ -51,7 +55,8 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
             _dispatcher,
             _textEditorService,
             _blazorStudioComponentRenderers,
-            _fileSystemProvider);
+            _fileSystemProvider,
+            _backgroundTaskQueue);
         
         return true;
     }

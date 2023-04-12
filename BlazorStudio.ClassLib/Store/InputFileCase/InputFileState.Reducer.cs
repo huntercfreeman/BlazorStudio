@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Interfaces;
+﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
+using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using Fluxor;
 
@@ -129,10 +130,20 @@ public partial record InputFileState
                     false,
                     true);
 
-                _ = Task.Run(async () =>
-                {
-                    await parentDirectoryTreeViewModel.LoadChildrenAsync();  
-                });
+                var backgroundTask = new BackgroundTask(
+                    async cancellationToken =>
+                    {
+                        await parentDirectoryTreeViewModel.LoadChildrenAsync();
+                    },
+                    "ReduceOpenParentDirectoryActionTask",
+                    "TODO: Describe this task",
+                    false,
+                    _ =>  Task.CompletedTask,
+                    null,
+                    CancellationToken.None);
+
+                openParentDirectoryAction.BackgroundTaskQueue
+                    .QueueBackgroundWorkItem(backgroundTask);
             }
 
             if (parentDirectoryTreeViewModel is not null)
@@ -157,11 +168,21 @@ public partial record InputFileState
                 .OpenedTreeViewModelHistory[inInputFileState.IndexInHistory];
 
             currentSelection.Children.Clear();
+            
+            var backgroundTask = new BackgroundTask(
+                async cancellationToken =>
+                {
+                    await currentSelection.LoadChildrenAsync();
+                },
+                "ReduceRefreshCurrentSelectionActionTask",
+                "TODO: Describe this task",
+                false,
+                _ =>  Task.CompletedTask,
+                null,
+                CancellationToken.None);
 
-            _ = Task.Run(async () =>
-            {
-                await currentSelection.LoadChildrenAsync();  
-            });
+            refreshCurrentSelectionAction.BackgroundTaskQueue
+                .QueueBackgroundWorkItem(backgroundTask);
 
             return inInputFileState;
         }
