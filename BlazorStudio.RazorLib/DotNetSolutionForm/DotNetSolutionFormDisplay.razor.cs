@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Text;
 using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorStudio.ClassLib.CommandLine;
@@ -45,8 +46,25 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         ? "{enter parent directory name}"
         : _parentDirectoryName;
 
-    private string InterpolatedCommand => 
+    private (string targetFileName, IEnumerable<string> arguments) FormattedCommand => 
         DotNetCliFacts.FormatDotnetNewSln(_solutionName);
+    
+    private string InterpolatedCommand => 
+        FormattedCommandToStringHelper(FormattedCommand);
+    
+    private string FormattedCommandToStringHelper(
+        (string targetFileName, IEnumerable<string> arguments) formattedCommand)
+    {
+        var interpolatedCommandBuilder = new StringBuilder(
+            formattedCommand.targetFileName);
+
+        foreach (var argument in formattedCommand.arguments)
+        {
+            interpolatedCommandBuilder.Append($" {argument}");
+        }
+
+        return interpolatedCommandBuilder.ToString();
+    }
 
     private void RequestInputFileForParentDirectory()
     {
@@ -84,7 +102,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     
     private async Task StartNewDotNetSolutionCommandOnClick()
     {
-        var interpolatedCommand = InterpolatedCommand;
+        var localFormattedCommand = FormattedCommand;
         var localSolutionName = _solutionName;
         var localParentDirectoryName = _parentDirectoryName;
 
@@ -96,7 +114,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         
         var newDotNetSolutionCommand = new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,
-            interpolatedCommand,
+            localFormattedCommand.targetFileName,
+            localFormattedCommand.arguments,
             _parentDirectoryName,
             _newDotNetSolutionCancellationTokenSource.Token,
             async () =>

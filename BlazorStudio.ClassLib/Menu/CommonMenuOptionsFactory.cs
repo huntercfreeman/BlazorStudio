@@ -763,7 +763,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             
                     var removeCSharpProjectReferenceFromSolutionCommand = new TerminalCommand(
                         TerminalCommandKey.NewTerminalCommandKey(), 
-                        removeCSharpProjectReferenceFromSolutionCommandString,
+                        removeCSharpProjectReferenceFromSolutionCommandString.targetFileName,
+                        removeCSharpProjectReferenceFromSolutionCommandString.arguments,
                         workingDirectory.GetAbsoluteFilePathString(),
                         CancellationToken.None,
                         async () => await onAfterCompletion.Invoke());
@@ -820,7 +821,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
                         var addProjectToProjectReferenceTerminalCommand = new TerminalCommand(
                             TerminalCommandKey.NewTerminalCommandKey(),
-                            interpolatedCommand,
+                            interpolatedCommand.targetFileName,
+                            interpolatedCommand.arguments,
                             null,
                             CancellationToken.None,
                             async () =>
@@ -909,7 +911,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
                 var removeProjectToProjectReferenceTerminalCommand = new TerminalCommand(
                     TerminalCommandKey.NewTerminalCommandKey(),
-                    interpolatedCommand,
+                    interpolatedCommand.targetFileName,
+                    interpolatedCommand.arguments,
                     null,
                     CancellationToken.None,
                     async () =>
@@ -975,7 +978,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
                 var moveProjectToSolutionFolderTerminalCommand = new TerminalCommand(
                     TerminalCommandKey.NewTerminalCommandKey(),
-                    moveProjectToSolutionFolderCommand,
+                    moveProjectToSolutionFolderCommand.targetFileName,
+                    moveProjectToSolutionFolderCommand.arguments,
                     null,
                     CancellationToken.None,
                     async () =>
@@ -1048,7 +1052,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
                 var removeNugetPackageReferenceFromProjectTerminalCommand = new TerminalCommand(
                     TerminalCommandKey.NewTerminalCommandKey(),
-                    interpolatedCommand,
+                    interpolatedCommand.targetFileName,
+                    interpolatedCommand.arguments,
                     null,
                     CancellationToken.None,
                     async () =>

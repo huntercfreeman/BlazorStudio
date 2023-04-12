@@ -397,14 +397,15 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     if (afp is null)
                         return;
                     
-                    var localInterpolatedAddExistingProjectToSolutionCommand = DotNetCliFacts
+                    var localFormattedAddExistingProjectToSolutionCommand = DotNetCliFacts
                         .FormatAddExistingProjectToSolution(
                             solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
                             afp.GetAbsoluteFilePathString());
                     
                     var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
                         TerminalCommandKey.NewTerminalCommandKey(), 
-                        localInterpolatedAddExistingProjectToSolutionCommand,
+                        localFormattedAddExistingProjectToSolutionCommand.targetFileName,
+                        localFormattedAddExistingProjectToSolutionCommand.arguments,
                         null,
                         CancellationToken.None,
                         async () =>

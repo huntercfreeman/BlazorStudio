@@ -5,6 +5,7 @@ using System.Text;
 using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.State;
+using CliWrap;
 using Fluxor;
 
 namespace BlazorStudio.ClassLib.Store.TerminalCase;
@@ -15,6 +16,9 @@ public class TerminalSession
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IBackgroundTaskQueue _backgroundTaskQueue;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
+    private readonly SemaphoreSlim _lifeOfTerminalCommandConsumerSemaphoreSlim = new(1, 1);
+    private bool _hasTerminalCommandConsumer;
+    private CancellationTokenSource _commandCancellationTokenSource = new();
 
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
 
@@ -23,8 +27,6 @@ public class TerminalSession
     /// </summary>
     private readonly Dictionary<TerminalCommandKey, StringBuilder> _standardOutBuilderMap = new();
 
-    private Process? _process;
-    
     public TerminalSession(
         string? workingDirectoryAbsoluteFilePathString, 
         IDispatcher dispatcher,
@@ -37,9 +39,6 @@ public class TerminalSession
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
     }
 
-    private readonly SemaphoreSlim _lifeOfTerminalCommandConsumerSemaphoreSlim = new(1, 1);
-    private bool _hasTerminalCommandConsumer;
-    
     public TerminalSessionKey TerminalSessionKey { get; init; } = 
         TerminalSessionKey.NewTerminalSessionKey();
 
@@ -141,7 +140,8 @@ public class TerminalSession
     
     public void KillProcess()
     {
-        _process?.Kill(true);
+        _commandCancellationTokenSource.Cancel();
+        _commandCancellationTokenSource = new();
     }
     
     private async Task ConsumeTerminalCommandsAsync()
@@ -178,80 +178,57 @@ public class TerminalSession
 
         _terminalCommandsHistory.Add(terminalCommand);
         ActiveTerminalCommand = terminalCommand;
-        
-        _process = new Process();
 
-        if (WorkingDirectoryAbsoluteFilePathString is not null)
+        var command = Cli.Wrap(terminalCommand.TargetFilePath);
+
+        if (terminalCommand.Arguments.Any())
+            command = command.WithArguments(terminalCommand.Arguments);
+
+        if (terminalCommand.ChangeWorkingDirectoryTo is not null)
         {
-            _process.StartInfo.WorkingDirectory = 
-                WorkingDirectoryAbsoluteFilePathString;   
+            command = command
+                .WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
+        }
+        else if (WorkingDirectoryAbsoluteFilePathString is not null)
+        {
+            command = command
+                .WithWorkingDirectory(WorkingDirectoryAbsoluteFilePathString);
         }
 
-        var bash = "/bin/bash";
-
-        if (await _fileSystemProvider.File.ExistsAsync(bash))
-        {
-            _process.StartInfo.FileName = bash;
-            _process.StartInfo.Arguments = $"-c \"{terminalCommand.Command}\"";
-        }
-        else
-        {
-            _process.StartInfo.FileName = "cmd.exe";
-            _process.StartInfo.Arguments = $"/c \"{terminalCommand.Command}\" 2>&1";
-        }
-
-        // Start the child process.
-        // 2>&1 combines stdout and stderr
-        //process.StartInfo.Arguments = $"";
-        // Redirect the output stream of the child process.
-        _process.StartInfo.UseShellExecute = false;
-        _process.StartInfo.RedirectStandardOutput = true;
-        _process.StartInfo.RedirectStandardError = true;
-        _process.StartInfo.CreateNoWindow = true;
-        
-        void OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             var terminalCommandKey = terminalCommand.TerminalCommandKey;
-
-            var text = $"{e.Data ?? string.Empty}\n";
             
-            _standardOutBuilderMap[terminalCommandKey]
-                .Append(text);
+            command
+                .WithStandardErrorPipe(
+                    PipeTarget.ToDelegate(text =>
+                    {
+                        _standardOutBuilderMap[terminalCommandKey]
+                            .Append(text);
 
-            DispatchNewStateKey();
+                        DispatchNewStateKey();
+                    }))
+                .WithStandardOutputPipe(PipeTarget.ToDelegate(text =>
+                {
+                    _standardOutBuilderMap[terminalCommandKey]
+                        .Append(text);
+
+                    DispatchNewStateKey();
+                }));
         }
-
-        _process.OutputDataReceived += OutputDataReceived;
         
-        try
-        {
-            _standardOutBuilderMap.TryAdd(
-                terminalCommand.TerminalCommandKey,
-                new StringBuilder());
+        // TODO: There was a try wrapping this command.ExecuteAsync() logic. I removed it on 2023-04-12 because it seemingly is no longer needed. It only had a finally to dispose of resources.
+        _standardOutBuilderMap.TryAdd(
+            terminalCommand.TerminalCommandKey,
+            new StringBuilder());
 
-            // Process Start
-            {
-                HasExecutingProcess = true;
-                DispatchNewStateKey();
+        HasExecutingProcess = true;
+        DispatchNewStateKey();
                 
-                _process.Start();
-            }
-
-            _process.BeginOutputReadLine();
-
-            // Await Process End
-            {
-                await _process.WaitForExitAsync();
-                
-                HasExecutingProcess = false;
-                DispatchNewStateKey();
-            }
-        }
-        finally
-        {
-            _process.CancelOutputRead();
-            _process.OutputDataReceived -= OutputDataReceived;
-        }
+        await command.ExecuteAsync(
+            _commandCancellationTokenSource.Token);
+            
+        HasExecutingProcess = false;
+        DispatchNewStateKey();
 
         if (terminalCommand.ContinueWith is not null)
         {

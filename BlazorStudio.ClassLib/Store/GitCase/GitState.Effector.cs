@@ -101,7 +101,8 @@ public partial record GitState
 
                 var gitStatusCommand = new TerminalCommand(
                     GitFacts.GitStatusTerminalCommandKey,
-                    GitCliFacts.GIT_STATUS_COMMAND,
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new [] { GitCliFacts.STATUS_COMMAND },
                     gitState.GitFolderAbsoluteFilePath.ParentDirectory.GetAbsoluteFilePathString(),
                     CancellationToken.None,
                     async () =>
@@ -206,7 +207,8 @@ public partial record GitState
         
                 var gitInitCommand = new TerminalCommand(
                     GitFacts.GitInitTerminalCommandKey,
-                    GitCliFacts.GIT_INIT_COMMAND,
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new [] { GitCliFacts.INIT_COMMAND },
                     gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
                     CancellationToken.None,
                     () =>
