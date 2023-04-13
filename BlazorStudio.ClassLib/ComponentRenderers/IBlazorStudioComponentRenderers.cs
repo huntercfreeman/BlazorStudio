@@ -5,6 +5,7 @@ namespace BlazorStudio.ClassLib.ComponentRenderers;
 public interface IBlazorStudioComponentRenderers
 {
     public IBlazorCommonComponentRenderers? BlazorCommonComponentRenderers { get; }
+    public Type? BooleanPromptOrCancelRendererType { get; }
     public Type? FileFormRendererType { get; }
     public Type? DeleteFileFormRendererType { get; }
     public Type? TreeViewNamespacePathRendererType { get; }
