@@ -269,11 +269,6 @@ hr.bcrl_hr {
     opacity: var(--bcrl_hr-opacity);
 }
 
-em.bcrl_em {
-    color: var(--bcrl_primary-emphasis-foreground-color);
-    font-style: normal;
-}
-
 .bstudio_footer-body {
     height: calc(100% - var(--bcrl_tabs-bar-height));
 }
