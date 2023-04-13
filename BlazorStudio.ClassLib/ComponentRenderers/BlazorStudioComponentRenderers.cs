@@ -6,6 +6,7 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
 {
     public BlazorStudioComponentRenderers(
         IBlazorCommonComponentRenderers? blazorCommonComponentRenderers,
+        Type? booleanPromptOrCancelRendererType,
         Type? fileFormRendererType,
         Type? deleteFileFormRendererType,
         Type? treeViewNamespacePathRendererType,
@@ -23,6 +24,7 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
         Type? treeViewSolutionFolderRendererType)
     {
         BlazorCommonComponentRenderers = blazorCommonComponentRenderers;
+        BooleanPromptOrCancelRendererType = booleanPromptOrCancelRendererType;
         FileFormRendererType = fileFormRendererType;
         DeleteFileFormRendererType = deleteFileFormRendererType;
         TreeViewNamespacePathRendererType = treeViewNamespacePathRendererType;
@@ -41,6 +43,7 @@ public class BlazorStudioComponentRenderers : IBlazorStudioComponentRenderers
     }
 
     public IBlazorCommonComponentRenderers? BlazorCommonComponentRenderers { get; }
+    public Type? BooleanPromptOrCancelRendererType { get; }
     public Type? FileFormRendererType { get; }
     public Type? DeleteFileFormRendererType { get; }
     public Type? TreeViewNamespacePathRendererType { get; }

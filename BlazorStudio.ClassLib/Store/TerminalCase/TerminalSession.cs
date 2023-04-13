@@ -208,42 +208,45 @@ public class TerminalSession
             
             HasExecutingProcess = true;
             DispatchNewStateKey();
-            
+
             try
             {
-                await command.Observe(_commandCancellationTokenSource.Token).ForEachAsync(cmdEvent =>
-                {
-                    switch (cmdEvent)
+                await command
+                    .Observe(_commandCancellationTokenSource.Token)
+                    .ForEachAsync(cmdEvent =>
                     {
-                        case StartedCommandEvent started:
-                            _standardOutBuilderMap[terminalCommandKey]
-                                .AppendLine($"Process started; ID: {started.ProcessId}");
-                        
-                            DispatchNewStateKey();
-                            break;
-                        case StandardOutputCommandEvent stdOut:
-                            _standardOutBuilderMap[terminalCommandKey]
-                                .AppendLine($"Out> {stdOut.Text}");
-                        
-                            DispatchNewStateKey();
-                            break;
-                        case StandardErrorCommandEvent stdErr:
-                            _standardOutBuilderMap[terminalCommandKey]
-                                .AppendLine($"Err> {stdErr.Text}");
-                        
-                            DispatchNewStateKey();
-                            break;
-                        case ExitedCommandEvent exited:
-                            _standardOutBuilderMap[terminalCommandKey]
-                                .AppendLine($"Process exited; Code: {exited.ExitCode}");
+                        switch (cmdEvent)
+                        {
+                            case StartedCommandEvent started:
+                                _standardOutBuilderMap[terminalCommandKey]
+                                    .AppendLine($"Process started; ID: {started.ProcessId}");
 
-                            DispatchNewStateKey();
-                            break;
-                    }
-                });
+                                DispatchNewStateKey();
+                                break;
+                            case StandardOutputCommandEvent stdOut:
+                                _standardOutBuilderMap[terminalCommandKey]
+                                    .AppendLine($"Out> {stdOut.Text}");
+
+                                DispatchNewStateKey();
+                                break;
+                            case StandardErrorCommandEvent stdErr:
+                                _standardOutBuilderMap[terminalCommandKey]
+                                    .AppendLine($"Err> {stdErr.Text}");
+
+                                DispatchNewStateKey();
+                                break;
+                            case ExitedCommandEvent exited:
+                                _standardOutBuilderMap[terminalCommandKey]
+                                    .AppendLine($"Process exited; Code: {exited.ExitCode}");
+
+                                DispatchNewStateKey();
+                                break;
+                        }
+                    });
             }
             finally
             {
+                _hasTerminalCommandConsumer = false;
                 HasExecutingProcess = false;
                 DispatchNewStateKey();
             
@@ -267,68 +270,6 @@ public class TerminalSession
                 }
             }
         }
-        
-        // Pipe.ToDelegate
-        //
-        // {
-        //     {
-        //         
-        //     
-        //         command
-        //             .WithStandardErrorPipe(
-        //                 PipeTarget.ToDelegate(text =>
-        //                 {
-        //                     _standardOutBuilderMap[terminalCommandKey]
-        //                         .Append(text);
-        //
-        //                     DispatchNewStateKey();
-        //                 }))
-        //             .WithStandardOutputPipe(PipeTarget.ToDelegate(text =>
-        //             {
-        //                 _standardOutBuilderMap[terminalCommandKey]
-        //                     .Append(text);
-        //
-        //                 DispatchNewStateKey();
-        //             }));
-        //     }
-        //
-        //     _standardOutBuilderMap.TryAdd(
-        //         terminalCommand.TerminalCommandKey,
-        //         new StringBuilder());
-        //
-        //     HasExecutingProcess = true;
-        //     DispatchNewStateKey();
-        //
-        //     try
-        //     {
-        //         var result = await command.ExecuteAsync(
-        //             _commandCancellationTokenSource.Token);
-        //     }
-        //     finally
-        //     {
-        //         HasExecutingProcess = false;
-        //         DispatchNewStateKey();
-        //
-        //         if (terminalCommand.ContinueWith is not null)
-        //         {
-        //             var continueWith = terminalCommand.ContinueWith;
-        //     
-        //             var backgroundTask = new BackgroundTask(
-        //                 async cancellationToken =>
-        //                 {
-        //                     await continueWith.Invoke();
-        //                 },
-        //                 "TerminalCommand.ContinueWithTask",
-        //                 "TODO: Describe this task",
-        //                 false,
-        //                 _ =>  Task.CompletedTask,
-        //                 _dispatcher,
-        //                 CancellationToken.None);
-        //
-        //             _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
-        //         }
-        //     }
-        // }
         
         goto doConsumeLabel;
     }
