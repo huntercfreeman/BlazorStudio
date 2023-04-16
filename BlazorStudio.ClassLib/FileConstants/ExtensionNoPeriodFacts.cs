@@ -1,4 +1,5 @@
-﻿using BlazorTextEditor.RazorLib.Analysis.CSharp.SyntaxActors;
+﻿using BlazorTextEditor.RazorLib.Analysis.C.SyntaxActors;
+using BlazorTextEditor.RazorLib.Analysis.CSharp.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.Css.Decoration;
 using BlazorTextEditor.RazorLib.Analysis.Css.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.FSharp.SyntaxActors;
@@ -34,6 +35,10 @@ public static class ExtensionNoPeriodFacts
     public const string TYPE_SCRIPT = "ts";
     public const string MARK_DOWN = "md";
     public const string F_SHARP = "fs";
+    public const string C = "c";
+    public const string H = "h";
+    public const string CPP = "cpp";
+    public const string HPP = "hpp";
 
     public static ILexer GetLexer(string extensionNoPeriod) => extensionNoPeriod switch
     {
@@ -49,6 +54,10 @@ public static class ExtensionNoPeriodFacts
         JSON => new TextEditorJsonLexer(),
         TYPE_SCRIPT => new TextEditorTypeScriptLexer(),
         F_SHARP => new TextEditorFSharpLexer(),
+        C => new TextEditorCLexer(),
+        H => new TextEditorCLexer(),
+        CPP => new TextEditorCLexer(),
+        HPP => new TextEditorCLexer(),
         _ => new TextEditorLexerDefault(),
     };
 
@@ -66,6 +75,10 @@ public static class ExtensionNoPeriodFacts
         JSON => new TextEditorJsonDecorationMapper(),
         TYPE_SCRIPT => new GenericDecorationMapper(),
         F_SHARP => new GenericDecorationMapper(),
+        C => new GenericDecorationMapper(),
+        H => new GenericDecorationMapper(),
+        CPP => new GenericDecorationMapper(),
+        HPP => new GenericDecorationMapper(),
         _ => new TextEditorDecorationMapperDefault(),
     };
 }

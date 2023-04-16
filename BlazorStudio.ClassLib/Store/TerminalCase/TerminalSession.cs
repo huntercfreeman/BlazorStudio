@@ -1,13 +1,17 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Reactive.Linq;
 using System.Text;
 using BlazorCommon.RazorLib.BackgroundTaskCase;
+using BlazorCommon.RazorLib.ComponentRenderers;
+using BlazorCommon.RazorLib.ComponentRenderers.Types;
+using BlazorCommon.RazorLib.Notification;
+using BlazorCommon.RazorLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.State;
+using BlazorTextEditor.RazorLib.Model;
+using BlazorTextEditor.RazorLib.ViewModel;
 using CliWrap;
-using CliWrap.Buffered;
 using CliWrap.EventStream;
 using Fluxor;
 
@@ -18,6 +22,7 @@ public class TerminalSession
     private readonly IDispatcher _dispatcher;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+    private readonly IBlazorCommonComponentRenderers _blazorCommonComponentRenderers;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
     private readonly SemaphoreSlim _lifeOfTerminalCommandConsumerSemaphoreSlim = new(1, 1);
     private bool _hasTerminalCommandConsumer;
@@ -34,16 +39,21 @@ public class TerminalSession
         string? workingDirectoryAbsoluteFilePathString, 
         IDispatcher dispatcher,
         IFileSystemProvider fileSystemProvider,
-        IBackgroundTaskQueue backgroundTaskQueue)
+        IBackgroundTaskQueue backgroundTaskQueue,
+        IBlazorCommonComponentRenderers blazorCommonComponentRenderers)
     {
         _dispatcher = dispatcher;
         _fileSystemProvider = fileSystemProvider;
         _backgroundTaskQueue = backgroundTaskQueue;
+        _blazorCommonComponentRenderers = blazorCommonComponentRenderers;
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
     }
 
     public TerminalSessionKey TerminalSessionKey { get; init; } = 
         TerminalSessionKey.NewTerminalSessionKey();
+    
+    public TextEditorModelKey TextEditorModelKey => new(TerminalSessionKey.Guid);
+    public TextEditorViewModelKey TextEditorViewModelKey => new(TerminalSessionKey.Guid);
 
     public string? WorkingDirectoryAbsoluteFilePathString { get; private set; }
     
@@ -179,6 +189,14 @@ public class TerminalSession
         if (terminalCommand.ChangeWorkingDirectoryTo is not null)
             WorkingDirectoryAbsoluteFilePathString = terminalCommand.ChangeWorkingDirectoryTo;
 
+        if (terminalCommand.TargetFilePath == "cd" &&
+            terminalCommand.Arguments.Any())
+        {
+            // TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
+            WorkingDirectoryAbsoluteFilePathString = terminalCommand.Arguments.ElementAt(0);
+        }
+            
+        
         _terminalCommandsHistory.Add(terminalCommand);
         ActiveTerminalCommand = terminalCommand;
 
@@ -243,6 +261,26 @@ public class TerminalSession
                                 break;
                         }
                     });
+            }
+            catch (Exception e)
+            {
+                var notificationRecord = new NotificationRecord(
+                    NotificationKey.NewNotificationKey(), 
+                    "Terminal Exception",
+                    _blazorCommonComponentRenderers.ErrorNotificationRendererType,
+                    new Dictionary<string, object?>
+                    {
+                        {
+                            nameof(IErrorNotificationRendererType.Message),
+                            e.ToString()
+                        }
+                    },
+                    TimeSpan.FromSeconds(10),
+                    IErrorNotificationRendererType.CSS_CLASS_STRING);
+                
+                _dispatcher.Dispatch(
+                    new NotificationRecordsCollection.RegisterAction(
+                        notificationRecord));
             }
             finally
             {

@@ -6,7 +6,6 @@ using BlazorStudio.ClassLib.DotNet;
 using BlazorStudio.ClassLib.DotNet.CSharp;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Namespaces;
-using BlazorStudio.ClassLib.TreeViewImplementations.Helper;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 

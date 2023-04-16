@@ -1,10 +1,20 @@
+using System.Collections.Immutable;
 using System.Text;
+using BlazorCommon.RazorLib.ComponentRenderers;
+using BlazorCommon.RazorLib.ComponentRenderers.Types;
+using BlazorCommon.RazorLib.Keyboard;
+using BlazorCommon.RazorLib.Notification;
 using BlazorStudio.ClassLib.Html;
 using BlazorStudio.ClassLib.State;
 using BlazorStudio.ClassLib.Store.TerminalCase;
+using BlazorTextEditor.RazorLib;
+using BlazorTextEditor.RazorLib.Cursor;
+using BlazorTextEditor.RazorLib.HelperComponents;
+using BlazorTextEditor.RazorLib.Model;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Terminal;
 
@@ -14,6 +24,15 @@ public partial class TerminalOutputDisplay : FluxorComponent
     private IStateSelection<TerminalSessionsState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
     [Inject]
     private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
+    // TODO: Don't inject TerminalSessionsStateWrap. It causes too many unnecessary re-renders
+    [Inject]
+    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
+    [Inject]
+    private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
 
     /// <summary>
     /// <see cref="TerminalSessionKey"/> is used to narrow down the terminal
@@ -44,8 +63,37 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
                 return null;
             });
-        
+
         base.OnInitialized();
+    }
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        var terminalSession = TerminalSessionsStateSelection.Value;
+
+        if (terminalSession is not null)
+        {
+            var textEditorModel = TextEditorService
+                .ModelFindOrDefault(terminalSession.TextEditorModelKey);
+
+            if (textEditorModel is null)
+            {
+                TextEditorService.ModelRegisterTemplatedModel(
+                    terminalSession.TextEditorModelKey,
+                    WellKnownModelKind.TerminalGeneric,
+                    terminalSession.TerminalSessionKey.DisplayName
+                    ?? "__terminal-display-name-fallback__",
+                    DateTime.UtcNow,
+                    "TERMINAL",
+                    string.Empty);
+                
+                TextEditorService.ViewModelRegister(
+                    terminalSession.TextEditorViewModelKey,
+                    terminalSession.TextEditorModelKey);
+            }
+        }
+        
+        base.OnAfterRender(firstRender);
     }
 
     private MarkupString GetAllTextEscaped(string value)
@@ -94,5 +142,59 @@ public partial class TerminalOutputDisplay : FluxorComponent
             outputBuilder.Append(input.EscapeHtml() + "<br />");
 
         return (MarkupString)(outputBuilder.ToString());
+    }
+
+    private async Task TextEditorAfterOnKeyDownAsync(
+        TextEditorModel textEditor,
+        ImmutableArray<TextEditorCursorSnapshot> cursorSnapshots,
+        KeyboardEventArgs keyboardEventArgs,
+        Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)
+    {
+        if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE ||
+            keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.CARRIAGE_RETURN_CODE)
+        {
+            var text = textEditor.GetAllText();
+            textEditor.SetContent(string.Empty);
+
+            var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+                TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            
+            var whitespace = new[]
+            {
+                KeyboardKeyFacts.WhitespaceCharacters.SPACE,
+                KeyboardKeyFacts.WhitespaceCharacters.TAB,
+                KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE,
+                KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN,
+            };
+
+            var indexOfFirstWordEndingExclusive = text.IndexOfAny(whitespace);
+
+            var targetFileName = text.Substring(
+                0,
+                indexOfFirstWordEndingExclusive);
+
+            if (targetFileName.StartsWith('.'))
+            {
+                targetFileName = (generalTerminalSession.WorkingDirectoryAbsoluteFilePathString ?? string.Empty) +
+                                 targetFileName;
+            }
+
+            var arguments = text
+                .Substring(indexOfFirstWordEndingExclusive + 1)
+                .Split(whitespace)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToArray();
+
+            var terminalCommand = new TerminalCommand(
+                TerminalCommandKey.NewTerminalCommandKey(), 
+                targetFileName,
+                arguments,
+                null,
+                CancellationToken.None,
+                () => Task.CompletedTask);
+        
+            await generalTerminalSession
+                .EnqueueCommandAsync(terminalCommand);
+        }
     }
 }

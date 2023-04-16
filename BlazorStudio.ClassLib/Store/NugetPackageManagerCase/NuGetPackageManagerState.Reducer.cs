@@ -1,10 +1,6 @@
-﻿using System.Collections.Immutable;
-using BlazorStudio.ClassLib.DotNet;
-using BlazorStudio.ClassLib.Nuget;
-using Fluxor;
-using Microsoft.CodeAnalysis;
+﻿using Fluxor;
 
-namespace BlazorStudio.ClassLib.Store.NuGetPackageManagerCase;
+namespace BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 
 public partial record NuGetPackageManagerState
 {

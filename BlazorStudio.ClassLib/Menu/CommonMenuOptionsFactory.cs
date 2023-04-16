@@ -9,7 +9,6 @@ using BlazorStudio.ClassLib.Clipboard;
 using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.ComponentRenderers.Types;
-using BlazorStudio.ClassLib.DotNet;
 using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;

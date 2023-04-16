@@ -3,7 +3,6 @@ using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.ComponentRenderers.Types;
 using BlazorStudio.ClassLib.DotNet.CSharp;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Nuget;
 
 namespace BlazorStudio.ClassLib.TreeViewImplementations;
 

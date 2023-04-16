@@ -119,14 +119,14 @@ public class EditorState
                 inputFileAbsoluteFilePathString);
 
             if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
-                blazorStudioComponentRenderers.BlazorCommonComponentRenderers.BooleanPromptOrCancelRendererType is not null)
+                blazorStudioComponentRenderers.BooleanPromptOrCancelRendererType is not null)
             {
                 var notificationInformativeKey = NotificationKey.NewNotificationKey();
                 
                 var notificationInformative  = new NotificationRecord(
                     notificationInformativeKey, 
                     "File contents were modified on disk",
-                    blazorStudioComponentRenderers.BlazorCommonComponentRenderers.BooleanPromptOrCancelRendererType,
+                    blazorStudioComponentRenderers.BooleanPromptOrCancelRendererType,
                     new Dictionary<string, object?>
                     {
                         {

@@ -10,7 +10,7 @@ using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorStudio.ClassLib.DotNet;
 using BlazorStudio.ClassLib.Nuget;
 using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
-using BlazorStudio.ClassLib.Store.NuGetPackageManagerCase;
+using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
