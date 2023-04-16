@@ -18,7 +18,7 @@ using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Nuget;
 using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
-using BlazorStudio.ClassLib.Store.NuGetPackageManagerCase;
+using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;

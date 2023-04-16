@@ -10,6 +10,7 @@ using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.ComponentRenderers;
 using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.FileSystem.Classes;
+using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
@@ -59,6 +60,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
+    private const string FOLDER_EXPLORER_ABSOLUTE_PATH_STRING = @"C:\Users\hunte\Repos\Aaa";
+    
     public static readonly TreeViewStateKey TreeViewFolderExplorerContentStateKey =
         TreeViewStateKey.NewTreeViewStateKey();
 
@@ -198,6 +201,17 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
                 FolderExplorerContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);
+    }
+    
+    private async Task SetFolderExplorerOnClickAsync()
+    {
+        var absoluteFilePath = new AbsoluteFilePath(
+            FOLDER_EXPLORER_ABSOLUTE_PATH_STRING, 
+            true,
+            EnvironmentProvider);
+
+        Dispatcher.Dispatch(
+            new SetFolderExplorerStateAction(absoluteFilePath));
     }
 
     public void Dispose()

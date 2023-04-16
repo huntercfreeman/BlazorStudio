@@ -24,6 +24,13 @@
                 <ButtonDisplay OnClickFunc="async () => await FolderExplorerState.ShowInputFileAsync(Dispatcher)">
                     Open Folder
                 </ButtonDisplay>
+                
+                <hr/>
+                
+                <button class="bcrl_button"
+                        @onclick="SetFolderExplorerOnClickAsync">
+                    Open Adhoc Folder
+                </button>
             }
             else
             {

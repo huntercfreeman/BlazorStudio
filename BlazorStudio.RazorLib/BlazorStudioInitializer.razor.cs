@@ -1,4 +1,5 @@
 ﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
+using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Icons.Codicon;
 using BlazorCommon.RazorLib.Store.ThemeCase;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
@@ -35,6 +36,8 @@ public partial class BlazorStudioInitializer : ComponentBase
     private BlazorTextEditorOptions BlazorTextEditorOptions { get; set; } = null!;
     [Inject]
     private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
+    [Inject]
+    private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
     
     protected override void OnInitialized()
     {
@@ -54,7 +57,8 @@ public partial class BlazorStudioInitializer : ComponentBase
                 null, 
                 Dispatcher,
                 FileSystemProvider,
-                BackgroundTaskQueue)
+                BackgroundTaskQueue,
+                BlazorCommonComponentRenderers)
             {
                 TerminalSessionKey = terminalSessionKey
             };
@@ -66,24 +70,6 @@ public partial class BlazorStudioInitializer : ComponentBase
         InitializePanelTabs();
         
         base.OnInitialized();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        // This block is so I can work on the Solution Explorer UI
-        // without clicking through the app to open a solution
-        {
-            var testSolutionExplorer = new AbsoluteFilePath(
-                @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp.sln",
-                false,
-                EnvironmentProvider);
-        
-            if (await FileSystemProvider.File.ExistsAsync(testSolutionExplorer.GetAbsoluteFilePathString()))
-            {
-            }
-        }
-        
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private void InitializePanelTabs()
@@ -109,10 +95,6 @@ public partial class BlazorStudioInitializer : ComponentBase
             leftPanel.PanelRecordKey,
             solutionExplorerPanelTab));
         
-        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
-            leftPanel.PanelRecordKey,
-            solutionExplorerPanelTab.PanelTabKey));
-        
         var gitChangesPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             leftPanel.ElementDimensions,
@@ -136,6 +118,10 @@ public partial class BlazorStudioInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             leftPanel.PanelRecordKey,
             folderExplorerPanelTab));
+        
+        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
+            leftPanel.PanelRecordKey,
+            folderExplorerPanelTab.PanelTabKey));
     }
     
     private void InitializeRightPanelTabs()
@@ -207,6 +193,10 @@ public partial class BlazorStudioInitializer : ComponentBase
             bottomPanel.PanelRecordKey,
             terminalPanelTab));
         
+        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
+            bottomPanel.PanelRecordKey,
+            terminalPanelTab.PanelTabKey));
+        
         var nuGetPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
@@ -218,10 +208,6 @@ public partial class BlazorStudioInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             bottomPanel.PanelRecordKey,
             nuGetPanelTab));
-        
-        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
-            bottomPanel.PanelRecordKey,
-            nuGetPanelTab.PanelTabKey));
         
         var unitTestsPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),

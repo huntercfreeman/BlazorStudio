@@ -53,6 +53,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
     
+    private const string SOLUTION_EXPLORER_ABSOLUTE_PATH_STRING = @"C:\Users\hunte\Repos\TestSolutionParser\TestSolutionParser.sln";
+    
     public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();
     
@@ -60,7 +62,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
-    private string _solutionExplorerAbsolutePathString = @"C:\Users\hunte\Repos\TestSolutionParser\TestSolutionParser.sln";
     private bool _disposed;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
