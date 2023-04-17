@@ -38,7 +38,6 @@ public class BlazorStudioFileSystemTestingBase
             null,
             null,
             null,
-            null,
             null));
 
         var shouldInitializeFluxor = false;
