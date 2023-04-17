@@ -1,13 +1,13 @@
 ﻿namespace BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 
-public class NumericLiteralToken : ISyntaxToken
+public class CommentSingleLineToken : ISyntaxToken
 {
-    public NumericLiteralToken(
+    public CommentSingleLineToken(
         BlazorStudioTextSpan blazorStudioTextSpan)
     {
         BlazorStudioTextSpan = blazorStudioTextSpan;
     }
 
     public BlazorStudioTextSpan BlazorStudioTextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.NumericLiteralToken;
+    public SyntaxKind SyntaxKind => SyntaxKind.CommentSingleLineToken;
 }
