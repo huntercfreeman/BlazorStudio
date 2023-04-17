@@ -2,6 +2,7 @@
 
 public enum SyntaxKind
 {
+    // Tokens
     CommentMultiLineToken,
     CommentSingleLineToken,
     IdentifierToken,
@@ -11,4 +12,12 @@ public enum SyntaxKind
     TriviaToken,
     PreprocessorDirectiveToken,
     LibraryReferenceToken,
+    PlusToken,
+    
+    // Nodes
+    NumericLiteralExpressionNode,
+    NumericThreePartExpressionNode,
+    VariableAssignmentExpressionNode,
+    ParenthesizedExpressionNode,
+    OperatorAdditionNode
 }

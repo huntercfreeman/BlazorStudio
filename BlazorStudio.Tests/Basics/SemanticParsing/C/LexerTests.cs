@@ -272,4 +272,37 @@ int main()
 		    identifierTokens,
 		    testDataHelloWorld);
     }
+    
+    [Fact]
+    public void SHOULD_LEX_PLUS_TOKENS()
+    {
+	    string testDataHelloWorld = @"#include <stdlib.h>
+#include <stdio.h>
+
+// C:\Users\hunte\Repos\Aaa\
+
+int main()
+{
+	int x = 10 + 32;
+
+	/*
+		A Multi-Line Comment
+	*/
+	
+	/* Another Multi-Line Comment */
+
+	printf(""%d"", x);
+}".ReplaceLineEndings("\n");
+
+	    var lexer = new Lexer(testDataHelloWorld);
+        
+	    lexer.Lex();
+        
+	    var plusTokens = lexer.SyntaxTokens
+		    .Where(x => x.SyntaxKind == SyntaxKind.PlusToken);
+        
+	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
+		    plusTokens,
+		    testDataHelloWorld);
+    }
 }

@@ -1,6 +1,9 @@
-﻿namespace BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
+﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 
-public interface ISyntaxNode
+namespace BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
+
+public interface ISyntaxNode : ISyntax
 {
-    
+    public ImmutableArray<ISyntax> Children { get; }
 }

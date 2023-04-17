@@ -71,6 +71,10 @@ public class Lexer
                     var identifierOrKeywordToken = ConsumeIdentifierOrKeyword();
                     _syntaxTokens.Add(identifierOrKeywordToken);
                     break;
+                case '+':
+                    var plusToken = ConsumePlus();
+                    _syntaxTokens.Add(plusToken);
+                    break;
                 case LexerFacts.STRING_LITERAL_START:
                     var stringLiteralToken = ConsumeStringLiteral();
                     _syntaxTokens.Add(stringLiteralToken);
@@ -322,5 +326,18 @@ public class Lexer
         libraryReferenceToken = libraryReferenceFactory.Invoke(
             textSpan);
         return true;
+    }
+    
+    private PlusToken ConsumePlus()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        _ = _stringWalker.ReadCharacter();
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+        
+        return new PlusToken(textSpan);
     }
 }

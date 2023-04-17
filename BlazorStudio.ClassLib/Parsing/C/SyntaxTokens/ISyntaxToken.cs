@@ -1,7 +1,6 @@
 ﻿namespace BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 
-public interface ISyntaxToken
+public interface ISyntaxToken : ISyntax
 {
     public BlazorStudioTextSpan BlazorStudioTextSpan { get; }
-    public SyntaxKind SyntaxKind { get; }
 }
