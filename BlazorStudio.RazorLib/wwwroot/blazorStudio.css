@@ -250,6 +250,7 @@ input[type="checkbox"]{
     height: calc(100% - var(--bcrl_tabs-bar-height));
     overflow-wrap: anywhere;
     overflow: auto;
+    font-family: monospace;
 }
 
 .bstudio_delete-file-form-display {
