@@ -41,6 +41,61 @@ public class Lexer
                     var numericLiteralToken = ConsumeNumericLiteral();
                     _syntaxTokens.Add(numericLiteralToken);
                     break;
+                case 'a':
+                case 'b':
+                case 'c':
+                case 'd':
+                case 'e':
+                case 'f':
+                case 'g':
+                case 'h':
+                case 'i':
+                case 'j':
+                case 'k':
+                case 'l':
+                case 'm':
+                case 'n':
+                case 'o':
+                case 'p':
+                case 'q':
+                case 'r':
+                case 's':
+                case 't':
+                case 'u':
+                case 'v':
+                case 'w':
+                case 'x':
+                case 'y':
+                case 'z':
+                case '_':
+                    var identifierOrKeywordToken = ConsumeIdentifierOrKeyword();
+                    _syntaxTokens.Add(identifierOrKeywordToken);
+                    break;
+                case LexerFacts.STRING_LITERAL_START:
+                    var stringLiteralToken = ConsumeStringLiteral();
+                    _syntaxTokens.Add(stringLiteralToken);
+                    break;
+                case LexerFacts.COMMENT_SINGLE_LINE_STARTING_CHAR:
+                    if (_stringWalker.PeekCharacter(1) == '/')
+                    {
+                        var commentSingleLineToken = ConsumeCommentSingleLine();
+                        _syntaxTokens.Add(commentSingleLineToken);
+                    }
+                    else
+                    {
+                        var commentMultiLineToken = ConsumeCommentMultiLine();
+                        _syntaxTokens.Add(commentMultiLineToken);
+                    }
+                    
+                    break;
+                case LexerFacts.PREPROCESSOR_DIRECTIVE_TRANSITION_CHAR:
+                    var preprocessorDirectiveToken = ConsumePreprocessorDirective();
+                    _syntaxTokens.Add(preprocessorDirectiveToken);
+                    
+                    if (TryConsumeLibraryReference(out var libraryReferenceToken))
+                        _syntaxTokens.Add(libraryReferenceToken);
+                    
+                    break;
                 default:
                     _ = _stringWalker.ReadCharacter();
                     break;
@@ -68,5 +123,204 @@ public class Lexer
             _stringWalker.PositionIndex);
         
         return new NumericLiteralToken(textSpan);
+    }
+    
+    private StringLiteralToken ConsumeStringLiteral()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        // Move past starting '"'
+        _ = _stringWalker.ReadCharacter();
+        
+        while (!_stringWalker.IsEof)
+        {
+            if (_stringWalker.CurrentCharacter == LexerFacts.STRING_LITERAL_END)
+                break;
+
+            _ = _stringWalker.ReadCharacter();
+        }
+        
+        // Move past ending '"'
+        _ = _stringWalker.ReadCharacter();
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+        
+        return new StringLiteralToken(textSpan);
+    }
+
+    private ISyntaxToken ConsumeIdentifierOrKeyword()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        while (!_stringWalker.IsEof)
+        {
+            if (char.IsWhiteSpace(_stringWalker.CurrentCharacter) ||
+                char.IsPunctuation(_stringWalker.CurrentCharacter) &&
+                    _stringWalker.CurrentCharacter != LexerFacts.Punctuation.UNDERSCORE_SPECIAL_CASE)
+            {
+                break;
+            }
+
+            _ = _stringWalker.ReadCharacter();
+        }
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+
+        var textValue = textSpan.GetText(_stringWalker.Content);
+        
+        if (LexerFacts.Keywords.ALL.Contains(textValue))
+        {
+            return new KeywordToken(textSpan);
+        }
+        
+        return new IdentifierToken(textSpan);
+    }
+    
+    private CommentSingleLineToken ConsumeCommentSingleLine()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        _ = _stringWalker.ReadRange(
+            LexerFacts.COMMENT_SINGLE_LINE_STARTING_SUBSTRING.Length);
+
+        while (!_stringWalker.IsEof)
+        {
+            if (_stringWalker.CurrentCharacter == LexerFacts.Whitespace.CARRIAGE_RETURN_CHAR ||
+                _stringWalker.CurrentCharacter == LexerFacts.Whitespace.LINE_FEED_CHAR)
+            {
+                break;
+            }
+
+            _ = _stringWalker.ReadCharacter();
+        }
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+
+        return new CommentSingleLineToken(textSpan);
+    }
+    
+    private CommentMultiLineToken ConsumeCommentMultiLine()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        _ = _stringWalker.ReadRange(
+            LexerFacts.COMMENT_MULTI_LINE_STARTING_SUBSTRING.Length);
+
+        while (!_stringWalker.IsEof)
+        {
+            if (_stringWalker.CurrentCharacter == LexerFacts.COMMENT_MULTI_LINE_ENDING_IDENTIFYING_CHAR &&
+                _stringWalker.PeekCharacter(1) == '/')
+            {
+                _ = _stringWalker.ReadRange(
+                    LexerFacts.COMMENT_MULTI_LINE_ENDING_SUBSTRING.Length);
+                
+                break;
+            }
+
+            _ = _stringWalker.ReadCharacter();
+        }
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+
+        return new CommentMultiLineToken(textSpan);
+    }
+    
+    private PreprocessorDirectiveToken ConsumePreprocessorDirective()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        // Move past the starting '#' transition character
+        _ = _stringWalker.ReadCharacter();
+
+        while (!_stringWalker.IsEof)
+        {
+            if (char.IsWhiteSpace(_stringWalker.CurrentCharacter))
+                break;
+
+            _ = _stringWalker.ReadCharacter();
+        }
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+
+        return new PreprocessorDirectiveToken(textSpan);
+    }
+    
+    private bool TryConsumeLibraryReference(
+        out LibraryReferenceToken? libraryReferenceToken)
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        // Move past the starting '#' transition character
+        _ = _stringWalker.ReadCharacter();
+
+        while (!_stringWalker.IsEof)
+        {
+            if (char.IsWhiteSpace(_stringWalker.CurrentCharacter))
+            {
+                _ = _stringWalker.ReadCharacter();
+                continue;
+            }
+            
+            break;
+        }
+
+        char characterToMatch;
+        Func<BlazorStudioTextSpan, LibraryReferenceToken> libraryReferenceFactory;
+
+        if (_stringWalker.CurrentCharacter == LexerFacts.LIBRARY_REFERENCE_ABSOLUTE_PATH_STARTING_CHAR)
+        {
+            characterToMatch = '>';
+            
+            libraryReferenceFactory = textSpan =>
+                new LibraryReferenceToken(
+                    textSpan,
+                    true);
+        }
+        else if (_stringWalker.CurrentCharacter == LexerFacts.LIBRARY_REFERENCE_RELATIVE_PATH_STARTING_CHAR)
+        {
+            characterToMatch = '"';
+            
+            libraryReferenceFactory = textSpan =>
+                new LibraryReferenceToken(
+                    textSpan,
+                    false);
+        }
+        else
+        {
+            _ = _stringWalker.BacktrackRange(
+                _stringWalker.PositionIndex - entryPositionIndex);
+            
+            libraryReferenceToken = null;
+            return false;
+        }
+        
+        while (!_stringWalker.IsEof)
+        {
+            if (_stringWalker.CurrentCharacter == characterToMatch)
+            {
+                _ = _stringWalker.ReadCharacter();
+                break;
+            }
+            
+            _ = _stringWalker.ReadCharacter();
+        }
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+
+        libraryReferenceToken = libraryReferenceFactory.Invoke(
+            textSpan);
+        return true;
     }
 }
