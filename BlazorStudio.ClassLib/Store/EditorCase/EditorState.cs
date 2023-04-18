@@ -154,7 +154,8 @@ public class EditorState
                                 
                                         textEditorService.ModelReload(
                                             textEditorKey,
-                                            content);
+                                            content,
+                                            fileLastWriteTime);
                                 
                                         await textEditorModel.ApplySyntaxHighlightingAsync();
                                     },
