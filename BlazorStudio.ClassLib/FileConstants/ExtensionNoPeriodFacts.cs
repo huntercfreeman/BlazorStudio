@@ -1,4 +1,5 @@
-﻿using BlazorTextEditor.RazorLib.Analysis.C.SyntaxActors;
+﻿using BlazorStudio.ClassLib.Parsing.C;
+using BlazorTextEditor.RazorLib.Analysis.C.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.CSharp.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.Css.Decoration;
 using BlazorTextEditor.RazorLib.Analysis.Css.SyntaxActors;
@@ -13,6 +14,7 @@ using BlazorTextEditor.RazorLib.Analysis.Razor.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.TypeScript.SyntaxActors;
 using BlazorTextEditor.RazorLib.Decoration;
 using BlazorTextEditor.RazorLib.Lexing;
+using BlazorTextEditor.RazorLib.Semantics;
 
 namespace BlazorStudio.ClassLib.FileConstants;
 
@@ -40,7 +42,8 @@ public static class ExtensionNoPeriodFacts
     public const string CPP = "cpp";
     public const string HPP = "hpp";
 
-    public static ILexer GetLexer(string extensionNoPeriod) => extensionNoPeriod switch
+    public static ILexer GetLexer(
+        string extensionNoPeriod) => extensionNoPeriod switch
     {
         HTML => new TextEditorHtmlLexer(),
         XML => new TextEditorHtmlLexer(),
@@ -61,7 +64,8 @@ public static class ExtensionNoPeriodFacts
         _ => new TextEditorLexerDefault(),
     };
 
-    public static IDecorationMapper GetDecorationMapper(string extensionNoPeriod) => extensionNoPeriod switch
+    public static IDecorationMapper GetDecorationMapper(
+        string extensionNoPeriod) => extensionNoPeriod switch
     {
         HTML => new TextEditorHtmlDecorationMapper(),
         XML => new TextEditorHtmlDecorationMapper(),
@@ -80,5 +84,27 @@ public static class ExtensionNoPeriodFacts
         CPP => new GenericDecorationMapper(),
         HPP => new GenericDecorationMapper(),
         _ => new TextEditorDecorationMapperDefault(),
+    };
+    
+    public static ISemanticModel? GetSemanticModel(
+        string extensionNoPeriod) => extensionNoPeriod switch
+    {
+        HTML => null,
+        XML => null,
+        C_SHARP_PROJECT => null,
+        C_SHARP_CLASS => null,
+        RAZOR_CODEBEHIND => null,
+        RAZOR_MARKUP => null,
+        CSHTML_CLASS => null,
+        CSS => null,
+        JAVA_SCRIPT => null,
+        JSON => null,
+        TYPE_SCRIPT => null,
+        F_SHARP => null,
+        C => new SemanticModelC(),
+        H => null,
+        CPP => null,
+        HPP => null,
+        _ => null,
     };
 }
