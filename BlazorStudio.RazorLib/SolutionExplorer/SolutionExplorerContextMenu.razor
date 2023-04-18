@@ -1,5 +1,5 @@
 ﻿@using BlazorCommon.RazorLib.Menu
 
-<CascadingValue Name="ReturnFocusToParentAction" Value="@(new Action(() => TreeViewCommandParameter.RestoreFocusToTreeView.Invoke()))">
+<CascadingValue Name="ReturnFocusToParentFuncAsync" Value="TreeViewCommandParameter.RestoreFocusToTreeView.Invoke">
     <MenuDisplay MenuRecord="GetMenuRecord(TreeViewCommandParameter)"/>
 </CascadingValue>

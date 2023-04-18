@@ -106,7 +106,7 @@ public class TerminalSession
         }
         finally
         {
-            // Task.Run was moved to after this Release otherwise deadlock
+            // BackgroundTask was moved to after this Release otherwise deadlock
             _lifeOfTerminalCommandConsumerSemaphoreSlim.Release();
         }
         

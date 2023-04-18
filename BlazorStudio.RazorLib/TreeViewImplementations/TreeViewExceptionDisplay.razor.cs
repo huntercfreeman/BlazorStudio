@@ -1,5 +1,5 @@
 ﻿using BlazorCommon.RazorLib.ComponentRenderers.Types;
-using BlazorCommon.RazorLib.WatchWindow.TreeViewImplementations;
+using BlazorCommon.RazorLib.WatchWindow.TreeViewClasses;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.TreeViewImplementations;

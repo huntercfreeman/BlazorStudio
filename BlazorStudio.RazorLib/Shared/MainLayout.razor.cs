@@ -98,14 +98,14 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void FontStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void FontStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)

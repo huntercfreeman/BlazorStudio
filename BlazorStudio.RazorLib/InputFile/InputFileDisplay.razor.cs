@@ -108,7 +108,21 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             FileSystemProvider,
             EnvironmentProvider,
             SetInputFileContentTreeViewRootFunc, 
-            () => Task.FromResult(SearchElementReference?.FocusAsync()),
+            async () =>
+            {
+                try
+                {
+                    if (SearchElementReference is not null)
+                        await SearchElementReference.Value.FocusAsync();
+                }
+                catch (Exception e)
+                {
+                    // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
+                    //             This bug is seemingly happening randomly. I have a suspicion
+                    //             that there are race-condition exceptions occurring with "FocusAsync"
+                    //             on an ElementReference.
+                }
+            },
             () => _searchMatchTuples,
             BackgroundTaskQueue);
         

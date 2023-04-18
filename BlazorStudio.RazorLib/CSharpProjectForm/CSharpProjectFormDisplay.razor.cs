@@ -96,16 +96,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         Dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
                 message,
-                afp =>
+                async afp =>
                 {
                     if (afp is null)
-                        return Task.CompletedTask;
+                        return;
 
                     _parentDirectoryName = afp.GetAbsoluteFilePathString();
 
-                    InvokeAsync(StateHasChanged);
-
-                    return Task.CompletedTask;
+                    await InvokeAsync(StateHasChanged);
                 },
                 afp =>
                 {

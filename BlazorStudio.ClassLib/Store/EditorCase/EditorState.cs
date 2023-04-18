@@ -103,6 +103,7 @@ public class EditorState
                 content,
                 ExtensionNoPeriodFacts.GetLexer(absoluteFilePath.ExtensionNoPeriod),
                 ExtensionNoPeriodFacts.GetDecorationMapper(absoluteFilePath.ExtensionNoPeriod),
+                ExtensionNoPeriodFacts.GetSemanticModel(absoluteFilePath.ExtensionNoPeriod),
                 null,
                 textEditorKey
             );
