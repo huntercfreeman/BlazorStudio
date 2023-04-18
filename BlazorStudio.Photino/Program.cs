@@ -13,27 +13,28 @@ namespace BlazorStudio.Photino
         static void Main(string[] args)
         {
             var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
+
             appBuilder.Services
                 .AddLogging();
-
+            
             appBuilder.Services.AddBlazorStudioRazorLibServices(true);
-
+            
             // The code:
             //     builder.Services.AddHostedService<QueuedHostedService>();
             //
             // is not working for the Photino Blazor app.
             // So manual starting of the service is done.
             appBuilder.Services.AddSingleton<QueuedHostedService>();
-            
-            // register root component
+
+            // register root component and selector
             appBuilder.RootComponents.Add<App>("app");
 
             var app = appBuilder.Build();
-
+            
             var queuedHostedService = app.Services.GetRequiredService<QueuedHostedService>();
 
             queuedHostedService.StartAsync(CancellationToken.None);
-            
+
             // customize window
             app.MainWindow
                 .SetIconFile("favicon.ico")
@@ -47,11 +48,11 @@ namespace BlazorStudio.Photino
 
             AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
             {
-                app.MainWindow.OpenAlertWindow("Fatal exception", error.ExceptionObject.ToString());
+                app.MainWindow.ShowMessage("Fatal exception", error.ExceptionObject.ToString());
             };
 
             app.Run();
-        }
 
+        }
     }
 }
