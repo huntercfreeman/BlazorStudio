@@ -71,16 +71,14 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         Dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
                 "Directory for new .NET Solution",
-                afp =>
+                async afp =>
                 {
                     if (afp is null)
-                        return Task.CompletedTask;
+                        return;
                     
                     _parentDirectoryName = afp.GetAbsoluteFilePathString();
                     
-                    InvokeAsync(StateHasChanged);
-
-                    return Task.CompletedTask;
+                    await InvokeAsync(StateHasChanged);
                 },
                 afp =>
                 {

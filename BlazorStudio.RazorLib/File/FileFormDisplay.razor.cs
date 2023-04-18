@@ -54,7 +54,17 @@ public partial class FileFormDisplay
             if (MenuOptionWidgetParameters is not null && 
                 _inputElementReference is not null)
             {
-                await _inputElementReference.Value.FocusAsync();
+                try
+                {
+                    await _inputElementReference.Value.FocusAsync();
+                }
+                catch (Exception e)
+                {
+                    // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
+                    //             This bug is seemingly happening randomly. I have a suspicion
+                    //             that there are race-condition exceptions occurring with "FocusAsync"
+                    //             on an ElementReference.
+                }
             }
         }
         

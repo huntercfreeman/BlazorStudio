@@ -45,9 +45,9 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
         base.OnInitialized();
     }
 
-    private void PanelsCollectionWrapOnStateChanged(object? sender, EventArgs e)
+    private async void PanelsCollectionWrapOnStateChanged(object? sender, EventArgs e)
     {
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     private void DispatchSetActivePanelTabActionOnClick()

@@ -168,19 +168,41 @@ public partial class BlazorTextEditorHeader : FluxorComponent
     /// <summary>
     /// TODO: Make this method abstracted into a component that takes care of the UI to show the dropdown and to restore focus when menu closed
     /// </summary>
-    private void RestoreFocusToButtonDisplayComponentFile()
+    private async Task RestoreFocusToButtonDisplayComponentFileAsync()
     {
-        _buttonDisplayComponentFile?.ButtonElementReference?
-            .FocusAsync();
+        try
+        {           
+            if (_buttonDisplayComponentFile?.ButtonElementReference is not null)
+            {
+                await _buttonDisplayComponentFile.ButtonElementReference.Value
+                    .FocusAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     /// <summary>
     /// TODO: Make this method abstracted into a component that takes care of the UI to show the dropdown and to restore focus when menu closed
     /// </summary>
-    private void RestoreFocusToButtonDisplayComponentAccount()
+    private async Task RestoreFocusToButtonDisplayComponentAccount()
     {
-        _buttonDisplayComponentAccount?.ButtonElementReference?
-            .FocusAsync();
+        try
+        {           
+            if (_buttonDisplayComponentAccount?.ButtonElementReference is not null)
+            {
+                await _buttonDisplayComponentAccount.ButtonElementReference.Value
+                    .FocusAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     private void OpenNewDotNetSolutionDialog()

@@ -24,7 +24,7 @@
                             
                             <ResizableColumn LeftElementDimensions="_sidebarElementDimensions"
                                              RightElementDimensions="_contentElementDimensions"
-                                             ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)"/>
+                                             ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged)"/>
                             
                             <InputFileContent ElementDimensions="_contentElementDimensions"
                                               SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm" />

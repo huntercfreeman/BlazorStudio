@@ -80,8 +80,18 @@ public partial class InputFileTopNavBar : ComponentBase
     {
         var localSearchElementReference = SearchElementReference;
 
-        if (localSearchElementReference is not null)
-            await localSearchElementReference.Value.FocusAsync();
+        try
+        {
+            if (localSearchElementReference is not null)
+                await localSearchElementReference.Value.FocusAsync();
+        }
+        catch (Exception e)
+        {
+            // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
+            //             This bug is seemingly happening randomly. I have a suspicion
+            //             that there are race-condition exceptions occurring with "FocusAsync"
+            //             on an ElementReference.
+        }
     }
 
     private async Task ChangeContentRootToOpenedTreeView(
@@ -147,9 +157,9 @@ public partial class InputFileTopNavBar : ComponentBase
         }
     }
     
-    private void HideInputFileEditAddress()
+    private async Task HideInputFileEditAddressAsync()
     {
         _showInputTextEditForAddress = false;
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 }

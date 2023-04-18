@@ -56,9 +56,20 @@ public partial class InputFileBottomControls : ComponentBase
             new InputFileState.RefreshCurrentSelectionAction(BackgroundTaskQueue));
     }
 
-    private void FocusSearchElementReferenceOnClick()
+    private async Task FocusSearchElementReferenceOnClickAsync()
     {
-        _searchElementReference?.FocusAsync();
+        try
+        {
+            if (_searchElementReference is not null)
+                await _searchElementReference.Value.FocusAsync();
+        }
+        catch (Exception e)
+        {
+            // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
+            //             This bug is seemingly happening randomly. I have a suspicion
+            //             that there are race-condition exceptions occurring with "FocusAsync"
+            //             on an ElementReference.
+        }
     }
     
     private void SelectInputFilePatternOnChange(ChangeEventArgs changeEventArgs)

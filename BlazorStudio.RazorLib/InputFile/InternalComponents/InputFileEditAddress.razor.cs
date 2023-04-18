@@ -11,7 +11,7 @@ public partial class InputFileEditAddress : ComponentBase
     [Parameter, EditorRequired]
     public Func<string, Task> OnFocusOutCallbackAsync { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action OnEscapeKeyDownCallback { get; set; } = null!;
+    public Func<Task> OnEscapeKeyDownCallbackAsync { get; set; } = null!;
 
     private string _editForAddressValue = string.Empty;
     private ElementReference? _inputTextEditForAddressElementReference;
@@ -24,14 +24,25 @@ public partial class InputFileEditAddress : ComponentBase
         base.OnInitialized();
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _inputTextEditForAddressElementReference?.FocusAsync();
+            try
+            {
+                if (_inputTextEditForAddressElementReference is not null)
+                    await _inputTextEditForAddressElementReference.Value.FocusAsync();
+            }
+            catch (Exception e)
+            {
+                // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
+                //             This bug is seemingly happening randomly. I have a suspicion
+                //             that there are race-condition exceptions occurring with "FocusAsync"
+                //             on an ElementReference.
+            }
         }
         
-        base.OnAfterRender(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task InputTextEditForAddressOnFocusOutAsync()
@@ -46,7 +57,7 @@ public partial class InputFileEditAddress : ComponentBase
         {
             _isCancelled = true;
             
-            OnEscapeKeyDownCallback.Invoke();
+            await OnEscapeKeyDownCallbackAsync.Invoke();
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {

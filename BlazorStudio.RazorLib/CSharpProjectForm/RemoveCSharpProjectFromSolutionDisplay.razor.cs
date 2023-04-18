@@ -42,8 +42,18 @@ public partial class RemoveCSharpProjectFromSolutionDisplay
             if (MenuOptionWidgetParameters is not null && 
                 _cancelButtonDisplay?.ButtonElementReference is not null)
             {
-                await _cancelButtonDisplay.ButtonElementReference.Value
-                    .FocusAsync();
+                try
+                {
+                    await _cancelButtonDisplay.ButtonElementReference.Value
+                        .FocusAsync();
+                }
+                catch (Exception e)
+                {
+                    // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
+                    //             This bug is seemingly happening randomly. I have a suspicion
+                    //             that there are race-condition exceptions occurring with "FocusAsync"
+                    //             on an ElementReference.
+                }
             }
         }
         

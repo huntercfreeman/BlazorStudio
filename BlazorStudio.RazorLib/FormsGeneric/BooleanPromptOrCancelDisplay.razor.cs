@@ -35,7 +35,17 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
         {
             if (_declineButtonDisplay?.ButtonElementReference is not null)
             {
-                await _declineButtonDisplay.ButtonElementReference.Value.FocusAsync();
+                try
+                {
+                    await _declineButtonDisplay.ButtonElementReference.Value.FocusAsync();
+                }
+                catch (Exception e)
+                {
+                    // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
+                    //             This bug is seemingly happening randomly. I have a suspicion
+                    //             that there are race-condition exceptions occurring with "FocusAsync"
+                    //             on an ElementReference.
+                }
             }
         }
         
