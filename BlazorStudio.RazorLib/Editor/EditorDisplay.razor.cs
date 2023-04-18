@@ -24,4 +24,10 @@ public partial class EditorDisplay : FluxorComponent
     
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
+    
+    private static readonly ImmutableArray<TextEditorHeaderButtonKind> TextEditorHeaderButtonKinds = 
+        Enum
+            .GetValues(typeof(TextEditorHeaderButtonKind))
+            .Cast<TextEditorHeaderButtonKind>()
+            .ToImmutableArray();
 }
