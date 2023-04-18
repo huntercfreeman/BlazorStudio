@@ -1,4 +1,5 @@
 ﻿using BlazorCommon.RazorLib.Dimensions;
+using BlazorCommon.RazorLib.Reactive;
 using BlazorCommon.RazorLib.Resize;
 using BlazorCommon.RazorLib.Store.DragCase;
 using BlazorStudio.ClassLib.Panel;
@@ -29,8 +30,11 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
         ? "bcrl_active"
         : string.Empty;
 
-    private readonly SemaphoreSlim _onMouseMoveSemaphoreSlim = new(1, 1);
-    private readonly TimeSpan _onMouseMoveDelay = TimeSpan.FromMilliseconds(25);
+    // TODO: The ValueTuple being used here needs to be made into a class likely as this is not nice to read
+    private readonly IThrottle<((MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), bool thinksLeftMouseButtonIsDown)> 
+        _onMouseMoveThrottle = 
+            new Throttle<((MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), bool thinksLeftMouseButtonIsDown)>(
+                TimeSpan.FromMilliseconds(25));
     
     private bool _thinksLeftMouseButtonIsDown;
     
@@ -195,36 +199,36 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
     private async Task DragEventHandlerScrollAsync(
         (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs) mouseEventArgsTuple)
     {
-        var success = await _onMouseMoveSemaphoreSlim
-            .WaitAsync(TimeSpan.Zero);
-    
-        if (!success)
+        var localThinksLeftMouseButtonIsDown = _thinksLeftMouseButtonIsDown;
+
+        if (!localThinksLeftMouseButtonIsDown)
             return;
-    
-        try
+        
+        var mostRecentEventArgs = await _onMouseMoveThrottle.FireAsync(
+            (mouseEventArgsTuple, localThinksLeftMouseButtonIsDown),
+            CancellationToken.None);
+
+        if (mostRecentEventArgs.isCancellationRequested)
+            return;
+
+        localThinksLeftMouseButtonIsDown = mostRecentEventArgs.tEventArgs.thinksLeftMouseButtonIsDown;
+        mouseEventArgsTuple = mostRecentEventArgs.tEventArgs.Item1;
+        
+        // Buttons is a bit flag
+        // '& 1' gets if left mouse button is held
+        if (localThinksLeftMouseButtonIsDown &&
+            (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
         {
-            // Buttons is a bit flag
-            // '& 1' gets if left mouse button is held
-            if (_thinksLeftMouseButtonIsDown &&
-                (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
-            {
-                ResizeHelper.Move(
-                    PanelTab.BeingDraggedDimensions,
-                    mouseEventArgsTuple.firstMouseEventArgs,
-                    mouseEventArgsTuple.secondMouseEventArgs);
-            }
-            else
-            {
-                _thinksLeftMouseButtonIsDown = false;
-                Dispatcher.Dispatch(new PanelsCollection.SetPanelDragEventArgsAction(null));
-                PanelTab.IsBeingDragged = false;
-            }
-    
-            await Task.Delay(_onMouseMoveDelay);
+            ResizeHelper.Move(
+                PanelTab.BeingDraggedDimensions,
+                mouseEventArgsTuple.firstMouseEventArgs,
+                mouseEventArgsTuple.secondMouseEventArgs);
         }
-        finally
+        else
         {
-            _onMouseMoveSemaphoreSlim.Release();
+            _thinksLeftMouseButtonIsDown = false;
+            Dispatcher.Dispatch(new PanelsCollection.SetPanelDragEventArgsAction(null));
+            PanelTab.IsBeingDragged = false;
         }
     }
 

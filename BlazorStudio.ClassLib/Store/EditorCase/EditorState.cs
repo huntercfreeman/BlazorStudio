@@ -81,15 +81,51 @@ public class EditorState
 
         var inputFileAbsoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
 
+        var textEditorModel = await GetOrCreateTextEditorModelAsync(
+            textEditorService,
+            fileSystemProvider,
+            absoluteFilePath,
+            inputFileAbsoluteFilePathString);
+        
+        await CheckIfContentsWereModifiedAsync(
+            dispatcher,
+            textEditorService,
+            blazorStudioComponentRenderers,
+            fileSystemProvider,
+            backgroundTaskQueue,
+            inputFileAbsoluteFilePathString,
+            textEditorModel);
+
+        var viewModel = GetOrCreateTextEditorViewModel(
+            absoluteFilePath,
+            shouldSetFocusToEditor,
+            dispatcher,
+            textEditorService,
+            fileSystemProvider,
+            backgroundTaskQueue,
+            textEditorModel,
+            inputFileAbsoluteFilePathString);
+
+        textEditorService.GroupAddViewModel(
+            EditorTextEditorGroupKey,
+            viewModel);
+        
+        textEditorService.GroupSetActiveViewModel(
+            EditorTextEditorGroupKey,
+            viewModel);
+    }
+
+    private static async Task<TextEditorModel> GetOrCreateTextEditorModelAsync(
+        ITextEditorService textEditorService,
+        IFileSystemProvider fileSystemProvider,
+        IAbsoluteFilePath absoluteFilePath,
+        string inputFileAbsoluteFilePathString)
+    {
         var textEditorModel = textEditorService
             .ResourceUriGetModelOrDefault(inputFileAbsoluteFilePathString);
-
-        var textEditorKey = textEditorModel?.ModelKey ?? TextEditorModelKey.Empty;
         
         if (textEditorModel is null)
         {
-            textEditorKey = TextEditorModelKey.NewTextEditorModelKey();
-
             var fileLastWriteTime = await fileSystemProvider.File.GetLastWriteTimeAsync(
                 inputFileAbsoluteFilePathString);
             
@@ -105,88 +141,109 @@ public class EditorState
                 ExtensionNoPeriodFacts.GetDecorationMapper(absoluteFilePath.ExtensionNoPeriod),
                 ExtensionNoPeriodFacts.GetSemanticModel(absoluteFilePath.ExtensionNoPeriod),
                 null,
-                textEditorKey
+                TextEditorModelKey.NewTextEditorModelKey()
             );
             
             textEditorService.ModelRegisterCustomModel(textEditorModel);
 
-            textEditorKey = textEditorModel.ModelKey;
-            
-            await textEditorModel.ApplySyntaxHighlightingAsync();
+            _ = Task.Run(async () =>
+                await textEditorModel.ApplySyntaxHighlightingAsync());
         }
-        else
+
+        return textEditorModel;
+    }
+
+    private static async Task CheckIfContentsWereModifiedAsync(
+        IDispatcher dispatcher,
+        ITextEditorService textEditorService,
+        IBlazorStudioComponentRenderers blazorStudioComponentRenderers,
+        IFileSystemProvider fileSystemProvider,
+        IBackgroundTaskQueue backgroundTaskQueue,
+        string inputFileAbsoluteFilePathString,
+        TextEditorModel textEditorModel)
+    {
+        var fileLastWriteTime = await fileSystemProvider.File.GetLastWriteTimeAsync(
+            inputFileAbsoluteFilePathString);
+
+        if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
+            blazorStudioComponentRenderers.BooleanPromptOrCancelRendererType is not null)
         {
-            var fileLastWriteTime = await fileSystemProvider.File.GetLastWriteTimeAsync(
-                inputFileAbsoluteFilePathString);
+            var notificationInformativeKey = NotificationKey.NewNotificationKey();
 
-            if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
-                blazorStudioComponentRenderers.BooleanPromptOrCancelRendererType is not null)
-            {
-                var notificationInformativeKey = NotificationKey.NewNotificationKey();
-                
-                var notificationInformative  = new NotificationRecord(
-                    notificationInformativeKey, 
-                    "File contents were modified on disk",
-                    blazorStudioComponentRenderers.BooleanPromptOrCancelRendererType,
-                    new Dictionary<string, object?>
+            var notificationInformative = new NotificationRecord(
+                notificationInformativeKey,
+                "File contents were modified on disk",
+                blazorStudioComponentRenderers.BooleanPromptOrCancelRendererType,
+                new Dictionary<string, object?>
+                {
                     {
-                        {
-                            nameof(IBooleanPromptOrCancelRendererType.Message), 
-                            "File contents were modified on disk"
-                        },
-                        {
-                            nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride), 
-                            "Reload"
-                        },
-                        {
-                            nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction), 
-                            new Action(() =>
-                            {
-                                var backgroundTask = new BackgroundTask(
-                                    async cancellationToken =>
-                                    {
-                                        dispatcher.Dispatch(
-                                            new NotificationRecordsCollection.DisposeAction(
-                                                notificationInformativeKey));
-                                    
-                                        var content = await fileSystemProvider.File
-                                            .ReadAllTextAsync(inputFileAbsoluteFilePathString);
-                                
-                                        textEditorService.ModelReload(
-                                            textEditorKey,
-                                            content);
-                                
-                                        await textEditorModel.ApplySyntaxHighlightingAsync();
-                                    },
-                                    "FileContentsWereModifiedOnDiskTask",
-                                    "TODO: Describe this task",
-                                    false,
-                                    _ =>  Task.CompletedTask,
-                                    dispatcher,
-                                    CancellationToken.None);
-
-                                backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
-                            })
-                        },
-                        {
-                            nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction), 
-                            new Action(() =>
-                            {
-                                dispatcher.Dispatch(
-                                    new NotificationRecordsCollection.DisposeAction(
-                                        notificationInformativeKey));
-                            })
-                        },
+                        nameof(IBooleanPromptOrCancelRendererType.Message),
+                        "File contents were modified on disk"
                     },
-                    TimeSpan.FromSeconds(20),
-                    null);
-        
-                dispatcher.Dispatch(
-                    new NotificationRecordsCollection.RegisterAction(
-                        notificationInformative));
-            }
-        }
+                    {
+                        nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride),
+                        "Reload"
+                    },
+                    {
+                        nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
+                        new Action(() =>
+                        {
+                            var backgroundTask = new BackgroundTask(
+                                async cancellationToken =>
+                                {
+                                    dispatcher.Dispatch(
+                                        new NotificationRecordsCollection.DisposeAction(
+                                            notificationInformativeKey));
 
+                                    var content = await fileSystemProvider.File
+                                        .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+
+                                    textEditorService.ModelReload(
+                                        textEditorModel.ModelKey,
+                                        content,
+                                        fileLastWriteTime);
+
+                                    await textEditorModel.ApplySyntaxHighlightingAsync();
+                                },
+                                "FileContentsWereModifiedOnDiskTask",
+                                "TODO: Describe this task",
+                                false,
+                                _ => Task.CompletedTask,
+                                dispatcher,
+                                CancellationToken.None);
+
+                            backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                        })
+                    },
+                    {
+                        nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction),
+                        new Action(() =>
+                        {
+                            dispatcher.Dispatch(
+                                new NotificationRecordsCollection.DisposeAction(
+                                    notificationInformativeKey));
+                        })
+                    },
+                },
+                TimeSpan.FromSeconds(20),
+                null);
+
+            dispatcher.Dispatch(
+                new NotificationRecordsCollection.RegisterAction(
+                    notificationInformative));
+        }
+    }
+    
+    private static TextEditorViewModelKey GetOrCreateTextEditorViewModel(
+        IAbsoluteFilePath absoluteFilePath,
+        bool shouldSetFocusToEditor,
+        IDispatcher dispatcher,
+        ITextEditorService textEditorService,
+        IFileSystemProvider fileSystemProvider,
+        IBackgroundTaskQueue backgroundTaskQueue,
+        TextEditorModel textEditorModel,
+        string? inputFileAbsoluteFilePathString)
+    {
         var viewModel = textEditorService
             .ModelGetViewModelsOrEmpty(textEditorModel.ModelKey)
             .FirstOrDefault();
@@ -196,11 +253,11 @@ public class EditorState
         if (viewModel is null)
         {
             viewModelKey = TextEditorViewModelKey.NewTextEditorViewModelKey();
-            
+
             textEditorService.ViewModelRegister(
                 viewModelKey,
-                textEditorKey);
-            
+                textEditorModel.ModelKey);
+
             textEditorService.ViewModelWith(
                 viewModelKey,
                 textEditorViewModel => textEditorViewModel with
@@ -214,19 +271,13 @@ public class EditorState
         {
             viewModel.ShouldSetFocusAfterNextRender = shouldSetFocusToEditor;
         }
-            
-        textEditorService.GroupAddViewModel(
-            EditorTextEditorGroupKey,
-            viewModelKey);
-        
-        textEditorService.GroupSetActiveViewModel(
-            EditorTextEditorGroupKey,
-            viewModelKey);
 
+        return viewModelKey;
+        
         void HandleOnSaveRequested(TextEditorModel innerTextEditor)
         {
             var innerContent = innerTextEditor.GetAllText();
-                
+
             var saveFileAction = new FileSystemState.SaveFileAction(
                 absoluteFilePath,
                 innerContent,
@@ -239,7 +290,7 @@ public class EditorState
                                 .GetLastWriteTimeAsync(
                                     inputFileAbsoluteFilePathString,
                                     cancellationToken);
-            
+
                             textEditorService.ModelSetResourceData(
                                 textEditorModel.ModelKey,
                                 textEditorModel.ResourceUri,
@@ -248,15 +299,15 @@ public class EditorState
                         "HandleOnSaveRequestedTask",
                         "TODO: Describe this task",
                         false,
-                        _ =>  Task.CompletedTask,
+                        _ => Task.CompletedTask,
                         dispatcher,
                         CancellationToken.None);
 
                     backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
                 });
-        
+
             dispatcher.Dispatch(saveFileAction);
-            
+
             innerTextEditor.ClearEditBlocks();
         }
     }

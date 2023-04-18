@@ -140,43 +140,45 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         {
             return;
         }
+        
+        var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
         var newDotNetSolutionCommand = new TerminalCommand(
             _newCSharpProjectTerminalCommandKey,
             localFormattedNewCSharpProjectCommand.targetFileName,
             localFormattedNewCSharpProjectCommand.arguments,
             localParentDirectoryName,
-            _newCSharpProjectCancellationTokenSource.Token);
-
-        var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            _newCSharpProjectCancellationTokenSource.Token,
+            async () =>
+            {
+                if (solutionNamespacePath is not null)
+                {
+                    var addExistingProjectToSolutionCommand = new TerminalCommand(
+                        _newCSharpProjectTerminalCommandKey,
+                        localFormattedAddExistingProjectToSolutionCommand.targetFileName,
+                        localFormattedAddExistingProjectToSolutionCommand.arguments,
+                        localParentDirectoryName,
+                        _newCSharpProjectCancellationTokenSource.Token,
+                        async () =>
+                        {
+                            Dispatcher.Dispatch(
+                                new DialogRecordsCollection.DisposeAction(
+                                    DialogRecord.DialogKey));
+                    
+                            await DotNetSolutionState.SetActiveSolutionAsync(
+                                solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                                FileSystemProvider,
+                                EnvironmentProvider,
+                                Dispatcher);
+                        });
+            
+                    await generalTerminalSession
+                        .EnqueueCommandAsync(addExistingProjectToSolutionCommand);
+                }
+            });
 
         await generalTerminalSession
             .EnqueueCommandAsync(newDotNetSolutionCommand);
-
-        if (solutionNamespacePath is not null)
-        {
-            var addExistingProjectToSolutionCommand = new TerminalCommand(
-                _newCSharpProjectTerminalCommandKey,
-                localFormattedAddExistingProjectToSolutionCommand.targetFileName,
-                localFormattedAddExistingProjectToSolutionCommand.arguments,
-                localParentDirectoryName,
-                _newCSharpProjectCancellationTokenSource.Token,
-                async () =>
-                {
-                    Dispatcher.Dispatch(
-                        new DialogRecordsCollection.DisposeAction(
-                            DialogRecord.DialogKey));
-                    
-                    await DotNetSolutionState.SetActiveSolutionAsync(
-                        solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                        FileSystemProvider,
-                        EnvironmentProvider,
-                        Dispatcher);
-                });
-            
-            await generalTerminalSession
-                .EnqueueCommandAsync(addExistingProjectToSolutionCommand);
-        }
     }
 }

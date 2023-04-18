@@ -53,7 +53,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
     
-    private const string SOLUTION_EXPLORER_ABSOLUTE_PATH_STRING = @"C:\Users\hunte\Repos\TestSolutionParser\TestSolutionParser.sln";
+    // For Windows: private const string SOLUTION_EXPLORER_ABSOLUTE_PATH_STRING = @"C:\Users\hunte\Repos\TestSolutionParser\TestSolutionParser.sln";
+    private const string SOLUTION_EXPLORER_ABSOLUTE_PATH_STRING = @"/home/hunter/Repos/Demos/BlazorCrudApp/BlazorCrudApp.sln";
     
     public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = 
         TreeViewStateKey.NewTreeViewStateKey();

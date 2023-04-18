@@ -24,8 +24,6 @@ public class TerminalSession
     private readonly IBackgroundTaskQueue _backgroundTaskQueue;
     private readonly IBlazorCommonComponentRenderers _blazorCommonComponentRenderers;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
-    private readonly SemaphoreSlim _lifeOfTerminalCommandConsumerSemaphoreSlim = new(1, 1);
-    private bool _hasTerminalCommandConsumer;
     private CancellationTokenSource _commandCancellationTokenSource = new();
 
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
@@ -85,42 +83,113 @@ public class TerminalSession
 
     public async Task EnqueueCommandAsync(TerminalCommand terminalCommand)
     {
-        _terminalCommandsConcurrentQueue.Enqueue(terminalCommand);
-
-        try
-        {
-            await _lifeOfTerminalCommandConsumerSemaphoreSlim.WaitAsync();
-
-            if (_hasTerminalCommandConsumer)
-            {
-                // Only 1 terminal command can run at a
-                // time foreach terminal session
-                //
-                // thereby only have 1 consumer
-                return;
-            }
-            else
-            {
-                _hasTerminalCommandConsumer = true;
-            }
-        }
-        finally
-        {
-            // BackgroundTask was moved to after this Release otherwise deadlock
-            _lifeOfTerminalCommandConsumerSemaphoreSlim.Release();
-        }
-        
-        // If a terminal is not executing a command
-        // it will 'dispose' of the consumer
-        //
-        // thereby a consumer will need to be
-        // made if there isn't one
-        //
-        // BackgroundTask as to not have a chance of blocking the UI thread?
         var backgroundTask = new BackgroundTask(
             async cancellationToken =>
             {
-                await ConsumeTerminalCommandsAsync();
+                if (terminalCommand.ChangeWorkingDirectoryTo is not null)
+                    WorkingDirectoryAbsoluteFilePathString = terminalCommand.ChangeWorkingDirectoryTo;
+
+                if (terminalCommand.TargetFilePath == "cd" &&
+                    terminalCommand.Arguments.Any())
+                {
+                    // TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
+                    WorkingDirectoryAbsoluteFilePathString = terminalCommand.Arguments.ElementAt(0);
+                }
+                
+                _terminalCommandsHistory.Add(terminalCommand);
+                ActiveTerminalCommand = terminalCommand;
+
+                var command = Cli.Wrap(terminalCommand.TargetFilePath);
+
+                if (terminalCommand.Arguments.Any())
+                    command = command.WithArguments(terminalCommand.Arguments);
+
+                if (terminalCommand.ChangeWorkingDirectoryTo is not null)
+                {
+                    command = command
+                        .WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
+                }
+                else if (WorkingDirectoryAbsoluteFilePathString is not null)
+                {
+                    command = command
+                        .WithWorkingDirectory(WorkingDirectoryAbsoluteFilePathString);
+                }
+
+                // Push-based event stream
+                {
+                    var terminalCommandKey = terminalCommand.TerminalCommandKey;
+                    
+                    _standardOutBuilderMap.TryAdd(
+                        terminalCommand.TerminalCommandKey,
+                        new StringBuilder());
+                    
+                    HasExecutingProcess = true;
+                    DispatchNewStateKey();
+
+                    try
+                    {
+                        await command
+                            .Observe(_commandCancellationTokenSource.Token)
+                            .ForEachAsync(cmdEvent =>
+                            {
+                                switch (cmdEvent)
+                                {
+                                    case StartedCommandEvent started:
+                                        _standardOutBuilderMap[terminalCommandKey]
+                                            .AppendLine($"Process started; ID: {started.ProcessId}");
+
+                                        DispatchNewStateKey();
+                                        break;
+                                    case StandardOutputCommandEvent stdOut:
+                                        _standardOutBuilderMap[terminalCommandKey]
+                                            .AppendLine($"Out> {stdOut.Text}");
+
+                                        DispatchNewStateKey();
+                                        break;
+                                    case StandardErrorCommandEvent stdErr:
+                                        _standardOutBuilderMap[terminalCommandKey]
+                                            .AppendLine($"Err> {stdErr.Text}");
+
+                                        DispatchNewStateKey();
+                                        break;
+                                    case ExitedCommandEvent exited:
+                                        _standardOutBuilderMap[terminalCommandKey]
+                                            .AppendLine($"Process exited; Code: {exited.ExitCode}");
+
+                                        DispatchNewStateKey();
+                                        break;
+                                }
+                            });
+                    }
+                    catch (Exception e)
+                    {
+                        var notificationRecord = new NotificationRecord(
+                            NotificationKey.NewNotificationKey(), 
+                            "Terminal Exception",
+                            _blazorCommonComponentRenderers.ErrorNotificationRendererType,
+                            new Dictionary<string, object?>
+                            {
+                                {
+                                    nameof(IErrorNotificationRendererType.Message),
+                                    e.ToString()
+                                }
+                            },
+                            TimeSpan.FromSeconds(10),
+                            IErrorNotificationRendererType.CSS_CLASS_STRING);
+                        
+                        _dispatcher.Dispatch(
+                            new NotificationRecordsCollection.RegisterAction(
+                                notificationRecord));
+                    }
+                    finally
+                    {
+                        HasExecutingProcess = false;
+                        DispatchNewStateKey();
+                    
+                        if (terminalCommand.ContinueWith is not null)
+                            await terminalCommand.ContinueWith.Invoke();
+                    }
+                }
             },
             "EnqueueCommandAsyncTask",
             "TODO: Describe this task",
@@ -155,161 +224,6 @@ public class TerminalSession
     {
         _commandCancellationTokenSource.Cancel();
         _commandCancellationTokenSource = new();
-    }
-    
-    private async Task ConsumeTerminalCommandsAsync()
-    {
-        // goto is used because the do-while or while loops would have
-        // hard to decipher predicates due to the double if for the semaphore
-        doConsumeLabel:
-        
-        if (!_terminalCommandsConcurrentQueue.TryDequeue(out var terminalCommand))
-        {
-            try
-            {
-                await _lifeOfTerminalCommandConsumerSemaphoreSlim.WaitAsync();
-
-                // duplicate inner if(TryDequeue) is for performance of not having to every loop
-                // await the semaphore
-                //
-                // await semaphore only if it seems like one should dispose of the consumer
-                // and then double check nothing was added in between those times
-                if (!_terminalCommandsConcurrentQueue.TryDequeue(out terminalCommand))
-                {
-                    _hasTerminalCommandConsumer = false;
-                    return;
-                }   
-            }
-            finally
-            {
-                _lifeOfTerminalCommandConsumerSemaphoreSlim.Release();
-            }
-        }
-
-        if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-            WorkingDirectoryAbsoluteFilePathString = terminalCommand.ChangeWorkingDirectoryTo;
-
-        if (terminalCommand.TargetFilePath == "cd" &&
-            terminalCommand.Arguments.Any())
-        {
-            // TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
-            WorkingDirectoryAbsoluteFilePathString = terminalCommand.Arguments.ElementAt(0);
-        }
-            
-        
-        _terminalCommandsHistory.Add(terminalCommand);
-        ActiveTerminalCommand = terminalCommand;
-
-        var command = Cli.Wrap(terminalCommand.TargetFilePath);
-
-        if (terminalCommand.Arguments.Any())
-            command = command.WithArguments(terminalCommand.Arguments);
-
-        if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-        {
-            command = command
-                .WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
-        }
-        else if (WorkingDirectoryAbsoluteFilePathString is not null)
-        {
-            command = command
-                .WithWorkingDirectory(WorkingDirectoryAbsoluteFilePathString);
-        }
-
-        // Push-based event stream
-        {
-            var terminalCommandKey = terminalCommand.TerminalCommandKey;
-            
-            _standardOutBuilderMap.TryAdd(
-                terminalCommand.TerminalCommandKey,
-                new StringBuilder());
-            
-            HasExecutingProcess = true;
-            DispatchNewStateKey();
-
-            try
-            {
-                await command
-                    .Observe(_commandCancellationTokenSource.Token)
-                    .ForEachAsync(cmdEvent =>
-                    {
-                        switch (cmdEvent)
-                        {
-                            case StartedCommandEvent started:
-                                _standardOutBuilderMap[terminalCommandKey]
-                                    .AppendLine($"Process started; ID: {started.ProcessId}");
-
-                                DispatchNewStateKey();
-                                break;
-                            case StandardOutputCommandEvent stdOut:
-                                _standardOutBuilderMap[terminalCommandKey]
-                                    .AppendLine($"Out> {stdOut.Text}");
-
-                                DispatchNewStateKey();
-                                break;
-                            case StandardErrorCommandEvent stdErr:
-                                _standardOutBuilderMap[terminalCommandKey]
-                                    .AppendLine($"Err> {stdErr.Text}");
-
-                                DispatchNewStateKey();
-                                break;
-                            case ExitedCommandEvent exited:
-                                _standardOutBuilderMap[terminalCommandKey]
-                                    .AppendLine($"Process exited; Code: {exited.ExitCode}");
-
-                                DispatchNewStateKey();
-                                break;
-                        }
-                    });
-            }
-            catch (Exception e)
-            {
-                var notificationRecord = new NotificationRecord(
-                    NotificationKey.NewNotificationKey(), 
-                    "Terminal Exception",
-                    _blazorCommonComponentRenderers.ErrorNotificationRendererType,
-                    new Dictionary<string, object?>
-                    {
-                        {
-                            nameof(IErrorNotificationRendererType.Message),
-                            e.ToString()
-                        }
-                    },
-                    TimeSpan.FromSeconds(10),
-                    IErrorNotificationRendererType.CSS_CLASS_STRING);
-                
-                _dispatcher.Dispatch(
-                    new NotificationRecordsCollection.RegisterAction(
-                        notificationRecord));
-            }
-            finally
-            {
-                _hasTerminalCommandConsumer = false;
-                HasExecutingProcess = false;
-                DispatchNewStateKey();
-            
-                if (terminalCommand.ContinueWith is not null)
-                {
-                    var continueWith = terminalCommand.ContinueWith;
-            
-                    var backgroundTask = new BackgroundTask(
-                        async cancellationToken =>
-                        {
-                            await continueWith.Invoke();
-                        },
-                        "TerminalCommand.ContinueWithTask",
-                        "TODO: Describe this task",
-                        false,
-                        _ =>  Task.CompletedTask,
-                        _dispatcher,
-                        CancellationToken.None);
-            
-                    _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
-                }
-            }
-        }
-        
-        goto doConsumeLabel;
     }
 
     private void DispatchNewStateKey()
