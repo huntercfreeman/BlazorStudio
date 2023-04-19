@@ -34,7 +34,7 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
     private readonly IThrottle<((MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), bool thinksLeftMouseButtonIsDown)> 
         _onMouseMoveThrottle = 
             new Throttle<((MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), bool thinksLeftMouseButtonIsDown)>(
-                TimeSpan.FromMilliseconds(25));
+                TimeSpan.FromMilliseconds(30));
     
     private bool _thinksLeftMouseButtonIsDown;
     
