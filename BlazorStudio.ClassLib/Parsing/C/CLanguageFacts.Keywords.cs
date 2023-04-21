@@ -2,7 +2,7 @@
 
 namespace BlazorStudio.ClassLib.Parsing.C;
 
-public partial class LexerFacts
+public partial class CLanguageFacts
 {
     public class Keywords
     {

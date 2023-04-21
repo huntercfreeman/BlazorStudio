@@ -121,7 +121,7 @@ public partial class BlazorStudioInitializer : ComponentBase
         
         Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
             leftPanel.PanelRecordKey,
-            solutionExplorerPanelTab.PanelTabKey));
+            folderExplorerPanelTab.PanelTabKey));
     }
     
     private void InitializeRightPanelTabs()

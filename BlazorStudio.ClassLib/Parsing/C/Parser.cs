@@ -23,6 +23,9 @@ public class Parser
                 case SyntaxKind.NumericLiteralToken:
                     ParseNumericLiteralToken((NumericLiteralToken)token);
                     break;
+                case SyntaxKind.LibraryReferenceToken:
+                    ParseLibraryReferenceToken((LibraryReferenceToken)token);
+                    break;
                 case SyntaxKind.PlusToken:
                     ParsePlusToken((PlusToken)token);
                     break;
@@ -37,18 +40,6 @@ public class Parser
         var literalNumericExpressionNode = new NumericLiteralExpressionNode(
             token);
         
-        /*
-         * Case A:
-         *     Empty Stack
-         * Case B:
-         *     _nodeStack.Pop() is of type which can accept a NumericLiteralExpressionNode Child
-         *         NumericThreePartExpressionNode # 4 + 2
-         *         VariableAssignmentExpressionNode # x = 2
-         *         ParenthesizedExpressionNode # (7)
-         * Case C:
-         *     _nodeStack.Pop() is of type which can NOT accept a NumericLiteralExpressionNode Child
-         */
-
         if (!_nodeStack.Any())
         {
             _nodeStack.Push(literalNumericExpressionNode);
@@ -87,18 +78,54 @@ public class Parser
         var operatorAdditionNode = new OperatorAdditionNode(
             token);
         
-        /*
-         * Case A:
-         *     Empty Stack
-         * Case B:
-         *     _nodeStack.Pop() is of type which can accept a OperatorAdditionNode Child
-         *         NumericThreePartExpressionNode # 4 + 2
-         *         NumericExpressionNode # x = +2
-         * Case C:
-         *     _nodeStack.Pop() is of type which can NOT accept a OperatorAdditionNode Child
-         *         
-         */
+        if (!_nodeStack.Any())
+        {
+            _nodeStack.Push(operatorAdditionNode);
+            return;
+        }
+        
+        var poppedNode = _nodeStack.Pop();
 
+        switch (poppedNode.SyntaxKind)
+        {
+            case SyntaxKind.NumericThreePartExpressionNode:
+            {
+                var numericThreePartExpressionNode = (NumericThreePartExpressionNode)poppedNode;
+
+                numericThreePartExpressionNode = new NumericThreePartExpressionNode(
+                    numericThreePartExpressionNode.LeftNumericExpressionNode,
+                    operatorAdditionNode,
+                    numericThreePartExpressionNode.RightNumericExpressionNode);
+
+                _nodeStack.Push(numericThreePartExpressionNode);
+
+                return;
+            }
+            default:
+            {
+                if (poppedNode is NumericExpressionNode numericExpressionNode)
+                {
+                    var numericThreePartExpressionNode = new NumericThreePartExpressionNode(
+                        numericExpressionNode,
+                        operatorAdditionNode,
+                        null);
+                    
+                    _nodeStack.Push(numericThreePartExpressionNode);
+
+                    return;
+                }
+
+                // TODO: Report a diagnostic and return?
+                throw new NotImplementedException();
+            }
+        }
+    }
+    
+    private void ParseLibraryReferenceToken(LibraryReferenceToken token)
+    {
+        var operatorAdditionNode = new OperatorAdditionNode(
+            token);
+        
         if (!_nodeStack.Any())
         {
             _nodeStack.Push(operatorAdditionNode);

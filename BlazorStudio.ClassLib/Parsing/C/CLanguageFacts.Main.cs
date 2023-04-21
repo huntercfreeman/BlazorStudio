@@ -1,6 +1,6 @@
 ﻿namespace BlazorStudio.ClassLib.Parsing.C;
 
-public partial class LexerFacts
+public partial class CLanguageFacts
 {
     public const char STRING_LITERAL_START = '"';
     public const char STRING_LITERAL_END = '"';
