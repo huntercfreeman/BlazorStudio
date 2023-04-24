@@ -19,5 +19,7 @@ public enum SyntaxKind
     NumericThreePartExpressionNode,
     VariableAssignmentExpressionNode,
     ParenthesizedExpressionNode,
-    OperatorAdditionNode
+    OperatorAdditionNode,
+    PreprocessorDirectiveNode,
+    LibraryReferenceNode,
 }

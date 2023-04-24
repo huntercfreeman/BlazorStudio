@@ -75,11 +75,11 @@ public class Lexer
                     var plusToken = ConsumePlus();
                     _syntaxTokens.Add(plusToken);
                     break;
-                case LexerFacts.STRING_LITERAL_START:
+                case CLanguageFacts.STRING_LITERAL_START:
                     var stringLiteralToken = ConsumeStringLiteral();
                     _syntaxTokens.Add(stringLiteralToken);
                     break;
-                case LexerFacts.COMMENT_SINGLE_LINE_STARTING_CHAR:
+                case CLanguageFacts.COMMENT_SINGLE_LINE_STARTING_CHAR:
                     if (_stringWalker.PeekCharacter(1) == '/')
                     {
                         var commentSingleLineToken = ConsumeCommentSingleLine();
@@ -92,12 +92,15 @@ public class Lexer
                     }
                     
                     break;
-                case LexerFacts.PREPROCESSOR_DIRECTIVE_TRANSITION_CHAR:
+                case CLanguageFacts.PREPROCESSOR_DIRECTIVE_TRANSITION_CHAR:
                     var preprocessorDirectiveToken = ConsumePreprocessorDirective();
                     _syntaxTokens.Add(preprocessorDirectiveToken);
                     
-                    if (TryConsumeLibraryReference(out var libraryReferenceToken))
+                    if (TryConsumeLibraryReference(out var libraryReferenceToken) &&
+                        libraryReferenceToken is not null)
+                    {
                         _syntaxTokens.Add(libraryReferenceToken);
+                    }
                     
                     break;
                 default:
@@ -138,7 +141,7 @@ public class Lexer
         
         while (!_stringWalker.IsEof)
         {
-            if (_stringWalker.CurrentCharacter == LexerFacts.STRING_LITERAL_END)
+            if (_stringWalker.CurrentCharacter == CLanguageFacts.STRING_LITERAL_END)
                 break;
 
             _ = _stringWalker.ReadCharacter();
@@ -162,7 +165,7 @@ public class Lexer
         {
             if (char.IsWhiteSpace(_stringWalker.CurrentCharacter) ||
                 char.IsPunctuation(_stringWalker.CurrentCharacter) &&
-                    _stringWalker.CurrentCharacter != LexerFacts.Punctuation.UNDERSCORE_SPECIAL_CASE)
+                    _stringWalker.CurrentCharacter != CLanguageFacts.Punctuation.UNDERSCORE_SPECIAL_CASE)
             {
                 break;
             }
@@ -176,7 +179,7 @@ public class Lexer
 
         var textValue = textSpan.GetText(_stringWalker.Content);
         
-        if (LexerFacts.Keywords.ALL.Contains(textValue))
+        if (CLanguageFacts.Keywords.ALL.Contains(textValue))
         {
             return new KeywordToken(textSpan);
         }
@@ -189,12 +192,12 @@ public class Lexer
         var entryPositionIndex = _stringWalker.PositionIndex;
         
         _ = _stringWalker.ReadRange(
-            LexerFacts.COMMENT_SINGLE_LINE_STARTING_SUBSTRING.Length);
+            CLanguageFacts.COMMENT_SINGLE_LINE_STARTING_SUBSTRING.Length);
 
         while (!_stringWalker.IsEof)
         {
-            if (_stringWalker.CurrentCharacter == LexerFacts.Whitespace.CARRIAGE_RETURN_CHAR ||
-                _stringWalker.CurrentCharacter == LexerFacts.Whitespace.LINE_FEED_CHAR)
+            if (_stringWalker.CurrentCharacter == CLanguageFacts.Whitespace.CARRIAGE_RETURN_CHAR ||
+                _stringWalker.CurrentCharacter == CLanguageFacts.Whitespace.LINE_FEED_CHAR)
             {
                 break;
             }
@@ -214,15 +217,15 @@ public class Lexer
         var entryPositionIndex = _stringWalker.PositionIndex;
         
         _ = _stringWalker.ReadRange(
-            LexerFacts.COMMENT_MULTI_LINE_STARTING_SUBSTRING.Length);
+            CLanguageFacts.COMMENT_MULTI_LINE_STARTING_SUBSTRING.Length);
 
         while (!_stringWalker.IsEof)
         {
-            if (_stringWalker.CurrentCharacter == LexerFacts.COMMENT_MULTI_LINE_ENDING_IDENTIFYING_CHAR &&
+            if (_stringWalker.CurrentCharacter == CLanguageFacts.COMMENT_MULTI_LINE_ENDING_IDENTIFYING_CHAR &&
                 _stringWalker.PeekCharacter(1) == '/')
             {
                 _ = _stringWalker.ReadRange(
-                    LexerFacts.COMMENT_MULTI_LINE_ENDING_SUBSTRING.Length);
+                    CLanguageFacts.COMMENT_MULTI_LINE_ENDING_SUBSTRING.Length);
                 
                 break;
             }
@@ -281,7 +284,7 @@ public class Lexer
         char characterToMatch;
         Func<BlazorStudioTextSpan, LibraryReferenceToken> libraryReferenceFactory;
 
-        if (_stringWalker.CurrentCharacter == LexerFacts.LIBRARY_REFERENCE_ABSOLUTE_PATH_STARTING_CHAR)
+        if (_stringWalker.CurrentCharacter == CLanguageFacts.LIBRARY_REFERENCE_ABSOLUTE_PATH_STARTING_CHAR)
         {
             characterToMatch = '>';
             
@@ -290,7 +293,7 @@ public class Lexer
                     textSpan,
                     true);
         }
-        else if (_stringWalker.CurrentCharacter == LexerFacts.LIBRARY_REFERENCE_RELATIVE_PATH_STARTING_CHAR)
+        else if (_stringWalker.CurrentCharacter == CLanguageFacts.LIBRARY_REFERENCE_RELATIVE_PATH_STARTING_CHAR)
         {
             characterToMatch = '"';
             

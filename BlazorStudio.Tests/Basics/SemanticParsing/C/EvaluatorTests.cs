@@ -7,7 +7,10 @@ public class EvaluatorTests
     [Fact]
     public void SHOULD_EVALUATE_NUMERIC_THREE_PART_EXPRESSION()
     {
-        string testDataHelloWorld = "10 + 32".ReplaceLineEndings("\n");
+        var x = 10;
+        var y = 32;
+        
+        string testDataHelloWorld = $"{x} + {y}".ReplaceLineEndings("\n");
 
         var lexer = new Lexer(testDataHelloWorld);
         lexer.Lex();
@@ -21,5 +24,11 @@ public class EvaluatorTests
             testDataHelloWorld);
 
         var evaluatorResult = evaluator.Evaluate();
+        
+        Assert.NotNull(evaluatorResult);
+
+        Assert.Equal(
+            x + y,
+            evaluatorResult!.ResultValue);
     }
 }
