@@ -95,13 +95,18 @@ public class Lexer
                 case CLanguageFacts.PREPROCESSOR_DIRECTIVE_TRANSITION_CHAR:
                     var preprocessorDirectiveToken = ConsumePreprocessorDirective();
                     _syntaxTokens.Add(preprocessorDirectiveToken);
-                    
-                    if (TryConsumeLibraryReference(out var libraryReferenceToken) &&
-                        libraryReferenceToken is not null)
+
+                    if (preprocessorDirectiveToken.BlazorStudioTextSpan
+                            .GetText(_stringWalker.Content) ==
+                        CLanguageFacts.Preprocessor.Directives.INCLUDE)
                     {
-                        _syntaxTokens.Add(libraryReferenceToken);
+                        if (TryConsumeLibraryReference(out var libraryReferenceToken) &&
+                            libraryReferenceToken is not null)
+                        {
+                            _syntaxTokens.Add(libraryReferenceToken);
+                        }
                     }
-                    
+
                     break;
                 default:
                     _ = _stringWalker.ReadCharacter();
@@ -242,10 +247,10 @@ public class Lexer
     
     private PreprocessorDirectiveToken ConsumePreprocessorDirective()
     {
-        var entryPositionIndex = _stringWalker.PositionIndex;
-        
         // Move past the starting '#' transition character
         _ = _stringWalker.ReadCharacter();
+
+        var startOfDirective = _stringWalker.PositionIndex;
 
         while (!_stringWalker.IsEof)
         {
@@ -256,7 +261,7 @@ public class Lexer
         }
 
         var textSpan = new BlazorStudioTextSpan(
-            entryPositionIndex,
+            startOfDirective,
             _stringWalker.PositionIndex);
 
         return new PreprocessorDirectiveToken(textSpan);
@@ -267,9 +272,6 @@ public class Lexer
     {
         var entryPositionIndex = _stringWalker.PositionIndex;
         
-        // Move past the starting '#' transition character
-        _ = _stringWalker.ReadCharacter();
-
         while (!_stringWalker.IsEof)
         {
             if (char.IsWhiteSpace(_stringWalker.CurrentCharacter))
@@ -310,22 +312,26 @@ public class Lexer
             libraryReferenceToken = null;
             return false;
         }
+
+        // Move past the library reference path starting character
+        _ = _stringWalker.ReadCharacter();
+        
+        var startOfLibraryReferencePositionIndex = _stringWalker.PositionIndex;
         
         while (!_stringWalker.IsEof)
         {
             if (_stringWalker.CurrentCharacter == characterToMatch)
-            {
-                _ = _stringWalker.ReadCharacter();
                 break;
-            }
             
             _ = _stringWalker.ReadCharacter();
         }
 
         var textSpan = new BlazorStudioTextSpan(
-            entryPositionIndex,
+            startOfLibraryReferencePositionIndex,
             _stringWalker.PositionIndex);
 
+        _ = _stringWalker.ReadCharacter();
+        
         libraryReferenceToken = libraryReferenceFactory.Invoke(
             textSpan);
         return true;

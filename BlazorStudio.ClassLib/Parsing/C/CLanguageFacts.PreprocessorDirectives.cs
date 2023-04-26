@@ -4,61 +4,63 @@ namespace BlazorStudio.ClassLib.Parsing.C;
 
 public partial class CLanguageFacts
 {
-    /// <summary>
-    /// When naming the preprocessor directive constants
-    /// the starting "#" or "__" must be included in order
-    /// to uniquely identify the preprocessor directive.
-    /// <br/><br/>
-    /// For example take the two directives: "# macro operator" "## macro operator".
-    /// <br/><br/>
-    /// The name "MACRO_OPERATOR" in this case would appear twice so both the
-    /// hashtag, and amount of them need be included in the constant's name to be unique.
-    /// <br/><br/>
-    /// Seemingly the "macro operator" case is the only case of constant name duplication
-    /// if one were to not include the starting "#" or "__".
-    /// <br/><br/>
-    /// If for whatever reason in the future more preprocessors were to be added however
-    /// I don't want to encounter constants having the same name.
-    /// <br/><br/>
-    /// "#" -> "HT"<br/>
-    /// "_" -> "US"<br/>
-    /// "double of any symbol" -> "D" followed by the symbol's respective shorthand<br/>
-    /// </summary>
-    public class PreprocessorDirectives
+    public class Preprocessor
     {
-        public const string HT_INCLUDE = "#include";
-        public const string HT_DEFINE = "#define";
-        public const string HT_UNDEF = "#undef";
-        public const string HT_IF = "#if";
-        public const string HT_IFDEF = "#ifdef";
-        public const string HT_IFNDEF = "#ifndef";
-        public const string HT_ERROR = "#error";
-        public const string DUS_FILE = "__FILE__";
-        public const string DUS_LINE = "__LINE__";
-        public const string DUS_DATE = "__DATE__";
-        public const string DUS_TIME = "__TIME__";
-        public const string DUS_TIMESTAMP = "__TIMESTAMP__";
-        public const string PRAGMA = "pragma";
-        public const string HT_MACRO_OPERATOR = "# macro operator";
-        public const string DHT_MACRO_OPERATOR = "## macro operator";
-
-        public static readonly ImmutableArray<string> All = new[]
+        public class Directives
         {
-            HT_INCLUDE,
-            HT_DEFINE,
-            HT_UNDEF,
-            HT_IF,
-            HT_IFDEF,
-            HT_IFNDEF,
-            HT_ERROR,
-            DUS_FILE,
-            DUS_LINE,
-            DUS_DATE,
-            DUS_TIME,
-            DUS_TIMESTAMP,
-            PRAGMA,
-            HT_MACRO_OPERATOR,
-            DHT_MACRO_OPERATOR,
-        }.ToImmutableArray();
+            public const string INCLUDE = "include";
+            public const string DEFINE = "define";
+            public const string UNDEF = "undef";
+            public const string IF = "if";
+            public const string IFDEF = "ifdef";
+            public const string IFNDEF = "ifndef";
+            public const string ERROR = "error";
+            public const string FILE = "__FILE__";
+            public const string LINE = "__LINE__";
+            public const string DATE = "__DATE__";
+            public const string TIME = "__TIME__";
+            public const string TIMESTAMP = "__TIMESTAMP__";
+            public const string PRAGMA = "pragma";
+            
+            // TODO: What are these preprocessor directives? I think the idea was to type '#' then a defined macro? Its not "actually" a named preprocessor command.
+            //
+            // public const string MACRO_OPERATOR_SINGLE_HASHTAG = " macro operator"; // TODO: This used to be the string literal value of "# macro operator". Which is correct?
+            // public const string MACRO_OPERATOR_DOUBLE_HASHTAG = " macro operator"; // TODO: This used to be the string literal value of "## macro operator". Which is correct?
+
+            public static readonly ImmutableArray<string> All = new[]
+            {
+                INCLUDE,
+                DEFINE,
+                UNDEF,
+                IF,
+                IFDEF,
+                IFNDEF,
+                ERROR,
+                FILE,
+                LINE,
+                DATE,
+                TIME,
+                TIMESTAMP,
+                PRAGMA,
+            }.ToImmutableArray();
+        }
+        
+        public class Variables
+        {
+            public const string FILE = "__FILE__";
+            public const string LINE = "__LINE__";
+            public const string DATE = "__DATE__";
+            public const string TIME = "__TIME__";
+            public const string TIMESTAMP = "__TIMESTAMP__";
+
+            public static readonly ImmutableArray<string> All = new[]
+            {
+                FILE,
+                LINE,
+                DATE,
+                TIME,
+                TIMESTAMP,
+            }.ToImmutableArray();
+        }
     }
 }

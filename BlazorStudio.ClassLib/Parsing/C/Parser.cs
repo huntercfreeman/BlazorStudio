@@ -23,9 +23,9 @@ public class Parser
                 case SyntaxKind.NumericLiteralToken:
                     ParseNumericLiteralToken((NumericLiteralToken)token);
                     break;
-                case SyntaxKind.LibraryReferenceToken:
-                    ParseLibraryReferenceToken((LibraryReferenceToken)token);
-                    break;
+                // case SyntaxKind.LibraryReferenceToken:
+                //     ParseLibraryReferenceToken((LibraryReferenceToken)token);
+                //     break;
                 case SyntaxKind.PlusToken:
                     ParsePlusToken((PlusToken)token);
                     break;
@@ -123,49 +123,6 @@ public class Parser
     
     private void ParseLibraryReferenceToken(LibraryReferenceToken token)
     {
-        var operatorAdditionNode = new OperatorAdditionNode(
-            token);
-        
-        if (!_nodeStack.Any())
-        {
-            _nodeStack.Push(operatorAdditionNode);
-            return;
-        }
-        
-        var poppedNode = _nodeStack.Pop();
-
-        switch (poppedNode.SyntaxKind)
-        {
-            case SyntaxKind.NumericThreePartExpressionNode:
-            {
-                var numericThreePartExpressionNode = (NumericThreePartExpressionNode)poppedNode;
-
-                numericThreePartExpressionNode = new NumericThreePartExpressionNode(
-                    numericThreePartExpressionNode.LeftNumericExpressionNode,
-                    operatorAdditionNode,
-                    numericThreePartExpressionNode.RightNumericExpressionNode);
-
-                _nodeStack.Push(numericThreePartExpressionNode);
-
-                return;
-            }
-            default:
-            {
-                if (poppedNode is NumericExpressionNode numericExpressionNode)
-                {
-                    var numericThreePartExpressionNode = new NumericThreePartExpressionNode(
-                        numericExpressionNode,
-                        operatorAdditionNode,
-                        null);
-                    
-                    _nodeStack.Push(numericThreePartExpressionNode);
-
-                    return;
-                }
-
-                // TODO: Report a diagnostic and return?
-                throw new NotImplementedException();
-            }
-        }
+        throw new NotImplementedException();
     }
 }
