@@ -19,4 +19,6 @@ public partial class CLanguageFacts
     
     public const char LIBRARY_REFERENCE_RELATIVE_PATH_STARTING_CHAR = '"';
     public const char LIBRARY_REFERENCE_RELATIVE_PATH_ENDING_CHAR = '"';
+    
+    public const char STATEMENT_DELIMITER_CHAR = ';';
 }

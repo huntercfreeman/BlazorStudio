@@ -13,6 +13,9 @@ public enum SyntaxKind
     PreprocessorDirectiveToken,
     LibraryReferenceToken,
     PlusToken,
+    EqualsToken,
+    StatementDelimiterToken,
+    EndOfFileToken,
     
     // Nodes
     NumericLiteralExpressionNode,
@@ -22,4 +25,16 @@ public enum SyntaxKind
     OperatorAdditionNode,
     PreprocessorDirectiveNode,
     LibraryReferenceNode,
+    TypeNode,
+    StatementNode,
+    VariableNode,
+    TypedLiteralExpressionNode,
+    TypedUnaryExpressionNode,
+    TypedBinaryExpressionNode,
+    
+    // Symbols
+    IntTypeSymbol,
+    
+    // Variable
+    Variable,
 }

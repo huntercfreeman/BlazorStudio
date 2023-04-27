@@ -1,9 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿namespace BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 
-namespace BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
-
-public abstract class NumericExpressionNode : ISyntaxNode
+[Obsolete("See TypedExpressionNode")]
+public abstract class NumericExpressionNode : ExpressionNode
 {
-    public abstract SyntaxKind SyntaxKind { get; }
-    public abstract ImmutableArray<ISyntax> Children { get; }
 }

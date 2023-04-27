@@ -75,6 +75,14 @@ public class Lexer
                     var plusToken = ConsumePlus();
                     _syntaxTokens.Add(plusToken);
                     break;
+                case '=':
+                    var equalsToken = ConsumeEquals();
+                    _syntaxTokens.Add(equalsToken);
+                    break;
+                case CLanguageFacts.STATEMENT_DELIMITER_CHAR:
+                    var statementDelimiterToken = ConsumeStatementDelimiter();
+                    _syntaxTokens.Add(statementDelimiterToken);
+                    break;
                 case CLanguageFacts.STRING_LITERAL_START:
                     var stringLiteralToken = ConsumeStringLiteral();
                     _syntaxTokens.Add(stringLiteralToken);
@@ -113,6 +121,12 @@ public class Lexer
                     break;
             }
         }
+
+        var endOfFileTextSpan = new BlazorStudioTextSpan(
+            _stringWalker.PositionIndex,
+            _stringWalker.PositionIndex);
+        
+        _syntaxTokens.Add(new EndOfFileToken(endOfFileTextSpan));
     }
 
     private NumericLiteralToken ConsumeNumericLiteral()
@@ -348,5 +362,31 @@ public class Lexer
             _stringWalker.PositionIndex);
         
         return new PlusToken(textSpan);
+    }
+    
+    private EqualsToken ConsumeEquals()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        _ = _stringWalker.ReadCharacter();
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+        
+        return new EqualsToken(textSpan);
+    }
+    
+    private StatementDelimiterToken ConsumeStatementDelimiter()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        _ = _stringWalker.ReadCharacter();
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+        
+        return new StatementDelimiterToken(textSpan);
     }
 }

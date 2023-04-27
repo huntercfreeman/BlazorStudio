@@ -360,4 +360,84 @@ int main()
 		    "stdio.h",
 		    tokenTextTuples[1].text);
     }
+    
+    [Fact]
+    public void SHOULD_LEX_EQUALS_TOKENS()
+    {
+	    string testDataHelloWorld = @"#include <stdlib.h>
+#include <stdio.h>
+
+// C:\Users\hunte\Repos\Aaa\
+
+int main()
+{
+	int x = 42;
+
+	/*
+		A Multi-Line Comment
+	*/
+	
+	/* Another Multi-Line Comment */
+
+	printf(""%d"", x);
+}".ReplaceLineEndings("\n");
+
+	    var lexer = new Lexer(testDataHelloWorld);
+        
+	    lexer.Lex();
+        
+	    var equalsTokens = lexer.SyntaxTokens
+		    .Single(x => x.SyntaxKind == SyntaxKind.EqualsToken);
+        
+	    var tokenTextTuple = SyntaxTokenHelper.GetTokenTextTuple(
+		    equalsTokens,
+		    testDataHelloWorld);
+	    
+	    Assert.Equal(
+		    "=",
+		    tokenTextTuple.text);
+    }
+    
+    [Fact]
+    public void SHOULD_LEX_STATEMENT_DELIMITER_TOKENS()
+    {
+	    string testDataHelloWorld = @"#include <stdlib.h>
+#include <stdio.h>
+
+// C:\Users\hunte\Repos\Aaa\
+
+int main()
+{
+	int x = 42;
+
+	/*
+		A Multi-Line Comment
+	*/
+	
+	/* Another Multi-Line Comment */
+
+	printf(""%d"", x);
+}".ReplaceLineEndings("\n");
+
+	    var lexer = new Lexer(testDataHelloWorld);
+        
+	    lexer.Lex();
+        
+	    var statementDelimiterTokens = lexer.SyntaxTokens
+		    .Where(x => x.SyntaxKind == SyntaxKind.StatementDelimiterToken);
+        
+	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
+		    statementDelimiterTokens,
+		    testDataHelloWorld);
+	    
+	    Assert.Equal(2, tokenTextTuples.Length);
+	    
+	    Assert.Equal(
+		    ";",
+		    tokenTextTuples[0].text);
+	    
+	    Assert.Equal(
+		    ";",
+		    tokenTextTuples[1].text);
+    }
 }

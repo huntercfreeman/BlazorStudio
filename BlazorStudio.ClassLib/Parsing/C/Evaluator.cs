@@ -4,25 +4,37 @@ namespace BlazorStudio.ClassLib.Parsing.C;
 
 public class Evaluator
 {
-    private readonly ISyntaxNode _root;
+    private readonly CompilationUnit _compilationUnit;
     private readonly string _content;
 
     public Evaluator(
-        ISyntaxNode root,
+        CompilationUnit compilationUnit,
         string content)
     {
-        _root = root;
+        _compilationUnit = compilationUnit;
         _content = content;
     }
     
     public EvaluatorResult? Evaluate()
     {
-        if (_root is NumericExpressionNode)
+        EvaluatorResult? mostRecentEvaluatorResult = null; 
+        
+        foreach (var statementNode in _compilationUnit.StatementNodes)
         {
-            return EvaluateNumericExpressionNode(
-                (NumericExpressionNode)_root);
+            mostRecentEvaluatorResult = EvaluateStatementNode(statementNode);
         }
 
+        return mostRecentEvaluatorResult;
+    }
+    
+    private EvaluatorResult? EvaluateStatementNode(StatementNode statementNode)
+    {
+        if (statementNode.Node is NumericExpressionNode)
+        {
+            return EvaluateNumericExpressionNode(
+                (NumericExpressionNode)statementNode.Node);
+        }
+        
         return null;
     }
     

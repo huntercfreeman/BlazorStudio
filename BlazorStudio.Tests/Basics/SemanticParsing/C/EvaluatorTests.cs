@@ -10,18 +10,20 @@ public class EvaluatorTests
         var x = 10;
         var y = 32;
         
-        string testDataHelloWorld = $"{x} + {y}".ReplaceLineEndings("\n");
+        string testData = $"{x} + {y}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(testDataHelloWorld);
+        var lexer = new Lexer(testData);
         lexer.Lex();
 
-        var parser = new Parser(lexer.SyntaxTokens);
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            testData);
         
         var root = parser.Parse();
 
         var evaluator = new Evaluator(
             root,
-            testDataHelloWorld);
+            testData);
 
         var evaluatorResult = evaluator.Evaluate();
         
