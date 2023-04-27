@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Parsing.C.Symbols;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 
@@ -7,32 +8,55 @@ namespace BlazorStudio.ClassLib.Parsing.C;
 public class Parser
 {
     private readonly ImmutableArray<ISyntaxToken> _tokens;
+    private readonly string _sourceText;
     private readonly Stack<ISyntaxNode> _nodeStack = new();
-
-    public Parser(ImmutableArray<ISyntaxToken> tokens)
+    private readonly Dictionary<string, ITypeSymbol> _typeMap = new(CLanguageFacts.Types.DefaultTypeMap);
+    private readonly Dictionary<string, Variable> _variableMap = new();
+    private readonly List<StatementNode> _statementNodes = new();
+    
+    private int _tokenIndex;
+    
+    public Parser(
+        ImmutableArray<ISyntaxToken> tokens,
+        string sourceText)
     {
         _tokens = tokens;
+        _sourceText = sourceText;
     }
     
-    public ISyntaxNode Parse()
+    public CompilationUnit Parse()
     {
-        foreach (var token in _tokens)
+        for (_tokenIndex = 0; _tokenIndex < _tokens.Length; _tokenIndex++)
         {
+            var token = _tokens[_tokenIndex];
+            
             switch (token.SyntaxKind)
             {
                 case SyntaxKind.NumericLiteralToken:
                     ParseNumericLiteralToken((NumericLiteralToken)token);
                     break;
-                case SyntaxKind.LibraryReferenceToken:
-                    ParseLibraryReferenceToken((LibraryReferenceToken)token);
-                    break;
+                // case SyntaxKind.LibraryReferenceToken:
+                //     ParseLibraryReferenceToken((LibraryReferenceToken)token);
+                //     break;
                 case SyntaxKind.PlusToken:
                     ParsePlusToken((PlusToken)token);
+                    break;
+                case SyntaxKind.KeywordToken:
+                    ParseKeywordToken((KeywordToken)token);
+                    break;
+                case SyntaxKind.IdentifierToken:
+                    ParseIdentifierToken((IdentifierToken)token);
+                    break;
+                case SyntaxKind.EqualsToken:
+                    ParseEqualsToken((EqualsToken)token);
+                    break;
+                case SyntaxKind.StatementDelimiterToken:
+                    ParseStatementDelimiterToken((StatementDelimiterToken)token);
                     break;
             }
         }
 
-        return _nodeStack.Pop();
+        return new CompilationUnit(_statementNodes);
     }
 
     private void ParseNumericLiteralToken(NumericLiteralToken token)
@@ -64,7 +88,14 @@ public class Parser
                 return;
             }
             case SyntaxKind.VariableAssignmentExpressionNode:
-                throw new NotImplementedException();
+            {
+                var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)poppedNode;
+                var typedLiteralExpressionNode = new TypedLiteralExpressionNode(token);
+
+                variableAssignmentExpressionNode.RightOperand = typedLiteralExpressionNode;
+                _nodeStack.Push(variableAssignmentExpressionNode);
+                return;
+            }
             case SyntaxKind.ParenthesizedExpressionNode:
                 throw new NotImplementedException();
             default:
@@ -121,51 +152,108 @@ public class Parser
         }
     }
     
-    private void ParseLibraryReferenceToken(LibraryReferenceToken token)
+    private void ParseKeywordToken(KeywordToken token)
     {
-        var operatorAdditionNode = new OperatorAdditionNode(
-            token);
-        
-        if (!_nodeStack.Any())
+        if (_nodeStack.Any())
         {
-            _nodeStack.Push(operatorAdditionNode);
-            return;
+            throw new ApplicationException(
+                "Only keywords which start a statement are currently implemented.");
         }
         
+        var keywordText = token.BlazorStudioTextSpan.GetText(_sourceText);
+        
+        if (_typeMap.TryGetValue(keywordText, out var typeSymbol))
+        {
+            // Was a primitive type such as "int"
+            // which is treated as a keyword, but maps to a type.
+
+            var typeNode = new TypeNode(
+                token,
+                typeSymbol
+            );
+            
+            _nodeStack.Push(typeNode);
+        }
+    }
+    
+    private void ParseIdentifierToken(IdentifierToken token)
+    {
         var poppedNode = _nodeStack.Pop();
 
         switch (poppedNode.SyntaxKind)
         {
-            case SyntaxKind.NumericThreePartExpressionNode:
+            case SyntaxKind.TypeNode:
             {
-                var numericThreePartExpressionNode = (NumericThreePartExpressionNode)poppedNode;
+                var typeNode = (TypeNode)poppedNode;
+            
+                var variable = new Variable(typeNode.TypeSymbol, token);
 
-                numericThreePartExpressionNode = new NumericThreePartExpressionNode(
-                    numericThreePartExpressionNode.LeftNumericExpressionNode,
-                    operatorAdditionNode,
-                    numericThreePartExpressionNode.RightNumericExpressionNode);
+                _variableMap[token.BlazorStudioTextSpan.GetText(_sourceText)] =
+                    variable;
 
-                _nodeStack.Push(numericThreePartExpressionNode);
-
-                return;
-            }
-            default:
-            {
-                if (poppedNode is NumericExpressionNode numericExpressionNode)
+                var nextTokenByPredicate = FindNextTokenByPredicate(st => st.SyntaxKind != SyntaxKind.TriviaToken);
+            
+                if (nextTokenByPredicate is not null &&
+                    nextTokenByPredicate.Value.token.SyntaxKind == SyntaxKind.EqualsToken)
                 {
-                    var numericThreePartExpressionNode = new NumericThreePartExpressionNode(
-                        numericExpressionNode,
-                        operatorAdditionNode,
-                        null);
-                    
-                    _nodeStack.Push(numericThreePartExpressionNode);
-
-                    return;
+                    // Presume a definition statement like "int x = 2;"
+                    _nodeStack.Push(new VariableNode(variable));
                 }
 
-                // TODO: Report a diagnostic and return?
-                throw new NotImplementedException();
+                break;
             }
         }
+    }
+    
+    private void ParseEqualsToken(EqualsToken token)
+    {
+        var poppedNode = _nodeStack.Pop();
+        
+        switch (poppedNode.SyntaxKind)
+        {
+            case SyntaxKind.VariableNode:
+            {
+                var variableNode = (VariableNode)poppedNode;
+
+                var operatorAssignmentNode = new OperatorAssignmentNode(
+                    token);
+
+                var assignmentExpressionNode = new VariableAssignmentExpressionNode(
+                    variableNode,
+                    operatorAssignmentNode,
+                    null,
+                    typeof(object));
+
+                _nodeStack.Push(assignmentExpressionNode);
+                
+                return;
+            }
+        }
+    }
+    
+    private void ParseStatementDelimiterToken(StatementDelimiterToken token)
+    {
+        var poppedNode = _nodeStack.Pop();
+        var statementNode = new StatementNode(poppedNode);
+        
+        _statementNodes.Add(statementNode);
+    }
+    
+    private void ParseLibraryReferenceToken(LibraryReferenceToken token)
+    {
+        throw new NotImplementedException();
+    }
+    
+    private (ISyntaxToken token, int index)? FindNextTokenByPredicate(Func<ISyntaxToken, bool> tokenPredicateFunc)
+    {
+        for (var index = 0; index < _tokens.Length; index++)
+        {
+            var token = _tokens[index];
+
+            if (tokenPredicateFunc.Invoke(token))
+                return (token, index);
+        }
+
+        return null;
     }
 }

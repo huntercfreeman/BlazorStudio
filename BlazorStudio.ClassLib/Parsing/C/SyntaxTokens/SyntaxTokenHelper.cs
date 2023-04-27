@@ -8,8 +8,15 @@ public class SyntaxTokenHelper
     {
         return syntaxTokens
             .Select(x => 
-                (x,
-                    x.BlazorStudioTextSpan.GetText(sourceText)))
+                GetTokenTextTuple(x, sourceText))
             .ToArray();
+    }
+    
+    public static (ISyntaxToken syntaxToken, string text) GetTokenTextTuple(
+        ISyntaxToken syntaxToken,
+        string sourceText)
+    {
+        return (syntaxToken,
+            syntaxToken.BlazorStudioTextSpan.GetText(sourceText));
     }
 }

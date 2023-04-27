@@ -10,7 +10,7 @@ public class SemanticModelC : ISemanticModel
     private string? _text;
     private Lexer? _lexer;
     private Parser? _parser;
-    private ISyntaxNode? _root;
+    private CompilationUnit? _compilationUnit;
 
     public SymbolDefinition? GoToDefinition(
         TextEditorModel model,
@@ -23,9 +23,11 @@ public class SemanticModelC : ISemanticModel
         _lexer = new Lexer(_text);
         _lexer.Lex();
 
-        _parser = new Parser(_lexer.SyntaxTokens);
+        _parser = new Parser(
+            _lexer.SyntaxTokens,
+            _text);
         
-        _root = _parser.Parse();
+        _compilationUnit = _parser.Parse();
 
         return null;
     }
@@ -38,8 +40,10 @@ public class SemanticModelC : ISemanticModel
         _lexer = new Lexer(_text);
         _lexer.Lex();
 
-        _parser = new Parser(_lexer.SyntaxTokens);
+        _parser = new Parser(
+            _lexer.SyntaxTokens,
+            _text);
         
-        _root = _parser.Parse();
+        _compilationUnit = _parser.Parse();
     }
 }

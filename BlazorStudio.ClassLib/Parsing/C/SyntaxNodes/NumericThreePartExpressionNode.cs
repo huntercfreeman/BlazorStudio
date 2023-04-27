@@ -2,6 +2,7 @@
 
 namespace BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 
+[Obsolete("See TypedBinaryExpressionNode")]
 public class NumericThreePartExpressionNode : NumericExpressionNode
 {
     public NumericThreePartExpressionNode(

@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 
 namespace BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 
+[Obsolete("See TypedLiteralExpressionNode")]
 public class NumericLiteralExpressionNode : NumericExpressionNode
 {
     public NumericLiteralExpressionNode(

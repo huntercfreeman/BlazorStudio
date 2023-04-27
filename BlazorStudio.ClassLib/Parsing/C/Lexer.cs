@@ -75,6 +75,14 @@ public class Lexer
                     var plusToken = ConsumePlus();
                     _syntaxTokens.Add(plusToken);
                     break;
+                case '=':
+                    var equalsToken = ConsumeEquals();
+                    _syntaxTokens.Add(equalsToken);
+                    break;
+                case CLanguageFacts.STATEMENT_DELIMITER_CHAR:
+                    var statementDelimiterToken = ConsumeStatementDelimiter();
+                    _syntaxTokens.Add(statementDelimiterToken);
+                    break;
                 case CLanguageFacts.STRING_LITERAL_START:
                     var stringLiteralToken = ConsumeStringLiteral();
                     _syntaxTokens.Add(stringLiteralToken);
@@ -95,19 +103,30 @@ public class Lexer
                 case CLanguageFacts.PREPROCESSOR_DIRECTIVE_TRANSITION_CHAR:
                     var preprocessorDirectiveToken = ConsumePreprocessorDirective();
                     _syntaxTokens.Add(preprocessorDirectiveToken);
-                    
-                    if (TryConsumeLibraryReference(out var libraryReferenceToken) &&
-                        libraryReferenceToken is not null)
+
+                    if (preprocessorDirectiveToken.BlazorStudioTextSpan
+                            .GetText(_stringWalker.Content) ==
+                        CLanguageFacts.Preprocessor.Directives.INCLUDE)
                     {
-                        _syntaxTokens.Add(libraryReferenceToken);
+                        if (TryConsumeLibraryReference(out var libraryReferenceToken) &&
+                            libraryReferenceToken is not null)
+                        {
+                            _syntaxTokens.Add(libraryReferenceToken);
+                        }
                     }
-                    
+
                     break;
                 default:
                     _ = _stringWalker.ReadCharacter();
                     break;
             }
         }
+
+        var endOfFileTextSpan = new BlazorStudioTextSpan(
+            _stringWalker.PositionIndex,
+            _stringWalker.PositionIndex);
+        
+        _syntaxTokens.Add(new EndOfFileToken(endOfFileTextSpan));
     }
 
     private NumericLiteralToken ConsumeNumericLiteral()
@@ -242,10 +261,10 @@ public class Lexer
     
     private PreprocessorDirectiveToken ConsumePreprocessorDirective()
     {
-        var entryPositionIndex = _stringWalker.PositionIndex;
-        
         // Move past the starting '#' transition character
         _ = _stringWalker.ReadCharacter();
+
+        var startOfDirective = _stringWalker.PositionIndex;
 
         while (!_stringWalker.IsEof)
         {
@@ -256,7 +275,7 @@ public class Lexer
         }
 
         var textSpan = new BlazorStudioTextSpan(
-            entryPositionIndex,
+            startOfDirective,
             _stringWalker.PositionIndex);
 
         return new PreprocessorDirectiveToken(textSpan);
@@ -267,9 +286,6 @@ public class Lexer
     {
         var entryPositionIndex = _stringWalker.PositionIndex;
         
-        // Move past the starting '#' transition character
-        _ = _stringWalker.ReadCharacter();
-
         while (!_stringWalker.IsEof)
         {
             if (char.IsWhiteSpace(_stringWalker.CurrentCharacter))
@@ -310,22 +326,26 @@ public class Lexer
             libraryReferenceToken = null;
             return false;
         }
+
+        // Move past the library reference path starting character
+        _ = _stringWalker.ReadCharacter();
+        
+        var startOfLibraryReferencePositionIndex = _stringWalker.PositionIndex;
         
         while (!_stringWalker.IsEof)
         {
             if (_stringWalker.CurrentCharacter == characterToMatch)
-            {
-                _ = _stringWalker.ReadCharacter();
                 break;
-            }
             
             _ = _stringWalker.ReadCharacter();
         }
 
         var textSpan = new BlazorStudioTextSpan(
-            entryPositionIndex,
+            startOfLibraryReferencePositionIndex,
             _stringWalker.PositionIndex);
 
+        _ = _stringWalker.ReadCharacter();
+        
         libraryReferenceToken = libraryReferenceFactory.Invoke(
             textSpan);
         return true;
@@ -342,5 +362,31 @@ public class Lexer
             _stringWalker.PositionIndex);
         
         return new PlusToken(textSpan);
+    }
+    
+    private EqualsToken ConsumeEquals()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        _ = _stringWalker.ReadCharacter();
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+        
+        return new EqualsToken(textSpan);
+    }
+    
+    private StatementDelimiterToken ConsumeStatementDelimiter()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        _ = _stringWalker.ReadCharacter();
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+        
+        return new StatementDelimiterToken(textSpan);
     }
 }
