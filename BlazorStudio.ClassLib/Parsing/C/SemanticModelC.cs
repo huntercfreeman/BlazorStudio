@@ -29,6 +29,13 @@ public class SemanticModelC : ISemanticModel
         
         _compilationUnit = _parser.Parse();
 
+        if (_parser.VariableMap.TryGetValue(identifier, out var definition))
+        {
+            return new SymbolDefinition(
+                model.ResourceUri,
+                definition.IdentifierToken.BlazorStudioTextSpan.StartingIndexInclusive);
+        }
+        
         return null;
     }
 

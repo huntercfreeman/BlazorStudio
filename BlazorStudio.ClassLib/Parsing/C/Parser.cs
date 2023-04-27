@@ -24,6 +24,8 @@ public class Parser
         _sourceText = sourceText;
     }
     
+    public Dictionary<string, Variable> VariableMap => _variableMap;
+    
     public CompilationUnit Parse()
     {
         for (_tokenIndex = 0; _tokenIndex < _tokens.Length; _tokenIndex++)
@@ -178,6 +180,9 @@ public class Parser
     
     private void ParseIdentifierToken(IdentifierToken token)
     {
+        if (_nodeStack.Count == 0)
+            return;
+        
         var poppedNode = _nodeStack.Pop();
 
         switch (poppedNode.SyntaxKind)
@@ -233,6 +238,9 @@ public class Parser
     
     private void ParseStatementDelimiterToken(StatementDelimiterToken token)
     {
+        if (_nodeStack.Count == 0)
+            return;
+        
         var poppedNode = _nodeStack.Pop();
         var statementNode = new StatementNode(poppedNode);
         
@@ -246,7 +254,7 @@ public class Parser
     
     private (ISyntaxToken token, int index)? FindNextTokenByPredicate(Func<ISyntaxToken, bool> tokenPredicateFunc)
     {
-        for (var index = 0; index < _tokens.Length; index++)
+        for (var index = _tokenIndex + 1; index < _tokens.Length; index++)
         {
             var token = _tokens[index];
 
