@@ -56,8 +56,7 @@ NuGet Package Manager
 - The gif for this will be the gif at the start of this file where I showcase its usage as to decrease how large this README is.
 
 Text Editor
-- Has its own public repository and is a NuGet Package itself. Find source code at: https://github.com/huntercfreeman/Blazor.Text.Editor 
-- Demo website at (clear your cache if needed as the demo website uses WebAssembly) https://hunter-freeman-dev.azurewebsites.net/
+- Has its own public repository and is a NuGet Package itself. Find source code at: https://github.com/huntercfreeman/Blazor.Text.Editor
 - Syntax Highlighting
 - Text Selection
 - Keyboard movement: { ArrowLeft, ArrowDown, ArrowUp, ArrowRight, Home, End }
