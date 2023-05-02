@@ -144,7 +144,7 @@ public class EditorState
                 TextEditorModelKey.NewTextEditorModelKey()
             );
             
-            textEditorService.Model.ModelRegisterCustomModel(textEditorModel);
+            textEditorService.Model.RegisterCustom(textEditorModel);
 
             _ = Task.Run(async () =>
                     await textEditorModel.ApplySyntaxHighlightingAsync());
@@ -198,7 +198,7 @@ public class EditorState
                                     var content = await fileSystemProvider.File
                                         .ReadAllTextAsync(inputFileAbsoluteFilePathString);
 
-                                    textEditorService.Model.ModelReload(
+                                    textEditorService.Model.Reload(
                                         textEditorModel.ModelKey,
                                         content,
                                         fileLastWriteTime);
@@ -245,7 +245,7 @@ public class EditorState
         string? inputFileAbsoluteFilePathString)
     {
         var viewModel = textEditorService.Model
-            .ModelGetViewModelsOrEmpty(textEditorModel.ModelKey)
+            .GetViewModelsOrEmpty(textEditorModel.ModelKey)
             .FirstOrDefault();
 
         var viewModelKey = viewModel?.ViewModelKey ?? TextEditorViewModelKey.Empty;
@@ -291,7 +291,7 @@ public class EditorState
                                     inputFileAbsoluteFilePathString,
                                     cancellationToken);
 
-                            textEditorService.Model.ModelSetResourceData(
+                            textEditorService.Model.SetResourceData(
                                 textEditorModel.ModelKey,
                                 textEditorModel.ResourceUri,
                                 fileLastWriteTime);

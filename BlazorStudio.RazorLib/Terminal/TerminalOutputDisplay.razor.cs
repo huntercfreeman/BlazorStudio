@@ -74,11 +74,11 @@ public partial class TerminalOutputDisplay : FluxorComponent
         if (terminalSession is not null)
         {
             var textEditorModel = TextEditorService.Model
-                .ModelFindOrDefault(terminalSession.TextEditorModelKey);
+                .FindOrDefault(terminalSession.TextEditorModelKey);
 
             if (textEditorModel is null)
             {
-                TextEditorService.Model.ModelRegisterTemplatedModel(
+                TextEditorService.Model.RegisterTemplated(
                     terminalSession.TextEditorModelKey,
                     WellKnownModelKind.TerminalGeneric,
                     terminalSession.TerminalSessionKey.DisplayName
