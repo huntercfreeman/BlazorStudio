@@ -73,12 +73,12 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
         if (terminalSession is not null)
         {
-            var textEditorModel = TextEditorService
-                .ModelFindOrDefault(terminalSession.TextEditorModelKey);
+            var textEditorModel = TextEditorService.Model
+                .FindOrDefault(terminalSession.TextEditorModelKey);
 
             if (textEditorModel is null)
             {
-                TextEditorService.ModelRegisterTemplatedModel(
+                TextEditorService.Model.RegisterTemplated(
                     terminalSession.TextEditorModelKey,
                     WellKnownModelKind.TerminalGeneric,
                     terminalSession.TerminalSessionKey.DisplayName
@@ -87,7 +87,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
                     "TERMINAL",
                     string.Empty);
                 
-                TextEditorService.ViewModelRegister(
+                TextEditorService.ViewModel.Register(
                     terminalSession.TextEditorViewModelKey,
                     terminalSession.TextEditorModelKey);
             }
