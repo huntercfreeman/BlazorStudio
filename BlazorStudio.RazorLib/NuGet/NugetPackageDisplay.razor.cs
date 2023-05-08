@@ -1,28 +1,16 @@
 using System.Collections.Immutable;
 using BlazorCommon.RazorLib.ComponentRenderers;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Nuget;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
-using System.Text;
 using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Notification;
 using BlazorCommon.RazorLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.CommandLine;
-using BlazorStudio.ClassLib.FileConstants;
-using BlazorStudio.ClassLib.FileSystem.Classes;
-using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Nuget;
 using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
 using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
-using BlazorStudio.ClassLib.Store.TerminalCase;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
-using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.NuGet;
 
@@ -38,9 +26,7 @@ public partial class NugetPackageDisplay : FluxorComponent
     private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    
+
     [Parameter, EditorRequired]
     public NugetPackageRecord NugetPackageRecord { get; set; } = null!;
 

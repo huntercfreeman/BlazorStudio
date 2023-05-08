@@ -6,22 +6,13 @@ using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.Dropdown;
 using BlazorCommon.RazorLib.Menu;
 using BlazorCommon.RazorLib.Notification;
-using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorCommon.RazorLib.Store.NotificationCase;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.CommandLine;
-using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.InputFile;
-using BlazorStudio.ClassLib.Namespaces;
-using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorStudio.RazorLib.CSharpProjectForm;
-using BlazorStudio.RazorLib.SolutionExplorer;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -152,69 +143,6 @@ public partial class InputFileContextMenu : ComponentBase
             //     $"namespace: {treeViewModel.Item.Namespace}",
             //     MenuOptionKind.Read)
         };
-    }
-
-    private void OpenNewCSharpProjectDialog(NamespacePath solutionNamespacePath)
-    {
-        var dialogRecord = new DialogRecord(
-            DialogKey.NewDialogKey(), 
-            "New C# Project",
-            typeof(CSharpProjectFormDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(CSharpProjectFormDisplay.SolutionNamespacePath),
-                    solutionNamespacePath
-                }
-            },
-            null)
-        {
-            IsResizable = true
-        };
-        
-        Dispatcher.Dispatch(
-            new DialogRecordsCollection.RegisterAction(
-                dialogRecord));
-    }
-    
-    private void AddExistingProjectToSolution(NamespacePath solutionNamespacePath)
-    {
-        Dispatcher.Dispatch(
-            new InputFileState.RequestInputFileStateFormAction(
-                "Existing C# Project to add to solution",
-                async afp =>
-                {
-                    if (afp is null)
-                        return;
-                    
-                    var localInterpolatedAddExistingProjectToSolutionCommand = DotNetCliFacts
-                        .FormatAddExistingProjectToSolution(
-                            solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                            afp.GetAbsoluteFilePathString());
-                    
-                    var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-                },
-                afp =>
-                {
-                    if (afp is null ||
-                        afp.IsDirectory)
-                    {
-                        return Task.FromResult(false);
-                    }
-
-                    return Task.FromResult(
-                        afp.ExtensionNoPeriod
-                            .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
-                },
-                new[]
-                {
-                    new InputFilePattern(
-                        "C# Project",
-                        afp => 
-                            afp.ExtensionNoPeriod
-                                .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-                }.ToImmutableArray()));
     }
 
     /// <summary>

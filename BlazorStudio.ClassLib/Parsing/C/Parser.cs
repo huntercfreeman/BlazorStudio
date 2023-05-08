@@ -246,12 +246,7 @@ public class Parser
         
         _statementNodes.Add(statementNode);
     }
-    
-    private void ParseLibraryReferenceToken(LibraryReferenceToken token)
-    {
-        throw new NotImplementedException();
-    }
-    
+
     private (ISyntaxToken token, int index)? FindNextTokenByPredicate(Func<ISyntaxToken, bool> tokenPredicateFunc)
     {
         for (var index = _tokenIndex + 1; index < _tokens.Length; index++)

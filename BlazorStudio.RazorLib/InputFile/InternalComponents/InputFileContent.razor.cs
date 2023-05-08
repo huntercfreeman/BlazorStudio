@@ -1,12 +1,9 @@
-﻿using BlazorCommon.RazorLib.ComponentRenderers;
-using BlazorCommon.RazorLib.Dimensions;
+﻿using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.RazorLib.InputFile.Classes;
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.InputFile.InternalComponents;
@@ -14,13 +11,7 @@ namespace BlazorStudio.RazorLib.InputFile.InternalComponents;
 public partial class InputFileContent : ComponentBase
 {
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
-    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     

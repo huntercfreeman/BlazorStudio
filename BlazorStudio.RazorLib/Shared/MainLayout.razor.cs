@@ -1,23 +1,13 @@
-﻿using BlazorCommon.RazorLib.Dialog;
-using BlazorCommon.RazorLib.Notification;
-using BlazorCommon.RazorLib.Dimensions;
-using BlazorCommon.RazorLib.Drag;
-using BlazorCommon.RazorLib.Icons;
+﻿using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.Options;
 using BlazorCommon.RazorLib.Resize;
-using BlazorCommon.RazorLib.Store;
 using BlazorCommon.RazorLib.Store.ApplicationOptions;
 using BlazorCommon.RazorLib.Store.DragCase;
-using BlazorCommon.RazorLib.Store.ThemeCase;
-using BlazorCommon.RazorLib.Theme;
 using BlazorStudio.ClassLib.Dimensions;
-using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 namespace BlazorStudio.RazorLib.Shared;
 
@@ -30,15 +20,9 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     private string _message = string.Empty;
 

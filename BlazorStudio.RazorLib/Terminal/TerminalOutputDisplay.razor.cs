@@ -1,11 +1,9 @@
 using System.Collections.Immutable;
 using System.Text;
 using BlazorCommon.RazorLib.ComponentRenderers;
-using BlazorCommon.RazorLib.ComponentRenderers.Types;
 using BlazorCommon.RazorLib.Keyboard;
 using BlazorCommon.RazorLib.Notification;
 using BlazorStudio.ClassLib.Html;
-using BlazorStudio.ClassLib.State;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Cursor;
