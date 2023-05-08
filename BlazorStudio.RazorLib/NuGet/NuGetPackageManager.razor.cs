@@ -1,20 +1,12 @@
-﻿using System.Collections.Immutable;
-using BlazorStudio.ClassLib.ComponentRenderers;
-using BlazorStudio.ClassLib.ComponentRenderers.Types;
+﻿using BlazorStudio.ClassLib.ComponentRenderers.Types;
 using BlazorStudio.ClassLib.Nuget;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
 using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorStudio.ClassLib.DotNet;
-using BlazorStudio.ClassLib.Nuget;
 using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
 using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
-using Microsoft.AspNetCore.Components;
-using Microsoft.CodeAnalysis;
 
 namespace BlazorStudio.RazorLib.NuGet;
 

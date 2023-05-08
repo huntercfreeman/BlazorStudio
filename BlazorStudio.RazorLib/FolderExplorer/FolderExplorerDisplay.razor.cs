@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using BlazorCommon.RazorLib.BackgroundTaskCase;
-using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Store.AccountCase;
 using BlazorCommon.RazorLib.Store.ApplicationOptions;
 using BlazorCommon.RazorLib.Store.DropdownCase;
@@ -8,25 +7,17 @@ using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.ComponentRenderers;
-using BlazorStudio.ClassLib.Dimensions;
-using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.Menu;
 using BlazorStudio.ClassLib.Store.FolderExplorerCase;
-using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.FolderExplorer.Classes;
 using BlazorStudio.RazorLib.FolderExplorer.InternalComponents;
-using BlazorStudio.RazorLib.InputFile.InternalComponents;
-using BlazorStudio.RazorLib.SolutionExplorer;
 using BlazorTextEditor.RazorLib;
 using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.FolderExplorer;
 

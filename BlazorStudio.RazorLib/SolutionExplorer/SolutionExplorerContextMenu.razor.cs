@@ -1,5 +1,4 @@
-﻿using BlazorStudio.ClassLib.Menu;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.ComponentRenderers.Types;
@@ -24,9 +23,7 @@ using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.CSharpProjectForm;
-using BlazorStudio.RazorLib.DotNetSolutionForm;
 using Fluxor;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.SolutionExplorer;
 

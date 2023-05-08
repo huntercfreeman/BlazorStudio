@@ -1,6 +1,5 @@
 using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.Resize;
-using BlazorStudio.ClassLib.Dimensions;
 using BlazorStudio.ClassLib.Store.PanelCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;

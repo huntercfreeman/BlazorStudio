@@ -11,7 +11,6 @@ using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
 using BlazorStudio.RazorLib.InputFile.Classes;
 using BlazorStudio.RazorLib.InputFile.InternalComponents;
-using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;

@@ -2,7 +2,6 @@
 using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Icons.Codicon;
 using BlazorCommon.RazorLib.Store.ThemeCase;
-using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Panel;
 using BlazorStudio.ClassLib.Store.PanelCase;

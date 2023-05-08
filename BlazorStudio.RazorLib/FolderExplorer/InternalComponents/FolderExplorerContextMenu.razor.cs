@@ -1,31 +1,19 @@
-﻿using BlazorStudio.ClassLib.Menu;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.ComponentRenderers.Types;
-using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.Dropdown;
 using BlazorCommon.RazorLib.Menu;
 using BlazorCommon.RazorLib.Notification;
-using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorCommon.RazorLib.Store.NotificationCase;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.CommandLine;
-using BlazorStudio.ClassLib.FileConstants;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
-using BlazorStudio.ClassLib.InputFile;
-using BlazorStudio.ClassLib.Namespaces;
-using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorStudio.RazorLib.CSharpProjectForm;
-using BlazorStudio.RazorLib.DotNetSolutionForm;
 using Fluxor;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.FolderExplorer.InternalComponents;
 

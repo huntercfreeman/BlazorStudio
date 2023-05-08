@@ -1,5 +1,4 @@
 ﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
-using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Store.DialogCase;
 using BlazorStudio.ClassLib.ComponentRenderers;

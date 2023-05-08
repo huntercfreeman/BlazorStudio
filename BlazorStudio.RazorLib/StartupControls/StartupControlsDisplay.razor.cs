@@ -1,5 +1,4 @@
-﻿using System.Text;
-using BlazorStudio.ClassLib.CommandLine;
+﻿using BlazorStudio.ClassLib.CommandLine;
 using BlazorStudio.ClassLib.Store.ProgramExecutionCase;
 using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;

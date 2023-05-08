@@ -1,12 +1,9 @@
-﻿using BlazorCommon.RazorLib.ComponentRenderers;
-using BlazorCommon.RazorLib.Dimensions;
+﻿using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.RazorLib.InputFile.Classes;
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorStudio.RazorLib.InputFile.InternalComponents;

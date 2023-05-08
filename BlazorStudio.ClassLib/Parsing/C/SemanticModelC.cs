@@ -1,5 +1,4 @@
-﻿using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
-using BlazorTextEditor.RazorLib.Lexing;
+﻿using BlazorTextEditor.RazorLib.Lexing;
 using BlazorTextEditor.RazorLib.Model;
 using BlazorTextEditor.RazorLib.Semantics;
 

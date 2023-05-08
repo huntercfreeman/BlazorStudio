@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using BlazorCommon.RazorLib.ComponentRenderers;
 using BlazorCommon.RazorLib.Dialog;
 using BlazorCommon.RazorLib.Dimensions;
 using BlazorCommon.RazorLib.Store.DropdownCase;
@@ -7,7 +6,6 @@ using BlazorCommon.RazorLib.TreeView;
 using BlazorCommon.RazorLib.TreeView.Commands;
 using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using BlazorStudio.ClassLib.ComponentRenderers;
-using BlazorStudio.ClassLib.FileSystem.Classes;
 using BlazorStudio.ClassLib.FileSystem.Interfaces;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorStudio.ClassLib.TreeViewImplementations;
