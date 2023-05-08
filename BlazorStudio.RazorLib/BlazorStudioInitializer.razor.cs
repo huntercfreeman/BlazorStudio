@@ -27,11 +27,7 @@ public partial class BlazorStudioInitializer : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private BlazorTextEditorOptions BlazorTextEditorOptions { get; set; } = null!;
     [Inject]

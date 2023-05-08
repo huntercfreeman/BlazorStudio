@@ -30,15 +30,9 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     private string _message = string.Empty;
 

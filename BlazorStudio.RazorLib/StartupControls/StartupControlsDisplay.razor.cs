@@ -14,9 +14,7 @@ public partial class StartupControlsDisplay : FluxorComponent
     private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    
+
     private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey = 
         TerminalCommandKey.NewTerminalCommandKey();
 
