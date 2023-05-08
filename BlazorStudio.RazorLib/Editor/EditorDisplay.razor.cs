@@ -15,13 +15,8 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorStudio.RazorLib.Editor;
 
-public partial class EditorDisplay : FluxorComponent
+public partial class EditorDisplay : ComponentBase
 {
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
-    
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
     

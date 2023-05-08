@@ -25,8 +25,6 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private IBlazorStudioComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private IState<InputFileState> InputFileStateWrap { get; set; } = null!;

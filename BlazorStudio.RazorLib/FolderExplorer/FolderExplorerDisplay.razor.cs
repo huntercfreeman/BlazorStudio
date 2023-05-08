@@ -39,8 +39,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AccountState> AccountStateWrap { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;

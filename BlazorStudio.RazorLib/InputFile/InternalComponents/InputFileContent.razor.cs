@@ -14,13 +14,7 @@ namespace BlazorStudio.RazorLib.InputFile.InternalComponents;
 public partial class InputFileContent : ComponentBase
 {
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
-    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     

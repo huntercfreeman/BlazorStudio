@@ -30,48 +30,7 @@ public partial class InputFileBottomControls : ComponentBase
 
     private ElementReference? _searchElementReference;
     private string _searchQuery = string.Empty;
-    
-    private void HandleBackButtonOnClick()
-    {
-        Dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
-    }
-    
-    private void HandleForwardButtonOnClick()
-    {
-        Dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
-    }
 
-    private void HandleUpwardButtonOnClick()
-    {
-        Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
-            BlazorStudioComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
-            BackgroundTaskQueue));
-    }
-
-    private void HandleRefreshButtonOnClick()
-    {
-        Dispatcher.Dispatch(
-            new InputFileState.RefreshCurrentSelectionAction(BackgroundTaskQueue));
-    }
-
-    private async Task FocusSearchElementReferenceOnClickAsync()
-    {
-        try
-        {
-            if (_searchElementReference is not null)
-                await _searchElementReference.Value.FocusAsync();
-        }
-        catch (Exception e)
-        {
-            // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
-            //             This bug is seemingly happening randomly. I have a suspicion
-            //             that there are race-condition exceptions occurring with "FocusAsync"
-            //             on an ElementReference.
-        }
-    }
-    
     private void SelectInputFilePatternOnChange(ChangeEventArgs changeEventArgs)
     {
         var patternName = (string)(changeEventArgs.Value ?? string.Empty);

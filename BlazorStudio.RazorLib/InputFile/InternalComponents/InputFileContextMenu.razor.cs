@@ -154,69 +154,6 @@ public partial class InputFileContextMenu : ComponentBase
         };
     }
 
-    private void OpenNewCSharpProjectDialog(NamespacePath solutionNamespacePath)
-    {
-        var dialogRecord = new DialogRecord(
-            DialogKey.NewDialogKey(), 
-            "New C# Project",
-            typeof(CSharpProjectFormDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(CSharpProjectFormDisplay.SolutionNamespacePath),
-                    solutionNamespacePath
-                }
-            },
-            null)
-        {
-            IsResizable = true
-        };
-        
-        Dispatcher.Dispatch(
-            new DialogRecordsCollection.RegisterAction(
-                dialogRecord));
-    }
-    
-    private void AddExistingProjectToSolution(NamespacePath solutionNamespacePath)
-    {
-        Dispatcher.Dispatch(
-            new InputFileState.RequestInputFileStateFormAction(
-                "Existing C# Project to add to solution",
-                async afp =>
-                {
-                    if (afp is null)
-                        return;
-                    
-                    var localInterpolatedAddExistingProjectToSolutionCommand = DotNetCliFacts
-                        .FormatAddExistingProjectToSolution(
-                            solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                            afp.GetAbsoluteFilePathString());
-                    
-                    var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-                },
-                afp =>
-                {
-                    if (afp is null ||
-                        afp.IsDirectory)
-                    {
-                        return Task.FromResult(false);
-                    }
-
-                    return Task.FromResult(
-                        afp.ExtensionNoPeriod
-                            .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
-                },
-                new[]
-                {
-                    new InputFilePattern(
-                        "C# Project",
-                        afp => 
-                            afp.ExtensionNoPeriod
-                                .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-                }.ToImmutableArray()));
-    }
-
     /// <summary>
     /// This method I believe is causing bugs
     /// <br/><br/>

@@ -38,9 +38,7 @@ public partial class NugetPackageDisplay : FluxorComponent
     private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    
+
     [Parameter, EditorRequired]
     public NugetPackageRecord NugetPackageRecord { get; set; } = null!;
 

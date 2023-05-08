@@ -23,8 +23,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
