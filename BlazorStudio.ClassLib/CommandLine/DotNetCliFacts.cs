@@ -151,7 +151,7 @@ public static class DotNetCliFacts
             "add",
             projectToMoveAbsoluteFilePathString,
             "--solution-folder",
-            "solutionFolderPath",
+            solutionFolderPath,
         });
     }
 }
