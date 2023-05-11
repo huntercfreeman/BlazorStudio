@@ -14,6 +14,7 @@ using BlazorStudio.RazorLib.NuGet;
 using BlazorStudio.RazorLib.SolutionExplorer;
 using BlazorStudio.RazorLib.Terminal;
 using BlazorTextEditor.RazorLib;
+using BlazorTextEditor.RazorLib.Store.Find;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
@@ -45,7 +46,14 @@ public partial class BlazorStudioInitializer : ComponentBase
                         themeRecord));
             }
         }
-        
+
+        foreach (var findProvider in BlazorTextEditorOptions.FindProviders)
+        {
+            Dispatcher.Dispatch(
+                new TextEditorFindProviderState.RegisterAction(
+                    findProvider));
+        }
+
         foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
         {
             var terminalSession = new TerminalSession(
