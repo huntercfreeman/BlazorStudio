@@ -8,7 +8,7 @@ public class LexerTests
     [Fact]
     public void SHOULD_LEX_NUMERIC_LITERAL_TOKENS()
     {
-        string testDataHelloWorld = @"#include <stdlib.h>
+        string testData = @"#include <stdlib.h>
 #include <stdio.h>
 
 // C:\Users\hunte\Repos\Aaa\
@@ -26,7 +26,7 @@ int main()
 	printf(""%d"", x);
 }".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(testDataHelloWorld);
+        var lexer = new Lexer(testData);
         
         lexer.Lex();
         
@@ -34,7 +34,7 @@ int main()
 	        .Single(x => x.SyntaxKind == SyntaxKind.NumericLiteralToken);
         
         var text = numericLiteralToken.BlazorStudioTextSpan
-	        .GetText(testDataHelloWorld);
+	        .GetText(testData);
 
         Assert.Equal("42", text);
     }
@@ -42,7 +42,7 @@ int main()
     [Fact]
     public void SHOULD_LEX_STRING_LITERAL_TOKENS()
     {
-        string testDataHelloWorld = @"#include <stdlib.h>
+        string testData = @"#include <stdlib.h>
 #include <stdio.h>
 
 // C:\Users\hunte\Repos\Aaa\
@@ -60,7 +60,7 @@ int main()
 	printf(""%d"", x);
 }".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(testDataHelloWorld);
+        var lexer = new Lexer(testData);
         
         lexer.Lex();
         
@@ -68,7 +68,7 @@ int main()
 	        .Single(x => x.SyntaxKind == SyntaxKind.StringLiteralToken);
         
         var text = stringLiteralToken.BlazorStudioTextSpan
-	        .GetText(testDataHelloWorld);
+	        .GetText(testData);
 
         Assert.Equal("\"%d\"", text);
     }
@@ -76,7 +76,7 @@ int main()
     [Fact]
     public void SHOULD_LEX_COMMENT_SINGLE_LINE_TOKENS()
     {
-	    string testDataHelloWorld = @"#include <stdlib.h>
+	    string testData = @"#include <stdlib.h>
 #include <stdio.h>
 
 // C:\Users\hunte\Repos\Aaa\
@@ -94,7 +94,7 @@ int main()
 	printf(""%d"", x);
 }".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(testDataHelloWorld);
+	    var lexer = new Lexer(testData);
         
 	    lexer.Lex();
 
@@ -103,7 +103,7 @@ int main()
 
 	    var tokenTextTuple = SyntaxTokenHelper.GetTokenTextTuple(
 		    commentSingleLineTokenToken,
-		    testDataHelloWorld);
+		    testData);
 
 	    Assert.Equal(
 		    "// C:\\Users\\hunte\\Repos\\Aaa\\",
@@ -113,7 +113,7 @@ int main()
     [Fact]
     public void SHOULD_LEX_COMMENT_MULTI_LINE_TOKENS()
     {
-	    string testDataHelloWorld = @"#include <stdlib.h>
+	    string testData = @"#include <stdlib.h>
 #include <stdio.h>
 
 // C:\Users\hunte\Repos\Aaa\
@@ -131,7 +131,7 @@ int main()
 	printf(""%d"", x);
 }".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(testDataHelloWorld);
+	    var lexer = new Lexer(testData);
         
 	    lexer.Lex();
         
@@ -141,7 +141,7 @@ int main()
 
 	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
 		    commentMultiLineTokenTokens,
-		    testDataHelloWorld);
+		    testData);
 	
 	    Assert.Equal(
 		    "/*\n\t\tA Multi-Line Comment\n\t*/",
@@ -155,7 +155,7 @@ int main()
     [Fact]
     public void SHOULD_LEX_KEYWORD_TOKENS()
     {
-        string testDataHelloWorld = @"#include <stdlib.h>
+        string testData = @"#include <stdlib.h>
 #include <stdio.h>
 
 // C:\Users\hunte\Repos\Aaa\
@@ -173,7 +173,7 @@ int main()
 	printf(""%d"", x);
 }".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(testDataHelloWorld);
+        var lexer = new Lexer(testData);
         
         lexer.Lex();
         
@@ -182,7 +182,7 @@ int main()
         
         var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
 	        keywordTokens,
-	        testDataHelloWorld);
+	        testData);
         
         Assert.Equal(
 	        "int",
@@ -196,7 +196,7 @@ int main()
     [Fact]
     public void SHOULD_LEX_IDENTIFIER_TOKENS()
     {
-	    string testDataHelloWorld = @"#include <stdlib.h>
+	    string testData = @"#include <stdlib.h>
 #include <stdio.h>
 
 // C:\Users\hunte\Repos\Aaa\
@@ -214,7 +214,7 @@ int main()
 	printf(""%d"", x);
 }".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(testDataHelloWorld);
+	    var lexer = new Lexer(testData);
         
 	    lexer.Lex();
         
@@ -223,7 +223,7 @@ int main()
         
 	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
 		    identifierTokens,
-		    testDataHelloWorld);
+		    testData);
 	    
 	    Assert.Equal(
 		    "main",
@@ -245,7 +245,7 @@ int main()
     [Fact]
     public void SHOULD_LEX_PLUS_TOKENS()
     {
-	    string testDataHelloWorld = @"#include <stdlib.h>
+	    string testData = @"#include <stdlib.h>
 #include <stdio.h>
 
 // C:\Users\hunte\Repos\Aaa\
@@ -263,7 +263,7 @@ int main()
 	printf(""%d"", x);
 }".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(testDataHelloWorld);
+	    var lexer = new Lexer(testData);
         
 	    lexer.Lex();
         
@@ -272,7 +272,7 @@ int main()
         
 	    var tokenTextTuple = SyntaxTokenHelper.GetTokenTextTuple(
 		    plusToken,
-		    testDataHelloWorld);
+		    testData);
 	    
 	    Assert.Equal(
 		    "+",
@@ -282,7 +282,7 @@ int main()
     [Fact]
     public void SHOULD_LEX_PREPROCESSOR_DIRECTIVE_TOKENS()
     {
-	    string testDataHelloWorld = @"#include <stdlib.h>
+	    string testData = @"#include <stdlib.h>
 #include <stdio.h>
 
 // C:\Users\hunte\Repos\Aaa\
@@ -300,7 +300,7 @@ int main()
 	printf(""%d"", x);
 }".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(testDataHelloWorld);
+	    var lexer = new Lexer(testData);
         
 	    lexer.Lex();
         
@@ -309,7 +309,7 @@ int main()
         
 	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
 		    preprocessorDirectiveTokens,
-		    testDataHelloWorld);
+		    testData);
 
 	    Assert.Equal(
 		    CLanguageFacts.Preprocessor.Directives.INCLUDE,
@@ -323,7 +323,7 @@ int main()
     [Fact]
     public void SHOULD_LEX_LIBRARY_REFERENCE_TOKENS()
     {
-	    string testDataHelloWorld = @"#include <stdlib.h>
+	    string testData = @"#include <stdlib.h>
 #include <stdio.h>
 
 // C:\Users\hunte\Repos\Aaa\
@@ -341,7 +341,7 @@ int main()
 	printf(""%d"", x);
 }".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(testDataHelloWorld);
+	    var lexer = new Lexer(testData);
         
 	    lexer.Lex();
         
@@ -350,7 +350,7 @@ int main()
         
 	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
 		    libraryReferenceTokens,
-		    testDataHelloWorld);
+		    testData);
 	    
 	    Assert.Equal(
 		    "stdlib.h",
@@ -364,7 +364,7 @@ int main()
     [Fact]
     public void SHOULD_LEX_EQUALS_TOKENS()
     {
-	    string testDataHelloWorld = @"#include <stdlib.h>
+	    string testData = @"#include <stdlib.h>
 #include <stdio.h>
 
 // C:\Users\hunte\Repos\Aaa\
@@ -382,7 +382,7 @@ int main()
 	printf(""%d"", x);
 }".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(testDataHelloWorld);
+	    var lexer = new Lexer(testData);
         
 	    lexer.Lex();
         
@@ -391,7 +391,7 @@ int main()
         
 	    var tokenTextTuple = SyntaxTokenHelper.GetTokenTextTuple(
 		    equalsTokens,
-		    testDataHelloWorld);
+		    testData);
 	    
 	    Assert.Equal(
 		    "=",
@@ -401,7 +401,7 @@ int main()
     [Fact]
     public void SHOULD_LEX_STATEMENT_DELIMITER_TOKENS()
     {
-	    string testDataHelloWorld = @"#include <stdlib.h>
+	    string testData = @"#include <stdlib.h>
 #include <stdio.h>
 
 // C:\Users\hunte\Repos\Aaa\
@@ -419,7 +419,7 @@ int main()
 	printf(""%d"", x);
 }".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(testDataHelloWorld);
+	    var lexer = new Lexer(testData);
         
 	    lexer.Lex();
         
@@ -428,7 +428,7 @@ int main()
         
 	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
 		    statementDelimiterTokens,
-		    testDataHelloWorld);
+		    testData);
 	    
 	    Assert.Equal(2, tokenTextTuples.Length);
 	    
