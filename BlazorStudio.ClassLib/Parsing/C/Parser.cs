@@ -1,6 +1,4 @@
 ﻿using System.Collections.Immutable;
-using BlazorCommon.RazorLib.Icons.Codicon;
-using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
