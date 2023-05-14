@@ -6,21 +6,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
+using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
+using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
 
 public class Binder
 {
     private ISyntaxNode? _currentNode;
-    private BoundCompilationUnitBuilder _boundCompilationUnitBuilder = new();
 
-    public BoundCompilationUnit BoundCompilationUnit => _boundCompilationUnitBuilder.Build();
-
-    public void BindLiteralExpressionNode(LiteralExpressionNode literalExpressionNode)
+    public BoundLiteralExpressionNode BindLiteralExpressionNode(LiteralExpressionNode literalExpressionNode)
     {
         var type = literalExpressionNode.LiteralSyntaxToken.SyntaxKind switch
         {
-            SyntaxKind.NumericLiteralToken => typeof(Int32),
+            SyntaxKind.NumericLiteralToken => typeof(int),
             SyntaxKind.StringLiteralToken => typeof(string),
             _ => throw new NotImplementedException(),
         };
@@ -32,11 +31,34 @@ public class Binder
         if (_currentNode is null)
         {
             _currentNode = boundLiteralExpressionNode;
-            _boundCompilationUnitBuilder.Children.Add(boundLiteralExpressionNode);
+
+            return boundLiteralExpressionNode;
         }
         else
         {
             throw new NotImplementedException();
         }
+    }
+
+    public BoundBinaryOperatorNode BindBinaryOperatorNode(
+        BoundLiteralExpressionNode leftBoundLiteralExpressionNode,
+        ISyntaxToken operatorToken,
+        BoundLiteralExpressionNode rightBoundLiteralExpressionNode)
+    {
+        if (leftBoundLiteralExpressionNode.ResultType == typeof(int) &&
+            rightBoundLiteralExpressionNode.ResultType == typeof(int))
+        {
+            switch (operatorToken.SyntaxKind)
+            {
+                case SyntaxKind.PlusToken:
+                    return new BoundBinaryOperatorNode(
+                        leftBoundLiteralExpressionNode.ResultType,
+                        operatorToken,
+                        rightBoundLiteralExpressionNode.ResultType,
+                        typeof(int));
+            }
+        }
+
+        throw new NotImplementedException();
     }
 }

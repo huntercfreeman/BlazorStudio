@@ -19,4 +19,7 @@ public enum SyntaxKind
 
     // Nodes
     LiteralExpressionNode,
+    BoundLiteralExpressionNode,
+    BoundBinaryOperatorNode,
+    BoundBinaryExpressionNode,
 }

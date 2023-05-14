@@ -7,12 +7,10 @@ public class CompilationUnitBuilder
     public bool IsExpression { get; set; }
     public List<ISyntax> Children { get; set; } = new();
 
-    public CompilationUnit Build(
-        BoundCompilationUnit boundCompilationUnit)
+    public CompilationUnit Build()
     {
         return new CompilationUnit(
             IsExpression,
-            Children.ToImmutableArray(),
-            boundCompilationUnit);
+            Children.ToImmutableArray());
     }
 }

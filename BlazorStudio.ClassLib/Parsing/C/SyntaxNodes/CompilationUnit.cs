@@ -11,15 +11,12 @@ public class CompilationUnit
 {
     public CompilationUnit(
         bool isExpression,
-        ImmutableArray<ISyntax> children,
-        BoundCompilationUnit boundCompilationUnit)
+        ImmutableArray<ISyntax> children)
     {
         IsExpression = isExpression;
         Children = children;
-        BoundCompilationUnit = boundCompilationUnit;
     }
 
     public bool IsExpression { get; }
     public ImmutableArray<ISyntax> Children { get; }
-    public BoundCompilationUnit BoundCompilationUnit { get; }
 }
