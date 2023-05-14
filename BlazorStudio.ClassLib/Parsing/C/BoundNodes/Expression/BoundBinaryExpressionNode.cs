@@ -30,7 +30,7 @@ public class BoundBinaryExpressionNode : IBoundExpressionNode
     public ImmutableArray<ISyntax> Children { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundBinaryExpressionNode;
 
-    public Type ResultType => throw new NotImplementedException();
+    public Type ResultType => BoundBinaryOperatorNode.ResultType;
 
     public IBoundExpressionNode LeftBoundExpressionNode { get; }
     public BoundBinaryOperatorNode BoundBinaryOperatorNode { get; }

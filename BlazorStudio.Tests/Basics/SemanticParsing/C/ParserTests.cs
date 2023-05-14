@@ -8,9 +8,9 @@ public class ParserTests
     [Fact]
     public void SHOULD_PARSE_NUMERIC_LITERAL_EXPRESSION()
     {
-        string testData = "3".ReplaceLineEndings("\n");
+        string sourceText = "3".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(testData);
+        var lexer = new Lexer(sourceText);
         lexer.Lex();
 
         var parser = new Parser(
@@ -23,15 +23,15 @@ public class ParserTests
         var boundLiteralExpressionNode = (BoundLiteralExpressionNode)compilationUnit
             .Children[0];
 
-        Assert.Equal(typeof(Int32), boundLiteralExpressionNode.ResultType);
+        Assert.Equal(typeof(int), boundLiteralExpressionNode.ResultType);
     }
     
     [Fact]
     public void SHOULD_PARSE_STRING_LITERAL_EXPRESSION()
     {
-        string testData = "\"123abc\"".ReplaceLineEndings("\n");
+        string sourceText = "\"123abc\"".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(testData);
+        var lexer = new Lexer(sourceText);
         lexer.Lex();
 
         var parser = new Parser(
@@ -50,9 +50,9 @@ public class ParserTests
     [Fact]
     public void SHOULD_PARSE_NUMERIC_BINARY_EXPRESSION()
     {
-        string testData = "3 + 3".ReplaceLineEndings("\n");
+        string sourceText = "3 + 3".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(testData);
+        var lexer = new Lexer(sourceText);
         lexer.Lex();
 
         var parser = new Parser(
@@ -62,9 +62,19 @@ public class ParserTests
 
         Assert.Single(compilationUnit.Children);
 
-        var boundLiteralExpressionNode = (BoundLiteralExpressionNode)compilationUnit
+        var boundBinaryExpressionNode = (BoundBinaryExpressionNode)compilationUnit
             .Children[0];
 
-        Assert.Equal(typeof(Int32), boundLiteralExpressionNode.ResultType);
+        Assert.Equal(
+            typeof(int),
+            boundBinaryExpressionNode.LeftBoundExpressionNode.ResultType);
+
+        Assert.Equal(
+            typeof(int),
+            boundBinaryExpressionNode.BoundBinaryOperatorNode.ResultType);
+
+        Assert.Equal(
+            typeof(int),
+            boundBinaryExpressionNode.RightBoundExpressionNode.ResultType);
     }
 }

@@ -28,16 +28,9 @@ public class Binder
             literalExpressionNode.LiteralSyntaxToken,
             type);
 
-        if (_currentNode is null)
-        {
-            _currentNode = boundLiteralExpressionNode;
+        _currentNode = boundLiteralExpressionNode;
 
-            return boundLiteralExpressionNode;
-        }
-        else
-        {
-            throw new NotImplementedException();
-        }
+        return boundLiteralExpressionNode;
     }
 
     public BoundBinaryOperatorNode BindBinaryOperatorNode(
@@ -56,6 +49,19 @@ public class Binder
                         operatorToken,
                         rightBoundLiteralExpressionNode.ResultType,
                         typeof(int));
+            }
+        }
+        else if (leftBoundLiteralExpressionNode.ResultType == typeof(string) &&
+            rightBoundLiteralExpressionNode.ResultType == typeof(string))
+        {
+            switch (operatorToken.SyntaxKind)
+            {
+                case SyntaxKind.PlusToken:
+                    return new BoundBinaryOperatorNode(
+                        leftBoundLiteralExpressionNode.ResultType,
+                        operatorToken,
+                        rightBoundLiteralExpressionNode.ResultType,
+                        typeof(string));
             }
         }
 

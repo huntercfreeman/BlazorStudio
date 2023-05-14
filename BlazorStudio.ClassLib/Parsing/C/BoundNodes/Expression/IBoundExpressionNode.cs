@@ -2,7 +2,7 @@
 
 namespace BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 
-public interface IBoundExpressionNode : ISyntaxNode
+public interface IBoundExpressionNode : IExpressionNode
 {
     public Type ResultType { get; }
 }

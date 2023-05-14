@@ -13,6 +13,9 @@ public class TokenWalker
     }
 
     public ImmutableArray<ISyntaxToken> Tokens => _tokens;
+    public ISyntaxToken Current => Peek(0);
+    public ISyntaxToken Next => Peek(1);
+    public bool IsEof => Current.SyntaxKind == SyntaxKind.EndOfFileToken;
 
     private int _index;
 
@@ -27,5 +30,16 @@ public class TokenWalker
         }
 
         return _tokens[index];
+    }
+    
+    public ISyntaxToken Consume()
+    {
+        if (_index >= _tokens.Length)
+        {
+            // Return the end of file token (the last token)
+            return _tokens[_tokens.Length - 1];
+        }
+
+        return _tokens[_index++];
     }
 }

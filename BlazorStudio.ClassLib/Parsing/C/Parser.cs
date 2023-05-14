@@ -19,28 +19,39 @@ public class Parser
         _binder = new Binder();
     }
 
-    private ISyntaxNode? _currentNode;
+    private ISyntaxNode? _nodeCurrent;
     private CompilationUnitBuilder _compilationUnitBuilder = new();
-
-    private ISyntaxToken Current => _tokenWalker.Peek(0);
-    private ISyntaxToken Next => _tokenWalker.Peek(1);
 
     public CompilationUnit Parse()
     {
-        var currentToken = Current;
-
-        switch (currentToken.SyntaxKind)
+        while (true)
         {
-            case SyntaxKind.NumericLiteralToken:
-                _ = ParseNumericLiteralToken((NumericLiteralToken)currentToken);
-                break;
-            case SyntaxKind.StringLiteralToken:
-                _ = ParseStringLiteralToken((StringLiteralToken)currentToken);
-                break;
-            case SyntaxKind.PlusToken:
-                ParsePlusToken((PlusToken)currentToken);
+            var tokenCurrent = _tokenWalker.Consume();
+
+            switch (tokenCurrent.SyntaxKind)
+            {
+                case SyntaxKind.NumericLiteralToken:
+                    _ = ParseNumericLiteralToken((NumericLiteralToken)tokenCurrent);
+                    break;
+                case SyntaxKind.StringLiteralToken:
+                    _ = ParseStringLiteralToken((StringLiteralToken)tokenCurrent);
+                    break;
+                case SyntaxKind.PlusToken:
+                    ParsePlusToken((PlusToken)tokenCurrent);
+                    break;
+                case SyntaxKind.EndOfFileToken:
+                    if (_nodeCurrent is IExpressionNode)
+                    {
+                        _compilationUnitBuilder.IsExpression = true;
+                        _compilationUnitBuilder.Children.Add(_nodeCurrent);
+                    }
+                    break;
+            }
+
+            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken)
                 break;
         }
+
         return _compilationUnitBuilder.Build();
     }
 
@@ -48,59 +59,47 @@ public class Parser
     {
         var literalExpressionNode = new LiteralExpressionNode(token);
 
-        if (_currentNode is null)
-        {
-            var boundLiteralExpressionNode = _binder
-                .BindLiteralExpressionNode(literalExpressionNode);
+        var boundLiteralExpressionNode = _binder
+            .BindLiteralExpressionNode(literalExpressionNode);
 
-            _currentNode = boundLiteralExpressionNode;
+        _nodeCurrent = boundLiteralExpressionNode;
 
-            _compilationUnitBuilder.IsExpression = true;
-
-            if (_tokenWalker.Tokens.Length == 1)
-                _compilationUnitBuilder.Children.Add(boundLiteralExpressionNode);
-
-            return boundLiteralExpressionNode;
-        }
-        else
-        {
-            throw new ApplicationException("TODO");
-        }
+        return boundLiteralExpressionNode;
     }
     
     private BoundLiteralExpressionNode ParseStringLiteralToken(StringLiteralToken token)
     {
         var literalExpressionNode = new LiteralExpressionNode(token);
 
-        if (_currentNode is null)
-        {
-            var boundLiteralExpressionNode = _binder
+        var boundLiteralExpressionNode = _binder
                 .BindLiteralExpressionNode(literalExpressionNode);
 
-            _currentNode = boundLiteralExpressionNode;
+        _nodeCurrent = boundLiteralExpressionNode;
 
-            _compilationUnitBuilder.IsExpression = true;
-            _compilationUnitBuilder.Children.Add(literalExpressionNode);
-
-            return boundLiteralExpressionNode;
-        }
-        else
-        {
-            throw new ApplicationException("TODO");
-        }
+        return boundLiteralExpressionNode;
     }
     
     private BoundBinaryExpressionNode ParsePlusToken(PlusToken token)
     {
-        var currentToken = Current;
+        var localNodeCurrent = _nodeCurrent;
 
-        if (currentToken is not BoundLiteralExpressionNode leftBoundLiteralExpressionNode)
+        if (localNodeCurrent is not BoundLiteralExpressionNode leftBoundLiteralExpressionNode)
             throw new NotImplementedException();
 
-        var nextToken = Next;
+        var nextToken = _tokenWalker.Consume();
 
-        var rightBoundLiteralExpressionNode = ParseNumericLiteralToken(
-            (NumericLiteralToken)nextToken);
+        BoundLiteralExpressionNode rightBoundLiteralExpressionNode;
+
+        if (nextToken.SyntaxKind == SyntaxKind.NumericLiteralToken)
+        {
+            rightBoundLiteralExpressionNode = ParseNumericLiteralToken(
+                (NumericLiteralToken)nextToken);
+        }
+        else
+        {
+            rightBoundLiteralExpressionNode = ParseStringLiteralToken(
+                (StringLiteralToken)nextToken);
+        }
 
         var boundBinaryOperatorNode = _binder.BindBinaryOperatorNode(
             leftBoundLiteralExpressionNode,
@@ -112,7 +111,7 @@ public class Parser
             boundBinaryOperatorNode,
             rightBoundLiteralExpressionNode);
 
-        _compilationUnitBuilder.Children.Add(boundBinaryExpressionNode);
+        _nodeCurrent = boundBinaryExpressionNode;
 
         return boundBinaryExpressionNode;
     }

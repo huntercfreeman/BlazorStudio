@@ -15,6 +15,7 @@ public class BoundLiteralExpressionNode : IBoundExpressionNode
         ISyntaxToken literalSyntaxToken,
         Type resultType)
     {
+        LiteralSyntaxToken = literalSyntaxToken;
         ResultType = resultType;
 
         Children = new ISyntax[]
@@ -23,6 +24,7 @@ public class BoundLiteralExpressionNode : IBoundExpressionNode
         }.ToImmutableArray();
     }
 
+    public ISyntaxToken LiteralSyntaxToken { get; }
     public Type ResultType { get; }
     public ImmutableArray<ISyntax> Children { get; }
 
