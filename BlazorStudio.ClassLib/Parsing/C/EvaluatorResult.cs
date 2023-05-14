@@ -3,13 +3,13 @@
 public class EvaluatorResult
 {
     public EvaluatorResult(
-        Type resultType,
-        object resultValue)
+        Type type,
+        object result)
     {
-        ResultType = resultType;
-        ResultValue = resultValue;
+        Type = type;
+        Result = result;
     }
 
-    public Type ResultType { get; }
-    public object ResultValue { get; }
+    public Type Type { get; }
+    public object Result { get; }
 }

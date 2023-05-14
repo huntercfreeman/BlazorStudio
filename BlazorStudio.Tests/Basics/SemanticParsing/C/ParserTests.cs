@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.Parsing.C;
+using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 
 namespace BlazorStudio.Tests.Basics.SemanticParsing.C;
 
@@ -7,50 +8,73 @@ public class ParserTests
     [Fact]
     public void SHOULD_PARSE_NUMERIC_LITERAL_EXPRESSION()
     {
-        string testData = "3".ReplaceLineEndings("\n");
+        string sourceText = "3".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(testData);
+        var lexer = new Lexer(sourceText);
         lexer.Lex();
 
         var parser = new Parser(
-            lexer.SyntaxTokens,
-            testData);
-        
-        var root = parser.Parse();
+            lexer.SyntaxTokens);
+
+        var compilationUnit = parser.Parse();
+
+        Assert.Single(compilationUnit.Children);
+
+        var boundLiteralExpressionNode = (BoundLiteralExpressionNode)compilationUnit
+            .Children[0];
+
+        Assert.Equal(typeof(int), boundLiteralExpressionNode.ResultType);
     }
     
     [Fact]
-    public void SHOULD_PARSE_NUMERIC_THREE_PART_EXPRESSION()
+    public void SHOULD_PARSE_STRING_LITERAL_EXPRESSION()
     {
-        string testData = "10 + 32".ReplaceLineEndings("\n");
+        string sourceText = "\"123abc\"".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(testData);
+        var lexer = new Lexer(sourceText);
         lexer.Lex();
 
         var parser = new Parser(
-            lexer.SyntaxTokens,
-            testData);
-        
-        var root = parser.Parse();
+            lexer.SyntaxTokens);
+
+        var compilationUnit = parser.Parse();
+
+        Assert.Single(compilationUnit.Children);
+
+        var boundLiteralExpressionNode = (BoundLiteralExpressionNode)compilationUnit
+            .Children[0];
+
+        Assert.Equal(typeof(string), boundLiteralExpressionNode.ResultType);
     }
     
-    /// <summary>
-    /// Variable Definition here is to mean "int x = 2;"
-    /// Variable Declaration here is to mean "int x;"
-    /// Variable Assignment here is to mean "x = 2;"
-    /// </summary>
     [Fact]
-    public void SHOULD_PARSE_VARIABLE_DEFINITION()
+    public void SHOULD_PARSE_NUMERIC_BINARY_EXPRESSION()
     {
-        string testData = "int x = 42;".ReplaceLineEndings("\n");
+        string sourceText = "3 + 3".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(testData);
+        var lexer = new Lexer(sourceText);
         lexer.Lex();
 
         var parser = new Parser(
-            lexer.SyntaxTokens,
-            testData);
-        
-        var root = parser.Parse();
+            lexer.SyntaxTokens);
+
+        var compilationUnit = parser.Parse();
+
+        Assert.Single(compilationUnit.Children);
+
+        var boundBinaryExpressionNode = (BoundBinaryExpressionNode)compilationUnit
+            .Children[0];
+
+        Assert.Equal(
+            typeof(int),
+            boundBinaryExpressionNode.LeftBoundExpressionNode.ResultType);
+
+        Assert.Equal(
+            typeof(int),
+            boundBinaryExpressionNode.BoundBinaryOperatorNode.ResultType);
+
+        Assert.Equal(
+            typeof(int),
+            boundBinaryExpressionNode.RightBoundExpressionNode.ResultType);
     }
 }

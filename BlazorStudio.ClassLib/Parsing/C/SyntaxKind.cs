@@ -16,25 +16,10 @@ public enum SyntaxKind
     EqualsToken,
     StatementDelimiterToken,
     EndOfFileToken,
-    
+
     // Nodes
-    NumericLiteralExpressionNode,
-    NumericThreePartExpressionNode,
-    VariableAssignmentExpressionNode,
-    ParenthesizedExpressionNode,
-    OperatorAdditionNode,
-    PreprocessorDirectiveNode,
-    LibraryReferenceNode,
-    TypeNode,
-    StatementNode,
-    VariableNode,
-    TypedLiteralExpressionNode,
-    TypedUnaryExpressionNode,
-    TypedBinaryExpressionNode,
-    
-    // Symbols
-    IntTypeSymbol,
-    
-    // Variable
-    Variable,
+    LiteralExpressionNode,
+    BoundLiteralExpressionNode,
+    BoundBinaryOperatorNode,
+    BoundBinaryExpressionNode,
 }

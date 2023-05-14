@@ -1,98 +1,112 @@
-﻿using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
+﻿using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
+using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
+using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
 
 public class Evaluator
 {
     private readonly CompilationUnit _compilationUnit;
-    private readonly string _content;
+    private readonly string _sourceText;
 
     public Evaluator(
         CompilationUnit compilationUnit,
-        string content)
+        string sourceText)
     {
         _compilationUnit = compilationUnit;
-        _content = content;
+        _sourceText = sourceText;
     }
-    
-    public EvaluatorResult? Evaluate()
+
+    public EvaluatorResult Evaluate()
     {
-        EvaluatorResult? mostRecentEvaluatorResult = null; 
-        
-        foreach (var statementNode in _compilationUnit.StatementNodes)
+        if (_compilationUnit.IsExpression)
         {
-            mostRecentEvaluatorResult = EvaluateStatementNode(statementNode);
-        }
+            var expressionNode = _compilationUnit.Children.Single();
 
-        return mostRecentEvaluatorResult;
-    }
-    
-    private EvaluatorResult? EvaluateStatementNode(StatementNode statementNode)
-    {
-        if (statementNode.Node is NumericExpressionNode)
-        {
-            return EvaluateNumericExpressionNode(
-                (NumericExpressionNode)statementNode.Node);
-        }
-        
-        return null;
-    }
-    
-    private EvaluatorResult EvaluateNumericExpressionNode(NumericExpressionNode node)
-    {
-        if (node is NumericLiteralExpressionNode numericLiteralExpressionNode)
-        {
-            var numericValueAsText = numericLiteralExpressionNode.NumericLiteralToken.BlazorStudioTextSpan
-                .GetText(_content);
-
-            var numericValue = int.Parse(numericValueAsText);
-
-            return new EvaluatorResult(
-                typeof(int),
-                numericValue);
-        }
-        
-        if (node is NumericThreePartExpressionNode numericThreePartExpressionNode)
-        {
-            var leftValue = EvaluateNumericExpressionNode(
-                numericThreePartExpressionNode.LeftNumericExpressionNode!);
-            
-            var rightValue = EvaluateNumericExpressionNode(
-                numericThreePartExpressionNode.RightNumericExpressionNode!);
-
-            var operationResult = EvaluateNumericOperation(
-                (int)leftValue.ResultValue,
-                numericThreePartExpressionNode.OperatorNode,
-                (int)rightValue.ResultValue);
-
-            return new EvaluatorResult(
-                typeof(int),
-                operationResult);
+            return EvaluateExpression((IExpressionNode)expressionNode);
         }
 
         throw new NotImplementedException();
     }
     
-    private EvaluatorResult EvaluateNumericOperation(
-        int leftValue,
-        OperatorNode operatorNode,
-        int rightValue)
+    public EvaluatorResult EvaluateExpression(IExpressionNode expressionNode)
     {
-        Type resultType;
-        object resultValue;
-
-        switch (operatorNode.SyntaxKind)
+        switch (expressionNode.SyntaxKind)
         {
-            case SyntaxKind.OperatorAdditionNode:
-                resultType = typeof(int);
-                resultValue = leftValue + rightValue;
-                break;
-            default:
-                throw new NotImplementedException();
+            case SyntaxKind.BoundLiteralExpressionNode:
+                return EvaluateBoundLiteralExpressionNode((BoundLiteralExpressionNode)expressionNode);
+            case SyntaxKind.BoundBinaryExpressionNode:
+                return EvaluateBoundBinaryExpressionNode((BoundBinaryExpressionNode)expressionNode);
         }
 
-        return new EvaluatorResult(
-            resultType,
-            resultValue);
+        throw new NotImplementedException();
+    }
+
+    public EvaluatorResult EvaluateBoundLiteralExpressionNode(BoundLiteralExpressionNode boundLiteralExpressionNode)
+    {
+        if (boundLiteralExpressionNode.ResultType == typeof(int))
+        {
+            var value = int.Parse(
+                boundLiteralExpressionNode.LiteralSyntaxToken.BlazorStudioTextSpan
+                    .GetText(_sourceText));
+
+            return new EvaluatorResult(
+                boundLiteralExpressionNode.ResultType,
+                value);
+        }
+        else if (boundLiteralExpressionNode.ResultType == typeof(string))
+        {
+            var value = new string(boundLiteralExpressionNode.LiteralSyntaxToken.BlazorStudioTextSpan
+                .GetText(_sourceText)
+                .Skip(1)
+                .SkipLast(1)
+                .ToArray());
+
+            return new EvaluatorResult(
+                boundLiteralExpressionNode.ResultType,
+                value);
+        }
+
+        throw new NotImplementedException();
+    }
+
+    private EvaluatorResult EvaluateBoundBinaryExpressionNode(BoundBinaryExpressionNode boundBinaryExpressionNode)
+    {
+        if (boundBinaryExpressionNode.ResultType == typeof(int))
+        {
+            var leftValue = EvaluateExpression(
+                boundBinaryExpressionNode.LeftBoundExpressionNode);
+            
+            var rightValue = EvaluateExpression(
+                boundBinaryExpressionNode.RightBoundExpressionNode);
+
+            if (boundBinaryExpressionNode.BoundBinaryOperatorNode.OperatorToken.SyntaxKind == SyntaxKind.PlusToken)
+            {
+                var resultingValue = (int)leftValue.Result + (int)rightValue.Result;
+
+                return new EvaluatorResult(
+                    boundBinaryExpressionNode.ResultType,
+                    resultingValue);
+            }
+        }
+        else if (boundBinaryExpressionNode.ResultType == typeof(string))
+        {
+            var leftValue = EvaluateExpression(
+                boundBinaryExpressionNode.LeftBoundExpressionNode);
+
+            var rightValue = EvaluateExpression(
+                boundBinaryExpressionNode.RightBoundExpressionNode);
+
+            if (boundBinaryExpressionNode.BoundBinaryOperatorNode.OperatorToken.SyntaxKind == SyntaxKind.PlusToken)
+            {
+                var resultingValue = (string)leftValue.Result + (string)rightValue.Result;
+
+                return new EvaluatorResult(
+                    boundBinaryExpressionNode.ResultType,
+                    resultingValue);
+            }
+        }
+
+        throw new NotImplementedException();
     }
 }

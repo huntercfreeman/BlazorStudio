@@ -9,7 +9,6 @@ public class SemanticModelC : ISemanticModel
     private string? _text;
     private Lexer? _lexer;
     private Parser? _parser;
-    private CompilationUnit? _compilationUnit;
 
     public SymbolDefinition? GoToDefinition(
         TextEditorModel model,
@@ -23,17 +22,7 @@ public class SemanticModelC : ISemanticModel
         _lexer.Lex();
 
         _parser = new Parser(
-            _lexer.SyntaxTokens,
-            _text);
-        
-        _compilationUnit = _parser.Parse();
-
-        if (_parser.VariableMap.TryGetValue(identifier, out var definition))
-        {
-            return new SymbolDefinition(
-                model.ResourceUri,
-                definition.IdentifierToken.BlazorStudioTextSpan.StartingIndexInclusive);
-        }
+            _lexer.SyntaxTokens);
         
         return null;
     }
@@ -47,9 +36,6 @@ public class SemanticModelC : ISemanticModel
         _lexer.Lex();
 
         _parser = new Parser(
-            _lexer.SyntaxTokens,
-            _text);
-        
-        _compilationUnit = _parser.Parse();
+            _lexer.SyntaxTokens);
     }
 }
