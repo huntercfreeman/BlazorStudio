@@ -79,6 +79,7 @@ public class Binder
             return true;
         }
 
+        boundTypeNode = null;
         return false;
     }
 }

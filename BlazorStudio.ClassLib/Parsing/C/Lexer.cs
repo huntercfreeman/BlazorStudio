@@ -79,6 +79,22 @@ public class Lexer
                     var equalsToken = ConsumeEquals();
                     _syntaxTokens.Add(equalsToken);
                     break;
+                case '(':
+                    var openParenthesisToken = ConsumeOpenParenthesis();
+                    _syntaxTokens.Add(openParenthesisToken);
+                    break;
+                case ')':
+                    var closeParenthesisToken = ConsumeCloseParenthesis();
+                    _syntaxTokens.Add(closeParenthesisToken);
+                    break;
+                case '{':
+                    var openBraceToken = ConsumeOpenBrace();
+                    _syntaxTokens.Add(openBraceToken);
+                    break;
+                case '}':
+                    var closeBraceToken = ConsumeCloseBrace();
+                    _syntaxTokens.Add(closeBraceToken);
+                    break;
                 case CLanguageFacts.STATEMENT_DELIMITER_CHAR:
                     var statementDelimiterToken = ConsumeStatementDelimiter();
                     _syntaxTokens.Add(statementDelimiterToken);
@@ -388,5 +404,57 @@ public class Lexer
             _stringWalker.PositionIndex);
         
         return new StatementDelimiterToken(textSpan);
+    }
+
+    private OpenParenthesisToken ConsumeOpenParenthesis()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _ = _stringWalker.ReadCharacter();
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+
+        return new OpenParenthesisToken(textSpan);
+    }
+
+    private CloseParenthesisToken ConsumeCloseParenthesis()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        _ = _stringWalker.ReadCharacter();
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+
+        return new CloseParenthesisToken(textSpan);
+    }
+
+    private OpenBraceToken ConsumeOpenBrace()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        _ = _stringWalker.ReadCharacter();
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+
+        return new OpenBraceToken(textSpan);
+    }
+
+    private CloseBraceToken ConsumeCloseBrace()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+        
+        _ = _stringWalker.ReadCharacter();
+
+        var textSpan = new BlazorStudioTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex);
+
+        return new CloseBraceToken(textSpan);
     }
 }

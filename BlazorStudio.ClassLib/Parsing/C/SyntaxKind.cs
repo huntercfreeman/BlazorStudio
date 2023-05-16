@@ -15,6 +15,10 @@ public enum SyntaxKind
     PlusToken,
     EqualsToken,
     StatementDelimiterToken,
+    OpenParenthesisToken,
+    CloseParenthesisToken,
+    OpenBraceToken,
+    CloseBraceToken,
     EndOfFileToken,
 
     // Nodes
