@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
@@ -20,7 +21,7 @@ public class Parser
         _binder = new Binder(sourceText);
     }
 
-    private ISyntaxNode? _nodeCurrent;
+    private ISyntaxNode? _nodeRecent;
     private CompilationUnitBuilder _compilationUnitBuilder = new();
 
     public CompilationUnit Parse()
@@ -52,11 +53,14 @@ public class Parser
                 case SyntaxKind.IdentifierToken:
                     ParseIdentifierToken((IdentifierToken)tokenCurrent);
                     break;
+                case SyntaxKind.OpenBraceToken:
+                    ParseOpenBraceToken((OpenBraceToken)tokenCurrent);
+                    break;
                 case SyntaxKind.EndOfFileToken:
-                    if (_nodeCurrent is IExpressionNode)
+                    if (_nodeRecent is IExpressionNode)
                     {
                         _compilationUnitBuilder.IsExpression = true;
-                        _compilationUnitBuilder.Children.Add(_nodeCurrent);
+                        _compilationUnitBuilder.Children.Add(_nodeRecent);
                     }
                     break;
             }
@@ -75,7 +79,7 @@ public class Parser
         var boundLiteralExpressionNode = _binder
             .BindLiteralExpressionNode(literalExpressionNode);
 
-        _nodeCurrent = boundLiteralExpressionNode;
+        _nodeRecent = boundLiteralExpressionNode;
 
         return boundLiteralExpressionNode;
     }
@@ -87,14 +91,14 @@ public class Parser
         var boundLiteralExpressionNode = _binder
                 .BindLiteralExpressionNode(literalExpressionNode);
 
-        _nodeCurrent = boundLiteralExpressionNode;
+        _nodeRecent = boundLiteralExpressionNode;
 
         return boundLiteralExpressionNode;
     }
     
     private BoundBinaryExpressionNode ParsePlusToken(PlusToken token)
     {
-        var localNodeCurrent = _nodeCurrent;
+        var localNodeCurrent = _nodeRecent;
 
         if (localNodeCurrent is not BoundLiteralExpressionNode leftBoundLiteralExpressionNode)
             throw new NotImplementedException();
@@ -124,7 +128,7 @@ public class Parser
             boundBinaryOperatorNode,
             rightBoundLiteralExpressionNode);
 
-        _nodeCurrent = boundBinaryExpressionNode;
+        _nodeRecent = boundBinaryExpressionNode;
 
         return boundBinaryExpressionNode;
     }
@@ -155,7 +159,7 @@ public class Parser
             boundTypeNode is not null)
         {
             // 'int', 'string', 'bool', etc...
-            _nodeCurrent = boundTypeNode;
+            _nodeRecent = boundTypeNode;
         }
         else
         {
@@ -165,15 +169,53 @@ public class Parser
     
     private void ParseIdentifierToken(IdentifierToken token)
     {
-        if (_nodeCurrent is not null &&
-            _nodeCurrent.SyntaxKind == SyntaxKind.BoundTypeNode)
+        if (_nodeRecent is not null &&
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundTypeNode)
         {
             // 'int main()...', 'char c', 'int num', etc...
-            
+            var nextToken = _tokenWalker.Consume();
+
+            if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+            {
+                var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
+                    (BoundTypeNode)_nodeRecent,
+                    token);
+
+                _nodeRecent = boundFunctionDeclarationNode;
+
+                ParseFunctionArguments();
+            }
         }
         else
         {
             throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// TODO: Implement ParseFunctionArguments() correctly. Until then, skip until the body of the function is found. Specifically until the CloseParenthesisToken is found
+    /// </summary>
+    private void ParseFunctionArguments()
+    {
+        while (true)
+        {
+            var tokenCurrent = _tokenWalker.Consume();
+
+            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken ||
+                tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+            { 
+                break;
+            }
+        }
+    }
+    
+    private void ParseOpenBraceToken(OpenBraceToken token)
+    {
+        if (_nodeRecent is not null &&
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
+        {
+            // Function body is being defined
+
         }
     }
 }

@@ -82,4 +82,24 @@ public class Binder
         boundTypeNode = null;
         return false;
     }
+
+    public BoundFunctionDeclarationNode BindFunctionDeclarationNode(
+        BoundTypeNode boundTypeNode,
+        IdentifierToken identifierToken)
+    {
+        var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
+
+        if (_globalScope.FunctionDeclarationMap.TryGetValue(
+            text, 
+            out var functionDeclarationNode))
+        {
+            // TODO: The function was already declared, so report a diagnostic?
+            // TODO: The function was already declared, so check that the return types match?
+            return functionDeclarationNode;
+        }
+
+        return new BoundFunctionDeclarationNode(
+            boundTypeNode,
+            identifierToken);
+    }
 }

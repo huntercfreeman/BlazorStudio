@@ -12,6 +12,11 @@ public class BoundTypeNode : ISyntaxNode
     {
         Type = type;
         Token = token;
+
+        Children = new ISyntax[]
+        {
+            token
+        }.ToImmutableArray();
     }
 
     public ImmutableArray<ISyntax> Children { get; }
