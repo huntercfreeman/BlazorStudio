@@ -2,12 +2,19 @@
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
+using BlazorStudio.ClassLib.Parsing.C.Scope;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
 
 public class Binder
 {
-    private ISyntaxNode? _currentNode;
+    private readonly BoundScope _globalScope = CLanguageFacts.Scope.GetInitialGlobalScope();
+    private readonly string _sourceText;
+
+    public Binder(string sourceText)
+    {
+        _sourceText = sourceText;
+    }
 
     public BoundLiteralExpressionNode BindLiteralExpressionNode(LiteralExpressionNode literalExpressionNode)
     {
@@ -21,8 +28,6 @@ public class Binder
         var boundLiteralExpressionNode = new BoundLiteralExpressionNode(
             literalExpressionNode.LiteralSyntaxToken,
             type);
-
-        _currentNode = boundLiteralExpressionNode;
 
         return boundLiteralExpressionNode;
     }
@@ -60,5 +65,20 @@ public class Binder
         }
 
         throw new NotImplementedException();
+    }
+    
+    public bool TryBindTypeNode(
+        ISyntaxToken token,
+        out BoundTypeNode? boundTypeNode)
+    {
+        var text = token.BlazorStudioTextSpan.GetText(_sourceText);
+
+        if (_globalScope.TypeMap.TryGetValue(text, out var type))
+        {
+            boundTypeNode = new BoundTypeNode(type, token);
+            return true;
+        }
+
+        return false;
     }
 }

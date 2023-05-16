@@ -2,6 +2,7 @@
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
+using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Statement;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
@@ -10,11 +11,13 @@ public class Parser
 {
     private readonly TokenWalker _tokenWalker;
     private readonly Binder _binder;
-    
-    public Parser(ImmutableArray<ISyntaxToken> tokens)
+
+    public Parser(
+        ImmutableArray<ISyntaxToken> tokens,
+        string sourceText)
     {
         _tokenWalker = new TokenWalker(tokens);
-        _binder = new Binder();
+        _binder = new Binder(sourceText);
     }
 
     private ISyntaxNode? _nodeCurrent;
@@ -36,6 +39,18 @@ public class Parser
                     break;
                 case SyntaxKind.PlusToken:
                     ParsePlusToken((PlusToken)tokenCurrent);
+                    break;
+                case SyntaxKind.PreprocessorDirectiveToken:
+                    ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)tokenCurrent);
+                    break;
+                case SyntaxKind.CommentSingleLineToken:
+                    // Do not parse comments.
+                    break;
+                case SyntaxKind.KeywordToken:
+                    ParseKeywordToken((KeywordToken)tokenCurrent);
+                    break;
+                case SyntaxKind.IdentifierToken:
+                    ParseIdentifierToken((IdentifierToken)tokenCurrent);
                     break;
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeCurrent is IExpressionNode)
@@ -112,5 +127,53 @@ public class Parser
         _nodeCurrent = boundBinaryExpressionNode;
 
         return boundBinaryExpressionNode;
+    }
+
+    private IStatementNode ParsePreprocessorDirectiveToken(PreprocessorDirectiveToken token)
+    {
+        var nextToken = _tokenWalker.Consume();
+
+        if (nextToken.SyntaxKind == SyntaxKind.LibraryReferenceToken)
+        {
+            var preprocessorLibraryReferenceStatement = new PreprocessorLibraryReferenceStatement(
+                token,
+                nextToken);
+
+            _compilationUnitBuilder.Children.Add(preprocessorLibraryReferenceStatement);
+
+            return preprocessorLibraryReferenceStatement;
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
+    private void ParseKeywordToken(KeywordToken token)
+    {
+        if (_binder.TryBindTypeNode(token, out var boundTypeNode) &&
+            boundTypeNode is not null)
+        {
+            // 'int', 'string', 'bool', etc...
+            _nodeCurrent = boundTypeNode;
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
+    private void ParseIdentifierToken(IdentifierToken token)
+    {
+        if (_nodeCurrent is not null &&
+            _nodeCurrent.SyntaxKind == SyntaxKind.BoundTypeNode)
+        {
+            // 'int main()...', 'char c', 'int num', etc...
+            
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
     }
 }
