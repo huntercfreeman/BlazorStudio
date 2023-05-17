@@ -15,11 +15,19 @@ public enum SyntaxKind
     PlusToken,
     EqualsToken,
     StatementDelimiterToken,
+    OpenParenthesisToken,
+    CloseParenthesisToken,
+    OpenBraceToken,
+    CloseBraceToken,
     EndOfFileToken,
 
     // Nodes
+    CompilationUnit,
     LiteralExpressionNode,
     BoundLiteralExpressionNode,
     BoundBinaryOperatorNode,
     BoundBinaryExpressionNode,
+    PreprocessorLibraryReferenceStatement,
+    BoundTypeNode,
+    BoundFunctionDeclarationNode,
 }

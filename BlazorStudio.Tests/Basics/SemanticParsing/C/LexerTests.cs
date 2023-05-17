@@ -440,4 +440,164 @@ int main()
 		    ";",
 		    tokenTextTuples[1].text);
     }
+	
+	[Fact]
+    public void SHOULD_LEX_OPEN_PARENTHESIS_TOKENS()
+    {
+	    string sourceText = @"#include <stdlib.h>
+#include <stdio.h>
+
+// C:\Users\hunte\Repos\Aaa\
+
+int main()
+{
+	int x = 42;
+
+	/*
+		A Multi-Line Comment
+	*/
+	
+	/* Another Multi-Line Comment */
+
+	printf(""%d"", x);
+}".ReplaceLineEndings("\n");
+
+	    var lexer = new Lexer(sourceText);
+        
+	    lexer.Lex();
+        
+	    var tokens = lexer.SyntaxTokens
+		    .Where(x => x.SyntaxKind == SyntaxKind.OpenParenthesisToken);
+        
+	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
+		    tokens,
+		    sourceText);
+	    
+	    Assert.Equal(2, tokenTextTuples.Length);
+	    
+	    Assert.Equal(
+		    "(",
+		    tokenTextTuples[0].text);
+	    
+	    Assert.Equal(
+            "(",
+		    tokenTextTuples[1].text);
+    }
+	
+	[Fact]
+    public void SHOULD_LEX_CLOSE_PARENTHESIS_TOKENS()
+    {
+	    string sourceText = @"#include <stdlib.h>
+#include <stdio.h>
+
+// C:\Users\hunte\Repos\Aaa\
+
+int main()
+{
+	int x = 42;
+
+	/*
+		A Multi-Line Comment
+	*/
+	
+	/* Another Multi-Line Comment */
+
+	printf(""%d"", x);
+}".ReplaceLineEndings("\n");
+
+	    var lexer = new Lexer(sourceText);
+        
+	    lexer.Lex();
+        
+	    var tokens = lexer.SyntaxTokens
+		    .Where(x => x.SyntaxKind == SyntaxKind.CloseParenthesisToken);
+        
+	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
+		    tokens,
+		    sourceText);
+	    
+	    Assert.Equal(2, tokenTextTuples.Length);
+	    
+	    Assert.Equal(
+		    ")",
+		    tokenTextTuples[0].text);
+	    
+	    Assert.Equal(
+            ")",
+		    tokenTextTuples[1].text);
+    }
+	
+	[Fact]
+    public void SHOULD_LEX_OPEN_BRACE_TOKENS()
+    {
+	    string sourceText = @"#include <stdlib.h>
+#include <stdio.h>
+
+// C:\Users\hunte\Repos\Aaa\
+
+int main()
+{
+	int x = 42;
+
+	/*
+		A Multi-Line Comment
+	*/
+	
+	/* Another Multi-Line Comment */
+
+	printf(""%d"", x);
+}".ReplaceLineEndings("\n");
+
+	    var lexer = new Lexer(sourceText);
+        
+	    lexer.Lex();
+        
+	    var token = lexer.SyntaxTokens
+		    .Single(x => x.SyntaxKind == SyntaxKind.OpenBraceToken);
+        
+	    var tokenTextTuple = SyntaxTokenHelper.GetTokenTextTuple(
+		    token,
+		    sourceText);
+	    
+	    Assert.Equal(
+		    "{",
+		    tokenTextTuple.text);
+    }
+	
+	[Fact]
+    public void SHOULD_LEX_CLOSE_BRACE_TOKENS()
+    {
+	    string sourceText = @"#include <stdlib.h>
+#include <stdio.h>
+
+// C:\Users\hunte\Repos\Aaa\
+
+int main()
+{
+	int x = 42;
+
+	/*
+		A Multi-Line Comment
+	*/
+	
+	/* Another Multi-Line Comment */
+
+	printf(""%d"", x);
+}".ReplaceLineEndings("\n");
+
+	    var lexer = new Lexer(sourceText);
+        
+	    lexer.Lex();
+        
+	    var token = lexer.SyntaxTokens
+		    .Single(x => x.SyntaxKind == SyntaxKind.CloseBraceToken);
+        
+	    var tokenTextTuple = SyntaxTokenHelper.GetTokenTextTuple(
+		    token,
+		    sourceText);
+	    
+	    Assert.Equal(
+		    "}",
+		    tokenTextTuple.text);
+    }
 }

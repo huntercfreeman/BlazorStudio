@@ -1,7 +1,9 @@
 ﻿using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
+using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Statement;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
@@ -10,76 +12,107 @@ public class Parser
 {
     private readonly TokenWalker _tokenWalker;
     private readonly Binder _binder;
-    
-    public Parser(ImmutableArray<ISyntaxToken> tokens)
+    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new(null);
+    private readonly string _sourceText;
+
+    public Parser(
+        ImmutableArray<ISyntaxToken> tokens,
+        string sourceText)
     {
+        _sourceText = sourceText;
         _tokenWalker = new TokenWalker(tokens);
-        _binder = new Binder();
+        _binder = new Binder(sourceText);
+
+        _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
     }
 
-    private ISyntaxNode? _nodeCurrent;
-    private CompilationUnitBuilder _compilationUnitBuilder = new();
+    private ISyntaxNode? _nodeRecent;
+    private CompilationUnitBuilder _currentCompilationUnitBuilder;
+
+    /// <summary>When parsing the body of a function this is used in order to keep the function declaration node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function declaration node and then append it.</summary>
+    private Action<CompilationUnit>? _finalizeCompilationUnitAction;
 
     public CompilationUnit Parse()
     {
         while (true)
         {
-            var tokenCurrent = _tokenWalker.Consume();
+            var consumedToken = _tokenWalker.Consume();
 
-            switch (tokenCurrent.SyntaxKind)
+            switch (consumedToken.SyntaxKind)
             {
                 case SyntaxKind.NumericLiteralToken:
-                    _ = ParseNumericLiteralToken((NumericLiteralToken)tokenCurrent);
+                    ParseNumericLiteralToken((NumericLiteralToken)consumedToken);
                     break;
                 case SyntaxKind.StringLiteralToken:
-                    _ = ParseStringLiteralToken((StringLiteralToken)tokenCurrent);
+                    ParseStringLiteralToken((StringLiteralToken)consumedToken);
                     break;
                 case SyntaxKind.PlusToken:
-                    ParsePlusToken((PlusToken)tokenCurrent);
+                    ParsePlusToken((PlusToken)consumedToken);
+                    break;
+                case SyntaxKind.PreprocessorDirectiveToken:
+                    ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)consumedToken);
+                    break;
+                case SyntaxKind.CommentSingleLineToken:
+                    // Do not parse comments.
+                    break;
+                case SyntaxKind.KeywordToken:
+                    ParseKeywordToken((KeywordToken)consumedToken);
+                    break;
+                case SyntaxKind.IdentifierToken:
+                    ParseIdentifierToken((IdentifierToken)consumedToken);
+                    break;
+                case SyntaxKind.OpenBraceToken:
+                    ParseOpenBraceToken();
+                    break;
+                case SyntaxKind.CloseBraceToken:
+                    ParseCloseBraceToken();
                     break;
                 case SyntaxKind.EndOfFileToken:
-                    if (_nodeCurrent is IExpressionNode)
+                    if (_nodeRecent is IExpressionNode)
                     {
-                        _compilationUnitBuilder.IsExpression = true;
-                        _compilationUnitBuilder.Children.Add(_nodeCurrent);
+                        _currentCompilationUnitBuilder.IsExpression = true;
+                        _currentCompilationUnitBuilder.Children.Add(_nodeRecent);
                     }
                     break;
             }
 
-            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken)
+            if (consumedToken.SyntaxKind == SyntaxKind.EndOfFileToken)
                 break;
         }
 
-        return _compilationUnitBuilder.Build();
+        return _currentCompilationUnitBuilder.Build();
     }
 
-    private BoundLiteralExpressionNode ParseNumericLiteralToken(NumericLiteralToken token)
+    private BoundLiteralExpressionNode ParseNumericLiteralToken(
+        NumericLiteralToken inToken)
     {
-        var literalExpressionNode = new LiteralExpressionNode(token);
+        var literalExpressionNode = new LiteralExpressionNode(inToken);
 
         var boundLiteralExpressionNode = _binder
             .BindLiteralExpressionNode(literalExpressionNode);
 
-        _nodeCurrent = boundLiteralExpressionNode;
+        _nodeRecent = boundLiteralExpressionNode;
 
         return boundLiteralExpressionNode;
     }
     
-    private BoundLiteralExpressionNode ParseStringLiteralToken(StringLiteralToken token)
+    private BoundLiteralExpressionNode ParseStringLiteralToken(
+        StringLiteralToken inToken)
     {
-        var literalExpressionNode = new LiteralExpressionNode(token);
+        var literalExpressionNode = new LiteralExpressionNode(inToken);
 
         var boundLiteralExpressionNode = _binder
                 .BindLiteralExpressionNode(literalExpressionNode);
 
-        _nodeCurrent = boundLiteralExpressionNode;
+        _nodeRecent = boundLiteralExpressionNode;
 
         return boundLiteralExpressionNode;
     }
     
-    private BoundBinaryExpressionNode ParsePlusToken(PlusToken token)
+    private BoundBinaryExpressionNode ParsePlusToken(
+        PlusToken inToken)
     {
-        var localNodeCurrent = _nodeCurrent;
+        var localNodeCurrent = _nodeRecent;
 
         if (localNodeCurrent is not BoundLiteralExpressionNode leftBoundLiteralExpressionNode)
             throw new NotImplementedException();
@@ -101,7 +134,7 @@ public class Parser
 
         var boundBinaryOperatorNode = _binder.BindBinaryOperatorNode(
             leftBoundLiteralExpressionNode,
-            token,
+            inToken,
             rightBoundLiteralExpressionNode);
 
         var boundBinaryExpressionNode = new BoundBinaryExpressionNode(
@@ -109,8 +142,145 @@ public class Parser
             boundBinaryOperatorNode,
             rightBoundLiteralExpressionNode);
 
-        _nodeCurrent = boundBinaryExpressionNode;
+        _nodeRecent = boundBinaryExpressionNode;
 
         return boundBinaryExpressionNode;
+    }
+
+    private IStatementNode ParsePreprocessorDirectiveToken(
+        PreprocessorDirectiveToken inToken)
+    {
+        var nextToken = _tokenWalker.Consume();
+
+        if (nextToken.SyntaxKind == SyntaxKind.LibraryReferenceToken)
+        {
+            var preprocessorLibraryReferenceStatement = new PreprocessorLibraryReferenceStatement(
+                inToken,
+                nextToken);
+
+            _currentCompilationUnitBuilder.Children.Add(preprocessorLibraryReferenceStatement);
+
+            return preprocessorLibraryReferenceStatement;
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
+    private void ParseKeywordToken(
+        KeywordToken inToken)
+    {
+        var text = inToken.BlazorStudioTextSpan.GetText(_sourceText);
+
+        if (_binder.TryGetTypeHierarchically(text, out var type) &&
+            type is not null)
+        {
+            // 'int', 'string', 'bool', etc...
+            _nodeRecent = new BoundTypeNode(type, inToken);
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
+    private void ParseIdentifierToken(
+        IdentifierToken inToken)
+    {
+        if (_nodeRecent is not null &&
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundTypeNode)
+        {
+            // 'int main()...', 'char c', 'int num', etc...
+            var nextToken = _tokenWalker.Consume();
+
+            if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+            {
+                var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
+                    (BoundTypeNode)_nodeRecent,
+                    inToken);
+
+                _nodeRecent = boundFunctionDeclarationNode;
+
+                var closureCompilationUnitBuilder = _currentCompilationUnitBuilder;
+
+                _finalizeCompilationUnitAction = compilationUnit =>
+                {
+                    boundFunctionDeclarationNode = boundFunctionDeclarationNode
+                        .WithFunctionBody(compilationUnit);
+
+                    closureCompilationUnitBuilder.Children
+                        .Add(boundFunctionDeclarationNode);
+                };
+
+                ParseFunctionArguments();
+            }
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// TODO: Implement ParseFunctionArguments() correctly. Until then, skip until the body of the function is found. Specifically until the CloseParenthesisToken is found
+    /// </summary>
+    private void ParseFunctionArguments()
+    {
+        while (true)
+        {
+            var tokenCurrent = _tokenWalker.Consume();
+
+            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken ||
+                tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+            { 
+                break;
+            }
+        }
+    }
+    
+    private void ParseOpenBraceToken()
+    {
+        var closureCompilationUnitBuilder = _currentCompilationUnitBuilder;
+
+        if (_nodeRecent is not null &&
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
+        {
+            var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)_nodeRecent;
+
+            _finalizeCompilationUnitAction = compilationUnit =>
+            {
+                boundFunctionDeclarationNode = boundFunctionDeclarationNode
+                    .WithFunctionBody(compilationUnit);
+
+                closureCompilationUnitBuilder.Children
+                    .Add(boundFunctionDeclarationNode);
+            };
+        }
+        else
+        {
+            _finalizeCompilationUnitAction = compilationUnit =>
+            {
+                closureCompilationUnitBuilder.Children
+                    .Add(compilationUnit);
+            };
+        }
+
+        _binder.RegisterBoundScope();
+        
+        _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
+    }
+    
+    private void ParseCloseBraceToken()
+    {
+        _binder.DisposeBoundScope();
+
+        if (_currentCompilationUnitBuilder.Parent is not null)
+        {
+            _finalizeCompilationUnitAction?.Invoke(
+                _currentCompilationUnitBuilder.Build());
+
+            _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
+        }
     }
 }

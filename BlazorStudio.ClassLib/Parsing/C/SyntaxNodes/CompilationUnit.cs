@@ -2,7 +2,7 @@
 
 namespace BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 
-public class CompilationUnit
+public class CompilationUnit : ISyntax
 {
     public CompilationUnit(
         bool isExpression,
@@ -14,4 +14,6 @@ public class CompilationUnit
 
     public bool IsExpression { get; }
     public ImmutableArray<ISyntax> Children { get; }
+
+    public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
 }

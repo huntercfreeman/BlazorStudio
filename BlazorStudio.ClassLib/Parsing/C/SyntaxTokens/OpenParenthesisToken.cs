@@ -1,13 +1,13 @@
 ﻿namespace BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 
-public class StatementDelimiterToken : ISyntaxToken
+public class OpenParenthesisToken : ISyntaxToken
 {
-    public StatementDelimiterToken(
+    public OpenParenthesisToken(
         BlazorStudioTextSpan blazorStudioTextSpan)
     {
         BlazorStudioTextSpan = blazorStudioTextSpan;
     }
 
     public BlazorStudioTextSpan BlazorStudioTextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.StatementDelimiterToken;
+    public SyntaxKind SyntaxKind => SyntaxKind.OpenParenthesisToken;
 }
