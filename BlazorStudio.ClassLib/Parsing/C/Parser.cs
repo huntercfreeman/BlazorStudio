@@ -28,33 +28,36 @@ public class Parser
     {
         while (true)
         {
-            var tokenCurrent = _tokenWalker.Consume();
+            var consumedToken = _tokenWalker.Consume();
 
-            switch (tokenCurrent.SyntaxKind)
+            switch (consumedToken.SyntaxKind)
             {
                 case SyntaxKind.NumericLiteralToken:
-                    _ = ParseNumericLiteralToken((NumericLiteralToken)tokenCurrent);
+                    _ = ParseNumericLiteralToken((NumericLiteralToken)consumedToken);
                     break;
                 case SyntaxKind.StringLiteralToken:
-                    _ = ParseStringLiteralToken((StringLiteralToken)tokenCurrent);
+                    _ = ParseStringLiteralToken((StringLiteralToken)consumedToken);
                     break;
                 case SyntaxKind.PlusToken:
-                    ParsePlusToken((PlusToken)tokenCurrent);
+                    ParsePlusToken((PlusToken)consumedToken);
                     break;
                 case SyntaxKind.PreprocessorDirectiveToken:
-                    ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)tokenCurrent);
+                    ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)consumedToken);
                     break;
                 case SyntaxKind.CommentSingleLineToken:
                     // Do not parse comments.
                     break;
                 case SyntaxKind.KeywordToken:
-                    ParseKeywordToken((KeywordToken)tokenCurrent);
+                    ParseKeywordToken((KeywordToken)consumedToken);
                     break;
                 case SyntaxKind.IdentifierToken:
-                    ParseIdentifierToken((IdentifierToken)tokenCurrent);
+                    ParseIdentifierToken((IdentifierToken)consumedToken);
                     break;
                 case SyntaxKind.OpenBraceToken:
-                    ParseOpenBraceToken((OpenBraceToken)tokenCurrent);
+                    ParseOpenBraceToken();
+                    break;
+                case SyntaxKind.CloseBraceToken:
+                    ParseCloseBraceToken();
                     break;
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
@@ -65,16 +68,17 @@ public class Parser
                     break;
             }
 
-            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken)
+            if (consumedToken.SyntaxKind == SyntaxKind.EndOfFileToken)
                 break;
         }
 
         return _compilationUnitBuilder.Build();
     }
 
-    private BoundLiteralExpressionNode ParseNumericLiteralToken(NumericLiteralToken token)
+    private BoundLiteralExpressionNode ParseNumericLiteralToken(
+        NumericLiteralToken inToken)
     {
-        var literalExpressionNode = new LiteralExpressionNode(token);
+        var literalExpressionNode = new LiteralExpressionNode(inToken);
 
         var boundLiteralExpressionNode = _binder
             .BindLiteralExpressionNode(literalExpressionNode);
@@ -84,9 +88,10 @@ public class Parser
         return boundLiteralExpressionNode;
     }
     
-    private BoundLiteralExpressionNode ParseStringLiteralToken(StringLiteralToken token)
+    private BoundLiteralExpressionNode ParseStringLiteralToken(
+        StringLiteralToken inToken)
     {
-        var literalExpressionNode = new LiteralExpressionNode(token);
+        var literalExpressionNode = new LiteralExpressionNode(inToken);
 
         var boundLiteralExpressionNode = _binder
                 .BindLiteralExpressionNode(literalExpressionNode);
@@ -96,7 +101,8 @@ public class Parser
         return boundLiteralExpressionNode;
     }
     
-    private BoundBinaryExpressionNode ParsePlusToken(PlusToken token)
+    private BoundBinaryExpressionNode ParsePlusToken(
+        PlusToken inToken)
     {
         var localNodeCurrent = _nodeRecent;
 
@@ -120,7 +126,7 @@ public class Parser
 
         var boundBinaryOperatorNode = _binder.BindBinaryOperatorNode(
             leftBoundLiteralExpressionNode,
-            token,
+            inToken,
             rightBoundLiteralExpressionNode);
 
         var boundBinaryExpressionNode = new BoundBinaryExpressionNode(
@@ -133,14 +139,15 @@ public class Parser
         return boundBinaryExpressionNode;
     }
 
-    private IStatementNode ParsePreprocessorDirectiveToken(PreprocessorDirectiveToken token)
+    private IStatementNode ParsePreprocessorDirectiveToken(
+        PreprocessorDirectiveToken inToken)
     {
         var nextToken = _tokenWalker.Consume();
 
         if (nextToken.SyntaxKind == SyntaxKind.LibraryReferenceToken)
         {
             var preprocessorLibraryReferenceStatement = new PreprocessorLibraryReferenceStatement(
-                token,
+                inToken,
                 nextToken);
 
             _compilationUnitBuilder.Children.Add(preprocessorLibraryReferenceStatement);
@@ -153,9 +160,10 @@ public class Parser
         }
     }
     
-    private void ParseKeywordToken(KeywordToken token)
+    private void ParseKeywordToken(
+        KeywordToken inToken)
     {
-        if (_binder.TryBindTypeNode(token, out var boundTypeNode) &&
+        if (_binder.TryBindTypeNode(inToken, out var boundTypeNode) &&
             boundTypeNode is not null)
         {
             // 'int', 'string', 'bool', etc...
@@ -167,7 +175,8 @@ public class Parser
         }
     }
     
-    private void ParseIdentifierToken(IdentifierToken token)
+    private void ParseIdentifierToken(
+        IdentifierToken inToken)
     {
         if (_nodeRecent is not null &&
             _nodeRecent.SyntaxKind == SyntaxKind.BoundTypeNode)
@@ -179,7 +188,7 @@ public class Parser
             {
                 var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
                     (BoundTypeNode)_nodeRecent,
-                    token);
+                    inToken);
 
                 _nodeRecent = boundFunctionDeclarationNode;
 
@@ -209,13 +218,13 @@ public class Parser
         }
     }
     
-    private void ParseOpenBraceToken(OpenBraceToken token)
+    private void ParseOpenBraceToken()
     {
-        if (_nodeRecent is not null &&
-            _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
-        {
-            // Function body is being defined
-
-        }
+        _binder.RegisterBoundScope();
+    }
+    
+    private void ParseCloseBraceToken()
+    {
+        _binder.DisposeBoundScope();
     }
 }

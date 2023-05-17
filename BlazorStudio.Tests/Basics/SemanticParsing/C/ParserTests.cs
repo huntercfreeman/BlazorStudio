@@ -1,6 +1,7 @@
 ﻿using BlazorStudio.ClassLib.Parsing.C;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
+using System.Xml.Linq;
 
 namespace BlazorStudio.Tests.Basics.SemanticParsing.C;
 
@@ -97,6 +98,14 @@ public class ParserTests
             sourceText);
 
         var compilationUnit = parser.Parse();
+
+        Assert.Single(compilationUnit.Children);
+        
+        var libraryReferenceNode = compilationUnit.Children.Single();
+
+        Assert.Equal(
+            SyntaxKind.PreprocessorLibraryReferenceStatement,
+            libraryReferenceNode.SyntaxKind);
     }
 
     [Fact]
@@ -115,6 +124,20 @@ public class ParserTests
             sourceText);
 
         var compilationUnit = parser.Parse();
+
+        Assert.Equal(2, compilationUnit.Children.Length);
+
+        var firstLibraryReferenceNode = compilationUnit.Children.First();
+
+        Assert.Equal(
+            SyntaxKind.PreprocessorLibraryReferenceStatement,
+            firstLibraryReferenceNode.SyntaxKind);
+
+        var secondLibraryReferenceNode = compilationUnit.Children.Last();
+
+        Assert.Equal(
+            SyntaxKind.PreprocessorLibraryReferenceStatement,
+            secondLibraryReferenceNode.SyntaxKind);
     }
     
     [Fact]

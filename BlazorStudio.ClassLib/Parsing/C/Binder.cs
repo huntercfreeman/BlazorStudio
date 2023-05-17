@@ -9,14 +9,18 @@ namespace BlazorStudio.ClassLib.Parsing.C;
 public class Binder
 {
     private readonly BoundScope _globalScope = CLanguageFacts.Scope.GetInitialGlobalScope();
+    private BoundScope _currentScope;
     private readonly string _sourceText;
 
-    public Binder(string sourceText)
+    public Binder(
+        string sourceText)
     {
         _sourceText = sourceText;
+        _currentScope = _globalScope;
     }
 
-    public BoundLiteralExpressionNode BindLiteralExpressionNode(LiteralExpressionNode literalExpressionNode)
+    public BoundLiteralExpressionNode BindLiteralExpressionNode(
+        LiteralExpressionNode literalExpressionNode)
     {
         var type = literalExpressionNode.LiteralSyntaxToken.SyntaxKind switch
         {
@@ -73,7 +77,7 @@ public class Binder
     {
         var text = token.BlazorStudioTextSpan.GetText(_sourceText);
 
-        if (_globalScope.TypeMap.TryGetValue(text, out var type))
+        if (_currentScope.TypeMap.TryGetValue(text, out var type))
         {
             boundTypeNode = new BoundTypeNode(type, token);
             return true;
@@ -83,13 +87,55 @@ public class Binder
         return false;
     }
 
+    /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
+    public bool TryGetBoundFunctionDeclarationNodeHierarchically(
+        string text,
+        out BoundFunctionDeclarationNode? boundFunctionDeclarationNode)
+    {
+        var localScope = _currentScope;
+
+        while (localScope is not null)
+        {
+            if (localScope.FunctionDeclarationMap.TryGetValue(
+                    text,
+                    out boundFunctionDeclarationNode))
+            {
+                return true;
+            }
+        }
+
+        boundFunctionDeclarationNode = null;
+        return false;
+    }
+    
+    /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
+    public bool TryGetTypeHierarchically(
+        string text,
+        out Type? type)
+    {
+        var localScope = _currentScope;
+
+        while (localScope is not null)
+        {
+            if (localScope.TypeMap.TryGetValue(
+                    text,
+                    out type))
+            {
+                return true;
+            }
+        }
+
+        type = null;
+        return false;
+    }
+
     public BoundFunctionDeclarationNode BindFunctionDeclarationNode(
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
         var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
 
-        if (_globalScope.FunctionDeclarationMap.TryGetValue(
+        if (_currentScope.FunctionDeclarationMap.TryGetValue(
             text, 
             out var functionDeclarationNode))
         {
@@ -98,8 +144,30 @@ public class Binder
             return functionDeclarationNode;
         }
 
-        return new BoundFunctionDeclarationNode(
+        var boundFunctionDeclarationNode = new BoundFunctionDeclarationNode(
             boundTypeNode,
             identifierToken);
+
+        _currentScope.FunctionDeclarationMap.Add(
+            text,
+            boundFunctionDeclarationNode);
+
+        return boundFunctionDeclarationNode;
+    }
+    
+    public void RegisterBoundScope()
+    {
+        var functionScope = new BoundScope(
+            _currentScope,
+            new(),
+            new());
+
+        _currentScope = functionScope;
+    }
+    
+    public void DisposeBoundScope()
+    {
+        if (_currentScope.Parent is not null)
+            _currentScope = _currentScope.Parent;
     }
 }

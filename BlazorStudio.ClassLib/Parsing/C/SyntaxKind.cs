@@ -26,7 +26,7 @@ public enum SyntaxKind
     BoundLiteralExpressionNode,
     BoundBinaryOperatorNode,
     BoundBinaryExpressionNode,
-    PreprocessorDirectiveStatement,
+    PreprocessorLibraryReferenceStatement,
     BoundTypeNode,
     BoundFunctionDeclarationNode,
 }
