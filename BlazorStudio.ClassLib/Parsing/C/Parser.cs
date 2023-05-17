@@ -12,17 +12,25 @@ public class Parser
 {
     private readonly TokenWalker _tokenWalker;
     private readonly Binder _binder;
+    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new(null);
+    private readonly string _sourceText;
 
     public Parser(
         ImmutableArray<ISyntaxToken> tokens,
         string sourceText)
     {
+        _sourceText = sourceText;
         _tokenWalker = new TokenWalker(tokens);
         _binder = new Binder(sourceText);
+
+        _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
     }
 
     private ISyntaxNode? _nodeRecent;
-    private CompilationUnitBuilder _compilationUnitBuilder = new();
+    private CompilationUnitBuilder _currentCompilationUnitBuilder;
+
+    /// <summary>When parsing the body of a function this is used in order to keep the function declaration node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function declaration node and then append it.</summary>
+    private Action<CompilationUnit>? _finalizeCompilationUnitAction;
 
     public CompilationUnit Parse()
     {
@@ -33,10 +41,10 @@ public class Parser
             switch (consumedToken.SyntaxKind)
             {
                 case SyntaxKind.NumericLiteralToken:
-                    _ = ParseNumericLiteralToken((NumericLiteralToken)consumedToken);
+                    ParseNumericLiteralToken((NumericLiteralToken)consumedToken);
                     break;
                 case SyntaxKind.StringLiteralToken:
-                    _ = ParseStringLiteralToken((StringLiteralToken)consumedToken);
+                    ParseStringLiteralToken((StringLiteralToken)consumedToken);
                     break;
                 case SyntaxKind.PlusToken:
                     ParsePlusToken((PlusToken)consumedToken);
@@ -62,8 +70,8 @@ public class Parser
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
                     {
-                        _compilationUnitBuilder.IsExpression = true;
-                        _compilationUnitBuilder.Children.Add(_nodeRecent);
+                        _currentCompilationUnitBuilder.IsExpression = true;
+                        _currentCompilationUnitBuilder.Children.Add(_nodeRecent);
                     }
                     break;
             }
@@ -72,7 +80,7 @@ public class Parser
                 break;
         }
 
-        return _compilationUnitBuilder.Build();
+        return _currentCompilationUnitBuilder.Build();
     }
 
     private BoundLiteralExpressionNode ParseNumericLiteralToken(
@@ -150,7 +158,7 @@ public class Parser
                 inToken,
                 nextToken);
 
-            _compilationUnitBuilder.Children.Add(preprocessorLibraryReferenceStatement);
+            _currentCompilationUnitBuilder.Children.Add(preprocessorLibraryReferenceStatement);
 
             return preprocessorLibraryReferenceStatement;
         }
@@ -163,11 +171,13 @@ public class Parser
     private void ParseKeywordToken(
         KeywordToken inToken)
     {
-        if (_binder.TryBindTypeNode(inToken, out var boundTypeNode) &&
-            boundTypeNode is not null)
+        var text = inToken.BlazorStudioTextSpan.GetText(_sourceText);
+
+        if (_binder.TryGetTypeHierarchically(text, out var type) &&
+            type is not null)
         {
             // 'int', 'string', 'bool', etc...
-            _nodeRecent = boundTypeNode;
+            _nodeRecent = new BoundTypeNode(type, inToken);
         }
         else
         {
@@ -191,6 +201,17 @@ public class Parser
                     inToken);
 
                 _nodeRecent = boundFunctionDeclarationNode;
+
+                var closureCompilationUnitBuilder = _currentCompilationUnitBuilder;
+
+                _finalizeCompilationUnitAction = compilationUnit =>
+                {
+                    boundFunctionDeclarationNode = boundFunctionDeclarationNode
+                        .WithFunctionBody(compilationUnit);
+
+                    closureCompilationUnitBuilder.Children
+                        .Add(boundFunctionDeclarationNode);
+                };
 
                 ParseFunctionArguments();
             }
@@ -220,11 +241,46 @@ public class Parser
     
     private void ParseOpenBraceToken()
     {
+        var closureCompilationUnitBuilder = _currentCompilationUnitBuilder;
+
+        if (_nodeRecent is not null &&
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
+        {
+            var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)_nodeRecent;
+
+            _finalizeCompilationUnitAction = compilationUnit =>
+            {
+                boundFunctionDeclarationNode = boundFunctionDeclarationNode
+                    .WithFunctionBody(compilationUnit);
+
+                closureCompilationUnitBuilder.Children
+                    .Add(boundFunctionDeclarationNode);
+            };
+        }
+        else
+        {
+            _finalizeCompilationUnitAction = compilationUnit =>
+            {
+                closureCompilationUnitBuilder.Children
+                    .Add(compilationUnit);
+            };
+        }
+
         _binder.RegisterBoundScope();
+        
+        _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
     }
     
     private void ParseCloseBraceToken()
     {
         _binder.DisposeBoundScope();
+
+        if (_currentCompilationUnitBuilder.Parent is not null)
+        {
+            _finalizeCompilationUnitAction?.Invoke(
+                _currentCompilationUnitBuilder.Build());
+
+            _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
+        }
     }
 }

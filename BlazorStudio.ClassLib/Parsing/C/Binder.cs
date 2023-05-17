@@ -102,6 +102,8 @@ public class Binder
             {
                 return true;
             }
+
+            localScope = localScope.Parent;
         }
 
         boundFunctionDeclarationNode = null;
@@ -123,6 +125,8 @@ public class Binder
             {
                 return true;
             }
+
+            localScope = localScope.Parent;
         }
 
         type = null;

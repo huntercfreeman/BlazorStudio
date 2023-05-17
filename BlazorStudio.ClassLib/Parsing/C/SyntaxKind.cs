@@ -22,6 +22,7 @@ public enum SyntaxKind
     EndOfFileToken,
 
     // Nodes
+    CompilationUnit,
     LiteralExpressionNode,
     BoundLiteralExpressionNode,
     BoundBinaryOperatorNode,
