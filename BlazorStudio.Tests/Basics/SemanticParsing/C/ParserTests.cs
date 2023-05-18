@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.Parsing.C;
+using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 using System.Xml.Linq;
@@ -157,6 +158,140 @@ public class ParserTests
         var compilationUnit = parser.Parse();
 
         Assert.Empty(compilationUnit.Children);
+    }
+
+    [Fact]
+    public void SHOULD_PARSE_VARIABLE_DECLARATION_STATEMENT()
+    {
+        string sourceText = @"int x;"
+            .ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText);
+
+        var compilationUnit = parser.Parse();
+
+        Assert.Single(compilationUnit.Children);
+
+        var boundVariableDeclarationStatementNode = 
+            (BoundVariableDeclarationStatementNode)compilationUnit.Children
+                .Single();
+
+        Assert.Equal(
+            SyntaxKind.BoundVariableDeclarationStatementNode,
+            boundVariableDeclarationStatementNode.SyntaxKind);
+
+        Assert.Equal(
+            2,
+            boundVariableDeclarationStatementNode.Children.Length);
+
+        var boundTypeNode = (BoundTypeNode)boundVariableDeclarationStatementNode
+            .Children[0];
+
+        Assert.Equal(
+            SyntaxKind.BoundTypeNode,
+            boundTypeNode.SyntaxKind);
+        
+        Assert.Equal(
+            typeof(int),
+            boundTypeNode.Type);
+
+        var identifierToken = boundVariableDeclarationStatementNode.Children[1];
+
+        Assert.Equal(
+            SyntaxKind.IdentifierToken,
+            identifierToken.SyntaxKind);
+    }
+
+    [Fact]
+    public void SHOULD_PARSE_VARIABLE_DECLARATION_STATEMENT_THEN_VARIABLE_ASSIGNMENT_STATEMENT()
+    {
+        string sourceText = @"int x;
+x = 42;"
+            .ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText);
+
+        var compilationUnit = parser.Parse();
+
+        Assert.Equal(2, compilationUnit.Children.Length);
+
+        var boundVariableDeclarationStatementNode = 
+            (BoundVariableDeclarationStatementNode)compilationUnit.Children[0];
+
+        Assert.Equal(
+            SyntaxKind.BoundVariableDeclarationStatementNode,
+            boundVariableDeclarationStatementNode.SyntaxKind);
+
+        var boundVariableAssignmentStatementNode =
+            (BoundVariableAssignmentStatementNode)compilationUnit.Children[1];
+
+        Assert.Equal(
+            SyntaxKind.BoundVariableAssignmentStatementNode,
+            boundVariableAssignmentStatementNode.SyntaxKind);
+    }
+
+    [Fact]
+    public void SHOULD_PARSE_COMPOUND_VARIABLE_DECLARATION_AND_ASSIGNMENT_STATEMENT()
+    {
+        string sourceText = @"int x = 42;"
+            .ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText);
+
+        var compilationUnit = parser.Parse();
+
+        Assert.Equal(2, compilationUnit.Children.Length);
+
+        var boundVariableDeclarationStatementNode =
+            (BoundVariableDeclarationStatementNode)compilationUnit.Children[0];
+
+        Assert.Equal(
+            SyntaxKind.BoundVariableDeclarationStatementNode,
+            boundVariableDeclarationStatementNode.SyntaxKind);
+
+        var boundVariableAssignmentStatementNode =
+            (BoundVariableAssignmentStatementNode)compilationUnit.Children[1];
+
+        Assert.Equal(
+            SyntaxKind.BoundVariableAssignmentStatementNode,
+            boundVariableAssignmentStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT()
+    {
+        string sourceText = @"printf(""%d"", x);"
+            .ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText);
+
+        var compilationUnit = parser.Parse();
+
+        throw new NotImplementedException("Need to write the parsing code and assertions for this.");
     }
 
     [Fact]

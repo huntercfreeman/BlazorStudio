@@ -159,10 +159,66 @@ public class Binder
         return boundFunctionDeclarationNode;
     }
     
+    public BoundVariableDeclarationStatementNode BindVariableDeclarationNode(
+        BoundTypeNode boundTypeNode,
+        IdentifierToken identifierToken)
+    {
+        var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
+
+        if (_currentScope.VariableDeclarationMap.TryGetValue(
+            text, 
+            out var variableDeclarationNode))
+        {
+            // TODO: The variable was already declared, so report a diagnostic?
+            // TODO: The variable was already declared, so check that the return types match?
+            return variableDeclarationNode;
+        }
+
+        var boundVariableDeclarationStatementNode = new BoundVariableDeclarationStatementNode(
+            boundTypeNode,
+            identifierToken);
+
+        _currentScope.VariableDeclarationMap.Add(
+            text,
+            boundVariableDeclarationStatementNode);
+
+        return boundVariableDeclarationStatementNode;
+    }
+    
+    /// <summary>Returns null if the variable was not yet declared.</summary>
+    public BoundVariableAssignmentStatementNode? BindVariableAssignmentNode(
+        IdentifierToken identifierToken,
+        ISyntax rightHandExpression)
+    {
+        var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
+
+        if (_currentScope.VariableDeclarationMap.TryGetValue(
+            text, 
+            out var variableDeclarationNode))
+        {
+            if (variableDeclarationNode.IsInitialized)
+                return new(identifierToken, rightHandExpression);
+
+            variableDeclarationNode = variableDeclarationNode
+                .WithIsInitialized(true);
+
+            _currentScope.VariableDeclarationMap[text] =
+                variableDeclarationNode;
+
+            return new(identifierToken, rightHandExpression);
+        }
+        else
+        {
+            // TODO: The variable was not yet declared, so report a diagnostic?
+            return null;
+        }
+    }
+    
     public void RegisterBoundScope()
     {
         var functionScope = new BoundScope(
             _currentScope,
+            new(),
             new(),
             new());
 

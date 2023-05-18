@@ -67,6 +67,9 @@ public class Parser
                 case SyntaxKind.CloseBraceToken:
                     ParseCloseBraceToken();
                     break;
+                case SyntaxKind.StatementDelimiterToken:
+                    ParseStatementDelimiterToken();
+                    break;
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
                     {
@@ -188,14 +191,17 @@ public class Parser
     private void ParseIdentifierToken(
         IdentifierToken inToken)
     {
+        var nextToken = _tokenWalker.Consume();
+
         if (_nodeRecent is not null &&
             _nodeRecent.SyntaxKind == SyntaxKind.BoundTypeNode)
         {
-            // 'int main()...', 'char c', 'int num', etc...
-            var nextToken = _tokenWalker.Consume();
+            // 'function declaration' OR 'variable declaration' OR 'variable initialization'
 
             if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
+                // 'function declaration'
+
                 var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
                     (BoundTypeNode)_nodeRecent,
                     inToken);
@@ -215,16 +221,92 @@ public class Parser
 
                 ParseFunctionArguments();
             }
+            else if (nextToken.SyntaxKind == SyntaxKind.EqualsToken ||
+                     nextToken.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+            {
+                // 'variable declaration' OR 'variable initialization'
+
+                // 'variable declaration'
+                var boundVariableDeclarationStatementNode = _binder.BindVariableDeclarationNode(
+                    (BoundTypeNode)_nodeRecent,
+                    inToken);
+
+                _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
+
+                if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
+                {
+                    // 'variable initialization'
+
+                    var rightHandExpression = ParseExpression();
+
+                    var boundVariableAssignmentNode = _binder.BindVariableAssignmentNode(
+                        (IdentifierToken)boundVariableDeclarationStatementNode.IdentifierToken,
+                        rightHandExpression);
+
+                    if (boundVariableAssignmentNode is null)
+                    {
+                        // TODO: Why would boundVariableDeclarationStatementNode ever be null here? The variable had just been defined. I suppose what I mean to say is, should this get the '!' operator? The compiler is correctly complaining and the return type should have nullability in the case of undefined variables. So, use the not null operator?
+                        throw new NotImplementedException();
+                    }
+                    else
+                    {
+                        _currentCompilationUnitBuilder.Children
+                            .Add(boundVariableAssignmentNode);
+                    }
+                }
+
+                var expectedStatementDelimiterToken = _tokenWalker.Consume();
+
+                if (expectedStatementDelimiterToken.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+                    _ = _tokenWalker.Backtrack();
+                
+                _nodeRecent = null;
+            }
+            else
+            {
+                // TODO: Report a diagnostic
+                throw new NotImplementedException();
+            }
         }
         else
         {
-            throw new NotImplementedException();
+            // 'function invocation' OR 'variable assignment' OR 'variable reference'
+
+            if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+            {
+                // 'function invocation'
+                throw new NotImplementedException();
+            }
+            else if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
+            {
+                // 'variable assignment'
+                
+                var rightHandExpression = ParseExpression();
+
+                var boundVariableAssignmentNode = _binder.BindVariableAssignmentNode(
+                    inToken,
+                    rightHandExpression);
+
+                if (boundVariableAssignmentNode is null)
+                {
+                    // TODO: Why would boundVariableDeclarationStatementNode ever be null here? The variable had just been defined. I suppose what I mean to say is, should this get the '!' operator? The compiler is correctly complaining and the return type should have nullability in the case of undefined variables. So, use the not null operator?
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    _currentCompilationUnitBuilder.Children
+                        .Add(boundVariableAssignmentNode);
+                }
+            }
+            else
+            {
+                // 'variable reference'
+                throw new NotImplementedException();
+            }
         }
     }
 
-    /// <summary>
-    /// TODO: Implement ParseFunctionArguments() correctly. Until then, skip until the body of the function is found. Specifically until the CloseParenthesisToken is found
-    /// </summary>
+    /// <summary>TODO: Implement ParseFunctionArguments() correctly. Until then, skip until the body of the function is found. Specifically until the CloseParenthesisToken is found</summary>
     private void ParseFunctionArguments()
     {
         while (true)
@@ -237,6 +319,26 @@ public class Parser
                 break;
             }
         }
+    }
+
+    /// <summary>TODO: Implement ParseExpression() correctly. Until then, skip until the statement delimiter token or end of file token is found.</summary>
+    private IExpressionNode ParseExpression()
+    {
+        while (true)
+        {
+            var tokenCurrent = _tokenWalker.Consume();
+
+            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken ||
+                tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+            { 
+                break;
+            }
+        }
+
+        // #TODO: Correctly implement this method Returning a nonsensical token for now.
+        return new BoundLiteralExpressionNode(
+            new EndOfFileToken(new(-1, -1)),
+            typeof(void));
     }
     
     private void ParseOpenBraceToken()
@@ -282,5 +384,10 @@ public class Parser
 
             _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
         }
+    }
+    
+    private void ParseStatementDelimiterToken()
+    {
+
     }
 }

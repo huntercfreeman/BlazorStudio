@@ -30,4 +30,6 @@ public enum SyntaxKind
     PreprocessorLibraryReferenceStatement,
     BoundTypeNode,
     BoundFunctionDeclarationNode,
+    BoundVariableDeclarationStatementNode,
+    BoundVariableAssignmentStatementNode,
 }

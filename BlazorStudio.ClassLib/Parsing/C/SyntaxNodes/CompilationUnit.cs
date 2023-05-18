@@ -2,7 +2,7 @@
 
 namespace BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 
-public class CompilationUnit : ISyntax
+public class CompilationUnit : ISyntaxNode
 {
     public CompilationUnit(
         bool isExpression,

@@ -22,7 +22,7 @@ public partial class CLanguageFacts
                 }
             };
 
-            return new BoundScope(null, typeMap, new());
+            return new BoundScope(null, typeMap, new(), new());
         }
     }
 }
