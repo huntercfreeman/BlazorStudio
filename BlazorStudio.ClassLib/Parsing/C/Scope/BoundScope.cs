@@ -13,7 +13,7 @@ public class BoundScope
         BoundScope? parent,
         Dictionary<string, Type> typeMap,
         Dictionary<string, BoundFunctionDeclarationNode> functionDeclarationMap,
-        Dictionary<string, BoundVariableDeclarationNode> variableDeclarationMap)
+        Dictionary<string, BoundVariableDeclarationStatementNode> variableDeclarationMap)
     {
         Parent = parent;
         TypeMap = typeMap;
@@ -23,6 +23,6 @@ public class BoundScope
 
     public Dictionary<string, Type> TypeMap { get; }
     public Dictionary<string, BoundFunctionDeclarationNode> FunctionDeclarationMap { get; }
-    public Dictionary<string, BoundVariableDeclarationNode> VariableDeclarationMap { get; }
+    public Dictionary<string, BoundVariableDeclarationStatementNode> VariableDeclarationMap { get; }
     public BoundScope? Parent { get; }
 }

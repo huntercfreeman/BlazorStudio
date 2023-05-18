@@ -159,7 +159,7 @@ public class Binder
         return boundFunctionDeclarationNode;
     }
     
-    public BoundVariableDeclarationNode BindVariableDeclarationNode(
+    public BoundVariableDeclarationStatementNode BindVariableDeclarationNode(
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
@@ -174,15 +174,43 @@ public class Binder
             return variableDeclarationNode;
         }
 
-        var boundVariableDeclarationNode = new BoundVariableDeclarationNode(
+        var boundVariableDeclarationStatementNode = new BoundVariableDeclarationStatementNode(
             boundTypeNode,
             identifierToken);
 
         _currentScope.VariableDeclarationMap.Add(
             text,
-            boundVariableDeclarationNode);
+            boundVariableDeclarationStatementNode);
 
-        return boundVariableDeclarationNode;
+        return boundVariableDeclarationStatementNode;
+    }
+    
+    /// <summary>Returns null if the variable was not yet declared.</summary>
+    public BoundVariableDeclarationStatementNode? InitializeVariableDeclarationNode(
+        IdentifierToken identifierToken)
+    {
+        var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
+
+        if (_currentScope.VariableDeclarationMap.TryGetValue(
+            text, 
+            out var variableDeclarationNode))
+        {
+            if (variableDeclarationNode.IsInitialized)
+                return variableDeclarationNode;
+
+            variableDeclarationNode = variableDeclarationNode
+                .WithIsInitialized(true);
+
+            _currentScope.VariableDeclarationMap[text] =
+                variableDeclarationNode;
+
+            return variableDeclarationNode;
+        }
+        else
+        {
+            // TODO: The variable was not yet declared, so report a diagnostic?
+            return null;
+        }
     }
     
     public void RegisterBoundScope()

@@ -67,6 +67,9 @@ public class Parser
                 case SyntaxKind.CloseBraceToken:
                     ParseCloseBraceToken();
                     break;
+                case SyntaxKind.StatementDelimiterToken:
+                    ParseStatementDelimiterToken();
+                    break;
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
                     {
@@ -224,15 +227,30 @@ public class Parser
                 // 'variable declaration' OR 'variable initialization'
 
                 // 'variable declaration'
-                var boundVariableDeclarationNode = _binder.BindVariableDeclarationNode(
+                var boundVariableDeclarationStatementNode = _binder.BindVariableDeclarationNode(
                     (BoundTypeNode)_nodeRecent,
                     inToken);
 
                 if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
                 {
                     // 'variable initialization'
-                    throw new NotImplementedException();
+                    boundVariableDeclarationStatementNode = _binder.InitializeVariableDeclarationNode(
+                        (IdentifierToken)boundVariableDeclarationStatementNode.IdentifierToken);
+
+                    if (boundVariableDeclarationStatementNode is null)
+                    {
+                        // TODO: Why would boundVariableDeclarationStatementNode ever be null here? The variable had just been defined. I suppose what I mean to say is, should this get the '!' operator? The compiler is correctly complaining and the return type should have nullability in the case of undefined variables. So, use the not null operator?
+                        throw new NotImplementedException();
+                    }
                 }
+
+                var expectedStatementDelimiterToken = _tokenWalker.Consume();
+
+                if (expectedStatementDelimiterToken.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+                    _ = _tokenWalker.Backtrack();
+
+                _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
+                _nodeRecent = null;
             }
             else
             {
@@ -252,7 +270,8 @@ public class Parser
             else if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
             {
                 // 'variable assignment'
-                throw new NotImplementedException();
+                _binder.InitializeVariableDeclarationNode(
+                    inToken);
             }
             else
             {
@@ -322,5 +341,10 @@ public class Parser
 
             _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
         }
+    }
+    
+    private void ParseStatementDelimiterToken()
+    {
+
     }
 }

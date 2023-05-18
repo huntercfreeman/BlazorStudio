@@ -42,4 +42,12 @@ public class TokenWalker
 
         return _tokens[_index++];
     }
+    
+    public ISyntaxToken Backtrack()
+    {
+        if (_index > 0)
+            _index--;
+
+        return Peek(_index);
+    }
 }

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace BlazorStudio.ClassLib.Parsing.C.BoundNodes;
 
-public class BoundVariableDeclarationNode : ISyntaxNode
+public class BoundVariableDeclarationStatementNode : ISyntaxNode
 {
-    public BoundVariableDeclarationNode(
+    public BoundVariableDeclarationStatementNode(
         BoundTypeNode boundTypeNode,
         ISyntaxToken identifierToken)
     {
@@ -24,10 +24,37 @@ public class BoundVariableDeclarationNode : ISyntaxNode
             IdentifierToken
         }.ToImmutableArray();
     }
+    
+    public BoundVariableDeclarationStatementNode(
+        BoundTypeNode boundTypeNode,
+        ISyntaxToken identifierToken,
+        bool isInitialized)
+    {
+        BoundTypeNode = boundTypeNode;
+        IdentifierToken = identifierToken;
+        IsInitialized = isInitialized;
+
+        Children = new ISyntax[]
+        {
+            BoundTypeNode,
+            IdentifierToken
+        }.ToImmutableArray();
+    }
 
     public ImmutableArray<ISyntax> Children { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundVariableDeclarationNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundVariableDeclarationStatementNode;
 
     public BoundTypeNode BoundTypeNode { get; }
     public ISyntaxToken IdentifierToken { get; }
+
+    public bool IsInitialized { get; }
+
+    public BoundVariableDeclarationStatementNode WithIsInitialized(
+        bool isInitialized)
+    {
+        return new BoundVariableDeclarationStatementNode(
+            BoundTypeNode,
+            IdentifierToken,
+            isInitialized);
+    }
 }
