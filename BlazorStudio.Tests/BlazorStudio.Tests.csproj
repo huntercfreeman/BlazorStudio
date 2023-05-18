@@ -29,7 +29,6 @@
 
     <ItemGroup>
       <Folder Include="Basics\Xml\" />
-      <Folder Include="UserStories" />
     </ItemGroup>
 
 </Project>
