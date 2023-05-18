@@ -1,603 +1,317 @@
 ﻿using BlazorStudio.ClassLib.Parsing.C;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
+using Microsoft.Extensions.Primitives;
 
 namespace BlazorStudio.Tests.Basics.SemanticParsing.C;
 
 public class LexerTests
 {
     [Fact]
-    public void SHOULD_LEX_NUMERIC_LITERAL_TOKENS()
+    public void SHOULD_LEX_NUMERIC_LITERAL_TOKEN()
     {
-        string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
-
-// C:\Users\hunte\Repos\Aaa\
-
-int main()
-{
-	int x = 42;
-
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
-
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
+		var numericValue = 4135;
+        var sourceText = $"{numericValue}".ReplaceLineEndings("\n");
 
         var lexer = new Lexer(sourceText);
-        
         lexer.Lex();
         
-        var numericLiteralToken = lexer.SyntaxTokens
-	        .Single(x => x.SyntaxKind == SyntaxKind.NumericLiteralToken);
-        
-        var text = numericLiteralToken.BlazorStudioTextSpan
-	        .GetText(sourceText);
+        var numericLiteralToken = lexer.SyntaxTokens.First();
 
-        Assert.Equal("42", text);
+		Assert.Equal(SyntaxKind.NumericLiteralToken, numericLiteralToken.SyntaxKind);
+
+        var text = numericLiteralToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(numericValue, int.Parse(text));
     }
     
     [Fact]
-    public void SHOULD_LEX_STRING_LITERAL_TOKENS()
+    public void SHOULD_LEX_STRING_LITERAL_TOKEN()
     {
-        string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
-
-// C:\Users\hunte\Repos\Aaa\
-
-int main()
-{
-	int x = 42;
-
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
-
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
+		var stringValue = "\"Apple Sauce\"";
+        var sourceText = $"{stringValue}".ReplaceLineEndings("\n");
 
         var lexer = new Lexer(sourceText);
-        
         lexer.Lex();
         
-        var stringLiteralToken = lexer.SyntaxTokens
-	        .Single(x => x.SyntaxKind == SyntaxKind.StringLiteralToken);
-        
-        var text = stringLiteralToken.BlazorStudioTextSpan
-	        .GetText(sourceText);
+        var stringLiteralToken = lexer.SyntaxTokens.First();
 
-        Assert.Equal("\"%d\"", text);
+        Assert.Equal(SyntaxKind.StringLiteralToken, stringLiteralToken.SyntaxKind);
+
+        var text = stringLiteralToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(stringValue, text);
     }
     
     [Fact]
-    public void SHOULD_LEX_COMMENT_SINGLE_LINE_TOKENS()
+    public void SHOULD_LEX_COMMENT_SINGLE_LINE_TOKEN_WITH_ENDING_AS_END_OF_FILE()
     {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
-
-// C:\Users\hunte\Repos\Aaa\
-
-int main()
-{
-	int x = 42;
-
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
-
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
+        var singleLineCommentAsString = @"// C:\Users\hunte\Repos\Aaa\";
+        var sourceText = $"{singleLineCommentAsString}".ReplaceLineEndings("\n");
 
 	    var lexer = new Lexer(sourceText);
-        
 	    lexer.Lex();
 
-	    var commentSingleLineTokenToken = lexer.SyntaxTokens
-		    .Single(x => x.SyntaxKind == SyntaxKind.CommentSingleLineToken);
+	    var commentSingleLineToken = lexer.SyntaxTokens.First();
 
-	    var tokenTextTuple = SyntaxTokenHelper.GetTokenTextTuple(
-		    commentSingleLineTokenToken,
-		    sourceText);
+        Assert.Equal(SyntaxKind.CommentSingleLineToken, commentSingleLineToken.SyntaxKind);
 
-	    Assert.Equal(
-		    "// C:\\Users\\hunte\\Repos\\Aaa\\",
-		    tokenTextTuple.text);
+        var text = commentSingleLineToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(singleLineCommentAsString, text);
     }
-    
-    [Fact]
-    public void SHOULD_LEX_COMMENT_MULTI_LINE_TOKENS()
-    {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
-
-// C:\Users\hunte\Repos\Aaa\
-
-int main()
-{
-	int x = 42;
-
-	/*
-		A Multi-Line Comment
-	*/
 	
-	/* Another Multi-Line Comment */
-
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
+	[Fact]
+    public void SHOULD_LEX_COMMENT_SINGLE_LINE_TOKEN_WITH_ENDING_AS_NEW_LINE()
+    {
+        var singleLineCommentAsString = @"// C:\Users\hunte\Repos\Aaa\";
+        var sourceText = $@"{singleLineCommentAsString}
+".ReplaceLineEndings("\n");
 
 	    var lexer = new Lexer(sourceText);
-        
 	    lexer.Lex();
-        
-	    var commentMultiLineTokenTokens = lexer.SyntaxTokens
-		    .Where(x => x.SyntaxKind == SyntaxKind.CommentMultiLineToken)
-		    .ToArray();
 
-	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
-		    commentMultiLineTokenTokens,
-		    sourceText);
-	
-	    Assert.Equal(
-		    "/*\n\t\tA Multi-Line Comment\n\t*/",
-		    tokenTextTuples[0].text);
-	    
-	    Assert.Equal(
-		    "/* Another Multi-Line Comment */",
-		    tokenTextTuples[1].text);
+	    var commentSingleLineToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.CommentSingleLineToken, commentSingleLineToken.SyntaxKind);
+        
+		var text = commentSingleLineToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(singleLineCommentAsString, text);
     }
     
     [Fact]
-    public void SHOULD_LEX_KEYWORD_TOKENS()
+    public void SHOULD_LEX_COMMENT_MULTI_LINE_TOKEN_WRITTEN_ON_MULTIPLE_LINES()
     {
-        string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
+        var multiLineCommentAsString = @"/*
+	A Multi-Line Comment
+*/".ReplaceLineEndings("\n");
 
-// C:\Users\hunte\Repos\Aaa\
+        var sourceText = $"{multiLineCommentAsString}".ReplaceLineEndings("\n");
 
-int main()
-{
-	int x = 42;
+	    var lexer = new Lexer(sourceText);
+	    lexer.Lex();
+        
+	    var commentMultiLineToken = lexer.SyntaxTokens.First();
 
-	/*
-		A Multi-Line Comment
-	*/
+        Assert.Equal(SyntaxKind.CommentMultiLineToken, commentMultiLineToken.SyntaxKind);
+
+        var text = commentMultiLineToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(multiLineCommentAsString, text);
+    }
 	
-	/* Another Multi-Line Comment */
+	[Fact]
+    public void SHOULD_LEX_COMMENT_MULTI_LINE_TOKEN_WRITTEN_ON_SINGLE_LINE()
+    {
+        var multiLineCommentAsString = @"/* Another Multi-Line Comment */"
+			.ReplaceLineEndings("\n");
 
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
+        var sourceText = $"{multiLineCommentAsString}".ReplaceLineEndings("\n");
+
+	    var lexer = new Lexer(sourceText);
+	    lexer.Lex();
+        
+	    var commentMultiLineToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.CommentMultiLineToken, commentMultiLineToken.SyntaxKind);
+
+        var text = commentMultiLineToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(multiLineCommentAsString, text);
+    }
+    
+    [Fact]
+    public void SHOULD_LEX_KEYWORD_TOKEN()
+    {
+		var keywordAsString = "int";
+        var sourceText = $"{keywordAsString}".ReplaceLineEndings("\n");
 
         var lexer = new Lexer(sourceText);
-        
         lexer.Lex();
         
-        var keywordTokens = lexer.SyntaxTokens
-	        .Where(x => x.SyntaxKind == SyntaxKind.KeywordToken);
-        
-        var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
-	        keywordTokens,
-	        sourceText);
-        
-        Assert.Equal(
-	        "int",
-	        tokenTextTuples[0].text);
-	    
-        Assert.Equal(
-	        "int",
-	        tokenTextTuples[1].text);
+        var keywordToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.KeywordToken, keywordToken.SyntaxKind);
+
+        var text = keywordToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(keywordAsString, text);
     }
     
     [Fact]
-    public void SHOULD_LEX_IDENTIFIER_TOKENS()
+    public void SHOULD_LEX_IDENTIFIER_TOKEN()
     {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
-
-// C:\Users\hunte\Repos\Aaa\
-
-int main()
-{
-	int x = 42;
-
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
-
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
+		var identifierAsString = "main";
+        var sourceText = $"{identifierAsString}".ReplaceLineEndings("\n");
 
 	    var lexer = new Lexer(sourceText);
-        
 	    lexer.Lex();
         
-	    var identifierTokens = lexer.SyntaxTokens
-		    .Where(x => x.SyntaxKind == SyntaxKind.IdentifierToken);
-        
-	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
-		    identifierTokens,
-		    sourceText);
-	    
-	    Assert.Equal(
-		    "main",
-		    tokenTextTuples[0].text);
-	    
-	    Assert.Equal(
-		    "x",
-		    tokenTextTuples[1].text);
-	    
-	    Assert.Equal(
-		    "printf",
-		    tokenTextTuples[2].text);
-	    
-	    Assert.Equal(
-		    "x",
-		    tokenTextTuples[3].text);
+	    var identifierToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
+
+        var text = identifierToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(identifierAsString, text);
     }
     
     [Fact]
-    public void SHOULD_LEX_PLUS_TOKENS()
+    public void SHOULD_LEX_PLUS_TOKEN()
     {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
-
-// C:\Users\hunte\Repos\Aaa\
-
-int main()
-{
-	int x = 10 + 32;
-
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
-
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
+		var plusTokenAsString = "+";
+        var sourceText = $"{plusTokenAsString}".ReplaceLineEndings("\n");
 
 	    var lexer = new Lexer(sourceText);
-        
 	    lexer.Lex();
         
-	    var plusToken = lexer.SyntaxTokens
-		    .Single(x => x.SyntaxKind == SyntaxKind.PlusToken);
+	    var plusToken = lexer.SyntaxTokens.First();
         
-	    var tokenTextTuple = SyntaxTokenHelper.GetTokenTextTuple(
-		    plusToken,
-		    sourceText);
-	    
-	    Assert.Equal(
-		    "+",
-		    tokenTextTuple.text);
+		Assert.Equal(SyntaxKind.PlusToken, plusToken.SyntaxKind);
+
+        var text = plusToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(plusTokenAsString, text);
     }
     
     [Fact]
-    public void SHOULD_LEX_PREPROCESSOR_DIRECTIVE_TOKENS()
+    public void SHOULD_LEX_PREPROCESSOR_DIRECTIVE_TOKEN()
     {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
-
-// C:\Users\hunte\Repos\Aaa\
-
-int main()
-{
-	int x = 42;
-
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
-
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
+		var preprocessorDirectiveAsString = "include";
+        var sourceText = $"#{preprocessorDirectiveAsString}".ReplaceLineEndings("\n");
 
 	    var lexer = new Lexer(sourceText);
-        
 	    lexer.Lex();
         
-	    var preprocessorDirectiveTokens = lexer.SyntaxTokens
-		    .Where(x => x.SyntaxKind == SyntaxKind.PreprocessorDirectiveToken);
-        
-	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
-		    preprocessorDirectiveTokens,
-		    sourceText);
+	    var preprocessorDirectiveToken = lexer.SyntaxTokens.First();
 
-	    Assert.Equal(
-		    CLanguageFacts.Preprocessor.Directives.INCLUDE,
-		    tokenTextTuples[0].text);
-	    
-	    Assert.Equal(
-		    CLanguageFacts.Preprocessor.Directives.INCLUDE,
-		    tokenTextTuples[1].text);
+        Assert.Equal(SyntaxKind.PreprocessorDirectiveToken, preprocessorDirectiveToken.SyntaxKind);
+
+        var text = preprocessorDirectiveToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(preprocessorDirectiveAsString, text);
     }
      
     [Fact]
-    public void SHOULD_LEX_LIBRARY_REFERENCE_TOKENS()
+    public void SHOULD_LEX_PREPROCESSOR_DIRECTIVE_TOKEN_AND_LIBRARY_REFERENCE_TOKEN()
     {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
+        var preprocessorDirectiveAsString = "include";
+        var libraryReferenceAsString = "<stdlib.h>";
+        var sourceText = $"#{preprocessorDirectiveAsString} {libraryReferenceAsString}".ReplaceLineEndings("\n");
 
-// C:\Users\hunte\Repos\Aaa\
+        var lexer = new Lexer(sourceText);
+        lexer.Lex();
 
-int main()
-{
-	int x = 42;
+        // Preprocessor Directive Token Assertions
+        {
+            var preprocessorDirectiveToken = lexer.SyntaxTokens[0];
 
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
+            Assert.Equal(SyntaxKind.PreprocessorDirectiveToken, preprocessorDirectiveToken.SyntaxKind);
 
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
-
-	    var lexer = new Lexer(sourceText);
+            var text = preprocessorDirectiveToken.BlazorStudioTextSpan.GetText(sourceText);
+            Assert.Equal(preprocessorDirectiveAsString, text);
+        }
         
-	    lexer.Lex();
-        
-	    var libraryReferenceTokens = lexer.SyntaxTokens
-		    .Where(x => x.SyntaxKind == SyntaxKind.LibraryReferenceToken);
-        
-	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
-		    libraryReferenceTokens,
-		    sourceText);
-	    
-	    Assert.Equal(
-		    "stdlib.h",
-		    tokenTextTuples[0].text);
-	    
-	    Assert.Equal(
-		    "stdio.h",
-		    tokenTextTuples[1].text);
+        // Library Reference Token Assertions
+        {
+            var libraryReferenceToken = lexer.SyntaxTokens[1];
+
+            Assert.Equal(SyntaxKind.LibraryReferenceToken, libraryReferenceToken.SyntaxKind);
+
+            var text = libraryReferenceToken.BlazorStudioTextSpan.GetText(sourceText);
+            Assert.Equal(libraryReferenceAsString, text);
+        }
     }
     
     [Fact]
-    public void SHOULD_LEX_EQUALS_TOKENS()
+    public void SHOULD_LEX_EQUALS_TOKEN()
     {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
+        var equalsTokenAsString = "=";
+        var sourceText = $"{equalsTokenAsString}".ReplaceLineEndings("\n");
 
-// C:\Users\hunte\Repos\Aaa\
+        var lexer = new Lexer(sourceText);
+        lexer.Lex();
 
-int main()
-{
-	int x = 42;
+        var equalsToken = lexer.SyntaxTokens.First();
 
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
+        Assert.Equal(SyntaxKind.EqualsToken, equalsToken.SyntaxKind);
 
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
-
-	    var lexer = new Lexer(sourceText);
-        
-	    lexer.Lex();
-        
-	    var equalsTokens = lexer.SyntaxTokens
-		    .Single(x => x.SyntaxKind == SyntaxKind.EqualsToken);
-        
-	    var tokenTextTuple = SyntaxTokenHelper.GetTokenTextTuple(
-		    equalsTokens,
-		    sourceText);
-	    
-	    Assert.Equal(
-		    "=",
-		    tokenTextTuple.text);
+        var text = equalsToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(equalsTokenAsString, text);
     }
     
     [Fact]
-    public void SHOULD_LEX_STATEMENT_DELIMITER_TOKENS()
+    public void SHOULD_LEX_STATEMENT_DELIMITER_TOKEN()
     {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
+        var statementDelimiterTokenAsString = ";";
+        var sourceText = $"{statementDelimiterTokenAsString}".ReplaceLineEndings("\n");
 
-// C:\Users\hunte\Repos\Aaa\
+        var lexer = new Lexer(sourceText);
+        lexer.Lex();
 
-int main()
-{
-	int x = 42;
+        var statementDelimiterToken = lexer.SyntaxTokens.First();
 
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
+        Assert.Equal(SyntaxKind.StatementDelimiterToken, statementDelimiterToken.SyntaxKind);
 
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
-
-	    var lexer = new Lexer(sourceText);
-        
-	    lexer.Lex();
-        
-	    var statementDelimiterTokens = lexer.SyntaxTokens
-		    .Where(x => x.SyntaxKind == SyntaxKind.StatementDelimiterToken);
-        
-	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
-		    statementDelimiterTokens,
-		    sourceText);
-	    
-	    Assert.Equal(2, tokenTextTuples.Length);
-	    
-	    Assert.Equal(
-		    ";",
-		    tokenTextTuples[0].text);
-	    
-	    Assert.Equal(
-		    ";",
-		    tokenTextTuples[1].text);
+        var text = statementDelimiterToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(statementDelimiterTokenAsString, text);
     }
 	
 	[Fact]
-    public void SHOULD_LEX_OPEN_PARENTHESIS_TOKENS()
+    public void SHOULD_LEX_OPEN_PARENTHESIS_TOKEN()
     {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
+        var openParenthesisTokenAsString = "(";
+        var sourceText = $"{openParenthesisTokenAsString}".ReplaceLineEndings("\n");
 
-// C:\Users\hunte\Repos\Aaa\
+        var lexer = new Lexer(sourceText);
+        lexer.Lex();
 
-int main()
-{
-	int x = 42;
+        var openParenthesisToken = lexer.SyntaxTokens.First();
 
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
+        Assert.Equal(SyntaxKind.OpenParenthesisToken, openParenthesisToken.SyntaxKind);
 
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
-
-	    var lexer = new Lexer(sourceText);
-        
-	    lexer.Lex();
-        
-	    var tokens = lexer.SyntaxTokens
-		    .Where(x => x.SyntaxKind == SyntaxKind.OpenParenthesisToken);
-        
-	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
-		    tokens,
-		    sourceText);
-	    
-	    Assert.Equal(2, tokenTextTuples.Length);
-	    
-	    Assert.Equal(
-		    "(",
-		    tokenTextTuples[0].text);
-	    
-	    Assert.Equal(
-            "(",
-		    tokenTextTuples[1].text);
+        var text = openParenthesisToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(openParenthesisTokenAsString, text);
     }
 	
 	[Fact]
-    public void SHOULD_LEX_CLOSE_PARENTHESIS_TOKENS()
+    public void SHOULD_LEX_CLOSE_PARENTHESIS_TOKEN()
     {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
+        var closeParenthesisTokenAsString = ")";
+        var sourceText = $"{closeParenthesisTokenAsString}".ReplaceLineEndings("\n");
 
-// C:\Users\hunte\Repos\Aaa\
+        var lexer = new Lexer(sourceText);
+        lexer.Lex();
 
-int main()
-{
-	int x = 42;
+        var closeParenthesisToken = lexer.SyntaxTokens.First();
 
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
+        Assert.Equal(SyntaxKind.CloseParenthesisToken, closeParenthesisToken.SyntaxKind);
 
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
-
-	    var lexer = new Lexer(sourceText);
-        
-	    lexer.Lex();
-        
-	    var tokens = lexer.SyntaxTokens
-		    .Where(x => x.SyntaxKind == SyntaxKind.CloseParenthesisToken);
-        
-	    var tokenTextTuples = SyntaxTokenHelper.GetTokenTextTuples(
-		    tokens,
-		    sourceText);
-	    
-	    Assert.Equal(2, tokenTextTuples.Length);
-	    
-	    Assert.Equal(
-		    ")",
-		    tokenTextTuples[0].text);
-	    
-	    Assert.Equal(
-            ")",
-		    tokenTextTuples[1].text);
+        var text = closeParenthesisToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(closeParenthesisTokenAsString, text);
     }
 	
 	[Fact]
-    public void SHOULD_LEX_OPEN_BRACE_TOKENS()
+    public void SHOULD_LEX_OPEN_BRACE_TOKEN()
     {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
+        var openBraceTokenAsString = "{";
+        var sourceText = $"{openBraceTokenAsString}".ReplaceLineEndings("\n");
 
-// C:\Users\hunte\Repos\Aaa\
+        var lexer = new Lexer(sourceText);
+        lexer.Lex();
 
-int main()
-{
-	int x = 42;
+        var openBraceToken = lexer.SyntaxTokens.First();
 
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
+        Assert.Equal(SyntaxKind.OpenBraceToken, openBraceToken.SyntaxKind);
 
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
-
-	    var lexer = new Lexer(sourceText);
-        
-	    lexer.Lex();
-        
-	    var token = lexer.SyntaxTokens
-		    .Single(x => x.SyntaxKind == SyntaxKind.OpenBraceToken);
-        
-	    var tokenTextTuple = SyntaxTokenHelper.GetTokenTextTuple(
-		    token,
-		    sourceText);
-	    
-	    Assert.Equal(
-		    "{",
-		    tokenTextTuple.text);
+        var text = openBraceToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(openBraceTokenAsString, text);
     }
 	
 	[Fact]
-    public void SHOULD_LEX_CLOSE_BRACE_TOKENS()
+    public void SHOULD_LEX_CLOSE_BRACE_TOKEN()
     {
-	    string sourceText = @"#include <stdlib.h>
-#include <stdio.h>
+        var closeBraceTokenAsString = "}";
+        var sourceText = $"{closeBraceTokenAsString}".ReplaceLineEndings("\n");
 
-// C:\Users\hunte\Repos\Aaa\
+        var lexer = new Lexer(sourceText);
+        lexer.Lex();
 
-int main()
-{
-	int x = 42;
+        var closeBraceToken = lexer.SyntaxTokens.First();
 
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
+        Assert.Equal(SyntaxKind.CloseBraceToken, closeBraceToken.SyntaxKind);
 
-	printf(""%d"", x);
-}".ReplaceLineEndings("\n");
-
-	    var lexer = new Lexer(sourceText);
-        
-	    lexer.Lex();
-        
-	    var token = lexer.SyntaxTokens
-		    .Single(x => x.SyntaxKind == SyntaxKind.CloseBraceToken);
-        
-	    var tokenTextTuple = SyntaxTokenHelper.GetTokenTextTuple(
-		    token,
-		    sourceText);
-	    
-	    Assert.Equal(
-		    "}",
-		    tokenTextTuple.text);
+        var text = closeBraceToken.BlazorStudioTextSpan.GetText(sourceText);
+        Assert.Equal(closeBraceTokenAsString, text);
     }
 }

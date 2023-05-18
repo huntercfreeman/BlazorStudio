@@ -274,40 +274,12 @@ x = 42;"
             SyntaxKind.BoundVariableAssignmentStatementNode,
             boundVariableAssignmentStatementNode.SyntaxKind);
     }
-    
-    [Fact]
-    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT()
-    {
-        string sourceText = @"printf(""%d"", x);"
-            .ReplaceLineEndings("\n");
-
-        var lexer = new Lexer(sourceText);
-
-        lexer.Lex();
-
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            sourceText);
-
-        var compilationUnit = parser.Parse();
-
-        throw new NotImplementedException("Need to write the parsing code and assertions for this.");
-    }
 
     [Fact]
     public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT()
     {
-        string sourceText = @"int main()
+        string sourceText = @"void WriteHelloWorldToConsole()
 {
-	int x = 42;
-
-	/*
-		A Multi-Line Comment
-	*/
-	
-	/* Another Multi-Line Comment */
-
-	printf(""%d"", x);
 }"
             .ReplaceLineEndings("\n");
 
@@ -321,6 +293,50 @@ x = 42;"
 
         var compilationUnit = parser.Parse();
 
-        Assert.Empty(compilationUnit.Children);
+        Assert.Single(compilationUnit.Children);
+
+        var boundFunctionDeclarationNode = 
+            (BoundFunctionDeclarationNode)compilationUnit.Children[0];
+
+        Assert.Equal(
+            SyntaxKind.BoundFunctionDeclarationNode,
+            boundFunctionDeclarationNode.SyntaxKind);
+    }
+
+    [Fact]
+    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT()
+    {
+        string sourceText = @"void WriteHelloWorldToConsole()
+{
+}
+
+WriteHelloWorldToConsole();"
+            .ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText);
+
+        var compilationUnit = parser.Parse();
+
+        Assert.Equal(2, compilationUnit.Children.Length);
+
+        var boundFunctionDeclarationNode =
+            (BoundFunctionDeclarationNode)compilationUnit.Children[0];
+
+        Assert.Equal(
+            SyntaxKind.BoundFunctionDeclarationNode,
+            boundFunctionDeclarationNode.SyntaxKind);
+        
+        var boundFunctionInvocationNode =
+            (BoundFunctionInvocationNode)compilationUnit.Children[1];
+
+        Assert.Equal(
+            SyntaxKind.BoundFunctionInvocationNode,
+            boundFunctionInvocationNode.SyntaxKind);
     }
 }

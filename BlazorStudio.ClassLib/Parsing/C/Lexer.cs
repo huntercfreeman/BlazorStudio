@@ -313,6 +313,8 @@ public class Lexer
             break;
         }
 
+        var libraryReferenceStartingDelimiterCharacterPositionIndex = _stringWalker.PositionIndex;
+
         char characterToMatch;
         Func<BlazorStudioTextSpan, LibraryReferenceToken> libraryReferenceFactory;
 
@@ -343,10 +345,8 @@ public class Lexer
             return false;
         }
 
-        // Move past the library reference path starting character
+        // Move past the library reference starting delimiter character
         _ = _stringWalker.ReadCharacter();
-        
-        var startOfLibraryReferencePositionIndex = _stringWalker.PositionIndex;
         
         while (!_stringWalker.IsEof)
         {
@@ -356,14 +356,16 @@ public class Lexer
             _ = _stringWalker.ReadCharacter();
         }
 
+        // Move past the library reference ending delimiter character
+        _ = _stringWalker.ReadCharacter();
+
         var textSpan = new BlazorStudioTextSpan(
-            startOfLibraryReferencePositionIndex,
+            libraryReferenceStartingDelimiterCharacterPositionIndex,
             _stringWalker.PositionIndex);
 
-        _ = _stringWalker.ReadCharacter();
-        
         libraryReferenceToken = libraryReferenceFactory.Invoke(
             textSpan);
+
         return true;
     }
     

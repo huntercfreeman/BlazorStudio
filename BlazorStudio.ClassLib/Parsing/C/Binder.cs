@@ -87,52 +87,6 @@ public class Binder
         return false;
     }
 
-    /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
-    public bool TryGetBoundFunctionDeclarationNodeHierarchically(
-        string text,
-        out BoundFunctionDeclarationNode? boundFunctionDeclarationNode)
-    {
-        var localScope = _currentScope;
-
-        while (localScope is not null)
-        {
-            if (localScope.FunctionDeclarationMap.TryGetValue(
-                    text,
-                    out boundFunctionDeclarationNode))
-            {
-                return true;
-            }
-
-            localScope = localScope.Parent;
-        }
-
-        boundFunctionDeclarationNode = null;
-        return false;
-    }
-    
-    /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
-    public bool TryGetTypeHierarchically(
-        string text,
-        out Type? type)
-    {
-        var localScope = _currentScope;
-
-        while (localScope is not null)
-        {
-            if (localScope.TypeMap.TryGetValue(
-                    text,
-                    out type))
-            {
-                return true;
-            }
-
-            localScope = localScope.Parent;
-        }
-
-        type = null;
-        return false;
-    }
-
     public BoundFunctionDeclarationNode BindFunctionDeclarationNode(
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
@@ -188,13 +142,14 @@ public class Binder
     /// <summary>Returns null if the variable was not yet declared.</summary>
     public BoundVariableAssignmentStatementNode? BindVariableAssignmentNode(
         IdentifierToken identifierToken,
-        ISyntax rightHandExpression)
+        IExpressionNode rightHandExpression)
     {
         var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
 
-        if (_currentScope.VariableDeclarationMap.TryGetValue(
-            text, 
-            out var variableDeclarationNode))
+        if (TryGetVariableHierarchically(
+                text,
+                out var variableDeclarationNode) &&
+            variableDeclarationNode is not null)
         {
             if (variableDeclarationNode.IsInitialized)
                 return new(identifierToken, rightHandExpression);
@@ -213,7 +168,26 @@ public class Binder
             return null;
         }
     }
-    
+
+    public BoundFunctionInvocationNode? BindFunctionInvocationNode(
+        IdentifierToken identifierToken)
+    {
+        var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
+
+        if (TryGetBoundFunctionDeclarationNodeHierarchically(
+                text,
+                out var boundFunctionDeclarationNode) &&
+            boundFunctionDeclarationNode is not null)
+        {
+            return new(identifierToken);
+        }
+        else
+        {
+            // TODO: The function was not yet declared, so report a diagnostic?
+            return null;
+        }
+    }
+
     public void RegisterBoundScope()
     {
         var functionScope = new BoundScope(
@@ -229,5 +203,74 @@ public class Binder
     {
         if (_currentScope.Parent is not null)
             _currentScope = _currentScope.Parent;
+    }
+
+    /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
+    public bool TryGetBoundFunctionDeclarationNodeHierarchically(
+        string text,
+        out BoundFunctionDeclarationNode? boundFunctionDeclarationNode)
+    {
+        var localScope = _currentScope;
+
+        while (localScope is not null)
+        {
+            if (localScope.FunctionDeclarationMap.TryGetValue(
+                    text,
+                    out boundFunctionDeclarationNode))
+            {
+                return true;
+            }
+
+            localScope = localScope.Parent;
+        }
+
+        boundFunctionDeclarationNode = null;
+        return false;
+    }
+
+    /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
+    public bool TryGetTypeHierarchically(
+        string text,
+        out Type? type)
+    {
+        var localScope = _currentScope;
+
+        while (localScope is not null)
+        {
+            if (localScope.TypeMap.TryGetValue(
+                    text,
+                    out type))
+            {
+                return true;
+            }
+
+            localScope = localScope.Parent;
+        }
+
+        type = null;
+        return false;
+    }
+
+    /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
+    public bool TryGetVariableHierarchically(
+        string text,
+        out BoundVariableDeclarationStatementNode? boundVariableDeclarationStatementNode)
+    {
+        var localScope = _currentScope;
+
+        while (localScope is not null)
+        {
+            if (localScope.VariableDeclarationMap.TryGetValue(
+                    text,
+                    out boundVariableDeclarationStatementNode))
+            {
+                return true;
+            }
+
+            localScope = localScope.Parent;
+        }
+
+        boundVariableDeclarationStatementNode = null;
+        return false;
     }
 }

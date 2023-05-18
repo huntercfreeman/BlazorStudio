@@ -1,4 +1,5 @@
 ﻿using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
+using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 using System.Collections.Immutable;
 
@@ -8,14 +9,15 @@ public class BoundVariableAssignmentStatementNode : ISyntaxNode
 {
     public BoundVariableAssignmentStatementNode(
         ISyntaxToken identifierToken,
-        ISyntax rightHandExpression)
+        IExpressionNode rightHandExpression)
     {
         IdentifierToken = identifierToken;
         RightHandExpression = rightHandExpression;
 
         Children = new ISyntax[]
         {
-            IdentifierToken
+            IdentifierToken,
+            RightHandExpression
         }.ToImmutableArray();
     }
 
@@ -23,5 +25,5 @@ public class BoundVariableAssignmentStatementNode : ISyntaxNode
     public SyntaxKind SyntaxKind => SyntaxKind.BoundVariableAssignmentStatementNode;
 
     public ISyntaxToken IdentifierToken { get; }
-    public ISyntax RightHandExpression { get; }
+    public IExpressionNode RightHandExpression { get; }
 }

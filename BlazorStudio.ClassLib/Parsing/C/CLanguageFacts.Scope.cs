@@ -19,6 +19,10 @@ public partial class CLanguageFacts
                 {
                     Types.String.name,
                     Types.String.type
+                },
+                {
+                    Types.Void.name,
+                    Types.Void.type
                 }
             };
 
