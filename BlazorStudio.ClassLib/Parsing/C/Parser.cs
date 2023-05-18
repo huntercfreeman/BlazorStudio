@@ -275,7 +275,13 @@ public class Parser
             if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
                 // 'function invocation'
-                throw new NotImplementedException();
+                var boundFunctionInvocationNode = _binder.BindFunctionInvocationNode(
+                    inToken);
+
+                if (boundFunctionInvocationNode is null)
+                    throw new ApplicationException($"{nameof(boundFunctionInvocationNode)} was null.");
+
+                _currentCompilationUnitBuilder.Children.Add(boundFunctionInvocationNode);
             }
             else if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
             {
