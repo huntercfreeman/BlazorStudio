@@ -225,7 +225,21 @@ x = 42;"
 
         var compilationUnit = parser.Parse();
 
-        throw new NotImplementedException("Add assertions");
+        Assert.Equal(2, compilationUnit.Children.Length);
+
+        var boundVariableDeclarationStatementNode = 
+            (BoundVariableDeclarationStatementNode)compilationUnit.Children[0];
+
+        Assert.Equal(
+            SyntaxKind.BoundVariableDeclarationStatementNode,
+            boundVariableDeclarationStatementNode.SyntaxKind);
+
+        var boundVariableAssignmentStatementNode =
+            (BoundVariableAssignmentStatementNode)compilationUnit.Children[1];
+
+        Assert.Equal(
+            SyntaxKind.BoundVariableAssignmentStatementNode,
+            boundVariableAssignmentStatementNode.SyntaxKind);
     }
 
     [Fact]
@@ -244,7 +258,40 @@ x = 42;"
 
         var compilationUnit = parser.Parse();
 
-        throw new NotImplementedException("Add assertions");
+        Assert.Equal(2, compilationUnit.Children.Length);
+
+        var boundVariableDeclarationStatementNode =
+            (BoundVariableDeclarationStatementNode)compilationUnit.Children[0];
+
+        Assert.Equal(
+            SyntaxKind.BoundVariableDeclarationStatementNode,
+            boundVariableDeclarationStatementNode.SyntaxKind);
+
+        var boundVariableAssignmentStatementNode =
+            (BoundVariableAssignmentStatementNode)compilationUnit.Children[1];
+
+        Assert.Equal(
+            SyntaxKind.BoundVariableAssignmentStatementNode,
+            boundVariableAssignmentStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT()
+    {
+        string sourceText = @"printf(""%d"", x);"
+            .ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText);
+
+        var compilationUnit = parser.Parse();
+
+        throw new NotImplementedException("Need to write the parsing code and assertions for this.");
     }
 
     [Fact]

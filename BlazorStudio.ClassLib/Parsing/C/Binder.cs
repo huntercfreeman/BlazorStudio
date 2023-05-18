@@ -186,8 +186,9 @@ public class Binder
     }
     
     /// <summary>Returns null if the variable was not yet declared.</summary>
-    public BoundVariableDeclarationStatementNode? InitializeVariableDeclarationNode(
-        IdentifierToken identifierToken)
+    public BoundVariableAssignmentStatementNode? BindVariableAssignmentNode(
+        IdentifierToken identifierToken,
+        ISyntax rightHandExpression)
     {
         var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
 
@@ -196,7 +197,7 @@ public class Binder
             out var variableDeclarationNode))
         {
             if (variableDeclarationNode.IsInitialized)
-                return variableDeclarationNode;
+                return new(identifierToken, rightHandExpression);
 
             variableDeclarationNode = variableDeclarationNode
                 .WithIsInitialized(true);
@@ -204,7 +205,7 @@ public class Binder
             _currentScope.VariableDeclarationMap[text] =
                 variableDeclarationNode;
 
-            return variableDeclarationNode;
+            return new(identifierToken, rightHandExpression);
         }
         else
         {
