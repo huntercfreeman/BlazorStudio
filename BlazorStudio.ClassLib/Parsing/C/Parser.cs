@@ -188,14 +188,17 @@ public class Parser
     private void ParseIdentifierToken(
         IdentifierToken inToken)
     {
+        var nextToken = _tokenWalker.Consume();
+
         if (_nodeRecent is not null &&
             _nodeRecent.SyntaxKind == SyntaxKind.BoundTypeNode)
         {
-            // 'int main()...', 'char c', 'int num', etc...
-            var nextToken = _tokenWalker.Consume();
+            // 'function declaration' OR 'variable declaration' OR 'variable initialization'
 
             if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
+                // 'function declaration'
+
                 var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
                     (BoundTypeNode)_nodeRecent,
                     inToken);
@@ -215,10 +218,47 @@ public class Parser
 
                 ParseFunctionArguments();
             }
+            else if (nextToken.SyntaxKind == SyntaxKind.EqualsToken ||
+                     nextToken.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+            {
+                // 'variable declaration' OR 'variable initialization'
+
+                // 'variable declaration'
+                var boundVariableDeclarationNode = _binder.BindVariableDeclarationNode(
+                    (BoundTypeNode)_nodeRecent,
+                    inToken);
+
+                if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
+                {
+                    // 'variable initialization'
+                    throw new NotImplementedException();
+                }
+            }
+            else
+            {
+                // TODO: Report a diagnostic
+                throw new NotImplementedException();
+            }
         }
         else
         {
-            throw new NotImplementedException();
+            // 'function invocation' OR 'variable assignment' OR 'variable reference'
+
+            if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+            {
+                // 'function invocation'
+                throw new NotImplementedException();
+            }
+            else if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
+            {
+                // 'variable assignment'
+                throw new NotImplementedException();
+            }
+            else
+            {
+                // 'variable reference'
+                throw new NotImplementedException();
+            }
         }
     }
 

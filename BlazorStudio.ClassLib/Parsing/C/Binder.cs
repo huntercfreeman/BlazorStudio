@@ -159,10 +159,37 @@ public class Binder
         return boundFunctionDeclarationNode;
     }
     
+    public BoundVariableDeclarationNode BindVariableDeclarationNode(
+        BoundTypeNode boundTypeNode,
+        IdentifierToken identifierToken)
+    {
+        var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
+
+        if (_currentScope.VariableDeclarationMap.TryGetValue(
+            text, 
+            out var variableDeclarationNode))
+        {
+            // TODO: The variable was already declared, so report a diagnostic?
+            // TODO: The variable was already declared, so check that the return types match?
+            return variableDeclarationNode;
+        }
+
+        var boundVariableDeclarationNode = new BoundVariableDeclarationNode(
+            boundTypeNode,
+            identifierToken);
+
+        _currentScope.VariableDeclarationMap.Add(
+            text,
+            boundVariableDeclarationNode);
+
+        return boundVariableDeclarationNode;
+    }
+    
     public void RegisterBoundScope()
     {
         var functionScope = new BoundScope(
             _currentScope,
+            new(),
             new(),
             new());
 
