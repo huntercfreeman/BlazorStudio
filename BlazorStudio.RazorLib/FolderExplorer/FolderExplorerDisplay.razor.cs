@@ -49,7 +49,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
-    private const string FOLDER_EXPLORER_ABSOLUTE_PATH_STRING = @"C:\Users\hunte\Repos\Aaa";
+    private const string FOLDER_EXPLORER_ABSOLUTE_PATH_STRING = @"C:\Users\hunte\Repos\CHelloWorld";
     
     public static readonly TreeViewStateKey TreeViewFolderExplorerContentStateKey =
         TreeViewStateKey.NewTreeViewStateKey();

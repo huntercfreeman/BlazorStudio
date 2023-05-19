@@ -1,4 +1,5 @@
-﻿using BlazorTextEditor.RazorLib.Lexing;
+﻿using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
+using BlazorTextEditor.RazorLib.Lexing;
 using BlazorTextEditor.RazorLib.Model;
 using BlazorTextEditor.RazorLib.Semantics;
 
@@ -9,6 +10,7 @@ public class SemanticModelC : ISemanticModel
     private string? _text;
     private Lexer? _lexer;
     private Parser? _parser;
+    private CompilationUnit? _compilationUnit;
 
     public SymbolDefinition? GoToDefinition(
         TextEditorModel model,
@@ -29,7 +31,7 @@ public class SemanticModelC : ISemanticModel
         return null;
     }
 
-    public void ManuallyRefreshSemanticModel(
+    public void Parse(
         TextEditorModel model)
     {
         _text = model.GetAllText();
@@ -41,5 +43,7 @@ public class SemanticModelC : ISemanticModel
             _lexer.SyntaxTokens,
             _text,
             _lexer.Diagnostics);
+
+        _compilationUnit = _parser.Parse();
     }
 }
