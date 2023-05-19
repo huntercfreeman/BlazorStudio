@@ -23,7 +23,8 @@ public class SemanticModelC : ISemanticModel
 
         _parser = new Parser(
             _lexer.SyntaxTokens,
-            _text);
+            _text,
+            _lexer.Diagnostics);
         
         return null;
     }
@@ -38,6 +39,7 @@ public class SemanticModelC : ISemanticModel
 
         _parser = new Parser(
             _lexer.SyntaxTokens,
-            _text);
+            _text,
+            _lexer.Diagnostics);
     }
 }

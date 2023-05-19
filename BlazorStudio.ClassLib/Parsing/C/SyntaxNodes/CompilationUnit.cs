@@ -10,9 +10,21 @@ public class CompilationUnit : ISyntaxNode
     {
         IsExpression = isExpression;
         Children = children;
+        Diagnostics = ImmutableArray<BlazorStudioDiagnostic>.Empty;
+    }
+
+    public CompilationUnit(
+        bool isExpression,
+        ImmutableArray<ISyntax> children,
+        ImmutableArray<BlazorStudioDiagnostic> diagnostics)
+    {
+        IsExpression = isExpression;
+        Children = children;
+        Diagnostics = diagnostics;
     }
 
     public bool IsExpression { get; }
+    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics { get; }
 
     public ImmutableArray<ISyntax> Children { get; }
     public bool IsFabricated { get; init; }

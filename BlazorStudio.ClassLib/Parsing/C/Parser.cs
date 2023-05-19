@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
+using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Statements;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Statement;
@@ -14,13 +15,16 @@ public class Parser
     private readonly Binder _binder;
     private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new(null);
     private readonly BlazorStudioDiagnosticBag _diagnosticBag = new();
+    private readonly ImmutableArray<BlazorStudioDiagnostic> _lexerDiagnostics;
     private readonly string _sourceText;
 
     public Parser(
         ImmutableArray<ISyntaxToken> tokens,
-        string sourceText)
+        string sourceText,
+        ImmutableArray<BlazorStudioDiagnostic> lexerDiagnostics)
     {
         _sourceText = sourceText;
+        _lexerDiagnostics = lexerDiagnostics;
         _tokenWalker = new TokenWalker(tokens);
         _binder = new Binder(sourceText);
 
@@ -86,7 +90,11 @@ public class Parser
                 break;
         }
 
-        return _currentCompilationUnitBuilder.Build();
+        return _currentCompilationUnitBuilder.Build(
+            Diagnostics
+                .Union(_binder.Diagnostics)
+                .Union(_lexerDiagnostics)
+                .ToImmutableArray());
     }
 
     private BoundLiteralExpressionNode ParseNumericLiteralToken(
@@ -187,7 +195,19 @@ public class Parser
         }
         else
         {
-            throw new NotImplementedException();
+            // 'return', 'if', 'get', etc...
+
+            if (text == "return")
+            {
+                // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
+                _nodeRecent = _binder.BindReturnStatementNode(
+                    inToken,
+                    ParseExpression());
+            }
+            else
+            {
+                throw new NotImplementedException("Implement more keywords");
+            }
         }
     }
     
@@ -331,7 +351,7 @@ public class Parser
     }
 
     /// <summary>TODO: Implement ParseExpression() correctly. Until then, skip until the statement delimiter token or end of file token is found.</summary>
-    private IExpressionNode ParseExpression()
+    private IBoundExpressionNode ParseExpression()
     {
         while (true)
         {
@@ -353,11 +373,14 @@ public class Parser
     private void ParseOpenBraceToken()
     {
         var closureCompilationUnitBuilder = _currentCompilationUnitBuilder;
+        Type? scopeReturnType = null;
 
         if (_nodeRecent is not null &&
             _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
         {
             var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)_nodeRecent;
+
+            scopeReturnType = boundFunctionDeclarationNode.BoundTypeNode.Type;
 
             _finalizeCompilationUnitAction = compilationUnit =>
             {
@@ -377,7 +400,7 @@ public class Parser
             };
         }
 
-        _binder.RegisterBoundScope();
+        _binder.RegisterBoundScope(scopeReturnType);
         
         _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
     }

@@ -2,7 +2,7 @@
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 using System.Collections.Immutable;
 
-namespace BlazorStudio.ClassLib.Parsing.C.BoundNodes;
+namespace BlazorStudio.ClassLib.Parsing.C.BoundNodes.Statements;
 
 public class BoundFunctionInvocationNode : ISyntaxNode
 {

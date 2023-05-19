@@ -19,4 +19,13 @@ public class CompilationUnitBuilder
             IsExpression,
             Children.ToImmutableArray());
     }
+    
+    public CompilationUnit Build(
+        ImmutableArray<BlazorStudioDiagnostic> diagnostics)
+    {
+        return new CompilationUnit(
+            IsExpression,
+            Children.ToImmutableArray(),
+            diagnostics);
+    }
 }

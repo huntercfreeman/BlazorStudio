@@ -1,28 +1,29 @@
-﻿using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
+﻿using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
+using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 using System.Collections.Immutable;
 
-namespace BlazorStudio.ClassLib.Parsing.C.BoundNodes;
+namespace BlazorStudio.ClassLib.Parsing.C.BoundNodes.Statements;
 
 public class BoundVariableAssignmentStatementNode : ISyntaxNode
 {
     public BoundVariableAssignmentStatementNode(
         ISyntaxToken identifierToken,
-        IExpressionNode rightHandExpression)
+        IBoundExpressionNode boundExpressionNode)
     {
         IdentifierToken = identifierToken;
-        RightHandExpression = rightHandExpression;
+        BoundExpressionNode = boundExpressionNode;
 
         Children = new ISyntax[]
         {
             IdentifierToken,
-            RightHandExpression
+            BoundExpressionNode
         }.ToImmutableArray();
     }
 
     public ISyntaxToken IdentifierToken { get; }
-    public IExpressionNode RightHandExpression { get; }
+    public IBoundExpressionNode BoundExpressionNode { get; }
 
     public ImmutableArray<ISyntax> Children { get; }
     public bool IsFabricated { get; init; }

@@ -1,5 +1,4 @@
-﻿using BlazorTextEditor.RazorLib.Analysis;
-using System.Collections;
+﻿using System.Collections;
 
 namespace BlazorStudio.ClassLib.Parsing;
 
@@ -15,17 +14,6 @@ public class BlazorStudioDiagnosticBag : IEnumerable<BlazorStudioDiagnostic>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
-    }
-
-    public void Report(BlazorStudioDiagnosticLevel blazorStudioDiagnosticLevel,
-        string message,
-        BlazorStudioTextSpan blazorStudioTextSpan)
-    {
-        _blazorStudioDiagnostics.Add(
-            new BlazorStudioDiagnostic(
-                blazorStudioDiagnosticLevel,
-                message,
-                blazorStudioTextSpan));
     }
 
     public void ReportEndOfFileUnexpected(BlazorStudioTextSpan blazorStudioTextSpan)
@@ -44,5 +32,35 @@ public class BlazorStudioDiagnosticBag : IEnumerable<BlazorStudioDiagnostic>
             BlazorStudioDiagnosticLevel.Error,
             $"Unexpected token: '{unexpectedToken}'",
             blazorStudioTextSpan);
+    }
+    
+    public void ReportUndefindFunction(
+        BlazorStudioTextSpan blazorStudioTextSpan,
+        string undefinedFunctionName)
+    {
+        Report(
+            BlazorStudioDiagnosticLevel.Error,
+            $"Undefined function: '{undefinedFunctionName}'",
+            blazorStudioTextSpan);
+    }
+    
+    public void ReportReturnStatementsAreStillBeingImplemented(
+        BlazorStudioTextSpan blazorStudioTextSpan)
+    {
+        Report(
+            BlazorStudioDiagnosticLevel.Hint,
+            $"Parsing of return statements is still being implemented.",
+            blazorStudioTextSpan);
+    }
+
+    private void Report(BlazorStudioDiagnosticLevel blazorStudioDiagnosticLevel,
+        string message,
+        BlazorStudioTextSpan blazorStudioTextSpan)
+    {
+        _blazorStudioDiagnostics.Add(
+            new BlazorStudioDiagnostic(
+                blazorStudioDiagnosticLevel,
+                message,
+                blazorStudioTextSpan));
     }
 }

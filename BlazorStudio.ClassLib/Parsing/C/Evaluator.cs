@@ -23,24 +23,30 @@ public class Evaluator
 
     public EvaluatorResult Evaluate()
     {
-        if (_compilationUnit.IsExpression)
+        if (_compilationUnit.Diagnostics.Any(x =>
+                x.BlazorStudioDiagnosticLevel == BlazorStudioDiagnosticLevel.Error))
         {
-            var expressionNode = _compilationUnit.Children.Single();
-
-            return EvaluateExpression((IExpressionNode)expressionNode);
+            throw new NotImplementedException("TODO: What should be done when there are error diagnostics?");
         }
 
-        throw new NotImplementedException();
+        if (_compilationUnit.IsExpression)
+        {
+            var boundExpressionNode = _compilationUnit.Children.Single();
+
+            return EvaluateExpression((IBoundExpressionNode)boundExpressionNode);
+        }
+
+        throw new NotImplementedException("TODO: Evaluate non-expression compilation units.");
     }
     
-    public EvaluatorResult EvaluateExpression(IExpressionNode expressionNode)
+    public EvaluatorResult EvaluateExpression(IBoundExpressionNode boundExpressionNode)
     {
-        switch (expressionNode.SyntaxKind)
+        switch (boundExpressionNode.SyntaxKind)
         {
             case SyntaxKind.BoundLiteralExpressionNode:
-                return EvaluateBoundLiteralExpressionNode((BoundLiteralExpressionNode)expressionNode);
+                return EvaluateBoundLiteralExpressionNode((BoundLiteralExpressionNode)boundExpressionNode);
             case SyntaxKind.BoundBinaryExpressionNode:
-                return EvaluateBoundBinaryExpressionNode((BoundBinaryExpressionNode)expressionNode);
+                return EvaluateBoundBinaryExpressionNode((BoundBinaryExpressionNode)boundExpressionNode);
         }
 
         throw new NotImplementedException();
