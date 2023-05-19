@@ -200,9 +200,14 @@ public class Parser
             if (text == "return")
             {
                 // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
-                _nodeRecent = _binder.BindReturnStatementNode(
+
+                var boundReturnStatementNode = _binder.BindReturnStatementNode(
                     inToken,
                     ParseExpression());
+
+                _currentCompilationUnitBuilder.Children.Add(boundReturnStatementNode);
+
+                _nodeRecent = boundReturnStatementNode;
             }
             else
             {
@@ -230,17 +235,6 @@ public class Parser
                     inToken);
 
                 _nodeRecent = boundFunctionDeclarationNode;
-
-                var closureCompilationUnitBuilder = _currentCompilationUnitBuilder;
-
-                _finalizeCompilationUnitAction = compilationUnit =>
-                {
-                    boundFunctionDeclarationNode = boundFunctionDeclarationNode
-                        .WithFunctionBody(compilationUnit);
-
-                    closureCompilationUnitBuilder.Children
-                        .Add(boundFunctionDeclarationNode);
-                };
 
                 ParseFunctionArguments();
             }
@@ -305,6 +299,8 @@ public class Parser
                     throw new ApplicationException($"{nameof(boundFunctionInvocationNode)} was null.");
 
                 _currentCompilationUnitBuilder.Children.Add(boundFunctionInvocationNode);
+
+                ParseFunctionArguments();
             }
             else if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
             {
