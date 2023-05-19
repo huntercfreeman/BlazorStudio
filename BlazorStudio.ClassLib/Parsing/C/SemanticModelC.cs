@@ -1,7 +1,9 @@
 ﻿using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
+using BlazorTextEditor.RazorLib.Diff;
 using BlazorTextEditor.RazorLib.Lexing;
 using BlazorTextEditor.RazorLib.Model;
 using BlazorTextEditor.RazorLib.Semantics;
+using System.Collections.Immutable;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
 
@@ -11,6 +13,8 @@ public class SemanticModelC : ISemanticModel
     private Lexer? _lexer;
     private Parser? _parser;
     private CompilationUnit? _compilationUnit;
+
+    public ImmutableList<TextEditorTextSpan> TextEditorTextSpans { get; private set; } = ImmutableList<TextEditorTextSpan>.Empty;
 
     public SymbolDefinition? GoToDefinition(
         TextEditorModel model,
@@ -45,5 +49,23 @@ public class SemanticModelC : ISemanticModel
             _lexer.Diagnostics);
 
         _compilationUnit = _parser.Parse();
+
+        TextEditorTextSpans = _compilationUnit.Diagnostics.Select(x =>
+        {
+            var textEditorDecorationKind = x.BlazorStudioDiagnosticLevel switch
+            {
+                BlazorStudioDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
+                BlazorStudioDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
+                BlazorStudioDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
+                BlazorStudioDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
+                BlazorStudioDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
+                _ => throw new NotImplementedException(),
+            };
+
+            return new TextEditorTextSpan(
+                x.BlazorStudioTextSpan.StartingIndexInclusive,
+                x.BlazorStudioTextSpan.EndingIndexExclusive,
+                (byte)textEditorDecorationKind);
+        }).ToImmutableList();
     }
 }
