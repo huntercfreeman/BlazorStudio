@@ -13,6 +13,7 @@ public class Parser
     private readonly TokenWalker _tokenWalker;
     private readonly Binder _binder;
     private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new(null);
+    private readonly BlazorStudioDiagnosticBag _diagnosticBag = new();
     private readonly string _sourceText;
 
     public Parser(
@@ -25,6 +26,8 @@ public class Parser
 
         _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
     }
+
+    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
     private ISyntaxNode? _nodeRecent;
     private CompilationUnitBuilder _currentCompilationUnitBuilder;

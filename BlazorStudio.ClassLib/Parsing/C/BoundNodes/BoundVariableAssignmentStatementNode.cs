@@ -21,9 +21,10 @@ public class BoundVariableAssignmentStatementNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public ImmutableArray<ISyntax> Children { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundVariableAssignmentStatementNode;
-
     public ISyntaxToken IdentifierToken { get; }
     public IExpressionNode RightHandExpression { get; }
+
+    public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundVariableAssignmentStatementNode;
 }

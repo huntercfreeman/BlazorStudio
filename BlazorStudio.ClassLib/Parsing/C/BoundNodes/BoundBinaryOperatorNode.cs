@@ -25,11 +25,12 @@ public class BoundBinaryOperatorNode : ISyntaxNode
         .ToImmutableArray();
     }
 
-    public ImmutableArray<ISyntax> Children { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundBinaryOperatorNode;
-
     public Type LeftOperandType { get; }
     public ISyntaxToken OperatorToken { get; }
     public Type RightOperandType { get; }
     public Type ResultType { get; }
+
+    public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundBinaryOperatorNode;
 }

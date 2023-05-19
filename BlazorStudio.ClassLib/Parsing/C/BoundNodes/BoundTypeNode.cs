@@ -19,9 +19,10 @@ public class BoundTypeNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public ImmutableArray<ISyntax> Children { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundTypeNode;
-
     public Type Type { get; }
     public ISyntaxToken Token { get; }
+
+    public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundTypeNode;
 }

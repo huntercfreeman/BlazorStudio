@@ -13,7 +13,8 @@ public class CompilationUnit : ISyntaxNode
     }
 
     public bool IsExpression { get; }
-    public ImmutableArray<ISyntax> Children { get; }
 
+    public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
 }

@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
 using BlazorStudio.ClassLib.Parsing.C.Scope;
+using System.Collections.Immutable;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
 
@@ -11,6 +12,7 @@ public class Binder
     private readonly BoundScope _globalScope = CLanguageFacts.Scope.GetInitialGlobalScope();
     private BoundScope _currentScope;
     private readonly string _sourceText;
+    private readonly BlazorStudioDiagnosticBag _diagnosticBag = new();
 
     public Binder(
         string sourceText)
@@ -18,6 +20,8 @@ public class Binder
         _sourceText = sourceText;
         _currentScope = _globalScope;
     }
+
+    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
     public BoundLiteralExpressionNode BindLiteralExpressionNode(
         LiteralExpressionNode literalExpressionNode)

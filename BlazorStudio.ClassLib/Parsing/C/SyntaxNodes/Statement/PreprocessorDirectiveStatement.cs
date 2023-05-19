@@ -23,5 +23,6 @@ public class PreprocessorLibraryReferenceStatement : IStatementNode
     public ISyntaxToken LibraryReferenceSyntaxToken { get; }
 
     public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatement;
 }

@@ -8,13 +8,15 @@ public class Lexer
 {
     private readonly StringWalker _stringWalker;
     private readonly List<ISyntaxToken> _syntaxTokens = new();
-    
+    private readonly BlazorStudioDiagnosticBag _diagnosticBag = new();
+
     public Lexer(string content)
     {
         _stringWalker = new StringWalker(content);
     }
 
     public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
+    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
     /// <summary>
     /// General idea for this Lex method is to use a switch statement

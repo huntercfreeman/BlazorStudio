@@ -37,12 +37,13 @@ public class BoundFunctionDeclarationNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public ImmutableArray<ISyntax> Children { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundFunctionDeclarationNode;
-
     public BoundTypeNode BoundTypeNode { get; }
     public ISyntaxToken IdentifierToken { get; }
     public CompilationUnit? FunctionBodyCompilationUnit { get; }
+
+    public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundFunctionDeclarationNode;
 
     public BoundFunctionDeclarationNode WithFunctionBody(
         CompilationUnit functionBodyCompilationUnit)

@@ -17,8 +17,9 @@ public class BoundFunctionInvocationNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public ImmutableArray<ISyntax> Children { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundFunctionInvocationNode;
-
     public ISyntaxToken IdentifierToken { get; }
+
+    public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundFunctionInvocationNode;
 }

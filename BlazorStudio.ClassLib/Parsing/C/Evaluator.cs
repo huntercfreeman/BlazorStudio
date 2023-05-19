@@ -1,6 +1,7 @@
 ﻿using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
+using System.Collections.Immutable;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
 
@@ -8,7 +9,8 @@ public class Evaluator
 {
     private readonly CompilationUnit _compilationUnit;
     private readonly string _sourceText;
-
+    private readonly BlazorStudioDiagnosticBag _diagnosticBag = new();
+    
     public Evaluator(
         CompilationUnit compilationUnit,
         string sourceText)
@@ -16,6 +18,8 @@ public class Evaluator
         _compilationUnit = compilationUnit;
         _sourceText = sourceText;
     }
+
+    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
     public EvaluatorResult Evaluate()
     {

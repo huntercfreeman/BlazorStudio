@@ -41,13 +41,13 @@ public class BoundVariableDeclarationStatementNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public ImmutableArray<ISyntax> Children { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundVariableDeclarationStatementNode;
-
     public BoundTypeNode BoundTypeNode { get; }
     public ISyntaxToken IdentifierToken { get; }
-
     public bool IsInitialized { get; }
+
+    public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundVariableDeclarationStatementNode;
 
     public BoundVariableDeclarationStatementNode WithIsInitialized(
         bool isInitialized)

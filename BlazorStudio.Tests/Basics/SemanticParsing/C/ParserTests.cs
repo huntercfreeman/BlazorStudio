@@ -339,4 +339,37 @@ WriteHelloWorldToConsole();"
             SyntaxKind.BoundFunctionInvocationNode,
             boundFunctionInvocationNode.SyntaxKind);
     }
+    
+    [Fact]
+    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_WITH_DIAGNOSTIC_FOR_UNDEFINED_FUNCTION()
+    {
+        string sourceText = @"printf();"
+            .ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText);
+
+        var compilationUnit = parser.Parse();
+
+        Assert.Equal(2, compilationUnit.Children.Length);
+
+        var boundFunctionDeclarationNode =
+            (BoundFunctionDeclarationNode)compilationUnit.Children[0];
+
+        Assert.Equal(
+            SyntaxKind.BoundFunctionDeclarationNode,
+            boundFunctionDeclarationNode.SyntaxKind);
+        
+        var boundFunctionInvocationNode =
+            (BoundFunctionInvocationNode)compilationUnit.Children[1];
+
+        Assert.Equal(
+            SyntaxKind.BoundFunctionInvocationNode,
+            boundFunctionInvocationNode.SyntaxKind);
+    }
 }
