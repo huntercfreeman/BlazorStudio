@@ -1,6 +1,7 @@
 ﻿using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
+using System.Collections.Immutable;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
 
@@ -8,7 +9,8 @@ public class Evaluator
 {
     private readonly CompilationUnit _compilationUnit;
     private readonly string _sourceText;
-
+    private readonly BlazorStudioDiagnosticBag _diagnosticBag = new();
+    
     public Evaluator(
         CompilationUnit compilationUnit,
         string sourceText)
@@ -17,26 +19,34 @@ public class Evaluator
         _sourceText = sourceText;
     }
 
+    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+
     public EvaluatorResult Evaluate()
     {
-        if (_compilationUnit.IsExpression)
+        if (_compilationUnit.Diagnostics.Any(x =>
+                x.BlazorStudioDiagnosticLevel == BlazorStudioDiagnosticLevel.Error))
         {
-            var expressionNode = _compilationUnit.Children.Single();
-
-            return EvaluateExpression((IExpressionNode)expressionNode);
+            throw new NotImplementedException("TODO: What should be done when there are error diagnostics?");
         }
 
-        throw new NotImplementedException();
+        if (_compilationUnit.IsExpression)
+        {
+            var boundExpressionNode = _compilationUnit.Children.Single();
+
+            return EvaluateExpression((IBoundExpressionNode)boundExpressionNode);
+        }
+
+        throw new NotImplementedException("TODO: Evaluate non-expression compilation units.");
     }
     
-    public EvaluatorResult EvaluateExpression(IExpressionNode expressionNode)
+    public EvaluatorResult EvaluateExpression(IBoundExpressionNode boundExpressionNode)
     {
-        switch (expressionNode.SyntaxKind)
+        switch (boundExpressionNode.SyntaxKind)
         {
             case SyntaxKind.BoundLiteralExpressionNode:
-                return EvaluateBoundLiteralExpressionNode((BoundLiteralExpressionNode)expressionNode);
+                return EvaluateBoundLiteralExpressionNode((BoundLiteralExpressionNode)boundExpressionNode);
             case SyntaxKind.BoundBinaryExpressionNode:
-                return EvaluateBoundBinaryExpressionNode((BoundBinaryExpressionNode)expressionNode);
+                return EvaluateBoundBinaryExpressionNode((BoundBinaryExpressionNode)boundExpressionNode);
         }
 
         throw new NotImplementedException();

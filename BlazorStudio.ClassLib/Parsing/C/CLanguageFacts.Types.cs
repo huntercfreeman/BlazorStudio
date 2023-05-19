@@ -1,8 +1,4 @@
-﻿using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
-using BlazorStudio.ClassLib.Parsing.C.Scope;
-using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
-
-namespace BlazorStudio.ClassLib.Parsing.C;
+﻿namespace BlazorStudio.ClassLib.Parsing.C;
 
 public partial class CLanguageFacts
 {

@@ -1,5 +1,4 @@
 ﻿using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
-using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 using System.Collections.Immutable;
 
@@ -25,11 +24,12 @@ public class BoundBinaryOperatorNode : ISyntaxNode
         .ToImmutableArray();
     }
 
-    public ImmutableArray<ISyntax> Children { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundBinaryOperatorNode;
-
     public Type LeftOperandType { get; }
     public ISyntaxToken OperatorToken { get; }
     public Type RightOperandType { get; }
     public Type ResultType { get; }
+
+    public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundBinaryOperatorNode;
 }

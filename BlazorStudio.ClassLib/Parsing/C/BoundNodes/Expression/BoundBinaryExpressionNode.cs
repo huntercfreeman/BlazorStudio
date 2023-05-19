@@ -21,12 +21,12 @@ public class BoundBinaryExpressionNode : IBoundExpressionNode
         }.ToImmutableArray();
     }
 
-    public ImmutableArray<ISyntax> Children { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundBinaryExpressionNode;
-
-    public Type ResultType => BoundBinaryOperatorNode.ResultType;
-
     public IBoundExpressionNode LeftBoundExpressionNode { get; }
     public BoundBinaryOperatorNode BoundBinaryOperatorNode { get; }
     public IBoundExpressionNode RightBoundExpressionNode { get; }
+    public Type ResultType => BoundBinaryOperatorNode.ResultType;
+
+    public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundBinaryExpressionNode;
 }

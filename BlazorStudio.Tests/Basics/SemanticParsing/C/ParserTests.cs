@@ -1,8 +1,8 @@
-﻿using BlazorStudio.ClassLib.Parsing.C;
+﻿using BlazorStudio.ClassLib.Parsing;
+using BlazorStudio.ClassLib.Parsing.C;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
-using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
-using System.Xml.Linq;
+using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Statements;
 
 namespace BlazorStudio.Tests.Basics.SemanticParsing.C;
 
@@ -18,7 +18,8 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -40,7 +41,8 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -62,7 +64,8 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -96,7 +99,8 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -122,7 +126,8 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -153,7 +158,8 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -172,7 +178,8 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -221,7 +228,8 @@ x = 42;"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -254,7 +262,8 @@ x = 42;"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -289,7 +298,8 @@ x = 42;"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -319,7 +329,8 @@ WriteHelloWorldToConsole();"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -338,5 +349,47 @@ WriteHelloWorldToConsole();"
         Assert.Equal(
             SyntaxKind.BoundFunctionInvocationNode,
             boundFunctionInvocationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_WITH_DIAGNOSTIC_FOR_UNDEFINED_FUNCTION()
+    {
+        string sourceText = @"printf();"
+            .ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        // BoundFunctionInvocationNode Assertions
+        {
+            Assert.Single(compilationUnit.Children);
+
+            var boundFunctionInvocationNode =
+                (BoundFunctionInvocationNode)compilationUnit.Children.Single();
+
+            Assert.Equal(
+                SyntaxKind.BoundFunctionInvocationNode,
+                boundFunctionInvocationNode.SyntaxKind);
+        }
+
+        // Diagnostic Assertions
+        {
+            Assert.Single(compilationUnit.Diagnostics);
+
+            var errorDiagnostic = compilationUnit.Diagnostics
+                .Single();
+
+            Assert.Equal(
+                BlazorStudioDiagnosticLevel.Error,
+                errorDiagnostic.BlazorStudioDiagnosticLevel);
+        }
     }
 }

@@ -1,17 +1,12 @@
 ﻿using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BlazorStudio.ClassLib.Parsing.C.BoundNodes;
+namespace BlazorStudio.ClassLib.Parsing.C.BoundNodes.Statements;
 
-public class BoundVariableDeclarationStatementNode : ISyntaxNode
+public class BoundFunctionDeclarationNode : ISyntaxNode
 {
-    public BoundVariableDeclarationStatementNode(
+    public BoundFunctionDeclarationNode(
         BoundTypeNode boundTypeNode,
         ISyntaxToken identifierToken)
     {
@@ -24,37 +19,38 @@ public class BoundVariableDeclarationStatementNode : ISyntaxNode
             IdentifierToken
         }.ToImmutableArray();
     }
-    
-    public BoundVariableDeclarationStatementNode(
+
+    public BoundFunctionDeclarationNode(
         BoundTypeNode boundTypeNode,
         ISyntaxToken identifierToken,
-        bool isInitialized)
+        CompilationUnit functionBodyCompilationUnit)
     {
         BoundTypeNode = boundTypeNode;
         IdentifierToken = identifierToken;
-        IsInitialized = isInitialized;
+        FunctionBodyCompilationUnit = functionBodyCompilationUnit;
 
         Children = new ISyntax[]
         {
             BoundTypeNode,
-            IdentifierToken
+            IdentifierToken,
+            FunctionBodyCompilationUnit
         }.ToImmutableArray();
     }
 
-    public ImmutableArray<ISyntax> Children { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundVariableDeclarationStatementNode;
-
     public BoundTypeNode BoundTypeNode { get; }
     public ISyntaxToken IdentifierToken { get; }
+    public CompilationUnit? FunctionBodyCompilationUnit { get; }
 
-    public bool IsInitialized { get; }
+    public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundFunctionDeclarationNode;
 
-    public BoundVariableDeclarationStatementNode WithIsInitialized(
-        bool isInitialized)
+    public BoundFunctionDeclarationNode WithFunctionBody(
+        CompilationUnit functionBodyCompilationUnit)
     {
-        return new BoundVariableDeclarationStatementNode(
+        return new BoundFunctionDeclarationNode(
             BoundTypeNode,
             IdentifierToken,
-            isInitialized);
+            functionBodyCompilationUnit);
     }
 }

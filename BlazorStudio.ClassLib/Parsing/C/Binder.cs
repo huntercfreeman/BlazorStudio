@@ -3,6 +3,8 @@ using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
 using BlazorStudio.ClassLib.Parsing.C.Scope;
+using System.Collections.Immutable;
+using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Statements;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
 
@@ -11,6 +13,7 @@ public class Binder
     private readonly BoundScope _globalScope = CLanguageFacts.Scope.GetInitialGlobalScope();
     private BoundScope _currentScope;
     private readonly string _sourceText;
+    private readonly BlazorStudioDiagnosticBag _diagnosticBag = new();
 
     public Binder(
         string sourceText)
@@ -18,6 +21,8 @@ public class Binder
         _sourceText = sourceText;
         _currentScope = _globalScope;
     }
+
+    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
     public BoundLiteralExpressionNode BindLiteralExpressionNode(
         LiteralExpressionNode literalExpressionNode)
@@ -113,6 +118,19 @@ public class Binder
         return boundFunctionDeclarationNode;
     }
     
+    /// <summary>TODO: Validate that the returned bound expression node has the same result type as the enclosing scope.</summary>
+    public BoundReturnStatementNode BindReturnStatementNode(
+        KeywordToken keywordToken,
+        IBoundExpressionNode boundExpressionNode)
+    {
+        _diagnosticBag.ReportReturnStatementsAreStillBeingImplemented(
+                keywordToken.BlazorStudioTextSpan);
+
+        return new BoundReturnStatementNode(
+            keywordToken,
+            boundExpressionNode);
+    }
+    
     public BoundVariableDeclarationStatementNode BindVariableDeclarationNode(
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
@@ -142,7 +160,7 @@ public class Binder
     /// <summary>Returns null if the variable was not yet declared.</summary>
     public BoundVariableAssignmentStatementNode? BindVariableAssignmentNode(
         IdentifierToken identifierToken,
-        IExpressionNode rightHandExpression)
+        IBoundExpressionNode boundExpressionNode)
     {
         var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
 
@@ -152,7 +170,7 @@ public class Binder
             variableDeclarationNode is not null)
         {
             if (variableDeclarationNode.IsInitialized)
-                return new(identifierToken, rightHandExpression);
+                return new(identifierToken, boundExpressionNode);
 
             variableDeclarationNode = variableDeclarationNode
                 .WithIsInitialized(true);
@@ -160,7 +178,7 @@ public class Binder
             _currentScope.VariableDeclarationMap[text] =
                 variableDeclarationNode;
 
-            return new(identifierToken, rightHandExpression);
+            return new(identifierToken, boundExpressionNode);
         }
         else
         {
@@ -183,20 +201,27 @@ public class Binder
         }
         else
         {
-            // TODO: The function was not yet declared, so report a diagnostic?
-            return null;
+            _diagnosticBag.ReportUndefindFunction(
+                identifierToken.BlazorStudioTextSpan,
+                text);
+
+            return new(identifierToken)
+            {
+                IsFabricated = true
+            };
         }
     }
 
-    public void RegisterBoundScope()
+    public void RegisterBoundScope(Type? scopeReturnType)
     {
-        var functionScope = new BoundScope(
+        var boundScope = new BoundScope(
             _currentScope,
+            scopeReturnType,
             new(),
             new(),
             new());
 
-        _currentScope = functionScope;
+        _currentScope = boundScope;
     }
     
     public void DisposeBoundScope()

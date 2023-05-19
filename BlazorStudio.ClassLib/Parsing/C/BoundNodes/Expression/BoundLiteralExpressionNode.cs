@@ -20,7 +20,8 @@ public class BoundLiteralExpressionNode : IBoundExpressionNode
 
     public ISyntaxToken LiteralSyntaxToken { get; }
     public Type ResultType { get; }
-    public ImmutableArray<ISyntax> Children { get; }
 
+    public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundLiteralExpressionNode;
 }

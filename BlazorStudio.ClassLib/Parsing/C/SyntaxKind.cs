@@ -33,4 +33,5 @@ public enum SyntaxKind
     BoundVariableDeclarationStatementNode,
     BoundVariableAssignmentStatementNode,
     BoundFunctionInvocationNode,
+    BoundReturnStatementNode,
 }

@@ -16,7 +16,8 @@ public class EvaluatorTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -41,7 +42,8 @@ public class EvaluatorTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -68,7 +70,8 @@ public class EvaluatorTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
@@ -95,7 +98,8 @@ public class EvaluatorTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText);
+            sourceText,
+            lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 

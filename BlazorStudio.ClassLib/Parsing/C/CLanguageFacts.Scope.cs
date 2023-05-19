@@ -1,6 +1,4 @@
-﻿using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
-using BlazorStudio.ClassLib.Parsing.C.Scope;
-using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
+﻿using BlazorStudio.ClassLib.Parsing.C.Scope;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
 
@@ -26,7 +24,7 @@ public partial class CLanguageFacts
                 }
             };
 
-            return new BoundScope(null, typeMap, new(), new());
+            return new BoundScope(null, typeof(void), typeMap, new(), new());
         }
     }
 }

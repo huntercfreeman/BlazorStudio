@@ -16,6 +16,8 @@ public class LiteralExpressionNode : IExpressionNode
     }
 
     public ISyntaxToken LiteralSyntaxToken { get; }
+
     public ImmutableArray<ISyntax> Children { get; }
+    public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
 }
