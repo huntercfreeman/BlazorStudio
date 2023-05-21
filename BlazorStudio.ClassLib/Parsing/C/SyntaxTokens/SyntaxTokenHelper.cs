@@ -17,6 +17,6 @@ public class SyntaxTokenHelper
         string sourceText)
     {
         return (syntaxToken,
-            syntaxToken.BlazorStudioTextSpan.GetText(sourceText));
+            syntaxToken.TextEditorTextSpan.GetText(sourceText));
     }
 }

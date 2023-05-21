@@ -1,13 +1,15 @@
-﻿namespace BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
+﻿using BlazorTextEditor.RazorLib.Lexing;
+
+namespace BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 
 public class CommentSingleLineToken : ISyntaxToken
 {
     public CommentSingleLineToken(
-        BlazorStudioTextSpan blazorStudioTextSpan)
+        TextEditorTextSpan textEditorTextSpan)
     {
-        BlazorStudioTextSpan = blazorStudioTextSpan;
+        TextEditorTextSpan = textEditorTextSpan;
     }
 
-    public BlazorStudioTextSpan BlazorStudioTextSpan { get; }
+    public TextEditorTextSpan TextEditorTextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.CommentSingleLineToken;
 }

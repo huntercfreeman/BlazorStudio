@@ -1,16 +1,18 @@
-﻿namespace BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
+﻿using BlazorTextEditor.RazorLib.Lexing;
+
+namespace BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 
 public class LibraryReferenceToken : ISyntaxToken
 {
     public LibraryReferenceToken(
-        BlazorStudioTextSpan blazorStudioTextSpan,
+        TextEditorTextSpan textEditorTextSpan,
         bool isAbsolutePath)
     {
-        BlazorStudioTextSpan = blazorStudioTextSpan;
+        TextEditorTextSpan = textEditorTextSpan;
         IsAbsolutePath = isAbsolutePath;
     }
 
-    public BlazorStudioTextSpan BlazorStudioTextSpan { get; }
+    public TextEditorTextSpan TextEditorTextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.LibraryReferenceToken;
     public bool IsAbsolutePath { get; }
 }

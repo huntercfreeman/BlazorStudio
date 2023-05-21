@@ -63,8 +63,8 @@ public class SemanticModelC : ISemanticModel
             };
 
             return new TextEditorTextSpan(
-                x.BlazorStudioTextSpan.StartingIndexInclusive,
-                x.BlazorStudioTextSpan.EndingIndexExclusive,
+                x.TextEditorTextSpan.StartingIndexInclusive,
+                x.TextEditorTextSpan.EndingIndexExclusive,
                 (byte)textEditorDecorationKind);
         }).ToImmutableList();
     }

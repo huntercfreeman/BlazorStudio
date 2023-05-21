@@ -17,7 +17,7 @@ public class LexerTests
 
 		Assert.Equal(SyntaxKind.NumericLiteralToken, numericLiteralToken.SyntaxKind);
 
-        var text = numericLiteralToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = numericLiteralToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(numericValue, int.Parse(text));
     }
     
@@ -34,7 +34,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.StringLiteralToken, stringLiteralToken.SyntaxKind);
 
-        var text = stringLiteralToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = stringLiteralToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(stringValue, text);
     }
     
@@ -51,7 +51,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.CommentSingleLineToken, commentSingleLineToken.SyntaxKind);
 
-        var text = commentSingleLineToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = commentSingleLineToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(singleLineCommentAsString, text);
     }
 	
@@ -69,7 +69,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.CommentSingleLineToken, commentSingleLineToken.SyntaxKind);
         
-		var text = commentSingleLineToken.BlazorStudioTextSpan.GetText(sourceText);
+		var text = commentSingleLineToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(singleLineCommentAsString, text);
     }
     
@@ -89,7 +89,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.CommentMultiLineToken, commentMultiLineToken.SyntaxKind);
 
-        var text = commentMultiLineToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = commentMultiLineToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(multiLineCommentAsString, text);
     }
 	
@@ -108,7 +108,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.CommentMultiLineToken, commentMultiLineToken.SyntaxKind);
 
-        var text = commentMultiLineToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = commentMultiLineToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(multiLineCommentAsString, text);
     }
     
@@ -125,14 +125,14 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.KeywordToken, keywordToken.SyntaxKind);
 
-        var text = keywordToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = keywordToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(keywordAsString, text);
     }
     
-    [Fact]
-    public void SHOULD_LEX_IDENTIFIER_TOKEN()
+    [Theory]
+    [InlineData("a")][InlineData("b")][InlineData("c")][InlineData("d")][InlineData("e")][InlineData("f")][InlineData("g")][InlineData("h")][InlineData("i")][InlineData("j")][InlineData("k")][InlineData("l")][InlineData("m")][InlineData("n")][InlineData("o")][InlineData("p")][InlineData("q")][InlineData("r")][InlineData("s")][InlineData("t")][InlineData("u")][InlineData("v")][InlineData("w")][InlineData("x")][InlineData("y")][InlineData("z")][InlineData("A")][InlineData("B")][InlineData("C")][InlineData("D")][InlineData("E")][InlineData("F")][InlineData("G")][InlineData("H")][InlineData("I")][InlineData("J")][InlineData("K")][InlineData("L")][InlineData("M")][InlineData("N")][InlineData("O")][InlineData("P")][InlineData("Q")][InlineData("R")][InlineData("S")][InlineData("T")][InlineData("U")][InlineData("V")][InlineData("W")][InlineData("X")][InlineData("Y")][InlineData("Z")][InlineData("_")][InlineData("abc")][InlineData("aBc")][InlineData("Abc")][InlineData("ABc")][InlineData("_a")][InlineData("_A")]
+    public void SHOULD_LEX_IDENTIFIER_TOKEN(string identifierAsString)
     {
-		var identifierAsString = "main";
         var sourceText = $"{identifierAsString}".ReplaceLineEndings("\n");
 
 	    var lexer = new Lexer(sourceText);
@@ -142,10 +142,10 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
 
-        var text = identifierToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = identifierToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(identifierAsString, text);
     }
-    
+
     [Fact]
     public void SHOULD_LEX_PLUS_TOKEN()
     {
@@ -159,7 +159,7 @@ public class LexerTests
         
 		Assert.Equal(SyntaxKind.PlusToken, plusToken.SyntaxKind);
 
-        var text = plusToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = plusToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(plusTokenAsString, text);
     }
     
@@ -176,7 +176,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.PreprocessorDirectiveToken, preprocessorDirectiveToken.SyntaxKind);
 
-        var text = preprocessorDirectiveToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = preprocessorDirectiveToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(preprocessorDirectiveAsString, text);
     }
      
@@ -196,7 +196,7 @@ public class LexerTests
 
             Assert.Equal(SyntaxKind.PreprocessorDirectiveToken, preprocessorDirectiveToken.SyntaxKind);
 
-            var text = preprocessorDirectiveToken.BlazorStudioTextSpan.GetText(sourceText);
+            var text = preprocessorDirectiveToken.TextEditorTextSpan.GetText(sourceText);
             Assert.Equal(preprocessorDirectiveAsString, text);
         }
         
@@ -206,7 +206,7 @@ public class LexerTests
 
             Assert.Equal(SyntaxKind.LibraryReferenceToken, libraryReferenceToken.SyntaxKind);
 
-            var text = libraryReferenceToken.BlazorStudioTextSpan.GetText(sourceText);
+            var text = libraryReferenceToken.TextEditorTextSpan.GetText(sourceText);
             Assert.Equal(libraryReferenceAsString, text);
         }
     }
@@ -224,7 +224,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.EqualsToken, equalsToken.SyntaxKind);
 
-        var text = equalsToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = equalsToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(equalsTokenAsString, text);
     }
     
@@ -241,7 +241,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.StatementDelimiterToken, statementDelimiterToken.SyntaxKind);
 
-        var text = statementDelimiterToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = statementDelimiterToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(statementDelimiterTokenAsString, text);
     }
 	
@@ -258,7 +258,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.OpenParenthesisToken, openParenthesisToken.SyntaxKind);
 
-        var text = openParenthesisToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = openParenthesisToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(openParenthesisTokenAsString, text);
     }
 	
@@ -275,7 +275,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.CloseParenthesisToken, closeParenthesisToken.SyntaxKind);
 
-        var text = closeParenthesisToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = closeParenthesisToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(closeParenthesisTokenAsString, text);
     }
 	
@@ -292,7 +292,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.OpenBraceToken, openBraceToken.SyntaxKind);
 
-        var text = openBraceToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = openBraceToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(openBraceTokenAsString, text);
     }
 	
@@ -309,7 +309,7 @@ public class LexerTests
 
         Assert.Equal(SyntaxKind.CloseBraceToken, closeBraceToken.SyntaxKind);
 
-        var text = closeBraceToken.BlazorStudioTextSpan.GetText(sourceText);
+        var text = closeBraceToken.TextEditorTextSpan.GetText(sourceText);
         Assert.Equal(closeBraceTokenAsString, text);
     }
 }

@@ -80,7 +80,7 @@ public class Binder
         ISyntaxToken token,
         out BoundTypeNode? boundTypeNode)
     {
-        var text = token.BlazorStudioTextSpan.GetText(_sourceText);
+        var text = token.TextEditorTextSpan.GetText(_sourceText);
 
         if (_currentScope.TypeMap.TryGetValue(text, out var type))
         {
@@ -96,7 +96,7 @@ public class Binder
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
+        var text = identifierToken.TextEditorTextSpan.GetText(_sourceText);
 
         if (_currentScope.FunctionDeclarationMap.TryGetValue(
             text, 
@@ -124,7 +124,7 @@ public class Binder
         IBoundExpressionNode boundExpressionNode)
     {
         _diagnosticBag.ReportReturnStatementsAreStillBeingImplemented(
-                keywordToken.BlazorStudioTextSpan);
+                keywordToken.TextEditorTextSpan);
 
         return new BoundReturnStatementNode(
             keywordToken,
@@ -135,7 +135,7 @@ public class Binder
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
+        var text = identifierToken.TextEditorTextSpan.GetText(_sourceText);
 
         if (_currentScope.VariableDeclarationMap.TryGetValue(
             text, 
@@ -162,7 +162,7 @@ public class Binder
         IdentifierToken identifierToken,
         IBoundExpressionNode boundExpressionNode)
     {
-        var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
+        var text = identifierToken.TextEditorTextSpan.GetText(_sourceText);
 
         if (TryGetVariableHierarchically(
                 text,
@@ -190,7 +190,7 @@ public class Binder
     public BoundFunctionInvocationNode? BindFunctionInvocationNode(
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.BlazorStudioTextSpan.GetText(_sourceText);
+        var text = identifierToken.TextEditorTextSpan.GetText(_sourceText);
 
         if (TryGetBoundFunctionDeclarationNodeHierarchically(
                 text,
@@ -202,7 +202,7 @@ public class Binder
         else
         {
             _diagnosticBag.ReportUndefindFunction(
-                identifierToken.BlazorStudioTextSpan,
+                identifierToken.TextEditorTextSpan,
                 text);
 
             return new(identifierToken)

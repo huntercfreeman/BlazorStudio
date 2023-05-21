@@ -6,6 +6,7 @@ using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Statement;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
+using BlazorTextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
 
@@ -185,7 +186,7 @@ public class Parser
     private void ParseKeywordToken(
         KeywordToken inToken)
     {
-        var text = inToken.BlazorStudioTextSpan.GetText(_sourceText);
+        var text = inToken.TextEditorTextSpan.GetText(_sourceText);
 
         if (_binder.TryGetTypeHierarchically(text, out var type) &&
             type is not null)
@@ -362,7 +363,7 @@ public class Parser
 
         // #TODO: Correctly implement this method Returning a nonsensical token for now.
         return new BoundLiteralExpressionNode(
-            new EndOfFileToken(new(-1, -1)),
+            new EndOfFileToken(new(-1, -1, (byte)GenericDecorationKind.None)),
             typeof(void));
     }
     

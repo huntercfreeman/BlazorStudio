@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using BlazorTextEditor.RazorLib.Lexing;
+using System.Collections;
 
 namespace BlazorStudio.ClassLib.Parsing;
 
@@ -16,51 +17,53 @@ public class BlazorStudioDiagnosticBag : IEnumerable<BlazorStudioDiagnostic>
         return GetEnumerator();
     }
 
-    public void ReportEndOfFileUnexpected(BlazorStudioTextSpan blazorStudioTextSpan)
+    public void ReportEndOfFileUnexpected(
+        TextEditorTextSpan textEditorTextSpan)
     {
         Report(
             BlazorStudioDiagnosticLevel.Error,
             "'End of file' was unexpected.",
-            blazorStudioTextSpan);
+            textEditorTextSpan);
     }
 
     public void ReportUnexpectedToken(
-        BlazorStudioTextSpan blazorStudioTextSpan,
+        TextEditorTextSpan textEditorTextSpan,
         string unexpectedToken)
     {
         Report(
             BlazorStudioDiagnosticLevel.Error,
             $"Unexpected token: '{unexpectedToken}'",
-            blazorStudioTextSpan);
+            textEditorTextSpan);
     }
     
     public void ReportUndefindFunction(
-        BlazorStudioTextSpan blazorStudioTextSpan,
+        TextEditorTextSpan textEditorTextSpan,
         string undefinedFunctionName)
     {
         Report(
             BlazorStudioDiagnosticLevel.Error,
             $"Undefined function: '{undefinedFunctionName}'",
-            blazorStudioTextSpan);
+            textEditorTextSpan);
     }
     
     public void ReportReturnStatementsAreStillBeingImplemented(
-        BlazorStudioTextSpan blazorStudioTextSpan)
+        TextEditorTextSpan textEditorTextSpan)
     {
         Report(
             BlazorStudioDiagnosticLevel.Hint,
             $"Parsing of return statements is still being implemented.",
-            blazorStudioTextSpan);
+            textEditorTextSpan);
     }
 
-    private void Report(BlazorStudioDiagnosticLevel blazorStudioDiagnosticLevel,
+    private void Report(
+        BlazorStudioDiagnosticLevel blazorStudioDiagnosticLevel,
         string message,
-        BlazorStudioTextSpan blazorStudioTextSpan)
+        TextEditorTextSpan textEditorTextSpan)
     {
         _blazorStudioDiagnostics.Add(
             new BlazorStudioDiagnostic(
                 blazorStudioDiagnosticLevel,
                 message,
-                blazorStudioTextSpan));
+                textEditorTextSpan));
     }
 }

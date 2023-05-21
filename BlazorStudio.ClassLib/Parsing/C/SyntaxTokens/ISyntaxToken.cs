@@ -1,6 +1,8 @@
-﻿namespace BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
+﻿using BlazorTextEditor.RazorLib.Lexing;
+
+namespace BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 
 public interface ISyntaxToken : ISyntax
 {
-    public BlazorStudioTextSpan BlazorStudioTextSpan { get; }
+    public TextEditorTextSpan TextEditorTextSpan { get; }
 }
