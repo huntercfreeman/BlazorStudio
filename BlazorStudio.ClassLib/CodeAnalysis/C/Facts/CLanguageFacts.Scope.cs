@@ -24,7 +24,14 @@ public partial class CLanguageFacts
                 }
             };
 
-            return new BoundScope(null, typeof(void), typeMap, new(), new());
+            return new BoundScope(
+                null,
+                typeof(void),
+                0,
+                null,
+                typeMap,
+                new(),
+                new());
         }
     }
 }

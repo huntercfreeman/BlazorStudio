@@ -1,6 +1,17 @@
-﻿namespace BlazorStudio.ClassLib.CodeAnalysis.C.Symbols;
+﻿using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
+using BlazorTextEditor.RazorLib.Lexing;
 
-public class FunctionSymbol : Symbol
+namespace BlazorStudio.ClassLib.CodeAnalysis.C.Symbols;
+
+public class FunctionSymbol : ISymbol
 {
+    public FunctionSymbol(
+        TextEditorTextSpan textSpan)
+    {
+        TextSpan = textSpan;
+    }
+
+    public TextEditorTextSpan TextSpan { get; }
+    public SyntaxKind SyntaxKind => SyntaxKind.FunctionSymbol;
 }
 

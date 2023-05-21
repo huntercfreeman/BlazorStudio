@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using BlazorCommon.RazorLib.BackgroundTaskCase;
 using BlazorCommon.RazorLib.ComponentRenderers.Types;
+using BlazorCommon.RazorLib.Misc;
 using BlazorCommon.RazorLib.Notification;
 using BlazorCommon.RazorLib.Store.NotificationCase;
 using BlazorStudio.ClassLib.ComponentRenderers;
@@ -11,7 +12,9 @@ using BlazorStudio.ClassLib.Store.FileSystemCase;
 using BlazorStudio.ClassLib.Store.InputFileCase;
 using BlazorTextEditor.RazorLib;
 using BlazorTextEditor.RazorLib.Group;
+using BlazorTextEditor.RazorLib.Lexing;
 using BlazorTextEditor.RazorLib.Model;
+using BlazorTextEditor.RazorLib.Semantics;
 using BlazorTextEditor.RazorLib.ViewModel;
 using Fluxor;
 
@@ -132,14 +135,24 @@ public class EditorState
             var content = await fileSystemProvider.File.ReadAllTextAsync(
                 inputFileAbsoluteFilePathString);
 
+            var lexer = ExtensionNoPeriodFacts.GetLexer(
+                absoluteFilePath.ExtensionNoPeriod);
+
+            var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
+                absoluteFilePath.ExtensionNoPeriod);
+
+            var semanticModel = ExtensionNoPeriodFacts.GetSemanticModel(
+                absoluteFilePath.ExtensionNoPeriod,
+                lexer);
+
             textEditorModel = new TextEditorModel(
                 inputFileAbsoluteFilePathString,
                 fileLastWriteTime,
                 absoluteFilePath.ExtensionNoPeriod,
                 content,
-                ExtensionNoPeriodFacts.GetLexer(absoluteFilePath.ExtensionNoPeriod),
-                ExtensionNoPeriodFacts.GetDecorationMapper(absoluteFilePath.ExtensionNoPeriod),
-                ExtensionNoPeriodFacts.GetSemanticModel(absoluteFilePath.ExtensionNoPeriod),
+                lexer,
+                decorationMapper,
+                semanticModel,
                 null,
                 TextEditorModelKey.NewTextEditorModelKey()
             );
@@ -147,7 +160,7 @@ public class EditorState
             textEditorService.Model.RegisterCustom(textEditorModel);
 
             _ = Task.Run(async () =>
-                    await textEditorModel.ApplySyntaxHighlightingAsync());
+                await textEditorModel.ApplySyntaxHighlightingAsync());
         }
 
         return textEditorModel;
@@ -266,6 +279,15 @@ public class EditorState
                     GetTabDisplayNameFunc = _ => absoluteFilePath.FilenameWithExtension,
                     ShouldSetFocusAfterNextRender = shouldSetFocusToEditor
                 });
+
+            //viewModel = textEditorService.ViewModel.FindOrDefault(viewModelKey);
+
+            //if (viewModel is not null)
+            //{
+            //    ChangeLastPresentationLayer(
+            //        textEditorService,
+            //        viewModel);
+            //}
         }
         else
         {
@@ -311,4 +333,47 @@ public class EditorState
             innerTextEditor.ClearEditBlocks();
         }
     }
+
+    //private static void ChangeLastPresentationLayer(
+    //    ITextEditorService textEditorService,
+    //    TextEditorViewModel viewModel)
+    //{
+    //    textEditorService.ViewModel.With(
+    //        viewModel.ViewModelKey,
+    //        inViewModel =>
+    //        {
+    //            var outPresentationLayer = inViewModel.FirstPresentationLayer;
+
+    //            var inPresentationModel = outPresentationLayer
+    //                .FirstOrDefault(x =>
+    //                    x.TextEditorPresentationKey == SemanticFacts.PresentationKey);
+
+    //            if (inPresentationModel is null)
+    //            {
+    //                inPresentationModel = SemanticFacts.EmptyPresentationModel;
+
+    //                outPresentationLayer = outPresentationLayer.Add(
+    //                    inPresentationModel);
+    //            }
+
+    //            var model = textEditorService.ViewModel
+    //                .FindBackingModelOrDefault(viewModel.ViewModelKey);
+
+    //            var outPresentationModel = inPresentationModel with
+    //            {
+    //                TextEditorTextSpans = model?.SemanticModel?.TextEditorTextSpans
+    //                    ?? ImmutableList<TextEditorTextSpan>.Empty
+    //            };
+
+    //            outPresentationLayer = outPresentationLayer.Replace(
+    //                inPresentationModel,
+    //                outPresentationModel);
+
+    //            return inViewModel with
+    //            {
+    //                FirstPresentationLayer = outPresentationLayer,
+    //                RenderStateKey = RenderStateKey.NewRenderStateKey()
+    //            };
+    //        });
+    //}
 }

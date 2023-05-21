@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using BlazorTextEditor.RazorLib.Analysis;
+using System.Collections.Immutable;
 
 namespace BlazorStudio.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
 
@@ -10,13 +11,13 @@ public class CompilationUnit : ISyntaxNode
     {
         IsExpression = isExpression;
         Children = children;
-        Diagnostics = ImmutableArray<BlazorStudioDiagnostic>.Empty;
+        Diagnostics = ImmutableArray<TextEditorDiagnostic>.Empty;
     }
 
     public CompilationUnit(
         bool isExpression,
         ImmutableArray<ISyntax> children,
-        ImmutableArray<BlazorStudioDiagnostic> diagnostics)
+        ImmutableArray<TextEditorDiagnostic> diagnostics)
     {
         IsExpression = isExpression;
         Children = children;
@@ -24,7 +25,7 @@ public class CompilationUnit : ISyntaxNode
     }
 
     public bool IsExpression { get; }
-    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics { get; }
+    public ImmutableArray<TextEditorDiagnostic> Diagnostics { get; }
 
     public ImmutableArray<ISyntax> Children { get; }
     public bool IsFabricated { get; init; }

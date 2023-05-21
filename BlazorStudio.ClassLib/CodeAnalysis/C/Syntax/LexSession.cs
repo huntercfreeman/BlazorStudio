@@ -7,19 +7,19 @@ using BlazorTextEditor.RazorLib.Lexing;
 
 namespace BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
 
-public class Lexer
+public class LexSession
 {
     private readonly StringWalker _stringWalker;
     private readonly List<ISyntaxToken> _syntaxTokens = new();
     private readonly BlazorStudioDiagnosticBag _diagnosticBag = new();
 
-    public Lexer(string content)
+    public LexSession(string content)
     {
         _stringWalker = new StringWalker(content);
     }
 
     public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
-    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+    public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
     /// <summary>General idea for this Lex method is to use a switch statement to invoke a method which returns the specific token.<br/><br/>The method also moves the position in the content forward.</summary>
     public void Lex()

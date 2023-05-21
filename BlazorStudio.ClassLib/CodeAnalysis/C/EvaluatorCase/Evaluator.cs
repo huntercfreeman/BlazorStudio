@@ -1,6 +1,7 @@
 ﻿using BlazorStudio.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Expression;
 using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
 using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
+using BlazorTextEditor.RazorLib.Analysis;
 using System.Collections.Immutable;
 
 namespace BlazorStudio.ClassLib.CodeAnalysis.C.EvaluatorCase;
@@ -19,12 +20,12 @@ public class Evaluator
         _sourceText = sourceText;
     }
 
-    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+    public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
     public EvaluatorResult Evaluate()
     {
         if (_compilationUnit.Diagnostics.Any(x =>
-                x.BlazorStudioDiagnosticLevel == BlazorStudioDiagnosticLevel.Error))
+                x.DiagnosticLevel == TextEditorDiagnosticLevel.Error))
         {
             throw new NotImplementedException("TODO: What should be done when there are error diagnostics?");
         }

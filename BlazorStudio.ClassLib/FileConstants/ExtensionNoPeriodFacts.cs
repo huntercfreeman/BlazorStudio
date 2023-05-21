@@ -43,7 +43,7 @@ public static class ExtensionNoPeriodFacts
     public const string CPP = "cpp";
     public const string HPP = "hpp";
 
-    public static ILexer GetLexer(
+    public static ITextEditorLexer GetLexer(
         string extensionNoPeriod) => extensionNoPeriod switch
     {
         HTML => new TextEditorHtmlLexer(),
@@ -58,7 +58,7 @@ public static class ExtensionNoPeriodFacts
         JSON => new TextEditorJsonLexer(),
         TYPE_SCRIPT => new TextEditorTypeScriptLexer(),
         F_SHARP => new TextEditorFSharpLexer(),
-        C => new LexerC(),
+        C => new TextEditorLexerC(),
         H => new TextEditorCLexer(),
         CPP => new TextEditorCLexer(),
         HPP => new TextEditorCLexer(),
@@ -88,7 +88,8 @@ public static class ExtensionNoPeriodFacts
     };
     
     public static ISemanticModel? GetSemanticModel(
-        string extensionNoPeriod) => extensionNoPeriod switch
+        string extensionNoPeriod,
+        ITextEditorLexer lexer) => extensionNoPeriod switch
     {
         HTML => null,
         XML => null,

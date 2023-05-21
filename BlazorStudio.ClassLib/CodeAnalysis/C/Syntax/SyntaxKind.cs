@@ -34,4 +34,9 @@ public enum SyntaxKind
     BoundVariableAssignmentStatementNode,
     BoundFunctionInvocationNode,
     BoundReturnStatementNode,
+
+    // Symbols
+    TypeSymbol,
+    FunctionSymbol,
+    VariableSymbol,
 }

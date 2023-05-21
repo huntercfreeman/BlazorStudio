@@ -7,33 +7,35 @@ using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
 using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes.Expression;
 using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes.Statement;
 using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax.SyntaxTokens;
+using BlazorTextEditor.RazorLib.Analysis;
 using BlazorTextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 
 namespace BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
 
-public class Parser
+public class ParserSession
 {
     private readonly TokenWalker _tokenWalker;
-    private readonly Binder _binder;
+    private readonly BinderSession _binder;
     private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new(null);
     private readonly BlazorStudioDiagnosticBag _diagnosticBag = new();
-    private readonly ImmutableArray<BlazorStudioDiagnostic> _lexerDiagnostics;
+    private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
     private readonly string _sourceText;
 
-    public Parser(
+    public ParserSession(
         ImmutableArray<ISyntaxToken> tokens,
         string sourceText,
-        ImmutableArray<BlazorStudioDiagnostic> lexerDiagnostics)
+        ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
     {
         _sourceText = sourceText;
         _lexerDiagnostics = lexerDiagnostics;
         _tokenWalker = new TokenWalker(tokens);
-        _binder = new Binder(sourceText);
+        _binder = new BinderSession(sourceText);
 
         _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
     }
 
-    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+    public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+    public BinderSession Binder => _binder;
 
     private ISyntaxNode? _nodeRecent;
     private CompilationUnitBuilder _currentCompilationUnitBuilder;
@@ -71,10 +73,10 @@ public class Parser
                     ParseIdentifierToken((IdentifierToken)consumedToken);
                     break;
                 case SyntaxKind.OpenBraceToken:
-                    ParseOpenBraceToken();
+                    ParseOpenBraceToken((OpenBraceToken)consumedToken);
                     break;
                 case SyntaxKind.CloseBraceToken:
-                    ParseCloseBraceToken();
+                    ParseCloseBraceToken((CloseBraceToken)consumedToken);
                     break;
                 case SyntaxKind.StatementDelimiterToken:
                     ParseStatementDelimiterToken();
@@ -368,7 +370,8 @@ public class Parser
             typeof(void));
     }
 
-    private void ParseOpenBraceToken()
+    private void ParseOpenBraceToken(
+        OpenBraceToken inToken)
     {
         var closureCompilationUnitBuilder = _currentCompilationUnitBuilder;
         Type? scopeReturnType = null;
@@ -398,14 +401,17 @@ public class Parser
             };
         }
 
-        _binder.RegisterBoundScope(scopeReturnType);
+        _binder.RegisterBoundScope(
+            scopeReturnType,
+            inToken.TextEditorTextSpan);
 
         _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
     }
 
-    private void ParseCloseBraceToken()
+    private void ParseCloseBraceToken(
+        CloseBraceToken inToken)
     {
-        _binder.DisposeBoundScope();
+        _binder.DisposeBoundScope(inToken.TextEditorTextSpan);
 
         if (_currentCompilationUnitBuilder.Parent is not null)
         {

@@ -21,11 +21,11 @@ int main() {
    return 0;
 }".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);

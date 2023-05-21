@@ -6,24 +6,38 @@ using BlazorStudio.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes;
 using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes.Expression;
 using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax.SyntaxTokens;
 using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
+using BlazorTextEditor.RazorLib.Analysis;
+using BlazorTextEditor.RazorLib.Lexing;
+using BlazorStudio.ClassLib.CodeAnalysis.C.Symbols;
+using BlazorTextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 
 namespace BlazorStudio.ClassLib.CodeAnalysis.C.BinderCase;
 
-public class Binder
+public class BinderSession
 {
     private readonly BoundScope _globalScope = CLanguageFacts.Scope.GetInitialGlobalScope();
-    private BoundScope _currentScope;
     private readonly string _sourceText;
     private readonly BlazorStudioDiagnosticBag _diagnosticBag = new();
+    
+    private BoundScope _currentScope;
 
-    public Binder(
+    public BinderSession(
         string sourceText)
     {
         _sourceText = sourceText;
         _currentScope = _globalScope;
+
+        BoundScopes.Add(_globalScope);
+
+        BoundScopes = BoundScopes
+            .OrderBy(x => x.StartingIndexInclusive)
+            .ToList();
     }
 
-    public ImmutableArray<BlazorStudioDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+    public List<BoundScope> BoundScopes { get; private set; } = new();
+    public List<ISymbol> Symbols { get; private set; } = new();
+
+    public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
     public BoundLiteralExpressionNode BindLiteralExpressionNode(
         LiteralExpressionNode literalExpressionNode)
@@ -115,6 +129,12 @@ public class Binder
         _currentScope.FunctionDeclarationMap.Add(
             text,
             boundFunctionDeclarationNode);
+
+        Symbols.Add(
+            new FunctionSymbol(identifierToken.TextEditorTextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Function
+            }));
 
         return boundFunctionDeclarationNode;
     }
@@ -213,22 +233,36 @@ public class Binder
         }
     }
 
-    public void RegisterBoundScope(Type? scopeReturnType)
+    public void RegisterBoundScope(
+        Type? scopeReturnType,
+        TextEditorTextSpan textEditorTextSpan)
     {
         var boundScope = new BoundScope(
             _currentScope,
             scopeReturnType,
+            textEditorTextSpan.StartingIndexInclusive,
+            null,
             new(),
             new(),
             new());
 
+        BoundScopes.Add(boundScope);
+
+        BoundScopes = BoundScopes
+            .OrderBy(x => x.StartingIndexInclusive)
+            .ToList();
+
         _currentScope = boundScope;
     }
 
-    public void DisposeBoundScope()
+    public void DisposeBoundScope(
+        TextEditorTextSpan textEditorTextSpan)
     {
         if (_currentScope.Parent is not null)
+        {
+            _currentScope.EndingIndexExclusive = textEditorTextSpan.EndingIndexExclusive;
             _currentScope = _currentScope.Parent;
+        }
     }
 
     /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>

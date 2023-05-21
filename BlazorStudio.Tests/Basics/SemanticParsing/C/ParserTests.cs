@@ -3,6 +3,7 @@ using BlazorStudio.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes;
 using BlazorStudio.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Expression;
 using BlazorStudio.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Statements;
 using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
+using BlazorTextEditor.RazorLib.Analysis;
 
 namespace BlazorStudio.Tests.Basics.SemanticParsing.C;
 
@@ -13,10 +14,10 @@ public class ParserTests
     {
         string sourceText = "3".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -36,10 +37,10 @@ public class ParserTests
     {
         string sourceText = "\"123abc\"".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -59,10 +60,10 @@ public class ParserTests
     {
         string sourceText = "3 + 3".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -93,11 +94,11 @@ public class ParserTests
         string sourceText = "#include <stdlib.h>"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -120,11 +121,11 @@ public class ParserTests
 #include <stdio.h>"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -152,11 +153,11 @@ public class ParserTests
         string sourceText = @"// C:\Users\hunte\Repos\Aaa\"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -172,11 +173,11 @@ public class ParserTests
         string sourceText = @"int x;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -222,11 +223,11 @@ public class ParserTests
 x = 42;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -256,11 +257,11 @@ x = 42;"
         string sourceText = @"int x = 42;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -292,11 +293,11 @@ x = 42;"
 }"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -323,11 +324,11 @@ x = 42;"
 WriteHelloWorldToConsole();"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -357,11 +358,11 @@ WriteHelloWorldToConsole();"
         string sourceText = @"printf();"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -388,8 +389,8 @@ WriteHelloWorldToConsole();"
                 .Single();
 
             Assert.Equal(
-                BlazorStudioDiagnosticLevel.Error,
-                errorDiagnostic.BlazorStudioDiagnosticLevel);
+                TextEditorDiagnosticLevel.Error,
+                errorDiagnostic.DiagnosticLevel);
         }
     }
 }

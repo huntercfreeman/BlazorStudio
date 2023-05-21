@@ -1,13 +1,14 @@
-﻿using BlazorTextEditor.RazorLib.Lexing;
+﻿using BlazorTextEditor.RazorLib.Analysis;
+using BlazorTextEditor.RazorLib.Lexing;
 using System.Collections;
 
 namespace BlazorStudio.ClassLib.CodeAnalysis;
 
-public class BlazorStudioDiagnosticBag : IEnumerable<BlazorStudioDiagnostic>
+public class BlazorStudioDiagnosticBag : IEnumerable<TextEditorDiagnostic>
 {
-    private readonly List<BlazorStudioDiagnostic> _blazorStudioDiagnostics = new();
+    private readonly List<TextEditorDiagnostic> _blazorStudioDiagnostics = new();
 
-    public IEnumerator<BlazorStudioDiagnostic> GetEnumerator()
+    public IEnumerator<TextEditorDiagnostic> GetEnumerator()
     {
         return _blazorStudioDiagnostics.GetEnumerator();
     }
@@ -21,7 +22,7 @@ public class BlazorStudioDiagnosticBag : IEnumerable<BlazorStudioDiagnostic>
         TextEditorTextSpan textEditorTextSpan)
     {
         Report(
-            BlazorStudioDiagnosticLevel.Error,
+            TextEditorDiagnosticLevel.Error,
             "'End of file' was unexpected.",
             textEditorTextSpan);
     }
@@ -31,7 +32,7 @@ public class BlazorStudioDiagnosticBag : IEnumerable<BlazorStudioDiagnostic>
         string unexpectedToken)
     {
         Report(
-            BlazorStudioDiagnosticLevel.Error,
+            TextEditorDiagnosticLevel.Error,
             $"Unexpected token: '{unexpectedToken}'",
             textEditorTextSpan);
     }
@@ -41,7 +42,7 @@ public class BlazorStudioDiagnosticBag : IEnumerable<BlazorStudioDiagnostic>
         string undefinedFunctionName)
     {
         Report(
-            BlazorStudioDiagnosticLevel.Error,
+            TextEditorDiagnosticLevel.Error,
             $"Undefined function: '{undefinedFunctionName}'",
             textEditorTextSpan);
     }
@@ -50,18 +51,18 @@ public class BlazorStudioDiagnosticBag : IEnumerable<BlazorStudioDiagnostic>
         TextEditorTextSpan textEditorTextSpan)
     {
         Report(
-            BlazorStudioDiagnosticLevel.Hint,
+            TextEditorDiagnosticLevel.Hint,
             $"Parsing of return statements is still being implemented.",
             textEditorTextSpan);
     }
 
     private void Report(
-        BlazorStudioDiagnosticLevel blazorStudioDiagnosticLevel,
+        TextEditorDiagnosticLevel blazorStudioDiagnosticLevel,
         string message,
         TextEditorTextSpan textEditorTextSpan)
     {
         _blazorStudioDiagnostics.Add(
-            new BlazorStudioDiagnostic(
+            new TextEditorDiagnostic(
                 blazorStudioDiagnosticLevel,
                 message,
                 textEditorTextSpan));

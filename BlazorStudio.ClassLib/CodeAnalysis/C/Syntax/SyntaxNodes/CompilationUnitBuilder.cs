@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using BlazorTextEditor.RazorLib.Analysis;
+using System.Collections.Immutable;
 
 namespace BlazorStudio.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
 
@@ -21,7 +22,7 @@ public class CompilationUnitBuilder
     }
 
     public CompilationUnit Build(
-        ImmutableArray<BlazorStudioDiagnostic> diagnostics)
+        ImmutableArray<TextEditorDiagnostic> diagnostics)
     {
         return new CompilationUnit(
             IsExpression,

@@ -10,7 +10,7 @@ public class LexerTests
 		var numericValue = 4135;
         var sourceText = $"{numericValue}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
         
         var numericLiteralToken = lexer.SyntaxTokens.First();
@@ -27,7 +27,7 @@ public class LexerTests
 		var stringValue = "\"Apple Sauce\"";
         var sourceText = $"{stringValue}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
         
         var stringLiteralToken = lexer.SyntaxTokens.First();
@@ -44,7 +44,7 @@ public class LexerTests
         var singleLineCommentAsString = @"// C:\Users\hunte\Repos\Aaa\";
         var sourceText = $"{singleLineCommentAsString}".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(sourceText);
+	    var lexer = new LexSession(sourceText);
 	    lexer.Lex();
 
 	    var commentSingleLineToken = lexer.SyntaxTokens.First();
@@ -62,7 +62,7 @@ public class LexerTests
         var sourceText = $@"{singleLineCommentAsString}
 ".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(sourceText);
+	    var lexer = new LexSession(sourceText);
 	    lexer.Lex();
 
 	    var commentSingleLineToken = lexer.SyntaxTokens.First();
@@ -82,7 +82,7 @@ public class LexerTests
 
         var sourceText = $"{multiLineCommentAsString}".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(sourceText);
+	    var lexer = new LexSession(sourceText);
 	    lexer.Lex();
         
 	    var commentMultiLineToken = lexer.SyntaxTokens.First();
@@ -101,7 +101,7 @@ public class LexerTests
 
         var sourceText = $"{multiLineCommentAsString}".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(sourceText);
+	    var lexer = new LexSession(sourceText);
 	    lexer.Lex();
         
 	    var commentMultiLineToken = lexer.SyntaxTokens.First();
@@ -118,7 +118,7 @@ public class LexerTests
 		var keywordAsString = "int";
         var sourceText = $"{keywordAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
         
         var keywordToken = lexer.SyntaxTokens.First();
@@ -138,7 +138,7 @@ public class LexerTests
     {
         var sourceText = $"{identifierAsString}".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(sourceText);
+	    var lexer = new LexSession(sourceText);
 	    lexer.Lex();
         
 	    var identifierToken = lexer.SyntaxTokens.First();
@@ -155,7 +155,7 @@ public class LexerTests
 		var plusTokenAsString = "+";
         var sourceText = $"{plusTokenAsString}".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(sourceText);
+	    var lexer = new LexSession(sourceText);
 	    lexer.Lex();
         
 	    var plusToken = lexer.SyntaxTokens.First();
@@ -172,7 +172,7 @@ public class LexerTests
 		var preprocessorDirectiveAsString = "#include";
         var sourceText = $"{preprocessorDirectiveAsString}".ReplaceLineEndings("\n");
 
-	    var lexer = new Lexer(sourceText);
+	    var lexer = new LexSession(sourceText);
 	    lexer.Lex();
         
 	    var preprocessorDirectiveToken = lexer.SyntaxTokens.First();
@@ -190,7 +190,7 @@ public class LexerTests
         var libraryReferenceAsString = "<stdlib.h>";
         var sourceText = $"{preprocessorDirectiveAsString} {libraryReferenceAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
         // Preprocessor Directive Token Assertions
@@ -220,7 +220,7 @@ public class LexerTests
         var equalsTokenAsString = "=";
         var sourceText = $"{equalsTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
         var equalsToken = lexer.SyntaxTokens.First();
@@ -237,7 +237,7 @@ public class LexerTests
         var statementDelimiterTokenAsString = ";";
         var sourceText = $"{statementDelimiterTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
         var statementDelimiterToken = lexer.SyntaxTokens.First();
@@ -254,7 +254,7 @@ public class LexerTests
         var openParenthesisTokenAsString = "(";
         var sourceText = $"{openParenthesisTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
         var openParenthesisToken = lexer.SyntaxTokens.First();
@@ -271,7 +271,7 @@ public class LexerTests
         var closeParenthesisTokenAsString = ")";
         var sourceText = $"{closeParenthesisTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
         var closeParenthesisToken = lexer.SyntaxTokens.First();
@@ -288,7 +288,7 @@ public class LexerTests
         var openBraceTokenAsString = "{";
         var sourceText = $"{openBraceTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
         var openBraceToken = lexer.SyntaxTokens.First();
@@ -305,7 +305,7 @@ public class LexerTests
         var closeBraceTokenAsString = "}";
         var sourceText = $"{closeBraceTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
         var closeBraceToken = lexer.SyntaxTokens.First();

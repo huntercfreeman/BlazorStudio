@@ -1,5 +1,6 @@
 ﻿using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
-using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
+using BlazorTextEditor.RazorLib;
+using BlazorTextEditor.RazorLib.Analysis;
 using BlazorTextEditor.RazorLib.Diff;
 using BlazorTextEditor.RazorLib.Lexing;
 using BlazorTextEditor.RazorLib.Model;
@@ -10,28 +11,16 @@ namespace BlazorStudio.ClassLib.CodeAnalysis.C;
 
 public class SemanticModelC : ISemanticModel
 {
-    private string? _text;
-    private Lexer? _lexer;
-    private Parser? _parser;
-    private CompilationUnit? _compilationUnit;
+    private SemanticModelResult? _recentSemanticModelResult;
 
-    public ImmutableList<TextEditorTextSpan> TextEditorTextSpans { get; private set; } = ImmutableList<TextEditorTextSpan>.Empty;
+    public ImmutableList<TextEditorTextSpan> DiagnosticTextSpans { get; set; } = ImmutableList<TextEditorTextSpan>.Empty;
+    public ImmutableList<TextEditorTextSpan> SymbolTextSpans { get; private set; } = ImmutableList<TextEditorTextSpan>.Empty;
 
     public SymbolDefinition? GoToDefinition(
         TextEditorModel model,
         TextEditorTextSpan textSpan)
     {
-        _text = model.GetAllText();
-
-        var identifier = textSpan.GetText(_text);
-
-        _lexer = new Lexer(_text);
-        _lexer.Lex();
-
-        _parser = new Parser(
-            _lexer.SyntaxTokens,
-            _text,
-            _lexer.Diagnostics);
+        var semanticModelResult = ParseWithResult(model);
 
         return null;
     }
@@ -39,27 +28,40 @@ public class SemanticModelC : ISemanticModel
     public void Parse(
         TextEditorModel model)
     {
-        _text = model.GetAllText();
+        _ = ParseWithResult(model);
+    }
+    
+    public SemanticModelResult? ParseWithResult(
+        TextEditorModel model)
+    {
+        var text = model.GetAllText();
 
-        _lexer = new Lexer(_text);
-        _lexer.Lex();
+        model.Lexer.Lex(
+            text,
+            model.RenderStateKey);
 
-        _parser = new Parser(
-            _lexer.SyntaxTokens,
-            _text,
-            _lexer.Diagnostics);
+        var textEditorLexerC = (TextEditorLexerC)model.Lexer;
+        var recentLexSession = textEditorLexerC.RecentLexSession;
 
-        _compilationUnit = _parser.Parse();
+        if (recentLexSession is null)
+            return null;
 
-        TextEditorTextSpans = _compilationUnit.Diagnostics.Select(x =>
+        var parserSession = new ParserSession(
+            recentLexSession.SyntaxTokens,
+            text,
+            recentLexSession.Diagnostics);
+
+        var compilationUnit = parserSession.Parse();
+
+        DiagnosticTextSpans = compilationUnit.Diagnostics.Select(x =>
         {
-            var textEditorDecorationKind = x.BlazorStudioDiagnosticLevel switch
+            var textEditorDecorationKind = x.DiagnosticLevel switch
             {
-                BlazorStudioDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
-                BlazorStudioDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
-                BlazorStudioDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
-                BlazorStudioDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
-                BlazorStudioDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
+                TextEditorDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
+                TextEditorDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
+                TextEditorDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
+                TextEditorDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
+                TextEditorDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
                 _ => throw new NotImplementedException(),
             };
 
@@ -68,5 +70,18 @@ public class SemanticModelC : ISemanticModel
                 x.TextEditorTextSpan.EndingIndexExclusive,
                 (byte)textEditorDecorationKind);
         }).ToImmutableList();
+
+        SymbolTextSpans = parserSession.Binder.Symbols
+            .Select(x => x.TextSpan)
+            .ToImmutableList();
+
+        var semanticModelResult = new SemanticModelResult(
+            text,
+            parserSession,
+            compilationUnit);
+
+        _recentSemanticModelResult = semanticModelResult;
+
+        return semanticModelResult;
     }
 }
