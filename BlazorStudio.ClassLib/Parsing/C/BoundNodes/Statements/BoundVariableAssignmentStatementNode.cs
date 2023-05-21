@@ -1,6 +1,5 @@
 ﻿using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes;
-using BlazorStudio.ClassLib.Parsing.C.SyntaxNodes.Expression;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 using System.Collections.Immutable;
 

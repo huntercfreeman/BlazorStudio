@@ -1,29 +1,10 @@
 ﻿using System.Collections.Immutable;
-using BlazorCommon.RazorLib.Misc;
 using BlazorStudio.ClassLib.Parsing.C.SyntaxTokens;
 using BlazorTextEditor.RazorLib.Analysis;
-using BlazorTextEditor.RazorLib.Analysis.GenericLexer;
 using BlazorTextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using BlazorTextEditor.RazorLib.Lexing;
 
 namespace BlazorStudio.ClassLib.Parsing.C;
-
-public class TextEditorLexerWrap : ILexer
-{
-    public RenderStateKey TextEditorModelRenderStateKey { get; } = RenderStateKey.Empty;
-    public Lexer Lexer { get; private set; }
-
-    public Task<ImmutableArray<TextEditorTextSpan>> Lex(string text)
-    {
-        Lexer = new Lexer(text);
-
-        Lexer.Lex();
-
-        return Task.FromResult(
-            Lexer.SyntaxTokens.Select(x => x.TextEditorTextSpan)
-            .ToImmutableArray());
-    }
-}
 
 public class Lexer
 {
@@ -39,84 +20,20 @@ public class Lexer
     public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
     public ImmutableArray<BlazorStudioDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
-    /// <summary>
-    /// General idea for this Lex method is to use a switch statement
-    /// to invoke a method which returns the specific token.
-    /// <br/><br/>
-    /// The method also moves the position in the content forward.
-    /// </summary>
+    /// <summary>General idea for this Lex method is to use a switch statement to invoke a method which returns the specific token.<br/><br/>The method also moves the position in the content forward.</summary>
     public void Lex()
     {
         while (!_stringWalker.IsEof)
         {
             switch (_stringWalker.CurrentCharacter)
             {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
+                /* Digits */ case '0':case '1':case '2':case '3':case '4':case '5':case '6':case '7':case '8':case '9':
                     var numericLiteralToken = ConsumeNumericLiteral();
                     _syntaxTokens.Add(numericLiteralToken);
                     break;
-                case 'a':
-                case 'b':
-                case 'c':
-                case 'd':
-                case 'e':
-                case 'f':
-                case 'g':
-                case 'h':
-                case 'i':
-                case 'j':
-                case 'k':
-                case 'l':
-                case 'm':
-                case 'n':
-                case 'o':
-                case 'p':
-                case 'q':
-                case 'r':
-                case 's':
-                case 't':
-                case 'u':
-                case 'v':
-                case 'w':
-                case 'x':
-                case 'y':
-                case 'z':
-                case 'A':
-                case 'B':
-                case 'C':
-                case 'D':
-                case 'E':
-                case 'F':
-                case 'G':
-                case 'H':
-                case 'I':
-                case 'J':
-                case 'K':
-                case 'L':
-                case 'M':
-                case 'N':
-                case 'O':
-                case 'P':
-                case 'Q':
-                case 'R':
-                case 'S':
-                case 'T':
-                case 'U':
-                case 'V':
-                case 'W':
-                case 'X':
-                case 'Y':
-                case 'Z':
-                case '_':
+                /* Lowercase Letters */ case 'a':case 'b':case 'c':case 'd':case 'e':case 'f':case 'g':case 'h':case 'i':case 'j':case 'k':case 'l':case 'm':case 'n':case 'o':case 'p':case 'q':case 'r':case 's':case 't':case 'u':case 'v':case 'w':case 'x':case 'y':case 'z':
+                /* Uppercase Letters */ case 'A':case 'B':case 'C':case 'D':case 'E':case 'F':case 'G':case 'H':case 'I':case 'J':case 'K':case 'L':case 'M':case 'N':case 'O':case 'P':case 'Q':case 'R':case 'S':case 'T':case 'U':case 'V':case 'W':case 'X':case 'Y':case 'Z':
+                /* Underscore */ case '_':
                     var identifierOrKeywordToken = ConsumeIdentifierOrKeyword();
                     _syntaxTokens.Add(identifierOrKeywordToken);
                     break;
