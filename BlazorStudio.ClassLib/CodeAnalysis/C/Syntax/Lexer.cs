@@ -318,9 +318,6 @@ public class Lexer
 
     private PreprocessorDirectiveToken ConsumePreprocessorDirective()
     {
-        // Move past the starting '#' transition character
-        _ = _stringWalker.ReadCharacter();
-
         var startOfDirective = _stringWalker.PositionIndex;
 
         while (!_stringWalker.IsEof)

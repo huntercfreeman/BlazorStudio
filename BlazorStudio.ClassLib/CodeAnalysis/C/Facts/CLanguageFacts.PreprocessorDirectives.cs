@@ -8,19 +8,19 @@ public partial class CLanguageFacts
     {
         public class Directives
         {
-            public const string INCLUDE = "include";
-            public const string DEFINE = "define";
-            public const string UNDEF = "undef";
-            public const string IF = "if";
-            public const string IFDEF = "ifdef";
-            public const string IFNDEF = "ifndef";
-            public const string ERROR = "error";
+            public const string INCLUDE = "#include";
+            public const string DEFINE = "#define";
+            public const string UNDEF = "#undef";
+            public const string IF = "#if";
+            public const string IFDEF = "#ifdef";
+            public const string IFNDEF = "#ifndef";
+            public const string ERROR = "#error";
             public const string FILE = "__FILE__";
             public const string LINE = "__LINE__";
             public const string DATE = "__DATE__";
             public const string TIME = "__TIME__";
             public const string TIMESTAMP = "__TIMESTAMP__";
-            public const string PRAGMA = "pragma";
+            public const string PRAGMA = "#pragma";
             
             // TODO: What are these preprocessor directives? I think the idea was to type '#' then a defined macro? Its not "actually" a named preprocessor command.
             //

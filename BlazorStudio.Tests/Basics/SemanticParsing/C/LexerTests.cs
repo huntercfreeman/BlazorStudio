@@ -169,8 +169,8 @@ public class LexerTests
     [Fact]
     public void SHOULD_LEX_PREPROCESSOR_DIRECTIVE_TOKEN()
     {
-		var preprocessorDirectiveAsString = "include";
-        var sourceText = $"#{preprocessorDirectiveAsString}".ReplaceLineEndings("\n");
+		var preprocessorDirectiveAsString = "#include";
+        var sourceText = $"{preprocessorDirectiveAsString}".ReplaceLineEndings("\n");
 
 	    var lexer = new Lexer(sourceText);
 	    lexer.Lex();
@@ -186,9 +186,9 @@ public class LexerTests
     [Fact]
     public void SHOULD_LEX_PREPROCESSOR_DIRECTIVE_TOKEN_AND_LIBRARY_REFERENCE_TOKEN()
     {
-        var preprocessorDirectiveAsString = "include";
+        var preprocessorDirectiveAsString = "#include";
         var libraryReferenceAsString = "<stdlib.h>";
-        var sourceText = $"#{preprocessorDirectiveAsString} {libraryReferenceAsString}".ReplaceLineEndings("\n");
+        var sourceText = $"{preprocessorDirectiveAsString} {libraryReferenceAsString}".ReplaceLineEndings("\n");
 
         var lexer = new Lexer(sourceText);
         lexer.Lex();
