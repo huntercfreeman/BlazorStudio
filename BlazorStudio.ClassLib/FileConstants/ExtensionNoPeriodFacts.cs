@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.Parsing.C;
+﻿using BlazorStudio.ClassLib.CodeAnalysis.C;
+using BlazorStudio.ClassLib.Parsing.C;
 using BlazorTextEditor.RazorLib.Analysis.C.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.CSharp.SyntaxActors;
 using BlazorTextEditor.RazorLib.Analysis.Css.Decoration;
@@ -57,7 +58,7 @@ public static class ExtensionNoPeriodFacts
         JSON => new TextEditorJsonLexer(),
         TYPE_SCRIPT => new TextEditorTypeScriptLexer(),
         F_SHARP => new TextEditorFSharpLexer(),
-        C => new TextEditorCLexer(),
+        C => new LexerC(),
         H => new TextEditorCLexer(),
         CPP => new TextEditorCLexer(),
         HPP => new TextEditorCLexer(),

@@ -1,8 +1,8 @@
-﻿using BlazorStudio.ClassLib.Parsing;
-using BlazorStudio.ClassLib.Parsing.C;
-using BlazorStudio.ClassLib.Parsing.C.BoundNodes;
-using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Expression;
-using BlazorStudio.ClassLib.Parsing.C.BoundNodes.Statements;
+﻿using BlazorStudio.ClassLib.CodeAnalysis;
+using BlazorStudio.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes;
+using BlazorStudio.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Expression;
+using BlazorStudio.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Statements;
+using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
 
 namespace BlazorStudio.Tests.Basics.SemanticParsing.C;
 

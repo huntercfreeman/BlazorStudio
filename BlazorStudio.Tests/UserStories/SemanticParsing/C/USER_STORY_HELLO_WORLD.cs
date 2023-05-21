@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.Parsing.C;
+﻿using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
+using BlazorStudio.ClassLib.Parsing.C;
 
 namespace BlazorStudio.Tests.Basics.SemanticParsing.C;
 
