@@ -1,4 +1,6 @@
-﻿using BlazorStudio.ClassLib.Parsing.C;
+﻿
+using BlazorStudio.ClassLib.CodeAnalysis.C.EvaluatorCase;
+using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
 
 namespace BlazorStudio.Tests.Basics.SemanticParsing.C;
 
@@ -11,10 +13,10 @@ public class EvaluatorTests
 
         string sourceText = $"{x}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -37,10 +39,10 @@ public class EvaluatorTests
         var x = "123abc";
         string sourceText = $"\"{x}\"".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -65,10 +67,10 @@ public class EvaluatorTests
 
         string sourceText = $"{x} + {y}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -93,10 +95,10 @@ public class EvaluatorTests
 
         string sourceText = $"\"{x}\" + \"{y}\"".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);

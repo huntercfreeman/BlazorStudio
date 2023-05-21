@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.DotNet.CSharp;
+﻿using BlazorCommon.RazorLib.Misc;
+using BlazorStudio.ClassLib.DotNet.CSharp;
 using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
 using BlazorStudio.ClassLib.FileSystem.Classes.Local;
 using BlazorTextEditor.RazorLib.Analysis.Html.SyntaxActors;
@@ -21,7 +22,7 @@ public class CSharpProjectParserTests
 
 	    var htmlLexer = new TextEditorHtmlLexer();
 
-	    var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA);
+	    var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, RenderStateKey.NewRenderStateKey());
 	    
 	    var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(PROJECT_TEST_DATA);
 
@@ -59,7 +60,7 @@ public class CSharpProjectParserTests
 
 	    var htmlLexer = new TextEditorHtmlLexer();
 
-	    var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA);
+	    var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, RenderStateKey.NewRenderStateKey());
 	    
 	    var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(PROJECT_TEST_DATA);
 

@@ -1,4 +1,5 @@
-﻿using BlazorStudio.ClassLib.Parsing.C;
+﻿using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
+using BlazorStudio.ClassLib.Parsing.C;
 
 namespace BlazorStudio.Tests.Basics.SemanticParsing.C;
 
@@ -20,11 +21,11 @@ int main() {
    return 0;
 }".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new LexSession(sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new ParserSession(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
