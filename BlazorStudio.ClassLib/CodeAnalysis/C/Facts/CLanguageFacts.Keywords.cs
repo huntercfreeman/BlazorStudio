@@ -74,5 +74,20 @@ public partial class CLanguageFacts
             VOLATILE_KEYWORD,
             WHILE_KEYWORD,
         }.ToImmutableArray();
+        
+        public static readonly ImmutableArray<string> CONTROL_KEYWORDS = new[]
+        {
+            BREAK_KEYWORD,
+            CASE_KEYWORD,
+            CONTINUE_KEYWORD,
+            DO_KEYWORD,
+            ELSE_KEYWORD,
+            FOR_KEYWORD,
+            GOTO_KEYWORD,
+            IF_KEYWORD,
+            RETURN_KEYWORD,
+            SWITCH_KEYWORD,
+            WHILE_KEYWORD,
+        }.ToImmutableArray();
     }
 }

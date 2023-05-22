@@ -250,9 +250,14 @@ public class LexSession
 
         if (CLanguageFacts.Keywords.ALL.Contains(textValue))
         {
+            var decorationByte = (byte)GenericDecorationKind.Keyword;
+
+            if (CLanguageFacts.Keywords.CONTROL_KEYWORDS.Contains(textValue))
+                decorationByte = (byte)GenericDecorationKind.KeywordControl;
+
             textSpan = textSpan with
             {
-                DecorationByte = (byte)GenericDecorationKind.Keyword,
+                DecorationByte = decorationByte,
             };
 
             return new KeywordToken(textSpan);
